@@ -132,7 +132,7 @@ const Card = ({
   <div
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl border border-amber-200 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={`rounded-2xl h-full border border-amber-200 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
   >
     {children}
   </div>
@@ -185,30 +185,11 @@ const Btn = ({
 );
 
 /* =========================================================
-   COUNTDOWN TIMER
-   - Presets reset safely to idle
-   - Accurate ticking via rAF delta
-   - Keyboard: Space (start/pause), R (reset), F (fullscreen)
+   COUNTDOWN TIMER (accurate via absolute time)
 ========================================================= */
 function CountdownTimer() {
   const beep = useBeep();
-  const presets = useMemo(
-    () => [
-      1,
-      2,
-      3,
-      5,
-      10,
-      15,
-      20,
-      25,
-      30,
-      45,
-      60, // minutes
-    ],
-    []
-  );
-
+  const presets = useMemo(() => [1, 2, 3, 5, 10, 15, 20, 25, 30, 45, 60], []);
   const [durationMs, setDurationMs] = useState(5 * 60 * 1000);
   const [remainingMs, setRemainingMs] = useState(durationMs);
   const [status, setStatus] = useState<"idle" | "running" | "paused" | "done">(
@@ -218,53 +199,48 @@ function CountdownTimer() {
   const [sound, setSound] = useState(true);
   const [inputStr, setInputStr] = useState("05:00");
   const displayRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const endTimeRef = useRef<number | null>(null);
 
-  // keep input mirrored
   useEffect(() => {
     setInputStr(msToClock(durationMs));
   }, [durationMs]);
 
-  // ticking
-  const rafRef = useRef<number | null>(null);
-  const lastTsRef = useRef<number>(0);
-
   useEffect(() => {
     if (status !== "running") {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      endTimeRef.current = null;
       return;
     }
 
-    const step = (ts: number) => {
-      if (!lastTsRef.current) lastTsRef.current = ts;
-      const delta = ts - lastTsRef.current;
-      lastTsRef.current = ts;
+    if (!endTimeRef.current)
+      endTimeRef.current = performance.now() + remainingMs;
 
-      setRemainingMs((prev) => {
-        const next = Math.max(0, prev - delta);
-        if (next === 0) {
-          // finish
-          if (sound) beep();
-          if (loop) {
-            return durationMs; // restart
-          } else {
-            setStatus("done");
-            return 0;
-          }
+    const tick = () => {
+      const now = performance.now();
+      const rem = Math.max(0, (endTimeRef.current ?? now) - now);
+      setRemainingMs(rem);
+
+      if (rem <= 0) {
+        if (sound) beep();
+        if (loop) {
+          endTimeRef.current = performance.now() + durationMs;
+          setRemainingMs(durationMs);
+        } else {
+          setStatus("done");
+          endTimeRef.current = null;
+          return;
         }
-        return next;
-      });
-
-      rafRef.current = requestAnimationFrame(step);
+      }
+      rafRef.current = requestAnimationFrame(tick);
     };
+    rafRef.current = requestAnimationFrame(tick);
 
-    rafRef.current = requestAnimationFrame(step);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
-      lastTsRef.current = 0;
+      endTimeRef.current = null;
     };
   }, [status, durationMs, loop, sound, beep]);
 
@@ -273,10 +249,10 @@ function CountdownTimer() {
     setDurationMs(ms);
     setRemainingMs(ms);
     setStatus("idle");
+    endTimeRef.current = null;
   }
 
   function parseInputToMs(str: string) {
-    // Accept "mm:ss", "m:ss", "sss" (seconds), "m" (minutes), "hh:mm:ss"
     const parts = str
       .trim()
       .split(":")
@@ -284,11 +260,7 @@ function CountdownTimer() {
     let ms = 0;
     if (parts.length === 1) {
       const n = Number(parts[0] || "0");
-      // interpret 90 as seconds if < 100, else minutes if looks like minutes value typed without colon
-      ms = (n >= 100 ? n : n) * 1000; // treat as seconds
-      if (n >= 10) {
-        // e.g., 500 -> 500 sec; 5 -> 5 sec (explicit)
-      }
+      ms = n * 1000;
     } else if (parts.length === 2) {
       const m = Number(parts[0] || "0");
       const s = Number(parts[1] || "0");
@@ -307,27 +279,17 @@ function CountdownTimer() {
     safeReset(ms);
   }
 
-  function onPreset(min: number) {
-    safeReset(min * 60 * 1000);
-  }
-
-  function onStartPause() {
+  const onPreset = (m: number) => safeReset(m * 60 * 1000);
+  const onStartPause = () => {
     if (status === "running") {
       setStatus("paused");
       return;
     }
-    if (remainingMs <= 0) {
-      // restart
-      setRemainingMs(durationMs);
-    }
+    if (remainingMs <= 0) setRemainingMs(durationMs);
     setStatus("running");
-  }
-
-  function onReset() {
-    safeReset();
-  }
-
-  function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+  };
+  const onReset = () => safeReset();
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === " ") {
       e.preventDefault();
       onStartPause();
@@ -336,8 +298,7 @@ function CountdownTimer() {
     } else if (e.key.toLowerCase() === "f" && displayRef.current) {
       toggleFullscreen(displayRef.current);
     }
-  }
-
+  };
   const done = status === "done";
 
   return (
@@ -381,7 +342,7 @@ function CountdownTimer() {
 
       <div
         ref={displayRef}
-        className={`mt-3 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-8xl font-mono font-extrabold tracking-widest text-amber-900`}
+        className="mt-3 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-8xl font-mono font-extrabold tracking-widest text-amber-900"
         style={{ minHeight: 140 }}
         aria-live="polite"
       >
@@ -430,46 +391,47 @@ function CountdownTimer() {
           Time’s up! Press Start to run again or pick a preset.
         </div>
       )}
-
       <p className="mt-3 text-xs text-amber-700">
         Shortcuts: <strong>Space</strong> start/pause • <strong>R</strong> reset
-        • <strong>F</strong> fullscreen (when this card is focused).
+        • <strong>F</strong> fullscreen.
       </p>
     </Card>
   );
 }
 
 /* =========================================================
-   STOPWATCH (with laps)
-   - rAF timing, millisecond precision display (centiseconds)
-   - Laps accumulate with split
+   STOPWATCH (accurate via absolute start time + fullscreen)
 ========================================================= */
 function StopwatchCard() {
   const [running, setRunning] = useState(false);
-  const [elapsed, setElapsed] = useState(0); // ms
+  const [elapsed, setElapsed] = useState(0);
   const [laps, setLaps] = useState<number[]>([]);
-  const baseRef = useRef(0);
   const rafRef = useRef<number | null>(null);
-  const lastRef = useRef(0);
+  const startTimeRef = useRef<number | null>(null);
+  const displayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!running) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
+      startTimeRef.current = null;
       return;
     }
-    const step = (ts: number) => {
-      if (!lastRef.current) lastRef.current = ts;
-      const delta = ts - lastRef.current;
-      lastRef.current = ts;
-      setElapsed((v) => v + delta);
-      rafRef.current = requestAnimationFrame(step);
+
+    // Establish a stable reference start time
+    if (!startTimeRef.current) {
+      startTimeRef.current = performance.now() - elapsed;
+    }
+
+    const tick = () => {
+      const now = performance.now();
+      setElapsed(now - (startTimeRef.current ?? now));
+      rafRef.current = requestAnimationFrame(tick);
     };
-    rafRef.current = requestAnimationFrame(step);
+
+    rafRef.current = requestAnimationFrame(tick);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      lastRef.current = 0;
     };
   }, [running]);
 
@@ -477,12 +439,14 @@ function StopwatchCard() {
     setRunning(false);
     setElapsed(0);
     setLaps([]);
-    baseRef.current = 0;
+    startTimeRef.current = null;
   }
+
   function lap() {
     if (!running && elapsed === 0) return;
     setLaps((xs) => [...xs, elapsed - (xs.length ? xs[xs.length - 1] : 0)]);
   }
+
   function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (e.key === " ") {
       e.preventDefault();
@@ -491,6 +455,8 @@ function StopwatchCard() {
       reset();
     } else if (e.key.toLowerCase() === "l") {
       lap();
+    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
+      toggleFullscreen(displayRef.current);
     }
   }
 
@@ -502,11 +468,23 @@ function StopwatchCard() {
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
-      <h3 className="text-lg font-semibold text-amber-900">Stopwatch</h3>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-lg font-semibold text-amber-900">Stopwatch</h3>
+        <Btn
+          kind="ghost"
+          onClick={() =>
+            displayRef.current && toggleFullscreen(displayRef.current)
+          }
+          className="py-1 text-sm"
+        >
+          Fullscreen
+        </Btn>
+      </div>
+
       <div
+        ref={displayRef}
         className="mt-3 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-6xl font-mono font-extrabold tracking-widest text-amber-900"
         style={{ minHeight: 110 }}
-        aria-live="polite"
       >
         {total}
       </div>
@@ -548,87 +526,144 @@ function StopwatchCard() {
 
       <p className="mt-3 text-xs text-amber-700">
         Shortcuts: <strong>Space</strong> start/pause • <strong>R</strong> reset
-        • <strong>L</strong> lap (when this card is focused).
+        • <strong>L</strong> lap • <strong>F</strong> fullscreen.
       </p>
     </Card>
   );
 }
 
 /* =========================================================
-   POMODORO (25/5 default, configurable, cycles, next)
+   POMODORO (accurate + auto-cycle + fullscreen) — FIXED
 ========================================================= */
 function PomodoroCard() {
   const beep = useBeep();
   const [workMin, setWorkMin] = useState(25);
   const [breakMin, setBreakMin] = useState(5);
   const [cycles, setCycles] = useState(4);
-  const [phase, setPhase] = useState<"work" | "break">("work");
+
+  const [phase, setPhase] = useState<"work" | "break" | "done">("work");
+  const [cycleIdx, setCycleIdx] = useState(0);
   const [remaining, setRemaining] = useState(workMin * 60 * 1000);
-  const [cycleIdx, setCycleIdx] = useState(0); // completed work sessions
   const [running, setRunning] = useState(false);
 
-  // when inputs change, pause + rebase remaining to current phase
+  const rafRef = useRef<number | null>(null);
+  const endRef = useRef<number | null>(null);
+  const displayRef = useRef<HTMLDivElement>(null);
+
+  // Duration helper
+  const durFor = (p: "work" | "break" | "done") =>
+    p === "work"
+      ? workMin * 60 * 1000
+      : p === "break"
+        ? breakMin * 60 * 1000
+        : 0;
+
+  // Reset when inputs (work/break lengths) change — but NOT on phase change
   useEffect(() => {
     setRunning(false);
-    setRemaining((phase === "work" ? workMin : breakMin) * 60 * 1000);
-  }, [workMin, breakMin, phase]);
+    const d = durFor(phase);
+    setRemaining(d);
+    endRef.current = null;
+  }, [workMin, breakMin]); // <-- phase intentionally NOT included
 
-  // tick
-  const raf = useRef<number | null>(null);
-  const last = useRef(0);
+  // Accurate ticking loop
   useEffect(() => {
     if (!running) {
-      if (raf.current) cancelAnimationFrame(raf.current);
-      raf.current = null;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      endRef.current = null;
       return;
     }
-    const step = (ts: number) => {
-      if (!last.current) last.current = ts;
-      const d = ts - last.current;
-      last.current = ts;
-      setRemaining((v) => {
-        const n = Math.max(0, v - d);
-        if (n === 0) {
-          beep();
-          // advance
-          if (phase === "work") {
-            setPhase("break");
-            return breakMin * 60 * 1000;
-          } else {
-            const doneWork = cycleIdx + 1;
-            setCycleIdx(doneWork);
-            if (doneWork >= cycles) {
-              setRunning(false);
-              return 0;
-            } else {
-              setPhase("work");
-              return workMin * 60 * 1000;
-            }
-          }
-        }
-        return n;
-      });
-      raf.current = requestAnimationFrame(step);
+
+    if (!endRef.current) {
+      endRef.current = performance.now() + remaining;
+    }
+
+    const tick = () => {
+      const now = performance.now();
+      const rem = Math.max(0, (endRef.current ?? now) - now);
+      setRemaining(rem);
+
+      if (rem <= 0) {
+        // Finish this phase and advance on next task
+        endRef.current = null;
+        setRunning(false);
+        // Advance out of the render cycle
+        setTimeout(handleAdvance, 16);
+        return;
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
     };
-    raf.current = requestAnimationFrame(step);
+
+    rafRef.current = requestAnimationFrame(tick);
     return () => {
-      if (raf.current) cancelAnimationFrame(raf.current);
-      raf.current = null;
-      last.current = 0;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
     };
-  }, [running, phase, workMin, breakMin, cycles, cycleIdx, beep]);
+  }, [running, remaining, phase, cycleIdx, workMin, breakMin, cycles]);
+
+  function startPhase(p: "work" | "break") {
+    const d = durFor(p);
+    setPhase(p);
+    setRemaining(d);
+    endRef.current = performance.now() + d;
+    setRunning(true);
+  }
+
+  function handleAdvance() {
+    beep();
+
+    if (phase === "work") {
+      // If this was the final work session, end
+      const isLastWork = cycleIdx + 1 >= cycles;
+      if (isLastWork) {
+        setPhase("done");
+        setRemaining(0);
+        setRunning(false);
+        return;
+      }
+      // Otherwise go to break
+      startPhase("break");
+      return;
+    }
+
+    if (phase === "break") {
+      // After break, increment completed work count and start next work
+      setCycleIdx((i) => i + 1);
+      startPhase("work");
+      return;
+    }
+
+    // If somehow in "done", just ensure we're stopped
+    if (phase === "done") {
+      setRunning(false);
+      setRemaining(0);
+      return;
+    }
+  }
 
   function resetAll() {
     setRunning(false);
     setPhase("work");
     setCycleIdx(0);
-    setRemaining(workMin * 60 * 1000);
+    const d = durFor("work");
+    setRemaining(d);
+    endRef.current = null;
   }
 
   function nextPhase() {
+    // Manual skip
     setRunning(false);
-    setRemaining((phase === "work" ? breakMin : workMin) * 60 * 1000);
-    setPhase((p) => (p === "work" ? "break" : "work"));
+    if (phase === "work") {
+      startPhase("break");
+    } else if (phase === "break") {
+      setCycleIdx((i) => i + 1);
+      startPhase("work");
+    } else {
+      // from done -> reset
+      resetAll();
+    }
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
@@ -639,16 +674,37 @@ function PomodoroCard() {
       resetAll();
     } else if (e.key.toLowerCase() === "n") {
       nextPhase();
+    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
+      toggleFullscreen(displayRef.current);
     }
   }
 
+  const phaseLabel =
+    phase === "work"
+      ? `Work ${cycleIdx + 1}/${cycles}`
+      : phase === "break"
+        ? `Break ${cycleIdx + 1}/${cycles}`
+        : "All cycles complete";
+
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
-      <h3 className="text-lg font-semibold text-amber-900">
-        Pomodoro Focus Timer
-      </h3>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-lg font-semibold text-amber-900">
+          Pomodoro Focus Timer
+        </h3>
+        <Btn
+          kind="ghost"
+          onClick={() =>
+            displayRef.current && toggleFullscreen(displayRef.current)
+          }
+          className="py-1 text-sm"
+        >
+          Fullscreen
+        </Btn>
+      </div>
+
       <div className="mt-1 text-sm text-amber-700">
-        25/5 default • configurable • auto-advance
+        Auto-advances between work and break cycles with accurate timing
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -694,17 +750,21 @@ function PomodoroCard() {
       </div>
 
       <div
+        ref={displayRef}
         className={`mt-4 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-6xl font-mono font-extrabold tracking-widest ${
-          phase === "work" ? "text-amber-900" : "text-emerald-800"
+          phase === "work"
+            ? "text-amber-900"
+            : phase === "break"
+              ? "text-emerald-800"
+              : "text-gray-500"
         }`}
         style={{ minHeight: 110 }}
-        aria-live="polite"
       >
-        {msToClock(remaining)}
+        {msToClock(Math.ceil(remaining / 1000) * 1000)}
       </div>
+
       <div className="mt-2 text-sm text-amber-900">
-        Phase: <strong>{phase === "work" ? "Work" : "Break"}</strong> •{" "}
-        {cycleIdx}/{cycles} cycles completed
+        Phase: <strong>{phaseLabel}</strong>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-3">
@@ -715,154 +775,156 @@ function PomodoroCard() {
           Reset
         </Btn>
         <Btn kind="ghost" onClick={nextPhase}>
-          Switch Phase
+          Skip →
         </Btn>
       </div>
 
       <p className="mt-3 text-xs text-amber-700">
         Shortcuts: <strong>Space</strong> start/pause • <strong>R</strong> reset
-        • <strong>N</strong> next phase (when this card is focused).
+        • <strong>N</strong> skip • <strong>F</strong> fullscreen.
       </p>
     </Card>
   );
 }
 
 /* =========================================================
-   HIIT / INTERVAL TIMER
-   - Warm-up → (Work/Rest × Rounds) → Cooldown
-   - Skip step, next, safe edits
+   HIIT / INTERVAL TIMER (stable + accurate + fullscreen)
 ========================================================= */
 type StepName = "warmup" | "work" | "rest" | "cooldown" | "done";
+
 function HIITCard() {
   const beep = useBeep();
+
+  // configuration
   const [warm, setWarm] = useState(30);
   const [work, setWork] = useState(20);
   const [rest, setRest] = useState(10);
   const [rounds, setRounds] = useState(8);
   const [cool, setCool] = useState(30);
 
+  // runtime state
   const [running, setRunning] = useState(false);
   const [step, setStep] = useState<StepName>("warmup");
   const [roundIdx, setRoundIdx] = useState(0);
   const [remaining, setRemaining] = useState(warm * 1000);
+  const displayRef = useRef<HTMLDivElement>(null);
 
-  // rebasing on input change
-  useEffect(() => {
-    setRunning(false);
-    const ms =
-      step === "warmup"
-        ? warm * 1000
-        : step === "work"
-          ? work * 1000
-          : step === "rest"
-            ? rest * 1000
-            : step === "cooldown"
-              ? cool * 1000
-              : 0;
-    setRemaining(ms);
-  }, [warm, work, rest, cool, step]);
+  const rafRef = useRef<number | null>(null);
+  const endRef = useRef<number | null>(null);
 
-  const raf = useRef<number | null>(null);
-  const last = useRef(0);
+  const durFor = (s: StepName) =>
+    s === "warmup"
+      ? warm * 1000
+      : s === "work"
+        ? work * 1000
+        : s === "rest"
+          ? rest * 1000
+          : s === "cooldown"
+            ? cool * 1000
+            : 0;
+
+  // keep timer ticking accurately
   useEffect(() => {
     if (!running) {
-      if (raf.current) cancelAnimationFrame(raf.current);
-      raf.current = null;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      endRef.current = null;
       return;
     }
-    const stepFn = (ts: number) => {
-      if (!last.current) last.current = ts;
-      const d = ts - last.current;
-      last.current = ts;
-      setRemaining((v) => {
-        const n = Math.max(0, v - d);
-        if (n === 0) {
-          beep();
-          advance();
-          return 0; // will be rebased in advance()
-        }
-        return n;
-      });
-      raf.current = requestAnimationFrame(stepFn);
-    };
-    raf.current = requestAnimationFrame(stepFn);
-    return () => {
-      if (raf.current) cancelAnimationFrame(raf.current);
-      raf.current = null;
-      last.current = 0;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [running]); // advance() closes over latest state via setters
 
-  function rebase(to: StepName, nextRoundIdx = roundIdx) {
-    setStep(to);
-    setRoundIdx(nextRoundIdx);
-    const ms =
-      to === "warmup"
-        ? warm * 1000
-        : to === "work"
-          ? work * 1000
-          : to === "rest"
-            ? rest * 1000
-            : to === "cooldown"
-              ? cool * 1000
-              : 0;
-    setRemaining(ms);
-  }
+    if (!endRef.current) endRef.current = performance.now() + remaining;
 
-  function advance() {
-    setRunning(false);
-    setTimeout(() => {
-      setRunning(true);
-    }, 0);
+    const tick = () => {
+      const now = performance.now();
+      const rem = Math.max(0, (endRef.current ?? now) - now);
+      setRemaining(rem);
 
-    if (step === "warmup") {
-      rebase(rounds > 0 ? "work" : "cooldown", 0);
-      return;
-    }
-    if (step === "work") {
-      if (rounds <= 0) {
-        rebase("cooldown", roundIdx);
+      if (rem <= 0) {
+        endRef.current = null;
+        setRunning(false); // pause momentarily
+        setTimeout(() => handleAdvance(), 20); // ensure state updates settle
         return;
       }
-      // next rest
-      rebase("rest", roundIdx);
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    };
+  }, [running, step, roundIdx, warm, work, rest, cool, rounds]);
+
+  // move to next phase (pure transitions)
+  function handleAdvance() {
+    beep();
+
+    if (step === "warmup") {
+      setStep("work");
+      setRoundIdx(0);
+      startPhase("work");
       return;
     }
-    if (step === "rest") {
-      const next = roundIdx + 1;
-      if (next >= rounds) {
-        rebase("cooldown", next);
+
+    if (step === "work") {
+      // after each work, always go to rest (unless 0 rest duration)
+      if (rest > 0) {
+        setStep("rest");
+        startPhase("rest");
       } else {
-        rebase("work", next);
+        // skip rest
+        advanceAfterRest();
       }
       return;
     }
+
+    if (step === "rest") {
+      advanceAfterRest();
+      return;
+    }
+
     if (step === "cooldown") {
-      setRunning(false);
       setStep("done");
       setRemaining(0);
-      return;
+      setRunning(false);
     }
   }
 
+  function advanceAfterRest() {
+    const next = roundIdx + 1;
+    if (next < rounds) {
+      setRoundIdx(next);
+      setStep("work");
+      startPhase("work");
+    } else {
+      setStep("cooldown");
+      startPhase("cooldown");
+    }
+  }
+
+  function startPhase(next: StepName) {
+    const d = durFor(next);
+    setRemaining(d);
+    endRef.current = performance.now() + d;
+    setRunning(true);
+  }
+
+  // user controls
   function resetAll() {
     setRunning(false);
-    rebase("warmup", 0);
+    setStep("warmup");
+    setRoundIdx(0);
+    const d = durFor("warmup");
+    setRemaining(d);
+    endRef.current = null;
   }
 
   function skip() {
-    setRunning(false);
-    if (step === "warmup") rebase("work", 0);
-    else if (step === "work") rebase("rest", roundIdx);
-    else if (step === "rest") {
-      const next = roundIdx + 1;
-      if (next >= rounds) rebase("cooldown", next);
-      else rebase("work", next);
-    } else if (step === "cooldown") {
-      setStep("done");
-      setRemaining(0);
-    }
+    if (step === "warmup") handleAdvance();
+    else if (step === "work") handleAdvance();
+    else if (step === "rest") handleAdvance();
+    else if (step === "cooldown") handleAdvance();
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
@@ -873,8 +935,18 @@ function HIITCard() {
       resetAll();
     } else if (e.key.toLowerCase() === "n") {
       skip();
+    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
+      toggleFullscreen(displayRef.current);
     }
   }
+
+  // when configuration changes, pause + rebase current step
+  useEffect(() => {
+    setRunning(false);
+    const d = durFor(step);
+    setRemaining(d);
+    endRef.current = null;
+  }, [warm, work, rest, cool]);
 
   const phaseLabel =
     step === "warmup"
@@ -889,11 +961,23 @@ function HIITCard() {
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
-      <h3 className="text-lg font-semibold text-amber-900">
-        HIIT / Interval Timer
-      </h3>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-lg font-semibold text-amber-900">
+          HIIT / Interval Timer
+        </h3>
+        <Btn
+          kind="ghost"
+          onClick={() =>
+            displayRef.current && toggleFullscreen(displayRef.current)
+          }
+          className="py-1 text-sm"
+        >
+          Fullscreen
+        </Btn>
+      </div>
+
       <div className="mt-1 text-sm text-amber-700">
-        Custom warm-up, work/rest rounds, and cool-down
+        Auto-runs through all rounds with accurate timing
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-5">
@@ -915,12 +999,14 @@ function HIITCard() {
       </div>
 
       <div
-        className={`mt-4 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-5xl font-mono font-extrabold tracking-widest text-amber-900`}
+        ref={displayRef}
+        className="mt-4 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-5xl font-mono font-extrabold tracking-widest text-amber-900"
         style={{ minHeight: 100 }}
         aria-live="polite"
       >
-        {msToClock(remaining)}
+        {msToClock(Math.ceil(remaining / 1000) * 1000)}
       </div>
+
       <div className="mt-2 text-sm text-amber-900">
         Phase: <strong>{phaseLabel}</strong>
       </div>
@@ -939,7 +1025,7 @@ function HIITCard() {
 
       <p className="mt-3 text-xs text-amber-700">
         Shortcuts: <strong>Space</strong> start/pause • <strong>R</strong> reset
-        • <strong>N</strong> skip (when this card is focused).
+        • <strong>N</strong> skip • <strong>F</strong> fullscreen.
       </p>
     </Card>
   );
@@ -1028,7 +1114,7 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
       <header className="sticky top-0 z-10 border-b border-amber-200 bg-amber-100/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <h1 className="flex items-center gap-2 text-xl font-bold">
-            ⏱ I Love Timers
+            ⏱ iLoveTimers
           </h1>
           <nav className="hidden gap-4 text-sm font-medium sm:flex">
             <a href="#countdown" className="hover:underline">

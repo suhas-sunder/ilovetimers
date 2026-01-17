@@ -1,3 +1,31 @@
-import { type RouteConfig, index } from "@react-router/dev/routes";
+import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
-export default [index("routes/home.tsx")] satisfies RouteConfig;
+export default [
+  index("routes/home.tsx"),
+
+  route("countdown-timer", "routes/countdown-timer.tsx"),
+  route("stopwatch", "routes/stopwatch.tsx"),
+  route("pomodoro-timer", "routes/pomodoro-timer.tsx"),
+  route("hiit-timer", "routes/hiit-timer.tsx"),
+  route("fullscreen-timer", "routes/fullscreen-timer.tsx"),
+  route("silent-timer", "routes/silent-timer.tsx"),
+  route("online-timer", "routes/online-timer.tsx"),
+  route("presentation-timer", "routes/presentation-timer.tsx"),
+  route("classroom-timer", "routes/classroom-timer.tsx"),
+  route("meeting-timer", "routes/meeting-timer.tsx"),
+  route("exam-timer", "routes/exam-timer.tsx"),
+  route("break-timer", "routes/break-timer.tsx"),
+  route("study-timer", "routes/study-timer.tsx"),
+  route("workout-timer", "routes/workout-timer.tsx"),
+  route("rest-timer", "routes/rest-timer.tsx"),
+  route("tabata-timer", "routes/tabata-timer.tsx"),
+  route("cooking-timer", "routes/cooking-timer.tsx"),
+  route("meditation-timer", "routes/meditation-timer.tsx"),
+  route("speedcubing-timer", "routes/speedcubing-timer.tsx"),
+  route("lab-timer", "routes/lab-timer.tsx"),
+  route("alarm-timer", "routes/alarm-timer.tsx"),
+  route("multiple-timers", "routes/multiple-timers.tsx"),
+  route("visual-timer", "routes/visual-timer.tsx"),
+  route("productivity-timer", "routes/productivity-timer.tsx"),
+  route("event-countdown", "routes/event-countdown.tsx"),
+] satisfies RouteConfig;

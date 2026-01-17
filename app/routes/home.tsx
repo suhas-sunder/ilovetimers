@@ -1,6 +1,6 @@
 import type { Route } from "./+types/home";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /* =========================================================
    META
@@ -79,32 +79,53 @@ function msToClockMs(ms: number) {
 // WebAudio beep (single oscillator, short)
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
+
   useEffect(() => {
     return () => {
       ctxRef.current?.close().catch(() => {});
     };
   }, []);
-  return (freq = 880, duration = 160) => {
+
+  return useCallback((freq = 880, duration = 160) => {
     try {
-      const ctx = (ctxRef.current ??= new (window.AudioContext ||
-        (window as any).webkitAudioContext)());
+      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = (ctxRef.current ??= new Ctx());
+
+      if (ctx.state === "suspended") {
+        ctx.resume().catch(() => {});
+      }
+
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.type = "sine";
       o.frequency.value = freq;
       g.gain.value = 0.1;
+
       o.connect(g);
       g.connect(ctx.destination);
+
       o.start();
-      setTimeout(() => {
+      window.setTimeout(() => {
         o.stop();
         o.disconnect();
         g.disconnect();
       }, duration);
     } catch {
-      // ignore (auto-play restrictions, etc.)
+      // ignore
     }
-  };
+  }, []);
+}
+
+function isTypingTarget(target: EventTarget | null) {
+  const el = target as HTMLElement | null;
+  if (!el) return false;
+  const tag = el.tagName;
+  return (
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    tag === "SELECT" ||
+    el.isContentEditable
+  );
 }
 
 async function toggleFullscreen(el: HTMLElement) {
@@ -132,7 +153,7 @@ const Card = ({
   <div
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-200 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
   >
     {children}
   </div>
@@ -150,10 +171,10 @@ const Chip = ({
   <button
     type="button"
     onClick={onClick}
-    className={`rounded-full px-3 py-1 text-sm transition ${
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm transition ${
       active
-        ? "bg-amber-600 text-white hover:bg-amber-700"
-        : "bg-amber-100 text-amber-900 hover:bg-amber-200"
+        ? "bg-amber-700 text-white hover:bg-amber-800"
+        : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
     }`}
   >
     {children}
@@ -176,8 +197,8 @@ const Btn = ({
     onClick={onClick}
     className={
       kind === "solid"
-        ? `rounded-lg bg-amber-600 px-4 py-2 font-medium text-white hover:bg-amber-700 ${className}`
-        : `rounded-lg bg-amber-100 px-4 py-2 font-medium text-amber-900 hover:bg-amber-200 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed ${className}`
+        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed ${className}`
     }
   >
     {children}
@@ -193,7 +214,7 @@ function CountdownTimer() {
   const [durationMs, setDurationMs] = useState(5 * 60 * 1000);
   const [remainingMs, setRemainingMs] = useState(durationMs);
   const [status, setStatus] = useState<"idle" | "running" | "paused" | "done">(
-    "idle"
+    "idle",
   );
   const [loop, setLoop] = useState(false);
   const [sound, setSound] = useState(true);
@@ -242,7 +263,7 @@ function CountdownTimer() {
       rafRef.current = null;
       endTimeRef.current = null;
     };
-  }, [status, durationMs, loop, sound, beep]);
+  }, [status, durationMs, loop, sound, beep, remainingMs]);
 
   function safeReset(to?: number) {
     const ms = to ?? durationMs;
@@ -289,7 +310,10 @@ function CountdownTimer() {
     setStatus("running");
   };
   const onReset = () => safeReset();
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(e.target)) return;
+
     if (e.key === " ") {
       e.preventDefault();
       onStartPause();
@@ -299,7 +323,10 @@ function CountdownTimer() {
       toggleFullscreen(displayRef.current);
     }
   };
+
   const done = status === "done";
+  const urgent =
+    status === "running" && remainingMs > 0 && remainingMs <= 10_000;
 
   return (
     <Card
@@ -308,7 +335,7 @@ function CountdownTimer() {
       className="col-span-2 lg:col-span-1"
     >
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-amber-900">
+        <h3 className="text-lg font-semibold text-amber-950">
           Countdown Timer
         </h3>
         <div className="flex items-center gap-2 text-sm">
@@ -342,7 +369,11 @@ function CountdownTimer() {
 
       <div
         ref={displayRef}
-        className="mt-3 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-8xl font-mono font-extrabold tracking-widest text-amber-900"
+        className={`mt-3 flex items-center justify-center rounded-2xl border p-6 text-8xl font-mono font-extrabold tracking-widest ${
+          urgent
+            ? "border-rose-400 bg-rose-50 text-rose-950"
+            : "border-amber-400 bg-amber-50 text-amber-950"
+        }`}
         style={{ minHeight: 140 }}
         aria-live="polite"
       >
@@ -372,7 +403,7 @@ function CountdownTimer() {
             }}
             onBlur={onSet}
             placeholder="mm:ss or ss"
-            className="w-full rounded-lg border border-amber-300 px-3 py-2 text-amber-900 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            className="w-full rounded-lg border border-amber-300 px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
           <Btn kind="ghost" onClick={onSet}>
             Set
@@ -387,14 +418,17 @@ function CountdownTimer() {
       </div>
 
       {done && (
-        <div className="mt-3 rounded-lg bg-amber-100 px-3 py-2 text-sm text-amber-900">
+        <div className="mt-3 rounded-lg border border-amber-200 bg-amber-100 px-3 py-2 text-sm font-medium text-amber-950">
           Time’s up! Press Start to run again or pick a preset.
         </div>
       )}
-      <p className="mt-3 text-xs text-amber-700">
-        Shortcuts: <strong>Space</strong> start/pause • <strong>R</strong> reset
-        • <strong>F</strong> fullscreen.
-      </p>
+
+      {/* minimal readability fix: bigger + darker + subtle container */}
+      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-slate-700">
+        Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
+        • <strong className="text-slate-900">R</strong> reset •{" "}
+        <strong className="text-slate-900">F</strong> fullscreen.
+      </div>
     </Card>
   );
 }
@@ -418,7 +452,6 @@ function StopwatchCard() {
       return;
     }
 
-    // Establish a stable reference start time
     if (!startTimeRef.current) {
       startTimeRef.current = performance.now() - elapsed;
     }
@@ -433,7 +466,7 @@ function StopwatchCard() {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [running]);
+  }, [running, elapsed]);
 
   function reset() {
     setRunning(false);
@@ -444,10 +477,15 @@ function StopwatchCard() {
 
   function lap() {
     if (!running && elapsed === 0) return;
-    setLaps((xs) => [...xs, elapsed - (xs.length ? xs[xs.length - 1] : 0)]);
+    setLaps((xs) => {
+      const prevTotal = xs.reduce((a, b) => a + b, 0);
+      return [...xs, elapsed - prevTotal];
+    });
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (isTypingTarget(e.target)) return;
+
     if (e.key === " ") {
       e.preventDefault();
       setRunning((r) => !r);
@@ -463,13 +501,24 @@ function StopwatchCard() {
   const total = msToClockMs(elapsed);
   const lapTotals = laps.reduce(
     (acc, l, i) => acc.concat([(acc[i - 1] ?? 0) + l]),
-    [] as number[]
+    [] as number[],
   );
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-amber-900">Stopwatch</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-amber-950">Stopwatch</h3>
+          <span
+            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+              running
+                ? "bg-emerald-100 text-emerald-900"
+                : "bg-slate-100 text-slate-700"
+            }`}
+          >
+            {running ? "RUNNING" : "PAUSED"}
+          </span>
+        </div>
         <Btn
           kind="ghost"
           onClick={() =>
@@ -483,7 +532,11 @@ function StopwatchCard() {
 
       <div
         ref={displayRef}
-        className="mt-3 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-6xl font-mono font-extrabold tracking-widest text-amber-900"
+        className={`mt-3 flex items-center justify-center rounded-2xl border p-6 text-6xl font-mono font-extrabold tracking-widest ${
+          running
+            ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+            : "border-amber-400 bg-amber-50 text-amber-950"
+        }`}
         style={{ minHeight: 110 }}
       >
         {total}
@@ -505,35 +558,48 @@ function StopwatchCard() {
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-amber-900">
+              <tr className="text-amber-950">
                 <th className="py-1 text-left">#</th>
                 <th className="py-1 text-left">Lap</th>
                 <th className="py-1 text-left">Total</th>
               </tr>
             </thead>
             <tbody>
-              {laps.map((l, i) => (
-                <tr key={i} className="border-t border-amber-100">
-                  <td className="py-1">Lap {i + 1}</td>
-                  <td className="py-1">{msToClockMs(l)}</td>
-                  <td className="py-1">{msToClockMs(lapTotals[i] ?? 0)}</td>
-                </tr>
-              ))}
+              {laps.map((l, i) => {
+                const isLatest = i === laps.length - 1;
+                return (
+                  <tr
+                    key={i}
+                    className={`border-t ${
+                      isLatest
+                        ? "border-emerald-200 bg-emerald-50/60"
+                        : "border-amber-500/30"
+                    }`}
+                  >
+                    <td className="py-1">Lap {i + 1}</td>
+                    <td className="py-1">{msToClockMs(l)}</td>
+                    <td className="py-1">{msToClockMs(lapTotals[i] ?? 0)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       )}
 
-      <p className="mt-3 text-xs text-amber-700">
-        Shortcuts: <strong>Space</strong> start/pause • <strong>R</strong> reset
-        • <strong>L</strong> lap • <strong>F</strong> fullscreen.
-      </p>
+      {/* minimal readability fix: bigger + darker + subtle container */}
+      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-slate-700">
+        Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
+        • <strong className="text-slate-900">R</strong> reset •{" "}
+        <strong className="text-slate-900">L</strong> lap •{" "}
+        <strong className="text-slate-900">F</strong> fullscreen.
+      </div>
     </Card>
   );
 }
 
 /* =========================================================
-   POMODORO (accurate + auto-cycle + fullscreen) — FIXED
+   POMODORO (accurate + auto-cycle + fullscreen)
 ========================================================= */
 function PomodoroCard() {
   const beep = useBeep();
@@ -550,7 +616,6 @@ function PomodoroCard() {
   const endRef = useRef<number | null>(null);
   const displayRef = useRef<HTMLDivElement>(null);
 
-  // Duration helper
   const durFor = (p: "work" | "break" | "done") =>
     p === "work"
       ? workMin * 60 * 1000
@@ -558,15 +623,13 @@ function PomodoroCard() {
         ? breakMin * 60 * 1000
         : 0;
 
-  // Reset when inputs (work/break lengths) change — but NOT on phase change
   useEffect(() => {
     setRunning(false);
     const d = durFor(phase);
     setRemaining(d);
     endRef.current = null;
-  }, [workMin, breakMin]); // <-- phase intentionally NOT included
+  }, [workMin, breakMin]);
 
-  // Accurate ticking loop
   useEffect(() => {
     if (!running) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -585,10 +648,8 @@ function PomodoroCard() {
       setRemaining(rem);
 
       if (rem <= 0) {
-        // Finish this phase and advance on next task
         endRef.current = null;
         setRunning(false);
-        // Advance out of the render cycle
         setTimeout(handleAdvance, 16);
         return;
       }
@@ -601,7 +662,7 @@ function PomodoroCard() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [running, remaining, phase, cycleIdx, workMin, breakMin, cycles]);
+  }, [running, phase, cycleIdx, workMin, breakMin, cycles, remaining]);
 
   function startPhase(p: "work" | "break") {
     const d = durFor(p);
@@ -615,7 +676,6 @@ function PomodoroCard() {
     beep();
 
     if (phase === "work") {
-      // If this was the final work session, end
       const isLastWork = cycleIdx + 1 >= cycles;
       if (isLastWork) {
         setPhase("done");
@@ -623,19 +683,16 @@ function PomodoroCard() {
         setRunning(false);
         return;
       }
-      // Otherwise go to break
       startPhase("break");
       return;
     }
 
     if (phase === "break") {
-      // After break, increment completed work count and start next work
       setCycleIdx((i) => i + 1);
       startPhase("work");
       return;
     }
 
-    // If somehow in "done", just ensure we're stopped
     if (phase === "done") {
       setRunning(false);
       setRemaining(0);
@@ -653,7 +710,6 @@ function PomodoroCard() {
   }
 
   function nextPhase() {
-    // Manual skip
     setRunning(false);
     if (phase === "work") {
       startPhase("break");
@@ -661,12 +717,13 @@ function PomodoroCard() {
       setCycleIdx((i) => i + 1);
       startPhase("work");
     } else {
-      // from done -> reset
       resetAll();
     }
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (isTypingTarget(e.target)) return;
+
     if (e.key === " ") {
       e.preventDefault();
       setRunning((r) => !r);
@@ -686,10 +743,17 @@ function PomodoroCard() {
         ? `Break ${cycleIdx + 1}/${cycles}`
         : "All cycles complete";
 
+  const displayTone =
+    phase === "work"
+      ? "border-rose-200 bg-rose-50 text-rose-950"
+      : phase === "break"
+        ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+        : "border-slate-200 bg-slate-50 text-slate-500";
+
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-amber-900">
+        <h3 className="text-lg font-semibold text-amber-950">
           Pomodoro Focus Timer
         </h3>
         <Btn
@@ -703,13 +767,14 @@ function PomodoroCard() {
         </Btn>
       </div>
 
-      <div className="mt-1 text-sm text-amber-700">
+      {/* minimal readability fix: darker text + slightly larger */}
+      <div className="mt-1 text-sm leading-relaxed text-slate-700">
         Auto-advances between work and break cycles with accurate timing
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <label className="block text-sm">
-          <span className="text-amber-900">Work (min)</span>
+          <span className="text-amber-950">Work (min)</span>
           <input
             type="number"
             min={1}
@@ -722,7 +787,7 @@ function PomodoroCard() {
           />
         </label>
         <label className="block text-sm">
-          <span className="text-amber-900">Break (min)</span>
+          <span className="text-amber-950">Break (min)</span>
           <input
             type="number"
             min={1}
@@ -735,7 +800,7 @@ function PomodoroCard() {
           />
         </label>
         <label className="block text-sm">
-          <span className="text-amber-900">Cycles</span>
+          <span className="text-amber-950">Cycles</span>
           <input
             type="number"
             min={1}
@@ -751,19 +816,13 @@ function PomodoroCard() {
 
       <div
         ref={displayRef}
-        className={`mt-4 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-6xl font-mono font-extrabold tracking-widest ${
-          phase === "work"
-            ? "text-amber-900"
-            : phase === "break"
-              ? "text-emerald-800"
-              : "text-gray-500"
-        }`}
+        className={`mt-4 flex items-center justify-center rounded-2xl border p-6 text-6xl font-mono font-extrabold tracking-widest ${displayTone}`}
         style={{ minHeight: 110 }}
       >
         {msToClock(Math.ceil(remaining / 1000) * 1000)}
       </div>
 
-      <div className="mt-2 text-sm text-amber-900">
+      <div className="mt-2 text-sm text-amber-950">
         Phase: <strong>{phaseLabel}</strong>
       </div>
 
@@ -779,10 +838,13 @@ function PomodoroCard() {
         </Btn>
       </div>
 
-      <p className="mt-3 text-xs text-amber-700">
-        Shortcuts: <strong>Space</strong> start/pause • <strong>R</strong> reset
-        • <strong>N</strong> skip • <strong>F</strong> fullscreen.
-      </p>
+      {/* minimal readability fix: bigger + darker + subtle container */}
+      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-slate-700">
+        Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
+        • <strong className="text-slate-900">R</strong> reset •{" "}
+        <strong className="text-slate-900">N</strong> skip •{" "}
+        <strong className="text-slate-900">F</strong> fullscreen.
+      </div>
     </Card>
   );
 }
@@ -795,14 +857,12 @@ type StepName = "warmup" | "work" | "rest" | "cooldown" | "done";
 function HIITCard() {
   const beep = useBeep();
 
-  // configuration
   const [warm, setWarm] = useState(30);
   const [work, setWork] = useState(20);
   const [rest, setRest] = useState(10);
   const [rounds, setRounds] = useState(8);
   const [cool, setCool] = useState(30);
 
-  // runtime state
   const [running, setRunning] = useState(false);
   const [step, setStep] = useState<StepName>("warmup");
   const [roundIdx, setRoundIdx] = useState(0);
@@ -823,7 +883,6 @@ function HIITCard() {
             ? cool * 1000
             : 0;
 
-  // keep timer ticking accurately
   useEffect(() => {
     if (!running) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -841,8 +900,8 @@ function HIITCard() {
 
       if (rem <= 0) {
         endRef.current = null;
-        setRunning(false); // pause momentarily
-        setTimeout(() => handleAdvance(), 20); // ensure state updates settle
+        setRunning(false);
+        setTimeout(() => handleAdvance(), 20);
         return;
       }
 
@@ -854,9 +913,8 @@ function HIITCard() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [running, step, roundIdx, warm, work, rest, cool, rounds]);
+  }, [running, step, roundIdx, warm, work, rest, cool, rounds, remaining]);
 
-  // move to next phase (pure transitions)
   function handleAdvance() {
     beep();
 
@@ -868,12 +926,10 @@ function HIITCard() {
     }
 
     if (step === "work") {
-      // after each work, always go to rest (unless 0 rest duration)
       if (rest > 0) {
         setStep("rest");
         startPhase("rest");
       } else {
-        // skip rest
         advanceAfterRest();
       }
       return;
@@ -910,7 +966,6 @@ function HIITCard() {
     setRunning(true);
   }
 
-  // user controls
   function resetAll() {
     setRunning(false);
     setStep("warmup");
@@ -928,6 +983,8 @@ function HIITCard() {
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (isTypingTarget(e.target)) return;
+
     if (e.key === " ") {
       e.preventDefault();
       setRunning((r) => !r);
@@ -940,7 +997,6 @@ function HIITCard() {
     }
   }
 
-  // when configuration changes, pause + rebase current step
   useEffect(() => {
     setRunning(false);
     const d = durFor(step);
@@ -952,17 +1008,37 @@ function HIITCard() {
     step === "warmup"
       ? "Warm-up"
       : step === "work"
-        ? `Work ${roundIdx + 1}/${rounds}`
+        ? "Work"
         : step === "rest"
-          ? `Rest ${roundIdx + 1}/${rounds}`
+          ? "Rest"
           : step === "cooldown"
             ? "Cool-down"
             : "Done";
 
+  const roundLabel =
+    step === "work" || step === "rest"
+      ? `Round ${roundIdx + 1}/${rounds}`
+      : step === "warmup"
+        ? "Get ready"
+        : step === "cooldown"
+          ? "Finish strong"
+          : "Complete";
+
+  const displayTone =
+    step === "work"
+      ? "border-rose-200 bg-rose-50 text-rose-950"
+      : step === "rest"
+        ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+        : step === "warmup"
+          ? "border-amber-300 bg-amber-50 text-amber-950"
+          : step === "cooldown"
+            ? "border-sky-200 bg-sky-50 text-sky-950"
+            : "border-slate-200 bg-slate-50 text-slate-500";
+
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-amber-900">
+        <h3 className="text-lg font-semibold text-amber-950">
           HIIT / Interval Timer
         </h3>
         <Btn
@@ -976,7 +1052,8 @@ function HIITCard() {
         </Btn>
       </div>
 
-      <div className="mt-1 text-sm text-amber-700">
+      {/* minimal readability fix: darker text + slightly larger */}
+      <div className="mt-1 text-sm leading-relaxed text-slate-700">
         Auto-runs through all rounds with accurate timing
       </div>
 
@@ -1000,15 +1077,19 @@ function HIITCard() {
 
       <div
         ref={displayRef}
-        className="mt-4 flex items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 p-6 text-5xl font-mono font-extrabold tracking-widest text-amber-900"
-        style={{ minHeight: 100 }}
+        className={`mt-4 rounded-2xl border p-6 ${displayTone}`}
+        style={{ minHeight: 120 }}
         aria-live="polite"
       >
-        {msToClock(Math.ceil(remaining / 1000) * 1000)}
-      </div>
-
-      <div className="mt-2 text-sm text-amber-900">
-        Phase: <strong>{phaseLabel}</strong>
+        <div className="flex items-baseline justify-between gap-3">
+          <div className="text-sm font-semibold uppercase tracking-wide opacity-90">
+            {phaseLabel}
+          </div>
+          <div className="text-sm font-semibold opacity-90">{roundLabel}</div>
+        </div>
+        <div className="mt-2 flex items-center justify-center text-5xl font-mono font-extrabold tracking-widest">
+          {msToClock(Math.ceil(remaining / 1000) * 1000)}
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-3">
@@ -1023,10 +1104,13 @@ function HIITCard() {
         </Btn>
       </div>
 
-      <p className="mt-3 text-xs text-amber-700">
-        Shortcuts: <strong>Space</strong> start/pause • <strong>R</strong> reset
-        • <strong>N</strong> skip • <strong>F</strong> fullscreen.
-      </p>
+      {/* minimal readability fix: bigger + darker + subtle container */}
+      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-slate-700">
+        Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
+        • <strong className="text-slate-900">R</strong> reset •{" "}
+        <strong className="text-slate-900">N</strong> skip •{" "}
+        <strong className="text-slate-900">F</strong> fullscreen.
+      </div>
     </Card>
   );
 }
@@ -1044,7 +1128,7 @@ function LabeledNumber({
 }) {
   return (
     <label className="block text-sm">
-      <span className="text-amber-900">{label}</span>
+      <span className="text-amber-950">{label}</span>
       <input
         type="number"
         min={0}
@@ -1104,29 +1188,29 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
   };
 
   return (
-    <main className="bg-amber-50 text-amber-900">
+    <main className="bg-amber-50 text-amber-950">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-200 bg-amber-100/90 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-50">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <h1 className="flex items-center gap-2 text-xl font-bold">
-            ⏱ iLoveTimers
+            ⏱ i💛Timers
           </h1>
           <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <a href="#countdown" className="hover:underline">
+            <a href="/countdown-timer" className="hover:underline">
               Countdown
             </a>
-            <a href="#stopwatch" className="hover:underline">
+            <a href="/stopwatch" className="hover:underline">
               Stopwatch
             </a>
-            <a href="#pomodoro" className="hover:underline">
+            <a href="/pomodoro-timer" className="hover:underline">
               Pomodoro
             </a>
-            <a href="#hiit" className="hover:underline">
+            <a href="/hiit-timer" className="hover:underline">
               HIIT
             </a>
           </nav>
@@ -1134,17 +1218,16 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
       </header>
 
       {/* Hero */}
-      <section className="border-b border-amber-200 bg-amber-100">
+      <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
           <h2 className="text-3xl font-extrabold sm:text-4xl">
             Free Online Timers - Simple, Accurate, Instant
           </h2>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
+
+          {/* minimal readability fix: darker text */}
+          <p className="mt-2 max-w-3xl text-lg text-slate-700">
             Countdown presets, a stopwatch with laps, Pomodoro focus cycles, and
             HIIT intervals - all on one fast page.
-            <span className="ml-2 text-sm">
-              Last updated {new Date(nowISO).toLocaleDateString()}
-            </span>
           </p>
         </div>
       </section>
@@ -1169,9 +1252,11 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
 
       {/* SEO text (compact) */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h3 className="text-lg font-bold">Timers for Every Task</h3>
-          <p className="mt-2 text-amber-800">
+
+          {/* minimal readability fix: darker text */}
+          <p className="mt-2 text-slate-700 leading-relaxed">
             A <strong>countdown timer</strong> is best for presentations,
             classrooms, exams, and cooking. The <strong>stopwatch</strong>{" "}
             tracks training splits and sprints with <em>laps</em>. The{" "}
@@ -1180,7 +1265,9 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
             <strong>HIIT interval timer</strong> cycles through warm-up,
             work/rest rounds, and cool-down.
           </p>
-          <p className="mt-2 text-amber-800">
+
+          {/* minimal readability fix: darker text */}
+          <p className="mt-2 text-slate-700 leading-relaxed">
             Everything runs in your browser, works offline after loading, and
             uses a high-contrast display for projectors and mobile screens. No
             sign-up - just press Start.
@@ -1191,10 +1278,11 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
       {/* =========================================================
     EXTRA SEO-RICH SECTIONS (place above FAQ)
 ========================================================= */}
-      <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-amber-800">
+      {/* minimal readability fix: swap section text color */}
+      <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-slate-700">
         {/* 1. Everyday Timer Uses */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Everyday Countdown Uses
           </h3>
           <p className="mt-2">
@@ -1211,8 +1299,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 2. Workout & HIIT */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Workout & HIIT Interval Training
           </h3>
           <p className="mt-2">
@@ -1227,8 +1315,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 3. Study & Pomodoro */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Pomodoro for Focus & Study
           </h3>
           <p className="mt-2">
@@ -1244,8 +1332,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 4. Precise Stopwatch for Sports */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Precision Stopwatch with Laps
           </h3>
           <p className="mt-2">
@@ -1258,8 +1346,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 5. Accessibility & Offline-Friendly */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             High-Contrast, Accessible & Offline-Ready
           </h3>
           <p className="mt-2">
@@ -1272,8 +1360,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 6. Privacy-Safe and Free */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Private, Free & No Sign-Up Needed
           </h3>
           <p className="mt-2">
@@ -1288,10 +1376,11 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
       {/* =========================================================
     EXTRA-EXTRA SEO-RICH SECTIONS (add above FAQ)
 ========================================================= */}
-      <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-amber-800">
+      {/* minimal readability fix: swap section text color */}
+      <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-slate-700">
         {/* 7. Classroom & Test-Prep */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Perfect for Classrooms & Test-Prep
           </h3>
           <p className="mt-2">
@@ -1308,8 +1397,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 8. Public Speaking & Livestreams */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Speech, Presentation & Livestream Timing
           </h3>
           <p className="mt-2">
@@ -1326,8 +1415,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 9. Cooking & Kitchen Helpers */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Kitchen-Friendly Cooking Timers
           </h3>
           <p className="mt-2">
@@ -1339,8 +1428,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 10. Meditation, Yoga & Sleep */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Meditation, Yoga & Sleep Sessions
           </h3>
           <p className="mt-2">
@@ -1356,8 +1445,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 11. Multi-Device Sync & Offline Use */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Works Across Devices & Offline
           </h3>
           <p className="mt-2">
@@ -1371,8 +1460,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 12. Keyboard Shortcuts & Productivity Hacks */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Power-User Keyboard Shortcuts
           </h3>
           <p className="mt-2">
@@ -1388,8 +1477,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 13. Custom Themes & Large-Screen Mode */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Custom Themes & Big-Screen Visibility
           </h3>
           <p className="mt-2">
@@ -1401,8 +1490,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 14. Data Privacy & Ad-Light Experience */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Privacy-First & Ad-Light Experience
           </h3>
           <p className="mt-2">
@@ -1421,8 +1510,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
 ========================================================= */}
       <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-amber-800">
         {/* 15. Fitness, HIIT & Interval Training */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Tailored for Fitness, HIIT & Interval Training
           </h3>
           <p className="mt-2">
@@ -1438,8 +1527,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 16. Pomodoro & Deep-Work Productivity */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Boost Focus with Pomodoro & Deep-Work Sessions
           </h3>
           <p className="mt-2">
@@ -1452,8 +1541,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 17. Stopwatch with Laps & Splits */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Precise Stopwatch with Laps & Splits
           </h3>
           <p className="mt-2">
@@ -1469,8 +1558,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 18. Marathon, 5K & Endurance Events */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Reliable for 5K, 10K & Marathon Pacing
           </h3>
           <p className="mt-2">
@@ -1483,8 +1572,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 19. Kids’ Study Routines & Chore Races */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Fun Timers for Kids’ Routines
           </h3>
           <p className="mt-2">
@@ -1497,8 +1586,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 20. Corporate & Remote-Team Meetings */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Keep Corporate & Remote Meetings on Track
           </h3>
           <p className="mt-2">
@@ -1510,8 +1599,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 21. Accessibility-Ready Controls */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Accessible for Everyone
           </h3>
           <p className="mt-2">
@@ -1526,8 +1615,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 22. Ultra-Light Performance & Security */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Ultra-Light, Fast & Secure
           </h3>
           <p className="mt-2">
@@ -1539,8 +1628,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </article>
 
         {/* 23. Future-Proof Features Roadmap */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
+        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+          <h3 className="text-xl font-bold text-amber-950">
             Feature Roadmap & Community Feedback
           </h3>
           <p className="mt-2">
@@ -1561,159 +1650,113 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
    ADDITIONAL SEO-RICH SECTIONS (more depth above FAQ)
 ========================================================= */}
       <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-amber-800">
-        {/* 24. Exam Countdown for Students */}
+        {/* Exam / Study timing tips */}
         <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
           <h3 className="text-xl font-bold text-amber-900">
-            Exam & Revision Countdown for Students
+            Exam & Study Timing Tips
           </h3>
           <p className="mt-2">
-            Whether it’s a{" "}
-            <strong>
-              mock SAT, AP Biology exam, IELTS reading block, or timed essay
-              practice
-            </strong>
-            , our <em>quiet countdown clock</em>
-            helps students stay aware of every minute. Visible timers reduce
-            panic, encourage even pacing across questions, and keep proctoring
-            stress-free.
+            Try a simple routine: <strong>25:00 focus</strong> +{" "}
+            <strong>5:00 break</strong> (or <strong>45:00</strong> +{" "}
+            <strong>10:00</strong> for longer sessions). For timed practice, set
+            a countdown for each section and restart it between parts. If you
+            tend to rush, aim to finish with <strong>2–3 minutes left</strong>{" "}
+            for review.
           </p>
         </article>
 
-        {/* 25. Seasonal & Holiday Event Planning */}
+        {/* Holidays / events without implying seasonal content */}
         <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
           <h3 className="text-xl font-bold text-amber-900">
-            Holiday Baking & Party Countdown
+            Parties, Events & Hosting
           </h3>
           <p className="mt-2">
-            Around{" "}
-            <strong>
-              Thanksgiving, Christmas, Lunar New Year, Eid, Diwali
-            </strong>
-            or birthday parties, families use multiple countdown timers to
-            juggle
-            <em>
-              turkey roasting, gift-unwrapping games, karaoke slots, and
-              party-quiz rounds
-            </em>
-            . Alarms keep each activity on schedule, freeing hosts to enjoy the
-            celebration.
+            Use <strong>short repeating timers</strong> to keep an event moving
+            without watching the clock: trivia rounds (5–10 min), game turns
+            (60–90 sec), or “next activity” reminders (10–15 min). If you’re
+            running a schedule, fullscreen the display so everyone can see it.
           </p>
         </article>
 
-        {/* 26. Laboratory & STEM Experiment Timers */}
+        {/* Labs / experiments: accurate timing advice */}
         <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
           <h3 className="text-xl font-bold text-amber-900">
-            Laboratory & STEM Experiment Timing
+            Labs, Experiments & Repeatable Timing
           </h3>
           <p className="mt-2">
-            University{" "}
-            <strong>
-              chemistry labs, physics demos, robotics teams, and makerspaces
-            </strong>{" "}
-            appreciate precise{" "}
-            <em>
-              millisecond-accurate stopwatches and repeatable countdown cycles
-            </em>{" "}
-            to time reactions, solder reflow, or 3-D-printer resin exposure.
-            Lightweight pages work on restricted lab computers with no install
-            required.
+            For experiments, consistency beats perfection. Use the{" "}
+            <strong>stopwatch + laps</strong> to record repeated trials (Lap 1,
+            Lap 2, Lap 3). For fixed waits (incubation, settling, exposure), use
+            a <strong>countdown</strong>. Write down your lap totals right away
+            (or screenshot the lap table).
           </p>
         </article>
 
-        {/* 27. Photography & Content-Creation Helpers */}
+        {/* Creators */}
         <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
           <h3 className="text-xl font-bold text-amber-900">
-            Photo, Video & Livestream Helpers
+            Creators: Video, Livestreams & Recording
           </h3>
           <p className="mt-2">
-            Creators use the <strong>on-screen stopwatch</strong> to measure
-            <em>
-              reel cuts, B-roll length, timelapse segments, unboxing segments,
-              podcast ad-breaks
-            </em>
-            , and keep <strong>TikTok / YouTube shorts</strong>
-            within exact length limits. Color-coded warning beeps signal
-            final-seconds while recording.
+            For tight segments, set a countdown for your target length and a
+            second timer for breaks or resets. If you’re timing takes, use the
+            stopwatch and hit <strong>Lap</strong> at each cut so you can see
+            split lengths fast.
           </p>
         </article>
 
-        {/* 28. Global Languages & Localized Digits */}
+        {/* Accessibility / language without claiming future localization */}
         <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
           <h3 className="text-xl font-bold text-amber-900">
-            Global Language-Friendly Interface
+            Clear Display & Keyboard Control
           </h3>
           <p className="mt-2">
-            <strong>I Love Timers</strong> plans to support
-            <em>
-              multi-language labels, 12-/24-hour clocks, Arabic-Indic digits,
-              and right-to-left layouts
-            </em>{" "}
-            for global classrooms and community events. This makes the site
-            inclusive for non-English speakers and improves SEO reach to
-            international audiences.
+            For projector or gym use, fullscreen the timer and control it with
+            the keyboard:
+            <em> Space</em> start/pause, <em>R</em> reset, <em>F</em>{" "}
+            fullscreen, <em>L</em> lap,
+            <em> N</em> next/skip. Tip: click the timer card once so it’s
+            focused, then the keys work.
           </p>
         </article>
 
-        {/* 29. Health-Care & Rehab Use-Cases */}
+        {/* Rehab / gentle pacing (no medical claims) */}
         <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
           <h3 className="text-xl font-bold text-amber-900">
-            Rehab & Health-Care Friendly
+            Pacing for Mobility, Stretching & Rehab Routines
           </h3>
           <p className="mt-2">
-            Physical-therapy clinics and speech-language therapists set gentle
-            <strong>1- to 5-minute interval timers</strong> for
-            <em>
-              rehab stretches, breathing exercises, hand-grip therapy, speech
-              pacing, and balance drills
-            </em>
-            . Clear audible alerts help patients self-pace without continuous
-            supervision.
+            For gentle routines, use predictable intervals:{" "}
+            <strong>30–60 seconds</strong> on,
+            <strong> 10–30 seconds</strong> rest, repeat for a set number of
+            rounds. If you’re following a plan from a professional, match their
+            timings exactly and keep the display visible.
           </p>
         </article>
 
-        {/* 30. Eco-Friendly & Battery-Light Code */}
+        {/* Battery / performance tips */}
         <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
           <h3 className="text-xl font-bold text-amber-900">
-            Eco-Friendly & Battery-Light Design
+            Reliability & Battery Tips
           </h3>
           <p className="mt-2">
-            Our minimalist codebase reduces CPU wake-ups and{" "}
-            <strong>
-              consumes less battery on laptops, tablets, and phones
-            </strong>
-            , which indirectly lowers energy use during long online events,
-            classroom sessions, or endurance streams.
+            Keep the timer in the foreground when possible for the smoothest
+            updates. On phones, lower screen brightness and use fullscreen to
+            avoid accidental taps. If you need a repeating routine, enable{" "}
+            <strong>Loop</strong> on the countdown.
           </p>
         </article>
 
-        {/* 31. Reliable in Low-Connectivity Regions */}
+        {/* Low connectivity */}
         <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
           <h3 className="text-xl font-bold text-amber-900">
-            Reliable in Low-Connectivity Regions
+            Low-Connectivity Friendly Habits
           </h3>
           <p className="mt-2">
-            Because timers run entirely in-browser after load,
-            <strong>
-              rural schools, field researchers, sports camps, and travellers
-            </strong>
-            can depend on accurate countdowns even if Wi-Fi drops or mobile data
-            slows to 2G. This resilience improves usability across the globe.
-          </p>
-        </article>
-
-        {/* 32. Educator Guides & Downloadable Worksheets */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
-            Educator Guides & Printable Worksheets
-          </h3>
-          <p className="mt-2">
-            We’re publishing <strong>free PDF classroom worksheets</strong> that
-            pair math-drill timers with answer-sheets, plus{" "}
-            <em>
-              science-fair experiment logs, speech-prep cue-cards, and PE
-              warm-up charts
-            </em>{" "}
-            so teachers can integrate online timers into lesson plans.
+            If you’re somewhere with unreliable internet, open the page once
+            before you need it, then keep the tab open. For events, consider a
+            quick test run (start, pause, reset) so you know sound and
+            fullscreen behave the way you expect on that device.
           </p>
         </article>
       </section>
@@ -1721,7 +1764,7 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
         <h3 className="text-2xl font-bold">Frequently Asked Questions</h3>
-        <div className="mt-4 divide-y divide-amber-200 rounded-2xl border border-amber-200 bg-white shadow-sm">
+        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
               My countdown breaks when I click a new preset. Fixed?
@@ -1761,10 +1804,10 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </div>
       </section>
 
-      <footer className="border-t border-amber-200 bg-amber-100/60">
+      <footer className="border-t border-amber-400 bg-amber-500/30/60">
         <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © {new Date().getFullYear()} I Love Timers - free countdown,
-          stopwatch, Pomodoro, and HIIT interval timers
+          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
+          interval timers
         </div>
       </footer>
     </main>

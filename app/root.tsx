@@ -298,7 +298,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-amber-800 sm:flex-row sm:items-center sm:justify-between">
             {/* Left */}
             <div>
-              © 2026 <span className="font-semibold">i💛Timers</span> – free
+              © 2026 <span className="font-semibold">i💛Timers</span> - free
               countdown, stopwatch, Pomodoro, HIIT, and clock tools
             </div>
 

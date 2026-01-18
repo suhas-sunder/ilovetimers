@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
   <url>
     <loc>https://www.ilovetimers.com/</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
@@ -9,6 +8,10 @@
   <!-- Timers -->
   <url>
     <loc>https://www.ilovetimers.com/countdown-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/count-up-timer</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
   <url>
@@ -80,6 +83,62 @@
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
   <url>
+    <loc>https://www.ilovetimers.com/breathing-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/sleep-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/stretch-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/drink-water-reminder-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/emom-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/amrap-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/round-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/pace-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/tea-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/egg-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/pizza-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/chaos-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/video-game-challenge-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/speedrun-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
     <loc>https://www.ilovetimers.com/speedcubing-timer</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
@@ -104,86 +163,25 @@
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
 
-  <url>
-    <loc>https://www.ilovetimers.com/count-up-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
+  <!-- Count-up variants -->
   <url>
     <loc>https://www.ilovetimers.com/meeting-count-up-timer</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
-  <url>
-    <loc>https://www.ilovetimers.com/breathing-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/sleep-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/stretch-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/drink-water-reminder-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
 
-  <url>
-    <loc>https://www.ilovetimers.com/emom-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/amrap-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/round-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/pace-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-
-  <url>
-    <loc>https://www.ilovetimers.com/tea-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/egg-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/chaos-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/video-game-challenge-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/speedrun-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/pizza-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-
-  <!-- Specialized Timers -->
-  <url>
-    <loc>https://www.ilovetimers.com/debt-repayment-timer</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
+  <!-- Specialized timers -->
   <url>
     <loc>https://www.ilovetimers.com/focus-session-timer</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/debt-repayment-timer</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
 
   <!-- Clocks -->
   <url>
-    <loc>https://www.ilovetimers.com/morse-code-clock</loc>
+    <loc>https://www.ilovetimers.com/current-local-time</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
   <url>
@@ -191,11 +189,7 @@
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
   <url>
-    <loc>https://www.ilovetimers.com/debt-clock</loc>
-    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://www.ilovetimers.com/current-local-time</loc>
+    <loc>https://www.ilovetimers.com/time-zone-converter</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
   <url>
@@ -226,11 +220,48 @@
     <loc>https://www.ilovetimers.com/sunrise-sunset-clock</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
+  <url>
+    <loc>https://www.ilovetimers.com/morse-code-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/golden-hour-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/moon-phase-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/astronomical-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/epoch-unix-time-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/swatch-internet-time-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/atomic-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
 
-  <!-- Countdown Clocks -->
+  <!-- Finance -->
+  <url>
+    <loc>https://www.ilovetimers.com/billable-hours-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/debt-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+
+  <!-- Countdown clocks -->
   <url>
     <loc>https://www.ilovetimers.com/event-countdown</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
-
 </urlset>

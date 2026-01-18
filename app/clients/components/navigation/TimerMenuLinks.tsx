@@ -17,6 +17,7 @@ const TimerMenuLinks = () => {
         { to: "/stopwatch", label: "Stopwatch" },
         { to: "/pomodoro-timer", label: "Pomodoro Timer" },
         { to: "/online-timer", label: "Online Timer" },
+        { to: "/fullscreen-timer", label: "Fullscreen Timer" },
       ],
     },
     {
@@ -31,6 +32,7 @@ const TimerMenuLinks = () => {
         { to: "/presentation-timer", label: "Presentation Timer" },
         { to: "/exam-timer", label: "Exam Timer" },
         { to: "/classroom-timer", label: "Classroom Timer" },
+        { to: "/time-blocking-clock", label: "Time-Blocking Clock" },
       ],
     },
     {
@@ -68,11 +70,13 @@ const TimerMenuLinks = () => {
       ],
     },
     {
-      title: "Clocks",
+      title: "Clocks & time",
       links: [
         { to: "/current-local-time", label: "Current Local Time" },
         { to: "/world-clock", label: "World Clock" },
+        { to: "/time-zone-converter", label: "Time Zone Converter" },
         { to: "/utc-clock", label: "UTC Clock" },
+        { to: "/atomic-clock", label: "Atomic Clock" },
         { to: "/digital-clock", label: "Digital Clock" },
         { to: "/analog-clock", label: "Analog Clock" },
         { to: "/binary-clock", label: "Binary Clock" },
@@ -80,6 +84,14 @@ const TimerMenuLinks = () => {
         { to: "/fibonacci-clock", label: "Fibonacci Clock" },
         { to: "/sunrise-sunset-clock", label: "Sunrise Sunset Clock" },
         { to: "/morse-code-clock", label: "Morse Code Clock" },
+        { to: "/golden-hour-clock", label: "Golden Hour Clock" },
+        { to: "/moon-phase-clock", label: "Moon Phase Clock" },
+        { to: "/astronomical-clock", label: "Astronomical Clock" },
+        { to: "/epoch-unix-time-clock", label: "Epoch / Unix Time Clock" },
+        {
+          to: "/swatch-internet-time-clock",
+          label: "Swatch Internet Time Clock",
+        },
       ],
     },
     {
@@ -88,6 +100,12 @@ const TimerMenuLinks = () => {
         { to: "/event-countdown", label: "Event Countdown" },
         { to: "/alarm-timer", label: "Alarm Timer" },
         { to: "/multiple-timers", label: "Multiple Timers" },
+      ],
+    },
+    {
+      title: "Finance & tracking",
+      links: [
+        { to: "/billable-hours-clock", label: "Billable Hours Clock" },
         { to: "/debt-repayment-timer", label: "Debt Repayment Timer" },
         { to: "/debt-clock", label: "Debt Clock" },
       ],

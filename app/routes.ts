@@ -55,7 +55,5 @@ export default [
   route("digital-clock", "routes/digital-clock.tsx"),
   route("binary-clock", "routes/binary-clock.tsx"),
   route("hexadecimal-clock", "routes/hexadecimal-clock.tsx"),
-  route("fibonacci-clock", "routes/fibonacci-clock.tsx"),
-  route("sunrise-sunset-clock", "routes/sunrise-sunset-clock.tsx"),
   route("event-countdown", "routes/event-countdown.tsx"),
 ] satisfies RouteConfig;

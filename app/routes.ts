@@ -2,7 +2,6 @@ import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
   index("routes/home.tsx"),
-  // Timers
   route("countdown-timer", "routes/countdown-timer.tsx"),
   route("stopwatch", "routes/stopwatch.tsx"),
   route("pomodoro-timer", "routes/pomodoro-timer.tsx"),
@@ -45,10 +44,8 @@ export default [
   route("pizza-timer", "routes/pizza-timer.tsx"),
   route("fibonacci-clock", "routes/fibonacci-clock.tsx"),
   route("sunrise-sunset-clock", "routes/sunrise-sunset-clock.tsx"),
-  // Specialized Timers
   route("debt-repayment-timer", "routes/debt-repayment-timer.tsx"),
   route("focus-session-timer", "routes/focus-session-timer.tsx"),
-  // Clocks
   route("morse-code-clock", "routes/morse-code-clock.tsx"),
   route("world-clock", "routes/world-clock.tsx"),
   route("debt-clock", "routes/debt-clock.tsx"),
@@ -60,6 +57,5 @@ export default [
   route("hexadecimal-clock", "routes/hexadecimal-clock.tsx"),
   route("fibonacci-clock", "routes/fibonacci-clock.tsx"),
   route("sunrise-sunset-clock", "routes/sunrise-sunset-clock.tsx"),
-  // Countdown Clocks
   route("event-countdown", "routes/event-countdown.tsx"),
 ] satisfies RouteConfig;

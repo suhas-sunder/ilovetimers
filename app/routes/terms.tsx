@@ -38,59 +38,6 @@ export const meta: Route.MetaFunction = () => {
 export default function TermsOfService() {
   return (
     <div className="my-8 mx-10 flex flex-col items-center justify-center gap-8 font-nunito text-skull-brown">
-      <header className="flex max-w-[1200px] w-full flex-col gap-5">
-        <nav aria-label="Breadcrumb" className="text-sm font-lato">
-          <ol className="flex flex-wrap items-center gap-2">
-            <li>
-              <Link to="/" className="hover:underline">
-                Home
-              </Link>
-            </li>
-            <li className="opacity-70">&gt;</li>
-            <li aria-current="page" className="opacity-90">
-              Terms of Service
-            </li>
-          </ol>
-        </nav>
-
-        <h1 className="mb-5 text-4xl">TERMS OF SERVICE</h1>
-        <h3 className="text-2xl">Last updated January 10, 2026</h3>
-
-        <h2>AGREEMENT TO OUR LEGAL TERMS</h2>
-
-        <p>
-          We are iLoveTimers (https://www.ilovetimers.com) ("Company", "we",
-          "us", "our").
-        </p>
-
-        <p>
-          We operate the website https://www.ilovetimers.com (the "Site"), as
-          well as any other related products and services that refer or link to
-          these legal terms (the "Legal Terms") (collectively, the "Services").
-        </p>
-
-        <p>
-          You can contact us by email at admin@ilovetimers.com or by mail to
-          https://www.ilovetimers.com, Toronto, Ontario, Canada.
-        </p>
-
-        <p>
-          These Legal Terms constitute a legally binding agreement made between
-          you, whether personally or on behalf of an entity ("you"), and
-          iLoveTimers, concerning your access to and use of the Services. IF YOU
-          DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY
-          PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE
-          IMMEDIATELY.
-        </p>
-
-        <p>
-          The Services are intended for a general audience. If you are under the
-          age of 13, you may not use the Services. If you are under the age of
-          majority in your jurisdiction, you may use the Services only with the
-          involvement and consent of a parent or legal guardian.
-        </p>
-      </header>
-
       <main className="flex max-w-[1200px] flex-col gap-8">
         <section>
           <h2 className="text-2xl">1. OUR SERVICES</h2>

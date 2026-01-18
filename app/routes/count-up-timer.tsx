@@ -3,8 +3,6 @@ import type { Route } from "./+types/count-up-timer";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
 
 /* =========================================================
    META
@@ -526,15 +524,6 @@ export default function CountUpTimerPage({
         <CountUpTimerCard />
       </section>
 
-      {/* Menu Links */}
-      <TimerMenuLinks />
-
-      {/* Related Sites */}
-      <RelatedSites
-        contextTags={["productivity", "focus", "learning", "tools"]}
-        title="More tools for focus and tracking"
-        subtitle="A small set of related sites that fit this page."
-      />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

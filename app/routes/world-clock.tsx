@@ -3,8 +3,6 @@ import type { Route } from "./+types/world-clock";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 
 /* =========================================================
    META
@@ -738,10 +736,6 @@ export default function WorldClockPage({}: Route.ComponentProps) {
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <WorldClockCard />
       </section>
-
-      {/* Menu Links */}
-      <TimerMenuLinks />
-      <RelatedSites />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

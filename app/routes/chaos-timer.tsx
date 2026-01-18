@@ -3,8 +3,6 @@ import type { Route } from "./+types/chaos-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 
 /* =========================================================
    META
@@ -856,9 +854,6 @@ export default function ChaosTimerPage({
         </div>
       </section>
 
-      {/* Menu Links */}
-      <TimerMenuLinks />
-      <RelatedSites />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

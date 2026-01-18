@@ -1,10 +1,8 @@
 // app/routes/meeting-countup-timer.tsx
 import type { Route } from "./+types/meeting-count-up-timer";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
 
 /* =========================================================
    META
@@ -556,16 +554,6 @@ export default function MeetingCountupTimerPage({}: Route.ComponentProps) {
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <MeetingCountupCard />
       </section>
-
-      {/* Menu Links (MUST be before RelatedSites) */}
-      <TimerMenuLinks />
-
-      {/* Related Sites */}
-      <RelatedSites
-        contextTags={["productivity", "focus", "tools"]}
-        title="More tools for meetings and focus"
-        subtitle="A small set of related sites that fit this page."
-      />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

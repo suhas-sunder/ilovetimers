@@ -3,8 +3,6 @@ import type { Route } from "./+types/atomic-clock";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 
 /* =========================================================
    META
@@ -415,9 +413,6 @@ export default function AtomicClockPage({}: Route.ComponentProps) {
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-8">
         <AtomicClockCard />
       </section>
-
-      <TimerMenuLinks />
-      <RelatedSites />
 
       {/* FAQ (rendered at bottom) */}
       <section id="faq">

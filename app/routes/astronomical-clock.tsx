@@ -2,8 +2,6 @@ import type { Route } from "./+types/astronomical-clock";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 
 /* =========================================================
    META
@@ -229,9 +227,6 @@ export default function AstronomicalClockPage({
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <AstronomicalClockCard />
       </section>
-
-      <TimerMenuLinks />
-      <RelatedSites />
 
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">

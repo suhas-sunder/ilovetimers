@@ -126,7 +126,7 @@ const TimerMenuLinks = () => {
   return (
     <section id="all-timers" className="mx-auto max-w-7xl px-4 pb-12">
       <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-bold text-amber-950">All timer pages</h2>
+        <h2 className="text-xl font-bold text-amber-950">All Tools</h2>
         <p className="mt-2 leading-relaxed text-amber-800">
           Pick a tool page or a purpose page. Everything runs in-browser.
         </p>

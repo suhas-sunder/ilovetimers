@@ -3,7 +3,6 @@ import type { Route } from "./+types/amrap-timer";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 import RelatedSites from "~/clients/components/navigation/RelatedSites";
 
 /* =========================================================
@@ -792,16 +791,6 @@ export default function AmrapTimerPage({}: Route.ComponentProps) {
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <AmrapTimerCard />
       </section>
-
-      {/* Menu Links (before RelatedSites) */}
-      <TimerMenuLinks />
-
-      {/* Related Sites */}
-      <RelatedSites
-        contextTags={["fitness", "habits", "tools", "learning"]}
-        title="More tools for training and consistency"
-        subtitle="A small set of related sites that fit this page."
-      />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

@@ -3,8 +3,6 @@ import type { Route } from "./+types/countdown-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 
 /* =========================================================
    META
@@ -597,10 +595,6 @@ export default function CountdownTimerPage({
           </div>
         </div>
       </section>
-
-      {/* SEO Section (tight, intent-focused, not spam) */}
-      <TimerMenuLinks />
-      <RelatedSites />
 
       {/* SEO Section (under TimerMenuLinks) */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

@@ -3,8 +3,6 @@ import type { Route } from "./+types/online-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 
 /* =========================================================
    META
@@ -671,9 +669,6 @@ export default function OnlineTimerPage({
         </div>
       </section>
 
-      {/* Shared menu */}
-      <TimerMenuLinks />
-      <RelatedSites />
 
       {/* SEO Section (broad intent) */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

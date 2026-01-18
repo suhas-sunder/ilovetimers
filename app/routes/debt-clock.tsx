@@ -3,8 +3,6 @@ import type { Route } from "./+types/debt-clock";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 
 /* =========================================================
    META
@@ -749,15 +747,6 @@ export default function DebtClockPage({
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <DebtClockCard />
       </section>
-
-      <TimerMenuLinks />
-
-      {/* Related Sites (external, always 6 via your component logic) */}
-      <RelatedSites
-        contextTags={["finance", "learning", "tools", "productivity"]}
-        title="More tools for money and learning"
-        subtitle="A small set of related sites that fit this topic."
-      />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

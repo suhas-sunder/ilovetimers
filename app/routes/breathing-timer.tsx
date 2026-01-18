@@ -3,8 +3,6 @@ import type { Route } from "./+types/breathing-timer";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
 
 /* =========================================================
    META
@@ -822,15 +820,6 @@ export default function BreathingTimerPage({
         <BreathingTimerCard />
       </section>
 
-      {/* Menu Links (MUST be before RelatedSites) */}
-      <TimerMenuLinks />
-
-      {/* Related Sites */}
-      <RelatedSites
-        contextTags={["calm", "meditation", "focus", "learning"]}
-        title="More calm and focus tools"
-        subtitle="A small set of related sites that fit this page."
-      />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

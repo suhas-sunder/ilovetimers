@@ -54,6 +54,8 @@ export const links: Route.LinksFunction = () => [
 // - Keeps your styling vibe (amber, simple, sticky)
 
 import { useEffect, useRef, useState } from "react";
+import RelatedSites from "./clients/components/navigation/RelatedSites";
+import TimerMenuLinks from "./clients/components/navigation/TimerMenuLinks";
 
 function useLockBodyScroll(locked: boolean) {
   useEffect(() => {
@@ -292,6 +294,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <SiteHeader />
         {children}
+
+        {/* Menu Links */}
+        <TimerMenuLinks />
+        <RelatedSites />
         <ScrollRestoration />
         <Scripts />
         <footer className="border-t border-amber-400 bg-amber-500/30/60">

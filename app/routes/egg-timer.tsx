@@ -199,12 +199,48 @@ type EggPreset = {
 };
 
 const EGG_PRESETS: EggPreset[] = [
-  { key: "soft", label: "Soft", minutes: 6, seconds: 0, note: "6:00 (runny yolk, set whites)" },
-  { key: "jammy", label: "Jammy", minutes: 7, seconds: 0, note: "7:00 (creamy/jammy yolk)" },
-  { key: "medium", label: "Medium", minutes: 8, seconds: 0, note: "8:00 (mostly set, slightly creamy)" },
-  { key: "hard", label: "Hard", minutes: 10, seconds: 0, note: "10:00 (fully set yolk)" },
-  { key: "very_hard", label: "Very hard", minutes: 12, seconds: 0, note: "12:00 (extra firm)" },
-  { key: "poached", label: "Poached", minutes: 3, seconds: 30, note: "3:30 (classic poach)" },
+  {
+    key: "soft",
+    label: "Soft",
+    minutes: 6,
+    seconds: 0,
+    note: "6:00 (runny yolk, set whites)",
+  },
+  {
+    key: "jammy",
+    label: "Jammy",
+    minutes: 7,
+    seconds: 0,
+    note: "7:00 (creamy/jammy yolk)",
+  },
+  {
+    key: "medium",
+    label: "Medium",
+    minutes: 8,
+    seconds: 0,
+    note: "8:00 (mostly set, slightly creamy)",
+  },
+  {
+    key: "hard",
+    label: "Hard",
+    minutes: 10,
+    seconds: 0,
+    note: "10:00 (fully set yolk)",
+  },
+  {
+    key: "very_hard",
+    label: "Very hard",
+    minutes: 12,
+    seconds: 0,
+    note: "12:00 (extra firm)",
+  },
+  {
+    key: "poached",
+    label: "Poached",
+    minutes: 3,
+    seconds: 30,
+    note: "3:30 (classic poach)",
+  },
 ];
 
 function EggTimerCard() {
@@ -331,9 +367,10 @@ function EggTimerCard() {
         <div className="min-w-0">
           <h2 className="text-xl font-extrabold text-amber-950">Egg Timer</h2>
           <p className="mt-1 text-base text-slate-700">
-            A fast <strong>egg timer</strong> for boiled eggs. One-click presets for{" "}
-            <strong>soft</strong>, <strong>medium</strong>, and <strong>hard</strong>{" "}
-            (plus jammy). Big digits, optional sound, and fullscreen.
+            A fast <strong>egg timer</strong> for boiled eggs. One-click presets
+            for <strong>soft</strong>, <strong>medium</strong>, and{" "}
+            <strong>hard</strong> (plus jammy). Big digits, optional sound, and
+            fullscreen.
           </p>
         </div>
 
@@ -396,7 +433,9 @@ function EggTimerCard() {
             min={0}
             max={60}
             value={minutes}
-            onChange={(e) => setMinutes(clamp(Number(e.target.value || 0), 0, 60))}
+            onChange={(e) =>
+              setMinutes(clamp(Number(e.target.value || 0), 0, 60))
+            }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </label>
@@ -408,7 +447,9 @@ function EggTimerCard() {
             min={0}
             max={59}
             value={seconds}
-            onChange={(e) => setSeconds(clamp(Number(e.target.value || 0), 0, 59))}
+            onChange={(e) =>
+              setSeconds(clamp(Number(e.target.value || 0), 0, 59))
+            }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </label>
@@ -428,9 +469,12 @@ function EggTimerCard() {
         <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
           Selected preset
         </div>
-        <div className="mt-1 text-sm font-semibold text-amber-950">{presetNote}</div>
+        <div className="mt-1 text-sm font-semibold text-amber-950">
+          {presetNote}
+        </div>
         <div className="mt-2 text-sm text-amber-900">
-          These are common starting points for large eggs in simmering water. Adjust for fridge-cold eggs, altitude, and preference.
+          These are common starting points for large eggs in simmering water.
+          Adjust for fridge-cold eggs, altitude, and preference.
         </div>
       </div>
 
@@ -529,7 +573,9 @@ function EggTimerCard() {
           <div className="fs-inner">
             <div className="fs-label">Egg Timer</div>
             <div className="fs-time">{shownTime}</div>
-            <div className="fs-help">Space start/pause · R reset · F fullscreen</div>
+            <div className="fs-help">
+              Space start/pause · R reset · F fullscreen
+            </div>
           </div>
         </div>
       </div>
@@ -629,29 +675,6 @@ export default function EggTimerPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header (same style as Pomodoro) */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-            <Link to="/stopwatch" className="hover:underline">
-              Stopwatch
-            </Link>
-            <Link to="/pomodoro-timer" className="hover:underline">
-              Pomodoro
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -667,8 +690,8 @@ export default function EggTimerPage({
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
             A simple <strong>egg timer</strong> with one-click presets for{" "}
-            <strong>soft</strong>, <strong>medium</strong>, and <strong>hard</strong>{" "}
-            boiled eggs.
+            <strong>soft</strong>, <strong>medium</strong>, and{" "}
+            <strong>hard</strong> boiled eggs.
           </p>
         </div>
       </section>
@@ -686,7 +709,8 @@ export default function EggTimerPage({
               Soft, medium, hard presets
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Tap a preset and start. If your eggs are extra large or fridge-cold, add a bit of time.
+              Tap a preset and start. If your eggs are extra large or
+              fridge-cold, add a bit of time.
             </p>
           </div>
 
@@ -695,7 +719,8 @@ export default function EggTimerPage({
               Reduce overcooking
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              When the timer ends, move eggs to an ice bath to stop cooking fast and reduce the gray yolk ring.
+              When the timer ends, move eggs to an ice bath to stop cooking fast
+              and reduce the gray yolk ring.
             </p>
           </div>
 
@@ -731,21 +756,25 @@ export default function EggTimerPage({
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>egg timer</strong> is a quick <strong>boiled egg timer</strong>{" "}
-              with presets for <strong>soft</strong>, <strong>medium</strong>, and{" "}
-              <strong>hard</strong> boiled eggs. Pick your doneness, press Start, and
-              stop the cook when the countdown hits zero.
+              This <strong>egg timer</strong> is a quick{" "}
+              <strong>boiled egg timer</strong> with presets for{" "}
+              <strong>soft</strong>, <strong>medium</strong>, and{" "}
+              <strong>hard</strong> boiled eggs. Pick your doneness, press
+              Start, and stop the cook when the countdown hits zero.
             </p>
 
             <p>
-              Timing depends on egg size and starting temperature. Many people start the timer
-              when the water is gently boiling or simmering. If you start from cold water,
-              you will usually need more time.
+              Timing depends on egg size and starting temperature. Many people
+              start the timer when the water is gently boiling or simmering. If
+              you start from cold water, you will usually need more time.
             </p>
 
             <p>
               If you want a general-purpose tool, use{" "}
-              <Link to="/countdown-timer" className="font-semibold hover:underline">
+              <Link
+                to="/countdown-timer"
+                className="font-semibold hover:underline"
+              >
                 Countdown Timer
               </Link>
               . For tea and coffee, use{" "}
@@ -796,9 +825,12 @@ export default function EggTimerPage({
               How long for soft, medium, and hard boiled eggs?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Common starting points are about <strong>6 minutes</strong> for soft,
-              <strong> 8 minutes</strong> for medium, and <strong>10 minutes</strong> for hard boiled eggs,
-              counted once the water is gently boiling or simmering. Adjust for egg size and starting temperature.
+              Common starting points are about <strong>6 minutes</strong> for
+              soft,
+              <strong> 8 minutes</strong> for medium, and{" "}
+              <strong>10 minutes</strong> for hard boiled eggs, counted once the
+              water is gently boiling or simmering. Adjust for egg size and
+              starting temperature.
             </div>
           </details>
 
@@ -807,8 +839,9 @@ export default function EggTimerPage({
               Do I start timing in cold water or boiling water?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Many timing guides assume you start timing once the water is gently boiling or simmering.
-              Starting from cold water usually increases the time and can be less consistent.
+              Many timing guides assume you start timing once the water is
+              gently boiling or simmering. Starting from cold water usually
+              increases the time and can be less consistent.
             </div>
           </details>
 
@@ -817,7 +850,8 @@ export default function EggTimerPage({
               Why use an ice bath after boiling?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              An ice bath stops cooking quickly, making timing more accurate and helping prevent overcooked yolks.
+              An ice bath stops cooking quickly, making timing more accurate and
+              helping prevent overcooked yolks.
             </div>
           </details>
 
@@ -832,12 +866,6 @@ export default function EggTimerPage({
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, tea, and egg timers
-        </div>
-      </footer>
     </main>
   );
 }

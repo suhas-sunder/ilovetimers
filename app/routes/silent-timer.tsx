@@ -320,7 +320,8 @@ function SilentCountdownCard() {
 
   const onReset = () => safeReset();
 
-  const urgent = status === "running" && remainingMs > 0 && remainingMs <= 10_000;
+  const urgent =
+    status === "running" && remainingMs > 0 && remainingMs <= 10_000;
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
@@ -339,7 +340,9 @@ function SilentCountdownCard() {
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Silent Timer</h2>
+          <h2 className="text-xl font-extrabold text-amber-950">
+            Silent Timer
+          </h2>
           <p className="mt-1 text-base text-slate-700">
             A <strong>quiet countdown</strong> for libraries, exams, meetings,
             and classrooms. Sound is off by default.
@@ -367,7 +370,9 @@ function SilentCountdownCard() {
 
           <Btn
             kind="ghost"
-            onClick={() => displayRef.current && toggleFullscreen(displayRef.current)}
+            onClick={() =>
+              displayRef.current && toggleFullscreen(displayRef.current)
+            }
             className="py-2"
           >
             Fullscreen
@@ -455,7 +460,8 @@ function SilentCountdownCard() {
 
         {!sound && (
           <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-900">
-            Silent mode is ON. Turn <strong>Sound</strong> on if you want an alarm at 0.
+            Silent mode is ON. Turn <strong>Sound</strong> on if you want an
+            alarm at 0.
           </div>
         )}
       </div>
@@ -466,7 +472,9 @@ function SilentCountdownCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function SilentTimerPage({ loaderData: { nowISO } }: Route.ComponentProps) {
+export default function SilentTimerPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
   const url = "https://ilovetimers.com/silent-timer";
 
   const jsonLd = {
@@ -482,7 +490,12 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://ilovetimers.com/" },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://ilovetimers.com/",
+          },
           { "@type": "ListItem", position: 2, name: "Silent Timer", item: url },
         ],
       },
@@ -533,29 +546,6 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ iLoveTimers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-            <Link to="/stopwatch" className="hover:underline">
-              Stopwatch
-            </Link>
-            <Link to="/pomodoro-timer" className="hover:underline">
-              Pomodoro
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -570,8 +560,8 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
             Silent Timer (No Sound Countdown)
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A <strong>silent timer</strong> for quiet spaces. Sound is off by default.
-            Need audio later? Turn <strong>Sound</strong> on anytime.
+            A <strong>silent timer</strong> for quiet spaces. Sound is off by
+            default. Need audio later? Turn <strong>Sound</strong> on anytime.
           </p>
         </div>
       </section>
@@ -583,23 +573,29 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
         {/* Quick-use hints */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">How to turn sound off</h2>
+            <h2 className="text-lg font-bold text-amber-950">
+              How to turn sound off
+            </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Use the <strong>Sound</strong> toggle at the top of the timer card.
-              When it’s off, the timer reaches 0 without any beep.
+              Use the <strong>Sound</strong> toggle at the top of the timer
+              card. When it’s off, the timer reaches 0 without any beep.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Quiet countdown use cases</h2>
+            <h2 className="text-lg font-bold text-amber-950">
+              Quiet countdown use cases
+            </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Ideal for exams, libraries, meetings, meditation, study halls,
-              and classrooms where noise is distracting.
+              Ideal for exams, libraries, meetings, meditation, study halls, and
+              classrooms where noise is distracting.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Keyboard shortcuts</h2>
+            <h2 className="text-lg font-bold text-amber-950">
+              Keyboard shortcuts
+            </h2>
             <ul className="mt-2 space-y-1 text-amber-800">
               <li>
                 <strong>Space</strong> = Start / Pause
@@ -616,7 +612,7 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
       </section>
 
       {/* Shared menu */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section (under TimerMenuLinks) */}
@@ -628,35 +624,47 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              If you need a <strong>silent timer</strong>, you usually want two things:
-              a clear countdown you can see from a distance, and a guarantee it will not make noise.
-              This page is a <strong>no sound timer</strong> by default, which makes it a good fit
-              for exams, libraries, meetings, and quiet classrooms.
+              If you need a <strong>silent timer</strong>, you usually want two
+              things: a clear countdown you can see from a distance, and a
+              guarantee it will not make noise. This page is a{" "}
+              <strong>no sound timer</strong> by default, which makes it a good
+              fit for exams, libraries, meetings, and quiet classrooms.
             </p>
 
             <p>
-              To keep the countdown quiet, turn <strong>Sound</strong> off.
-              When Sound is off, the timer will reach zero without any beep.
-              If you want the alert back, just toggle Sound on again.
+              To keep the countdown quiet, turn <strong>Sound</strong> off. When
+              Sound is off, the timer will reach zero without any beep. If you
+              want the alert back, just toggle Sound on again.
             </p>
 
             <p>
-              You can still use all the features: presets for fast starts, custom input for exact durations,
-              optional <strong>Loop</strong> to repeat the same countdown, and <strong>Fullscreen</strong> for projector use.
-              Control it quickly with the keyboard after clicking the timer once to focus it.
+              You can still use all the features: presets for fast starts,
+              custom input for exact durations, optional <strong>Loop</strong>{" "}
+              to repeat the same countdown, and <strong>Fullscreen</strong> for
+              projector use. Control it quickly with the keyboard after clicking
+              the timer once to focus it.
             </p>
 
             <p>
               Looking for a specific style? Try{" "}
-              <Link to="/fullscreen-timer" className="font-semibold hover:underline">
+              <Link
+                to="/fullscreen-timer"
+                className="font-semibold hover:underline"
+              >
                 Fullscreen Timer
               </Link>{" "}
               for projector displays,{" "}
-              <Link to="/countdown-timer" className="font-semibold hover:underline">
+              <Link
+                to="/countdown-timer"
+                className="font-semibold hover:underline"
+              >
                 Countdown Timer
               </Link>{" "}
               for the standard countdown page, or{" "}
-              <Link to="/pomodoro-timer" className="font-semibold hover:underline">
+              <Link
+                to="/pomodoro-timer"
+                className="font-semibold hover:underline"
+              >
                 Pomodoro Timer
               </Link>{" "}
               for study and focus cycles.
@@ -669,7 +677,8 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
                 Quiet by default
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Sound starts OFF so you get a true quiet countdown with no surprise beep.
+                Sound starts OFF so you get a true quiet countdown with no
+                surprise beep.
               </p>
             </div>
 
@@ -703,7 +712,8 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
               How do I turn the sound off?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Use the <strong>Sound</strong> toggle at the top of the timer card. When it’s off, there’s no beep at zero.
+              Use the <strong>Sound</strong> toggle at the top of the timer
+              card. When it’s off, there’s no beep at zero.
             </div>
           </details>
 
@@ -712,7 +722,8 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
               Is this a “no sound timer” even in fullscreen?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Fullscreen only changes the display size. Sound stays off as long as the Sound toggle is off.
+              Yes. Fullscreen only changes the display size. Sound stays off as
+              long as the Sound toggle is off.
             </div>
           </details>
 
@@ -721,7 +732,8 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
               Can I still loop a silent countdown?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Turn on <strong>Loop</strong> to repeat automatically while keeping Sound off.
+              Yes. Turn on <strong>Loop</strong> to repeat automatically while
+              keeping Sound off.
             </div>
           </details>
 
@@ -730,17 +742,12 @@ export default function SilentTimerPage({ loaderData: { nowISO } }: Route.Compon
               What shortcuts work on this page?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause · <strong>R</strong> reset · <strong>F</strong> fullscreen (when focused).
+              <strong>Space</strong> start/pause · <strong>R</strong> reset ·{" "}
+              <strong>F</strong> fullscreen (when focused).
             </div>
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 I Love Timers - free countdown, stopwatch, Pomodoro, and HIIT interval timers
-        </div>
-      </footer>
     </main>
   );
 }

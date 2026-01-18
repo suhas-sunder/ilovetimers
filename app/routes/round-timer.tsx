@@ -191,13 +191,55 @@ function RoundTimerCard() {
   // Common presets (boxing + MMA + training variants)
   const presets: Preset[] = useMemo(
     () => [
-      { label: "Boxing 3×3 (1m rest)", rounds: 3, workSec: 180, restSec: 60, warmupSec: 10 },
-      { label: "Boxing 6×3 (1m rest)", rounds: 6, workSec: 180, restSec: 60, warmupSec: 10 },
-      { label: "Boxing 12×3 (1m rest)", rounds: 12, workSec: 180, restSec: 60, warmupSec: 10 },
-      { label: "MMA 3×5 (1m rest)", rounds: 3, workSec: 300, restSec: 60, warmupSec: 10 },
-      { label: "MMA 5×5 (1m rest)", rounds: 5, workSec: 300, restSec: 60, warmupSec: 10 },
-      { label: "Tabata-ish 8×(20/10)", rounds: 8, workSec: 20, restSec: 10, warmupSec: 10 },
-      { label: "Sprints 10×(30/30)", rounds: 10, workSec: 30, restSec: 30, warmupSec: 10 },
+      {
+        label: "Boxing 3×3 (1m rest)",
+        rounds: 3,
+        workSec: 180,
+        restSec: 60,
+        warmupSec: 10,
+      },
+      {
+        label: "Boxing 6×3 (1m rest)",
+        rounds: 6,
+        workSec: 180,
+        restSec: 60,
+        warmupSec: 10,
+      },
+      {
+        label: "Boxing 12×3 (1m rest)",
+        rounds: 12,
+        workSec: 180,
+        restSec: 60,
+        warmupSec: 10,
+      },
+      {
+        label: "MMA 3×5 (1m rest)",
+        rounds: 3,
+        workSec: 300,
+        restSec: 60,
+        warmupSec: 10,
+      },
+      {
+        label: "MMA 5×5 (1m rest)",
+        rounds: 5,
+        workSec: 300,
+        restSec: 60,
+        warmupSec: 10,
+      },
+      {
+        label: "Tabata-ish 8×(20/10)",
+        rounds: 8,
+        workSec: 20,
+        restSec: 10,
+        warmupSec: 10,
+      },
+      {
+        label: "Sprints 10×(30/30)",
+        rounds: 10,
+        workSec: 30,
+        restSec: 30,
+        warmupSec: 10,
+      },
     ],
     [],
   );
@@ -383,7 +425,18 @@ function RoundTimerCard() {
 
     rafRef.current = requestAnimationFrame(tick);
     return () => stopRaf();
-  }, [isRunning, phase, rounds, roundIndex, workSec, restSec, warmupSec, sound, finalBeeps, beep]);
+  }, [
+    isRunning,
+    phase,
+    rounds,
+    roundIndex,
+    workSec,
+    restSec,
+    warmupSec,
+    sound,
+    finalBeeps,
+    beep,
+  ]);
 
   const shownTime =
     phase === "idle"
@@ -394,21 +447,21 @@ function RoundTimerCard() {
     phase === "idle"
       ? "Ready"
       : phase === "warmup"
-      ? "Warmup"
-      : phase === "work"
-      ? `Round ${roundIndex} of ${rounds}`
-      : phase === "rest"
-      ? "Rest"
-      : "Complete";
+        ? "Warmup"
+        : phase === "work"
+          ? `Round ${roundIndex} of ${rounds}`
+          : phase === "rest"
+            ? "Rest"
+            : "Complete";
 
   const shellClass =
     phase === "work"
       ? "border-amber-300 bg-amber-50 text-amber-950"
       : phase === "rest"
-      ? "border-sky-200 bg-sky-50 text-sky-950"
-      : phase === "warmup"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-      : "border-amber-300 bg-amber-50 text-amber-950";
+        ? "border-sky-200 bg-sky-50 text-sky-950"
+        : phase === "warmup"
+          ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+          : "border-amber-300 bg-amber-50 text-amber-950";
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
@@ -510,7 +563,9 @@ function RoundTimerCard() {
             max={60}
             value={rounds}
             disabled={isRunning}
-            onChange={(e) => setRounds(clamp(Number(e.target.value || 1), 1, 60))}
+            onChange={(e) =>
+              setRounds(clamp(Number(e.target.value || 1), 1, 60))
+            }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </label>
@@ -523,7 +578,9 @@ function RoundTimerCard() {
             max={3600}
             value={workSec}
             disabled={isRunning}
-            onChange={(e) => setWorkSec(clamp(Number(e.target.value || 10), 10, 3600))}
+            onChange={(e) =>
+              setWorkSec(clamp(Number(e.target.value || 10), 10, 3600))
+            }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </label>
@@ -536,7 +593,9 @@ function RoundTimerCard() {
             max={3600}
             value={restSec}
             disabled={isRunning}
-            onChange={(e) => setRestSec(clamp(Number(e.target.value || 0), 0, 3600))}
+            onChange={(e) =>
+              setRestSec(clamp(Number(e.target.value || 0), 0, 3600))
+            }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </label>
@@ -549,7 +608,9 @@ function RoundTimerCard() {
             max={600}
             value={warmupSec}
             disabled={isRunning}
-            onChange={(e) => setWarmupSec(clamp(Number(e.target.value || 0), 0, 600))}
+            onChange={(e) =>
+              setWarmupSec(clamp(Number(e.target.value || 0), 0, 600))
+            }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </label>
@@ -659,7 +720,10 @@ function RoundTimerCard() {
                   Rounds
                 </div>
                 <div className="mt-1 text-2xl font-extrabold text-amber-950">
-                  {phase === "idle" ? rounds : Math.min(rounds, Math.max(1, roundIndex))} / {rounds}
+                  {phase === "idle"
+                    ? rounds
+                    : Math.min(rounds, Math.max(1, roundIndex))}{" "}
+                  / {rounds}
                 </div>
               </div>
 
@@ -668,7 +732,8 @@ function RoundTimerCard() {
                   Round / Rest
                 </div>
                 <div className="mt-1 text-sm font-semibold text-slate-700">
-                  {Math.round(workSec / 60)}m round · {Math.round(restSec / 60)}m rest
+                  {Math.round(workSec / 60)}m round · {Math.round(restSec / 60)}
+                  m rest
                 </div>
               </div>
 
@@ -683,7 +748,8 @@ function RoundTimerCard() {
             </div>
 
             <div className="mt-2 text-xs text-slate-600">
-              Runs while the page is open. Background tabs may update less often.
+              Runs while the page is open. Background tabs may update less
+              often.
             </div>
           </div>
         </div>
@@ -699,12 +765,12 @@ function RoundTimerCard() {
               {phase === "work"
                 ? `Round ${roundIndex} / ${rounds}`
                 : phase === "rest"
-                ? `Rest · Next: Round ${Math.min(rounds, roundIndex + 1)}`
-                : phase === "warmup"
-                ? `Warmup · Starts Round 1`
-                : phase === "done"
-                ? `Done`
-                : `Rounds ${rounds}`}
+                  ? `Rest · Next: Round ${Math.min(rounds, roundIndex + 1)}`
+                  : phase === "warmup"
+                    ? `Warmup · Starts Round 1`
+                    : phase === "done"
+                      ? `Done`
+                      : `Rounds ${rounds}`}
             </div>
             <div className="fs-help">
               Space start/skip · R reset · F fullscreen · S sound
@@ -745,7 +811,12 @@ export default function RoundTimerPage({}: Route.ComponentProps) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://ilovetimers.com/" },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://ilovetimers.com/",
+          },
           { "@type": "ListItem", position: 2, name: "Round Timer", item: url },
         ],
       },
@@ -795,29 +866,6 @@ export default function RoundTimerPage({}: Route.ComponentProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/workout-timer" className="hover:underline">
-              Workout
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-            <Link to="/tabata-timer" className="hover:underline">
-              Tabata
-            </Link>
-            <Link to="/emom-timer" className="hover:underline">
-              EMOM
-            </Link>
-          </nav>
-        </div>
-      </header>
 
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
@@ -894,8 +942,9 @@ export default function RoundTimerPage({}: Route.ComponentProps) {
               What’s a common boxing round timer setting?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              A very common boxing training setting is <strong>3 minutes on</strong>{" "}
-              and <strong>1 minute rest</strong>, repeated for multiple rounds.
+              A very common boxing training setting is{" "}
+              <strong>3 minutes on</strong> and <strong>1 minute rest</strong>,
+              repeated for multiple rounds.
             </div>
           </details>
 
@@ -905,8 +954,8 @@ export default function RoundTimerPage({}: Route.ComponentProps) {
             </summary>
             <div className="px-5 pb-4 text-amber-800">
               MMA rounds are often <strong>5 minutes</strong> with{" "}
-              <strong>1 minute rest</strong> in competition, and similar timing is
-              used for training.
+              <strong>1 minute rest</strong> in competition, and similar timing
+              is used for training.
             </div>
           </details>
 
@@ -915,7 +964,8 @@ export default function RoundTimerPage({}: Route.ComponentProps) {
               Can I customize round and rest length?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Set your number of rounds, round length, rest length, and optional warmup.
+              Yes. Set your number of rounds, round length, rest length, and
+              optional warmup.
             </div>
           </details>
 
@@ -925,18 +975,12 @@ export default function RoundTimerPage({}: Route.ComponentProps) {
             </summary>
             <div className="px-5 pb-4 text-amber-800">
               <strong>Space</strong> starts (or skips to the next phase),{" "}
-              <strong>R</strong> resets, <strong>F</strong> toggles fullscreen, and{" "}
-              <strong>S</strong> toggles sound.
+              <strong>R</strong> resets, <strong>F</strong> toggles fullscreen,
+              and <strong>S</strong> toggles sound.
             </div>
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - timers, clocks, and useful time tools
-        </div>
-      </footer>
     </main>
   );
 }

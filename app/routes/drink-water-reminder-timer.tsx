@@ -473,7 +473,8 @@ function WaterReminderTimerCard() {
             </div>
 
             <div className="mt-1 text-xs text-slate-600">
-              Runs while the page is open. Background tabs may update less often.
+              Runs while the page is open. Background tabs may update less
+              often.
             </div>
           </div>
         </div>
@@ -487,7 +488,8 @@ function WaterReminderTimerCard() {
               Interval {intervalMin}m · Reminders {remindersFired}
             </div>
             <div className="fs-help">
-              Space start/pause · N remind now · R reset · F fullscreen · S sound
+              Space start/pause · N remind now · R reset · F fullscreen · S
+              sound
             </div>
           </div>
         </div>
@@ -510,7 +512,8 @@ function WaterReminderTimerCard() {
       {/* Shortcuts */}
       <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · N remind now · R reset · F fullscreen · S sound
+          Shortcuts: Space start/pause · N remind now · R reset · F fullscreen ·
+          S sound
         </div>
         <div className="text-xs text-slate-600">
           Tip: click the card once so keyboard shortcuts work immediately.
@@ -539,8 +542,18 @@ export default function WaterReminderTimerPage({}: Route.ComponentProps) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://ilovetimers.com/" },
-          { "@type": "ListItem", position: 2, name: "Water Reminder Timer", item: url },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://ilovetimers.com/",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Water Reminder Timer",
+            item: url,
+          },
         ],
       },
       {
@@ -589,29 +602,6 @@ export default function WaterReminderTimerPage({}: Route.ComponentProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/break-timer" className="hover:underline">
-              Break
-            </Link>
-            <Link to="/study-timer" className="hover:underline">
-              Study
-            </Link>
-            <Link to="/productivity-timer" className="hover:underline">
-              Productivity
-            </Link>
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-          </nav>
-        </div>
-      </header>
 
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
@@ -664,9 +654,9 @@ export default function WaterReminderTimerPage({}: Route.ComponentProps) {
 
             <p>
               Choose a reminder interval like <strong>30 minutes</strong> or{" "}
-              <strong>60 minutes</strong>, start the timer, and keep the tab open
-              while you work. This is a simple in-browser tool, so it’s best
-              used on a second screen or in fullscreen.
+              <strong>60 minutes</strong>, start the timer, and keep the tab
+              open while you work. This is a simple in-browser tool, so it’s
+              best used on a second screen or in fullscreen.
             </p>
 
             <p>
@@ -731,12 +721,6 @@ export default function WaterReminderTimerPage({}: Route.ComponentProps) {
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - timers, clocks, and useful time tools
-        </div>
-      </footer>
     </main>
   );
 }

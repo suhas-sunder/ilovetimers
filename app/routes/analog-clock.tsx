@@ -10,7 +10,8 @@ import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Analog Clock | Simple Clock Face (Fullscreen, Clean, Readable)";
+  const title =
+    "Analog Clock | Simple Clock Face (Fullscreen, Clean, Readable)";
   const description =
     "Free analog clock with a clean clock face. Fullscreen mode, optional seconds hand, smooth motion, and a big readable design for classrooms, offices, and wall displays.";
   const url = "https://ilovetimers.com/analog-clock";
@@ -197,9 +198,12 @@ function AnalogClockCard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Analog Clock</h2>
+          <h2 className="text-xl font-extrabold text-amber-950">
+            Analog Clock
+          </h2>
           <p className="mt-1 text-base text-slate-700">
-            Clean analog clock face with fullscreen. Toggle seconds hand and smooth motion.
+            Clean analog clock face with fullscreen. Toggle seconds hand and
+            smooth motion.
           </p>
         </div>
 
@@ -225,7 +229,9 @@ function AnalogClockCard() {
 
           <Btn
             kind="ghost"
-            onClick={() => displayWrapRef.current && toggleFullscreen(displayWrapRef.current)}
+            onClick={() =>
+              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
+            }
             className="py-2"
           >
             Fullscreen
@@ -336,7 +342,9 @@ function AnalogClockCard() {
               />
             </div>
 
-            <div className="fs-help">F fullscreen · S seconds hand · M smooth</div>
+            <div className="fs-help">
+              F fullscreen · S seconds hand · M smooth
+            </div>
           </div>
         </div>
       </div>
@@ -473,10 +481,29 @@ function ClockFaceSvg({
 
   return (
     <div className="aspect-square w-full">
-      <svg viewBox="0 0 100 100" className="h-full w-full" role="img" aria-label="Analog clock">
+      <svg
+        viewBox="0 0 100 100"
+        className="h-full w-full"
+        role="img"
+        aria-label="Analog clock"
+      >
         {/* Face */}
-        <circle cx={cx} cy={cy} r={outerR} fill={faceFill} stroke={ringStroke} strokeWidth="1.8" />
-        <circle cx={cx} cy={cy} r={innerR} fill="transparent" stroke={innerStroke} strokeWidth="1.2" />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={outerR}
+          fill={faceFill}
+          stroke={ringStroke}
+          strokeWidth="1.8"
+        />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={innerR}
+          fill="transparent"
+          stroke={innerStroke}
+          strokeWidth="1.2"
+        />
 
         {/* Ticks */}
         {ticks.map((t, idx) => (
@@ -553,14 +580,25 @@ function ClockFaceSvg({
                 strokeLinecap="round"
               />
               {/* seconds counterweight dot */}
-              <circle cx={cx} cy={cy + 12} r="1.6" fill={handSec} opacity={dark ? 0.7 : 0.9} />
+              <circle
+                cx={cx}
+                cy={cy + 12}
+                r="1.6"
+                fill={handSec}
+                opacity={dark ? 0.7 : 0.9}
+              />
             </g>
           ) : null}
         </g>
 
         {/* Center cap */}
         <circle cx={cx} cy={cy} r="2.4" fill={centerFill} />
-        <circle cx={cx} cy={cy} r="0.9" fill={dark ? "rgba(0,0,0,.65)" : "rgba(255,255,255,.65)"} />
+        <circle
+          cx={cx}
+          cy={cy}
+          r="0.9"
+          fill={dark ? "rgba(0,0,0,.65)" : "rgba(255,255,255,.65)"}
+        />
       </svg>
     </div>
   );
@@ -569,7 +607,9 @@ function ClockFaceSvg({
 /* =========================================================
    PAGE
 ========================================================= */
-export default function AnalogClockPage({ loaderData: { nowISO } }: Route.ComponentProps) {
+export default function AnalogClockPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
   const url = "https://ilovetimers.com/analog-clock";
 
   const jsonLd = {
@@ -585,7 +625,12 @@ export default function AnalogClockPage({ loaderData: { nowISO } }: Route.Compon
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://ilovetimers.com/" },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://ilovetimers.com/",
+          },
           { "@type": "ListItem", position: 2, name: "Analog Clock", item: url },
         ],
       },
@@ -631,30 +676,10 @@ export default function AnalogClockPage({ loaderData: { nowISO } }: Route.Compon
 
   return (
     <main className="bg-amber-50 text-amber-950">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-            <Link to="/stopwatch" className="hover:underline">
-              Stopwatch
-            </Link>
-            <Link to="/pomodoro-timer" className="hover:underline">
-              Pomodoro
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
@@ -666,9 +691,12 @@ export default function AnalogClockPage({ loaderData: { nowISO } }: Route.Compon
             / <span className="text-amber-950">Analog Clock</span>
           </p>
 
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">Analog Clock</h1>
+          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+            Analog Clock
+          </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>analog clock</strong> with a readable clock face, seconds hand, smooth motion, and fullscreen mode.
+            A clean <strong>analog clock</strong> with a readable clock face,
+            seconds hand, smooth motion, and fullscreen mode.
           </p>
         </div>
       </section>
@@ -682,21 +710,29 @@ export default function AnalogClockPage({ loaderData: { nowISO } }: Route.Compon
         {/* Quick-use hints */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Perfect for wall displays</h2>
+            <h2 className="text-lg font-bold text-amber-950">
+              Perfect for wall displays
+            </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Use fullscreen on a TV, projector, or second monitor for a clean wall-clock style display.
+              Use fullscreen on a TV, projector, or second monitor for a clean
+              wall-clock style display.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Seconds hand and smooth sweep</h2>
+            <h2 className="text-lg font-bold text-amber-950">
+              Seconds hand and smooth sweep
+            </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Toggle the seconds hand, and enable smooth motion if you want a continuous sweep instead of a tick.
+              Toggle the seconds hand, and enable smooth motion if you want a
+              continuous sweep instead of a tick.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Keyboard shortcuts</h2>
+            <h2 className="text-lg font-bold text-amber-950">
+              Keyboard shortcuts
+            </h2>
             <ul className="mt-2 space-y-1 text-amber-800">
               <li>
                 <strong>F</strong> = Fullscreen
@@ -719,17 +755,23 @@ export default function AnalogClockPage({ loaderData: { nowISO } }: Route.Compon
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">Free online analog clock</h2>
+          <h2 className="text-xl font-bold text-amber-950">
+            Free online analog clock
+          </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This page is a simple <strong>analog clock</strong> with a clean clock face. It uses your device’s local time,
-              so it matches the time zone settings on your phone or computer.
+              This page is a simple <strong>analog clock</strong> with a clean
+              clock face. It uses your device’s local time, so it matches the
+              time zone settings on your phone or computer.
             </p>
 
             <p>
               Want a digital clock instead? Try{" "}
-              <Link to="/current-local-time" className="font-semibold hover:underline">
+              <Link
+                to="/current-local-time"
+                className="font-semibold hover:underline"
+              >
                 Current Local Time
               </Link>
               . Need a reference standard? Try{" "}
@@ -747,38 +789,45 @@ export default function AnalogClockPage({ loaderData: { nowISO } }: Route.Compon
         <h2 className="text-2xl font-bold">Analog Clock FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">Does this analog clock show my local time?</summary>
-            <div className="px-5 pb-4 text-amber-800">Yes. It uses your device’s local time and time zone settings.</div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">Can I hide the seconds hand?</summary>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              Does this analog clock show my local time?
+            </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Seconds hand</strong> off (or press <strong>S</strong>).
+              Yes. It uses your device’s local time and time zone settings.
             </div>
           </details>
 
           <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">What is smooth motion?</summary>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              Can I hide the seconds hand?
+            </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Smooth motion makes the seconds hand sweep continuously instead of ticking once per second.
+              Yes. Toggle <strong>Seconds hand</strong> off (or press{" "}
+              <strong>S</strong>).
             </div>
           </details>
 
           <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">How do I use fullscreen?</summary>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              What is smooth motion?
+            </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Click <strong>Fullscreen</strong> or press <strong>F</strong> while the card is focused.
+              Smooth motion makes the seconds hand sweep continuously instead of
+              ticking once per second.
+            </div>
+          </details>
+
+          <details>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              How do I use fullscreen?
+            </summary>
+            <div className="px-5 pb-4 text-amber-800">
+              Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
+              while the card is focused.
             </div>
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and clock tools
-        </div>
-      </footer>
     </main>
   );
 }

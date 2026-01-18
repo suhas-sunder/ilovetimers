@@ -446,7 +446,9 @@ function SleepTimerCard() {
           style={{ minHeight: 260 }}
         >
           <div className="flex w-full flex-col items-center justify-center gap-2">
-            <div className={`text-xs font-extrabold uppercase tracking-widest ${dimMode ? "text-white/70" : "text-slate-700"}`}>
+            <div
+              className={`text-xs font-extrabold uppercase tracking-widest ${dimMode ? "text-white/70" : "text-slate-700"}`}
+            >
               Sleep countdown
             </div>
             <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
@@ -568,29 +570,6 @@ export default function SleepTimerPage({}: Route.ComponentProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/meditation-timer" className="hover:underline">
-              Meditation
-            </Link>
-            <Link to="/breathing-timer" className="hover:underline">
-              Breathing
-            </Link>
-            <Link to="/silent-timer" className="hover:underline">
-              Silent
-            </Link>
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -636,22 +615,25 @@ export default function SleepTimerPage({}: Route.ComponentProps) {
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              A <strong>sleep timer</strong> is a countdown you start before bed.
-              You can use it to time a relaxation routine, set a limit for a
-              screen session, or run a gentle countdown while you fall asleep.
+              A <strong>sleep timer</strong> is a countdown you start before
+              bed. You can use it to time a relaxation routine, set a limit for
+              a screen session, or run a gentle countdown while you fall asleep.
             </p>
 
             <p>
-              If you searched for a <strong>screen off timer</strong>, here’s the
-              honest part: web pages can’t force your device to turn the screen
-              off. This page includes <strong>dim mode</strong> to reduce glare,
-              but your operating system’s power settings control actual screen
-              sleep.
+              If you searched for a <strong>screen off timer</strong>, here’s
+              the honest part: web pages can’t force your device to turn the
+              screen off. This page includes <strong>dim mode</strong> to reduce
+              glare, but your operating system’s power settings control actual
+              screen sleep.
             </p>
 
             <p>
               For quiet sessions, use{" "}
-              <Link to="/silent-timer" className="font-semibold hover:underline">
+              <Link
+                to="/silent-timer"
+                className="font-semibold hover:underline"
+              >
                 Silent Timer
               </Link>
               . For guided calm breathing, use{" "}
@@ -676,9 +658,9 @@ export default function SleepTimerPage({}: Route.ComponentProps) {
               Can this act as a “screen off timer”?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Not directly. Browsers can’t reliably turn your screen off. Use Dim
-              mode here, and set your device’s screen sleep settings for true
-              screen-off behavior.
+              Not directly. Browsers can’t reliably turn your screen off. Use
+              Dim mode here, and set your device’s screen sleep settings for
+              true screen-off behavior.
             </div>
           </details>
 
@@ -707,18 +689,12 @@ export default function SleepTimerPage({}: Route.ComponentProps) {
               What’s a good duration for a sleep timer?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Common choices are 20 to 45 minutes for winding down, or 60 to 90 minutes
-              if you want a longer cutoff.
+              Common choices are 20 to 45 minutes for winding down, or 60 to 90
+              minutes if you want a longer cutoff.
             </div>
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - timers, clocks, and useful time tools
-        </div>
-      </footer>
     </main>
   );
 }

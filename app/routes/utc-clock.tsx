@@ -88,7 +88,10 @@ function formatClockUTC(
       hour12: !use24,
     });
 
-    return fmt.format(d).replace(/\u200e/g, "").trim();
+    return fmt
+      .format(d)
+      .replace(/\u200e/g, "")
+      .trim();
   } catch {
     // Fallback: manual UTC formatting
     const h = d.getUTCHours();
@@ -243,8 +246,8 @@ function UtcClockCard() {
         <div className="min-w-0">
           <h2 className="text-xl font-extrabold text-amber-950">UTC Clock</h2>
           <p className="mt-1 text-base text-slate-700">
-            Current <strong>UTC time</strong> with seconds, copy, and fullscreen.
-            Great for logging and coordination across time zones.
+            Current <strong>UTC time</strong> with seconds, copy, and
+            fullscreen. Great for logging and coordination across time zones.
           </p>
         </div>
 
@@ -440,7 +443,12 @@ export default function UtcClockPage({
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://ilovetimers.com/" },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://ilovetimers.com/",
+          },
           { "@type": "ListItem", position: 2, name: "UTC Clock", item: url },
         ],
       },
@@ -491,29 +499,6 @@ export default function UtcClockPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-            <Link to="/stopwatch" className="hover:underline">
-              Stopwatch
-            </Link>
-            <Link to="/pomodoro-timer" className="hover:underline">
-              Pomodoro
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -524,7 +509,9 @@ export default function UtcClockPage({
             / <span className="text-amber-950">UTC Clock</span>
           </p>
 
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">UTC Clock</h1>
+          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+            UTC Clock
+          </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
             Current <strong>UTC time</strong> with a big readable display,
             seconds, copy, and fullscreen.
@@ -561,7 +548,9 @@ export default function UtcClockPage({
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Keyboard shortcuts</h2>
+            <h2 className="text-lg font-bold text-amber-950">
+              Keyboard shortcuts
+            </h2>
             <ul className="mt-2 space-y-1 text-amber-800">
               <li>
                 <strong>F</strong> = Fullscreen
@@ -660,13 +649,6 @@ export default function UtcClockPage({
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and time
-          tools
-        </div>
-      </footer>
     </main>
   );
 }

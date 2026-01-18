@@ -660,29 +660,6 @@ export default function ClassroomTimerPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-            <Link to="/stopwatch" className="hover:underline">
-              Stopwatch
-            </Link>
-            <Link to="/pomodoro-timer" className="hover:underline">
-              Pomodoro
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -728,8 +705,8 @@ export default function ClassroomTimerPage({
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
               Try <strong>1 to 3 minutes</strong> for transitions,{" "}
-              <strong>5 to 10</strong> for warm ups, and <strong>15 to 30</strong> for
-              centers or independent work.
+              <strong>5 to 10</strong> for warm ups, and{" "}
+              <strong>15 to 30</strong> for centers or independent work.
             </p>
           </div>
 
@@ -756,7 +733,7 @@ export default function ClassroomTimerPage({
       </section>
 
       {/* Menu Links */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section */}
@@ -812,8 +789,8 @@ export default function ClassroomTimerPage({
                 Classroom routines
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Use 1 to 3 minutes for transitions, 5 to 10 for warm ups, and 15 to 30
-                for stations and centers.
+                Use 1 to 3 minutes for transitions, 5 to 10 for warm ups, and 15
+                to 30 for stations and centers.
               </p>
             </div>
 
@@ -885,13 +862,6 @@ export default function ClassroomTimerPage({
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
-        </div>
-      </footer>
     </main>
   );
 }

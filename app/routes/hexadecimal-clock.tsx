@@ -94,17 +94,24 @@ function toHex(n: number, width: number) {
   return n.toString(16).toUpperCase().padStart(width, "0");
 }
 
-function formatTimeString(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
+function formatTimeString(
+  d: Date,
+  opts: { use24: boolean; showSeconds: boolean },
+) {
   const hh24 = d.getHours();
   const mm = d.getMinutes();
   const ss = d.getSeconds();
 
   if (opts.use24) {
-    return opts.showSeconds ? `${pad2(hh24)}:${pad2(mm)}:${pad2(ss)}` : `${pad2(hh24)}:${pad2(mm)}`;
+    return opts.showSeconds
+      ? `${pad2(hh24)}:${pad2(mm)}:${pad2(ss)}`
+      : `${pad2(hh24)}:${pad2(mm)}`;
   }
 
   const { h, ampm } = to12h(hh24);
-  return opts.showSeconds ? `${pad2(h)}:${pad2(mm)}:${pad2(ss)} ${ampm}` : `${pad2(h)}:${pad2(mm)} ${ampm}`;
+  return opts.showSeconds
+    ? `${pad2(h)}:${pad2(mm)}:${pad2(ss)} ${ampm}`
+    : `${pad2(h)}:${pad2(mm)} ${ampm}`;
 }
 
 function formatDateLine(d: Date) {
@@ -197,7 +204,10 @@ function HexClockCard() {
     return () => window.clearInterval(t);
   }, [showSeconds, showMs]);
 
-  const decTime = useMemo(() => formatTimeString(now, { use24, showSeconds }), [now, use24, showSeconds]);
+  const decTime = useMemo(
+    () => formatTimeString(now, { use24, showSeconds }),
+    [now, use24, showSeconds],
+  );
   const dateText = useMemo(() => formatDateLine(now), [now]);
 
   const hex = useMemo(() => {
@@ -229,18 +239,28 @@ function HexClockCard() {
       const bb = toHex(s, 2);
       return {
         main: showSeconds ? `#${rr}${gg}${bb}` : `#${rr}${gg}00`,
-        sub: showSeconds ? `RR=${rr} (hours) · GG=${gg} (minutes) · BB=${bb} (seconds)` : `RR=${rr} · GG=${gg} · BB=00`,
+        sub: showSeconds
+          ? `RR=${rr} (hours) · GG=${gg} (minutes) · BB=${bb} (seconds)`
+          : `RR=${rr} · GG=${gg} · BB=00`,
         color: `#${rr}${gg}${bb}`,
         raw: showSeconds ? `#${rr}${gg}${bb}` : `#${rr}${gg}00`,
         suffix: "",
       };
     }
 
-    const main = showSeconds ? `${hh}:${mm}:${ss}${suffix}` : `${hh}:${mm}${suffix}`;
+    const main = showSeconds
+      ? `${hh}:${mm}:${ss}${suffix}`
+      : `${hh}:${mm}${suffix}`;
     const sub = showMs
       ? `ms: ${mms} (hex) · ${pad3(ms)} (dec)`
       : `Hours=${hh} · Minutes=${mm}${showSeconds ? ` · Seconds=${ss}` : ""}`;
-    return { main, sub, color: null as string | null, raw: showMs ? `${main} · ms:${mms}` : main, suffix };
+    return {
+      main,
+      sub,
+      color: null as string | null,
+      raw: showMs ? `${main} · ms:${mms}` : main,
+      suffix,
+    };
   }, [now, use24, showSeconds, showMs, mode]);
 
   const copyText = useMemo(() => {
@@ -292,9 +312,12 @@ function HexClockCard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Hexadecimal Clock</h2>
+          <h2 className="text-xl font-extrabold text-amber-950">
+            Hexadecimal Clock
+          </h2>
           <p className="mt-1 text-base text-slate-700">
-            Shows the current time in hex. Use HH:MM:SS in hex, or the classic “hex color clock” format.
+            Shows the current time in hex. Use HH:MM:SS in hex, or the classic
+            “hex color clock” format.
           </p>
         </div>
 
@@ -312,7 +335,11 @@ function HexClockCard() {
           </label>
 
           <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input type="checkbox" checked={showSeconds} onChange={(e) => setShowSeconds(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={showSeconds}
+              onChange={(e) => setShowSeconds(e.target.checked)}
+            />
             Seconds
           </label>
 
@@ -327,7 +354,11 @@ function HexClockCard() {
           </label>
 
           <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input type="checkbox" checked={use24} onChange={(e) => setUse24(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={use24}
+              onChange={(e) => setUse24(e.target.checked)}
+            />
             24-hour
           </label>
 
@@ -335,7 +366,13 @@ function HexClockCard() {
             {copied ? "Copied" : "Copy"}
           </Btn>
 
-          <Btn kind="ghost" onClick={() => displayWrapRef.current && toggleFullscreen(displayWrapRef.current)} className="py-2">
+          <Btn
+            kind="ghost"
+            onClick={() =>
+              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
+            }
+            className="py-2"
+          >
             Fullscreen
           </Btn>
         </div>
@@ -415,62 +452,88 @@ function HexClockCard() {
         />
 
         {/* Normal shell */}
-        <div data-shell="normal" className="h-full w-full items-center justify-center p-6" style={{ minHeight: 360 }}>
+        <div
+          data-shell="normal"
+          className="h-full w-full items-center justify-center p-6"
+          style={{ minHeight: 360 }}
+        >
           <div className="flex w-full flex-col items-center justify-center gap-4">
             <div className="text-xs font-bold uppercase tracking-wide text-amber-800 text-center">
-              Local time · {tz} · {mode === "hms" ? "Hex HH:MM:SS" : "Hex color clock"}
+              Local time · {tz} ·{" "}
+              {mode === "hms" ? "Hex HH:MM:SS" : "Hex color clock"}
             </div>
 
             <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl text-center whitespace-nowrap">
               {hex.main}
             </div>
 
-            <div className="text-sm font-semibold text-amber-900 text-center">{hex.sub}</div>
+            <div className="text-sm font-semibold text-amber-900 text-center">
+              {hex.sub}
+            </div>
 
             {showColorPanel ? (
               <div className="w-full max-w-[720px]">
                 <div className="grid gap-4 sm:grid-cols-[1fr_auto] items-stretch">
                   <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                    <div className="text-xs font-bold uppercase tracking-wide text-amber-800">Color preview</div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                      Color preview
+                    </div>
                     <div className="mt-3 flex items-center gap-3">
                       <div
                         className="h-14 w-14 rounded-2xl border"
-                        style={{ background: color ?? "#000", borderColor: "rgba(180,83,9,.25)" }}
+                        style={{
+                          background: color ?? "#000",
+                          borderColor: "rgba(180,83,9,.25)",
+                        }}
                         aria-label="Current hex color"
                         title={color ?? "#000"}
                       />
                       <div className="min-w-0">
-                        <div className="font-mono text-xl font-black text-amber-950">{hex.main}</div>
+                        <div className="font-mono text-xl font-black text-amber-950">
+                          {hex.main}
+                        </div>
                         <div className="mt-1 text-xs font-semibold text-amber-800">
-                          This is the “hex color clock” format where RR=hours, GG=minutes, BB=seconds.
+                          This is the “hex color clock” format where RR=hours,
+                          GG=minutes, BB=seconds.
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                    <div className="text-xs font-bold uppercase tracking-wide text-amber-800">Decimal time</div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                      Decimal time
+                    </div>
                     <div className="mt-2 font-mono text-lg font-extrabold text-amber-950 whitespace-nowrap">
                       {decTime}
                     </div>
-                    <div className="mt-2 text-xs font-semibold text-amber-800">{dateText}</div>
+                    <div className="mt-2 text-xs font-semibold text-amber-800">
+                      {dateText}
+                    </div>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="rounded-2xl border border-amber-200 bg-white p-4 text-xs text-amber-900 w-full max-w-[720px]">
-                <div className="text-xs font-bold uppercase tracking-wide text-amber-800">How to read this</div>
+                <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                  How to read this
+                </div>
                 <div className="mt-2 leading-relaxed">
-                  Each part of the normal time is converted to hex. For example, minutes 15 becomes <span className="font-mono font-bold">0F</span>.
-                  This is not “base-16 timekeeping”, it’s normal time shown in hexadecimal.
+                  Each part of the normal time is converted to hex. For example,
+                  minutes 15 becomes{" "}
+                  <span className="font-mono font-bold">0F</span>. This is not
+                  “base-16 timekeeping”, it’s normal time shown in hexadecimal.
                 </div>
               </div>
             )}
 
-            <div className="text-sm font-semibold text-amber-900 text-center">{dateText}</div>
+            <div className="text-sm font-semibold text-amber-900 text-center">
+              {dateText}
+            </div>
 
             <div className="text-xs font-semibold text-amber-800 text-center">
-              Shortcuts: F fullscreen · C copy · S seconds · M ms · X mode · 1 (12h) · 2 (24h)
+              Shortcuts: F fullscreen · C copy · S seconds · M ms · X mode · 1
+              (12h) · 2 (24h)
             </div>
           </div>
         </div>
@@ -498,10 +561,21 @@ function HexClockCard() {
                   title={color ?? "#000"}
                 />
                 <div style={{ textAlign: "left", maxWidth: 760 }}>
-                  <div style={{ font: "800 16px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial", opacity: 0.95 }}>
+                  <div
+                    style={{
+                      font: "800 16px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+                      opacity: 0.95,
+                    }}
+                  >
                     {hex.sub}
                   </div>
-                  <div style={{ font: "700 13px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial", opacity: 0.85, marginTop: 6 }}>
+                  <div
+                    style={{
+                      font: "700 13px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
+                      opacity: 0.85,
+                      marginTop: 6,
+                    }}
+                  >
                     Decimal: {decTime}
                   </div>
                 </div>
@@ -510,7 +584,10 @@ function HexClockCard() {
               <div className="fs-sub">{hex.sub}</div>
             )}
 
-            <div className="fs-help">F fullscreen · C copy · S seconds · M ms · X mode · 1 (12h) · 2 (24h)</div>
+            <div className="fs-help">
+              F fullscreen · C copy · S seconds · M ms · X mode · 1 (12h) · 2
+              (24h)
+            </div>
           </div>
         </div>
       </div>
@@ -518,9 +595,12 @@ function HexClockCard() {
       {/* Shortcuts */}
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: F fullscreen · C copy · S seconds · M ms · X mode · 1 (12h) · 2 (24h)
+          Shortcuts: F fullscreen · C copy · S seconds · M ms · X mode · 1 (12h)
+          · 2 (24h)
         </div>
-        <div className="text-xs text-slate-600">Tip: click the card once so keyboard shortcuts work immediately.</div>
+        <div className="text-xs text-slate-600">
+          Tip: click the card once so keyboard shortcuts work immediately.
+        </div>
       </div>
     </Card>
   );
@@ -529,7 +609,9 @@ function HexClockCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function HexadecimalClockPage({ loaderData: { nowISO } }: Route.ComponentProps) {
+export default function HexadecimalClockPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
   const url = "https://ilovetimers.com/hexadecimal-clock";
 
   const jsonLd = {
@@ -545,8 +627,18 @@ export default function HexadecimalClockPage({ loaderData: { nowISO } }: Route.C
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://ilovetimers.com/" },
-          { "@type": "ListItem", position: 2, name: "Hexadecimal Clock", item: url },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://ilovetimers.com/",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Hexadecimal Clock",
+            item: url,
+          },
         ],
       },
       {
@@ -591,30 +683,10 @@ export default function HexadecimalClockPage({ loaderData: { nowISO } }: Route.C
 
   return (
     <main className="bg-amber-50 text-amber-950">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-            <Link to="/stopwatch" className="hover:underline">
-              Stopwatch
-            </Link>
-            <Link to="/pomodoro-timer" className="hover:underline">
-              Pomodoro
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
@@ -626,9 +698,12 @@ export default function HexadecimalClockPage({ loaderData: { nowISO } }: Route.C
             / <span className="text-amber-950">Hexadecimal Clock</span>
           </p>
 
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">Hexadecimal Clock</h1>
+          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+            Hexadecimal Clock
+          </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A <strong>hexadecimal clock</strong> that shows the current time in hex. Includes hex HH:MM:SS and a hex color clock mode.
+            A <strong>hexadecimal clock</strong> that shows the current time in
+            hex. Includes hex HH:MM:SS and a hex color clock mode.
           </p>
         </div>
       </section>
@@ -644,19 +719,25 @@ export default function HexadecimalClockPage({ loaderData: { nowISO } }: Route.C
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">Hex HH:MM:SS</h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Shows standard time values converted into hexadecimal. It’s a fun way to practice base-16.
+              Shows standard time values converted into hexadecimal. It’s a fun
+              way to practice base-16.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Hex color clock</h2>
+            <h2 className="text-lg font-bold text-amber-950">
+              Hex color clock
+            </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Displays a color like <strong>#RRGGBB</strong> where RR=hours, GG=minutes, BB=seconds (in hex).
+              Displays a color like <strong>#RRGGBB</strong> where RR=hours,
+              GG=minutes, BB=seconds (in hex).
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Keyboard shortcuts</h2>
+            <h2 className="text-lg font-bold text-amber-950">
+              Keyboard shortcuts
+            </h2>
             <ul className="mt-2 space-y-1 text-amber-800">
               <li>
                 <strong>F</strong> = Fullscreen
@@ -691,22 +772,32 @@ export default function HexadecimalClockPage({ loaderData: { nowISO } }: Route.C
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">Free hexadecimal clock (time in hex)</h2>
+          <h2 className="text-xl font-bold text-amber-950">
+            Free hexadecimal clock (time in hex)
+          </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>hexadecimal clock</strong> shows your current local time in base-16. If you searched for{" "}
-              <strong>time in hex</strong>, <strong>hex clock</strong>, or <strong>hexadecimal clock</strong>, you can read the time as hex
-              values and copy both the hex and decimal versions.
+              This <strong>hexadecimal clock</strong> shows your current local
+              time in base-16. If you searched for <strong>time in hex</strong>,{" "}
+              <strong>hex clock</strong>, or <strong>hexadecimal clock</strong>,
+              you can read the time as hex values and copy both the hex and
+              decimal versions.
             </p>
 
             <p>
               Want a different novelty clock? Try{" "}
-              <Link to="/binary-clock" className="font-semibold hover:underline">
+              <Link
+                to="/binary-clock"
+                className="font-semibold hover:underline"
+              >
                 Binary Clock
               </Link>{" "}
               or{" "}
-              <Link to="/morse-code-clock" className="font-semibold hover:underline">
+              <Link
+                to="/morse-code-clock"
+                className="font-semibold hover:underline"
+              >
                 Morse Code Clock
               </Link>
               .
@@ -720,40 +811,46 @@ export default function HexadecimalClockPage({ loaderData: { nowISO } }: Route.C
         <h2 className="text-2xl font-bold">Hexadecimal Clock FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">Does this show my local time?</summary>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              Does this show my local time?
+            </summary>
             <div className="px-5 pb-4 text-amber-800">
               Yes. It uses your device’s local time and time zone settings.
             </div>
           </details>
 
           <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">Is hex time the same as hexadecimal timekeeping?</summary>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              Is hex time the same as hexadecimal timekeeping?
+            </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Usually no. Most “hex clocks” show standard time values converted into hex, rather than changing how time is measured.
+              Usually no. Most “hex clocks” show standard time values converted
+              into hex, rather than changing how time is measured.
             </div>
           </details>
 
           <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">What is the hex color clock mode?</summary>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              What is the hex color clock mode?
+            </summary>
             <div className="px-5 pb-4 text-amber-800">
-              It displays a color code like <strong>#RRGGBB</strong> where RR corresponds to hours, GG to minutes, and BB to seconds (all in hex).
+              It displays a color code like <strong>#RRGGBB</strong> where RR
+              corresponds to hours, GG to minutes, and BB to seconds (all in
+              hex).
             </div>
           </details>
 
           <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">How do I use fullscreen?</summary>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              How do I use fullscreen?
+            </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Click <strong>Fullscreen</strong> or press <strong>F</strong> while the card is focused.
+              Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
+              while the card is focused.
             </div>
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and clock tools
-        </div>
-      </footer>
     </main>
   );
 }

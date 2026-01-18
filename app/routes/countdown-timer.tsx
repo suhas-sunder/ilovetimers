@@ -527,29 +527,6 @@ export default function CountdownTimerPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header (same style as Home) */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-50">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-            <Link to="/stopwatch" className="hover:underline">
-              Stopwatch
-            </Link>
-            <Link to="/pomodoro-timer" className="hover:underline">
-              Pomodoro
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -622,7 +599,7 @@ export default function CountdownTimerPage({
       </section>
 
       {/* SEO Section (tight, intent-focused, not spam) */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section (under TimerMenuLinks) */}
@@ -635,8 +612,8 @@ export default function CountdownTimerPage({
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
               This <strong>countdown timer</strong> is built for fast,
-              distraction-free timing. Choose a preset (1 to 60 minutes) or set a
-              custom duration, then press <strong>Start</strong> to begin. The
+              distraction-free timing. Choose a preset (1 to 60 minutes) or set
+              a custom duration, then press <strong>Start</strong> to begin. The
               display uses large digits and high contrast so it’s easy to read
               on phones, laptops, and projectors.
             </p>
@@ -755,13 +732,6 @@ export default function CountdownTimerPage({
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
-        </div>
-      </footer>
     </main>
   );
 }

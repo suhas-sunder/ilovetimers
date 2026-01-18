@@ -387,7 +387,9 @@ function ChaosTimerCard() {
   }, [minSec, maxSec]);
 
   const progressText =
-    mode === "intervals" ? `${Math.min(currentInterval, intervalCount)}/${intervalCount}` : "Single";
+    mode === "intervals"
+      ? `${Math.min(currentInterval, intervalCount)}/${intervalCount}`
+      : "Single";
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
@@ -396,8 +398,9 @@ function ChaosTimerCard() {
         <div className="min-w-0">
           <h2 className="text-xl font-extrabold text-amber-950">Chaos Timer</h2>
           <p className="mt-1 text-base text-slate-700">
-            A <strong>random timer</strong> and <strong>random interval timer</strong>. Generate random durations for
-            training, games, classroom drills, and chaos workouts.
+            A <strong>random timer</strong> and{" "}
+            <strong>random interval timer</strong>. Generate random durations
+            for training, games, classroom drills, and chaos workouts.
           </p>
         </div>
 
@@ -467,7 +470,9 @@ function ChaosTimerCard() {
             min={1}
             max={3600}
             value={minSec}
-            onChange={(e) => setMinSec(clamp(Number(e.target.value || 1), 1, 3600))}
+            onChange={(e) =>
+              setMinSec(clamp(Number(e.target.value || 1), 1, 3600))
+            }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </label>
@@ -479,7 +484,9 @@ function ChaosTimerCard() {
             min={1}
             max={3600}
             value={maxSec}
-            onChange={(e) => setMaxSec(clamp(Number(e.target.value || 45), 1, 3600))}
+            onChange={(e) =>
+              setMaxSec(clamp(Number(e.target.value || 45), 1, 3600))
+            }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </label>
@@ -529,7 +536,11 @@ function ChaosTimerCard() {
           Final beeps
         </label>
 
-        <Btn kind="ghost" onClick={() => sound && beep(880, 140)} disabled={!sound}>
+        <Btn
+          kind="ghost"
+          onClick={() => sound && beep(880, 140)}
+          disabled={!sound}
+        >
           Test beep
         </Btn>
       </div>
@@ -610,7 +621,11 @@ function ChaosTimerCard() {
         />
 
         {/* Normal shell */}
-        <div data-shell="normal" className="h-full w-full p-6" style={{ minHeight: 260 }}>
+        <div
+          data-shell="normal"
+          className="h-full w-full p-6"
+          style={{ minHeight: 260 }}
+        >
           <div className="grid gap-4 sm:grid-cols-2 sm:items-start">
             <div className="rounded-2xl border border-amber-200 bg-white p-4">
               <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
@@ -665,11 +680,15 @@ function ChaosTimerCard() {
             <div className="fs-label">Chaos Timer</div>
             <div className="fs-time">{shownTime}</div>
             <div className="fs-sub">
-              {mode === "intervals" ? `Interval ${Math.min(currentInterval, intervalCount)} of ${intervalCount}` : "Random timer"}
+              {mode === "intervals"
+                ? `Interval ${Math.min(currentInterval, intervalCount)} of ${intervalCount}`
+                : "Random timer"}
               {" · "}
               Range {rangeText}
             </div>
-            <div className="fs-help">Space start/pause · R reset · F fullscreen</div>
+            <div className="fs-help">
+              Space start/pause · R reset · F fullscreen
+            </div>
           </div>
         </div>
       </div>
@@ -769,29 +788,6 @@ export default function ChaosTimerPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-            <Link to="/stopwatch" className="hover:underline">
-              Stopwatch
-            </Link>
-            <Link to="/pomodoro-timer" className="hover:underline">
-              Pomodoro
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -806,8 +802,9 @@ export default function ChaosTimerPage({
             Chaos Timer
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A <strong>random timer</strong> and <strong>random interval timer</strong>{" "}
-            for training and games. Set a range, roll random durations, and go fullscreen.
+            A <strong>random timer</strong> and{" "}
+            <strong>random interval timer</strong> for training and games. Set a
+            range, roll random durations, and go fullscreen.
           </p>
         </div>
       </section>
@@ -825,7 +822,8 @@ export default function ChaosTimerPage({
               Random durations (no pattern)
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Useful when you want unpredictability: reaction drills, tag games, classroom games, or surprise work blocks.
+              Useful when you want unpredictability: reaction drills, tag games,
+              classroom games, or surprise work blocks.
             </p>
           </div>
 
@@ -834,7 +832,8 @@ export default function ChaosTimerPage({
               Random interval timer for training
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Set a range like <strong>10s–45s</strong> and a number of intervals. Each interval rerolls a new duration.
+              Set a range like <strong>10s–45s</strong> and a number of
+              intervals. Each interval rerolls a new duration.
             </p>
           </div>
 
@@ -870,13 +869,16 @@ export default function ChaosTimerPage({
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>random timer</strong> generates a countdown duration at random within your chosen range.
-              Use it for games, drills, and any activity where predictable timing makes things boring.
+              This <strong>random timer</strong> generates a countdown duration
+              at random within your chosen range. Use it for games, drills, and
+              any activity where predictable timing makes things boring.
             </p>
 
             <p>
-              In <strong>random interval timer</strong> mode, the tool rolls a new random duration each interval.
-              That makes it useful for training sessions where you want varied work blocks without doing math.
+              In <strong>random interval timer</strong> mode, the tool rolls a
+              new random duration each interval. That makes it useful for
+              training sessions where you want varied work blocks without doing
+              math.
             </p>
 
             <p>
@@ -885,7 +887,10 @@ export default function ChaosTimerPage({
                 HIIT
               </Link>{" "}
               or a standard{" "}
-              <Link to="/countdown-timer" className="font-semibold hover:underline">
+              <Link
+                to="/countdown-timer"
+                className="font-semibold hover:underline"
+              >
                 Countdown Timer
               </Link>
               .
@@ -932,7 +937,9 @@ export default function ChaosTimerPage({
               How does the random interval timer work?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Set a minimum and maximum duration, choose the number of intervals, and press Start. Each time an interval ends, the next interval rerolls a random duration within your range.
+              Set a minimum and maximum duration, choose the number of
+              intervals, and press Start. Each time an interval ends, the next
+              interval rerolls a random duration within your range.
             </div>
           </details>
 
@@ -941,7 +948,8 @@ export default function ChaosTimerPage({
               Can I reroll the random durations?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Press R or click Reroll. It resets the session and generates new random durations.
+              Yes. Press R or click Reroll. It resets the session and generates
+              new random durations.
             </div>
           </details>
 
@@ -950,7 +958,8 @@ export default function ChaosTimerPage({
               Does this random timer work in fullscreen?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Press Fullscreen (or F) while the card is focused for a dark view with huge digits.
+              Yes. Press Fullscreen (or F) while the card is focused for a dark
+              view with huge digits.
             </div>
           </details>
 
@@ -959,18 +968,12 @@ export default function ChaosTimerPage({
               What are the keyboard shortcuts?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset/reroll •{" "}
-              <strong>F</strong> fullscreen (when focused).
+              <strong>Space</strong> start/pause • <strong>R</strong>{" "}
+              reset/reroll • <strong>F</strong> fullscreen (when focused).
             </div>
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and random timers
-        </div>
-      </footer>
     </main>
   );
 }

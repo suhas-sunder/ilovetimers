@@ -352,10 +352,10 @@ function EmomTimerCard() {
     phase === "prep"
       ? "Get ready"
       : phase === "emom"
-      ? `Minute ${minuteIndex + 1} of ${rounds}`
-      : phase === "done"
-      ? "Complete"
-      : "Ready";
+        ? `Minute ${minuteIndex + 1} of ${rounds}`
+        : phase === "done"
+          ? "Complete"
+          : "Ready";
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
@@ -627,13 +627,17 @@ function EmomTimerCard() {
         <div data-shell="fullscreen">
           <div className="fs-inner">
             <div className="fs-label">{label}</div>
-            <div className="fs-time">{phase === "done" ? "0:00" : shownTime}</div>
+            <div className="fs-time">
+              {phase === "done" ? "0:00" : shownTime}
+            </div>
             <div className="fs-help">
               {phase === "emom"
                 ? `Round ${minuteIndex + 1} / ${rounds} · Beep each minute start`
                 : `Rounds ${rounds} · Prep ${prepSeconds}s`}
             </div>
-            <div className="fs-help">Space start/reset · R reset · F fullscreen · S sound</div>
+            <div className="fs-help">
+              Space start/reset · R reset · F fullscreen · S sound
+            </div>
           </div>
         </div>
       </div>
@@ -670,7 +674,12 @@ export default function EmomTimerPage({}: Route.ComponentProps) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://ilovetimers.com/" },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://ilovetimers.com/",
+          },
           { "@type": "ListItem", position: 2, name: "EMOM Timer", item: url },
         ],
       },
@@ -720,29 +729,6 @@ export default function EmomTimerPage({}: Route.ComponentProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-            <Link to="/tabata-timer" className="hover:underline">
-              Tabata
-            </Link>
-            <Link to="/workout-timer" className="hover:underline">
-              Workout
-            </Link>
-            <Link to="/rest-timer" className="hover:underline">
-              Rest
-            </Link>
-          </nav>
-        </div>
-      </header>
 
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
@@ -803,7 +789,10 @@ export default function EmomTimerPage({}: Route.ComponentProps) {
                 HIIT Timer
               </Link>{" "}
               or{" "}
-              <Link to="/tabata-timer" className="font-semibold hover:underline">
+              <Link
+                to="/tabata-timer"
+                className="font-semibold hover:underline"
+              >
                 Tabata Timer
               </Link>
               .
@@ -857,12 +846,6 @@ export default function EmomTimerPage({}: Route.ComponentProps) {
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - timers, clocks, and useful time tools
-        </div>
-      </footer>
     </main>
   );
 }

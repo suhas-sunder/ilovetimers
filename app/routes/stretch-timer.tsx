@@ -719,29 +719,6 @@ export default function StretchTimerPage({}: Route.ComponentProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/workout-timer" className="hover:underline">
-              Workout
-            </Link>
-            <Link to="/hiit-timer" className="hover:underline">
-              HIIT
-            </Link>
-            <Link to="/tabata-timer" className="hover:underline">
-              Tabata
-            </Link>
-            <Link to="/rest-timer" className="hover:underline">
-              Rest
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -835,8 +812,8 @@ export default function StretchTimerPage({}: Route.ComponentProps) {
               How long should I hold a stretch?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Many routines use 30 to 60 seconds. Deeper holds often use 60 to 90
-              seconds, depending on comfort and experience.
+              Many routines use 30 to 60 seconds. Deeper holds often use 60 to
+              90 seconds, depending on comfort and experience.
             </div>
           </details>
 
@@ -861,12 +838,6 @@ export default function StretchTimerPage({}: Route.ComponentProps) {
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - timers, clocks, and useful time tools
-        </div>
-      </footer>
     </main>
   );
 }

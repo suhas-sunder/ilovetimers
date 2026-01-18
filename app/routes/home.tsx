@@ -1,6 +1,8 @@
 import type { Route } from "./+types/home";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import RelatedSites from "~/clients/components/navigation/RelatedSites";
+import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 
 /* =========================================================
    META
@@ -1194,29 +1196,6 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-50">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <h1 className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </h1>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <a href="/countdown-timer" className="hover:underline">
-              Countdown
-            </a>
-            <a href="/stopwatch" className="hover:underline">
-              Stopwatch
-            </a>
-            <a href="/pomodoro-timer" className="hover:underline">
-              Pomodoro
-            </a>
-            <a href="/hiit-timer" className="hover:underline">
-              HIIT
-            </a>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -1274,6 +1253,16 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
           </p>
         </div>
       </section>
+
+      {/* Menu Links (before RelatedSites) */}
+      <TimerMenuLinks />
+
+      {/* Related Sites */}
+      <RelatedSites
+        contextTags={["finance", "learning", "tools", "productivity"]}
+        title="More tools for money + focus"
+        subtitle="A small set of related sites that fit this page."
+      />
 
       {/* =========================================================
     EXTRA SEO-RICH SECTIONS (place above FAQ)
@@ -1420,9 +1409,9 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
             Kitchen-Friendly Cooking Timers
           </h3>
           <p className="mt-2">
-            The <strong>1-click presets</strong> (1 m  to  60 m) make boiling eggs,
-            timing tea, proofing bread, or simmering stews effortless on a phone
-            or tablet stand. Audible alarms help busy cooks track multiple
+            The <strong>1-click presets</strong> (1 m to 60 m) make boiling
+            eggs, timing tea, proofing bread, or simmering stews effortless on a
+            phone or tablet stand. Audible alarms help busy cooks track multiple
             dishes without losing focus on prep.
           </p>
         </article>
@@ -1660,8 +1649,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
             <strong>5:00 break</strong> (or <strong>45:00</strong> +{" "}
             <strong>10:00</strong> for longer sessions). For timed practice, set
             a countdown for each section and restart it between parts. If you
-            tend to rush, aim to finish with <strong>2 to 3 minutes left</strong>{" "}
-            for review.
+            tend to rush, aim to finish with{" "}
+            <strong>2 to 3 minutes left</strong> for review.
           </p>
         </article>
 
@@ -1673,8 +1662,9 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
           <p className="mt-2">
             Use <strong>short repeating timers</strong> to keep an event moving
             without watching the clock: trivia rounds (5 to 10 min), game turns
-            (60 to 90 sec), or “next activity” reminders (10 to 15 min). If you’re
-            running a schedule, fullscreen the display so everyone can see it.
+            (60 to 90 sec), or “next activity” reminders (10 to 15 min). If
+            you’re running a schedule, fullscreen the display so everyone can
+            see it.
           </p>
         </article>
 
@@ -1803,13 +1793,6 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
-        </div>
-      </footer>
     </main>
   );
 }

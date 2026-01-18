@@ -56,4 +56,7 @@ export default [
   route("binary-clock", "routes/binary-clock.tsx"),
   route("hexadecimal-clock", "routes/hexadecimal-clock.tsx"),
   route("event-countdown", "routes/event-countdown.tsx"),
+  route("privacy", "routes/privacy.tsx"),
+  route("terms", "routes/terms.tsx"),
+  route("cookies", "routes/cookies.tsx"),
 ] satisfies RouteConfig;

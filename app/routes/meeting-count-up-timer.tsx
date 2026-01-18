@@ -531,29 +531,6 @@ export default function MeetingCountupTimerPage({}: Route.ComponentProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold">
-            ⏱ i💛Timers
-          </Link>
-          <nav className="hidden gap-4 text-sm font-medium sm:flex">
-            <Link to="/meeting-timer" className="hover:underline">
-              Meeting Timer
-            </Link>
-            <Link to="/presentation-timer" className="hover:underline">
-              Presentation
-            </Link>
-            <Link to="/count-up-timer" className="hover:underline">
-              Count Up
-            </Link>
-            <Link to="/countdown-timer" className="hover:underline">
-              Countdown
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -677,12 +654,6 @@ export default function MeetingCountupTimerPage({}: Route.ComponentProps) {
           </details>
         </div>
       </section>
-
-      <footer className="border-t border-amber-400 bg-amber-500/30/60">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - timers, clocks, and useful time tools
-        </div>
-      </footer>
     </main>
   );
 }

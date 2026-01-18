@@ -106,7 +106,7 @@ const TimerMenuLinks = () => {
   ];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-12">
+    <section id="all-timers" className="mx-auto max-w-7xl px-4 pb-12">
       <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
         <h2 className="text-xl font-bold text-amber-950">All timer pages</h2>
         <p className="mt-2 leading-relaxed text-amber-800">

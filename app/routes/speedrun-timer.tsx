@@ -1,5 +1,5 @@
-// app/routes/presentation-timer.tsx
-import type { Route } from "./+types/presentation-timer";
+// app/routes/speedrun-timer.tsx
+import type { Route } from "./+types/speedrun-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
@@ -11,23 +11,21 @@ import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Presentation Timer | Speaker & Meeting Timer (Fullscreen, Simple, Visible)";
+    "Speedrun Timer | Split Timer for Speedrunning (Fullscreen, Simple, Visible)";
   const description =
-    "Free presentation timer for speakers and meetings. Large fullscreen countdown, presets, custom minutes, sound optional, and keyboard shortcuts. Designed for projector and classroom visibility.";
-  const url = "https://ilovetimers.com/presentation-timer";
+    "Free speedrun timer with splits. Start/pause, record splits, undo last split, and view a clean fullscreen display. Built for speedrunning practice and casual runs without complicated setup.";
+  const url = "https://ilovetimers.com/speedrun-timer";
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "presentation timer",
-        "speaker timer",
-        "meeting timer",
-        "fullscreen timer",
-        "timer for projector",
-        "talk timer",
-        "countdown timer for presentations",
+        "speedrun timer",
+        "split timer",
+        "speedrunning timer",
+        "splits timer",
+        "timer for speedrun",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -60,13 +58,18 @@ function clamp(n: number, min: number, max: number) {
 
 const pad2 = (n: number) => n.toString().padStart(2, "0");
 
-function msToClock(ms: number) {
+function msToClockWithMs(ms: number) {
   const t = Math.max(0, Math.floor(ms));
-  const s = Math.floor(t / 1000);
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
-  return h > 0 ? `${h}:${pad2(m)}:${pad2(sec)}` : `${m}:${pad2(sec)}`;
+  const totalMs = t;
+
+  const totalSec = Math.floor(totalMs / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+
+  const hundredths = Math.floor((totalMs % 1000) / 10);
+  const base = h > 0 ? `${h}:${pad2(m)}:${pad2(s)}` : `${m}:${pad2(s)}`;
+  return `${base}.${pad2(hundredths)}`;
 }
 
 function isTypingTarget(target: EventTarget | null) {
@@ -79,46 +82,6 @@ function isTypingTarget(target: EventTarget | null) {
     tag === "SELECT" ||
     el.isContentEditable
   );
-}
-
-// WebAudio beep (same style as other pages)
-function useBeep() {
-  const ctxRef = useRef<AudioContext | null>(null);
-
-  useEffect(() => {
-    return () => {
-      ctxRef.current?.close().catch(() => {});
-    };
-  }, []);
-
-  return useCallback((freq = 880, duration = 160) => {
-    try {
-      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = (ctxRef.current ??= new Ctx());
-
-      if (ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
-
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = freq;
-      g.gain.value = 0.1;
-
-      o.connect(g);
-      g.connect(ctx.destination);
-
-      o.start();
-      window.setTimeout(() => {
-        o.stop();
-        o.disconnect();
-        g.disconnect();
-      }, duration);
-    } catch {
-      // ignore
-    }
-  }, []);
 }
 
 async function toggleFullscreen(el: HTMLElement) {
@@ -180,68 +143,42 @@ const Btn = ({
 );
 
 /* =========================================================
-   PRESENTATION TIMER CARD
+   SPEEDRUN TIMER CARD
 ========================================================= */
-function PresentationTimerCard() {
-  const beep = useBeep();
+type Split = {
+  id: string;
+  name: string;
+  totalMs: number;
+  deltaMs: number;
+};
 
-  const presetsMin = useMemo(
-    () => [3, 5, 7, 10, 12, 15, 20, 25, 30, 45, 60],
-    [],
-  );
-  const [minutes, setMinutes] = useState(10);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
+function uid() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
+function SpeedrunTimerCard() {
   const [running, setRunning] = useState(false);
+  const [nowTick, setNowTick] = useState(0);
 
-  const [sound, setSound] = useState(true);
-  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
+  const [splits, setSplits] = useState<Split[]>([]);
+  const [nextSplitName, setNextSplitName] = useState("");
 
+  const startRef = useRef<number | null>(null);
+  const elapsedBeforeStartRef = useRef<number>(0);
   const rafRef = useRef<number | null>(null);
-  const endRef = useRef<number | null>(null);
+
   const displayWrapRef = useRef<HTMLDivElement>(null);
-  const lastBeepSecondRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
-    setRunning(false);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }, [minutes]);
-
+  // tick loop for smooth display
   useEffect(() => {
     if (!running) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
-      endRef.current = null;
-      lastBeepSecondRef.current = null;
       return;
     }
 
-    if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
-    }
-
     const tick = () => {
-      const now = performance.now();
-      const rem = Math.max(0, (endRef.current ?? now) - now);
-      setRemaining(rem);
-
-      if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
-        const secLeft = Math.ceil(rem / 1000);
-        if (lastBeepSecondRef.current !== secLeft) {
-          lastBeepSecondRef.current = secLeft;
-          beep(880, 110);
-        }
-      }
-
-      if (rem <= 0) {
-        endRef.current = null;
-        setRunning(false);
-        lastBeepSecondRef.current = null;
-        if (sound) beep(660, 220);
-        return;
-      }
-
+      setNowTick(performance.now());
       rafRef.current = requestAnimationFrame(tick);
     };
 
@@ -250,22 +187,74 @@ function PresentationTimerCard() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [running, remaining, sound, finalCountdownBeeps, beep]);
+  }, [running]);
+
+  const elapsedMs = useMemo(() => {
+    if (!running || startRef.current === null)
+      return elapsedBeforeStartRef.current;
+    return elapsedBeforeStartRef.current + (nowTick - startRef.current);
+  }, [running, nowTick]);
+
+  function startPause() {
+    setRunning((r) => {
+      const next = !r;
+
+      if (next) {
+        startRef.current = performance.now();
+      } else {
+        if (startRef.current !== null) {
+          elapsedBeforeStartRef.current += performance.now() - startRef.current;
+        }
+        startRef.current = null;
+      }
+
+      return next;
+    });
+  }
 
   function reset() {
     setRunning(false);
-    setRemaining(minutes * 60 * 1000);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
+    startRef.current = null;
+    elapsedBeforeStartRef.current = 0;
+    setNowTick(0);
+    setSplits([]);
+    setNextSplitName("");
   }
 
-  function startPause() {
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
+  function addSplit() {
+    const total = Math.max(0, Math.floor(elapsedMs));
+    const prevTotal = splits.length ? splits[splits.length - 1].totalMs : 0;
+    const delta = total - prevTotal;
+
+    const name = (nextSplitName || `Split ${splits.length + 1}`).trim();
+
+    setSplits((prev) => [
+      ...prev,
+      { id: uid(), name, totalMs: total, deltaMs: delta },
+    ]);
+
+    setNextSplitName("");
   }
 
-  function setPreset(m: number) {
-    setMinutes(m);
+  function undoSplit() {
+    setSplits((prev) => prev.slice(0, -1));
+  }
+
+  function finishRun() {
+    // Add final split labeled "Finish" if not already added at the same time.
+    const total = Math.max(0, Math.floor(elapsedMs));
+    const last = splits[splits.length - 1];
+    if (last && Math.abs(last.totalMs - total) < 20) {
+      setRunning(false);
+      return;
+    }
+    const prevTotal = splits.length ? splits[splits.length - 1].totalMs : 0;
+    const delta = total - prevTotal;
+    setSplits((prev) => [
+      ...prev,
+      { id: uid(), name: "Finish", totalMs: total, deltaMs: delta },
+    ]);
+    setRunning(false);
   }
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -278,11 +267,16 @@ function PresentationTimerCard() {
       reset();
     } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
       toggleFullscreen(displayWrapRef.current);
+    } else if (e.key.toLowerCase() === "s") {
+      addSplit();
+    } else if (e.key.toLowerCase() === "u") {
+      undoSplit();
+    } else if (e.key.toLowerCase() === "e") {
+      finishRun();
     }
   };
 
-  const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
+  const shownTime = msToClockWithMs(elapsedMs);
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
@@ -290,34 +284,16 @@ function PresentationTimerCard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h2 className="text-xl font-extrabold text-amber-950">
-            Presentation Timer
+            Speedrun Timer
           </h2>
           <p className="mt-1 text-base text-slate-700">
-            Built for speakers and meetings. Big digits, quick presets,
-            fullscreen, sound optional, and keyboard shortcuts.
+            A simple <strong>speedrun timer</strong> with{" "}
+            <strong>splits</strong>. Start/pause, hit Split, undo the last
+            split, and go fullscreen for a clean run display.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
           <Btn
             kind="ghost"
             onClick={() =>
@@ -330,44 +306,47 @@ function PresentationTimerCard() {
         </div>
       </div>
 
-      {/* Presets + custom */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
-          <input
-            type="number"
-            min={1}
-            max={180}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <div className="flex items-end gap-3">
+      {/* Controls */}
+      <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]">
+        <div className="flex flex-wrap items-end gap-3">
           <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
           <Btn kind="ghost" onClick={reset}>
             Reset
           </Btn>
+          <Btn
+            kind="ghost"
+            onClick={finishRun}
+            disabled={!running && elapsedMs <= 0}
+          >
+            End run
+          </Btn>
+        </div>
+
+        <div className="flex items-end gap-3">
+          <label className="block text-sm font-semibold text-amber-950">
+            Next split name (optional)
+            <input
+              value={nextSplitName}
+              onChange={(e) => setNextSplitName(e.target.value)}
+              placeholder={`Split ${splits.length + 1}`}
+              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            />
+          </label>
+        </div>
+      </div>
+
+      {/* Split buttons */}
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <Btn onClick={addSplit} disabled={elapsedMs <= 0}>
+          Split
+        </Btn>
+        <Btn kind="ghost" onClick={undoSplit} disabled={splits.length === 0}>
+          Undo split
+        </Btn>
+
+        <div className="text-xs font-semibold text-amber-800">
+          Shortcuts: Space start/pause · S split · U undo · E end · R reset · F
+          fullscreen
         </div>
       </div>
 
@@ -375,16 +354,11 @@ function PresentationTimerCard() {
       <div
         ref={displayWrapRef}
         data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 240 }}
+        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
+        style={{ minHeight: 260 }}
         aria-live="polite"
       >
-        {/* Fullscreen CSS: show ONLY the fullscreen shell in fullscreen,
-            and ONLY the normal shell otherwise. */}
+        {/* Fullscreen CSS */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -416,19 +390,19 @@ function PresentationTimerCard() {
                 flex-direction:column;
                 align-items:center;
                 justify-content:center;
-                gap:18px;
+                gap:16px;
               }
 
               [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                font: 800 20px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
                 letter-spacing:.12em;
                 text-transform:uppercase;
                 opacity:.9;
               }
 
               [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
+                font: 900 clamp(92px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                letter-spacing:.08em;
                 text-align:center;
               }
 
@@ -444,35 +418,78 @@ function PresentationTimerCard() {
         {/* Normal shell */}
         <div
           data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          className="h-full w-full p-6"
+          style={{ minHeight: 260 }}
         >
-          <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-            <span className="text-6xl sm:text-7xl md:text-8xl">
-              {shownTime}
-            </span>
+          <div className="grid gap-4 lg:grid-cols-[1fr_1fr] lg:items-start">
+            <div className="rounded-2xl border border-amber-200 bg-white p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                Time
+              </div>
+              <div className="mt-2 font-mono text-6xl font-extrabold tracking-widest">
+                {shownTime}
+              </div>
+              <div className="mt-3 text-xs font-semibold text-amber-800">
+                Space start/pause · S split · U undo · E end · R reset · F
+                fullscreen
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-amber-200 bg-white p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                Splits
+              </div>
+
+              {splits.length === 0 ? (
+                <div className="mt-3 text-sm text-amber-900">
+                  Press <strong>S</strong> (or click Split) during a run to
+                  record split times.
+                </div>
+              ) : (
+                <div className="mt-3 max-h-60 overflow-auto rounded-xl border border-amber-200">
+                  <table className="w-full text-left text-sm">
+                    <thead className="sticky top-0 bg-amber-50">
+                      <tr className="text-xs uppercase tracking-wide text-amber-900">
+                        <th className="px-3 py-2">Split</th>
+                        <th className="px-3 py-2">Total</th>
+                        <th className="px-3 py-2">Delta</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {splits.map((s, idx) => (
+                        <tr
+                          key={s.id}
+                          className={idx % 2 ? "bg-white" : "bg-amber-50/50"}
+                        >
+                          <td className="px-3 py-2 font-semibold text-amber-950">
+                            {s.name}
+                          </td>
+                          <td className="px-3 py-2 font-mono">
+                            {msToClockWithMs(s.totalMs)}
+                          </td>
+                          <td className="px-3 py-2 font-mono">
+                            {msToClockWithMs(s.deltaMs)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Fullscreen shell */}
         <div data-shell="fullscreen">
           <div className="fs-inner">
-            <div className="fs-label">Presentation Timer</div>
+            <div className="fs-label">Speedrun Timer</div>
             <div className="fs-time">{shownTime}</div>
             <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+              Space start/pause · S split · U undo · E end · R reset · F
+              fullscreen
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
         </div>
       </div>
     </Card>
@@ -482,20 +499,20 @@ function PresentationTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function PresentationTimerPage({
+export default function SpeedrunTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/presentation-timer";
+  const url = "https://ilovetimers.com/speedrun-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Presentation Timer",
+        name: "Speedrun Timer",
         url,
         description:
-          "Fullscreen presentation timer for speakers, meetings, and projector screens. Big countdown, presets, sound optional, and shortcuts.",
+          "A simple speedrun timer with splits. Start/pause, record split times, undo last split, and go fullscreen for a clean display.",
       },
       {
         "@type": "BreadcrumbList",
@@ -509,7 +526,7 @@ export default function PresentationTimerPage({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Presentation Timer",
+            name: "Speedrun Timer",
             item: url,
           },
         ],
@@ -519,26 +536,26 @@ export default function PresentationTimerPage({
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is a presentation timer?",
+            name: "What is a speedrun timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A presentation timer is a countdown clock used by speakers to stay within a time limit. It is typically shown on a projector or second screen so the remaining time is easy to see.",
+              text: "A speedrun timer is used to track how long a run takes from start to finish. Many speedrun timers also support splits, which let you record segment times during the run.",
             },
           },
           {
             "@type": "Question",
-            name: "How do I use fullscreen on this speaker timer?",
+            name: "What are splits on a split timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Click Fullscreen (or press F) while the timer card is focused. Fullscreen mode uses a clean dark background and very large digits for long-distance visibility.",
+              text: "Splits are segment timestamps during a run. Each time you hit Split, the timer records the total time and the time since the previous split (delta).",
             },
           },
           {
             "@type": "Question",
-            name: "Can I turn sound off for meetings?",
+            name: "How do I record splits during a run?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Toggle Sound off. The timer still runs normally and you can rely on the on-screen countdown.",
+              text: "Press the Split button or use the keyboard shortcut S while the timer card is focused. You can optionally name the next split before recording it.",
             },
           },
           {
@@ -546,7 +563,7 @@ export default function PresentationTimerPage({
             name: "What are the keyboard shortcuts?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the card is focused.",
+              text: "Space starts/pauses, S records a split, U undoes the last split, E ends the run, R resets, and F toggles fullscreen while the card is focused.",
             },
           },
         ],
@@ -561,7 +578,7 @@ export default function PresentationTimerPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header (same style as Pomodoro) */}
+      {/* Sticky Header */}
       <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold">
@@ -591,16 +608,16 @@ export default function PresentationTimerPage({
             <Link to="/" className="hover:underline">
               Home
             </Link>{" "}
-            / <span className="text-amber-950">Presentation Timer</span>
+            / <span className="text-amber-950">Speedrun Timer</span>
           </p>
 
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Presentation Timer
+            Speedrun Timer
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>speaker timer</strong> and{" "}
-            <strong>meeting timer</strong> with presets and a true fullscreen
-            view. Built for projector readability and simple control.
+            A simple <strong>speedrun timer</strong> and{" "}
+            <strong>split timer</strong> for speedrunning. Start/pause, record
+            splits, undo, and go fullscreen.
           </p>
         </div>
       </section>
@@ -608,29 +625,28 @@ export default function PresentationTimerPage({
       {/* Main Tool */}
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <div>
-          <PresentationTimerCard />
+          <SpeedrunTimerCard />
         </div>
 
         {/* Quick-use hints */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Speaker timing that stays readable
+              Split timer basics
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen is designed for distance: dark background, huge digits,
-              and no clutter. Works well on projectors and TVs.
+              Use splits for sections like “Level 1”, “Boss 1”, “Chapter 3”,
+              etc. You can name the next split before you hit Split.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Common presentation presets
+              Fullscreen for runs
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>7 to 10 minutes</strong> for lightning talks,{" "}
-              <strong>12 to 15</strong> for short updates, and{" "}
-              <strong>20 to 30</strong> for longer segments.
+              Fullscreen shows a clean dark display with huge digits. Good for
+              stream overlays and second monitors.
             </p>
           </div>
 
@@ -641,6 +657,15 @@ export default function PresentationTimerPage({
             <ul className="mt-2 space-y-1 text-amber-800">
               <li>
                 <strong>Space</strong> = Start / Pause
+              </li>
+              <li>
+                <strong>S</strong> = Split
+              </li>
+              <li>
+                <strong>U</strong> = Undo split
+              </li>
+              <li>
+                <strong>E</strong> = End run
               </li>
               <li>
                 <strong>R</strong> = Reset
@@ -654,52 +679,43 @@ export default function PresentationTimerPage({
       </section>
 
       {/* Menu Links */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-bold text-amber-950">
-            Free fullscreen presentation timer for speakers, meetings, and
-            projector screens
+            Free speedrun timer with splits
           </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>presentation timer</strong> is a simple{" "}
-              <strong>speaker timer</strong> designed to keep talks and meetings
-              on schedule. Set a time limit, press Start, and keep the countdown
-              visible on a projector or second screen so you can pace yourself
-              without checking a phone.
+              This tool is a lightweight <strong>speedrun timer</strong> for
+              tracking a run from start to finish. It also works as a
+              <strong> split timer</strong> by recording segment times during
+              your run.
             </p>
 
             <p>
-              Use the preset buttons for common lengths, or enter custom minutes
-              for your agenda. Fullscreen mode is intentionally plain: a dark
-              background and very large digits so the remaining time stays
-              readable from across the room.
+              When you press Split, the timer stores the total run time and the
+              time since your last split (delta). If you make a mistake, use
+              Undo. For casual runs you can end with an optional Finish split
+              using End run.
             </p>
 
             <p>
-              If you want a general tool, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
+              If you want a general stopwatch, use{" "}
+              <Link to="/stopwatch" className="font-semibold hover:underline">
+                Stopwatch
               </Link>
-              . For silent rooms, keep Sound off. For structured work/rest
-              routines, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              or{" "}
+              . For interval training, use{" "}
               <Link to="/hiit-timer" className="font-semibold hover:underline">
                 HIIT
+              </Link>
+              . For random intervals, use{" "}
+              <Link to="/chaos-timer" className="font-semibold hover:underline">
+                Chaos Timer
               </Link>
               .
             </p>
@@ -708,30 +724,28 @@ export default function PresentationTimerPage({
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Meeting timer
+                Speedrun timer
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Keep agenda items tight: set 5 to 15 minutes per section and reset
-                between topics.
+                Track total time with hundredths.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Speaker timer
+                Split timer
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen makes it readable from the stage without tiny UI
-                distractions.
+                Record segment totals and deltas during the run.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Projector-friendly
+                Fullscreen
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Dark fullscreen reduces glare and keeps contrast high.
+                Clean dark display for streams and second monitors.
               </p>
             </div>
           </div>
@@ -740,34 +754,35 @@ export default function PresentationTimerPage({
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Presentation Timer FAQ</h2>
+        <h2 className="text-2xl font-bold">Speedrun Timer FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a speaker timer or a meeting timer?
+              How is this different from a speedcubing timer?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Both. It’s a large, simple countdown designed for talks, meetings,
-              classrooms, and any timed agenda.
+              Speedcubing timers usually focus on single solves, inspection
+              time, and averages. A speedrun timer tracks one continuous run and
+              lets you record splits for segments.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I make it look good on a projector?
+              How do I record splits?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Use <strong>Fullscreen</strong> (or press <strong>F</strong>) for
-              a dark, high-contrast view with huge digits.
+              Click Split or press <strong>S</strong> while focused. The split
+              list shows the total time and the delta since the previous split.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off?
+              Can I undo a split?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off for quiet rooms.
+              Yes. Click Undo split or press <strong>U</strong>.
             </div>
           </details>
 
@@ -776,8 +791,9 @@ export default function PresentationTimerPage({
               What are the keyboard shortcuts?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen (when focused).
+              <strong>Space</strong> start/pause • <strong>S</strong> split •{" "}
+              <strong>U</strong> undo • <strong>E</strong> end •{" "}
+              <strong>R</strong> reset • <strong>F</strong> fullscreen.
             </div>
           </details>
         </div>
@@ -785,8 +801,8 @@ export default function PresentationTimerPage({
 
       <footer className="border-t border-amber-400 bg-amber-500/30/60">
         <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
+          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and
+          speedrun timers
         </div>
       </footer>
     </main>

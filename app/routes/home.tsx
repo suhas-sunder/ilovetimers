@@ -1420,7 +1420,7 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
             Kitchen-Friendly Cooking Timers
           </h3>
           <p className="mt-2">
-            The <strong>1-click presets</strong> (1 m – 60 m) make boiling eggs,
+            The <strong>1-click presets</strong> (1 m  to  60 m) make boiling eggs,
             timing tea, proofing bread, or simmering stews effortless on a phone
             or tablet stand. Audible alarms help busy cooks track multiple
             dishes without losing focus on prep.
@@ -1660,7 +1660,7 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
             <strong>5:00 break</strong> (or <strong>45:00</strong> +{" "}
             <strong>10:00</strong> for longer sessions). For timed practice, set
             a countdown for each section and restart it between parts. If you
-            tend to rush, aim to finish with <strong>2–3 minutes left</strong>{" "}
+            tend to rush, aim to finish with <strong>2 to 3 minutes left</strong>{" "}
             for review.
           </p>
         </article>
@@ -1672,8 +1672,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
           </h3>
           <p className="mt-2">
             Use <strong>short repeating timers</strong> to keep an event moving
-            without watching the clock: trivia rounds (5–10 min), game turns
-            (60–90 sec), or “next activity” reminders (10–15 min). If you’re
+            without watching the clock: trivia rounds (5 to 10 min), game turns
+            (60 to 90 sec), or “next activity” reminders (10 to 15 min). If you’re
             running a schedule, fullscreen the display so everyone can see it.
           </p>
         </article>
@@ -1727,8 +1727,8 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
           </h3>
           <p className="mt-2">
             For gentle routines, use predictable intervals:{" "}
-            <strong>30–60 seconds</strong> on,
-            <strong> 10–30 seconds</strong> rest, repeat for a set number of
+            <strong>30 to 60 seconds</strong> on,
+            <strong> 10 to 30 seconds</strong> rest, repeat for a set number of
             rounds. If you’re following a plan from a professional, match their
             timings exactly and keep the display visible.
           </p>

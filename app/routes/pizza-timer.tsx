@@ -1,5 +1,5 @@
-// app/routes/presentation-timer.tsx
-import type { Route } from "./+types/presentation-timer";
+// app/routes/pizza-timer.tsx
+import type { Route } from "./+types/pizza-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
@@ -11,23 +11,21 @@ import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Presentation Timer | Speaker & Meeting Timer (Fullscreen, Simple, Visible)";
+    "Pizza Timer | Frozen Pizza Timer (Oven & Air Fryer) (Fullscreen, Simple, Visible)";
   const description =
-    "Free presentation timer for speakers and meetings. Large fullscreen countdown, presets, custom minutes, sound optional, and keyboard shortcuts. Designed for projector and classroom visibility.";
-  const url = "https://ilovetimers.com/presentation-timer";
+    "Free pizza timer and frozen pizza timer. Quick presets for common bake times, a big readable countdown, optional sound, and fullscreen mode. Includes a simple doneness checklist so you do not underbake or burn pizza.";
+  const url = "https://ilovetimers.com/pizza-timer";
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "presentation timer",
-        "speaker timer",
-        "meeting timer",
-        "fullscreen timer",
-        "timer for projector",
-        "talk timer",
-        "countdown timer for presentations",
+        "pizza timer",
+        "frozen pizza timer",
+        "timer for pizza",
+        "pizza oven timer",
+        "air fryer pizza timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -180,33 +178,158 @@ const Btn = ({
 );
 
 /* =========================================================
-   PRESENTATION TIMER CARD
+   PIZZA TIMER CARD
 ========================================================= */
-function PresentationTimerCard() {
+type HeatMethod = "oven" | "air_fryer" | "skillet" | "custom";
+
+type PizzaPreset = {
+  key: string;
+  label: string;
+  method: HeatMethod;
+  minutes: number;
+  seconds: number;
+  note: string;
+};
+
+const PRESETS: PizzaPreset[] = [
+  {
+    key: "frozen_oven_14",
+    label: "Frozen (Oven 14m)",
+    method: "oven",
+    minutes: 14,
+    seconds: 0,
+    note: "Common frozen pizza bake time range is roughly 12 to 18 minutes depending on brand and oven.",
+  },
+  {
+    key: "frozen_oven_16",
+    label: "Frozen (Oven 16m)",
+    method: "oven",
+    minutes: 16,
+    seconds: 0,
+    note: "Use this if you like crispier crust or your oven runs cool.",
+  },
+  {
+    key: "frozen_air_10",
+    label: "Frozen (Air fryer 10m)",
+    method: "air_fryer",
+    minutes: 10,
+    seconds: 0,
+    note: "Air fryers are faster. Check early and adjust to avoid burning cheese edges.",
+  },
+  {
+    key: "reheat_slice_6",
+    label: "Reheat slice (6m)",
+    method: "oven",
+    minutes: 6,
+    seconds: 0,
+    note: "Good for reheating a slice in an oven or toaster oven. Check at 5 minutes.",
+  },
+  {
+    key: "skillet_slice_5",
+    label: "Skillet slice (5m)",
+    method: "skillet",
+    minutes: 5,
+    seconds: 0,
+    note: "Skillet reheating can be fast. Cover with a lid to melt cheese.",
+  },
+];
+
+function PizzaTimerCard() {
   const beep = useBeep();
 
-  const presetsMin = useMemo(
-    () => [3, 5, 7, 10, 12, 15, 20, 25, 30, 45, 60],
-    [],
-  );
-  const [minutes, setMinutes] = useState(10);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
+  const [method, setMethod] = useState<HeatMethod>("oven");
+
+  const [minutes, setMinutes] = useState(14);
+  const [seconds, setSeconds] = useState(0);
+
+  const [remaining, setRemaining] = useState((minutes * 60 + seconds) * 1000);
   const [running, setRunning] = useState(false);
 
   const [sound, setSound] = useState(true);
   const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
+
+  const [checkAtMin, setCheckAtMin] = useState<number>(2);
+
+  // Reminder mode (default = repeating)
+  const [reminderMode, setReminderMode] = useState<
+    "none" | "triple" | "repeat"
+  >("repeat");
+  const [reminderFired, setReminderFired] = useState(false);
+  const reminderRepeatUntilRef = useRef<number | null>(null);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
   const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
+  const stopReminder = useCallback(() => {
+    reminderRepeatUntilRef.current = null;
+  }, []);
+
+  const playReminder = useCallback(() => {
+    if (!sound || reminderMode === "none") return;
+
+    if (reminderMode === "triple") {
+      beep(740, 140);
+      window.setTimeout(() => beep(740, 140), 220);
+      window.setTimeout(() => beep(740, 140), 440);
+      return;
+    }
+
+    // repeat mode: beep every 2s for ~10s
+    const until = performance.now() + 10_000;
+    reminderRepeatUntilRef.current = until;
+
+    const loop = () => {
+      const u = reminderRepeatUntilRef.current;
+      if (!u) return;
+      if (performance.now() >= u) {
+        reminderRepeatUntilRef.current = null;
+        return;
+      }
+      beep(740, 140);
+      window.setTimeout(loop, 2000);
+    };
+
+    loop();
+  }, [sound, reminderMode, beep]);
+
+  function applyPreset(p: PizzaPreset) {
+    setMethod(p.method);
+    setMinutes(p.minutes);
+    setSeconds(p.seconds);
+
     setRunning(false);
     endRef.current = null;
     lastBeepSecondRef.current = null;
-  }, [minutes]);
+    setRemaining((p.minutes * 60 + p.seconds) * 1000);
+
+    // default "check early" cue
+    if (p.method === "air_fryer") setCheckAtMin(2);
+    else if (p.method === "skillet") setCheckAtMin(1);
+    else setCheckAtMin(2);
+
+    setReminderFired(false);
+    stopReminder();
+  }
+
+  useEffect(() => {
+    setRemaining((minutes * 60 + seconds) * 1000);
+    setRunning(false);
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+
+    setReminderFired(false);
+    stopReminder();
+  }, [minutes, seconds, stopReminder]);
+
+  // reset reminder when starting a run
+  useEffect(() => {
+    if (!running) return;
+    setReminderFired(false);
+    stopReminder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running]);
 
   useEffect(() => {
     if (!running) {
@@ -214,6 +337,7 @@ function PresentationTimerCard() {
       rafRef.current = null;
       endRef.current = null;
       lastBeepSecondRef.current = null;
+      stopReminder();
       return;
     }
 
@@ -225,6 +349,19 @@ function PresentationTimerCard() {
       const now = performance.now();
       const rem = Math.max(0, (endRef.current ?? now) - now);
       setRemaining(rem);
+
+      // "check early" reminder when remaining hits X minutes
+      const checkAtMs = clamp(checkAtMin, 0, 60) * 60 * 1000;
+      if (
+        sound &&
+        !reminderFired &&
+        checkAtMs > 0 &&
+        rem <= checkAtMs &&
+        rem > Math.max(0, checkAtMs - 400)
+      ) {
+        setReminderFired(true);
+        playReminder();
+      }
 
       if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
         const secLeft = Math.ceil(rem / 1000);
@@ -238,6 +375,8 @@ function PresentationTimerCard() {
         endRef.current = null;
         setRunning(false);
         lastBeepSecondRef.current = null;
+        setReminderFired(false);
+        stopReminder();
         if (sound) beep(660, 220);
         return;
       }
@@ -250,22 +389,32 @@ function PresentationTimerCard() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [running, remaining, sound, finalCountdownBeeps, beep]);
+  }, [
+    running,
+    remaining,
+    sound,
+    finalCountdownBeeps,
+    beep,
+    checkAtMin,
+    reminderFired,
+    playReminder,
+    stopReminder,
+  ]);
 
   function reset() {
     setRunning(false);
-    setRemaining(minutes * 60 * 1000);
+    setRemaining((minutes * 60 + seconds) * 1000);
     endRef.current = null;
     lastBeepSecondRef.current = null;
+
+    setReminderFired(false);
+    stopReminder();
   }
 
   function startPause() {
+    if (!running && sound) beep(0, 1); // prime audio
     setRunning((r) => !r);
     lastBeepSecondRef.current = null;
-  }
-
-  function setPreset(m: number) {
-    setMinutes(m);
   }
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -284,17 +433,36 @@ function PresentationTimerCard() {
   const urgent = running && remaining > 0 && remaining <= 10_000;
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
+  const selectedNote = useMemo(() => {
+    const p = PRESETS.find(
+      (x) =>
+        x.method === method && x.minutes === minutes && x.seconds === seconds,
+    );
+    if (p) return p.note;
+    if (method === "air_fryer")
+      return "Air fryers run hot and fast. Check early to avoid burning.";
+    if (method === "skillet")
+      return "Skillet reheating is quick. Use a lid to melt cheese.";
+    return "Use your box instructions as the source of truth. This timer helps you stay on track.";
+  }, [method, minutes, seconds]);
+
+  const methodLabel = useMemo(() => {
+    if (method === "air_fryer") return "Air fryer";
+    if (method === "skillet") return "Skillet";
+    if (method === "oven") return "Oven";
+    return "Custom";
+  }, [method]);
+
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Presentation Timer
-          </h2>
+          <h2 className="text-xl font-extrabold text-amber-950">Pizza Timer</h2>
           <p className="mt-1 text-base text-slate-700">
-            Built for speakers and meetings. Big digits, quick presets,
-            fullscreen, sound optional, and keyboard shortcuts.
+            A <strong>pizza timer</strong> and{" "}
+            <strong>frozen pizza timer</strong> with quick presets. Big digits,
+            optional sound, and fullscreen mode.
           </p>
         </div>
 
@@ -330,44 +498,170 @@ function PresentationTimerCard() {
         </div>
       </div>
 
-      {/* Presets + custom */}
+      {/* Presets */}
       <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
+        {PRESETS.map((p) => (
           <button
-            key={m}
+            key={p.key}
             type="button"
-            onClick={() => setPreset(m)}
+            onClick={() => applyPreset(p)}
             className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
+              p.method === method &&
+              p.minutes === minutes &&
+              p.seconds === seconds
                 ? "bg-amber-700 text-white hover:bg-amber-800"
                 : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
             }`}
           >
-            {m}m
+            {p.label}
           </button>
         ))}
+
+        <span className="mx-1 text-xs font-semibold text-amber-800">
+          Method: {methodLabel}
+        </span>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+      {/* Inputs */}
+      <div className="mt-4 grid gap-3 sm:grid-cols-4">
         <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
+          Minutes
           <input
             type="number"
-            min={1}
+            min={0}
             max={180}
             value={minutes}
             onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
+              setMinutes(clamp(Number(e.target.value || 0), 0, 180))
             }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </label>
 
+        <label className="block text-sm font-semibold text-amber-950">
+          Seconds
+          <input
+            type="number"
+            min={0}
+            max={59}
+            value={seconds}
+            onChange={(e) =>
+              setSeconds(clamp(Number(e.target.value || 0), 0, 59))
+            }
+            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+        </label>
+
+        <label className="block text-sm font-semibold text-amber-950">
+          Method
+          <select
+            value={method}
+            onChange={(e) => setMethod(e.target.value as HeatMethod)}
+            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          >
+            <option value="oven">Oven</option>
+            <option value="air_fryer">Air fryer</option>
+            <option value="skillet">Skillet</option>
+            <option value="custom">Custom</option>
+          </select>
+        </label>
+
         <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
+          <Btn onClick={startPause} disabled={minutes * 60 + seconds <= 0}>
+            {running ? "Pause" : "Start"}
+          </Btn>
           <Btn kind="ghost" onClick={reset}>
             Reset
           </Btn>
+        </div>
+      </div>
+
+      {/* Check early */}
+      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+        <label className="block text-sm font-semibold text-amber-950">
+          Check with <span className="font-extrabold">{checkAtMin}</span> min
+          left
+          <input
+            type="number"
+            min={0}
+            max={30}
+            value={checkAtMin}
+            onChange={(e) =>
+              setCheckAtMin(clamp(Number(e.target.value || 0), 0, 30))
+            }
+            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+          <div className="mt-1 text-xs text-amber-800">
+            Reminder will sound when this much time remains.
+          </div>
+        </label>
+
+        <div className="grid gap-2">
+          <label className="block text-sm font-semibold text-amber-950">
+            Reminder style
+            <select
+              value={reminderMode}
+              onChange={(e) =>
+                setReminderMode(e.target.value as "none" | "triple" | "repeat")
+              }
+              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              disabled={!sound}
+            >
+              <option value="repeat">Repeating (10s)</option>
+              <option value="triple">Triple beep</option>
+              <option value="none">None</option>
+            </select>
+            {!sound ? (
+              <div className="mt-1 text-xs text-amber-800">
+                Enable Sound to use reminders.
+              </div>
+            ) : null}
+          </label>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Btn
+              kind="ghost"
+              onClick={() => playReminder()}
+              disabled={!sound || reminderMode === "none"}
+              className="h-fit"
+            >
+              Test reminder
+            </Btn>
+
+            <Btn
+              kind="ghost"
+              onClick={() => stopReminder()}
+              disabled={!sound}
+              className="h-fit"
+            >
+              Stop sound
+            </Btn>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+            Doneness checklist
+          </div>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>Cheese bubbling and starting to brown</li>
+            <li>Crust edges golden</li>
+            <li>Bottom crisp (lift with spatula)</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Note */}
+      <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+          Tip
+        </div>
+        <div className="mt-1 text-sm font-semibold text-amber-950">
+          {selectedNote}
+        </div>
+        <div className="mt-2 text-sm text-amber-900">
+          Frozen pizza varies a lot by brand and thickness. Use the box time as
+          the baseline and this timer to keep you honest.
         </div>
       </div>
 
@@ -380,11 +674,10 @@ function PresentationTimerCard() {
             ? "border-rose-300 bg-rose-50 text-rose-950"
             : "border-amber-300 bg-amber-50 text-amber-950"
         }`}
-        style={{ minHeight: 240 }}
+        style={{ minHeight: 260 }}
         aria-live="polite"
       >
-        {/* Fullscreen CSS: show ONLY the fullscreen shell in fullscreen,
-            and ONLY the normal shell otherwise. */}
+        {/* Fullscreen CSS */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -416,19 +709,25 @@ function PresentationTimerCard() {
                 flex-direction:column;
                 align-items:center;
                 justify-content:center;
-                gap:18px;
+                gap:16px;
               }
 
               [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                font: 800 20px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
                 letter-spacing:.12em;
                 text-transform:uppercase;
                 opacity:.9;
               }
 
               [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                font: 900 clamp(92px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                 letter-spacing:.10em;
+                text-align:center;
+              }
+
+              [data-fs-container]:fullscreen .fs-sub{
+                font: 800 18px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                opacity:.9;
                 text-align:center;
               }
 
@@ -444,21 +743,53 @@ function PresentationTimerCard() {
         {/* Normal shell */}
         <div
           data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          className="h-full w-full p-6"
+          style={{ minHeight: 260 }}
         >
-          <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-            <span className="text-6xl sm:text-7xl md:text-8xl">
+          <div className="flex w-full flex-col items-center justify-center gap-3">
+            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+              {methodLabel} · Pizza timer
+            </div>
+
+            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
               {shownTime}
-            </span>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-amber-800">
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                Check with {checkAtMin} min left
+              </span>
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                Reminder{" "}
+                {sound
+                  ? reminderMode === "repeat"
+                    ? "repeating"
+                    : reminderMode === "triple"
+                      ? "triple"
+                      : "off"
+                  : "off"}
+              </span>
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                Sound {sound ? "on" : "off"}
+              </span>
+            </div>
+
+            <div className="text-xs font-semibold text-amber-800">
+              Shortcuts: Space start/pause · R reset · F fullscreen
+            </div>
           </div>
         </div>
 
         {/* Fullscreen shell */}
         <div data-shell="fullscreen">
           <div className="fs-inner">
-            <div className="fs-label">Presentation Timer</div>
+            <div className="fs-label">Pizza Timer</div>
             <div className="fs-time">{shownTime}</div>
+            <div className="fs-sub">
+              {methodLabel}
+              {" · "}
+              Check at {checkAtMin} min left
+            </div>
             <div className="fs-help">
               Space start/pause · R reset · F fullscreen
             </div>
@@ -482,20 +813,20 @@ function PresentationTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function PresentationTimerPage({
+export default function PizzaTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/presentation-timer";
+  const url = "https://ilovetimers.com/pizza-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Presentation Timer",
+        name: "Pizza Timer",
         url,
         description:
-          "Fullscreen presentation timer for speakers, meetings, and projector screens. Big countdown, presets, sound optional, and shortcuts.",
+          "A pizza timer and frozen pizza timer with presets for common bake times, a doneness checklist, fullscreen display, and optional sound.",
       },
       {
         "@type": "BreadcrumbList",
@@ -509,7 +840,7 @@ export default function PresentationTimerPage({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Presentation Timer",
+            name: "Pizza Timer",
             item: url,
           },
         ],
@@ -519,26 +850,26 @@ export default function PresentationTimerPage({
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is a presentation timer?",
+            name: "How long does frozen pizza take?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A presentation timer is a countdown clock used by speakers to stay within a time limit. It is typically shown on a projector or second screen so the remaining time is easy to see.",
+              text: "Many frozen pizzas bake in roughly 12 to 18 minutes in a conventional oven, but it varies by brand, thickness, and oven temperature. Use the box instructions as the baseline and check early.",
             },
           },
           {
             "@type": "Question",
-            name: "How do I use fullscreen on this speaker timer?",
+            name: "Can I use this as a frozen pizza timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Click Fullscreen (or press F) while the timer card is focused. Fullscreen mode uses a clean dark background and very large digits for long-distance visibility.",
+              text: "Yes. Pick a frozen pizza preset (or set your own time) and start the countdown. You can also set a reminder to check doneness a few minutes before the end.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I turn sound off for meetings?",
+            name: "Should I set a reminder to check pizza early?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Toggle Sound off. The timer still runs normally and you can rely on the on-screen countdown.",
+              text: "Yes. Pizza can go from perfect to overdone quickly. A reminder 1 to 3 minutes before the end helps you check cheese bubbling, crust color, and crispness.",
             },
           },
           {
@@ -546,7 +877,7 @@ export default function PresentationTimerPage({
             name: "What are the keyboard shortcuts?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the card is focused.",
+              text: "Space starts/pauses, R resets, and F toggles fullscreen while the timer card is focused.",
             },
           },
         ],
@@ -561,7 +892,7 @@ export default function PresentationTimerPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header (same style as Pomodoro) */}
+      {/* Sticky Header */}
       <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold">
@@ -591,16 +922,16 @@ export default function PresentationTimerPage({
             <Link to="/" className="hover:underline">
               Home
             </Link>{" "}
-            / <span className="text-amber-950">Presentation Timer</span>
+            / <span className="text-amber-950">Pizza Timer</span>
           </p>
 
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Presentation Timer
+            Pizza Timer
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>speaker timer</strong> and{" "}
-            <strong>meeting timer</strong> with presets and a true fullscreen
-            view. Built for projector readability and simple control.
+            A <strong>pizza timer</strong> and{" "}
+            <strong>frozen pizza timer</strong> with quick presets and a
+            reminder to check doneness early.
           </p>
         </div>
       </section>
@@ -608,29 +939,28 @@ export default function PresentationTimerPage({
       {/* Main Tool */}
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <div>
-          <PresentationTimerCard />
+          <PizzaTimerCard />
         </div>
 
         {/* Quick-use hints */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Speaker timing that stays readable
+              Frozen pizza timer presets
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen is designed for distance: dark background, huge digits,
-              and no clutter. Works well on projectors and TVs.
+              Pick a preset (like 14m or 16m) and adjust to match your box
+              instructions and oven.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Common presentation presets
+              Check a few minutes early
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>7 to 10 minutes</strong> for lightning talks,{" "}
-              <strong>12 to 15</strong> for short updates, and{" "}
-              <strong>20 to 30</strong> for longer segments.
+              Pizza can finish faster than the box depending on oven
+              calibration. A check reminder prevents burning.
             </p>
           </div>
 
@@ -654,52 +984,41 @@ export default function PresentationTimerPage({
       </section>
 
       {/* Menu Links */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-bold text-amber-950">
-            Free fullscreen presentation timer for speakers, meetings, and
-            projector screens
+            Free pizza timer and frozen pizza timer
           </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>presentation timer</strong> is a simple{" "}
-              <strong>speaker timer</strong> designed to keep talks and meetings
-              on schedule. Set a time limit, press Start, and keep the countdown
-              visible on a projector or second screen so you can pace yourself
-              without checking a phone.
+              This <strong>pizza timer</strong> is a simple countdown designed
+              for cooking pizza in an oven or air fryer. It also works as a{" "}
+              <strong>frozen pizza timer</strong> by offering common bake-time
+              presets.
             </p>
 
             <p>
-              Use the preset buttons for common lengths, or enter custom minutes
-              for your agenda. Fullscreen mode is intentionally plain: a dark
-              background and very large digits so the remaining time stays
-              readable from across the room.
+              Frozen pizza brands vary a lot. Use your box instructions for
+              temperature and baseline time, then set a reminder to check
+              doneness a few minutes before the end.
             </p>
 
             <p>
-              If you want a general tool, use{" "}
+              For a general cooking countdown, use{" "}
               <Link
                 to="/countdown-timer"
                 className="font-semibold hover:underline"
               >
                 Countdown Timer
               </Link>
-              . For silent rooms, keep Sound off. For structured work/rest
-              routines, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
+              . For boiled eggs, use{" "}
+              <Link to="/egg-timer" className="font-semibold hover:underline">
+                Egg Timer
               </Link>
               .
             </p>
@@ -708,30 +1027,28 @@ export default function PresentationTimerPage({
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Meeting timer
+                Pizza timer
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Keep agenda items tight: set 5 to 15 minutes per section and reset
-                between topics.
+                Big countdown that is easy to glance at while cooking.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Speaker timer
+                Frozen pizza timer
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen makes it readable from the stage without tiny UI
-                distractions.
+                Presets for common ranges, plus easy custom time.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Projector-friendly
+                Check reminder
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Dark fullscreen reduces glare and keeps contrast high.
+                Repeating reminder by default so you actually notice it.
               </p>
             </div>
           </div>
@@ -740,34 +1057,38 @@ export default function PresentationTimerPage({
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Presentation Timer FAQ</h2>
+        <h2 className="text-2xl font-bold">Pizza Timer FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a speaker timer or a meeting timer?
+              How long does frozen pizza take?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Both. It’s a large, simple countdown designed for talks, meetings,
-              classrooms, and any timed agenda.
+              Many frozen pizzas bake in about <strong>12 to 18 minutes</strong>{" "}
+              in a conventional oven, but it depends on the brand, thickness,
+              temperature, and your oven. Use the box instructions and check
+              early.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I make it look good on a projector?
+              Should I set a timer to check pizza early?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Use <strong>Fullscreen</strong> (or press <strong>F</strong>) for
-              a dark, high-contrast view with huge digits.
+              Yes. Pizza can finish faster than expected. A reminder at{" "}
+              <strong>1 to 3 minutes</strong> remaining helps you avoid burning
+              the cheese or crust.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off?
+              Can I use this for air fryer pizza?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off for quiet rooms.
+              Yes. Choose an air fryer preset or set your own time. Air fryers
+              vary, so start checking early.
             </div>
           </details>
 
@@ -777,7 +1098,7 @@ export default function PresentationTimerPage({
             </summary>
             <div className="px-5 pb-4 text-amber-800">
               <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen (when focused).
+              <strong>F</strong> fullscreen.
             </div>
           </details>
         </div>
@@ -785,8 +1106,8 @@ export default function PresentationTimerPage({
 
       <footer className="border-t border-amber-400 bg-amber-500/30/60">
         <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
+          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and
+          cooking timers
         </div>
       </footer>
     </main>

@@ -13,7 +13,7 @@ export function meta({}: Route.MetaArgs) {
   const title =
     "Break Timer | Work Break & Rest Timer (Fullscreen, Simple, Visible)";
   const description =
-    "Free break timer for quick work breaks and rest periods. Big fullscreen countdown, popular presets (1–15 minutes), custom minutes, optional sound, and keyboard shortcuts. Great for desk breaks, study breaks, and meetings.";
+    "Free break timer for quick work breaks and rest periods. Big fullscreen countdown, popular presets (1 to 15 minutes), custom minutes, optional sound, and keyboard shortcuts. Great for desk breaks, study breaks, and meetings.";
   const url = "https://ilovetimers.com/break-timer";
   return [
     { title },
@@ -558,7 +558,7 @@ export default function BreakTimerPage({
             name: "What are good break lengths?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Common break lengths are 1–3 minutes for quick resets, 5 minutes for short breaks, and 10–15 minutes for longer rest periods. Choose a preset or set custom minutes.",
+              text: "Common break lengths are 1 to 3 minutes for quick resets, 5 minutes for short breaks, and 10 to 15 minutes for longer rest periods. Choose a preset or set custom minutes.",
             },
           },
           {
@@ -656,9 +656,9 @@ export default function BreakTimerPage({
               Popular break presets
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>1–3 minutes</strong> for a quick reset,{" "}
+              Try <strong>1 to 3 minutes</strong> for a quick reset,{" "}
               <strong>5 minutes</strong> for a short break, and{" "}
-              <strong>10–15 minutes</strong> for a longer rest.
+              <strong>10 to 15 minutes</strong> for a longer rest.
             </p>
           </div>
 
@@ -729,7 +729,7 @@ export default function BreakTimerPage({
                 Work breaks
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Take 1–5 minutes between tasks and come back on time.
+                Take 1 to 5 minutes between tasks and come back on time.
               </p>
             </div>
 
@@ -738,7 +738,7 @@ export default function BreakTimerPage({
                 Study breaks
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Use 5–15 minutes after a focus block to reset your attention.
+                Use 5 to 15 minutes after a focus block to reset your attention.
               </p>
             </div>
 
@@ -773,8 +773,8 @@ export default function BreakTimerPage({
               What is a good break length?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              1–3 minutes is great for quick resets, 5 minutes is a common short
-              break, and 10–15 minutes works for longer rest periods.
+              1 to 3 minutes is great for quick resets, 5 minutes is a common short
+              break, and 10 to 15 minutes works for longer rest periods.
             </div>
           </details>
 

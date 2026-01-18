@@ -1,5 +1,5 @@
-// app/routes/presentation-timer.tsx
-import type { Route } from "./+types/presentation-timer";
+// app/routes/chaos-timer.tsx
+import type { Route } from "./+types/chaos-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
@@ -11,23 +11,21 @@ import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Presentation Timer | Speaker & Meeting Timer (Fullscreen, Simple, Visible)";
+    "Chaos Timer | Random Timer & Random Interval Timer (Fullscreen, Simple, Visible)";
   const description =
-    "Free presentation timer for speakers and meetings. Large fullscreen countdown, presets, custom minutes, sound optional, and keyboard shortcuts. Designed for projector and classroom visibility.";
-  const url = "https://ilovetimers.com/presentation-timer";
+    "Free random timer and random interval timer. Generate random countdown durations for training, games, classroom drills, and focus sessions. Optional beep at each interval and a clean fullscreen display.";
+  const url = "https://ilovetimers.com/chaos-timer";
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "presentation timer",
-        "speaker timer",
-        "meeting timer",
-        "fullscreen timer",
-        "timer for projector",
-        "talk timer",
-        "countdown timer for presentations",
+        "random timer",
+        "random interval timer",
+        "random countdown timer",
+        "random duration timer",
+        "interval timer random",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -81,6 +79,12 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
+function randInt(min: number, max: number) {
+  const a = Math.ceil(min);
+  const b = Math.floor(max);
+  return Math.floor(Math.random() * (b - a + 1)) + a;
+}
+
 // WebAudio beep (same style as other pages)
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -91,7 +95,7 @@ function useBeep() {
     };
   }, []);
 
-  return useCallback((freq = 880, duration = 160) => {
+  return useCallback((freq = 880, duration = 120) => {
     try {
       const Ctx = window.AudioContext || (window as any).webkitAudioContext;
       const ctx = (ctxRef.current ??= new Ctx());
@@ -180,34 +184,70 @@ const Btn = ({
 );
 
 /* =========================================================
-   PRESENTATION TIMER CARD
+   CHAOS TIMER CARD
 ========================================================= */
-function PresentationTimerCard() {
+type Mode = "single" | "intervals";
+
+function ChaosTimerCard() {
   const beep = useBeep();
 
-  const presetsMin = useMemo(
-    () => [3, 5, 7, 10, 12, 15, 20, 25, 30, 45, 60],
-    [],
-  );
-  const [minutes, setMinutes] = useState(10);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
-  const [running, setRunning] = useState(false);
+  const [mode, setMode] = useState<Mode>("intervals");
 
+  // Random range
+  const [minSec, setMinSec] = useState(10);
+  const [maxSec, setMaxSec] = useState(45);
+
+  // Intervals
+  const [intervalCount, setIntervalCount] = useState(10);
+
+  // Options
   const [sound, setSound] = useState(true);
+  const [beepEachInterval, setBeepEachInterval] = useState(true);
   const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
+
+  // Timer state
+  const [running, setRunning] = useState(false);
+  const [remaining, setRemaining] = useState(0);
+
+  // Session state
+  const [currentInterval, setCurrentInterval] = useState(1);
+  const [currentDurationSec, setCurrentDurationSec] = useState(0);
+  const [nextDurationSec, setNextDurationSec] = useState(0);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
   const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
 
+  function normalizeRange() {
+    const min = clamp(minSec, 1, 3600);
+    const max = clamp(maxSec, 1, 3600);
+    return min <= max ? { min, max } : { min: max, max: min };
+  }
+
+  function rollDuration() {
+    const { min, max } = normalizeRange();
+    return randInt(min, max);
+  }
+
+  function primeNext() {
+    setNextDurationSec(rollDuration());
+  }
+
+  // Initialize durations
   useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
+    const d = rollDuration();
+    setCurrentDurationSec(d);
+    setRemaining(d * 1000);
     setRunning(false);
+    setCurrentInterval(1);
     endRef.current = null;
     lastBeepSecondRef.current = null;
-  }, [minutes]);
+    setNextDurationSec(rollDuration());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [minSec, maxSec, mode]);
 
+  // Timer loop
   useEffect(() => {
     if (!running) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -236,9 +276,38 @@ function PresentationTimerCard() {
 
       if (rem <= 0) {
         endRef.current = null;
-        setRunning(false);
         lastBeepSecondRef.current = null;
-        if (sound) beep(660, 220);
+
+        if (sound && (beepEachInterval || mode === "single")) {
+          beep(660, 220);
+        }
+
+        if (mode === "single") {
+          setRunning(false);
+          return;
+        }
+
+        // intervals mode: advance
+        setCurrentInterval((i) => {
+          const nextI = i + 1;
+          return nextI;
+        });
+
+        setCurrentDurationSec((_) => {
+          const d = nextDurationSec || rollDuration();
+          setRemaining(d * 1000);
+          // roll a new preview for the next after that
+          setNextDurationSec(rollDuration());
+          return d;
+        });
+
+        // stop if reached count
+        if (currentInterval >= intervalCount) {
+          setRunning(false);
+          return;
+        }
+
+        // continue running: set endRef when effect sees remaining update
         return;
       }
 
@@ -250,22 +319,50 @@ function PresentationTimerCard() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [running, remaining, sound, finalCountdownBeeps, beep]);
+  }, [
+    running,
+    remaining,
+    sound,
+    finalCountdownBeeps,
+    beep,
+    mode,
+    beepEachInterval,
+    currentInterval,
+    intervalCount,
+    nextDurationSec,
+  ]);
 
-  function reset() {
+  // Ensure we stop exactly at intervalCount in intervals mode
+  useEffect(() => {
+    if (mode !== "intervals") return;
+    if (!running) return;
+    if (currentInterval > intervalCount) {
+      setRunning(false);
+    }
+  }, [currentInterval, intervalCount, mode, running]);
+
+  function resetSession() {
+    const d = rollDuration();
     setRunning(false);
-    setRemaining(minutes * 60 * 1000);
+    setCurrentInterval(1);
+    setCurrentDurationSec(d);
+    setRemaining(d * 1000);
+    setNextDurationSec(rollDuration());
     endRef.current = null;
     lastBeepSecondRef.current = null;
   }
 
   function startPause() {
+    // prime audio on gesture
+    if (!running && sound) beep(0, 1);
+
+    // Guard for intervals mode: if already completed, reset first
+    if (!running && mode === "intervals" && currentInterval > intervalCount) {
+      resetSession();
+    }
+
     setRunning((r) => !r);
     lastBeepSecondRef.current = null;
-  }
-
-  function setPreset(m: number) {
-    setMinutes(m);
   }
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -275,7 +372,7 @@ function PresentationTimerCard() {
       e.preventDefault();
       startPause();
     } else if (e.key.toLowerCase() === "r") {
-      reset();
+      resetSession();
     } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
       toggleFullscreen(displayWrapRef.current);
     }
@@ -284,17 +381,23 @@ function PresentationTimerCard() {
   const urgent = running && remaining > 0 && remaining <= 10_000;
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
+  const rangeText = useMemo(() => {
+    const { min, max } = normalizeRange();
+    return `${min}s–${max}s`;
+  }, [minSec, maxSec]);
+
+  const progressText =
+    mode === "intervals" ? `${Math.min(currentInterval, intervalCount)}/${intervalCount}` : "Single";
+
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Presentation Timer
-          </h2>
+          <h2 className="text-xl font-extrabold text-amber-950">Chaos Timer</h2>
           <p className="mt-1 text-base text-slate-700">
-            Built for speakers and meetings. Big digits, quick presets,
-            fullscreen, sound optional, and keyboard shortcuts.
+            A <strong>random timer</strong> and <strong>random interval timer</strong>. Generate random durations for
+            training, games, classroom drills, and chaos workouts.
           </p>
         </div>
 
@@ -306,16 +409,6 @@ function PresentationTimerCard() {
               onChange={(e) => setSound(e.target.checked)}
             />
             Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
           </label>
 
           <Btn
@@ -330,45 +423,115 @@ function PresentationTimerCard() {
         </div>
       </div>
 
-      {/* Presets + custom */}
+      {/* Mode */}
       <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
+        <button
+          type="button"
+          onClick={() => setMode("single")}
+          className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
+            mode === "single"
+              ? "bg-amber-700 text-white hover:bg-amber-800"
+              : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
+          }`}
+        >
+          Random timer
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMode("intervals")}
+          className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
+            mode === "intervals"
+              ? "bg-amber-700 text-white hover:bg-amber-800"
+              : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
+          }`}
+        >
+          Random interval timer
+        </button>
+
+        <span className="mx-1 text-xs font-semibold text-amber-800">
+          Range: {rangeText}
+        </span>
+
+        <Btn kind="ghost" onClick={resetSession} className="py-1.5">
+          Reroll
+        </Btn>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+      {/* Inputs */}
+      <div className="mt-4 grid gap-3 sm:grid-cols-4">
         <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
+          Min seconds
           <input
             type="number"
             min={1}
-            max={180}
-            value={minutes}
+            max={3600}
+            value={minSec}
+            onChange={(e) => setMinSec(clamp(Number(e.target.value || 1), 1, 3600))}
+            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+        </label>
+
+        <label className="block text-sm font-semibold text-amber-950">
+          Max seconds
+          <input
+            type="number"
+            min={1}
+            max={3600}
+            value={maxSec}
+            onChange={(e) => setMaxSec(clamp(Number(e.target.value || 45), 1, 3600))}
+            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+        </label>
+
+        <label className="block text-sm font-semibold text-amber-950">
+          Intervals
+          <input
+            type="number"
+            min={1}
+            max={500}
+            value={intervalCount}
             onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
+              setIntervalCount(clamp(Number(e.target.value || 10), 1, 500))
             }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            disabled={mode !== "intervals"}
           />
         </label>
 
         <div className="flex items-end gap-3">
           <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
+          <Btn kind="ghost" onClick={resetSession}>
             Reset
           </Btn>
         </div>
+      </div>
+
+      {/* Sound options */}
+      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+        <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
+          <input
+            type="checkbox"
+            checked={beepEachInterval}
+            onChange={(e) => setBeepEachInterval(e.target.checked)}
+            disabled={!sound || mode !== "intervals"}
+          />
+          Beep each interval
+        </label>
+
+        <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
+          <input
+            type="checkbox"
+            checked={finalCountdownBeeps}
+            onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+            disabled={!sound}
+          />
+          Final beeps
+        </label>
+
+        <Btn kind="ghost" onClick={() => sound && beep(880, 140)} disabled={!sound}>
+          Test beep
+        </Btn>
       </div>
 
       {/* Display */}
@@ -380,11 +543,10 @@ function PresentationTimerCard() {
             ? "border-rose-300 bg-rose-50 text-rose-950"
             : "border-amber-300 bg-amber-50 text-amber-950"
         }`}
-        style={{ minHeight: 240 }}
+        style={{ minHeight: 260 }}
         aria-live="polite"
       >
-        {/* Fullscreen CSS: show ONLY the fullscreen shell in fullscreen,
-            and ONLY the normal shell otherwise. */}
+        {/* Fullscreen CSS */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -416,19 +578,25 @@ function PresentationTimerCard() {
                 flex-direction:column;
                 align-items:center;
                 justify-content:center;
-                gap:18px;
+                gap:16px;
               }
 
               [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                font: 800 20px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
                 letter-spacing:.12em;
                 text-transform:uppercase;
                 opacity:.9;
               }
 
               [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                font: 900 clamp(92px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                 letter-spacing:.10em;
+                text-align:center;
+              }
+
+              [data-fs-container]:fullscreen .fs-sub{
+                font: 800 18px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                opacity:.9;
                 text-align:center;
               }
 
@@ -442,26 +610,66 @@ function PresentationTimerCard() {
         />
 
         {/* Normal shell */}
-        <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
-        >
-          <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-            <span className="text-6xl sm:text-7xl md:text-8xl">
-              {shownTime}
-            </span>
+        <div data-shell="normal" className="h-full w-full p-6" style={{ minHeight: 260 }}>
+          <div className="grid gap-4 sm:grid-cols-2 sm:items-start">
+            <div className="rounded-2xl border border-amber-200 bg-white p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                Remaining
+              </div>
+              <div className="mt-2 font-mono text-6xl font-extrabold tracking-widest">
+                {shownTime}
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
+                  <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                    Mode
+                  </div>
+                  <div className="mt-1 font-extrabold text-amber-950">
+                    {mode === "intervals" ? "Intervals" : "Single"}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
+                  <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                    Progress
+                  </div>
+                  <div className="mt-1 font-mono text-2xl font-extrabold">
+                    {progressText}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-amber-200 bg-white p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                This interval
+              </div>
+              <div className="mt-2 font-mono text-4xl font-extrabold tracking-wide">
+                {currentDurationSec}s
+              </div>
+
+              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                Next interval preview: <strong>{nextDurationSec}s</strong>
+                <div className="mt-2 text-xs text-amber-800">
+                  Reroll resets the session and generates new random durations.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Fullscreen shell */}
         <div data-shell="fullscreen">
           <div className="fs-inner">
-            <div className="fs-label">Presentation Timer</div>
+            <div className="fs-label">Chaos Timer</div>
             <div className="fs-time">{shownTime}</div>
-            <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+            <div className="fs-sub">
+              {mode === "intervals" ? `Interval ${Math.min(currentInterval, intervalCount)} of ${intervalCount}` : "Random timer"}
+              {" · "}
+              Range {rangeText}
             </div>
+            <div className="fs-help">Space start/pause · R reset · F fullscreen</div>
           </div>
         </div>
       </div>
@@ -482,20 +690,20 @@ function PresentationTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function PresentationTimerPage({
+export default function ChaosTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/presentation-timer";
+  const url = "https://ilovetimers.com/chaos-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Presentation Timer",
+        name: "Chaos Timer",
         url,
         description:
-          "Fullscreen presentation timer for speakers, meetings, and projector screens. Big countdown, presets, sound optional, and shortcuts.",
+          "A random timer and random interval timer that generates random countdown durations for training and games, with fullscreen and optional sound.",
       },
       {
         "@type": "BreadcrumbList",
@@ -509,7 +717,7 @@ export default function PresentationTimerPage({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Presentation Timer",
+            name: "Chaos Timer",
             item: url,
           },
         ],
@@ -519,26 +727,26 @@ export default function PresentationTimerPage({
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is a presentation timer?",
+            name: "What is a random timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A presentation timer is a countdown clock used by speakers to stay within a time limit. It is typically shown on a projector or second screen so the remaining time is easy to see.",
+              text: "A random timer generates a countdown duration randomly within a range. It is useful for games, drills, and surprise timing.",
             },
           },
           {
             "@type": "Question",
-            name: "How do I use fullscreen on this speaker timer?",
+            name: "What is a random interval timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Click Fullscreen (or press F) while the timer card is focused. Fullscreen mode uses a clean dark background and very large digits for long-distance visibility.",
+              text: "A random interval timer generates a sequence of random countdowns. Each interval has a random duration within your chosen range, which is useful for training, reaction games, and classroom drills.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I turn sound off for meetings?",
+            name: "Can I control the random range?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Toggle Sound off. The timer still runs normally and you can rely on the on-screen countdown.",
+              text: "Yes. Set the minimum and maximum seconds. The timer will choose random durations within that range.",
             },
           },
           {
@@ -546,7 +754,7 @@ export default function PresentationTimerPage({
             name: "What are the keyboard shortcuts?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the card is focused.",
+              text: "Space starts/pauses, R resets and rerolls, and F toggles fullscreen while the card is focused.",
             },
           },
         ],
@@ -561,7 +769,7 @@ export default function PresentationTimerPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header (same style as Pomodoro) */}
+      {/* Sticky Header */}
       <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold">
@@ -591,16 +799,15 @@ export default function PresentationTimerPage({
             <Link to="/" className="hover:underline">
               Home
             </Link>{" "}
-            / <span className="text-amber-950">Presentation Timer</span>
+            / <span className="text-amber-950">Chaos Timer</span>
           </p>
 
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Presentation Timer
+            Chaos Timer
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>speaker timer</strong> and{" "}
-            <strong>meeting timer</strong> with presets and a true fullscreen
-            view. Built for projector readability and simple control.
+            A <strong>random timer</strong> and <strong>random interval timer</strong>{" "}
+            for training and games. Set a range, roll random durations, and go fullscreen.
           </p>
         </div>
       </section>
@@ -608,29 +815,26 @@ export default function PresentationTimerPage({
       {/* Main Tool */}
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <div>
-          <PresentationTimerCard />
+          <ChaosTimerCard />
         </div>
 
         {/* Quick-use hints */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Speaker timing that stays readable
+              Random durations (no pattern)
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen is designed for distance: dark background, huge digits,
-              and no clutter. Works well on projectors and TVs.
+              Useful when you want unpredictability: reaction drills, tag games, classroom games, or surprise work blocks.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Common presentation presets
+              Random interval timer for training
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>7 to 10 minutes</strong> for lightning talks,{" "}
-              <strong>12 to 15</strong> for short updates, and{" "}
-              <strong>20 to 30</strong> for longer segments.
+              Set a range like <strong>10s–45s</strong> and a number of intervals. Each interval rerolls a new duration.
             </p>
           </div>
 
@@ -643,7 +847,7 @@ export default function PresentationTimerPage({
                 <strong>Space</strong> = Start / Pause
               </li>
               <li>
-                <strong>R</strong> = Reset
+                <strong>R</strong> = Reset / Reroll
               </li>
               <li>
                 <strong>F</strong> = Fullscreen
@@ -654,52 +858,35 @@ export default function PresentationTimerPage({
       </section>
 
       {/* Menu Links */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-bold text-amber-950">
-            Free fullscreen presentation timer for speakers, meetings, and
-            projector screens
+            Free random timer and random interval timer
           </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>presentation timer</strong> is a simple{" "}
-              <strong>speaker timer</strong> designed to keep talks and meetings
-              on schedule. Set a time limit, press Start, and keep the countdown
-              visible on a projector or second screen so you can pace yourself
-              without checking a phone.
+              This <strong>random timer</strong> generates a countdown duration at random within your chosen range.
+              Use it for games, drills, and any activity where predictable timing makes things boring.
             </p>
 
             <p>
-              Use the preset buttons for common lengths, or enter custom minutes
-              for your agenda. Fullscreen mode is intentionally plain: a dark
-              background and very large digits so the remaining time stays
-              readable from across the room.
+              In <strong>random interval timer</strong> mode, the tool rolls a new random duration each interval.
+              That makes it useful for training sessions where you want varied work blocks without doing math.
             </p>
 
             <p>
-              If you want a general tool, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For silent rooms, keep Sound off. For structured work/rest
-              routines, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              or{" "}
+              If you want structured intervals instead of randomness, use{" "}
               <Link to="/hiit-timer" className="font-semibold hover:underline">
                 HIIT
+              </Link>{" "}
+              or a standard{" "}
+              <Link to="/countdown-timer" className="font-semibold hover:underline">
+                Countdown Timer
               </Link>
               .
             </p>
@@ -708,30 +895,28 @@ export default function PresentationTimerPage({
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Meeting timer
+                Random timer
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Keep agenda items tight: set 5 to 15 minutes per section and reset
-                between topics.
+                One random countdown duration. Reroll anytime.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Speaker timer
+                Random interval timer
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen makes it readable from the stage without tiny UI
-                distractions.
+                Multiple random intervals in a row for workouts and games.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Projector-friendly
+                Fullscreen
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Dark fullscreen reduces glare and keeps contrast high.
+                Big digits with a dark, high-contrast display.
               </p>
             </div>
           </div>
@@ -740,34 +925,32 @@ export default function PresentationTimerPage({
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Presentation Timer FAQ</h2>
+        <h2 className="text-2xl font-bold">Chaos Timer FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a speaker timer or a meeting timer?
+              How does the random interval timer work?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Both. It’s a large, simple countdown designed for talks, meetings,
-              classrooms, and any timed agenda.
+              Set a minimum and maximum duration, choose the number of intervals, and press Start. Each time an interval ends, the next interval rerolls a random duration within your range.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I make it look good on a projector?
+              Can I reroll the random durations?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Use <strong>Fullscreen</strong> (or press <strong>F</strong>) for
-              a dark, high-contrast view with huge digits.
+              Yes. Press R or click Reroll. It resets the session and generates new random durations.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off?
+              Does this random timer work in fullscreen?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off for quiet rooms.
+              Yes. Press Fullscreen (or F) while the card is focused for a dark view with huge digits.
             </div>
           </details>
 
@@ -776,7 +959,7 @@ export default function PresentationTimerPage({
               What are the keyboard shortcuts?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
+              <strong>Space</strong> start/pause • <strong>R</strong> reset/reroll •{" "}
               <strong>F</strong> fullscreen (when focused).
             </div>
           </details>
@@ -785,8 +968,7 @@ export default function PresentationTimerPage({
 
       <footer className="border-t border-amber-400 bg-amber-500/30/60">
         <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
+          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and random timers
         </div>
       </footer>
     </main>

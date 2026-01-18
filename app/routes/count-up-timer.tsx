@@ -1,34 +1,33 @@
-// app/routes/meeting-timer.tsx
-import type { Route } from "./+types/meeting-timer";
+// app/routes/count-up-timer.tsx
+import type { Route } from "./+types/count-up-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
 import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
+import RelatedSites from "~/clients/components/navigation/RelatedSites";
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Meeting Timer | Agenda Timer for Meetings (Fullscreen, Simple, Visible)";
+    "Count Up Timer | Elapsed Time & Time Since Timer (Fullscreen, Simple)";
   const description =
-    "Free meeting timer for teams and agendas. Big fullscreen countdown, quick presets, custom minutes, optional sound, and keyboard shortcuts. Great for keeping meeting sections on time.";
-  const url = "https://ilovetimers.com/meeting-timer";
+    "Free count up timer for tracking elapsed time. Start, pause, lap, reset, and fullscreen mode. Great for tasks, experiments, meetings, workouts, and productivity tracking.";
+  const url = "https://ilovetimers.com/count-up-timer";
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "meeting timer",
-        "agenda timer",
-        "timer for meetings",
-        "timebox timer",
-        "standup timer",
-        "scrum meeting timer",
-        "fullscreen timer",
-        "countdown timer for meetings",
+        "count up timer",
+        "elapsed time timer",
+        "time since timer",
+        "count up clock",
+        "timer that counts up",
+        "fullscreen count up timer",
+        "elapsed timer online",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -55,13 +54,9 @@ export function loader() {
 /* =========================================================
    UTILS
 ========================================================= */
-function clamp(n: number, min: number, max: number) {
-  return Math.min(Math.max(n, min), max);
-}
-
 const pad2 = (n: number) => n.toString().padStart(2, "0");
 
-function msToClock(ms: number) {
+function msToClockUp(ms: number) {
   const t = Math.max(0, Math.floor(ms));
   const s = Math.floor(t / 1000);
   const h = Math.floor(s / 3600);
@@ -80,46 +75,6 @@ function isTypingTarget(target: EventTarget | null) {
     tag === "SELECT" ||
     el.isContentEditable
   );
-}
-
-// WebAudio beep (same style as other pages)
-function useBeep() {
-  const ctxRef = useRef<AudioContext | null>(null);
-
-  useEffect(() => {
-    return () => {
-      ctxRef.current?.close().catch(() => {});
-    };
-  }, []);
-
-  return useCallback((freq = 880, duration = 160) => {
-    try {
-      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = (ctxRef.current ??= new Ctx());
-
-      if (ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
-
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = freq;
-      g.gain.value = 0.1;
-
-      o.connect(g);
-      g.connect(ctx.destination);
-
-      o.start();
-      window.setTimeout(() => {
-        o.stop();
-        o.disconnect();
-        g.disconnect();
-      }, duration);
-    } catch {
-      // ignore
-    }
-  }, []);
 }
 
 async function toggleFullscreen(el: HTMLElement) {
@@ -181,94 +136,82 @@ const Btn = ({
 );
 
 /* =========================================================
-   MEETING TIMER CARD
+   COUNT UP TIMER CARD
 ========================================================= */
-function MeetingTimerCard() {
-  const beep = useBeep();
+type Lap = { n: number; ms: number; splitMs: number };
 
-  const presetsMin = useMemo(
-    () => [1, 2, 3, 5, 7, 10, 12, 15, 20, 25, 30, 45, 60],
-    [],
-  );
-
-  const [minutes, setMinutes] = useState(10);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
+function CountUpTimerCard() {
   const [running, setRunning] = useState(false);
-
-  const [sound, setSound] = useState(true);
-  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
 
   const rafRef = useRef<number | null>(null);
-  const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
-  const lastBeepSecondRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
+  const baseRef = useRef<number>(0);
 
-  useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
-    setRunning(false);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }, [minutes]);
+  const [laps, setLaps] = useState<Lap[]>([]);
+  const lastLapElapsedRef = useRef<number>(0);
+
+  const displayWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!running) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
-      endRef.current = null;
-      lastBeepSecondRef.current = null;
+      startRef.current = null;
       return;
     }
 
-    if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
-    }
+    startRef.current = performance.now();
 
     const tick = () => {
       const now = performance.now();
-      const rem = Math.max(0, (endRef.current ?? now) - now);
-      setRemaining(rem);
-
-      if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
-        const secLeft = Math.ceil(rem / 1000);
-        if (lastBeepSecondRef.current !== secLeft) {
-          lastBeepSecondRef.current = secLeft;
-          beep(880, 110);
-        }
-      }
-
-      if (rem <= 0) {
-        endRef.current = null;
-        setRunning(false);
-        lastBeepSecondRef.current = null;
-        if (sound) beep(660, 220);
-        return;
-      }
-
+      const delta = now - (startRef.current ?? now);
+      const next = baseRef.current + delta;
+      setElapsed(next);
       rafRef.current = requestAnimationFrame(tick);
     };
 
     rafRef.current = requestAnimationFrame(tick);
+
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [running, remaining, sound, finalCountdownBeeps, beep]);
+  }, [running]);
+
+  function startPause() {
+    setRunning((r) => {
+      const next = !r;
+      if (next) {
+        // resume: anchor base to current elapsed
+        baseRef.current = elapsed;
+      } else {
+        // pause: freeze base at current elapsed
+        baseRef.current = elapsed;
+      }
+      return next;
+    });
+  }
 
   function reset() {
     setRunning(false);
-    setRemaining(minutes * 60 * 1000);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
+    setElapsed(0);
+    baseRef.current = 0;
+    setLaps([]);
+    lastLapElapsedRef.current = 0;
   }
 
-  function startPause() {
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
+  function lap() {
+    const split = elapsed - lastLapElapsedRef.current;
+    lastLapElapsedRef.current = elapsed;
+
+    setLaps((prev) => [
+      { n: prev.length + 1, ms: elapsed, splitMs: split },
+      ...prev,
+    ]);
   }
 
-  function setPreset(m: number) {
-    setMinutes(m);
-  }
+  const shownTime = msToClockUp(Math.ceil(elapsed / 1000) * 1000);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
@@ -278,13 +221,12 @@ function MeetingTimerCard() {
       startPause();
     } else if (e.key.toLowerCase() === "r") {
       reset();
+    } else if (e.key.toLowerCase() === "l") {
+      if (running) lap();
     } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
       toggleFullscreen(displayWrapRef.current);
     }
   };
-
-  const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
@@ -292,34 +234,15 @@ function MeetingTimerCard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h2 className="text-xl font-extrabold text-amber-950">
-            Meeting Timer
+            Count Up Timer
           </h2>
           <p className="mt-1 text-base text-slate-700">
-            Keep agenda items on time. Big digits, quick presets, fullscreen,
-            sound optional, and keyboard shortcuts.
+            Track <strong>elapsed time</strong> for tasks, experiments,
+            meetings, and “time since” activities. Includes laps and fullscreen.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
           <Btn
             kind="ghost"
             onClick={() =>
@@ -332,44 +255,18 @@ function MeetingTimerCard() {
         </div>
       </div>
 
-      {/* Presets + custom */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
+      {/* Controls */}
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
+        <Btn kind="ghost" onClick={reset}>
+          Reset
+        </Btn>
+        <Btn kind="ghost" onClick={lap} disabled={!running}>
+          Lap
+        </Btn>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
-          <input
-            type="number"
-            min={1}
-            max={180}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
+        <div className="ml-auto rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
+          Shortcuts: Space start/pause · L lap · R reset · F fullscreen
         </div>
       </div>
 
@@ -377,11 +274,7 @@ function MeetingTimerCard() {
       <div
         ref={displayWrapRef}
         data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
+        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
         style={{ minHeight: 240 }}
         aria-live="polite"
       >
@@ -457,22 +350,67 @@ function MeetingTimerCard() {
         {/* Fullscreen shell */}
         <div data-shell="fullscreen">
           <div className="fs-inner">
-            <div className="fs-label">Meeting Timer</div>
+            <div className="fs-label">Elapsed Time</div>
             <div className="fs-time">{shownTime}</div>
             <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+              Space start/pause · L lap · R reset · F fullscreen
             </div>
           </div>
         </div>
       </div>
 
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
+      {/* Laps */}
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-amber-200 bg-white p-4 shadow-sm">
+          <h3 className="text-sm font-extrabold uppercase tracking-wide text-amber-950">
+            Laps (most recent first)
+          </h3>
+
+          {laps.length === 0 ? (
+            <p className="mt-2 text-sm text-slate-700">
+              Press <strong>Lap</strong> (or <strong>L</strong>) while running
+              to record splits.
+            </p>
+          ) : (
+            <div className="mt-3 space-y-2">
+              {laps.slice(0, 10).map((l) => (
+                <div
+                  key={l.n}
+                  className="flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-3 py-2"
+                >
+                  <div className="text-sm font-semibold text-amber-950">
+                    Lap {l.n}
+                  </div>
+                  <div className="text-sm font-extrabold text-amber-950">
+                    {msToClockUp(l.ms)}
+                  </div>
+                  <div className="text-xs font-semibold text-slate-700">
+                    Split {msToClockUp(l.splitMs)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
+
+        <div className="rounded-2xl border border-amber-200 bg-white p-4 shadow-sm">
+          <h3 className="text-sm font-extrabold uppercase tracking-wide text-amber-950">
+            Common uses
+          </h3>
+          <ul className="mt-2 space-y-2 text-sm text-amber-800">
+            <li>
+              <strong>Meetings:</strong> track how long a topic takes.
+            </li>
+            <li>
+              <strong>Experiments:</strong> record elapsed time and lap splits.
+            </li>
+            <li>
+              <strong>Tasks:</strong> “time since started” for focus sessions.
+            </li>
+            <li>
+              <strong>Workouts:</strong> count up between intervals or sets.
+            </li>
+          </ul>
         </div>
       </div>
     </Card>
@@ -482,20 +420,20 @@ function MeetingTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function MeetingTimerPage({
+export default function CountUpTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/meeting-timer";
+  const url = "https://ilovetimers.com/count-up-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Meeting Timer",
+        name: "Count Up Timer",
         url,
         description:
-          "Fullscreen meeting timer for agendas and timeboxing. Big countdown, presets, optional sound, and keyboard shortcuts.",
+          "Count up timer for elapsed time and time-since tracking with fullscreen and lap splits.",
       },
       {
         "@type": "BreadcrumbList",
@@ -509,7 +447,7 @@ export default function MeetingTimerPage({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Meeting Timer",
+            name: "Count Up Timer",
             item: url,
           },
         ],
@@ -519,26 +457,26 @@ export default function MeetingTimerPage({
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is a meeting timer?",
+            name: "What is a count up timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A meeting timer is a countdown clock used to timebox agenda items so meetings stay on schedule. It is often displayed on a shared screen or projector so everyone can see the remaining time.",
+              text: "A count up timer tracks elapsed time by counting upward from zero. It is useful when you want to see how long something has been running.",
             },
           },
           {
             "@type": "Question",
-            name: "How do I use fullscreen for meetings?",
+            name: "Is this the same as a stopwatch?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Click Fullscreen (or press F) while the timer card is focused. Fullscreen mode shows a clean dark background and very large digits for easy visibility.",
+              text: "It is similar. A stopwatch is a type of count up timer, often with laps and splits. This page includes laps and a fullscreen display.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I turn sound off?",
+            name: "Does it keep running if I close the tab?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Toggle Sound off for quiet rooms. The timer still runs normally and the countdown stays visible.",
+              text: "It runs while the page is open. Some browsers may slow updates in background tabs to save power.",
             },
           },
           {
@@ -546,7 +484,7 @@ export default function MeetingTimerPage({
             name: "What are the keyboard shortcuts?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the card is focused.",
+              text: "Space starts or pauses, L records a lap, R resets, and F toggles fullscreen when focused.",
             },
           },
         ],
@@ -591,181 +529,108 @@ export default function MeetingTimerPage({
             <Link to="/" className="hover:underline">
               Home
             </Link>{" "}
-            / <span className="text-amber-950">Meeting Timer</span>
+            / <span className="text-amber-950">Count Up Timer</span>
           </p>
 
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Meeting Timer
+            Count Up Timer (Elapsed Time)
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>meeting timer</strong> for agenda timeboxing with
-            presets and a true fullscreen view. Built for shared-screen
-            visibility and simple control.
+            A <strong>count up timer</strong> tracks{" "}
+            <strong>elapsed time</strong>. Use it as a{" "}
+            <strong>time since</strong> timer for tasks, meetings, experiments,
+            workouts, and productivity tracking.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <div>
-          <MeetingTimerCard />
-        </div>
-
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Timebox agenda items
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Set a time per topic, start the countdown, and reset between
-              sections. It keeps meetings from drifting.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Common meeting presets
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>5 to 10 minutes</strong> for updates,{" "}
-              <strong>12 to 15</strong> for discussion blocks, and{" "}
-              <strong>20 to 30</strong> for deep dives.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
-        </div>
+        <CountUpTimerCard />
       </section>
 
       {/* Menu Links */}
-       <TimerMenuLinks />
-      <RelatedSites />
+      <TimerMenuLinks />
+      
+      {/* Related Sites */}
+      <RelatedSites
+        contextTags={["productivity", "focus", "learning", "tools"]}
+        title="More tools for focus and tracking"
+        subtitle="A small set of related sites that fit this page."
+      />
+
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-bold text-amber-950">
-            Free meeting timer for agendas, standups, and timeboxing
+            Free count up timer for elapsed time and “time since”
           </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>meeting timer</strong> is a simple{" "}
-              <strong>agenda timer</strong> designed to keep meetings on track.
-              Choose a time for each agenda item, press Start, and keep the
-              countdown visible on a shared screen so everyone knows how much
-              time is left.
+              A <strong>count up timer</strong> is useful when you don’t know
+              how long something will take. Instead of counting down to zero, it
+              counts upward so you can see elapsed time at a glance.
             </p>
 
             <p>
-              Use the preset buttons for common timeboxes, or enter custom
-              minutes for your agenda. Fullscreen mode is intentionally plain: a
-              dark background and very large digits for long-distance
-              visibility.
+              This makes it a strong fit for <strong>meetings</strong> (time
+              spent on agenda items),
+              <strong>experiments</strong> (elapsed duration and splits), and{" "}
+              <strong>productivity</strong> tracking (time since you started a
+              task).
             </p>
 
             <p>
-              If you want a general tool, use{" "}
+              If you need a fixed time limit, use{" "}
               <Link
                 to="/countdown-timer"
                 className="font-semibold hover:underline"
               >
                 Countdown Timer
               </Link>
-              . For silent rooms, keep Sound off. For structured work and break
-              blocks, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
+              . For a dedicated stopwatch, use{" "}
+              <Link to="/stopwatch" className="font-semibold hover:underline">
+                Stopwatch
               </Link>
               .
             </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Agenda timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Assign a timebox per topic and reset between sections to stay on
-                schedule.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Standups and check-ins
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Use 1 to 3 minutes per person, or 5 to 10 for a fast round of updates.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Shared screen friendly
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen keeps the timer readable without distracting UI.
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Meeting Timer FAQ</h2>
+        <h2 className="text-2xl font-bold">Count Up Timer FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a meeting timer or an agenda timer?
+              What is an elapsed time timer?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Both. It is a large countdown designed for meetings where you want
-              clear timeboxes per agenda item.
+              An elapsed time timer counts upward from zero and shows how much
+              time has passed.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I use it for a standup?
+              Can I use this as a “time since” timer?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Pick a preset like 1 to 3 minutes, press Start, and reset between
-              speakers. Fullscreen works well on a shared screen.
+              Yes. Start it when the activity begins and you’ll see the time
+              since it started.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off?
+              Does it work in a background tab?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off for quiet rooms.
+              It runs while the page is open. Some browsers slow updates in
+              background tabs to save battery.
             </div>
           </details>
 
@@ -774,8 +639,7 @@ export default function MeetingTimerPage({
               What are the keyboard shortcuts?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen (when focused).
+              Space start/pause, L lap, R reset, F fullscreen (when focused).
             </div>
           </details>
         </div>
@@ -783,8 +647,7 @@ export default function MeetingTimerPage({
 
       <footer className="border-t border-amber-400 bg-amber-500/30/60">
         <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
+          © 2026 i💛Timers - timers, clocks, and useful time tools
         </div>
       </footer>
     </main>

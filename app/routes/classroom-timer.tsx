@@ -727,8 +727,8 @@ export default function ClassroomTimerPage({
               Fast presets for classroom routines
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>1–3 minutes</strong> for transitions,{" "}
-              <strong>5–10</strong> for warm ups, and <strong>15–30</strong> for
+              Try <strong>1 to 3 minutes</strong> for transitions,{" "}
+              <strong>5 to 10</strong> for warm ups, and <strong>15 to 30</strong> for
               centers or independent work.
             </p>
           </div>
@@ -812,7 +812,7 @@ export default function ClassroomTimerPage({
                 Classroom routines
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Use 1–3 minutes for transitions, 5–10 for warm ups, and 15–30
+                Use 1 to 3 minutes for transitions, 5 to 10 for warm ups, and 15 to 30
                 for stations and centers.
               </p>
             </div>

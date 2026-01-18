@@ -1,5 +1,5 @@
-// app/routes/presentation-timer.tsx
-import type { Route } from "./+types/presentation-timer";
+// app/routes/video-game-challenge-timer.tsx
+import type { Route } from "./+types/video-game-challenge-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
@@ -11,23 +11,23 @@ import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Presentation Timer | Speaker & Meeting Timer (Fullscreen, Simple, Visible)";
+    "Video Game Challenge Timer | Sudden Death Timer & One Minute Challenge Timer (Fullscreen)";
   const description =
-    "Free presentation timer for speakers and meetings. Large fullscreen countdown, presets, custom minutes, sound optional, and keyboard shortcuts. Designed for projector and classroom visibility.";
-  const url = "https://ilovetimers.com/presentation-timer";
+    "Free challenge timer for games: sudden death countdown, one-minute challenge mode, and quick preset rounds. Big fullscreen display, optional sound, and keyboard shortcuts. Great for party games, streams, and competitive challenges.";
+  const url = "https://ilovetimers.com/video-game-challenge-timer";
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "presentation timer",
-        "speaker timer",
-        "meeting timer",
-        "fullscreen timer",
-        "timer for projector",
-        "talk timer",
-        "countdown timer for presentations",
+        "sudden death timer",
+        "one minute challenge timer",
+        "one minute timer challenge",
+        "challenge timer",
+        "game challenge timer",
+        "stream timer",
+        "party game timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -180,33 +180,148 @@ const Btn = ({
 );
 
 /* =========================================================
-   PRESENTATION TIMER CARD
+   VIDEO GAME CHALLENGE TIMER CARD
 ========================================================= */
-function PresentationTimerCard() {
+type Mode = "sudden_death" | "one_minute" | "custom_rounds";
+
+type ChallengePreset = {
+  key: string;
+  label: string;
+  mode: Mode;
+  minutes: number;
+  seconds: number;
+  rounds?: number;
+  restSec?: number;
+  note: string;
+};
+
+const PRESETS: ChallengePreset[] = [
+  {
+    key: "one_minute",
+    label: "One minute",
+    mode: "one_minute",
+    minutes: 1,
+    seconds: 0,
+    note: "Classic one-minute challenge.",
+  },
+  {
+    key: "sudden_death_30",
+    label: "Sudden death (30s)",
+    mode: "sudden_death",
+    minutes: 0,
+    seconds: 30,
+    note: "Short sudden death round.",
+  },
+  {
+    key: "sudden_death_60",
+    label: "Sudden death (60s)",
+    mode: "sudden_death",
+    minutes: 1,
+    seconds: 0,
+    note: "Sudden death with 60 seconds.",
+  },
+  {
+    key: "best_of_5_60",
+    label: "Best of 5 (60s)",
+    mode: "custom_rounds",
+    minutes: 1,
+    seconds: 0,
+    rounds: 5,
+    restSec: 10,
+    note: "5 rounds, 10s rest between rounds.",
+  },
+  {
+    key: "best_of_10_45",
+    label: "Best of 10 (45s)",
+    mode: "custom_rounds",
+    minutes: 0,
+    seconds: 45,
+    rounds: 10,
+    restSec: 10,
+    note: "10 rounds, 10s rest between rounds.",
+  },
+];
+
+function VideoGameChallengeTimerCard() {
   const beep = useBeep();
 
-  const presetsMin = useMemo(
-    () => [3, 5, 7, 10, 12, 15, 20, 25, 30, 45, 60],
-    [],
-  );
-  const [minutes, setMinutes] = useState(10);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
+  const [mode, setMode] = useState<Mode>("one_minute");
+
+  // duration for round
+  const [minutes, setMinutes] = useState(1);
+  const [seconds, setSeconds] = useState(0);
+
+  // multi-round
+  const [rounds, setRounds] = useState(5);
+  const [restSec, setRestSec] = useState(10);
+  const [phase, setPhase] = useState<"round" | "rest">("round");
+  const [roundIndex, setRoundIndex] = useState(1);
+
+  // timer
+  const [remaining, setRemaining] = useState((minutes * 60 + seconds) * 1000);
   const [running, setRunning] = useState(false);
 
+  // audio
   const [sound, setSound] = useState(true);
-  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
+  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(true);
+  const [beepOnPhaseChange, setBeepOnPhaseChange] = useState(true);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
   const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
+  const roundMs = useMemo(
+    () => (minutes * 60 + seconds) * 1000,
+    [minutes, seconds],
+  );
+  const restMs = useMemo(() => restSec * 1000, [restSec]);
+
+  const activeLabel = useMemo(() => {
+    if (mode === "one_minute") return "One Minute Challenge";
+    if (mode === "sudden_death") return "Sudden Death";
+    return phase === "round"
+      ? `Round ${roundIndex} of ${rounds}`
+      : `Rest (Round ${roundIndex}/${rounds})`;
+  }, [mode, phase, roundIndex, rounds]);
+
+  function applyPreset(p: ChallengePreset) {
+    setMode(p.mode);
+    setMinutes(p.minutes);
+    setSeconds(p.seconds);
+    setRounds(p.rounds ?? 5);
+    setRestSec(p.restSec ?? 10);
+
     setRunning(false);
+    setPhase("round");
+    setRoundIndex(1);
     endRef.current = null;
     lastBeepSecondRef.current = null;
-  }, [minutes]);
+
+    setRemaining((p.minutes * 60 + p.seconds) * 1000);
+  }
+
+  // when duration changes in single modes or round duration in rounds mode
+  useEffect(() => {
+    setRunning(false);
+    setPhase("round");
+    setRoundIndex(1);
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+    setRemaining(roundMs);
+  }, [roundMs, mode]);
+
+  // when rest changes
+  useEffect(() => {
+    if (mode !== "custom_rounds") return;
+    // no hard reset required, but safest
+    setRunning(false);
+    setPhase("round");
+    setRoundIndex(1);
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+    setRemaining(roundMs);
+  }, [restMs, mode, roundMs]);
 
   useEffect(() => {
     if (!running) {
@@ -236,9 +351,34 @@ function PresentationTimerCard() {
 
       if (rem <= 0) {
         endRef.current = null;
-        setRunning(false);
         lastBeepSecondRef.current = null;
+
         if (sound) beep(660, 220);
+
+        if (mode !== "custom_rounds") {
+          setRunning(false);
+          return;
+        }
+
+        // rounds mode: flip phase
+        if (phase === "round") {
+          // if this was the last round, stop
+          if (roundIndex >= rounds) {
+            setRunning(false);
+            return;
+          }
+
+          setPhase("rest");
+          setRemaining(restMs);
+          if (sound && beepOnPhaseChange) beep(520, 160);
+        } else {
+          // rest -> next round
+          setPhase("round");
+          setRoundIndex((r) => r + 1);
+          setRemaining(roundMs);
+          if (sound && beepOnPhaseChange) beep(760, 160);
+        }
+
         return;
       }
 
@@ -250,22 +390,34 @@ function PresentationTimerCard() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     };
-  }, [running, remaining, sound, finalCountdownBeeps, beep]);
+  }, [
+    running,
+    remaining,
+    sound,
+    finalCountdownBeeps,
+    beep,
+    mode,
+    phase,
+    roundIndex,
+    rounds,
+    roundMs,
+    restMs,
+    beepOnPhaseChange,
+  ]);
 
   function reset() {
     setRunning(false);
-    setRemaining(minutes * 60 * 1000);
+    setPhase("round");
+    setRoundIndex(1);
+    setRemaining(roundMs);
     endRef.current = null;
     lastBeepSecondRef.current = null;
   }
 
   function startPause() {
+    if (!running && sound) beep(0, 1); // prime audio on gesture
     setRunning((r) => !r);
     lastBeepSecondRef.current = null;
-  }
-
-  function setPreset(m: number) {
-    setMinutes(m);
   }
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -284,17 +436,25 @@ function PresentationTimerCard() {
   const urgent = running && remaining > 0 && remaining <= 10_000;
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
+  const presetNote = useMemo(() => {
+    const p = PRESETS.find(
+      (x) => x.mode === mode && x.minutes === minutes && x.seconds === seconds,
+    );
+    return p?.note ?? "Pick a preset or set your own round time.";
+  }, [mode, minutes, seconds]);
+
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h2 className="text-xl font-extrabold text-amber-950">
-            Presentation Timer
+            Video Game Challenge Timer
           </h2>
           <p className="mt-1 text-base text-slate-700">
-            Built for speakers and meetings. Big digits, quick presets,
-            fullscreen, sound optional, and keyboard shortcuts.
+            A <strong>sudden death timer</strong> and{" "}
+            <strong>one minute challenge timer</strong> for games and streams.
+            Big digits, optional sound, fullscreen, and keyboard shortcuts.
           </p>
         </div>
 
@@ -330,37 +490,65 @@ function PresentationTimerCard() {
         </div>
       </div>
 
-      {/* Presets + custom */}
+      {/* Presets */}
       <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
+        {PRESETS.map((p) => (
           <button
-            key={m}
+            key={p.key}
             type="button"
-            onClick={() => setPreset(m)}
+            onClick={() => applyPreset(p)}
             className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
+              p.mode === mode && p.minutes === minutes && p.seconds === seconds
                 ? "bg-amber-700 text-white hover:bg-amber-800"
                 : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
             }`}
           >
-            {m}m
+            {p.label}
           </button>
         ))}
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+      {/* Inputs */}
+      <div className="mt-4 grid gap-3 sm:grid-cols-4">
         <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
+          Minutes
           <input
             type="number"
-            min={1}
+            min={0}
             max={180}
             value={minutes}
             onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
+              setMinutes(clamp(Number(e.target.value || 0), 0, 180))
             }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
+        </label>
+
+        <label className="block text-sm font-semibold text-amber-950">
+          Seconds
+          <input
+            type="number"
+            min={0}
+            max={59}
+            value={seconds}
+            onChange={(e) =>
+              setSeconds(clamp(Number(e.target.value || 0), 0, 59))
+            }
+            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+        </label>
+
+        <label className="block text-sm font-semibold text-amber-950">
+          Mode
+          <select
+            value={mode}
+            onChange={(e) => setMode(e.target.value as Mode)}
+            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          >
+            <option value="one_minute">One minute challenge</option>
+            <option value="sudden_death">Sudden death</option>
+            <option value="custom_rounds">Rounds (with rest)</option>
+          </select>
         </label>
 
         <div className="flex items-end gap-3">
@@ -368,6 +556,63 @@ function PresentationTimerCard() {
           <Btn kind="ghost" onClick={reset}>
             Reset
           </Btn>
+        </div>
+      </div>
+
+      {/* Rounds controls */}
+      {mode === "custom_rounds" && (
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <label className="block text-sm font-semibold text-amber-950">
+            Rounds
+            <input
+              type="number"
+              min={1}
+              max={200}
+              value={rounds}
+              onChange={(e) =>
+                setRounds(clamp(Number(e.target.value || 5), 1, 200))
+              }
+              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            />
+          </label>
+
+          <label className="block text-sm font-semibold text-amber-950">
+            Rest (seconds)
+            <input
+              type="number"
+              min={0}
+              max={600}
+              value={restSec}
+              onChange={(e) =>
+                setRestSec(clamp(Number(e.target.value || 10), 0, 600))
+              }
+              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            />
+          </label>
+
+          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
+            <input
+              type="checkbox"
+              checked={beepOnPhaseChange}
+              onChange={(e) => setBeepOnPhaseChange(e.target.checked)}
+              disabled={!sound}
+            />
+            Beep on round/rest
+          </label>
+        </div>
+      )}
+
+      {/* Note */}
+      <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+          Quick use
+        </div>
+        <div className="mt-1 text-sm font-semibold text-amber-950">
+          {presetNote}
+        </div>
+        <div className="mt-2 text-sm text-amber-900">
+          Sudden death is just a countdown. One-minute challenge is the classic
+          60-second mode. Rounds adds short breaks for tournament play.
         </div>
       </div>
 
@@ -380,11 +625,10 @@ function PresentationTimerCard() {
             ? "border-rose-300 bg-rose-50 text-rose-950"
             : "border-amber-300 bg-amber-50 text-amber-950"
         }`}
-        style={{ minHeight: 240 }}
+        style={{ minHeight: 260 }}
         aria-live="polite"
       >
-        {/* Fullscreen CSS: show ONLY the fullscreen shell in fullscreen,
-            and ONLY the normal shell otherwise. */}
+        {/* Fullscreen CSS */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -416,19 +660,25 @@ function PresentationTimerCard() {
                 flex-direction:column;
                 align-items:center;
                 justify-content:center;
-                gap:18px;
+                gap:16px;
               }
 
               [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                font: 800 20px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
                 letter-spacing:.12em;
                 text-transform:uppercase;
                 opacity:.9;
               }
 
               [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                font: 900 clamp(92px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                 letter-spacing:.10em;
+                text-align:center;
+              }
+
+              [data-fs-container]:fullscreen .fs-sub{
+                font: 800 18px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                opacity:.9;
                 text-align:center;
               }
 
@@ -444,21 +694,51 @@ function PresentationTimerCard() {
         {/* Normal shell */}
         <div
           data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          className="h-full w-full p-6"
+          style={{ minHeight: 260 }}
         >
-          <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-            <span className="text-6xl sm:text-7xl md:text-8xl">
+          <div className="flex w-full flex-col items-center justify-center gap-3">
+            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+              {activeLabel}
+            </div>
+
+            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
               {shownTime}
-            </span>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-amber-800">
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                Mode:{" "}
+                {mode === "one_minute"
+                  ? "One minute"
+                  : mode === "sudden_death"
+                    ? "Sudden death"
+                    : "Rounds"}
+              </span>
+              {mode === "custom_rounds" && (
+                <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                  {phase === "round" ? "Round" : "Rest"} · {roundIndex}/{rounds}
+                </span>
+              )}
+            </div>
+
+            <div className="text-xs font-semibold text-amber-800">
+              Shortcuts: Space start/pause · R reset · F fullscreen
+            </div>
           </div>
         </div>
 
         {/* Fullscreen shell */}
         <div data-shell="fullscreen">
           <div className="fs-inner">
-            <div className="fs-label">Presentation Timer</div>
+            <div className="fs-label">Challenge Timer</div>
             <div className="fs-time">{shownTime}</div>
+            <div className="fs-sub">
+              {activeLabel}
+              {mode === "custom_rounds"
+                ? ` · ${phase === "round" ? "ROUND" : "REST"}`
+                : ""}
+            </div>
             <div className="fs-help">
               Space start/pause · R reset · F fullscreen
             </div>
@@ -482,20 +762,20 @@ function PresentationTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function PresentationTimerPage({
+export default function VideoGameChallengeTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/presentation-timer";
+  const url = "https://ilovetimers.com/video-game-challenge-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Presentation Timer",
+        name: "Video Game Challenge Timer",
         url,
         description:
-          "Fullscreen presentation timer for speakers, meetings, and projector screens. Big countdown, presets, sound optional, and shortcuts.",
+          "A sudden death timer and one minute challenge timer for games and streams with fullscreen display, optional sound, and shortcuts.",
       },
       {
         "@type": "BreadcrumbList",
@@ -509,7 +789,7 @@ export default function PresentationTimerPage({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Presentation Timer",
+            name: "Video Game Challenge Timer",
             item: url,
           },
         ],
@@ -519,26 +799,26 @@ export default function PresentationTimerPage({
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is a presentation timer?",
+            name: "What is a sudden death timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A presentation timer is a countdown clock used by speakers to stay within a time limit. It is typically shown on a projector or second screen so the remaining time is easy to see.",
+              text: "A sudden death timer is a short countdown used to create pressure in a game or challenge. When the timer hits zero, the round ends immediately.",
             },
           },
           {
             "@type": "Question",
-            name: "How do I use fullscreen on this speaker timer?",
+            name: "What is a one minute challenge timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Click Fullscreen (or press F) while the timer card is focused. Fullscreen mode uses a clean dark background and very large digits for long-distance visibility.",
+              text: "A one minute challenge timer is a 60-second countdown used for quick challenges. It is common in party games, streams, and skill challenges.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I turn sound off for meetings?",
+            name: "Can I run multiple rounds for a tournament?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Toggle Sound off. The timer still runs normally and you can rely on the on-screen countdown.",
+              text: "Yes. Switch to Rounds mode, set the number of rounds and rest time, then start. The timer automatically alternates between rounds and rests.",
             },
           },
           {
@@ -561,7 +841,7 @@ export default function PresentationTimerPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header (same style as Pomodoro) */}
+      {/* Sticky Header */}
       <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold">
@@ -591,16 +871,17 @@ export default function PresentationTimerPage({
             <Link to="/" className="hover:underline">
               Home
             </Link>{" "}
-            / <span className="text-amber-950">Presentation Timer</span>
+            / <span className="text-amber-950">Video Game Challenge Timer</span>
           </p>
 
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Presentation Timer
+            Video Game Challenge Timer
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>speaker timer</strong> and{" "}
-            <strong>meeting timer</strong> with presets and a true fullscreen
-            view. Built for projector readability and simple control.
+            A <strong>sudden death timer</strong> and{" "}
+            <strong>one minute challenge timer</strong> for fast rounds,
+            tournaments, and stream challenges. One click presets, big digits,
+            and fullscreen.
           </p>
         </div>
       </section>
@@ -608,29 +889,28 @@ export default function PresentationTimerPage({
       {/* Main Tool */}
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <div>
-          <PresentationTimerCard />
+          <VideoGameChallengeTimerCard />
         </div>
 
         {/* Quick-use hints */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Speaker timing that stays readable
+              Sudden death timer
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen is designed for distance: dark background, huge digits,
-              and no clutter. Works well on projectors and TVs.
+              Use 30 to 60 seconds for clutch situations. When it hits zero, the
+              round ends instantly.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Common presentation presets
+              One minute challenge timer
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>7 to 10 minutes</strong> for lightning talks,{" "}
-              <strong>12 to 15</strong> for short updates, and{" "}
-              <strong>20 to 30</strong> for longer segments.
+              The classic 60-second format for quick skill challenges, party
+              games, and stream segments.
             </p>
           </div>
 
@@ -654,52 +934,43 @@ export default function PresentationTimerPage({
       </section>
 
       {/* Menu Links */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-bold text-amber-950">
-            Free fullscreen presentation timer for speakers, meetings, and
-            projector screens
+            Free sudden death timer and one minute challenge timer
           </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>presentation timer</strong> is a simple{" "}
-              <strong>speaker timer</strong> designed to keep talks and meetings
-              on schedule. Set a time limit, press Start, and keep the countdown
-              visible on a projector or second screen so you can pace yourself
-              without checking a phone.
+              This page is a fast <strong>challenge timer</strong> built for
+              games. Use it as a <strong>sudden death timer</strong> for short,
+              high-pressure rounds or a{" "}
+              <strong>one minute challenge timer</strong> for classic 60-second
+              challenges.
             </p>
 
             <p>
-              Use the preset buttons for common lengths, or enter custom minutes
-              for your agenda. Fullscreen mode is intentionally plain: a dark
-              background and very large digits so the remaining time stays
-              readable from across the room.
+              If you want multiple rounds, switch to <strong>Rounds</strong>{" "}
+              mode to run a quick tournament format with short breaks.
+              Fullscreen mode keeps the timer readable on a TV, projector, or
+              stream overlay.
             </p>
 
             <p>
-              If you want a general tool, use{" "}
+              For random timing instead of fixed rounds, use{" "}
+              <Link to="/chaos-timer" className="font-semibold hover:underline">
+                Chaos Timer
+              </Link>
+              . For general timing, use{" "}
               <Link
                 to="/countdown-timer"
                 className="font-semibold hover:underline"
               >
                 Countdown Timer
-              </Link>
-              . For silent rooms, keep Sound off. For structured work/rest
-              routines, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
               </Link>
               .
             </p>
@@ -708,30 +979,28 @@ export default function PresentationTimerPage({
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Meeting timer
+                Sudden death
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Keep agenda items tight: set 5 to 15 minutes per section and reset
-                between topics.
+                Short countdown that ends the round instantly.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Speaker timer
+                One-minute challenge
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen makes it readable from the stage without tiny UI
-                distractions.
+                Classic 60-second mode for quick challenges.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Projector-friendly
+                Rounds
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Dark fullscreen reduces glare and keeps contrast high.
+                Tournament-friendly rounds with optional rest.
               </p>
             </div>
           </div>
@@ -740,34 +1009,36 @@ export default function PresentationTimerPage({
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Presentation Timer FAQ</h2>
+        <h2 className="text-2xl font-bold">Challenge Timer FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a speaker timer or a meeting timer?
+              How do I use this as a sudden death timer?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Both. It’s a large, simple countdown designed for talks, meetings,
-              classrooms, and any timed agenda.
+              Pick a short preset like 30s or 60s (or set your own). Start the
+              timer. When it hits zero, the round ends immediately.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I make it look good on a projector?
+              Is there a one minute challenge timer mode?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Use <strong>Fullscreen</strong> (or press <strong>F</strong>) for
-              a dark, high-contrast view with huge digits.
+              Yes. Use the One Minute preset for a 60-second countdown. It is
+              the most common challenge format.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off?
+              Can it run multiple rounds?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off for quiet rooms.
+              Yes. Switch to Rounds mode, set the number of rounds and rest
+              duration, then start. The timer alternates between rounds and rest
+              automatically.
             </div>
           </details>
 
@@ -785,8 +1056,8 @@ export default function PresentationTimerPage({
 
       <footer className="border-t border-amber-400 bg-amber-500/30/60">
         <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
+          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and
+          challenge timers
         </div>
       </footer>
     </main>

@@ -512,7 +512,7 @@ function PomodoroCard() {
             </label>
 
             <p className="mt-2 text-sm text-slate-700">
-              Common choice: 10–20 minutes.
+              Common choice: 10 to 20 minutes.
             </p>
           </div>
         </div>

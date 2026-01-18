@@ -943,7 +943,7 @@ export default function HIITTimerPage({
                 Circuits
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Configure longer work blocks (30–60s) with rest and repeat for
+                Configure longer work blocks (30 to 60s) with rest and repeat for
                 the rounds you need.
               </p>
             </div>

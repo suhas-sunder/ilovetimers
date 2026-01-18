@@ -1,5 +1,5 @@
-// app/routes/presentation-timer.tsx
-import type { Route } from "./+types/presentation-timer";
+// app/routes/digital-clock.tsx
+import type { Route } from "./+types/digital-clock";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
@@ -10,24 +10,23 @@ import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Presentation Timer | Speaker & Meeting Timer (Fullscreen, Simple, Visible)";
+  const title = "Digital Clock | Current Time (Big, Fullscreen, Readable)";
   const description =
-    "Free presentation timer for speakers and meetings. Large fullscreen countdown, presets, custom minutes, sound optional, and keyboard shortcuts. Designed for projector and classroom visibility.";
-  const url = "https://ilovetimers.com/presentation-timer";
+    "Free digital clock showing your current local time. Big readable digits, optional seconds, 12/24-hour toggle, fullscreen mode, and copy-friendly output. Great for classrooms, offices, and wall displays.";
+  const url = "https://ilovetimers.com/digital-clock";
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "presentation timer",
-        "speaker timer",
-        "meeting timer",
-        "fullscreen timer",
-        "timer for projector",
-        "talk timer",
-        "countdown timer for presentations",
+        "digital clock",
+        "current time",
+        "current local time",
+        "time now",
+        "clock online",
+        "digital clock fullscreen",
+        "big digital clock",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -54,21 +53,6 @@ export function loader() {
 /* =========================================================
    UTILS
 ========================================================= */
-function clamp(n: number, min: number, max: number) {
-  return Math.min(Math.max(n, min), max);
-}
-
-const pad2 = (n: number) => n.toString().padStart(2, "0");
-
-function msToClock(ms: number) {
-  const t = Math.max(0, Math.floor(ms));
-  const s = Math.floor(t / 1000);
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
-  return h > 0 ? `${h}:${pad2(m)}:${pad2(sec)}` : `${m}:${pad2(sec)}`;
-}
-
 function isTypingTarget(target: EventTarget | null) {
   const el = target as HTMLElement | null;
   if (!el) return false;
@@ -81,51 +65,71 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (same style as other pages)
-function useBeep() {
-  const ctxRef = useRef<AudioContext | null>(null);
-
-  useEffect(() => {
-    return () => {
-      ctxRef.current?.close().catch(() => {});
-    };
-  }, []);
-
-  return useCallback((freq = 880, duration = 160) => {
-    try {
-      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = (ctxRef.current ??= new Ctx());
-
-      if (ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
-
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = freq;
-      g.gain.value = 0.1;
-
-      o.connect(g);
-      g.connect(ctx.destination);
-
-      o.start();
-      window.setTimeout(() => {
-        o.stop();
-        o.disconnect();
-        g.disconnect();
-      }, duration);
-    } catch {
-      // ignore
-    }
-  }, []);
-}
-
 async function toggleFullscreen(el: HTMLElement) {
   if (!document.fullscreenElement) {
     await el.requestFullscreen().catch(() => {});
   } else {
     await document.exitFullscreen().catch(() => {});
+  }
+}
+
+function safeTimeZone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+  } catch {
+    return "Local";
+  }
+}
+
+function formatLocalTime(
+  d: Date,
+  opts: { use24: boolean; showSeconds: boolean },
+) {
+  const { use24, showSeconds } = opts;
+  try {
+    const fmt = new Intl.DateTimeFormat(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: showSeconds ? "2-digit" : undefined,
+      hour12: !use24,
+    });
+    return fmt
+      .format(d)
+      .replace(/\u200e/g, "")
+      .trim();
+  } catch {
+    const pad2 = (n: number) => String(n).padStart(2, "0");
+    const h = d.getHours();
+    const m = d.getMinutes();
+    const s = d.getSeconds();
+
+    if (use24) {
+      return showSeconds
+        ? `${pad2(h)}:${pad2(m)}:${pad2(s)}`
+        : `${pad2(h)}:${pad2(m)}`;
+    }
+
+    const ampm = h >= 12 ? "PM" : "AM";
+    const h12 = h % 12 || 12;
+    return showSeconds
+      ? `${pad2(h12)}:${pad2(m)}:${pad2(s)} ${ampm}`
+      : `${pad2(h12)}:${pad2(m)} ${ampm}`;
+  }
+}
+
+function formatLocalDateLine(d: Date) {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+    })
+      .format(d)
+      .replace(/\u200e/g, "")
+      .trim();
+  } catch {
+    return d.toDateString();
   }
 }
 
@@ -180,109 +184,61 @@ const Btn = ({
 );
 
 /* =========================================================
-   PRESENTATION TIMER CARD
+   DIGITAL CLOCK CARD
 ========================================================= */
-function PresentationTimerCard() {
-  const beep = useBeep();
+function DigitalClockCard() {
+  const [now, setNow] = useState<Date>(() => new Date());
+  const [use24, setUse24] = useState(true);
+  const [showSeconds, setShowSeconds] = useState(true);
+  const [copied, setCopied] = useState(false);
 
-  const presetsMin = useMemo(
-    () => [3, 5, 7, 10, 12, 15, 20, 25, 30, 45, 60],
-    [],
-  );
-  const [minutes, setMinutes] = useState(10);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
-  const [running, setRunning] = useState(false);
-
-  const [sound, setSound] = useState(true);
-  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
-
-  const rafRef = useRef<number | null>(null);
-  const endRef = useRef<number | null>(null);
+  const tz = useMemo(() => safeTimeZone(), []);
   const displayWrapRef = useRef<HTMLDivElement>(null);
-  const lastBeepSecondRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
-    setRunning(false);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }, [minutes]);
+    const ms = showSeconds ? 1000 : 15000;
+    const t = window.setInterval(() => setNow(new Date()), ms);
+    return () => window.clearInterval(t);
+  }, [showSeconds]);
 
-  useEffect(() => {
-    if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      endRef.current = null;
-      lastBeepSecondRef.current = null;
-      return;
+  const timeText = useMemo(
+    () => formatLocalTime(now, { use24, showSeconds }),
+    [now, use24, showSeconds],
+  );
+
+  const dateText = useMemo(() => formatLocalDateLine(now), [now]);
+
+  const copyText = useMemo(() => {
+    // Include both readable and ISO for copy usefulness.
+    const iso = now.toISOString();
+    return `${timeText} (${tz}) - ${dateText} (ISO: ${iso})`;
+  }, [timeText, tz, dateText, now]);
+
+  const copy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(copyText);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // ignore
     }
-
-    if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
-    }
-
-    const tick = () => {
-      const now = performance.now();
-      const rem = Math.max(0, (endRef.current ?? now) - now);
-      setRemaining(rem);
-
-      if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
-        const secLeft = Math.ceil(rem / 1000);
-        if (lastBeepSecondRef.current !== secLeft) {
-          lastBeepSecondRef.current = secLeft;
-          beep(880, 110);
-        }
-      }
-
-      if (rem <= 0) {
-        endRef.current = null;
-        setRunning(false);
-        lastBeepSecondRef.current = null;
-        if (sound) beep(660, 220);
-        return;
-      }
-
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, remaining, sound, finalCountdownBeeps, beep]);
-
-  function reset() {
-    setRunning(false);
-    setRemaining(minutes * 60 * 1000);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }
-
-  function startPause() {
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
-  }
-
-  function setPreset(m: number) {
-    setMinutes(m);
-  }
+  }, [copyText]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
-    if (e.key === " ") {
-      e.preventDefault();
-      startPause();
-    } else if (e.key.toLowerCase() === "r") {
-      reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
+    if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
       toggleFullscreen(displayWrapRef.current);
+    } else if (e.key.toLowerCase() === "c") {
+      copy();
+    } else if (e.key.toLowerCase() === "s") {
+      setShowSeconds((v) => !v);
+    } else if (e.key === "2") {
+      setUse24(true);
+    } else if (e.key === "1") {
+      setUse24(false);
     }
   };
-
-  const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
@@ -290,11 +246,11 @@ function PresentationTimerCard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h2 className="text-xl font-extrabold text-amber-950">
-            Presentation Timer
+            Digital Clock
           </h2>
           <p className="mt-1 text-base text-slate-700">
-            Built for speakers and meetings. Big digits, quick presets,
-            fullscreen, sound optional, and keyboard shortcuts.
+            Big digital clock for your local time. Fullscreen, seconds toggle,
+            12/24-hour, and copy.
           </p>
         </div>
 
@@ -302,21 +258,24 @@ function PresentationTimerCard() {
           <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
             <input
               type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
+              checked={showSeconds}
+              onChange={(e) => setShowSeconds(e.target.checked)}
             />
-            Sound
+            Seconds
           </label>
 
           <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
             <input
               type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
+              checked={use24}
+              onChange={(e) => setUse24(e.target.checked)}
             />
-            Final beeps
+            24-hour
           </label>
+
+          <Btn kind="ghost" onClick={copy} className="py-2">
+            {copied ? "Copied" : "Copy"}
+          </Btn>
 
           <Btn
             kind="ghost"
@@ -330,61 +289,14 @@ function PresentationTimerCard() {
         </div>
       </div>
 
-      {/* Presets + custom */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
-          <input
-            type="number"
-            min={1}
-            max={180}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
-
       {/* Display */}
       <div
         ref={displayWrapRef}
         data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 240 }}
+        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
+        style={{ minHeight: 300 }}
         aria-live="polite"
       >
-        {/* Fullscreen CSS: show ONLY the fullscreen shell in fullscreen,
-            and ONLY the normal shell otherwise. */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -424,11 +336,19 @@ function PresentationTimerCard() {
                 letter-spacing:.12em;
                 text-transform:uppercase;
                 opacity:.9;
+                text-align:center;
               }
 
               [data-fs-container]:fullscreen .fs-time{
                 font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                 letter-spacing:.10em;
+                text-align:center;
+                white-space:nowrap;
+              }
+
+              [data-fs-container]:fullscreen .fs-sub{
+                font: 800 18px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                opacity:.9;
                 text-align:center;
               }
 
@@ -445,22 +365,47 @@ function PresentationTimerCard() {
         <div
           data-shell="normal"
           className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          style={{ minHeight: 300 }}
         >
-          <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-            <span className="text-6xl sm:text-7xl md:text-8xl">
-              {shownTime}
-            </span>
+          <div className="flex w-full flex-col items-center justify-center gap-3">
+            <div className="text-xs font-bold uppercase tracking-wide text-amber-800 text-center">
+              Local time · {tz}
+            </div>
+
+            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl text-center whitespace-nowrap">
+              {timeText}
+            </div>
+
+            <div className="text-sm font-semibold text-amber-900 text-center">
+              {dateText}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-amber-800">
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                {use24 ? "24-hour" : "12-hour"}
+              </span>
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                Seconds {showSeconds ? "on" : "off"}
+              </span>
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                Press C to copy
+              </span>
+            </div>
+
+            <div className="text-xs font-semibold text-amber-800 text-center">
+              Shortcuts: F fullscreen · C copy · S seconds · 1 (12h) · 2 (24h)
+            </div>
           </div>
         </div>
 
         {/* Fullscreen shell */}
         <div data-shell="fullscreen">
           <div className="fs-inner">
-            <div className="fs-label">Presentation Timer</div>
-            <div className="fs-time">{shownTime}</div>
+            <div className="fs-label">Digital Clock</div>
+            <div className="fs-time">{timeText}</div>
+            <div className="fs-sub">{tz}</div>
             <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+              F fullscreen · C copy · S seconds · 1 (12h) · 2 (24h)
             </div>
           </div>
         </div>
@@ -469,7 +414,7 @@ function PresentationTimerCard() {
       {/* Shortcuts */}
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
+          Shortcuts: F fullscreen · C copy · S seconds · 1 (12h) · 2 (24h)
         </div>
         <div className="text-xs text-slate-600">
           Tip: click the card once so keyboard shortcuts work immediately.
@@ -482,20 +427,20 @@ function PresentationTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function PresentationTimerPage({
+export default function DigitalClockPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/presentation-timer";
+  const url = "https://ilovetimers.com/digital-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Presentation Timer",
+        name: "Digital Clock",
         url,
         description:
-          "Fullscreen presentation timer for speakers, meetings, and projector screens. Big countdown, presets, sound optional, and shortcuts.",
+          "Big digital clock showing your current local time with fullscreen, seconds toggle, 12/24-hour mode, and copy.",
       },
       {
         "@type": "BreadcrumbList",
@@ -509,7 +454,7 @@ export default function PresentationTimerPage({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Presentation Timer",
+            name: "Digital Clock",
             item: url,
           },
         ],
@@ -519,34 +464,34 @@ export default function PresentationTimerPage({
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is a presentation timer?",
+            name: "Does this digital clock show my local time?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A presentation timer is a countdown clock used by speakers to stay within a time limit. It is typically shown on a projector or second screen so the remaining time is easy to see.",
+              text: "Yes. It uses your device’s local time and time zone settings.",
             },
           },
           {
             "@type": "Question",
-            name: "How do I use fullscreen on this speaker timer?",
+            name: "Can I hide seconds?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Click Fullscreen (or press F) while the timer card is focused. Fullscreen mode uses a clean dark background and very large digits for long-distance visibility.",
+              text: "Yes. Toggle Seconds off or press S while the card is focused.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I turn sound off for meetings?",
+            name: "Can I use 12-hour or 24-hour time?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Toggle Sound off. The timer still runs normally and you can rely on the on-screen countdown.",
+              text: "Yes. Toggle 24-hour on or off. You can also press 1 for 12-hour and 2 for 24-hour while focused.",
             },
           },
           {
             "@type": "Question",
-            name: "What are the keyboard shortcuts?",
+            name: "How do I use fullscreen?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the card is focused.",
+              text: "Click Fullscreen or press F while the card is focused to show a clean dark display with huge digits.",
             },
           },
         ],
@@ -561,7 +506,7 @@ export default function PresentationTimerPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Sticky Header (same style as Pomodoro) */}
+      {/* Sticky Header */}
       <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-500/30/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold">
@@ -591,16 +536,15 @@ export default function PresentationTimerPage({
             <Link to="/" className="hover:underline">
               Home
             </Link>{" "}
-            / <span className="text-amber-950">Presentation Timer</span>
+            / <span className="text-amber-950">Digital Clock</span>
           </p>
 
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Presentation Timer
+            Digital Clock
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>speaker timer</strong> and{" "}
-            <strong>meeting timer</strong> with presets and a true fullscreen
-            view. Built for projector readability and simple control.
+            A big <strong>digital clock</strong> showing your current local time
+            with fullscreen mode and optional seconds.
           </p>
         </div>
       </section>
@@ -608,29 +552,28 @@ export default function PresentationTimerPage({
       {/* Main Tool */}
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <div>
-          <PresentationTimerCard />
+          <DigitalClockCard />
         </div>
 
         {/* Quick-use hints */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Speaker timing that stays readable
+              Great for classrooms and offices
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen is designed for distance: dark background, huge digits,
-              and no clutter. Works well on projectors and TVs.
+              Keep a big clock on-screen during lessons, meetings, and timed
+              activities.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Common presentation presets
+              Seconds toggle and 12/24-hour
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>7 to 10 minutes</strong> for lightning talks,{" "}
-              <strong>12 to 15</strong> for short updates, and{" "}
-              <strong>20 to 30</strong> for longer segments.
+              Show seconds when you need precision, and hide seconds for a
+              calmer wall-display style look.
             </p>
           </div>
 
@@ -640,13 +583,19 @@ export default function PresentationTimerPage({
             </h2>
             <ul className="mt-2 space-y-1 text-amber-800">
               <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
                 <strong>F</strong> = Fullscreen
+              </li>
+              <li>
+                <strong>C</strong> = Copy
+              </li>
+              <li>
+                <strong>S</strong> = Seconds toggle
+              </li>
+              <li>
+                <strong>1</strong> = 12-hour
+              </li>
+              <li>
+                <strong>2</strong> = 24-hour
               </li>
             </ul>
           </div>
@@ -654,130 +603,81 @@ export default function PresentationTimerPage({
       </section>
 
       {/* Menu Links */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-bold text-amber-950">
-            Free fullscreen presentation timer for speakers, meetings, and
-            projector screens
+            Current time now (digital clock)
           </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>presentation timer</strong> is a simple{" "}
-              <strong>speaker timer</strong> designed to keep talks and meetings
-              on schedule. Set a time limit, press Start, and keep the countdown
-              visible on a projector or second screen so you can pace yourself
-              without checking a phone.
+              If you searched for <strong>digital clock</strong>,{" "}
+              <strong>current time</strong>, or <strong>time now</strong>, this
+              page shows your current local time instantly with a big, readable
+              display.
             </p>
 
             <p>
-              Use the preset buttons for common lengths, or enter custom minutes
-              for your agenda. Fullscreen mode is intentionally plain: a dark
-              background and very large digits so the remaining time stays
-              readable from across the room.
-            </p>
-
-            <p>
-              If you want a general tool, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
+              Need a global reference? Try{" "}
+              <Link to="/utc-clock" className="font-semibold hover:underline">
+                UTC Clock
               </Link>
-              . For silent rooms, keep Sound off. For structured work/rest
-              routines, use{" "}
+              . Prefer an analog face? Try{" "}
               <Link
-                to="/pomodoro-timer"
+                to="/analog-clock"
                 className="font-semibold hover:underline"
               >
-                Pomodoro
-              </Link>{" "}
-              or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
+                Analog Clock
               </Link>
               .
             </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Meeting timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Keep agenda items tight: set 5 to 15 minutes per section and reset
-                between topics.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Speaker timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen makes it readable from the stage without tiny UI
-                distractions.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Projector-friendly
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Dark fullscreen reduces glare and keeps contrast high.
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Presentation Timer FAQ</h2>
+        <h2 className="text-2xl font-bold">Digital Clock FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a speaker timer or a meeting timer?
+              Does this show my current local time?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Both. It’s a large, simple countdown designed for talks, meetings,
-              classrooms, and any timed agenda.
+              Yes. It uses your device’s local time.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I make it look good on a projector?
+              Can I switch between 12-hour and 24-hour time?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Use <strong>Fullscreen</strong> (or press <strong>F</strong>) for
-              a dark, high-contrast view with huge digits.
+              Yes. Toggle 24-hour on/off, or press <strong>1</strong> for
+              12-hour and <strong>2</strong> for 24-hour while focused.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off?
+              Can I hide seconds?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off for quiet rooms.
+              Yes. Toggle Seconds off, or press <strong>S</strong>.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
+              How do I use fullscreen?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen (when focused).
+              Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
+              while the card is focused.
             </div>
           </details>
         </div>
@@ -785,8 +685,8 @@ export default function PresentationTimerPage({
 
       <footer className="border-t border-amber-400 bg-amber-500/30/60">
         <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
+          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and
+          clock tools
         </div>
       </footer>
     </main>

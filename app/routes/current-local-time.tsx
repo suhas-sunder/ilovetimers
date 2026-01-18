@@ -1,5 +1,5 @@
-// app/routes/meeting-timer.tsx
-import type { Route } from "./+types/meeting-timer";
+// app/routes/current-local-time.tsx
+import type { Route } from "./+types/current-local-time";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
@@ -11,24 +11,23 @@ import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Meeting Timer | Agenda Timer for Meetings (Fullscreen, Simple, Visible)";
+    "Current Local Time | Local Time Now (Big, Fullscreen, Copyable)";
   const description =
-    "Free meeting timer for teams and agendas. Big fullscreen countdown, quick presets, custom minutes, optional sound, and keyboard shortcuts. Great for keeping meeting sections on time.";
-  const url = "https://ilovetimers.com/meeting-timer";
+    "See your current local time instantly. Big readable clock, optional seconds, 12/24-hour toggle, fullscreen mode, and copy-friendly output. Great for classrooms, meetings, and streaming overlays.";
+  const url = "https://ilovetimers.com/current-local-time";
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "meeting timer",
-        "agenda timer",
-        "timer for meetings",
-        "timebox timer",
-        "standup timer",
-        "scrum meeting timer",
-        "fullscreen timer",
-        "countdown timer for meetings",
+        "current local time",
+        "local time now",
+        "what time is it",
+        "current time",
+        "time right now",
+        "local time",
+        "current time in my location",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -55,21 +54,6 @@ export function loader() {
 /* =========================================================
    UTILS
 ========================================================= */
-function clamp(n: number, min: number, max: number) {
-  return Math.min(Math.max(n, min), max);
-}
-
-const pad2 = (n: number) => n.toString().padStart(2, "0");
-
-function msToClock(ms: number) {
-  const t = Math.max(0, Math.floor(ms));
-  const s = Math.floor(t / 1000);
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
-  return h > 0 ? `${h}:${pad2(m)}:${pad2(sec)}` : `${m}:${pad2(sec)}`;
-}
-
 function isTypingTarget(target: EventTarget | null) {
   const el = target as HTMLElement | null;
   if (!el) return false;
@@ -82,46 +66,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (same style as other pages)
-function useBeep() {
-  const ctxRef = useRef<AudioContext | null>(null);
-
-  useEffect(() => {
-    return () => {
-      ctxRef.current?.close().catch(() => {});
-    };
-  }, []);
-
-  return useCallback((freq = 880, duration = 160) => {
-    try {
-      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = (ctxRef.current ??= new Ctx());
-
-      if (ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
-
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = freq;
-      g.gain.value = 0.1;
-
-      o.connect(g);
-      g.connect(ctx.destination);
-
-      o.start();
-      window.setTimeout(() => {
-        o.stop();
-        o.disconnect();
-        g.disconnect();
-      }, duration);
-    } catch {
-      // ignore
-    }
-  }, []);
-}
-
 async function toggleFullscreen(el: HTMLElement) {
   if (!document.fullscreenElement) {
     await el.requestFullscreen().catch(() => {});
@@ -130,8 +74,67 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function safeTimeZone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+  } catch {
+    return "Local";
+  }
+}
+
+function formatClock(
+  d: Date,
+  opts: { use24: boolean; showSeconds: boolean },
+) {
+  const { use24, showSeconds } = opts;
+
+  try {
+    const fmt = new Intl.DateTimeFormat(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: showSeconds ? "2-digit" : undefined,
+      hour12: !use24,
+    });
+
+    // normalize spacing a bit for readability
+    return fmt.format(d).replace(/\u200e/g, "").trim();
+  } catch {
+    const h = d.getHours();
+    const m = d.getMinutes();
+    const s = d.getSeconds();
+    if (use24) {
+      const hh = String(h).padStart(2, "0");
+      const mm = String(m).padStart(2, "0");
+      const ss = String(s).padStart(2, "0");
+      return showSeconds ? `${hh}:${mm}:${ss}` : `${hh}:${mm}`;
+    }
+    const ampm = h >= 12 ? "PM" : "AM";
+    const h12 = h % 12 || 12;
+    const hh = String(h12).padStart(2, "0");
+    const mm = String(m).padStart(2, "0");
+    const ss = String(s).padStart(2, "0");
+    return showSeconds ? `${hh}:${mm}:${ss} ${ampm}` : `${hh}:${mm} ${ampm}`;
+  }
+}
+
+function formatDateLine(d: Date) {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+    })
+      .format(d)
+      .replace(/\u200e/g, "")
+      .trim();
+  } catch {
+    return d.toDateString();
+  }
+}
+
 /* =========================================================
-   UI PRIMITIVES
+   UI PRIMITIVES (same style as Home/Pomodoro)
 ========================================================= */
 const Card = ({
   children,
@@ -181,110 +184,61 @@ const Btn = ({
 );
 
 /* =========================================================
-   MEETING TIMER CARD
+   CURRENT LOCAL TIME CARD
 ========================================================= */
-function MeetingTimerCard() {
-  const beep = useBeep();
+function CurrentLocalTimeCard() {
+  const [now, setNow] = useState<Date>(() => new Date());
+  const [use24, setUse24] = useState(false);
+  const [showSeconds, setShowSeconds] = useState(true);
+  const [copied, setCopied] = useState(false);
 
-  const presetsMin = useMemo(
-    () => [1, 2, 3, 5, 7, 10, 12, 15, 20, 25, 30, 45, 60],
-    [],
+  const tz = useMemo(() => safeTimeZone(), []);
+  const displayWrapRef = useRef<HTMLDivElement>(null);
+
+  // tick every second if showing seconds, else every 15s to keep fresh
+  useEffect(() => {
+    const ms = showSeconds ? 1000 : 15000;
+    const t = window.setInterval(() => setNow(new Date()), ms);
+    return () => window.clearInterval(t);
+  }, [showSeconds]);
+
+  const timeText = useMemo(
+    () => formatClock(now, { use24, showSeconds }),
+    [now, use24, showSeconds],
   );
 
-  const [minutes, setMinutes] = useState(10);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
-  const [running, setRunning] = useState(false);
+  const dateText = useMemo(() => formatDateLine(now), [now]);
 
-  const [sound, setSound] = useState(true);
-  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
+  const copyText = useMemo(() => {
+    // keep it simple and useful
+    return `${timeText} (${tz}) - ${dateText}`;
+  }, [timeText, tz, dateText]);
 
-  const rafRef = useRef<number | null>(null);
-  const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
-  const lastBeepSecondRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
-    setRunning(false);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }, [minutes]);
-
-  useEffect(() => {
-    if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      endRef.current = null;
-      lastBeepSecondRef.current = null;
-      return;
+  const copy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(copyText);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // ignore
     }
-
-    if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
-    }
-
-    const tick = () => {
-      const now = performance.now();
-      const rem = Math.max(0, (endRef.current ?? now) - now);
-      setRemaining(rem);
-
-      if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
-        const secLeft = Math.ceil(rem / 1000);
-        if (lastBeepSecondRef.current !== secLeft) {
-          lastBeepSecondRef.current = secLeft;
-          beep(880, 110);
-        }
-      }
-
-      if (rem <= 0) {
-        endRef.current = null;
-        setRunning(false);
-        lastBeepSecondRef.current = null;
-        if (sound) beep(660, 220);
-        return;
-      }
-
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, remaining, sound, finalCountdownBeeps, beep]);
-
-  function reset() {
-    setRunning(false);
-    setRemaining(minutes * 60 * 1000);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }
-
-  function startPause() {
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
-  }
-
-  function setPreset(m: number) {
-    setMinutes(m);
-  }
+  }, [copyText]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
-    if (e.key === " ") {
-      e.preventDefault();
-      startPause();
-    } else if (e.key.toLowerCase() === "r") {
-      reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
+    if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
       toggleFullscreen(displayWrapRef.current);
+    } else if (e.key.toLowerCase() === "c") {
+      copy();
+    } else if (e.key.toLowerCase() === "s") {
+      setShowSeconds((v) => !v);
+    } else if (e.key === "2") {
+      setUse24(true);
+    } else if (e.key === "1") {
+      setUse24(false);
     }
   };
-
-  const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
@@ -292,11 +246,11 @@ function MeetingTimerCard() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h2 className="text-xl font-extrabold text-amber-950">
-            Meeting Timer
+            Current Local Time
           </h2>
           <p className="mt-1 text-base text-slate-700">
-            Keep agenda items on time. Big digits, quick presets, fullscreen,
-            sound optional, and keyboard shortcuts.
+            Big readable clock with seconds, 12/24-hour toggle, copy, and
+            fullscreen.
           </p>
         </div>
 
@@ -304,21 +258,24 @@ function MeetingTimerCard() {
           <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
             <input
               type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
+              checked={showSeconds}
+              onChange={(e) => setShowSeconds(e.target.checked)}
             />
-            Sound
+            Seconds
           </label>
 
           <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
             <input
               type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
+              checked={use24}
+              onChange={(e) => setUse24(e.target.checked)}
             />
-            Final beeps
+            24-hour
           </label>
+
+          <Btn kind="ghost" onClick={copy} className="py-2">
+            {copied ? "Copied" : "Copy"}
+          </Btn>
 
           <Btn
             kind="ghost"
@@ -332,57 +289,12 @@ function MeetingTimerCard() {
         </div>
       </div>
 
-      {/* Presets + custom */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
-          <input
-            type="number"
-            min={1}
-            max={180}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
-
       {/* Display */}
       <div
         ref={displayWrapRef}
         data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 240 }}
+        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
+        style={{ minHeight: 280 }}
         aria-live="polite"
       >
         <style
@@ -416,19 +328,25 @@ function MeetingTimerCard() {
                 flex-direction:column;
                 align-items:center;
                 justify-content:center;
-                gap:18px;
+                gap:16px;
               }
 
               [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                font: 800 20px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
                 letter-spacing:.12em;
                 text-transform:uppercase;
                 opacity:.9;
               }
 
               [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                font: 900 clamp(92px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                 letter-spacing:.10em;
+                text-align:center;
+              }
+
+              [data-fs-container]:fullscreen .fs-sub{
+                font: 800 18px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+                opacity:.9;
                 text-align:center;
               }
 
@@ -445,22 +363,49 @@ function MeetingTimerCard() {
         <div
           data-shell="normal"
           className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          style={{ minHeight: 280 }}
         >
-          <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-            <span className="text-6xl sm:text-7xl md:text-8xl">
-              {shownTime}
-            </span>
+          <div className="flex w-full flex-col items-center justify-center gap-3">
+            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+              Local time now · {tz}
+            </div>
+
+            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
+              {timeText}
+            </div>
+
+            <div className="text-sm font-semibold text-amber-900">
+              {dateText}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-amber-800">
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                {use24 ? "24-hour" : "12-hour"}
+              </span>
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                Seconds {showSeconds ? "on" : "off"}
+              </span>
+              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+                Press C to copy
+              </span>
+            </div>
+
+            <div className="text-xs font-semibold text-amber-800">
+              Shortcuts: F fullscreen · C copy · S seconds · 1 (12h) · 2 (24h)
+            </div>
           </div>
         </div>
 
         {/* Fullscreen shell */}
         <div data-shell="fullscreen">
           <div className="fs-inner">
-            <div className="fs-label">Meeting Timer</div>
-            <div className="fs-time">{shownTime}</div>
+            <div className="fs-label">Current Local Time</div>
+            <div className="fs-time">{timeText}</div>
+            <div className="fs-sub">
+              {dateText} · {tz}
+            </div>
             <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+              F fullscreen · C copy · S seconds · 1 (12h) · 2 (24h)
             </div>
           </div>
         </div>
@@ -469,7 +414,7 @@ function MeetingTimerCard() {
       {/* Shortcuts */}
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
+          Shortcuts: F fullscreen · C copy · S seconds · 1 (12h) · 2 (24h)
         </div>
         <div className="text-xs text-slate-600">
           Tip: click the card once so keyboard shortcuts work immediately.
@@ -482,20 +427,20 @@ function MeetingTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function MeetingTimerPage({
+export default function CurrentLocalTimePage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/meeting-timer";
+  const url = "https://ilovetimers.com/current-local-time";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Meeting Timer",
+        name: "Current Local Time",
         url,
         description:
-          "Fullscreen meeting timer for agendas and timeboxing. Big countdown, presets, optional sound, and keyboard shortcuts.",
+          "See your current local time instantly with a big readable clock, optional seconds, 12/24-hour toggle, copy, and fullscreen.",
       },
       {
         "@type": "BreadcrumbList",
@@ -509,7 +454,7 @@ export default function MeetingTimerPage({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Meeting Timer",
+            name: "Current Local Time",
             item: url,
           },
         ],
@@ -519,34 +464,34 @@ export default function MeetingTimerPage({
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is a meeting timer?",
+            name: "What does current local time mean?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A meeting timer is a countdown clock used to timebox agenda items so meetings stay on schedule. It is often displayed on a shared screen or projector so everyone can see the remaining time.",
+              text: "Current local time is the time in your device’s current time zone. This page reads your device settings and shows the time right now.",
             },
           },
           {
             "@type": "Question",
-            name: "How do I use fullscreen for meetings?",
+            name: "Why might my local time look wrong?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Click Fullscreen (or press F) while the timer card is focused. Fullscreen mode shows a clean dark background and very large digits for easy visibility.",
+              text: "If your device time zone or clock is set incorrectly, the displayed local time will be incorrect. Check your device date/time and time zone settings.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I turn sound off?",
+            name: "Can I show local time in fullscreen?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Toggle Sound off for quiet rooms. The timer still runs normally and the countdown stays visible.",
+              text: "Yes. Click Fullscreen (or press F while the card is focused) for a clean dark display with huge digits.",
             },
           },
           {
             "@type": "Question",
-            name: "What are the keyboard shortcuts?",
+            name: "How do I copy the current time?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the card is focused.",
+              text: "Press Copy (or press C) to copy the current time, time zone, and date to your clipboard.",
             },
           },
         ],
@@ -591,16 +536,15 @@ export default function MeetingTimerPage({
             <Link to="/" className="hover:underline">
               Home
             </Link>{" "}
-            / <span className="text-amber-950">Meeting Timer</span>
+            / <span className="text-amber-950">Current Local Time</span>
           </p>
 
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Meeting Timer
+            Current Local Time
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>meeting timer</strong> for agenda timeboxing with
-            presets and a true fullscreen view. Built for shared-screen
-            visibility and simple control.
+            Your <strong>local time now</strong>, shown in a big readable clock
+            with seconds, 12/24-hour toggle, copy, and fullscreen.
           </p>
         </div>
       </section>
@@ -608,174 +552,118 @@ export default function MeetingTimerPage({
       {/* Main Tool */}
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <div>
-          <MeetingTimerCard />
+          <CurrentLocalTimeCard />
         </div>
 
         {/* Quick-use hints */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Timebox agenda items
+              Big clock for visibility
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Set a time per topic, start the countdown, and reset between
-              sections. It keeps meetings from drifting.
+              Use it on a second monitor, projector, classroom screen, or stream
+              overlay. Fullscreen keeps it clean and readable.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
+            <h2 className="text-lg font-bold text-amber-950">Copy the time</h2>
+            <p className="mt-2 leading-relaxed text-amber-800">
+              Copy includes time, time zone, and date so you can paste it into
+              messages, notes, or docs.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Common meeting presets
+              Switch 12h or 24h
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>5 to 10 minutes</strong> for updates,{" "}
-              <strong>12 to 15</strong> for discussion blocks, and{" "}
-              <strong>20 to 30</strong> for deep dives.
+              Toggle 12-hour or 24-hour formats and turn seconds on or off
+              depending on what you need.
             </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
           </div>
         </div>
       </section>
 
       {/* Menu Links */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-bold text-amber-950">
-            Free meeting timer for agendas, standups, and timeboxing
+            Local time now, instantly
           </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>meeting timer</strong> is a simple{" "}
-              <strong>agenda timer</strong> designed to keep meetings on track.
-              Choose a time for each agenda item, press Start, and keep the
-              countdown visible on a shared screen so everyone knows how much
-              time is left.
+              If you searched for <strong>current local time</strong> or{" "}
+              <strong>local time now</strong>, this page is the fastest answer.
+              It shows the time using your device’s current time zone settings,
+              with a clean display that is easy to read at a glance.
             </p>
 
             <p>
-              Use the preset buttons for common timeboxes, or enter custom
-              minutes for your agenda. Fullscreen mode is intentionally plain: a
-              dark background and very large digits for long-distance
-              visibility.
-            </p>
-
-            <p>
-              If you want a general tool, use{" "}
+              Need a countdown instead? Use{" "}
               <Link
                 to="/countdown-timer"
                 className="font-semibold hover:underline"
               >
                 Countdown Timer
               </Link>
-              . For silent rooms, keep Sound off. For structured work and break
-              blocks, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
+              . Need a stopwatch? Use{" "}
+              <Link to="/stopwatch" className="font-semibold hover:underline">
+                Stopwatch
               </Link>
               .
             </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Agenda timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Assign a timebox per topic and reset between sections to stay on
-                schedule.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Standups and check-ins
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Use 1 to 3 minutes per person, or 5 to 10 for a fast round of updates.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Shared screen friendly
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen keeps the timer readable without distracting UI.
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Meeting Timer FAQ</h2>
+        <h2 className="text-2xl font-bold">Current Local Time FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a meeting timer or an agenda timer?
+              Is this the current time where I am?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Both. It is a large countdown designed for meetings where you want
-              clear timeboxes per agenda item.
+              Yes. It uses your device’s local time and time zone settings.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I use it for a standup?
+              Why does it show the wrong time zone?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Pick a preset like 1 to 3 minutes, press Start, and reset between
-              speakers. Fullscreen works well on a shared screen.
+              If your device time zone is set manually or incorrectly, the time
+              will be wrong. Fix your device time zone and refresh.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off?
+              How do I use fullscreen?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off for quiet rooms.
+              Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
+              while the card is focused.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
+              How do I copy the current time?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen (when focused).
+              Click <strong>Copy</strong> or press <strong>C</strong> to copy
+              the time, time zone, and date.
             </div>
           </details>
         </div>
@@ -783,8 +671,8 @@ export default function MeetingTimerPage({
 
       <footer className="border-t border-amber-400 bg-amber-500/30/60">
         <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
+          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and
+          simple time tools
         </div>
       </footer>
     </main>

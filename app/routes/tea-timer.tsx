@@ -1,5 +1,5 @@
-// app/routes/presentation-timer.tsx
-import type { Route } from "./+types/presentation-timer";
+// app/routes/tea-timer.tsx
+import type { Route } from "./+types/tea-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
@@ -11,23 +11,20 @@ import TimerMenuLinks from "~/clients/components/navigation/TimerMenuLinks";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Presentation Timer | Speaker & Meeting Timer (Fullscreen, Simple, Visible)";
+    "Tea Timer | Green Tea Timer & Steep Timer (Pre-filled Steep Times, Fullscreen)";
   const description =
-    "Free presentation timer for speakers and meetings. Large fullscreen countdown, presets, custom minutes, sound optional, and keyboard shortcuts. Designed for projector and classroom visibility.";
-  const url = "https://ilovetimers.com/presentation-timer";
+    "Free tea timer with pre-filled steep times for green tea, black tea, oolong, white, herbal, and more. One-click presets, big readable countdown, optional sound, and fullscreen mode.";
+  const url = "https://ilovetimers.com/tea-timer";
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "presentation timer",
-        "speaker timer",
-        "meeting timer",
-        "fullscreen timer",
-        "timer for projector",
-        "talk timer",
-        "countdown timer for presentations",
+        "tea timer",
+        "green tea timer",
+        "steep timer",
+        "steeping timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -180,33 +177,130 @@ const Btn = ({
 );
 
 /* =========================================================
-   PRESENTATION TIMER CARD
+   TEA TIMER CARD
 ========================================================= */
-function PresentationTimerCard() {
+type TeaKey =
+  | "green"
+  | "black"
+  | "oolong"
+  | "white"
+  | "herbal"
+  | "chai"
+  | "matcha"
+  | "rooibos"
+  | "pu_erh";
+
+type TeaPreset = {
+  key: TeaKey;
+  label: string;
+  minutes: number;
+  seconds: number;
+  note: string;
+};
+
+const TEA_PRESETS: TeaPreset[] = [
+  {
+    key: "green",
+    label: "Green tea",
+    minutes: 2,
+    seconds: 0,
+    note: "2:00 (lighter, avoid bitterness)",
+  },
+  {
+    key: "black",
+    label: "Black tea",
+    minutes: 4,
+    seconds: 0,
+    note: "4:00 (stronger, classic mug)",
+  },
+  {
+    key: "oolong",
+    label: "Oolong",
+    minutes: 3,
+    seconds: 0,
+    note: "3:00 (balanced)",
+  },
+  {
+    key: "white",
+    label: "White tea",
+    minutes: 3,
+    seconds: 0,
+    note: "3:00 (gentle)",
+  },
+  {
+    key: "herbal",
+    label: "Herbal",
+    minutes: 5,
+    seconds: 0,
+    note: "5:00 (bigger leaves, longer steep)",
+  },
+  {
+    key: "chai",
+    label: "Chai",
+    minutes: 5,
+    seconds: 0,
+    note: "5:00 (spiced, bold)",
+  },
+  {
+    key: "rooibos",
+    label: "Rooibos",
+    minutes: 5,
+    seconds: 0,
+    note: "5:00 (caffeine-free, forgiving)",
+  },
+  {
+    key: "pu_erh",
+    label: "Pu-erh",
+    minutes: 4,
+    seconds: 0,
+    note: "4:00 (earthy)",
+  },
+  {
+    key: "matcha",
+    label: "Matcha",
+    minutes: 0,
+    seconds: 0,
+    note: "No steep: whisk and sip",
+  },
+];
+
+function TeaTimerCard() {
   const beep = useBeep();
 
-  const presetsMin = useMemo(
-    () => [3, 5, 7, 10, 12, 15, 20, 25, 30, 45, 60],
-    [],
-  );
-  const [minutes, setMinutes] = useState(10);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
+  const [preset, setPreset] = useState<TeaKey>("green");
+  const [minutes, setMinutes] = useState(2);
+  const [seconds, setSeconds] = useState(0);
+
+  const [remaining, setRemaining] = useState((minutes * 60 + seconds) * 1000);
   const [running, setRunning] = useState(false);
 
   const [sound, setSound] = useState(true);
-  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
+  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(true);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
   const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
 
+  // Apply preset
   useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
+    const p = TEA_PRESETS.find((x) => x.key === preset);
+    if (!p) return;
+    setMinutes(p.minutes);
+    setSeconds(p.seconds);
     setRunning(false);
     endRef.current = null;
     lastBeepSecondRef.current = null;
-  }, [minutes]);
+    setRemaining((p.minutes * 60 + p.seconds) * 1000);
+  }, [preset]);
+
+  // When custom time changes
+  useEffect(() => {
+    setRemaining((minutes * 60 + seconds) * 1000);
+    setRunning(false);
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+  }, [minutes, seconds]);
 
   useEffect(() => {
     if (!running) {
@@ -254,18 +348,16 @@ function PresentationTimerCard() {
 
   function reset() {
     setRunning(false);
-    setRemaining(minutes * 60 * 1000);
+    setRemaining((minutes * 60 + seconds) * 1000);
     endRef.current = null;
     lastBeepSecondRef.current = null;
   }
 
   function startPause() {
+    // prime audio on gesture
+    if (!running && sound) beep(0, 1);
     setRunning((r) => !r);
     lastBeepSecondRef.current = null;
-  }
-
-  function setPreset(m: number) {
-    setMinutes(m);
   }
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -284,17 +376,23 @@ function PresentationTimerCard() {
   const urgent = running && remaining > 0 && remaining <= 10_000;
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
+  const presetNote = useMemo(() => {
+    const p = TEA_PRESETS.find((x) => x.key === preset);
+    return p?.note ?? "";
+  }, [preset]);
+
+  const isMatcha = preset === "matcha";
+
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Presentation Timer
-          </h2>
+          <h2 className="text-xl font-extrabold text-amber-950">Tea Timer</h2>
           <p className="mt-1 text-base text-slate-700">
-            Built for speakers and meetings. Big digits, quick presets,
-            fullscreen, sound optional, and keyboard shortcuts.
+            A simple <strong>tea timer</strong> with pre-filled steep times for{" "}
+            <strong>green tea</strong> and other common teas. Big digits,
+            optional sound, and fullscreen.
           </p>
         </div>
 
@@ -330,44 +428,80 @@ function PresentationTimerCard() {
         </div>
       </div>
 
-      {/* Presets + custom */}
+      {/* Presets */}
       <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
+        {TEA_PRESETS.map((p) => (
           <button
-            key={m}
+            key={p.key}
             type="button"
-            onClick={() => setPreset(m)}
+            onClick={() => setPreset(p.key)}
             className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
+              p.key === preset
                 ? "bg-amber-700 text-white hover:bg-amber-800"
                 : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
             }`}
           >
-            {m}m
+            {p.label}
           </button>
         ))}
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+      {/* Custom time */}
+      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
         <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
+          Minutes
           <input
             type="number"
-            min={1}
-            max={180}
+            min={0}
+            max={60}
             value={minutes}
             onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
+              setMinutes(clamp(Number(e.target.value || 0), 0, 60))
             }
             className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            disabled={isMatcha}
+          />
+        </label>
+
+        <label className="block text-sm font-semibold text-amber-950">
+          Seconds
+          <input
+            type="number"
+            min={0}
+            max={59}
+            value={seconds}
+            onChange={(e) =>
+              setSeconds(clamp(Number(e.target.value || 0), 0, 59))
+            }
+            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            disabled={isMatcha}
           />
         </label>
 
         <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
+          <Btn
+            onClick={startPause}
+            disabled={isMatcha || minutes * 60 + seconds <= 0}
+          >
+            {running ? "Pause" : "Start"}
+          </Btn>
+          <Btn kind="ghost" onClick={reset} disabled={isMatcha}>
             Reset
           </Btn>
+        </div>
+      </div>
+
+      {/* Preset note */}
+      <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+          Preset note
+        </div>
+        <div className="mt-1 text-sm font-semibold text-amber-950">
+          {isMatcha ? "Matcha is usually whisked, not steeped." : presetNote}
+        </div>
+        <div className="mt-2 text-sm text-amber-900">
+          Adjust based on leaf size, water temperature, and taste. These are
+          quick defaults, not strict rules.
         </div>
       </div>
 
@@ -383,8 +517,7 @@ function PresentationTimerCard() {
         style={{ minHeight: 240 }}
         aria-live="polite"
       >
-        {/* Fullscreen CSS: show ONLY the fullscreen shell in fullscreen,
-            and ONLY the normal shell otherwise. */}
+        {/* Fullscreen CSS: show ONLY fullscreen shell in fullscreen */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -447,17 +580,26 @@ function PresentationTimerCard() {
           className="h-full w-full items-center justify-center p-6"
           style={{ minHeight: 240 }}
         >
-          <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-            <span className="text-6xl sm:text-7xl md:text-8xl">
+          <div className="flex w-full flex-col items-center justify-center gap-3">
+            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+              {TEA_PRESETS.find((x) => x.key === preset)?.label ?? "Tea"}{" "}
+              {isMatcha ? "(no steep)" : "steep time"}
+            </div>
+
+            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
               {shownTime}
-            </span>
+            </div>
+
+            <div className="text-xs font-semibold text-amber-800">
+              Shortcuts: Space start/pause · R reset · F fullscreen
+            </div>
           </div>
         </div>
 
         {/* Fullscreen shell */}
         <div data-shell="fullscreen">
           <div className="fs-inner">
-            <div className="fs-label">Presentation Timer</div>
+            <div className="fs-label">Tea Timer</div>
             <div className="fs-time">{shownTime}</div>
             <div className="fs-help">
               Space start/pause · R reset · F fullscreen
@@ -482,20 +624,18 @@ function PresentationTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function PresentationTimerPage({
-  loaderData: { nowISO },
-}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/presentation-timer";
+export default function TeaTimerPage({}: Route.ComponentProps) {
+  const url = "https://ilovetimers.com/tea-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Presentation Timer",
+        name: "Tea Timer",
         url,
         description:
-          "Fullscreen presentation timer for speakers, meetings, and projector screens. Big countdown, presets, sound optional, and shortcuts.",
+          "A tea steep timer with pre-filled steep times for green tea, black tea, oolong, herbal tea, and more, plus fullscreen and optional sound.",
       },
       {
         "@type": "BreadcrumbList",
@@ -509,7 +649,7 @@ export default function PresentationTimerPage({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Presentation Timer",
+            name: "Tea Timer",
             item: url,
           },
         ],
@@ -519,34 +659,34 @@ export default function PresentationTimerPage({
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is a presentation timer?",
+            name: "What is a tea timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A presentation timer is a countdown clock used by speakers to stay within a time limit. It is typically shown on a projector or second screen so the remaining time is easy to see.",
+              text: "A tea timer is a simple countdown that helps you steep tea for a chosen amount of time. Pick a tea type or set a custom time, start the timer, and stop steeping when it hits zero.",
             },
           },
           {
             "@type": "Question",
-            name: "How do I use fullscreen on this speaker timer?",
+            name: "What is a green tea timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Click Fullscreen (or press F) while the timer card is focused. Fullscreen mode uses a clean dark background and very large digits for long-distance visibility.",
+              text: "A green tea timer is a tea timer with shorter default steep times. Green tea can turn bitter when steeped too long, so presets like 2 to 3 minutes are common starting points.",
             },
           },
           {
             "@type": "Question",
-            name: "Can I turn sound off for meetings?",
+            name: "Are the steep times exact?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Toggle Sound off. The timer still runs normally and you can rely on the on-screen countdown.",
+              text: "No. Presets are quick defaults. The best steep time depends on the tea, water temperature, leaf size, and taste preferences.",
             },
           },
           {
             "@type": "Question",
-            name: "What are the keyboard shortcuts?",
+            name: "Does this steep timer work in fullscreen?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the card is focused.",
+              text: "Yes. Press Fullscreen (or F) while the timer card is focused for a dark, high-contrast display with very large digits.",
             },
           },
         ],
@@ -591,16 +731,16 @@ export default function PresentationTimerPage({
             <Link to="/" className="hover:underline">
               Home
             </Link>{" "}
-            / <span className="text-amber-950">Presentation Timer</span>
+            / <span className="text-amber-950">Tea Timer</span>
           </p>
 
           <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Presentation Timer
+            Tea Timer
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>speaker timer</strong> and{" "}
-            <strong>meeting timer</strong> with presets and a true fullscreen
-            view. Built for projector readability and simple control.
+            A simple <strong>tea timer</strong> with pre-filled steep times.
+            Great for <strong>green tea</strong>, black tea, oolong, herbal tea,
+            and more.
           </p>
         </div>
       </section>
@@ -608,29 +748,28 @@ export default function PresentationTimerPage({
       {/* Main Tool */}
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <div>
-          <PresentationTimerCard />
+          <TeaTimerCard />
         </div>
 
         {/* Quick-use hints */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Speaker timing that stays readable
+              Pre-filled steep times
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen is designed for distance: dark background, huge digits,
-              and no clutter. Works well on projectors and TVs.
+              Pick a tea type and start immediately. Presets are designed as
+              practical defaults, and you can tweak the time.
             </p>
           </div>
 
           <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-bold text-amber-950">
-              Common presentation presets
+              Green tea timer (quick by default)
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>7 to 10 minutes</strong> for lightning talks,{" "}
-              <strong>12 to 15</strong> for short updates, and{" "}
-              <strong>20 to 30</strong> for longer segments.
+              Green tea usually steeps shorter than black tea. Use the preset as
+              a baseline, then adjust based on taste.
             </p>
           </div>
 
@@ -654,31 +793,28 @@ export default function PresentationTimerPage({
       </section>
 
       {/* Menu Links */}
-       <TimerMenuLinks />
+      <TimerMenuLinks />
       <RelatedSites />
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-bold text-amber-950">
-            Free fullscreen presentation timer for speakers, meetings, and
-            projector screens
+            Free steep timer for tea (including green tea)
           </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>presentation timer</strong> is a simple{" "}
-              <strong>speaker timer</strong> designed to keep talks and meetings
-              on schedule. Set a time limit, press Start, and keep the countdown
-              visible on a projector or second screen so you can pace yourself
-              without checking a phone.
+              This <strong>tea timer</strong> is a fast{" "}
+              <strong>steep timer</strong> for everyday brewing. Choose a tea
+              type to load a common steep time, then press Start. You can also
+              set a custom time if your tea or cup size needs it.
             </p>
 
             <p>
-              Use the preset buttons for common lengths, or enter custom minutes
-              for your agenda. Fullscreen mode is intentionally plain: a dark
-              background and very large digits so the remaining time stays
-              readable from across the room.
+              Use the <strong>green tea timer</strong> preset for a quick
+              baseline and adjust to avoid bitterness. Herbal blends and larger
+              leaves often benefit from a longer steep.
             </p>
 
             <p>
@@ -689,49 +825,43 @@ export default function PresentationTimerPage({
               >
                 Countdown Timer
               </Link>
-              . For silent rooms, keep Sound off. For structured work/rest
-              routines, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
+              . For cooking, you might also like{" "}
+              <Link to="/egg-timer" className="font-semibold hover:underline">
+                Egg Timer
               </Link>{" "}
               or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
-              </Link>
-              .
+              <Link to="/pasta-timer" className="font-semibold hover:underline">
+                Pasta Timer
+              </Link>{" "}
+              if you add those pages later.
             </p>
           </div>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Meeting timer
+                Tea timer
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Keep agenda items tight: set 5 to 15 minutes per section and reset
-                between topics.
+                One-click steep presets, big countdown, and fast reset.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Speaker timer
+                Green tea timer
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen makes it readable from the stage without tiny UI
-                distractions.
+                Shorter defaults so you can avoid over-steeping and bitterness.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Projector-friendly
+                Steep timer
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Dark fullscreen reduces glare and keeps contrast high.
+                Clean fullscreen view with optional sound and final beeps.
               </p>
             </div>
           </div>
@@ -740,34 +870,36 @@ export default function PresentationTimerPage({
 
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Presentation Timer FAQ</h2>
+        <h2 className="text-2xl font-bold">Tea Timer FAQ</h2>
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a speaker timer or a meeting timer?
+              What is a steep timer?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Both. It’s a large, simple countdown designed for talks, meetings,
-              classrooms, and any timed agenda.
+              A steep timer is a countdown timer used for tea. It helps you stop
+              steeping at the right time so the flavor stays consistent.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I make it look good on a projector?
+              What steep time should I use for green tea?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Use <strong>Fullscreen</strong> (or press <strong>F</strong>) for
-              a dark, high-contrast view with huge digits.
+              Many green teas are steeped around 2 to 3 minutes. This page
+              includes a green tea preset you can adjust based on taste and
+              water temperature.
             </div>
           </details>
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off?
+              Can I change the steep time?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off for quiet rooms.
+              Yes. Use the preset buttons to start quickly, then adjust minutes
+              and seconds for your preference.
             </div>
           </details>
 
@@ -785,8 +917,8 @@ export default function PresentationTimerPage({
 
       <footer className="border-t border-amber-400 bg-amber-500/30/60">
         <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-amber-800">
-          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, and HIIT
-          interval timers
+          © 2026 i💛Timers - free countdown, stopwatch, Pomodoro, HIIT, and tea
+          timers
         </div>
       </footer>
     </main>

@@ -737,8 +737,8 @@ export default function CookingTimerPage({
               Common kitchen presets, ready to tap
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Use fast presets for quick tasks (30s–5m) and bigger blocks for
-              baking and oven timing (10–60m).
+              Use fast presets for quick tasks (30s to 5m) and bigger blocks for
+              baking and oven timing (10 to 60m).
             </p>
           </div>
 

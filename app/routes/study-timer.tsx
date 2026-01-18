@@ -642,7 +642,7 @@ export default function StudyTimerPage({
             name: "What are good study session lengths?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Common session lengths are 25–30 minutes for short focus blocks and 45–60 minutes for deeper study. Pick a preset or set a custom time that matches your workload.",
+              text: "Common session lengths are 25 to 30 minutes for short focus blocks and 45 to 60 minutes for deeper study. Pick a preset or set a custom time that matches your workload.",
             },
           },
           {
@@ -732,8 +732,8 @@ export default function StudyTimerPage({
               Homework friendly presets
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>25–30 minutes</strong> for a focused block,{" "}
-              <strong>45–60</strong> for deeper work, and <strong>75–90</strong>{" "}
+              Try <strong>25 to 30 minutes</strong> for a focused block,{" "}
+              <strong>45 to 60</strong> for deeper work, and <strong>75 to 90</strong>{" "}
               for long study sessions.
             </p>
           </div>
@@ -862,7 +862,7 @@ export default function StudyTimerPage({
               What is a good study session length?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Many people use 25–30 minutes for a focused block and 45–60
+              Many people use 25 to 30 minutes for a focused block and 45 to 60
               minutes for deeper work. Choose what matches your attention and
               workload.
             </div>

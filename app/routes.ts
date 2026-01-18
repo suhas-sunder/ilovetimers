@@ -2,7 +2,7 @@ import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
   index("routes/home.tsx"),
-
+  // Timers
   route("countdown-timer", "routes/countdown-timer.tsx"),
   route("stopwatch", "routes/stopwatch.tsx"),
   route("pomodoro-timer", "routes/pomodoro-timer.tsx"),
@@ -27,5 +27,39 @@ export default [
   route("multiple-timers", "routes/multiple-timers.tsx"),
   route("visual-timer", "routes/visual-timer.tsx"),
   route("productivity-timer", "routes/productivity-timer.tsx"),
+  route("count-up-timer", "routes/count-up-timer.tsx"),
+  route("meeting-count-up-timer", "routes/meeting-count-up-timer.tsx"),
+  route("breathing-timer", "routes/breathing-timer.tsx"),
+  route("sleep-timer", "routes/sleep-timer.tsx"),
+  route("stretch-timer", "routes/stretch-timer.tsx"),
+  route("drink-water-reminder-timer", "routes/drink-water-reminder-timer.tsx"),
+  route("emom-timer", "routes/emom-timer.tsx"),
+  route("amrap-timer", "routes/amrap-timer.tsx"),
+  route("round-timer", "routes/round-timer.tsx"),
+  route("pace-timer", "routes/pace-timer.tsx"),
+  route("tea-timer", "routes/tea-timer.tsx"),
+  route("egg-timer", "routes/egg-timer.tsx"),
+  route("chaos-timer", "routes/chaos-timer.tsx"),
+  route("video-game-challenge-timer", "routes/video-game-challenge-timer.tsx"),
+  route("speedrun-timer", "routes/speedrun-timer.tsx"),
+  route("pizza-timer", "routes/pizza-timer.tsx"),
+  route("fibonacci-clock", "routes/fibonacci-clock.tsx"),
+  route("sunrise-sunset-clock", "routes/sunrise-sunset-clock.tsx"),
+  // Specialized Timers
+  route("debt-repayment-timer", "routes/debt-repayment-timer.tsx"),
+  route("focus-session-timer", "routes/focus-session-timer.tsx"),
+  // Clocks
+  route("morse-code-clock", "routes/morse-code-clock.tsx"),
+  route("world-clock", "routes/world-clock.tsx"),
+  route("debt-clock", "routes/debt-clock.tsx"),
+  route("current-local-time", "routes/current-local-time.tsx"),
+  route("utc-clock", "routes/utc-clock.tsx"),
+  route("analog-clock", "routes/analog-clock.tsx"),
+  route("digital-clock", "routes/digital-clock.tsx"),
+  route("binary-clock", "routes/binary-clock.tsx"),
+  route("hexadecimal-clock", "routes/hexadecimal-clock.tsx"),
+  route("fibonacci-clock", "routes/fibonacci-clock.tsx"),
+  route("sunrise-sunset-clock", "routes/sunrise-sunset-clock.tsx"),
+  // Countdown Clocks
   route("event-countdown", "routes/event-countdown.tsx"),
 ] satisfies RouteConfig;

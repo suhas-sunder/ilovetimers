@@ -635,7 +635,7 @@ export default function CountdownTimerPage({
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
               This <strong>countdown timer</strong> is built for fast,
-              distraction-free timing. Choose a preset (1–60 minutes) or set a
+              distraction-free timing. Choose a preset (1 to 60 minutes) or set a
               custom duration, then press <strong>Start</strong> to begin. The
               display uses large digits and high contrast so it’s easy to read
               on phones, laptops, and projectors.

@@ -13,7 +13,7 @@ export function meta({}: Route.MetaArgs) {
   const title =
     "Rest Timer | Set Rest Between Sets (Fullscreen, Simple, Visible)";
   const description =
-    "Free rest timer for workouts and training. Big fullscreen countdown, fast presets for between sets (30s–5m), custom minutes, optional sound, and keyboard shortcuts. Great for lifting, circuits, and coaching.";
+    "Free rest timer for workouts and training. Big fullscreen countdown, fast presets for between sets (30s to 5m), custom minutes, optional sound, and keyboard shortcuts. Great for lifting, circuits, and coaching.";
   const url = "https://ilovetimers.com/rest-timer";
   return [
     { title },
@@ -564,7 +564,7 @@ export default function RestTimerPage({
             name: "What are common rest times between sets?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Common rest times are 30–90 seconds for lighter work, 2–3 minutes for heavier sets, and 3–5 minutes for very heavy strength work. Pick a preset or set custom seconds.",
+              text: "Common rest times are 30 to 90 seconds for lighter work, 2 to 3 minutes for heavier sets, and 3 to 5 minutes for very heavy strength work. Pick a preset or set custom seconds.",
             },
           },
           {
@@ -662,9 +662,9 @@ export default function RestTimerPage({
               Fast presets in seconds
             </h2>
             <p className="mt-2 leading-relaxed text-amber-800">
-              Use <strong>30–90 seconds</strong> for lighter work,{" "}
-              <strong>2–3 minutes</strong> for heavier sets, and{" "}
-              <strong>3–5 minutes</strong> for very heavy strength work.
+              Use <strong>30 to 90 seconds</strong> for lighter work,{" "}
+              <strong>2 to 3 minutes</strong> for heavier sets, and{" "}
+              <strong>3 to 5 minutes</strong> for very heavy strength work.
             </p>
           </div>
 
@@ -779,8 +779,8 @@ export default function RestTimerPage({
               What rest time should I use?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              30–90 seconds is common for lighter work, 2–3 minutes for heavier
-              sets, and 3–5 minutes for very heavy strength work.
+              30 to 90 seconds is common for lighter work, 2 to 3 minutes for heavier
+              sets, and 3 to 5 minutes for very heavy strength work.
             </div>
           </details>
 

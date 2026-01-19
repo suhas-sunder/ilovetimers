@@ -196,6 +196,7 @@
     <loc>https://www.ilovetimers.com/utc-clock</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
+
   <url>
     <loc>https://www.ilovetimers.com/analog-clock</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
@@ -249,6 +250,24 @@
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
 
+  <!-- Added clocks you were missing -->
+  <url>
+    <loc>https://www.ilovetimers.com/retro-flip-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/minimalist-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/roman-numeral-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/binary-stopwatch</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+
   <!-- Finance -->
   <url>
     <loc>https://www.ilovetimers.com/billable-hours-clock</loc>
@@ -256,6 +275,42 @@
   </url>
   <url>
     <loc>https://www.ilovetimers.com/debt-clock</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+
+  <!-- Tools (calculators / converters) -->
+  <url>
+    <loc>https://www.ilovetimers.com/military-time-converter</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/work-hours-calculator</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/time-calculator</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/billable-hours-calculator</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/milliseconds-converter</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+
+  <!-- Tests & music tools -->
+  <url>
+    <loc>https://www.ilovetimers.com/reaction-time-test</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/metronome</loc>
+    <lastmod>2026-01-17T00:00:00.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.ilovetimers.com/bpm-tapper</loc>
     <lastmod>2026-01-17T00:00:00.000Z</lastmod>
   </url>
 

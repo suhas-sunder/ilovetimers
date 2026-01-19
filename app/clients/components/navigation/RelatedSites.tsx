@@ -277,7 +277,7 @@ function pickSites(contextTags: string[] | undefined) {
 export default function RelatedSites({
   contextTags,
   title = "More sites you may find useful",
-  subtitle = "Curated to match this page. Always a small set.",
+  subtitle = "Curated to match this page. All open in a new tab. Enjoy!",
 }: {
   contextTags?: string[];
   title?: string;

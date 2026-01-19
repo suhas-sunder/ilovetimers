@@ -12,4 +12,7 @@ export default defineConfig({
     tailwindcss(),
     netlifyPlugin(), // generates the Netlify serverless function for SSR
   ],
+  ssr: {
+    noExternal: ["posthog-js", "posthog-js/react"],
+  },
 });

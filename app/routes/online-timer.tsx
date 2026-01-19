@@ -537,6 +537,9 @@ export default function OnlineTimerPage({
 }: Route.ComponentProps) {
   const url = "https://ilovetimers.com/online-timer";
 
+  /* =========================
+   JSON-LD (update)
+========================= */
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -545,7 +548,7 @@ export default function OnlineTimerPage({
         name: "Online Timer",
         url,
         description:
-          "Free online timer website with a fast countdown timer: presets, custom input, loop, sound toggle, fullscreen, and keyboard shortcuts.",
+          "Free online timer website with a fast countdown timer: presets, custom input, loop mode, sound toggle, fullscreen, and keyboard shortcuts.",
       },
       {
         "@type": "BreadcrumbList",
@@ -564,15 +567,31 @@ export default function OnlineTimerPage({
         mainEntity: [
           {
             "@type": "Question",
-            name: "What is an online timer?",
+            name: "How do I set a timer for 10 minutes (or any duration)?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "An online timer is a timer that runs in your web browser. You can set a duration and start a countdown without installing an app.",
+              text: "Choose a preset like 10m, or type a custom time using mm:ss (like 10:00) or h:mm:ss (like 1:00:00), then press Set and Start.",
             },
           },
           {
             "@type": "Question",
-            name: "Does this timer work on phones and laptops?",
+            name: "Can I set a 1 minute timer, 2 minute timer, or 5 minute timer?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. Use the preset chips for common times, or type your own duration (for example 1:00, 2:00, or 5:00) and press Set.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Can I set a timer for seconds (like 10 seconds or 30 seconds)?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. Type seconds directly (like 10 or 30) or use mm:ss (like 0:10 or 0:30), then press Set and Start.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Does this online timer work on phones and laptops?",
             acceptedAnswer: {
               "@type": "Answer",
               text: "Yes. The timer is responsive and works on phones, tablets, laptops, and desktops.",
@@ -588,10 +607,18 @@ export default function OnlineTimerPage({
           },
           {
             "@type": "Question",
-            name: "Can I turn sound off?",
+            name: "Can I turn sound off or loop the timer?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Toggle Sound off to run the timer silently.",
+              text: "Yes. Toggle Sound off to run silently. Enable Loop to repeat the same countdown automatically.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What keyboard shortcuts are supported?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Space starts or pauses, R resets, and F toggles fullscreen (when the timer card is focused).",
             },
           },
         ],
@@ -605,7 +632,6 @@ export default function OnlineTimerPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-
       {/* Hero */}
       <section className="border-b border-amber-400 bg-amber-500/30">
         <div className="mx-auto max-w-7xl px-4 py-8">
@@ -626,7 +652,6 @@ export default function OnlineTimerPage({
           </p>
         </div>
       </section>
-
       {/* Main Tool */}
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <OnlineTimerCard />
@@ -668,36 +693,53 @@ export default function OnlineTimerPage({
           </div>
         </div>
       </section>
-
-
-      {/* SEO Section (broad intent) */}
+      {/* SEO Section (broad intent, without spam) */}
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
           <h2 className="text-xl font-bold text-amber-950">
-            Free online timer that just works
+            Set a timer fast (minutes, seconds, or custom)
           </h2>
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              If you searched for an <strong>online timer</strong> or a{" "}
-              <strong>timer website</strong>, you probably want something
-              simple: set a time, start a countdown, and read it instantly. This
-              page is a clean browser timer with presets for common durations
-              and a custom input for exact timing.
+              If you searched for an <strong>online timer</strong>, a{" "}
+              <strong>timer website</strong>, or something like{" "}
+              <strong>set a timer for 10 minutes</strong>, this page is built
+              for that exact job: pick a preset, press Start, and you are done.
             </p>
 
             <p>
-              Use <strong>Sound</strong> for an end alert, or turn it off for a
-              silent run. Enable <strong>Loop</strong> if you want the same
-              countdown to repeat automatically for routines, stations, or
-              intervals.
+              Popular timer settings people use daily include short bursts like
+              a <strong>10 second timer</strong> or{" "}
+              <strong>30 second timer</strong>, quick tasks like a{" "}
+              <strong>1 minute timer</strong> and{" "}
+              <strong>2 minute timer</strong>, and common work blocks like a{" "}
+              <strong>5 minute timer</strong>, <strong>10 minute timer</strong>,{" "}
+              <strong>15 minute timer</strong>, <strong>20 minute timer</strong>
+              , <strong>25 minute timer</strong>, and{" "}
+              <strong>30 minute timer</strong>. For longer sessions, use a{" "}
+              <strong>40 minute timer</strong>, <strong>45 minute timer</strong>
+              , or <strong>60 minute timer</strong>.
             </p>
 
             <p>
-              For visibility, use <strong>Fullscreen</strong> (or press{" "}
-              <strong>F</strong>) and control the timer with the keyboard after
-              clicking the timer card once to focus it. The goal is fast timing
-              with minimal friction.
+              Want something specific that is not in the chips? Type your own
+              duration using <strong>mm:ss</strong> (like <strong>08:00</strong>
+              ) or <strong>h:mm:ss</strong> (like <strong>1:15:00</strong>),
+              then press <strong>Set</strong>. This is useful for exact requests
+              such as a <strong>7 minute timer</strong>,{" "}
+              <strong>12 minute timer</strong>, <strong>16 minute timer</strong>
+              , or <strong>27 minute timer</strong>.
+            </p>
+
+            <p>
+              Use <strong>Fullscreen</strong> for visibility on a projector or
+              shared screen, and control everything by keyboard after clicking
+              the card once:
+              <strong> Space</strong> to start or pause, <strong>R</strong> to
+              reset, and <strong>F</strong> for fullscreen. Toggle{" "}
+              <strong>Sound</strong> off for a silent timer, or enable{" "}
+              <strong>Loop</strong> for repeating intervals.
             </p>
 
             <p>
@@ -723,46 +765,81 @@ export default function OnlineTimerPage({
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Simple countdown
+                Quick presets
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Presets + custom input so you can start in seconds.
+                One tap for common picks like 1m, 5m, 10m, 15m, 20m, 30m, 45m,
+                and 60m.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Fullscreen ready
+                Exact durations
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Big digits for screens, projectors, and classrooms.
+                Set any time you need with mm:ss or h:mm:ss, then press Set.
               </p>
             </div>
 
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
               <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Control options
+                Presentation ready
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Sound toggle, loop mode, and keyboard shortcuts.
+                Fullscreen mode makes the digits readable across a room.
               </p>
             </div>
           </div>
         </div>
       </section>
-
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
         <h2 className="text-2xl font-bold">Online Timer FAQ</h2>
+
         <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I use this online timer?
+              How do I set a timer for 10 minutes (or any duration)?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Choose a preset (like 10m) or type a custom time (mm:ss), then
-              press <strong>Start</strong>. Use <strong>Reset</strong> to return
-              to your set duration.
+              Choose a preset (like <strong>10m</strong>) or type a custom time
+              using <strong>mm:ss</strong> (like <strong>10:00</strong>) or{" "}
+              <strong>h:mm:ss</strong> (like <strong>1:00:00</strong>). Press{" "}
+              <strong>Set</strong>, then press <strong>Start</strong>.
+            </div>
+          </details>
+
+          <details>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              Can I set a 1 minute timer, 2 minute timer, or 5 minute timer?
+            </summary>
+            <div className="px-5 pb-4 text-amber-800">
+              Yes. Use the preset chips for common times, or type your own
+              duration (for example <strong>1:00</strong>, <strong>2:00</strong>
+              , or <strong>5:00</strong>) and press <strong>Set</strong>.
+            </div>
+          </details>
+
+          <details>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              Can I set a timer for seconds (like 10 seconds or 30 seconds)?
+            </summary>
+            <div className="px-5 pb-4 text-amber-800">
+              Yes. Type seconds directly (like <strong>10</strong> or{" "}
+              <strong>30</strong>) or use <strong>mm:ss</strong> (like{" "}
+              <strong>0:10</strong> or <strong>0:30</strong>). Press{" "}
+              <strong>Set</strong>, then press <strong>Start</strong>.
+            </div>
+          </details>
+
+          <details>
+            <summary className="cursor-pointer px-5 py-4 font-medium">
+              Does this online timer work on phones and laptops?
+            </summary>
+            <div className="px-5 pb-4 text-amber-800">
+              Yes. The timer is responsive and works on phones, tablets,
+              laptops, and desktops.
             </div>
           </details>
 
@@ -778,10 +855,11 @@ export default function OnlineTimerPage({
 
           <details>
             <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off?
+              Can I turn sound off or loop the timer?
             </summary>
             <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off to run silently.
+              Yes. Toggle <strong>Sound</strong> off to run silently. Enable{" "}
+              <strong>Loop</strong> to repeat the same countdown automatically.
             </div>
           </details>
 

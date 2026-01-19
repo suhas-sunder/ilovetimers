@@ -77,6 +77,9 @@ const TimerMenuLinks = () => {
         { to: "/time-zone-converter", label: "Time Zone Converter" },
         { to: "/utc-clock", label: "UTC Clock" },
         { to: "/atomic-clock", label: "Atomic Clock" },
+        { to: "/retro-flip-clock", label: "Retro Flip Clock" },
+        { to: "/minimalist-clock", label: "Minimalist Clock" },
+        { to: "/roman-numeral-clock", label: "Roman Numeral Clock" },
         { to: "/digital-clock", label: "Digital Clock" },
         { to: "/analog-clock", label: "Analog Clock" },
         { to: "/binary-clock", label: "Binary Clock" },
@@ -92,6 +95,7 @@ const TimerMenuLinks = () => {
           to: "/swatch-internet-time-clock",
           label: "Swatch Internet Time Clock",
         },
+        { to: "/binary-stopwatch", label: "Binary Stopwatch" },
       ],
     },
     {
@@ -100,14 +104,26 @@ const TimerMenuLinks = () => {
         { to: "/event-countdown", label: "Event Countdown" },
         { to: "/alarm-timer", label: "Alarm Timer" },
         { to: "/multiple-timers", label: "Multiple Timers" },
+        { to: "/reaction-time-test", label: "Reaction Time Test" },
+        { to: "/metronome", label: "Metronome" },
+        { to: "/bpm-tapper", label: "BPM Tapper" },
       ],
     },
     {
-      title: "Finance & tracking",
+      title: "Finance, timekeeping & calculators",
       links: [
         { to: "/billable-hours-clock", label: "Billable Hours Clock" },
         { to: "/debt-repayment-timer", label: "Debt Repayment Timer" },
         { to: "/debt-clock", label: "Debt Clock" },
+        { to: "/military-time-converter", label: "Military Time Converter" },
+        { to: "/time-zone-converter", label: "Time Zone Converter" },
+        { to: "/work-hours-calculator", label: "Work Hours Calculator" },
+        { to: "/time-calculator", label: "Time Calculator" },
+        {
+          to: "/billable-hours-calculator",
+          label: "Billable Hours Calculator",
+        },
+        { to: "/milliseconds-converter", label: "Milliseconds Converter" },
       ],
     },
     {
@@ -128,7 +144,9 @@ const TimerMenuLinks = () => {
       <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
         <h2 className="text-xl font-bold text-amber-950">All Tools</h2>
         <p className="mt-2 leading-relaxed text-amber-800">
-          Pick a tool page or a purpose page. Everything runs in-browser.
+          All timers, clocks, and related tools are free to use. Everything runs
+          in-browser. No downloads or installs needed. Pick a tool and get
+          going!
         </p>
 
         <div className="mt-5 grid gap-6 lg:grid-cols-3">

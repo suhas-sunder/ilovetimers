@@ -56,6 +56,7 @@ export const links: Route.LinksFunction = () => [
 import { useEffect, useRef, useState } from "react";
 import RelatedSites from "./clients/components/navigation/RelatedSites";
 import TimerMenuLinks from "./clients/components/navigation/TimerMenuLinks";
+import { PHProvider } from "./provider";
 
 function useLockBodyScroll(locked: boolean) {
   useEffect(() => {
@@ -292,45 +293,47 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <SiteHeader />
-        {children}
+        <PHProvider>
+          <SiteHeader />
+          {children}
 
-        {/* Menu Links */}
-        <TimerMenuLinks />
-        <RelatedSites />
-        <ScrollRestoration />
-        <Scripts />
-        <footer className="border-t border-amber-400 bg-amber-500/30/60">
-          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-amber-800 sm:flex-row sm:items-center sm:justify-between">
-            {/* Left */}
-            <div>
-              © 2026 <span className="font-semibold">i💛Timers</span> - free
-              countdown, stopwatch, Pomodoro, HIIT, and clock tools
+          {/* Menu Links */}
+          <TimerMenuLinks />
+          <RelatedSites />
+          <ScrollRestoration />
+          <Scripts />
+          <footer className="border-t border-amber-400 bg-amber-500/30/60">
+            <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-amber-800 sm:flex-row sm:items-center sm:justify-between">
+              {/* Left */}
+              <div>
+                © 2026 <span className="font-semibold">i💛Timers</span> - free
+                countdown, stopwatch, Pomodoro, HIIT, and clock tools
+              </div>
+
+              {/* Right */}
+              <nav className="flex flex-wrap gap-x-4 gap-y-1 font-medium">
+                <a
+                  href="/privacy"
+                  className="hover:underline focus:outline-none focus:ring-2 focus:ring-amber-400"
+                >
+                  Privacy
+                </a>
+                <a
+                  href="/terms"
+                  className="hover:underline focus:outline-none focus:ring-2 focus:ring-amber-400"
+                >
+                  Terms
+                </a>
+                <a
+                  href="/cookies"
+                  className="hover:underline focus:outline-none focus:ring-2 focus:ring-amber-400"
+                >
+                  Cookies
+                </a>
+              </nav>
             </div>
-
-            {/* Right */}
-            <nav className="flex flex-wrap gap-x-4 gap-y-1 font-medium">
-              <a
-                href="/privacy"
-                className="hover:underline focus:outline-none focus:ring-2 focus:ring-amber-400"
-              >
-                Privacy
-              </a>
-              <a
-                href="/terms"
-                className="hover:underline focus:outline-none focus:ring-2 focus:ring-amber-400"
-              >
-                Terms
-              </a>
-              <a
-                href="/cookies"
-                className="hover:underline focus:outline-none focus:ring-2 focus:ring-amber-400"
-              >
-                Cookies
-              </a>
-            </nav>
-          </div>
-        </footer>
+          </footer>
+        </PHProvider>
       </body>
     </html>
   );

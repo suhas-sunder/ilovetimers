@@ -9,35 +9,39 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Golden Hour Clock | Golden Hour Times (Sunrise, Sunset) (Live, Simple, Fullscreen)";
+    "Golden Hour Times | Sunrise, Sunset, and Golden Hour Near You";
   const description =
-    "Free Golden Hour Clock that shows today’s golden hour times for your location. Pick a date, set latitude/longitude (or use GPS), and get sunrise, sunset, and golden hour start/end with a live countdown and fullscreen view.";
+    "Free golden hour clock showing today’s golden hour times for your location. View sunrise and sunset, golden hour start and end, and a live countdown in a clean fullscreen display.";
   const url = "https://ilovetimers.com/golden-hour-clock";
+
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
+        "golden hour times",
         "golden hour clock",
         "golden hour time",
-        "golden hour times",
         "golden hour calculator",
-        "golden hour sunrise sunset",
-        "photography golden hour",
         "golden hour near me",
-        "sunrise sunset clock",
+        "photography golden hour",
+        "sunrise sunset times",
+        "golden hour sunrise sunset",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

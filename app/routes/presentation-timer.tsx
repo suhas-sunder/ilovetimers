@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Presentation Timer | Speaker & Meeting Timer (Fullscreen, Simple, Visible)";
+  const title = "Presentation Timer (Fullscreen Countdown)";
   const description =
-    "Free presentation timer for speakers and meetings. Large fullscreen countdown, presets, custom minutes, sound optional, and keyboard shortcuts. Designed for projector and classroom visibility.";
+    "Keep talks and presentations on time with a clear fullscreen countdown. Big digits designed to stay readable on projectors and in classrooms.";
+
   const url = "https://ilovetimers.com/presentation-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "presentation timer",
-        "speaker timer",
-        "meeting timer",
-        "fullscreen timer",
-        "timer for projector",
-        "talk timer",
-        "countdown timer for presentations",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -627,7 +616,6 @@ export default function PresentationTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

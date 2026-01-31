@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Break Timer | Work Break & Rest Timer (Fullscreen, Simple, Visible)";
+  const title = "Break Timer | Fullscreen Work Break Countdown With Presets";
   const description =
-    "Free break timer for quick work breaks and rest periods. Big fullscreen countdown, popular presets (1 to 15 minutes), custom minutes, optional sound, and keyboard shortcuts. Great for desk breaks, study breaks, and meetings.";
+    "Free break timer for work, study, and meetings. Start a big fullscreen countdown with 1 to 15 minute presets, custom minutes, optional sound, and keyboard shortcuts.";
   const url = "https://ilovetimers.com/break-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -23,21 +23,23 @@ export function meta({}: Route.MetaArgs) {
         "work break timer",
         "rest timer",
         "study break timer",
-        "desk break timer",
-        "fullscreen timer",
-        "countdown timer for breaks",
         "short break timer",
+        "fullscreen break timer",
+        "countdown timer for breaks",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

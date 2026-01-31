@@ -8,30 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Pizza Timer | Frozen Pizza Timer (Oven & Air Fryer) (Fullscreen, Simple, Visible)";
+  const title = "Pizza Timer (Frozen Pizza)";
   const description =
-    "Free pizza timer and frozen pizza timer. Quick presets for common bake times, a big readable countdown, optional sound, and fullscreen mode. Includes a simple doneness checklist so you do not underbake or burn pizza.";
+    "Set a simple pizza timer with quick presets for frozen pizza. Big, easy-to-read countdown to help you pull your pizza out at the right time.";
+
   const url = "https://ilovetimers.com/pizza-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "pizza timer",
-        "frozen pizza timer",
-        "timer for pizza",
-        "pizza oven timer",
-        "air fryer pizza timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -957,7 +948,6 @@ export default function PizzaTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

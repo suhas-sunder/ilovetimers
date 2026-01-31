@@ -8,30 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Multiple Timers | Two Timers at Once (Parallel Timers)";
+  const title = "Multiple Timers Online (Run Two at Once)";
   const description =
-    "Free multiple timers tool. Run two timers at once (or more) with parallel countdowns, big digits, presets, optional sound, and fullscreen. Designed for cooking, classrooms, workouts, and labs.";
+    "Run multiple timers at the same time. Start two or more countdowns side by side with big, clear digits. Ideal for cooking, workouts, classes, and labs.";
+
   const url = "https://ilovetimers.com/multiple-timers";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "multiple timers",
-        "two timers at once",
-        "parallel timers",
-        "two countdown timers",
-        "multi timer",
-        "multiple countdown timers",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

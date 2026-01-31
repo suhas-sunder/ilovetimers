@@ -9,10 +9,11 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Fullscreen Timer | Big Online Timer for Projectors and Classrooms (Countdown + Shortcuts)";
+    "Fullscreen Timer | Big Countdown Timer for Classrooms and Projectors";
   const description =
-    "Free fullscreen timer with huge digits for projectors, smartboards, and classrooms. Start fast with presets or set a custom countdown. Keyboard shortcuts, optional sound, and loop mode.";
+    "Free fullscreen timer with huge digits for projectors and smartboards. Start with presets or set a custom countdown, use keyboard shortcuts, enable optional sound, and turn on loop mode.";
   const url = "https://ilovetimers.com/fullscreen-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -21,23 +22,26 @@ export function meta({}: Route.MetaArgs) {
       content: [
         "fullscreen timer",
         "timer for projector",
+        "projector timer",
+        "smartboard timer",
         "classroom fullscreen timer",
         "big timer",
         "large countdown timer",
         "online fullscreen countdown timer",
-        "smartboard timer",
-        "projector timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

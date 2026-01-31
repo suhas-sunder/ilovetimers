@@ -8,31 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "UTC Clock | Current UTC Time (Big, Fullscreen, Copyable)";
+  const title = "Current UTC Time (Live Clock)";
   const description =
-    "See the current UTC time instantly. Big readable UTC clock, optional seconds, 12/24-hour toggle, fullscreen mode, and copy-friendly output. Great for logging, coordination, and online schedules.";
+    "See the current UTC time instantly. A clean, live UTC clock with a big, readable display for coordination, logging, and schedules.";
+
   const url = "https://ilovetimers.com/utc-clock";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "utc clock",
-        "utc time",
-        "current utc time",
-        "utc time now",
-        "what time is it utc",
-        "utc now",
-        "universal time clock",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -569,7 +559,6 @@ export default function UtcClockPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Video Game Challenge Timer | Sudden Death Timer & One Minute Challenge Timer (Fullscreen)";
+  const title = "Game Challenge Timer (Sudden Death)";
   const description =
-    "Free challenge timer for games: sudden death countdown, one-minute challenge mode, and quick preset rounds. Big fullscreen display, optional sound, and keyboard shortcuts. Great for party games, streams, and competitive challenges.";
+    "Run fast game challenges with a sudden death or one-minute timer. Big fullscreen countdown built for party games, streams, and competitive play.";
+
   const url = "https://ilovetimers.com/video-game-challenge-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "sudden death timer",
-        "one minute challenge timer",
-        "one minute timer challenge",
-        "challenge timer",
-        "game challenge timer",
-        "stream timer",
-        "party game timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -41,6 +30,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
+
 
 /* =========================================================
    LOADER

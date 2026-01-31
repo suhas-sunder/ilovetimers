@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Event Countdown | Countdown to Date & Time (Online, Fullscreen)";
+  const title = "Event Countdown | Countdown to a Date and Time (Fullscreen)";
   const description =
-    "Free event countdown. Count down to a specific date and time with big fullscreen display, optional sound, and simple controls. Also supports a duration-based workaround if your browser blocks exact scheduling.";
+    "Free event countdown timer to count down to a specific date and time. Big fullscreen display, simple controls, and optional sound alerts for events, launches, and deadlines.";
   const url = "https://ilovetimers.com/event-countdown";
+
   return [
     { title },
     { name: "description", content: description },
@@ -24,18 +24,22 @@ export function meta({}: Route.MetaArgs) {
         "countdown to time",
         "countdown to a date",
         "date countdown timer",
+        "event countdown timer",
         "countdown clock",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -805,7 +809,6 @@ export default function EventCountdownPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

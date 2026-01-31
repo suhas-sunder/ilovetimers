@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Visual Timer | Classroom Visual Timer for Kids (Fullscreen, Simple)";
+  const title = "Visual Timer for Kids and Classrooms";
   const description =
-    "Free visual timer for kids and classrooms. A countdown with a big time display plus a shrinking visual bar (and optional pie-style ring). Fullscreen, presets, custom minutes, sound optional, and easy keyboard shortcuts.";
+    "Help kids see time pass with a clear visual timer. A countdown with a shrinking visual bar designed for classrooms, lessons, and activities.";
+
   const url = "https://ilovetimers.com/visual-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "visual timer",
-        "timer kids",
-        "classroom visual timer",
-        "visual countdown timer",
-        "timer for kids",
-        "teacher visual timer",
-        "smartboard timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -791,7 +780,6 @@ export default function VisualTimerPage({
           <VisualTimerCard />
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

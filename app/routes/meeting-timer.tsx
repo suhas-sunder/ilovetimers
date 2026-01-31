@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Meeting Timer | Agenda Timer for Meetings (Fullscreen, Simple, Visible)";
+  const title = "Meeting Timer for Agendas and Timeboxing";
   const description =
-    "Free meeting timer for teams and agendas. Big fullscreen countdown, quick presets, custom minutes, optional sound, and keyboard shortcuts. Great for keeping meeting sections on time.";
+    "Keep meetings on track with a clear agenda timer. Run a fullscreen countdown for each topic, standup, or timebox so everyone sees the time left.";
+
   const url = "https://ilovetimers.com/meeting-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "meeting timer",
-        "agenda timer",
-        "timer for meetings",
-        "timebox timer",
-        "standup timer",
-        "scrum meeting timer",
-        "fullscreen timer",
-        "countdown timer for meetings",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

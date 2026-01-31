@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Sleep Timer | Online Sleep Timer + Screen Off Timer (Soft Alarm Optional)";
+  const title = "Sleep Timer (Countdown for Bedtime)";
   const description =
-    "Free sleep timer with a simple countdown and optional soft alarm. Includes screen-dim mode, fullscreen, presets, and honest browser limitations for keeping your screen off.";
+    "Set a simple sleep timer with a gentle countdown before bed. Use it to time music, reading, or winding down with a calm, distraction-free display.";
+
   const url = "https://ilovetimers.com/sleep-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "sleep timer",
-        "online sleep timer",
-        "screen off timer",
-        "sleep timer online",
-        "bedtime timer",
-        "soft alarm timer",
-        "countdown sleep timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -593,7 +582,6 @@ export default function SleepTimerPage({}: Route.ComponentProps) {
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <SleepTimerCard />
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

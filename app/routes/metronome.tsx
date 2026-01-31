@@ -8,25 +8,15 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Online Metronome | Tempo Timer (Tap Tempo + Accents)";
+  const title = "Online Metronome with Tap Tempo";
   const description =
-    "Free online metronome and tempo timer. Set BPM, tap tempo, choose time signature, accents, and subdivisions. Accurate audio scheduling, visual pulse, fullscreen stage, and copy settings.";
+    "Practice with a clean, accurate online metronome. Set BPM, tap your tempo, and keep time with a clear visual and audio pulse. Built for musicians.";
+
   const url = "https://ilovetimers.com/metronome";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "online metronome",
-        "tempo timer",
-        "metronome online",
-        "tap tempo",
-        "bpm metronome",
-        "metronome bpm",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },

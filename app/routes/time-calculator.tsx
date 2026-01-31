@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Time Calculator | Add Time + Subtract Time + Time Duration Calculator";
+  const title = "Time Calculator (Add and Subtract Time)";
   const description =
-    "Free time calculator to add time, subtract time, and calculate time duration between two times. Supports days, hours, minutes, seconds, carry/borrow, negative results, and copyable outputs.";
+    "Add or subtract time in seconds. Calculate time durations between two times with a simple, accurate time calculator.";
+
   const url = "https://ilovetimers.com/time-calculator";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "time calculator",
-        "add time calculator",
-        "subtract time calculator",
-        "time duration calculator",
-        "hours minutes seconds calculator",
-        "time difference calculator",
-        "calculate duration",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -41,6 +30,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
+
 
 /* =========================================================
    LOADER

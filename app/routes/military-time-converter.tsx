@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Military Time Converter | 24-Hour to Standard Time (AM/PM) Instantly";
+  const title = "Military Time Converter (24-Hour to AM/PM)";
   const description =
-    "Convert military time (24-hour time) to standard time (AM/PM) instantly. Paste 1730, 17:30, 0730, or 0000. Includes reverse conversion, copy buttons, and examples.";
+    "Convert military time to standard AM/PM in seconds. Paste 1730, 0730, or 0000 and get the exact time instantly. Simple, fast, and accurate.";
+
   const url = "https://ilovetimers.com/military-time-converter";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "military time converter",
-        "24 hour time converter",
-        "military time to standard time",
-        "24 hour to am pm",
-        "1730 to time",
-        "0000 to time",
-        "standard time to military",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

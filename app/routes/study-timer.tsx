@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Study Timer | Focus & Homework Timer (Fullscreen, Simple, Visible)";
+  const title = "Study Timer for Focus and Homework";
   const description =
-    "Free study timer for focus and homework. Big fullscreen countdown, study-friendly presets, custom minutes, optional sound, and keyboard shortcuts. Designed for distraction-free studying.";
+    "Stay focused while studying with a simple study timer. Run distraction-free study sessions using a clear fullscreen countdown built for homework and deep focus.";
+
   const url = "https://ilovetimers.com/study-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "study timer",
-        "focus timer",
-        "homework timer",
-        "study countdown timer",
-        "timer for studying",
-        "study session timer",
-        "fullscreen timer",
-        "distraction free timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

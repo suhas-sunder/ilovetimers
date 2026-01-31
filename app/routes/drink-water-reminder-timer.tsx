@@ -8,35 +8,38 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Water Reminder Timer | Drink Water Timer (Hydration Reminder, Simple)";
+  const title = "Drink Water Reminder | Hydration Timer With Repeating Alerts";
   const description =
-    "Free drink water timer with repeating hydration reminders. Choose an interval, optional sound, fullscreen display, and a clear note about browser notification limitations.";
+    "Free drink water reminder and hydration timer. Set repeating intervals, optional sound alerts, and use a clean fullscreen display to stay hydrated throughout the day.";
   const url = "https://ilovetimers.com/water-reminder-timer";
+
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
+        "drink water reminder",
         "drink water timer",
         "water reminder timer",
-        "hydration reminder timer",
-        "drink water reminder",
+        "hydration reminder",
         "hydration timer",
-        "water timer",
         "water reminder online",
+        "drink water reminder online",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -625,7 +628,6 @@ export default function WaterReminderTimerPage({}: Route.ComponentProps) {
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <WaterReminderTimerCard />
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

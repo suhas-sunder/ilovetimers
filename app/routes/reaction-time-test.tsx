@@ -8,25 +8,15 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Reaction Time Test | Human Reaction Timer (Fast, Free)";
+  const title = "Reaction Time Test (Fast Human Reflex Test)";
   const description =
-    "Free reaction time test and human reaction timer. Tap or press space when the screen turns green. Track best, average, and try multiple runs. Fullscreen and copy results.";
+    "Test your reaction time in seconds. Tap or press when the screen changes and see your best and average reaction speed instantly.";
+
   const url = "https://ilovetimers.com/reaction-time-test";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "reaction time test",
-        "human reaction timer",
-        "reaction test",
-        "reaction time",
-        "click speed test",
-        "reflex test",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },

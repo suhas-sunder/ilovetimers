@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Lab Timer | Experiment & Reaction Timer (Stopwatch, Laps, Repeat Countdown)";
+  const title = "Lab Timer for Experiments and Reaction Time";
   const description =
-    "Free lab timer for experiments and reaction timing. Includes stopwatch with laps (splits), a repeatable countdown for timed steps, fullscreen display, optional sound, and keyboard shortcuts.";
+    "Online lab timer for experiments and reaction timing. Use a precise stopwatch with laps or run repeatable countdowns for timed lab steps. Clear, distraction-free display.";
+
   const url = "https://ilovetimers.com/lab-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "lab timer",
-        "experiment timer",
-        "reaction timer",
-        "lab stopwatch",
-        "timer with laps",
-        "splits timer",
-        "repeat countdown timer",
-        "fullscreen timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

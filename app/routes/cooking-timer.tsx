@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Cooking Timer | Kitchen Timer (Eggs, Pasta, Oven, Fullscreen)";
+  const title = "Cooking Timer | Kitchen Timer With Egg and Pasta Presets";
   const description =
-    "Free cooking timer and kitchen timer with common presets. Big fullscreen countdown, eggs timer presets, custom minutes, optional sound, and keyboard shortcuts. Great for boiling eggs, pasta, baking, and everyday cooking.";
+    "Free cooking and kitchen timer with common presets for eggs, pasta, baking, and ovens. Big fullscreen countdown, custom minutes, optional sound, and keyboard shortcuts.";
   const url = "https://ilovetimers.com/cooking-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -20,8 +21,8 @@ export function meta({}: Route.MetaArgs) {
       content: [
         "cooking timer",
         "kitchen timer",
-        "boiling eggs timer",
         "egg timer",
+        "boiling eggs timer",
         "pasta timer",
         "oven timer",
         "baking timer",
@@ -29,14 +30,17 @@ export function meta({}: Route.MetaArgs) {
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -740,7 +744,6 @@ export default function CookingTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

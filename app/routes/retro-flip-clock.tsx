@@ -8,25 +8,15 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Retro Flip Clock | Flip Clock + Retro Flip Clock Online (Fullscreen)";
+  const title = "Retro Flip Clock (Fullscreen)";
   const description =
-    "Free flip clock and retro flip clock online. Big retro flip digits, fullscreen screensaver mode, optional seconds and date, 12/24-hour toggle, copy, and Zen mode that hides UI.";
+    "A classic retro flip clock with big animated digits. Use it fullscreen as a desk clock or screensaver-style display with a clean, nostalgic look.";
+
   const url = "https://ilovetimers.com/retro-flip-clock";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "flip clock",
-        "retro flip clock online",
-        "flip clock online",
-        "fullscreen flip clock",
-        "flip clock screensaver",
-        "aesthetic flip clock",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },

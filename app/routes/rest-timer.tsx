@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Rest Timer | Set Rest Between Sets (Fullscreen, Simple, Visible)";
+  const title = "Rest Timer Between Sets";
   const description =
-    "Free rest timer for workouts and training. Big fullscreen countdown, fast presets for between sets (30s to 5m), custom minutes, optional sound, and keyboard shortcuts. Great for lifting, circuits, and coaching.";
+    "Time your rest between sets with a clear workout rest timer. Big, easy-to-read countdown built for lifting, circuits, and training sessions.";
+
   const url = "https://ilovetimers.com/rest-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "rest timer",
-        "rest timer between sets",
-        "set rest timer",
-        "gym rest timer",
-        "workout rest timer",
-        "timer between sets",
-        "fullscreen timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -654,7 +643,6 @@ export default function RestTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

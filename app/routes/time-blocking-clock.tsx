@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Time-Blocking Clock | Live Clock + Simple Day Blocks (Fullscreen)";
+  const title = "Time Blocking Clock (Daily Schedule)";
   const description =
-    "Free time-blocking clock: a live clock with an editable schedule. Add time blocks, set start and end, highlight the current block, copy your plan, and use fullscreen.";
+    "Plan your day with a live time-blocking clock. Create simple time blocks, see the current block at a glance, and stay on schedule with a clear fullscreen view.";
+
   const url = "https://ilovetimers.com/time-blocking-clock";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "time blocking clock",
-        "time blocking planner",
-        "time block schedule",
-        "daily schedule blocks",
-        "time blocking template",
-        "time blocks",
-        "focus schedule",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -736,7 +724,6 @@ export default function TimeBlockingClockPage({
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <TimeBlockingClockCard />
       </section>
-
 
       <section className="mx-auto max-w-7xl px-4 pb-10">
         <div className="text-xs text-slate-600">Build: {nowISO}</div>

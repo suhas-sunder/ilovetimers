@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Productivity Timer | Focus Timer Online (Deep Work, Breaks, Fullscreen)";
+  const title = "Productivity Timer for Focus and Deep Work";
   const description =
-    "Free productivity timer and focus timer online. Quick deep-work presets, custom work/break cycles, optional sound, fullscreen, and keyboard shortcuts. Built for distraction-free productivity.";
+    "Stay focused with a simple productivity timer. Run deep work sessions, structured breaks, and focus blocks with a clear fullscreen countdown.";
+
   const url = "https://ilovetimers.com/productivity-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "productivity timer",
-        "focus timer online",
-        "focus timer",
-        "deep work timer",
-        "work break timer",
-        "study timer",
-        "pomodoro alternative",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -768,7 +757,6 @@ export default function ProductivityTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

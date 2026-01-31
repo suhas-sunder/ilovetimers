@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Meeting Count Up Timer | Meeting Running Time & Elapsed Time (Fullscreen)";
+  const title = "Meeting Count-Up Timer (Elapsed Time)";
   const description =
-    "Free meeting count up timer to track meeting running time and elapsed time. Start/pause, topic splits, fullscreen display, and simple keyboard shortcuts.";
+    "Track how long your meeting has been running with a simple count-up timer. Clear elapsed time display for meetings, standups, and presentations.";
+
   const url = "https://ilovetimers.com/meeting-countup-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "meeting running time",
-        "meeting elapsed time",
-        "meeting count up timer",
-        "meeting timer counts up",
-        "elapsed time meeting",
-        "meeting stopwatch",
-        "fullscreen meeting timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

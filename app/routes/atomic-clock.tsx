@@ -8,9 +8,10 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Atomic Clock | Live Time (Simulated) with Fullscreen";
+  const title =
+    "Atomic Clock Online | Exact Time With Milliseconds (Fullscreen)";
   const description =
-    "Atomic clock style display showing live time with milliseconds, fullscreen mode, and keyboard shortcuts. For reference display only.";
+    "View the current time with milliseconds in a clean fullscreen atomic-clock style display. Optional keyboard shortcuts and a big readable layout for reference and displays.";
   const url = "https://ilovetimers.com/atomic-clock";
 
   return [
@@ -20,23 +21,26 @@ export function meta({}: Route.MetaArgs) {
       name: "keywords",
       content: [
         "atomic clock",
-        "atomic time",
-        "online atomic clock",
-        "precise time",
-        "accurate clock",
+        "atomic clock online",
+        "exact time",
+        "accurate time",
         "time with milliseconds",
         "fullscreen clock",
+        "precise time",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

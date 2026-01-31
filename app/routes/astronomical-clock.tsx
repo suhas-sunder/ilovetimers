@@ -8,9 +8,9 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Astronomical Clock | Sun, Moon, Daylight, and Night (Live, Fullscreen)";
+    "Astronomical Clock Online | Sun, Moon, Daylight and Night in Real Time";
   const description =
-    "Free astronomical clock showing local time, daylight vs night, sun position context, sunrise and sunset times, and moon phase overview. Clean, live, fullscreen-friendly.";
+    "Live astronomical clock showing the sun and moon, daylight vs night, sunrise and sunset, and local time. Clean fullscreen display that updates in real time.";
   const url = "https://ilovetimers.com/astronomical-clock";
 
   return [
@@ -20,11 +20,11 @@ export function meta({}: Route.MetaArgs) {
       name: "keywords",
       content: [
         "astronomical clock",
-        "astronomy clock",
+        "astronomical clock online",
         "sun and moon clock",
-        "day night clock",
+        "day and night clock",
         "sunrise sunset clock",
-        "astronomy time",
+        "astronomy clock",
       ].join(", "),
     },
     { rel: "canonical", href: url },

@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Tabata Timer 20/10 | Tabata Interval Timer (8 Rounds, Fullscreen)";
+  const title = "Tabata Timer (20/10 Interval)";
   const description =
-    "Free Tabata timer with the classic 20/10 × 8 defaults. Big fullscreen intervals, simple controls, optional sound, and keyboard shortcuts. Great for Tabata HIIT, conditioning, and timed workouts.";
+    "Run classic Tabata workouts with a clear 20/10 interval timer. Big fullscreen intervals built for HIIT, conditioning, and fast-paced training.";
+
   const url = "https://ilovetimers.com/tabata-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "tabata timer 20 10",
-        "tabata timer 20/10",
-        "tabata interval timer",
-        "tabata timer",
-        "20 10 tabata",
-        "tabata hiit timer",
-        "interval timer",
-        "fullscreen tabata timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -887,7 +875,6 @@ export default function TabataTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

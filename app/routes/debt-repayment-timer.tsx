@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Debt Repayment Timer | Debt Payoff Timer (Countdown + Motivation, Simple)";
+  const title = "Debt Payoff Countdown | Debt Repayment Timer to a Payoff Date";
   const description =
-    "Free debt repayment timer. Set a payoff date or a countdown duration, track time remaining, estimate progress, and stay motivated. Includes clear disclosures: this is a planning tool, not financial advice.";
+    "Free debt repayment timer and payoff countdown. Set a payoff date or duration to track time remaining and see estimated progress toward being debt-free.";
   const url = "https://ilovetimers.com/debt-repayment-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -25,17 +25,21 @@ export function meta({}: Route.MetaArgs) {
         "debt countdown",
         "payoff countdown timer",
         "debt tracker timer",
+        "debt free countdown",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -721,7 +725,6 @@ export default function DebtRepaymentTimerPage({}: Route.ComponentProps) {
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <DebtRepaymentTimerCard />
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

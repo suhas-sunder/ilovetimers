@@ -7,34 +7,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Moon Phase Clock | Current Moon Phase Today (Illumination + Next Full Moon) (Live, Fullscreen)";
+  const title = "Current Moon Phase Today";
   const description =
-    "Free Moon Phase Clock that shows the current moon phase, illumination estimate, moon age, and a countdown to the next major phase (new moon, first quarter, full moon, last quarter). Works instantly, includes fullscreen mode.";
+    "See today’s moon phase at a glance. View current phase, illumination, moon age, and when the next full or new moon occurs. Clean, live display.";
+
   const url = "https://ilovetimers.com/moon-phase-clock";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "moon phase clock",
-        "current moon phase",
-        "moon phase today",
-        "lunar phase today",
-        "moon illumination",
-        "moon age",
-        "next full moon",
-        "next new moon",
-        "moon phases",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -834,7 +821,6 @@ export default function MoonPhaseClockPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

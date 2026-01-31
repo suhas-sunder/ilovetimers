@@ -9,10 +9,11 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Classroom Timer | Timer for Teachers & Smartboard (Fullscreen, Big, Simple)";
+    "Classroom Timer | Fullscreen Countdown for Smartboards and Projectors";
   const description =
-    "Free classroom timer for teachers. Big fullscreen countdown for smartboards and projectors, quick presets, custom minutes, optional sound, and keyboard shortcuts. Great for transitions, centers, and tests.";
+    "Free classroom timer for teachers. Big fullscreen countdown for smartboards and projectors with quick presets, custom minutes, optional sound, and keyboard shortcuts for smooth transitions.";
   const url = "https://ilovetimers.com/classroom-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -23,21 +24,23 @@ export function meta({}: Route.MetaArgs) {
         "timer for teachers",
         "smartboard timer",
         "interactive whiteboard timer",
-        "timer for classroom",
-        "teacher timer",
-        "countdown timer for classroom",
+        "classroom countdown timer",
         "projector timer",
+        "teacher timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -729,7 +732,6 @@ export default function ClassroomTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "HIIT Timer | Free Interval Timer (Tabata + Work/Rest) with Rounds, Fullscreen, and Shortcuts";
+  const title = "HIIT Timer | Interval Timer for Work and Rest (Tabata, Rounds)";
   const description =
-    "Free HIIT / interval timer with warmup, work, rest, rounds, and cooldown. Includes Tabata presets, skip/next, sound, fullscreen, and keyboard shortcuts. Built for workouts and training.";
+    "Free HIIT and interval timer with warmup, work, rest, rounds, and cooldown. Includes Tabata presets, sound cues, skip and next controls, fullscreen mode, and keyboard shortcuts.";
   const url = "https://ilovetimers.com/hiit-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -30,18 +30,22 @@ export function meta({}: Route.MetaArgs) {
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
+
 
 /* =========================================================
    LOADER

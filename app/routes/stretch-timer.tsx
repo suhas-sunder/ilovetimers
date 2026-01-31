@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Stretch Timer | Mobility Timer + Yoga Stretch Timer (Intervals, Simple, Fullscreen)";
+  const title = "Stretch Timer for Mobility and Yoga";
   const description =
-    "Free stretch timer for mobility and yoga stretching. Set stretch + rest intervals, choose rounds, use presets, fullscreen display, and optional sound cues.";
+    "Guide your stretching with a simple interval stretch timer. Alternate stretch and rest periods with a clear fullscreen countdown built for mobility work.";
+
   const url = "https://ilovetimers.com/stretch-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "stretch timer",
-        "mobility timer",
-        "yoga stretch timer",
-        "stretch interval timer",
-        "stretch and rest timer",
-        "mobility intervals",
-        "stretch timer online",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -742,7 +731,6 @@ export default function StretchTimerPage({}: Route.ComponentProps) {
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <StretchTimerCard />
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

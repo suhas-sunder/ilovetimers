@@ -1,39 +1,28 @@
 // app/routes/stopwatch.tsx
 import type { Route } from "./+types/stopwatch";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Stopwatch | Free Online Stopwatch with Laps (Millisecond Stopwatch) + Fullscreen";
+  const title = "Online Stopwatch with Laps";
   const description =
-    "Free online stopwatch with laps and millisecond precision. Fullscreen display, keyboard shortcuts, and one-click copy for lap splits and totals. Great for workouts, speedcubing, labs, and timing practice.";
+    "Use a fast, accurate online stopwatch with laps. Start instantly, track splits, and keep time with a clean fullscreen display built for serious timing.";
+
   const url = "https://ilovetimers.com/stopwatch";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "online stopwatch",
-        "stopwatch with laps",
-        "millisecond stopwatch",
-        "lap timer",
-        "split timer",
-        "fullscreen stopwatch",
-        "stopwatch timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -568,7 +557,6 @@ export default function StopwatchPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section (under TimerMenuLinks) */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

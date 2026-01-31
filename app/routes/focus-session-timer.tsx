@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Focus Session Timer | Deep Work Timer (One Session, Fullscreen, Simple)";
+  const title = "Focus Session Timer | Single Deep Work Countdown (Fullscreen)";
   const description =
-    "Free focus session timer for deep work. Pick a session length, start a clean countdown, optional sound, fullscreen display, and quick break suggestions when you finish.";
+    "Free focus session timer for deep work. Choose one session length, start a distraction-free countdown, use fullscreen mode, and get a short break suggestion when you finish.";
   const url = "https://ilovetimers.com/focus-session-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -24,19 +24,22 @@ export function meta({}: Route.MetaArgs) {
         "focus timer",
         "study focus timer",
         "work session timer",
-        "fullscreen focus timer",
         "single session timer",
+        "fullscreen focus timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

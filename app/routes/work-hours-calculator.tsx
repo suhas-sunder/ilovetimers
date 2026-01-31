@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Work Hours Calculator | Calculate Time Worked (Start, End, Break) + Payroll Hours";
+  const title = "Work Hours Calculator (Time Worked)";
   const description =
-    "Free work hours calculator for payroll and time tracking. Enter start time, end time, and subtract break minutes to get total hours worked. Supports overnight shifts, decimal hours, and copyable results.";
+    "Calculate hours worked from start and end times. Subtract breaks and get total work hours instantly with a simple, accurate calculator.";
+
   const url = "https://ilovetimers.com/work-hours-calculator";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "work hours calculator",
-        "hours worked calculator",
-        "payroll hours calculator",
-        "time card calculator",
-        "calculate hours worked",
-        "subtract break",
-        "overnight shift hours",
-        "decimal hours",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

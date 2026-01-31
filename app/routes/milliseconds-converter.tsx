@@ -8,31 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Milliseconds Converter | ms to seconds + seconds to ms (Instant)";
+  const title = "Milliseconds to Seconds Converter";
   const description =
-    "Free milliseconds converter. Convert ms to seconds and seconds to ms instantly, with copy buttons and common quick examples.";
+    "Convert milliseconds to seconds or seconds to milliseconds instantly. Paste a value and get an exact result with no clutter.";
+
   const url = "https://ilovetimers.com/milliseconds-converter";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "milliseconds converter",
-        "ms to seconds",
-        "milliseconds to seconds",
-        "seconds to ms",
-        "seconds to milliseconds",
-        "ms to s converter",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Breathing Timer | Box Breathing + 4-7-8 Breathing (Simple Guided Cycles)";
+  const title = "Breathing Timer | Box Breathing and Guided Breathing Cycles";
   const description =
-    "Free breathing timer for box breathing, 4-7-8 breathing, and custom inhale/hold/exhale cycles. Clean visuals, optional sound, fullscreen mode, and calming pacing.";
+    "Free breathing timer for box breathing, 4-7-8 breathing, and custom inhale, hold, and exhale cycles. Clean guided visuals, optional sound, and fullscreen mode.";
   const url = "https://ilovetimers.com/breathing-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -20,23 +20,26 @@ export function meta({}: Route.MetaArgs) {
       name: "keywords",
       content: [
         "breathing timer",
-        "breathing exercise timer",
         "box breathing timer",
+        "breathing exercise timer",
         "4-7-8 breathing timer",
-        "inhale exhale timer",
         "guided breathing timer",
+        "inhale exhale timer",
         "breathing cycle timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -819,7 +822,6 @@ export default function BreathingTimerPage({
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <BreathingTimerCard />
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Speedcubing Timer | Cubing Stopwatch + Splits (Fullscreen, Big Digits)";
+  const title = "Speedcubing Timer (Cube Stopwatch)";
   const description =
-    "Free speedcubing timer with a cubing-style stopwatch and splits (laps). Big fullscreen time, fast keyboard controls, lap list, and a clean layout designed for practice sessions.";
+    "Practice speedcubing with a fast, clean cube timer. Start and stop instantly, track splits, and focus on your solves with a big, readable display.";
+
   const url = "https://ilovetimers.com/speedcubing-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "speedcubing timer",
-        "cubing stopwatch",
-        "cube timer",
-        "rubiks cube timer",
-        "splits timer",
-        "laps timer",
-        "stopwatch with splits",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -617,7 +606,6 @@ export default function SpeedcubingTimerPage({}: Route.ComponentProps) {
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Countdown Timer | Free Online Fullscreen Countdown Timer for Classrooms, Exams, Presentations";
+  const title = "Countdown Timer | Free Online Fullscreen Timer With Presets";
   const description =
-    "Free online countdown timer with presets, custom time input, loop mode, sound alerts, fullscreen display, and keyboard shortcuts. Great for classrooms, exams, presentations, and everyday tasks.";
+    "Free online countdown timer with presets, custom time input, loop mode, sound alerts, fullscreen display, and keyboard shortcuts. Ideal for classrooms, exams, presentations, and daily tasks.";
   const url = "https://ilovetimers.com/countdown-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -24,19 +24,22 @@ export function meta({}: Route.MetaArgs) {
         "fullscreen countdown timer",
         "classroom countdown timer",
         "timer for projector",
-        "silent timer",
         "countdown clock",
+        "silent timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

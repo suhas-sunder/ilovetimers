@@ -9,10 +9,11 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Binary Stopwatch | Binary Timer Online (Practice Mode + Fullscreen)";
+    "Binary Stopwatch | Binary Timer With Practice Mode (Fullscreen)";
   const description =
-    "Free binary stopwatch and binary timer. Read time as binary bits with an optional bit weights legend, practice mode, fullscreen, dim mode, presets, and a soft alarm for countdown.";
+    "Free binary stopwatch and countdown timer. Practice reading binary time with an optional bit-weight legend, presets, dim mode, fullscreen, and a soft alarm for countdowns.";
   const url = "https://ilovetimers.com/binary-stopwatch";
+
   return [
     { title },
     { name: "description", content: description },
@@ -24,19 +25,22 @@ export function meta({}: Route.MetaArgs) {
         "binary stopwatch online",
         "binary timer online",
         "binary countdown timer",
-        "binary time stopwatch",
         "learn binary time",
+        "binary time practice",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

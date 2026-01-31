@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Binary Clock | Time in Binary (BCD + Fullscreen)";
+  const title = "Binary Clock Online | View the Current Time in Binary";
   const description =
-    "Free binary clock that shows the current time in binary. Includes BCD digit mode and pure binary mode, optional seconds, 12/24-hour toggle, copy-friendly output, and fullscreen display.";
+    "Free binary clock that displays the current time in binary. Switch between BCD and pure binary, toggle seconds and 12 or 24 hour time, and use a clean fullscreen display.";
   const url = "https://ilovetimers.com/binary-clock";
+
   return [
     { title },
     { name: "description", content: description },
@@ -19,22 +20,25 @@ export function meta({}: Route.MetaArgs) {
       name: "keywords",
       content: [
         "binary clock",
-        "clock in binary",
-        "binary time",
+        "binary clock online",
+        "time in binary",
+        "binary time clock",
         "bcd clock",
         "binary clock fullscreen",
-        "binary time clock",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -920,7 +924,6 @@ export default function BinaryClockPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

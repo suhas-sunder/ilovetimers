@@ -8,25 +8,15 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Minimalist Clock | Aesthetic Clock Online (Fullscreen, Zen)";
+  const title = "Minimalist Online Clock (Fullscreen)";
   const description =
-    "Free minimalist clock and aesthetic clock online. Clean big digits, fullscreen screensaver mode, optional seconds and date, 12/24-hour toggle, copy, and Zen mode that hides UI.";
+    "A clean, distraction-free online clock with big digits. Use it fullscreen as a desk clock, wall display, or screensaver-style clock with an aesthetic look.";
+
   const url = "https://ilovetimers.com/minimalist-clock";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "minimalist clock",
-        "aesthetic clock online",
-        "digital clock online",
-        "fullscreen clock",
-        "clock screensaver",
-        "minimal clock",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },

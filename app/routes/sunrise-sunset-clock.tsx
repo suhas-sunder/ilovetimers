@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Sunrise & Sunset Clock | Today's Sunrise, Sunset, Daylight (Live + Fullscreen)";
+  const title = "Today’s Sunrise and Sunset Times";
   const description =
-    "Free sunrise and sunset clock. Shows today's sunrise, sunset, daylight progress, and time until the next event. Uses your location or manual latitude/longitude. Fullscreen, 12/24-hour, and readable display.";
+    "See today’s sunrise and sunset at a glance. Track daylight progress and how much time remains until the next sunrise or sunset with a clear live display.";
+
   const url = "https://ilovetimers.com/sunrise-sunset-clock";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "sunrise and sunset",
-        "sunrise sunset clock",
-        "sunrise time",
-        "sunset time",
-        "daylight tracker",
-        "time until sunset",
-        "time until sunrise",
-        "golden hour clock",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -1098,7 +1086,6 @@ export default function SunriseSunsetClockPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

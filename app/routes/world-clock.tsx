@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "World Clock | Current Time in Cities (Live, Fullscreen, 12/24)";
+  const title = "World Clock (Current Time in Cities)";
   const description =
-    "Free world clock showing live current time in popular cities and time zones. Add cities, search, 12/24-hour toggle, seconds toggle, and fullscreen display for big readable time.";
+    "See the current time in cities around the world. A clean, live world clock that shows local times at a glance with a clear, readable display.";
+
   const url = "https://ilovetimers.com/world-clock";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "world clock",
-        "time zones",
-        "current time in",
-        "city time",
-        "time zone converter",
-        "live world time",
-        "international clock",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

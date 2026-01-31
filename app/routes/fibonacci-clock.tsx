@@ -9,10 +9,11 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Fibonacci Clock | Time with Fibonacci Squares (Live + Time Zones)";
+    "Fibonacci Clock | A Live Clock Made of Fibonacci Squares (Time Zones)";
   const description =
-    "Free Fibonacci clock that shows time using Fibonacci-sized squares (1,1,2,3,5). Live local time, time zone switching, manual explore mode, fullscreen, and copy-friendly output.";
+    "Free Fibonacci clock that shows the time using Fibonacci squares (1, 1, 2, 3, 5). View live local time, switch time zones, explore manually, go fullscreen, and copy the output.";
   const url = "https://ilovetimers.com/fibonacci-clock";
+
   return [
     { title },
     { name: "description", content: description },
@@ -28,14 +29,17 @@ export function meta({}: Route.MetaArgs) {
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
     { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

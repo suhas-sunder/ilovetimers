@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Time Zone Converter | Convert Time Between Time Zones (DST-aware, Copy, Share, Fullscreen)";
+  const title = "Time Zone Converter (World Time)";
   const description =
-    "Free time zone converter. Convert a date and time between time zones with DST handling, quick presets, copy-friendly results, shareable links, and a clean fullscreen display.";
+    "Convert time between time zones instantly. Pick a date and time and see the exact local time anywhere in the world with a clear, simple layout.";
+
   const url = "https://ilovetimers.com/time-zone-converter";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "time zone converter",
-        "timezone converter",
-        "convert time zone",
-        "time zone conversion",
-        "convert time between time zones",
-        "dst aware time converter",
-        "world time converter",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -1215,7 +1203,6 @@ export default function TimeZoneConverterPage({}: Route.ComponentProps) {
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

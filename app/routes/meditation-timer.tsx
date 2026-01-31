@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Meditation Timer | Breathing & Yoga Timer (Fullscreen, Simple, Quiet)";
+  const title = "Meditation Timer for Breathing and Yoga";
   const description =
-    "Free meditation timer with calm fullscreen countdown. Includes breathing timer presets, yoga-friendly durations, loop option, sound toggle, and keyboard shortcuts. Designed for quiet rooms and easy visibility.";
+    "Calm, distraction-free meditation timer. Set a quiet fullscreen countdown for breathing exercises, yoga sessions, or mindfulness practice. Clear, easy to read, and ready instantly.";
+
   const url = "https://ilovetimers.com/meditation-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "meditation timer",
-        "breathing timer",
-        "yoga timer",
-        "mindfulness timer",
-        "quiet timer",
-        "fullscreen timer",
-        "countdown timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -762,7 +751,6 @@ export default function MeditationTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

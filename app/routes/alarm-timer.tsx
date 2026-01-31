@@ -8,10 +8,12 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Alarm Timer | Countdown Alarm (Online, Fullscreen, Simple)";
+  const title =
+    "Alarm Timer Online | Fullscreen Countdown With Sound & Presets";
   const description =
-    "Free alarm timer and countdown alarm online. Big fullscreen countdown, presets, custom minutes, optional sound, and keyboard shortcuts. Works while the page is open (browser limitations explained).";
+    "Start a free alarm timer in seconds. Fullscreen countdown, quick presets, custom minutes, optional sound, and keyboard shortcuts. Works in your browser while this tab stays open.";
   const url = "https://ilovetimers.com/alarm-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -19,22 +21,25 @@ export function meta({}: Route.MetaArgs) {
       name: "keywords",
       content: [
         "alarm timer",
-        "timer alarm online",
-        "countdown alarm",
-        "online alarm timer",
+        "alarm timer online",
         "timer with alarm",
+        "countdown alarm",
         "fullscreen timer",
+        "online timer with sound",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

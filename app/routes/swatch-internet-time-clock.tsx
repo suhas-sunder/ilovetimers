@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Swatch Internet Time (.beat) Clock | Live @Beat Time (BMT) with Seconds";
+  const title = "Swatch Internet Time (.beat) Clock";
   const description =
-    "Live Swatch Internet Time (.beat) clock showing the current @beat with decimals (sub-beat seconds). Based on Biel Mean Time (UTC+1), timezone-free and DST-free. Fullscreen mode and keyboard shortcuts.";
+    "View the current Swatch Internet Time (@beat) live. A clean, timezone-free clock that shows the exact .beat time with a clear, readable display.";
+
   const url = "https://ilovetimers.com/swatch-internet-time-clock";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "swatch internet time",
-        "beat time",
-        ".beat clock",
-        "internet time clock",
-        "bmt time",
-        "timezone free clock",
-        "beat time seconds",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -450,7 +438,6 @@ export default function SwatchInternetTimePage({
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <SwatchInternetTimeCard />
       </section>
-
 
       <section className="mx-auto max-w-7xl px-4 pb-12">
         <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">

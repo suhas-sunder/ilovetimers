@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Pomodoro Timer | Free 25/5 Focus Timer (Study Timer) with Cycles, Sound, and Shortcuts";
+  const title = "Pomodoro Timer (25/5 Focus)";
   const description =
-    "Free Pomodoro timer (25/5) with customizable work/break times, cycles, skip/next, sound alerts, fullscreen, and keyboard shortcuts. Built for focus, study, and deep work.";
+    "Stay focused with a clean Pomodoro timer. Run 25/5 work and break cycles, adjust timings, and keep deep work sessions on track with a clear countdown.";
+
   const url = "https://ilovetimers.com/pomodoro-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "pomodoro timer",
-        "25 5 timer",
-        "focus timer",
-        "study timer",
-        "pomodoro technique timer",
-        "work break timer",
-        "online pomodoro timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -759,7 +748,6 @@ export default function PomodoroTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section (under TimerMenuLinks) */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

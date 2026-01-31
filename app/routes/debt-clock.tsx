@@ -9,10 +9,11 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Debt Clock | National + World Debt Counter (Estimated, Live, Fullscreen)";
+    "Debt Clock | Live National and World Debt Counter (Fullscreen)";
   const description =
-    "Free debt clock that estimates national or world debt as a live counter. Pick a preset or enter your own starting debt and yearly change rate. Includes clear disclosures and fullscreen display.";
+    "Free debt clock with a live debt counter for national or world debt. Choose a preset or enter a starting amount and yearly change rate to simulate a running total in fullscreen.";
   const url = "https://ilovetimers.com/debt-clock";
+
   return [
     { title },
     { name: "description", content: description },
@@ -29,14 +30,17 @@ export function meta({}: Route.MetaArgs) {
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

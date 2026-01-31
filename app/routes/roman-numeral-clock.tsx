@@ -8,31 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Roman Numeral Clock | Roman Numeral Clock Online (Fullscreen)";
+  const title = "Roman Numeral Clock (Live Time)";
   const description =
-    "Free roman numeral clock online. Shows the current time with Roman numerals, 12/24-hour toggle, optional seconds, copy-friendly output, and a clean fullscreen display.";
+    "See the current time written in Roman numerals. A clean, fullscreen Roman numeral clock with a clear, classic look.";
+
   const url = "https://ilovetimers.com/roman-numeral-clock";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "roman numeral clock online",
-        "roman numeral clock",
-        "roman numerals clock",
-        "clock with roman numerals",
-        "roman time clock",
-        "roman numeral clock fullscreen",
-        "roman numerals time",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

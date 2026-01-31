@@ -8,30 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Speedrun Timer | Split Timer for Speedrunning (Fullscreen, Simple, Visible)";
+  const title = "Speedrun Timer with Splits";
   const description =
-    "Free speedrun timer with splits. Start/pause, record splits, undo last split, and view a clean fullscreen display. Built for speedrunning practice and casual runs without complicated setup.";
+    "Time your speedruns with a simple split timer. Start, pause, record splits, and keep runs organized with a clean, fullscreen display.";
+
   const url = "https://ilovetimers.com/speedrun-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "speedrun timer",
-        "split timer",
-        "speedrunning timer",
-        "splits timer",
-        "timer for speedrun",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -652,7 +643,6 @@ export default function SpeedrunTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

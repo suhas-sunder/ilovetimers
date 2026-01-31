@@ -3,7 +3,6 @@ import type { Route } from "./+types/amrap-timer";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
-import RelatedSites from "~/clients/components/navigation/RelatedSites";
 
 /* =========================================================
    META

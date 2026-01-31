@@ -6,28 +6,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "I Love Timers | Free Countdown Timer, Stopwatch with Laps, Pomodoro, and HIIT Interval Timers";
+  const title = "Free Online Timers: Countdown, Stopwatch, Pomodoro";
   const description =
-    "Use accurate, fast, mobile-friendly timers: a countdown timer with presets, a millisecond stopwatch with laps, a Pomodoro focus timer, and a HIIT / interval timer. Keyboard shortcuts, fullscreen, and sound. No sign-up.";
-  const url = "https://ilovetimers.com/";
+    "Start a countdown, run a precise stopwatch with laps, or focus with a Pomodoro timer. Clean, fast online timers that work instantly.";
+
+  const url = "https://ilovetimers.com";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "countdown timer",
-        "online stopwatch",
-        "stopwatch laps",
-        "pomodoro timer",
-        "25 5 timer",
-        "interval timer",
-        "HIIT timer",
-        "workout timer",
-        "presentation timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -38,7 +25,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" }, // warm amber
+    { name: "theme-color", content: "#ffedd5" },
   ];
 }
 

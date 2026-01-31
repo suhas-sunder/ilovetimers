@@ -8,33 +8,38 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Hexadecimal Clock | Time in Hex (Fullscreen + Copy)";
+  const title = "Hexadecimal Clock | View the Current Time in Hex";
   const description =
-    "Free hexadecimal clock that shows the current time in hex. Includes HH:MM:SS and milliseconds, optional seconds, 12/24-hour toggle, copy-friendly output, and fullscreen display.";
+    "Free hexadecimal clock that displays the current time in hex format. See HH:MM:SS and milliseconds, toggle 12 or 24 hour time, copy values, and use a clean fullscreen display.";
   const url = "https://ilovetimers.com/hexadecimal-clock";
+
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "hex clock",
         "hexadecimal clock",
+        "hex clock",
         "time in hex",
         "hex time",
         "clock in hexadecimal",
         "hex clock fullscreen",
+        "hexadecimal time",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -762,7 +767,6 @@ export default function HexadecimalClockPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

@@ -8,33 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Workout Timer | Gym & Boxing Round Timer (Rounds, Rest, Fullscreen)";
+  const title = "Workout Timer (Rounds and Rest)";
   const description =
-    "Free workout timer for the gym and boxing rounds. Big fullscreen countdown, round + rest mode, simple presets, custom minutes, optional sound, and keyboard shortcuts. Great for bag work, circuits, and conditioning.";
+    "Run workouts with a simple round and rest timer. Big fullscreen countdown designed for gym training, boxing, circuits, and conditioning.";
+
   const url = "https://ilovetimers.com/workout-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "workout timer",
-        "gym timer",
-        "boxing round timer",
-        "boxing timer",
-        "round timer",
-        "interval timer",
-        "circuit timer",
-        "fullscreen timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -828,7 +816,6 @@ export default function WorkoutTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

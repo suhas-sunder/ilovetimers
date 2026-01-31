@@ -8,29 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Tea Timer | Green Tea Timer & Steep Timer (Pre-filled Steep Times, Fullscreen)";
+  const title = "Tea Timer with Steep Times";
   const description =
-    "Free tea timer with pre-filled steep times for green tea, black tea, oolong, white, herbal, and more. One-click presets, big readable countdown, optional sound, and fullscreen mode.";
+    "Brew better tea with a simple tea timer. One-click steep times for green, black, oolong, white, and herbal teas with a clear countdown.";
+
   const url = "https://ilovetimers.com/tea-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "tea timer",
-        "green tea timer",
-        "steep timer",
-        "steeping timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -766,7 +758,6 @@ export default function TeaTimerPage({}: Route.ComponentProps) {
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

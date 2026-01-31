@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Egg Timer | Boiled Egg Timer (Soft, Medium, Hard) (Fullscreen, Simple, Visible)";
+  const title = "Egg Timer | Soft, Medium, and Hard Boiled Egg Presets";
   const description =
-    "Free egg timer for boiled eggs. One-click presets for soft, medium, and hard boiled eggs, plus big readable countdown, optional sound, and fullscreen mode. Includes quick timing guide for common doneness levels.";
+    "Free egg timer for perfectly boiled eggs. One-click presets for soft, medium, and hard boiled eggs, plus a big readable countdown, optional sound, and fullscreen mode.";
   const url = "https://ilovetimers.com/egg-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -24,19 +24,21 @@ export function meta({}: Route.MetaArgs) {
         "soft boiled egg timer",
         "medium boiled egg timer",
         "hard boiled egg timer",
-        "boiled egg timer soft medium hard",
         "egg boiling timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

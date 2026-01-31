@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Online Timer | Free Timer Website (Countdown + Fullscreen) with Presets and Shortcuts";
+  const title = "Online Timer (Free Countdown)";
   const description =
-    "Free online timer website: a fast countdown timer with presets, custom time input, loop, sound toggle, fullscreen display, and keyboard shortcuts. Works on phones, laptops, and projectors.";
+    "Start a free online countdown timer instantly. Big, clear display with quick presets and fullscreen mode, perfect for classrooms, presentations, and everyday timing.";
+
   const url = "https://ilovetimers.com/online-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "online timer",
-        "timer website",
-        "free online timer",
-        "countdown timer",
-        "fullscreen timer",
-        "timer online",
-        "web timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

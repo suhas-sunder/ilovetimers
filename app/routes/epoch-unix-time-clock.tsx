@@ -9,21 +9,22 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Epoch / Unix Time Clock | Live Unix Timestamp (Seconds + Milliseconds) (Fullscreen)";
+    "Unix Time Clock | Current Epoch Timestamp (Seconds and Milliseconds)";
   const description =
-    "Free epoch / Unix time clock showing the current Unix timestamp in seconds and milliseconds. Includes copy buttons, local and UTC display, and fullscreen mode.";
+    "Free Unix time clock showing the current epoch timestamp in seconds and milliseconds. Includes copy buttons, local and UTC display, and a clean fullscreen view.";
   const url = "https://ilovetimers.com/epoch-unix-time-clock";
+
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "epoch time clock",
         "unix time clock",
-        "unix timestamp clock",
-        "epoch timestamp",
+        "epoch time clock",
+        "unix timestamp",
         "current unix time",
+        "epoch timestamp",
         "unix time seconds",
         "unix time milliseconds",
         "epoch converter",

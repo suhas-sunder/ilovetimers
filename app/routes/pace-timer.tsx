@@ -8,34 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Pace Timer | Running Pace Timer & Rowing Split Timer (Fullscreen, Simple, Visible)";
+  const title = "Pace Timer for Running and Rowing";
   const description =
-    "Free pace timer for running and rowing. Switch between min/km, min/mi, and rowing split per 500m. Set distance and a target pace or finish time, then run a big, readable timer with optional interval beeps and fullscreen mode.";
+    "Train at a steady pace with a clear running and rowing pace timer. Set your target pace or finish time and follow a big, easy-to-read timer built for workouts.";
+
   const url = "https://ilovetimers.com/pace-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "running pace timer",
-        "pace timer",
-        "pace timer running",
-        "rowing pace timer",
-        "rowing split timer",
-        "500m split timer",
-        "min per km timer",
-        "min per mile timer",
-        "training pace timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -983,7 +970,6 @@ export default function PaceTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

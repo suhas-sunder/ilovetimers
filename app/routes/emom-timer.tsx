@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "EMOM Timer | Every Minute On the Minute (CrossFit-Friendly, Fullscreen)";
+  const title = "EMOM Timer | Fullscreen Every Minute On the Minute Timer";
   const description =
-    "Free EMOM timer (Every Minute On the Minute). Set total minutes (rounds), optional prep countdown, sound cues, fullscreen display, and clear round tracking for CrossFit-style workouts.";
+    "Free EMOM timer for Every Minute On the Minute workouts. Set rounds and total time, add an optional prep countdown, enable sound cues, and track rounds clearly in fullscreen.";
   const url = "https://ilovetimers.com/emom-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -28,14 +28,17 @@ export function meta({}: Route.MetaArgs) {
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -752,7 +755,6 @@ export default function EmomTimerPage({}: Route.ComponentProps) {
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <EmomTimerCard />
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

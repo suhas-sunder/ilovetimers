@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Count Up Timer | Elapsed Time & Time Since Timer (Fullscreen, Simple)";
+  const title = "Count Up Timer | Elapsed Time Timer With Laps (Fullscreen)";
   const description =
-    "Free count up timer for tracking elapsed time. Start, pause, lap, reset, and fullscreen mode. Great for tasks, experiments, meetings, workouts, and productivity tracking.";
+    "Free count up timer to track elapsed time. Start, pause, record laps, reset, and go fullscreen. Useful for tasks, workouts, meetings, and experiments.";
   const url = "https://ilovetimers.com/count-up-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -21,22 +21,25 @@ export function meta({}: Route.MetaArgs) {
       content: [
         "count up timer",
         "elapsed time timer",
-        "time since timer",
-        "count up clock",
-        "timer that counts up",
-        "fullscreen count up timer",
         "elapsed timer online",
+        "timer that counts up",
+        "count up stopwatch",
+        "time since timer",
+        "fullscreen count up timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -523,7 +526,6 @@ export default function CountUpTimerPage({
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <CountUpTimerCard />
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

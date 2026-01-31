@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Digital Clock | Current Time (Big, Fullscreen, Readable)";
+  const title = "Digital Clock Online | Big Fullscreen Clock With Seconds";
   const description =
-    "Free digital clock showing your current local time. Big readable digits, optional seconds, 12/24-hour toggle, fullscreen mode, and copy-friendly output. Great for classrooms, offices, and wall displays.";
+    "Free digital clock showing your local time with big readable digits. Toggle seconds and 12 or 24 hour time, go fullscreen, and copy the time for classrooms, offices, and wall displays.";
   const url = "https://ilovetimers.com/digital-clock";
+
   return [
     { title },
     { name: "description", content: description },
@@ -19,23 +20,26 @@ export function meta({}: Route.MetaArgs) {
       name: "keywords",
       content: [
         "digital clock",
-        "current time",
+        "digital clock online",
+        "big digital clock",
+        "fullscreen digital clock",
         "current local time",
         "time now",
         "clock online",
-        "digital clock fullscreen",
-        "big digital clock",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

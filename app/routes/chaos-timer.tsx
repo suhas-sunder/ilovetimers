@@ -8,37 +8,41 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Chaos Timer | Random Timer & Random Interval Timer (Fullscreen, Simple, Visible)";
+  const title = "Random Interval Timer | Random Countdown Generator (Fullscreen)";
   const description =
-    "Free random timer and random interval timer. Generate random countdown durations for training, games, classroom drills, and focus sessions. Optional beep at each interval and a clean fullscreen display.";
+    "Free random interval timer that generates unpredictable countdowns for training, games, classrooms, and focus sessions. Optional beep each interval and a clean fullscreen display.";
   const url = "https://ilovetimers.com/chaos-timer";
+
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
       content: [
-        "random timer",
         "random interval timer",
+        "random timer",
         "random countdown timer",
         "random duration timer",
         "interval timer random",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
+
 
 /* =========================================================
    LOADER

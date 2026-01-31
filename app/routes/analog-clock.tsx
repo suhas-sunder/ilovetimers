@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Analog Clock | Simple Clock Face (Fullscreen, Clean, Readable)";
+  const title = "Analog Clock Online | Fullscreen Clock Face With Seconds Hand";
   const description =
-    "Free analog clock with a clean clock face. Fullscreen mode, optional seconds hand, smooth motion, and a big readable design for classrooms, offices, and wall displays.";
+    "Free online analog clock with a clean, readable clock face. Go fullscreen, toggle the seconds hand, and display a smooth wall clock for classrooms, offices, or screens.";
   const url = "https://ilovetimers.com/analog-clock";
+
   return [
     { title },
     { name: "description", content: description },
@@ -20,22 +20,25 @@ export function meta({}: Route.MetaArgs) {
       name: "keywords",
       content: [
         "analog clock",
-        "clock face",
         "analog clock online",
+        "fullscreen analog clock",
+        "clock face online",
+        "analog wall clock",
         "clock with seconds hand",
-        "analog clock fullscreen",
-        "wall clock online",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

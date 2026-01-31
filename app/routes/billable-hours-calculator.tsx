@@ -9,10 +9,11 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Billable Hours Calculator | Time Worked + Hourly Rate = Total (Freelancers & Lawyers)";
+    "Billable Hours Calculator | Calculate Time, Rounding, and Total Pay";
   const description =
-    "Free billable hours calculator for freelancers, consultants, and lawyers. Enter start time, end time, break, and hourly rate to get billable hours (HH:MM + decimal) and total amount. Supports overnight and rounding to common billing increments.";
+    "Free billable hours calculator for freelancers and lawyers. Enter start and end time, breaks, and hourly rate to calculate billable hours and total pay with common rounding increments.";
   const url = "https://ilovetimers.com/billable-hours-calculator";
+
   return [
     { title },
     { name: "description", content: description },
@@ -20,24 +21,26 @@ export function meta({}: Route.MetaArgs) {
       name: "keywords",
       content: [
         "billable hours calculator",
+        "calculate billable hours",
         "hourly rate calculator",
-        "freelance hours calculator",
         "lawyer billable hours",
+        "freelance billing calculator",
         "billing increment calculator",
-        "round to 6 minutes",
-        "time tracking billing",
-        "calculate billable time",
+        "round billable time",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

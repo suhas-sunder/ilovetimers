@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Current Local Time | Local Time Now (Big, Fullscreen, Copyable)";
+  const title = "Current Local Time Now | Big Fullscreen Clock and Copy Time";
   const description =
-    "See your current local time instantly. Big readable clock, optional seconds, 12/24-hour toggle, fullscreen mode, and copy-friendly output. Great for classrooms, meetings, and streaming overlays.";
+    "See your local time now in a big, readable display. Toggle seconds and 12 or 24 hour time, go fullscreen, and copy the time for classrooms, meetings, and streaming overlays.";
   const url = "https://ilovetimers.com/current-local-time";
+
   return [
     { title },
     { name: "description", content: description },
@@ -21,22 +21,25 @@ export function meta({}: Route.MetaArgs) {
       content: [
         "current local time",
         "local time now",
-        "what time is it",
-        "current time",
+        "current time now",
         "time right now",
+        "current time",
         "local time",
         "current time in my location",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
@@ -80,10 +83,7 @@ function safeTimeZone() {
   }
 }
 
-function formatClock(
-  d: Date,
-  opts: { use24: boolean; showSeconds: boolean },
-) {
+function formatClock(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
   const { use24, showSeconds } = opts;
 
   try {
@@ -95,7 +95,10 @@ function formatClock(
     });
 
     // normalize spacing a bit for readability
-    return fmt.format(d).replace(/\u200e/g, "").trim();
+    return fmt
+      .format(d)
+      .replace(/\u200e/g, "")
+      .trim();
   } catch {
     const h = d.getHours();
     const m = d.getMinutes();

@@ -8,32 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Silent Timer | Free No Sound Timer (Quiet Countdown) with Fullscreen and Shortcuts";
+  const title = "Silent Timer (No Sound Countdown)";
   const description =
-    "Free silent timer and quiet countdown. Turn Sound off for a no sound timer in classrooms, exams, libraries, or meetings. Presets, custom input, loop, fullscreen, and keyboard shortcuts.";
+    "Use a silent countdown timer with no sound alerts. Ideal for classrooms, exams, libraries, and meetings where quiet timing matters.";
+
   const url = "https://ilovetimers.com/silent-timer";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "silent timer",
-        "no sound timer",
-        "quiet countdown",
-        "silent countdown timer",
-        "mute timer",
-        "timer without sound",
-        "silent classroom timer",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

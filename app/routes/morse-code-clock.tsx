@@ -8,30 +8,21 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Morse Code Clock | Time in Morse (Live, Fullscreen, Readable)";
+  const title = "Morse Code Clock (Live Time Display)";
   const description =
-    "Free Morse code clock that shows the current time using dots and dashes. Live updating, big fullscreen display, 12/24-hour toggle, and copy-friendly output. Great for learning Morse and classroom demos.";
+    "See the current time written in Morse code. A live, easy-to-read Morse clock that updates every minute and works fullscreen for demos or learning.";
+
   const url = "https://ilovetimers.com/morse-code-clock";
+
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "morse code clock",
-        "clock in morse code",
-        "morse time",
-        "morse code time",
-        "morse clock",
-        "morse code learning",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
@@ -658,7 +649,6 @@ export default function MorseCodeClockPage({
       <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <MorseCodeClockCard />
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

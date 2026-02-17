@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Binary Clock Online | View the Current Time in Binary";
+  const title = "Online Binary Clock (View Current Time in Binary)";
   const description =
-    "Free binary clock that displays the current time in binary. Switch between BCD and pure binary, toggle seconds and 12 or 24 hour time, and use a clean fullscreen display.";
-  const url = "https://ilovetimers.com/binary-clock";
+    "Free binary clock that shows the current time in binary. Switch between BCD and pure binary, toggle seconds and 12 or 24-hour time, and go fullscreen.";
+
+  const url = "https://www.ilovetimers.com/binary-clock";
 
   return [
     { title },
@@ -33,7 +34,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

@@ -8,29 +8,34 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Game Challenge Timer (Sudden Death)";
+  const title = "Game Challenge Timer (Sudden Death, Fullscreen)";
   const description =
     "Run fast game challenges with a sudden death or one-minute timer. Big fullscreen countdown built for party games, streams, and competitive play.";
 
-  const url = "https://ilovetimers.com/video-game-challenge-timer";
+  const url = "https://www.ilovetimers.com/video-game-challenge-timer";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
-
 
 /* =========================================================
    LOADER
@@ -897,7 +902,6 @@ export default function VideoGameChallengeTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

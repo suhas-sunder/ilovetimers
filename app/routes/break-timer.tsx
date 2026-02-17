@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Break Timer | Fullscreen Work Break Countdown With Presets";
+  const title = "Break Timer (Fullscreen Countdown + Quick Presets)";
   const description =
-    "Free break timer for work, study, and meetings. Start a big fullscreen countdown with 1 to 15 minute presets, custom minutes, optional sound, and keyboard shortcuts.";
-  const url = "https://ilovetimers.com/break-timer";
+    "Free break timer for work or study. Start a big fullscreen countdown with quick presets, custom minutes, optional sound, and keyboard shortcuts.";
+
+  const url = "https://www.ilovetimers.com/break-timer";
 
   return [
     { title },
@@ -34,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

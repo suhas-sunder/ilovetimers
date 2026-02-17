@@ -8,24 +8,30 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Morse Code Clock (Live Time Display)";
+  const title = "Morse Code Clock (Live Time Display, Fullscreen)";
   const description =
     "See the current time written in Morse code. A live, easy-to-read Morse clock that updates every minute and works fullscreen for demos or learning.";
 
-  const url = "https://ilovetimers.com/morse-code-clock";
+  const url = "https://www.ilovetimers.com/morse-code-clock";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

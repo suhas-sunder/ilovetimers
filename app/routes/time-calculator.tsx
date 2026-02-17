@@ -8,29 +8,34 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Time Calculator (Add and Subtract Time)";
+  const title = "Time Calculator (Add & Subtract Time, Instant Results)";
   const description =
     "Add or subtract time in seconds. Calculate time durations between two times with a simple, accurate time calculator.";
 
-  const url = "https://ilovetimers.com/time-calculator";
+  const url = "https://www.ilovetimers.com/time-calculator";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
-
 
 /* =========================================================
    LOADER
@@ -218,11 +223,7 @@ const MiniPill = ({ children }: { children: React.ReactNode }) => (
 /* =========================================================
    ADD/SUBTRACT CARD (D/H/M/S)
 ========================================================= */
-function AddSubtractCard({
-  mode,
-}: {
-  mode: "add" | "subtract";
-}) {
+function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
   const [a, setA] = useState<HMSD>({ d: 0, h: 1, m: 30, s: 0 });
   const [b, setB] = useState<HMSD>({ d: 0, h: 0, m: 45, s: 0 });
   const [lastCopied, setLastCopied] = useState<string | null>(null);
@@ -246,19 +247,17 @@ function AddSubtractCard({
     window.setTimeout(() => setLastCopied(null), 900);
   }, []);
 
-  const setField =
-    (which: "a" | "b", key: keyof HMSD) =>
-    (v: string) => {
-      const n = clamp(Number(v || 0), 0, key === "d" ? 9999 : 59);
-      const max = key === "h" ? 23 : key === "m" || key === "s" ? 59 : 9999;
-      const val = clamp(Math.floor(n), 0, max);
-      if (which === "a") setA((x) => ({ ...x, [key]: val }));
-      else setB((x) => ({ ...x, [key]: val }));
-    };
+  const setField = (which: "a" | "b", key: keyof HMSD) => (v: string) => {
+    const n = clamp(Number(v || 0), 0, key === "d" ? 9999 : 59);
+    const max = key === "h" ? 23 : key === "m" || key === "s" ? 59 : 9999;
+    const val = clamp(Math.floor(n), 0, max);
+    if (which === "a") setA((x) => ({ ...x, [key]: val }));
+    else setB((x) => ({ ...x, [key]: val }));
+  };
 
   const resultText = `${formatHMSD(out.sign, out.v)} (${formatWords(
     out.sign,
-    out.v
+    out.v,
   )})`;
 
   return (
@@ -266,7 +265,9 @@ function AddSubtractCard({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-xl font-extrabold text-amber-950">
-            {mode === "add" ? "Add Time Calculator" : "Subtract Time Calculator"}
+            {mode === "add"
+              ? "Add Time Calculator"
+              : "Subtract Time Calculator"}
           </h2>
           <p className="mt-1 text-base text-slate-700">
             Add or subtract durations using days, hours, minutes, and seconds.
@@ -292,7 +293,13 @@ function AddSubtractCard({
             {(["d", "h", "m", "s"] as const).map((k) => (
               <label key={`a-${k}`} className="block">
                 <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-                  {k === "d" ? "Days" : k === "h" ? "Hours" : k === "m" ? "Minutes" : "Seconds"}
+                  {k === "d"
+                    ? "Days"
+                    : k === "h"
+                      ? "Hours"
+                      : k === "m"
+                        ? "Minutes"
+                        : "Seconds"}
                 </div>
                 <input
                   type="number"
@@ -314,7 +321,13 @@ function AddSubtractCard({
             {(["d", "h", "m", "s"] as const).map((k) => (
               <label key={`b-${k}`} className="block">
                 <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-                  {k === "d" ? "Days" : k === "h" ? "Hours" : k === "m" ? "Minutes" : "Seconds"}
+                  {k === "d"
+                    ? "Days"
+                    : k === "h"
+                      ? "Hours"
+                      : k === "m"
+                        ? "Minutes"
+                        : "Seconds"}
                 </div>
                 <input
                   type="number"
@@ -369,8 +382,10 @@ function DurationCard() {
   const endSec = useMemo(() => parseTimeValueHHMMSS(end), [end]);
 
   const res = useMemo(() => {
-    if (startSec == null) return { ok: false as const, error: "Enter a valid start time." };
-    if (endSec == null) return { ok: false as const, error: "Enter a valid end time." };
+    if (startSec == null)
+      return { ok: false as const, error: "Enter a valid start time." };
+    if (endSec == null)
+      return { ok: false as const, error: "Enter a valid end time." };
 
     const overnight = endSec < startSec;
     const diff = overnight ? endSec + 86400 - startSec : endSec - startSec;
@@ -414,7 +429,8 @@ function DurationCard() {
 
     if (!includeSeconds) {
       // hide seconds by zeroing in display
-      const h = v.d > 0 ? `${v.d}d ${pad2(v.h)}:${pad2(v.m)}` : `${v.h}:${pad2(v.m)}`;
+      const h =
+        v.d > 0 ? `${v.d}d ${pad2(v.h)}:${pad2(v.m)}` : `${v.h}:${pad2(v.m)}`;
       return sign < 0 ? `-${h}` : h;
     }
 
@@ -436,8 +452,9 @@ function DurationCard() {
     }
   };
 
-  const copyText =
-    res.ok ? `Duration: ${shown}${res.overnight ? " (overnight)" : ""}` : "";
+  const copyText = res.ok
+    ? `Duration: ${shown}${res.overnight ? " (overnight)" : ""}`
+    : "";
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
@@ -498,7 +515,9 @@ function DurationCard() {
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <label className="block">
-          <div className="text-sm font-extrabold text-amber-950">Start time</div>
+          <div className="text-sm font-extrabold text-amber-950">
+            Start time
+          </div>
           <input
             value={start}
             onChange={(e) => setStart(e.target.value)}
@@ -530,7 +549,9 @@ function DurationCard() {
         </div>
         {res.ok ? (
           <div className="mt-2 flex flex-col gap-1">
-            <div className="text-4xl font-extrabold text-amber-950">{shown}</div>
+            <div className="text-4xl font-extrabold text-amber-950">
+              {shown}
+            </div>
             <div className="text-sm font-semibold text-amber-900">
               {formatWords(res.out.sign, res.out.v)}
               {res.overnight ? " (crosses midnight)" : ""}
@@ -614,8 +635,18 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://ilovetimers.com/" },
-          { "@type": "ListItem", position: 2, name: "Time Calculator", item: url },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://ilovetimers.com/",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Time Calculator",
+            item: url,
+          },
         ],
       },
       {
@@ -671,9 +702,9 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
             Time Calculator
           </h1>
           <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            One page for <strong>add time</strong>, <strong>subtract time</strong>,
-            and <strong>time duration</strong>. Instant results, copy buttons,
-            and sane handling of midnight.
+            One page for <strong>add time</strong>,{" "}
+            <strong>subtract time</strong>, and <strong>time duration</strong>.
+            Instant results, copy buttons, and sane handling of midnight.
           </p>
         </div>
       </section>
@@ -692,10 +723,10 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
 
           <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
             <p>
-              This <strong>time calculator</strong> covers three common use cases:
-              adding durations (like 1h 20m + 45m), subtracting durations, and
-              calculating the time between a <strong>start time</strong> and an{" "}
-              <strong>end time</strong>.
+              This <strong>time calculator</strong> covers three common use
+              cases: adding durations (like 1h 20m + 45m), subtracting
+              durations, and calculating the time between a{" "}
+              <strong>start time</strong> and an <strong>end time</strong>.
             </p>
 
             <p>
@@ -705,11 +736,17 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
 
             <p>
               If you need payroll style hours, use{" "}
-              <Link to="/work-hours-calculator" className="font-semibold hover:underline">
+              <Link
+                to="/work-hours-calculator"
+                className="font-semibold hover:underline"
+              >
                 Work Hours Calculator
               </Link>
               . If you need a 24-hour converter, use{" "}
-              <Link to="/military-time-converter" className="font-semibold hover:underline">
+              <Link
+                to="/military-time-converter"
+                className="font-semibold hover:underline"
+              >
                 Military Time Converter
               </Link>
               .

@@ -8,24 +8,30 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Productivity Timer for Focus and Deep Work";
+  const title = "Productivity Timer (Focus & Deep Work, Fullscreen)";
   const description =
     "Stay focused with a simple productivity timer. Run deep work sessions, structured breaks, and focus blocks with a clear fullscreen countdown.";
 
-  const url = "https://ilovetimers.com/productivity-timer";
+  const url = "https://www.ilovetimers.com/productivity-timer";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

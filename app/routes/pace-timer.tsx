@@ -8,24 +8,30 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Pace Timer for Running and Rowing";
+  const title = "Pace Timer (Running & Rowing, Target Pace)";
   const description =
     "Train at a steady pace with a clear running and rowing pace timer. Set your target pace or finish time and follow a big, easy-to-read timer built for workouts.";
 
-  const url = "https://ilovetimers.com/pace-timer";
+  const url = "https://www.ilovetimers.com/pace-timer";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

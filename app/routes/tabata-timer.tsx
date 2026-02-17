@@ -8,24 +8,30 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Tabata Timer (20/10 Interval)";
+  const title = "Tabata Timer (20/10 Intervals, Fullscreen)";
   const description =
     "Run classic Tabata workouts with a clear 20/10 interval timer. Big fullscreen intervals built for HIIT, conditioning, and fast-paced training.";
 
-  const url = "https://ilovetimers.com/tabata-timer";
+  const url = "https://www.ilovetimers.com/tabata-timer";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

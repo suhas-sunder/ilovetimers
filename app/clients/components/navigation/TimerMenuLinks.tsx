@@ -139,60 +139,11 @@ const TimerMenuLinks = () => {
     },
   ];
 
-  return (
-    <section id="all-timers" className="mx-auto max-w-7xl px-4 pb-12">
-      <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-bold text-amber-950">All Tools</h2>
-        <p className="mt-2 leading-relaxed text-amber-800">
-          All timers, clocks, and related tools are free to use. Everything runs
-          in-browser. No downloads or installs needed. Pick a tool and get
-          going!
-        </p>
-
-        <div className="mt-5 grid gap-6 lg:grid-cols-3">
-          {sections
-            .filter((s) => s.variant !== "flat")
-            .map((s) => (
-              <MenuCard key={s.title} title={s.title} links={s.links} />
-            ))}
-        </div>
-
-        {sections
-          .filter((s) => s.variant === "flat")
-          .map((s) => (
-            <div key={s.title} className="mt-6">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                {s.title}
-              </h3>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {s.links.map((l) => (
-                  <Link key={l.to} to={l.to} className={linkClassSoft}>
-                    {l.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-      </div>
-    </section>
-  );
+  return <></>;
 };
 
 function MenuCard({ title, links }: { title: string; links: TimerMenuLink[] }) {
-  return (
-    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-      <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-        {title}
-      </h3>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {links.map((l) => (
-          <Link key={l.to} to={l.to} className={linkClassCard}>
-            {l.label}
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
+  return <></>;
 }
 
 const linkClassCard =

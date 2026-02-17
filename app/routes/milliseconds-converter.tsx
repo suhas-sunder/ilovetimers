@@ -8,24 +8,30 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Milliseconds to Seconds Converter";
+  const title = "Milliseconds to Seconds Converter (Instant, Two-Way)";
   const description =
     "Convert milliseconds to seconds or seconds to milliseconds instantly. Paste a value and get an exact result with no clutter.";
 
-  const url = "https://ilovetimers.com/milliseconds-converter";
+  const url = "https://www.ilovetimers.com/milliseconds-converter";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

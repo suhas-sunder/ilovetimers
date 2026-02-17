@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Binary Stopwatch | Binary Timer With Practice Mode (Fullscreen)";
+  const title = "Binary Stopwatch (Practice Mode + Countdown, Fullscreen)";
   const description =
-    "Free binary stopwatch and countdown timer. Practice reading binary time with an optional bit-weight legend, presets, dim mode, fullscreen, and a soft alarm for countdowns.";
-  const url = "https://ilovetimers.com/binary-stopwatch";
+    "Free binary stopwatch and countdown timer. Practice reading binary time with a bit-weight legend, presets, dim mode, fullscreen, and a soft alarm.";
+
+  const url = "https://www.ilovetimers.com/binary-stopwatch";
 
   return [
     { title },
@@ -35,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

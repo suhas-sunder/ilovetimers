@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "EMOM Timer | Fullscreen Every Minute On the Minute Timer";
+  const title = "EMOM Timer (Every Minute On the Minute, Fullscreen)";
   const description =
-    "Free EMOM timer for Every Minute On the Minute workouts. Set rounds and total time, add an optional prep countdown, enable sound cues, and track rounds clearly in fullscreen.";
-  const url = "https://ilovetimers.com/emom-timer";
+    "Free EMOM timer for Every Minute On the Minute workouts. Set rounds and total time, add a prep countdown, enable sound cues, and track rounds clearly in fullscreen.";
+
+  const url = "https://www.ilovetimers.com/emom-timer";
 
   return [
     { title },
@@ -33,7 +34,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

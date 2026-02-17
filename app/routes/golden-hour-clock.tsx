@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Golden Hour Times | Sunrise, Sunset, and Golden Hour Near You";
+  const title = "Golden Hour Times (Sunrise, Sunset & Golden Hour Near You)";
   const description =
-    "Free golden hour clock showing today’s golden hour times for your location. View sunrise and sunset, golden hour start and end, and a live countdown in a clean fullscreen display.";
-  const url = "https://ilovetimers.com/golden-hour-clock";
+    "Free golden hour clock showing today’s golden hour times for your location. View sunrise and sunset, golden hour start and end, and a live countdown in fullscreen.";
+
+  const url = "https://www.ilovetimers.com/golden-hour-clock";
 
   return [
     { title },
@@ -36,7 +36,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

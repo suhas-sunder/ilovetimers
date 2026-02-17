@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Debt Payoff Countdown | Debt Repayment Timer to a Payoff Date";
+  const title = "Debt Payoff Countdown (Debt Repayment Timer to Payoff Date)";
   const description =
     "Free debt repayment timer and payoff countdown. Set a payoff date or duration to track time remaining and see estimated progress toward being debt-free.";
-  const url = "https://ilovetimers.com/debt-repayment-timer";
+
+  const url = "https://www.ilovetimers.com/debt-repayment-timer";
 
   return [
     { title },
@@ -34,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Analog Clock Online | Fullscreen Clock Face With Seconds Hand";
+  const title = "Online Analog Clock (Fullscreen Clock Face + Seconds Hand)";
   const description =
-    "Free online analog clock with a clean, readable clock face. Go fullscreen, toggle the seconds hand, and display a smooth wall clock for classrooms, offices, or screens.";
-  const url = "https://ilovetimers.com/analog-clock";
+    "Free online analog clock with a clean, readable face. Go fullscreen, toggle the seconds hand, and display a smooth wall clock for classrooms or offices.";
+
+  const url = "https://www.ilovetimers.com/analog-clock";
 
   return [
     { title },
@@ -33,7 +34,7 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    { property: "og:image", content: "https://www.ilovetimers.com/og-image.jpg" },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
@@ -43,6 +44,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
+
 
 /* =========================================================
    LOADER

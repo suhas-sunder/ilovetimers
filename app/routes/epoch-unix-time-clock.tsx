@@ -9,10 +9,11 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Unix Time Clock | Current Epoch Timestamp (Seconds and Milliseconds)";
+    "Unix Time Clock (Current Epoch Timestamp in Seconds & Milliseconds)";
   const description =
-    "Free Unix time clock showing the current epoch timestamp in seconds and milliseconds. Includes copy buttons, local and UTC display, and a clean fullscreen view.";
-  const url = "https://ilovetimers.com/epoch-unix-time-clock";
+    "Free Unix time clock showing the current epoch timestamp in seconds and milliseconds. Copy buttons, local and UTC display, and a clean fullscreen view.";
+
+  const url = "https://www.ilovetimers.com/epoch-unix-time-clock";
 
   return [
     { title },
@@ -32,6 +33,20 @@ export function meta({}: Route.MetaArgs) {
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { rel: "canonical", href: url },
+
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: url },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
+
     { name: "theme-color", content: "#ffedd5" },
   ];
 }

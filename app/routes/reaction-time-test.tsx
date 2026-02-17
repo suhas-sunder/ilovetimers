@@ -8,24 +8,30 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Reaction Time Test (Fast Human Reflex Test)";
+  const title = "Reaction Time Test (Fast Human Reflex Test, Instant Results)";
   const description =
     "Test your reaction time in seconds. Tap or press when the screen changes and see your best and average reaction speed instantly.";
 
-  const url = "https://ilovetimers.com/reaction-time-test";
+  const url = "https://www.ilovetimers.com/reaction-time-test";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

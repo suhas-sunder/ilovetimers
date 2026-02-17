@@ -5,11 +5,19 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  redirect, // ⟵ add this
+  redirect,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+
+import { useEffect, useRef, useState } from "react";
+import RelatedSites from "./clients/components/navigation/RelatedSites";
+import TimerMenuLinks from "./clients/components/navigation/TimerMenuLinks";
+import { PHProvider } from "./provider";
+import Footer from "./clients/components/navigation/Footer";
+
+import logoPng from "./clients/assets/images/ilovetimers-icon.png";
 
 /* ---------- Trailing slash helpers (one place, app-level) ---------- */
 function needsStrip(pathname: string) {
@@ -46,17 +54,6 @@ export const links: Route.LinksFunction = () => [
   },
   { rel: "canonical", href: "https://ilovetimers.com" },
 ];
-
-// Drop-in replacement for your header.
-// - Adds "All Timers" anchor link to #all-timers
-// - Adds a few high-intent links
-// - Mobile burger menu with proper a11y + outside click + ESC close + scroll lock
-// - Keeps your styling vibe (amber, simple, sticky)
-
-import { useEffect, useRef, useState } from "react";
-import RelatedSites from "./clients/components/navigation/RelatedSites";
-import TimerMenuLinks from "./clients/components/navigation/TimerMenuLinks";
-import { PHProvider } from "./provider";
 
 function useLockBodyScroll(locked: boolean) {
   useEffect(() => {
@@ -108,7 +105,6 @@ function SiteHeader() {
     setOpen(false);
   }
 
-  // Scroll to the links section on the same page
   function goAllTimers(e: React.MouseEvent) {
     e.preventDefault();
     close();
@@ -117,44 +113,58 @@ function SiteHeader() {
     else window.location.assign("/#all-timers");
   }
 
+  const desktopLink =
+    "text-slate-200 hover:text-white hover:underline underline-offset-4";
+
   return (
-    <header className="sticky top-0 z-10 border-b border-amber-400 bg-amber-50">
+    <header className="sticky top-0 z-10 border-b border-slate-700 bg-slate-800">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        <a href="/" className="flex items-center gap-2 text-xl font-bold">
-          ⏱ i💛Timers
+        <a
+          href="/"
+          className="group flex items-center gap-2 text-sm font-semibold text-slate-100 hover:text-white"
+          aria-label="iLoveTimers home"
+        >
+          <img
+            src={logoPng}
+            alt="iLoveTimers"
+            className="h-9 w-9 rounded-md"
+            loading="eager"
+          />
+          <span className="tracking-tight">
+            iLoveTimers
+            <span className="ml-0.5 text-amber-300 group-hover:text-amber-200">
+              .com
+            </span>
+          </span>
         </a>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-4 text-sm font-medium sm:flex">
-          <a href="/countdown-timer" className="hover:underline">
+          <a href="/countdown-timer" className={desktopLink}>
             Countdown
           </a>
-          <a href="/stopwatch" className="hover:underline">
+          <a href="/stopwatch" className={desktopLink}>
             Stopwatch
           </a>
-          <a href="/pomodoro-timer" className="hover:underline">
+          <a href="/pomodoro-timer" className={desktopLink}>
             Pomodoro
           </a>
-          <a href="/hiit-timer" className="hover:underline">
+          <a href="/hiit-timer" className={desktopLink}>
             HIIT
           </a>
 
           {/* High-intent / commonly searched */}
-          <a href="/sleep-timer" className="hover:underline">
+          <a href="/sleep-timer" className={desktopLink}>
             Sleep
           </a>
-          <a href="/egg-timer" className="hover:underline">
+          <a href="/egg-timer" className={desktopLink}>
             Egg
           </a>
-          <a href="/pizza-timer" className="hover:underline">
+          <a href="/pizza-timer" className={desktopLink}>
             Pizza
           </a>
 
-          <a
-            href="#all-timers"
-            onClick={goAllTimers}
-            className="hover:underline"
-          >
+          <a href="#all-timers" onClick={goAllTimers} className={desktopLink}>
             All Timers
           </a>
         </nav>
@@ -168,22 +178,21 @@ function SiteHeader() {
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="rounded-lg border border-amber-300 bg-white px-3 py-2 text-amber-950 shadow-sm hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            className="rounded-lg border border-slate-600 bg-slate-900/40 px-3 py-2 text-slate-100 shadow-sm hover:bg-slate-900/60 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
           >
-            {/* icon */}
             <span className="relative block h-4 w-5" aria-hidden="true">
               <span
-                className={`absolute left-0 top-0 h-0.5 w-5 bg-amber-950 transition ${
+                className={`absolute left-0 top-0 h-0.5 w-5 bg-slate-100 transition ${
                   open ? "translate-y-2 rotate-45" : ""
                 }`}
               />
               <span
-                className={`absolute left-0 top-2 h-0.5 w-5 bg-amber-950 transition ${
+                className={`absolute left-0 top-2 h-0.5 w-5 bg-slate-100 transition ${
                   open ? "opacity-0" : "opacity-100"
                 }`}
               />
               <span
-                className={`absolute left-0 top-4 h-0.5 w-5 bg-amber-950 transition ${
+                className={`absolute left-0 top-4 h-0.5 w-5 bg-slate-100 transition ${
                   open ? "-translate-y-2 -rotate-45" : ""
                 }`}
               />
@@ -195,11 +204,11 @@ function SiteHeader() {
       {/* Mobile overlay + panel */}
       {open ? (
         <div className="sm:hidden">
-          <div className="fixed inset-0 z-20 bg-black/30" />
+          <div className="fixed inset-0 z-20 bg-black/50" />
           <div
             id="mobile-nav"
             ref={panelRef}
-            className="fixed left-0 right-0 top-[57px] z-30 border-b border-amber-400 bg-amber-50"
+            className="fixed left-0 right-0 top-[57px] z-30 border-b border-slate-700 bg-slate-900"
             role="dialog"
             aria-modal="true"
           >
@@ -208,55 +217,55 @@ function SiteHeader() {
                 <a
                   href="/countdown-timer"
                   onClick={close}
-                  className="rounded-lg border border-amber-200 bg-white px-4 py-3 font-semibold text-amber-950 hover:bg-amber-50"
+                  className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 font-semibold text-slate-100 hover:bg-slate-700"
                 >
                   Countdown Timer
                 </a>
                 <a
                   href="/stopwatch"
                   onClick={close}
-                  className="rounded-lg border border-amber-200 bg-white px-4 py-3 font-semibold text-amber-950 hover:bg-amber-50"
+                  className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 font-semibold text-slate-100 hover:bg-slate-700"
                 >
                   Stopwatch
                 </a>
                 <a
                   href="/pomodoro-timer"
                   onClick={close}
-                  className="rounded-lg border border-amber-200 bg-white px-4 py-3 font-semibold text-amber-950 hover:bg-amber-50"
+                  className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 font-semibold text-slate-100 hover:bg-slate-700"
                 >
                   Pomodoro Timer
                 </a>
                 <a
                   href="/hiit-timer"
                   onClick={close}
-                  className="rounded-lg border border-amber-200 bg-white px-4 py-3 font-semibold text-amber-950 hover:bg-amber-50"
+                  className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 font-semibold text-slate-100 hover:bg-slate-700"
                 >
                   HIIT Timer
                 </a>
 
-                <div className="mt-2 rounded-xl border border-amber-200 bg-amber-50 p-3">
-                  <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                <div className="mt-2 rounded-xl border border-slate-700 bg-slate-800 p-3">
+                  <div className="text-xs font-bold uppercase tracking-wide text-slate-300">
                     Popular
                   </div>
                   <div className="mt-2 grid gap-2">
                     <a
                       href="/sleep-timer"
                       onClick={close}
-                      className="rounded-lg bg-amber-500/30 px-4 py-3 font-semibold text-amber-950 hover:bg-amber-400"
+                      className="rounded-lg bg-slate-700 px-4 py-3 font-semibold text-white hover:bg-slate-600"
                     >
                       Sleep Timer
                     </a>
                     <a
                       href="/egg-timer"
                       onClick={close}
-                      className="rounded-lg bg-amber-500/30 px-4 py-3 font-semibold text-amber-950 hover:bg-amber-400"
+                      className="rounded-lg bg-slate-700 px-4 py-3 font-semibold text-white hover:bg-slate-600"
                     >
                       Egg Timer (Soft/Medium/Hard)
                     </a>
                     <a
                       href="/pizza-timer"
                       onClick={close}
-                      className="rounded-lg bg-amber-500/30 px-4 py-3 font-semibold text-amber-950 hover:bg-amber-400"
+                      className="rounded-lg bg-slate-700 px-4 py-3 font-semibold text-white hover:bg-slate-600"
                     >
                       Pizza Timer
                     </a>
@@ -266,14 +275,14 @@ function SiteHeader() {
                 <a
                   href="#all-timers"
                   onClick={goAllTimers}
-                  className="mt-2 rounded-lg border border-amber-300 bg-amber-700 px-4 py-3 text-center font-bold text-white hover:bg-amber-800"
+                  className="mt-2 rounded-lg bg-amber-400 px-4 py-3 text-center font-bold text-slate-900 hover:bg-amber-300"
                 >
                   All Timers
                 </a>
               </div>
 
-              <div className="mt-3 text-center text-xs font-semibold text-amber-800">
-                Tip: Swipe/scroll the page after closing the menu.
+              <div className="mt-3 text-center text-xs font-semibold text-slate-300">
+                Tip: Tap a link to close the menu.
               </div>
             </div>
           </div>
@@ -292,47 +301,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-white text-slate-900">
         <PHProvider>
           <SiteHeader />
           {children}
 
-          {/* Menu Links */}
           <TimerMenuLinks />
           <RelatedSites />
           <ScrollRestoration />
           <Scripts />
-          <footer className="border-t border-amber-400 bg-amber-500/30/60">
-            <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-amber-800 sm:flex-row sm:items-center sm:justify-between">
-              {/* Left */}
-              <div>
-                © 2026 <span className="font-semibold">i💛Timers</span> - free
-                countdown, stopwatch, Pomodoro, HIIT, and clock tools
-              </div>
-
-              {/* Right */}
-              <nav className="flex flex-wrap gap-x-4 gap-y-1 font-medium">
-                <a
-                  href="/privacy"
-                  className="hover:underline focus:outline-none focus:ring-2 focus:ring-amber-400"
-                >
-                  Privacy
-                </a>
-                <a
-                  href="/terms"
-                  className="hover:underline focus:outline-none focus:ring-2 focus:ring-amber-400"
-                >
-                  Terms
-                </a>
-                <a
-                  href="/cookies"
-                  className="hover:underline focus:outline-none focus:ring-2 focus:ring-amber-400"
-                >
-                  Cookies
-                </a>
-              </nav>
-            </div>
-          </footer>
+          <Footer />
         </PHProvider>
       </body>
     </html>

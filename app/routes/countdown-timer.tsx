@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Countdown Timer | Free Online Fullscreen Timer With Presets";
+  const title = "Countdown Timer (Free Online Fullscreen + Presets)";
   const description =
     "Free online countdown timer with presets, custom time input, loop mode, sound alerts, fullscreen display, and keyboard shortcuts. Ideal for classrooms, exams, presentations, and daily tasks.";
-  const url = "https://ilovetimers.com/countdown-timer";
+
+  const url = "https://www.ilovetimers.com/countdown-timer";
 
   return [
     { title },
@@ -34,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

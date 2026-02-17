@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Current Local Time Now | Big Fullscreen Clock and Copy Time";
+  const title = "Current Local Time (Big Fullscreen Clock + Copy Time)";
   const description =
-    "See your local time now in a big, readable display. Toggle seconds and 12 or 24 hour time, go fullscreen, and copy the time for classrooms, meetings, and streaming overlays.";
-  const url = "https://ilovetimers.com/current-local-time";
+    "See your local time now in a big, readable display. Toggle seconds and 12 or 24-hour time, go fullscreen, and copy the time for classrooms, meetings, and streaming overlays.";
+
+  const url = "https://www.ilovetimers.com/current-local-time";
 
   return [
     { title },
@@ -34,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

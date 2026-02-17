@@ -9,10 +9,11 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Classroom Timer | Fullscreen Countdown for Smartboards and Projectors";
+    "Classroom Timer (Fullscreen Countdown for Smartboards & Projectors)";
   const description =
-    "Free classroom timer for teachers. Big fullscreen countdown for smartboards and projectors with quick presets, custom minutes, optional sound, and keyboard shortcuts for smooth transitions.";
-  const url = "https://ilovetimers.com/classroom-timer";
+    "Free classroom timer for teachers. Big fullscreen countdown for smartboards and projectors with quick presets, custom minutes, optional sound, and keyboard shortcuts.";
+
+  const url = "https://www.ilovetimers.com/classroom-timer";
 
   return [
     { title },
@@ -35,7 +36,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

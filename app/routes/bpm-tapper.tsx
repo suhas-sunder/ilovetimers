@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Tap BPM | Instant BPM Counter and Tempo Tapper";
+  const title = "Tap BPM (Instant BPM Counter + Tempo Tapper)";
   const description =
-    "Tap to find BPM instantly. Simple tempo tapper and BPM counter that measures beats per minute as you tap. Auto-resets after pauses, supports fullscreen, and lets you copy the BPM.";
-  const url = "https://ilovetimers.com/bpm-tapper";
+    "Tap to find BPM instantly. Simple tempo tapper and BPM counter that measures beats per minute as you tap. Auto-resets after pauses and lets you copy the BPM.";
+
+  const url = "https://www.ilovetimers.com/bpm-tapper";
 
   return [
     { title },
@@ -33,7 +34,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

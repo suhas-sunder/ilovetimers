@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Debt Clock | Live National and World Debt Counter (Fullscreen)";
+  const title = "Debt Clock (Live National & World Debt Counter, Fullscreen)";
   const description =
-    "Free debt clock with a live debt counter for national or world debt. Choose a preset or enter a starting amount and yearly change rate to simulate a running total in fullscreen.";
-  const url = "https://ilovetimers.com/debt-clock";
+    "Free debt clock with a live counter for national or world debt. Choose a preset or enter a starting amount and yearly change rate to simulate a running total in fullscreen.";
+
+  const url = "https://www.ilovetimers.com/debt-clock";
 
   return [
     { title },
@@ -35,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

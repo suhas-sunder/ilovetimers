@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Alarm Timer Online | Fullscreen Countdown With Sound & Presets";
+  const title = "Online Alarm Timer (Fullscreen Countdown + Sound Presets)";
   const description =
-    "Start a free alarm timer in seconds. Fullscreen countdown, quick presets, custom minutes, optional sound, and keyboard shortcuts. Works in your browser while this tab stays open.";
-  const url = "https://ilovetimers.com/alarm-timer";
+    "Start a free online alarm timer with fullscreen countdown, quick presets, custom minutes, and optional sound. Runs instantly in your browser.";
+
+  const url = "https://www.ilovetimers.com/alarm-timer";
 
   return [
     { title },
@@ -34,7 +34,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: `${url.replace("/alarm-timer", "")}/og-image.jpg`,
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

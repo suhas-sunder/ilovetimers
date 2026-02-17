@@ -8,24 +8,30 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Stretch Timer for Mobility and Yoga";
+  const title = "Stretch Timer (Mobility & Yoga Intervals, Fullscreen)";
   const description =
     "Guide your stretching with a simple interval stretch timer. Alternate stretch and rest periods with a clear fullscreen countdown built for mobility work.";
 
-  const url = "https://ilovetimers.com/stretch-timer";
+  const url = "https://www.ilovetimers.com/stretch-timer";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

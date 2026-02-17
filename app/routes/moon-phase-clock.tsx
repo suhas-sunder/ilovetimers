@@ -7,24 +7,30 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Current Moon Phase Today";
+  const title = "Current Moon Phase Today (Live Phase, Illumination & Age)";
   const description =
-    "See today’s moon phase at a glance. View current phase, illumination, moon age, and when the next full or new moon occurs. Clean, live display.";
+    "See today’s moon phase at a glance. View the current phase, illumination, moon age, and when the next full or new moon occurs in a clean, live display.";
 
-  const url = "https://ilovetimers.com/moon-phase-clock";
+  const url = "https://www.ilovetimers.com/moon-phase-clock";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

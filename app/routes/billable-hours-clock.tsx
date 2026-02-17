@@ -8,11 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Billable Hours Calculator | Calculate Time, Rounding, and Total Pay";
+  const title = "Billable Hours Clock (Live Timer + Rounding, Total Pay)";
   const description =
-    "Free billable hours calculator for freelancers and lawyers. Enter start and end time, breaks, and hourly rate to calculate billable hours and total pay with common rounding increments.";
-  const url = "https://ilovetimers.com/billable-hours-calculator";
+    "Free billable hours clock for freelancers and lawyers. Track time live, apply rounding increments, and calculate total pay with start/stop controls and breaks.";
+
+  const url = "https://www.ilovetimers.com/billable-hours-clock";
 
   return [
     { title },
@@ -35,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

@@ -8,28 +8,32 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Round Timer for Boxing and MMA";
+  const title = "Round Timer (Boxing & MMA Rounds, Fullscreen)";
   const description =
     "Run boxing and MMA rounds with a clear round timer. Set rounds and rest periods and follow a big, easy-to-read countdown built for training.";
 
-  const url = "https://ilovetimers.com/round-timer";
+  const url = "https://www.ilovetimers.com/round-timer";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    { property: "og:image", content: "https://www.ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
+
 
 /* =========================================================
    LOADER

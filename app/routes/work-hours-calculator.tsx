@@ -8,24 +8,30 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Work Hours Calculator (Time Worked)";
+  const title = "Work Hours Calculator (Time Worked, Breaks Subtracted)";
   const description =
     "Calculate hours worked from start and end times. Subtract breaks and get total work hours instantly with a simple, accurate calculator.";
 
-  const url = "https://ilovetimers.com/work-hours-calculator";
+  const url = "https://www.ilovetimers.com/work-hours-calculator";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];

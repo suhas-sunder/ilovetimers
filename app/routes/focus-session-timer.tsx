@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Focus Session Timer | Single Deep Work Countdown (Fullscreen)";
+  const title = "Focus Session Timer (Single Deep Work Countdown, Fullscreen)";
   const description =
     "Free focus session timer for deep work. Choose one session length, start a distraction-free countdown, use fullscreen mode, and get a short break suggestion when you finish.";
-  const url = "https://ilovetimers.com/focus-session-timer";
+
+  const url = "https://www.ilovetimers.com/focus-session-timer";
 
   return [
     { title },
@@ -34,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

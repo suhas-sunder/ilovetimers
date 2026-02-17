@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Hexadecimal Clock | View the Current Time in Hex";
+  const title = "Hexadecimal Clock (View Current Time in Hex)";
   const description =
-    "Free hexadecimal clock that displays the current time in hex format. See HH:MM:SS and milliseconds, toggle 12 or 24 hour time, copy values, and use a clean fullscreen display.";
-  const url = "https://ilovetimers.com/hexadecimal-clock";
+    "Free hexadecimal clock that displays the current time in hex format. See HH:MM:SS and milliseconds, toggle 12 or 24-hour time, copy values, and go fullscreen.";
+
+  const url = "https://www.ilovetimers.com/hexadecimal-clock";
 
   return [
     { title },
@@ -34,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

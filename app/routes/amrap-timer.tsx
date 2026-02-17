@@ -8,11 +8,12 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "AMRAP Timer | CrossFit AMRAP Countdown + Rep Counter (Fullscreen, Simple)";
+  const title = "AMRAP Timer (CrossFit Countdown + Rep Counter, Fullscreen)";
   const description =
-    "Free AMRAP timer (As Many Rounds/Reps As Possible). Set minutes, run a clean fullscreen countdown, and track reps/rounds with big tap buttons and keyboard shortcuts.";
-  const url = "https://ilovetimers.com/amrap-timer";
+    "Free AMRAP timer for CrossFit. Set your minutes, run a fullscreen countdown, and track reps or rounds with big tap buttons or keyboard shortcuts.";
+
+  const url = "https://www.ilovetimers.com/amrap-timer";
+
   return [
     { title },
     { name: "description", content: description },
@@ -32,7 +33,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `https://ilovetimers.com/og-image.jpg` },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },

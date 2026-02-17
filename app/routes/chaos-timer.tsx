@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Random Interval Timer | Random Countdown Generator (Fullscreen)";
+  const title = "Random Interval Timer (Unpredictable Countdown, Fullscreen)";
   const description =
-    "Free random interval timer that generates unpredictable countdowns for training, games, classrooms, and focus sessions. Optional beep each interval and a clean fullscreen display.";
-  const url = "https://ilovetimers.com/chaos-timer";
+    "Free random interval timer that generates unpredictable countdowns for training, games, classrooms, and focus sessions. Optional beep each interval with a clean fullscreen display.";
+
+  const url = "https://www.ilovetimers.com/chaos-timer";
 
   return [
     { title },
@@ -32,7 +33,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
@@ -42,7 +46,6 @@ export function meta({}: Route.MetaArgs) {
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
-
 
 /* =========================================================
    LOADER
@@ -857,7 +860,6 @@ export default function ChaosTimerPage({
           </div>
         </div>
       </section>
-
 
       {/* SEO Section */}
       <section className="mx-auto max-w-7xl px-4 pb-12">

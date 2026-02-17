@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Cooking Timer | Kitchen Timer With Egg and Pasta Presets";
+  const title = "Cooking Timer (Kitchen Timer + Egg & Pasta Presets)";
   const description =
-    "Free cooking and kitchen timer with common presets for eggs, pasta, baking, and ovens. Big fullscreen countdown, custom minutes, optional sound, and keyboard shortcuts.";
-  const url = "https://ilovetimers.com/cooking-timer";
+    "Free cooking and kitchen timer with common presets for eggs, pasta, baking, and ovens. Big fullscreen countdown with custom minutes, optional sound, and keyboard shortcuts.";
+
+  const url = "https://www.ilovetimers.com/cooking-timer";
 
   return [
     { title },
@@ -35,7 +36,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

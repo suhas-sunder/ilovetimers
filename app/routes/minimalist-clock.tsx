@@ -8,28 +8,32 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Minimalist Online Clock (Fullscreen)";
+  const title = "Minimalist Online Clock (Big Fullscreen Display)";
   const description =
-    "A clean, distraction-free online clock with big digits. Use it fullscreen as a desk clock, wall display, or screensaver-style clock with an aesthetic look.";
+    "A clean, distraction-free online clock with big digits. Use it fullscreen as a desk clock, wall display, or screensaver-style clock with a minimalist look.";
 
-  const url = "https://ilovetimers.com/minimalist-clock";
+  const url = "https://www.ilovetimers.com/minimalist-clock";
 
   return [
     { title },
     { name: "description", content: description },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    { property: "og:image", content: "https://www.ilovetimers.com/og-image.jpg" },
+
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
+
     { rel: "canonical", href: url },
     { name: "theme-color", content: "#ffedd5" },
   ];
 }
+
 
 /* =========================================================
    LOADER

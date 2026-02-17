@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Egg Timer | Soft, Medium, and Hard Boiled Egg Presets";
+  const title = "Egg Timer (Soft, Medium & Hard Boiled Presets)";
   const description =
-    "Free egg timer for perfectly boiled eggs. One-click presets for soft, medium, and hard boiled eggs, plus a big readable countdown, optional sound, and fullscreen mode.";
-  const url = "https://ilovetimers.com/egg-timer";
+    "Free egg timer for perfectly boiled eggs. One-click presets for soft, medium, and hard boiled eggs with a big readable countdown, optional sound, and fullscreen mode.";
+
+  const url = "https://www.ilovetimers.com/egg-timer";
 
   return [
     { title },
@@ -33,7 +34,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

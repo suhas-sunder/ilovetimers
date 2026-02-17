@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Event Countdown | Countdown to a Date and Time (Fullscreen)";
+  const title = "Event Countdown (Countdown to a Date & Time, Fullscreen)";
   const description =
-    "Free event countdown timer to count down to a specific date and time. Big fullscreen display, simple controls, and optional sound alerts for events, launches, and deadlines.";
-  const url = "https://ilovetimers.com/event-countdown";
+    "Free event countdown timer to count down to a specific date and time. Big fullscreen display with simple controls and optional sound alerts for launches and deadlines.";
+
+  const url = "https://www.ilovetimers.com/event-countdown";
 
   return [
     { title },
@@ -34,7 +35,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

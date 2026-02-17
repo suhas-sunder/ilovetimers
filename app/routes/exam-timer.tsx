@@ -8,10 +8,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Exam Timer | Fullscreen Countdown for Tests and Practice";
+  const title = "Exam Timer (Fullscreen Countdown for Tests & Practice)";
   const description =
-    "Free exam timer for tests and timed practice. Big fullscreen countdown with presets, custom minutes, optional sound, and keyboard shortcuts. Works well for SAT-style timing and mock exams.";
-  const url = "https://ilovetimers.com/exam-timer";
+    "Free exam timer for tests and timed practice. Big fullscreen countdown with presets, custom minutes, optional sound, and keyboard shortcuts. Great for SAT-style timing and mock exams.";
+
+  const url = "https://www.ilovetimers.com/exam-timer";
 
   return [
     { title },
@@ -35,7 +36,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

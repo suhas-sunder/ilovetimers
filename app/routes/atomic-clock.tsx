@@ -9,10 +9,11 @@ import { Link } from "react-router";
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
   const title =
-    "Atomic Clock Online | Exact Time With Milliseconds (Fullscreen)";
+    "Online Atomic Clock (Exact Time With Milliseconds, Fullscreen)";
   const description =
-    "View the current time with milliseconds in a clean fullscreen atomic-clock style display. Optional keyboard shortcuts and a big readable layout for reference and displays.";
-  const url = "https://ilovetimers.com/atomic-clock";
+    "View the current time with milliseconds in a clean fullscreen atomic-style display. Big readable layout with optional keyboard shortcuts.";
+
+  const url = "https://www.ilovetimers.com/atomic-clock";
 
   return [
     { title },
@@ -35,7 +36,10 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

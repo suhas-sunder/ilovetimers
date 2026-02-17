@@ -7,11 +7,11 @@ import { Link } from "react-router";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Astronomical Clock Online | Sun, Moon, Daylight and Night in Real Time";
+  const title = "Online Astronomical Clock (Live Sun, Moon, Day & Night)";
   const description =
     "Live astronomical clock showing the sun and moon, daylight vs night, sunrise and sunset, and local time. Clean fullscreen display that updates in real time.";
-  const url = "https://ilovetimers.com/astronomical-clock";
+
+  const url = "https://www.ilovetimers.com/astronomical-clock";
 
   return [
     { title },
@@ -29,6 +29,20 @@ export function meta({}: Route.MetaArgs) {
     },
     { rel: "canonical", href: url },
     { name: "robots", content: "index,follow,max-image-preview:large" },
+
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: url },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
+
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
+
     { name: "theme-color", content: "#ffedd5" },
   ];
 }

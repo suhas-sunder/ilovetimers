@@ -1,16 +1,21 @@
 import type { Route } from "./+types/home";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Disclaimer from "~/clients/components/home/Disclaimer";
+import FAQ from "~/clients/components/home/FAQ";
+import HowItWorks from "~/clients/components/home/HowItWorks";
+import KeyboardShortcuts from "~/clients/components/home/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/home/PopularUseCases";
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Free Online Timers: Countdown, Stopwatch, Pomodoro";
+  const title = "Online Timer & Stopwatch (Free Countdown + Pomodoro)";
   const description =
-    "Start a countdown, run a precise stopwatch with laps, or focus with a Pomodoro timer. Clean, fast online timers that work instantly.";
+    "Use a free online timer, precise stopwatch with laps, or Pomodoro focus timer. No signup. Starts instantly in your browser.";
 
-  const url = "https://ilovetimers.com";
+  const url = "https://www.ilovetimers.com";
 
   return [
     { title },
@@ -20,12 +25,12 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: `${url}og-image.jpg` },
+    { property: "og:image", content: `${url}/og-image.jpg` },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -140,7 +145,7 @@ const Card = ({
   <div
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={`h-full rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-300/60 ${className}`}
   >
     {children}
   </div>
@@ -158,10 +163,10 @@ const Chip = ({
   <button
     type="button"
     onClick={onClick}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm transition ${
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition ${
       active
-        ? "bg-amber-700 text-white hover:bg-amber-800"
-        : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
+        ? "bg-slate-900 text-white hover:bg-slate-800"
+        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
     }`}
   >
     {children}
@@ -173,19 +178,22 @@ const Btn = ({
   children,
   onClick,
   className = "",
+  disabled,
 }: {
   kind?: "solid" | "ghost";
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
+  disabled?: boolean;
 }) => (
   <button
     type="button"
     onClick={onClick}
+    disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -322,23 +330,24 @@ function CountdownTimer() {
       className="col-span-2 lg:col-span-1"
     >
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-amber-950">
-          Countdown Timer
-        </h3>
-        <div className="flex items-center gap-2 text-sm">
-          <label className="inline-flex items-center gap-1">
+        <h3 className="text-lg font-semibold text-sky-700">Countdown Timer</h3>
+
+        <div className="flex items-center gap-3 text-sm text-slate-600">
+          <label className="inline-flex cursor-pointer items-center gap-1">
             <input
               type="checkbox"
               checked={sound}
               onChange={(e) => setSound(e.target.checked)}
+              className="accent-amber-500"
             />
             Sound
           </label>
-          <label className="inline-flex items-center gap-1">
+          <label className="inline-flex cursor-pointer items-center gap-1">
             <input
               type="checkbox"
               checked={loop}
               onChange={(e) => setLoop(e.target.checked)}
+              className="accent-amber-500"
             />
             Loop
           </label>
@@ -347,7 +356,7 @@ function CountdownTimer() {
             onClick={() =>
               displayRef.current && toggleFullscreen(displayRef.current)
             }
-            className="py-1"
+            className="py-1 text-sm"
           >
             Fullscreen
           </Btn>
@@ -356,12 +365,12 @@ function CountdownTimer() {
 
       <div
         ref={displayRef}
-        className={`mt-3 flex items-center justify-center rounded-2xl border p-6 text-8xl font-mono font-extrabold tracking-widest ${
+        className={`mt-3 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${
           urgent
-            ? "border-rose-400 bg-rose-50 text-rose-950"
-            : "border-amber-400 bg-amber-50 text-amber-950"
+            ? "border-rose-200 bg-amber-50 text-rose-950"
+            : "border-slate-200 bg-slate-50 text-slate-950"
         }`}
-        style={{ minHeight: 140 }}
+        style={{ minHeight: 140, fontSize: "4.25rem", lineHeight: "1" }}
         aria-live="polite"
       >
         {msToClock(remainingMs)}
@@ -390,7 +399,7 @@ function CountdownTimer() {
             }}
             onBlur={onSet}
             placeholder="mm:ss or ss"
-            className="w-full rounded-lg border border-amber-300 px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
           />
           <Btn kind="ghost" onClick={onSet}>
             Set
@@ -405,13 +414,12 @@ function CountdownTimer() {
       </div>
 
       {done && (
-        <div className="mt-3 rounded-lg border border-amber-200 bg-amber-100 px-3 py-2 text-sm font-medium text-amber-950">
-          Time’s up! Press Start to run again or pick a preset.
+        <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-900">
+          Time’s up. Press Start to run again or pick a preset.
         </div>
       )}
 
-      {/* minimal readability fix: bigger + darker + subtle container */}
-      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-slate-700">
+      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
         Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
         • <strong className="text-slate-900">R</strong> reset •{" "}
         <strong className="text-slate-900">F</strong> fullscreen.
@@ -495,12 +503,12 @@ function StopwatchCard() {
     <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold text-amber-950">Stopwatch</h3>
+          <h3 className="text-lg font-semibold text-sky-700">Stopwatch</h3>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+            className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${
               running
-                ? "bg-emerald-100 text-emerald-900"
-                : "bg-slate-100 text-slate-700"
+                ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                : "border-slate-200 bg-slate-50 text-slate-700"
             }`}
           >
             {running ? "RUNNING" : "PAUSED"}
@@ -519,12 +527,12 @@ function StopwatchCard() {
 
       <div
         ref={displayRef}
-        className={`mt-3 flex items-center justify-center rounded-2xl border p-6 text-6xl font-mono font-extrabold tracking-widest ${
+        className={`mt-3 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${
           running
             ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-            : "border-amber-400 bg-amber-50 text-amber-950"
+            : "border-slate-200 bg-slate-50 text-slate-950"
         }`}
-        style={{ minHeight: 110 }}
+        style={{ minHeight: 110, fontSize: "3.25rem", lineHeight: "1" }}
       >
         {total}
       </div>
@@ -545,7 +553,7 @@ function StopwatchCard() {
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-amber-950">
+              <tr className="text-slate-900">
                 <th className="py-1 text-left">#</th>
                 <th className="py-1 text-left">Lap</th>
                 <th className="py-1 text-left">Total</th>
@@ -560,7 +568,7 @@ function StopwatchCard() {
                     className={`border-t ${
                       isLatest
                         ? "border-emerald-200 bg-emerald-50/60"
-                        : "border-amber-500/30"
+                        : "border-slate-200"
                     }`}
                   >
                     <td className="py-1">Lap {i + 1}</td>
@@ -574,8 +582,7 @@ function StopwatchCard() {
         </div>
       )}
 
-      {/* minimal readability fix: bigger + darker + subtle container */}
-      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-slate-700">
+      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
         Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
         • <strong className="text-slate-900">R</strong> reset •{" "}
         <strong className="text-slate-900">L</strong> lap •{" "}
@@ -732,7 +739,7 @@ function PomodoroCard() {
 
   const displayTone =
     phase === "work"
-      ? "border-rose-200 bg-rose-50 text-rose-950"
+      ? "border-rose-200 bg-amber-50 text-rose-950"
       : phase === "break"
         ? "border-emerald-200 bg-emerald-50 text-emerald-950"
         : "border-slate-200 bg-slate-50 text-slate-500";
@@ -740,7 +747,7 @@ function PomodoroCard() {
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-amber-950">
+        <h3 className="text-lg font-semibold text-sky-700">
           Pomodoro Focus Timer
         </h3>
         <Btn
@@ -754,14 +761,13 @@ function PomodoroCard() {
         </Btn>
       </div>
 
-      {/* minimal readability fix: darker text + slightly larger */}
-      <div className="mt-1 text-sm leading-relaxed text-slate-700">
-        Auto-advances between work and break cycles with accurate timing
+      <div className="mt-1 text-sm leading-relaxed text-slate-600">
+        Auto-advances between work and break cycles with accurate timing.
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <label className="block text-sm">
-          <span className="text-amber-950">Work (min)</span>
+          <span className="text-slate-900">Work (min)</span>
           <input
             type="number"
             min={1}
@@ -770,11 +776,11 @@ function PomodoroCard() {
             onChange={(e) =>
               setWorkMin(clamp(Number(e.target.value || 0), 1, 180))
             }
-            className="mt-1 w-full rounded-lg border border-amber-300 px-3 py-2"
+            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
           />
         </label>
         <label className="block text-sm">
-          <span className="text-amber-950">Break (min)</span>
+          <span className="text-slate-900">Break (min)</span>
           <input
             type="number"
             min={1}
@@ -783,11 +789,11 @@ function PomodoroCard() {
             onChange={(e) =>
               setBreakMin(clamp(Number(e.target.value || 0), 1, 60))
             }
-            className="mt-1 w-full rounded-lg border border-amber-300 px-3 py-2"
+            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
           />
         </label>
         <label className="block text-sm">
-          <span className="text-amber-950">Cycles</span>
+          <span className="text-slate-900">Cycles</span>
           <input
             type="number"
             min={1}
@@ -796,21 +802,21 @@ function PomodoroCard() {
             onChange={(e) =>
               setCycles(clamp(Number(e.target.value || 0), 1, 12))
             }
-            className="mt-1 w-full rounded-lg border border-amber-300 px-3 py-2"
+            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
           />
         </label>
       </div>
 
       <div
         ref={displayRef}
-        className={`mt-4 flex items-center justify-center rounded-2xl border p-6 text-6xl font-mono font-extrabold tracking-widest ${displayTone}`}
-        style={{ minHeight: 110 }}
+        className={`mt-4 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${displayTone}`}
+        style={{ minHeight: 110, fontSize: "3.25rem", lineHeight: "1" }}
       >
         {msToClock(Math.ceil(remaining / 1000) * 1000)}
       </div>
 
-      <div className="mt-2 text-sm text-amber-950">
-        Phase: <strong>{phaseLabel}</strong>
+      <div className="mt-2 text-sm text-slate-600">
+        Phase: <strong className="text-slate-900">{phaseLabel}</strong>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-3">
@@ -825,8 +831,7 @@ function PomodoroCard() {
         </Btn>
       </div>
 
-      {/* minimal readability fix: bigger + darker + subtle container */}
-      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-slate-700">
+      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
         Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
         • <strong className="text-slate-900">R</strong> reset •{" "}
         <strong className="text-slate-900">N</strong> skip •{" "}
@@ -1008,16 +1013,16 @@ function HIITCard() {
       : step === "warmup"
         ? "Get ready"
         : step === "cooldown"
-          ? "Finish strong"
+          ? "Finish"
           : "Complete";
 
   const displayTone =
     step === "work"
-      ? "border-rose-200 bg-rose-50 text-rose-950"
+      ? "border-rose-200 bg-amber-50 text-rose-950"
       : step === "rest"
         ? "border-emerald-200 bg-emerald-50 text-emerald-950"
         : step === "warmup"
-          ? "border-amber-300 bg-amber-50 text-amber-950"
+          ? "border-slate-200 bg-slate-50 text-slate-950"
           : step === "cooldown"
             ? "border-sky-200 bg-sky-50 text-sky-950"
             : "border-slate-200 bg-slate-50 text-slate-500";
@@ -1025,7 +1030,7 @@ function HIITCard() {
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-amber-950">
+        <h3 className="text-lg font-semibold text-sky-700">
           HIIT / Interval Timer
         </h3>
         <Btn
@@ -1039,9 +1044,8 @@ function HIITCard() {
         </Btn>
       </div>
 
-      {/* minimal readability fix: darker text + slightly larger */}
-      <div className="mt-1 text-sm leading-relaxed text-slate-700">
-        Auto-runs through all rounds with accurate timing
+      <div className="mt-1 text-sm leading-relaxed text-slate-600">
+        Auto-runs through all rounds with accurate timing.
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-5">
@@ -1074,7 +1078,10 @@ function HIITCard() {
           </div>
           <div className="text-sm font-semibold opacity-90">{roundLabel}</div>
         </div>
-        <div className="mt-2 flex items-center justify-center text-5xl font-mono font-extrabold tracking-widest">
+        <div
+          className="mt-2 flex items-center justify-center font-mono font-extrabold tracking-widest"
+          style={{ fontSize: "3rem", lineHeight: "1" }}
+        >
           {msToClock(Math.ceil(remaining / 1000) * 1000)}
         </div>
       </div>
@@ -1091,8 +1098,7 @@ function HIITCard() {
         </Btn>
       </div>
 
-      {/* minimal readability fix: bigger + darker + subtle container */}
-      <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-slate-700">
+      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
         Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
         • <strong className="text-slate-900">R</strong> reset •{" "}
         <strong className="text-slate-900">N</strong> skip •{" "}
@@ -1115,14 +1121,14 @@ function LabeledNumber({
 }) {
   return (
     <label className="block text-sm">
-      <span className="text-amber-950">{label}</span>
+      <span className="text-slate-900">{label}</span>
       <input
         type="number"
         min={0}
         max={max}
         value={value}
         onChange={(e) => set(clamp(Number(e.target.value || 0), 0, max))}
-        className="mt-1 w-full rounded-lg border border-amber-300 px-3 py-2"
+        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
       />
     </label>
   );
@@ -1150,7 +1156,7 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
             name: "Are these timers accurate?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Timers use requestAnimationFrame with delta-time correction to minimize drift and remain accurate across pauses and background tabs.",
+              text: "Yes. Timers use absolute time (performance.now) to avoid drift, including across pauses and most background situations.",
             },
           },
           {
@@ -1158,7 +1164,7 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
             name: "Do timers keep working if I switch tabs or lock my phone?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "They continue tracking and catch up on the next animation frame. For presentations or workouts, you can also enable fullscreen for better visibility.",
+              text: "They keep tracking time and update when the browser resumes. For presentations or workouts, fullscreen mode keeps the display readable from a distance.",
             },
           },
           {
@@ -1166,7 +1172,7 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
             name: "Are there keyboard shortcuts?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes. Focus any card then use Space to start/pause, R to reset, F to fullscreen (countdown), L for lap (stopwatch), and N for next/skip (Pomodoro/HIIT).",
+              text: "Yes. Focus any card then use Space to start/pause, R to reset, F to fullscreen, L for lap (stopwatch), and N for next/skip (Pomodoro/HIIT).",
             },
           },
         ],
@@ -1175,23 +1181,21 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <h2 className="text-3xl font-extrabold sm:text-4xl">
-            Free Online Timers - Simple, Accurate, Instant
-          </h2>
-
-          {/* minimal readability fix: darker text */}
-          <p className="mt-2 max-w-3xl text-lg text-slate-700">
+      {/* Minimal header (no tall banner) */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-5">
+          <h1 className="text-xl font-semibold text-sky-700 sm:text-2xl">
+            Free Online Timers
+          </h1>
+          <p className="mt-1 max-w-3xl text-sm text-slate-600">
             Countdown presets, a stopwatch with laps, Pomodoro focus cycles, and
-            HIIT intervals - all on one fast page.
+            HIIT intervals on one fast page.
           </p>
         </div>
       </section>
@@ -1214,560 +1218,77 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </div>
       </section>
 
-      {/* SEO text (compact) */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold">Timers for Every Task</h3>
-
-          {/* minimal readability fix: darker text */}
+      {/* Compact SEO section (kept, but no fluff wall) */}
+      <section className="mx-auto max-w-7xl px-4 pb-10">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-semibold text-sky-700">
+            Timers for everyday use
+          </h2>
           <p className="mt-2 text-slate-700 leading-relaxed">
-            A <strong>countdown timer</strong> is best for presentations,
+            Use a <strong>countdown timer</strong> for presentations,
             classrooms, exams, and cooking. The <strong>stopwatch</strong>{" "}
-            tracks training splits and sprints with <em>laps</em>. The{" "}
-            <strong>Pomodoro timer</strong> structures deep work into focused
-            blocks with short, refreshing breaks. For workouts, our{" "}
-            <strong>HIIT interval timer</strong> cycles through warm-up,
-            work/rest rounds, and cool-down.
+            tracks splits with <em>laps</em>. The{" "}
+            <strong>Pomodoro timer</strong> helps you focus with structured work
+            and break cycles. For workouts, the{" "}
+            <strong>HIIT interval timer</strong> runs warm-up, work/rest rounds,
+            and cool-down.
           </p>
-
-          {/* minimal readability fix: darker text */}
           <p className="mt-2 text-slate-700 leading-relaxed">
-            Everything runs in your browser, works offline after loading, and
-            uses a high-contrast display for projectors and mobile screens. No
-            sign-up - just press Start.
+            Everything runs in your browser. Fullscreen mode keeps digits
+            readable on TVs, projectors, and phones.
           </p>
         </div>
       </section>
 
-      {/* =========================================================
-    EXTRA SEO-RICH SECTIONS (place above FAQ)
-========================================================= */}
-      {/* minimal readability fix: swap section text color */}
-      <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-slate-700">
-        {/* 1. Everyday Timer Uses */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Everyday Countdown Uses
-          </h3>
-          <p className="mt-2">
-            Our <strong>online countdown timer</strong> helps you manage
-            everything from
-            <em>
-              {" "}
-              classroom quizzes, cooking pasta, meditation sessions, speeches,
-              livestream segments, exam practice, brewing coffee, and power naps
-            </em>
-            . Large digits, one-click presets and sound alerts make it easy to
-            glance at the screen even on a projector or phone in the kitchen.
-          </p>
-        </article>
+      {/* Use-cases (kept focused) */}
+      <section className="mx-auto max-w-7xl px-4 pb-12">
+        <div className="grid gap-6 md:grid-cols-2">
+          <article className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+            <h3 className="text-base font-semibold text-sky-700">
+              Presentations and meetings
+            </h3>
+            <p className="mt-2 text-slate-700 leading-relaxed">
+              Run a visible countdown to stay on agenda. Fullscreen makes the
+              timer easy to read across a room.
+            </p>
+          </article>
 
-        {/* 2. Workout & HIIT */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Workout & HIIT Interval Training
-          </h3>
-          <p className="mt-2">
-            Fitness fans use the <strong>HIIT / interval timer</strong> for
-            Tabata, circuit training, treadmill sprints, rowing, and boxing
-            rounds. Configure{" "}
-            <em>warm-up, work / rest splits, rounds, and cool-down</em> without
-            downloading an app. Keyboard shortcuts let trainers advance or skip
-            a phase mid-session while the big clock stays visible on TVs or
-            mirrors.
-          </p>
-        </article>
+          <article className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+            <h3 className="text-base font-semibold text-sky-700">
+              Silent timing
+            </h3>
+            <p className="mt-2 text-slate-700 leading-relaxed">
+              Turn off sound when you need a discreet timer for talks,
+              recording, or quiet rooms.
+            </p>
+          </article>
 
-        {/* 3. Study & Pomodoro */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Pomodoro for Focus & Study
-          </h3>
-          <p className="mt-2">
-            Students and remote workers rely on the built-in{" "}
-            <strong>Pomodoro timer</strong>
-            (25 minutes work / 5 minutes break by default) to improve focus,
-            beat procrastination and reduce screen fatigue. Adjust work or break
-            length, run multiple cycles, and use the <em>
-              auto-switch phase
-            </em>{" "}
-            to keep momentum.
-          </p>
-        </article>
+          <article className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+            <h3 className="text-base font-semibold text-sky-700">
+              Study and focus
+            </h3>
+            <p className="mt-2 text-slate-700 leading-relaxed">
+              Use Pomodoro cycles to work in focused blocks with short breaks.
+            </p>
+          </article>
 
-        {/* 4. Precise Stopwatch for Sports */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Precision Stopwatch with Laps
-          </h3>
-          <p className="mt-2">
-            The <strong>online stopwatch</strong> records{" "}
-            <em>millisecond-level</em>
-            lap splits for track sprints, swim intervals, speed-cubing, robotics
-            contests, or science experiments. Export lap data by copy-paste into
-            spreadsheets or simply screenshot the table after your run.
-          </p>
-        </article>
-
-        {/* 5. Accessibility & Offline-Friendly */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            High-Contrast, Accessible & Offline-Ready
-          </h3>
-          <p className="mt-2">
-            All timers feature <strong>large high-contrast digits</strong>,
-            simple keyboard shortcuts (<em>Space, R, F, L, N</em>), and work
-            offline after the first load, making them reliable for classrooms,
-            travel, or low-connectivity gyms. Full-screen mode keeps numbers
-            readable from a distance, ideal for projectors and big displays.
-          </p>
-        </article>
-
-        {/* 6. Privacy-Safe and Free */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Private, Free & No Sign-Up Needed
-          </h3>
-          <p className="mt-2">
-            <strong>I Love Timers</strong> stores no personal data or cookies
-            beyond basic browser settings. Everything runs locally in your tab,
-            so you can use it at school, at work, or while travelling without
-            creating an account or worrying about privacy.
-          </p>
-        </article>
-      </section>
-
-      {/* =========================================================
-    EXTRA-EXTRA SEO-RICH SECTIONS (add above FAQ)
-========================================================= */}
-      {/* minimal readability fix: swap section text color */}
-      <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-slate-700">
-        {/* 7. Classroom & Test-Prep */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Perfect for Classrooms & Test-Prep
-          </h3>
-          <p className="mt-2">
-            Teachers use our <strong>countdown timer with sound alerts</strong>{" "}
-            to pace
-            <em>
-              {" "}
-              spelling bees, math drills, science lab work, mock SAT / IELTS /
-              GRE sections, debate rounds, and timed essays
-            </em>
-            . Large digits projected on a smartboard keep every student aware of
-            remaining time without constant reminders.
-          </p>
-        </article>
-
-        {/* 8. Public Speaking & Livestreams */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Speech, Presentation & Livestream Timing
-          </h3>
-          <p className="mt-2">
-            Conference speakers and online hosts rely on the
-            <strong> full-screen countdown clock</strong> to hit their slot
-            limits, flash final-minute warnings, and avoid running over.
-            <em>
-              {" "}
-              Podcast recordings, webinars, Twitch / YouTube segments
-            </em>{" "}
-            also benefit from the discreet silent timer that’s visible
-            off-camera.
-          </p>
-        </article>
-
-        {/* 9. Cooking & Kitchen Helpers */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Kitchen-Friendly Cooking Timers
-          </h3>
-          <p className="mt-2">
-            The <strong>1-click presets</strong> (1 m to 60 m) make boiling
-            eggs, timing tea, proofing bread, or simmering stews effortless on a
-            phone or tablet stand. Audible alarms help busy cooks track multiple
-            dishes without losing focus on prep.
-          </p>
-        </article>
-
-        {/* 10. Meditation, Yoga & Sleep */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Meditation, Yoga & Sleep Sessions
-          </h3>
-          <p className="mt-2">
-            Minimal interface and soft chime options suit
-            <em>
-              {" "}
-              meditation timers, pranayama breathing cycles, yin-yoga holds,
-              stretching sessions, and short power-naps
-            </em>
-            . The loop mode repeats any countdown automatically for multi-round
-            practice.
-          </p>
-        </article>
-
-        {/* 11. Multi-Device Sync & Offline Use */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Works Across Devices & Offline
-          </h3>
-          <p className="mt-2">
-            Open the same page on{" "}
-            <strong>laptops, tablets, phones, Chromebooks</strong>
-            and the timers stay accurate even if you switch tabs or lose Wi-Fi
-            after load. Add the site to your home-screen as a{" "}
-            <em>Progressive Web App (PWA)</em> for near-native offline
-            performance.
-          </p>
-        </article>
-
-        {/* 12. Keyboard Shortcuts & Productivity Hacks */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Power-User Keyboard Shortcuts
-          </h3>
-          <p className="mt-2">
-            Quickly control timers with the keyboard:
-            <em>
-              {" "}
-              Space = Start / Pause, R = Reset, F = Fullscreen, L = Lap, N =
-              Next Interval
-            </em>
-            . These shortcuts save clicks during
-            <strong> HIIT sessions, presentations, or live streams</strong>.
-          </p>
-        </article>
-
-        {/* 13. Custom Themes & Large-Screen Mode */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Custom Themes & Big-Screen Visibility
-          </h3>
-          <p className="mt-2">
-            Switch between <strong>light / dark / high-contrast themes</strong>{" "}
-            for gyms, classrooms, or low-light studios. Full-screen mode
-            enlarges digits for TVs, projectors, or outdoor boot-camp sessions
-            where distance visibility matters.
-          </p>
-        </article>
-
-        {/* 14. Data Privacy & Ad-Light Experience */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Privacy-First & Ad-Light Experience
-          </h3>
-          <p className="mt-2">
-            No sign-up, no tracking scripts - timers run entirely in-browser.
-            Lightweight pages ensure{" "}
-            <strong>
-              fast loads, low battery drain, and zero personal data collection
-            </strong>
-            , keeping focus on productivity rather than pop-ups or banners.
-          </p>
-        </article>
-      </section>
-
-      {/* =========================================================
-   EVEN MORE SEO-RICH SECTIONS (stack above FAQ)
-========================================================= */}
-      <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-amber-800">
-        {/* 15. Fitness, HIIT & Interval Training */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Tailored for Fitness, HIIT & Interval Training
-          </h3>
-          <p className="mt-2">
-            Our <strong>interval timer</strong> makes it easy to configure
-            <em>
-              {" "}
-              work / rest cycles for HIIT, Tabata, CrossFit, circuit training,
-              jump-rope, and sprint repeats
-            </em>
-            . Use the lap function to record every round and the audible
-            countdown to keep pace without constantly checking your phone.
-          </p>
-        </article>
-
-        {/* 16. Pomodoro & Deep-Work Productivity */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Boost Focus with Pomodoro & Deep-Work Sessions
-          </h3>
-          <p className="mt-2">
-            Set up the classic <strong>25-5 Pomodoro cycle</strong> or customize
-            focus / break blocks to prevent burnout. Freelancers, writers,
-            coders, and students use it to maintain
-            <em> high-energy sprints followed by mindful breaks</em>
-            that reduce fatigue and improve output.
-          </p>
-        </article>
-
-        {/* 17. Stopwatch with Laps & Splits */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Precise Stopwatch with Laps & Splits
-          </h3>
-          <p className="mt-2">
-            Our <strong>digital stopwatch</strong> records
-            <em>
-              {" "}
-              lap-times for track sprints, swim heats, rowing, car-repair tests,
-              and speed-cubing contests
-            </em>
-            . Export splits as a CSV (coming soon) to log training history or
-            share with coaches.
-          </p>
-        </article>
-
-        {/* 18. Marathon, 5K & Endurance Events */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Reliable for 5K, 10K & Marathon Pacing
-          </h3>
-          <p className="mt-2">
-            Long-distance runners trust the{" "}
-            <strong>persistent full-screen stopwatch</strong>
-            that stays accurate even if you switch tabs or receive
-            notifications. The projected clock at local fun-runs and school
-            track meets keeps everyone synchronized at the start / finish line.
-          </p>
-        </article>
-
-        {/* 19. Kids’ Study Routines & Chore Races */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Fun Timers for Kids’ Routines
-          </h3>
-          <p className="mt-2">
-            Parents use the colorful timers to turn{" "}
-            <em>chores, homework, clean-up sessions, and screen-time limits</em>{" "}
-            into
-            <strong> motivating mini-races</strong>. Countdown bells let kids
-            know exactly when time’s up without nagging.
-          </p>
-        </article>
-
-        {/* 20. Corporate & Remote-Team Meetings */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Keep Corporate & Remote Meetings on Track
-          </h3>
-          <p className="mt-2">
-            Managers love the <strong>meeting countdown clock</strong>
-            to rein in lengthy discussions, breakout-rooms, and stand-ups. A
-            visible timer reduces overruns and keeps agendas tight whether on
-            Zoom, Meet, or in-person huddles.
-          </p>
-        </article>
-
-        {/* 21. Accessibility-Ready Controls */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Accessible for Everyone
-          </h3>
-          <p className="mt-2">
-            The interface supports{" "}
-            <strong>
-              keyboard navigation, screen-reader labels, dark-mode high-contrast
-              themes, and color-blind friendly palettes
-            </strong>
-            . Large digits and audible alarms assist users with low vision or
-            attention-span challenges.
-          </p>
-        </article>
-
-        {/* 22. Ultra-Light Performance & Security */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Ultra-Light, Fast & Secure
-          </h3>
-          <p className="mt-2">
-            Built with a <strong>vanilla-JS core weighing under 40 KB</strong>,
-            our timers load instantly even on spotty Wi-Fi or low-end phones. No
-            accounts, no trackers, no cookies - just efficient code for
-            dependable timing tasks without privacy trade-offs.
-          </p>
-        </article>
-
-        {/* 23. Future-Proof Features Roadmap */}
-        <article className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-950">
-            Feature Roadmap & Community Feedback
-          </h3>
-          <p className="mt-2">
-            Upcoming upgrades include{" "}
-            <em>
-              multi-timer dashboards, exportable lap logs, sync across devices,
-              Siri / Alexa voice commands, and smart-home light or buzzer
-              triggers
-            </em>
-            . Feedback from power-users guides our roadmap so that{" "}
-            <strong>I Love Timers</strong> stays competitive with top commercial
-            timer apps - for free.
-          </p>
-        </article>
-      </section>
-
-      {/* =========================================================
-   ADDITIONAL SEO-RICH SECTIONS (more depth above FAQ)
-========================================================= */}
-      <section className="mx-auto max-w-7xl px-4 pb-12 space-y-10 leading-relaxed text-amber-800">
-        {/* Exam / Study timing tips */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
-            Exam & Study Timing Tips
-          </h3>
-          <p className="mt-2">
-            Try a simple routine: <strong>25:00 focus</strong> +{" "}
-            <strong>5:00 break</strong> (or <strong>45:00</strong> +{" "}
-            <strong>10:00</strong> for longer sessions). For timed practice, set
-            a countdown for each section and restart it between parts. If you
-            tend to rush, aim to finish with{" "}
-            <strong>2 to 3 minutes left</strong> for review.
-          </p>
-        </article>
-
-        {/* Holidays / events without implying seasonal content */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
-            Parties, Events & Hosting
-          </h3>
-          <p className="mt-2">
-            Use <strong>short repeating timers</strong> to keep an event moving
-            without watching the clock: trivia rounds (5 to 10 min), game turns
-            (60 to 90 sec), or “next activity” reminders (10 to 15 min). If
-            you’re running a schedule, fullscreen the display so everyone can
-            see it.
-          </p>
-        </article>
-
-        {/* Labs / experiments: accurate timing advice */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
-            Labs, Experiments & Repeatable Timing
-          </h3>
-          <p className="mt-2">
-            For experiments, consistency beats perfection. Use the{" "}
-            <strong>stopwatch + laps</strong> to record repeated trials (Lap 1,
-            Lap 2, Lap 3). For fixed waits (incubation, settling, exposure), use
-            a <strong>countdown</strong>. Write down your lap totals right away
-            (or screenshot the lap table).
-          </p>
-        </article>
-
-        {/* Creators */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
-            Creators: Video, Livestreams & Recording
-          </h3>
-          <p className="mt-2">
-            For tight segments, set a countdown for your target length and a
-            second timer for breaks or resets. If you’re timing takes, use the
-            stopwatch and hit <strong>Lap</strong> at each cut so you can see
-            split lengths fast.
-          </p>
-        </article>
-
-        {/* Accessibility / language without claiming future localization */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
-            Clear Display & Keyboard Control
-          </h3>
-          <p className="mt-2">
-            For projector or gym use, fullscreen the timer and control it with
-            the keyboard:
-            <em> Space</em> start/pause, <em>R</em> reset, <em>F</em>{" "}
-            fullscreen, <em>L</em> lap,
-            <em> N</em> next/skip. Tip: click the timer card once so it’s
-            focused, then the keys work.
-          </p>
-        </article>
-
-        {/* Rehab / gentle pacing (no medical claims) */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
-            Pacing for Mobility, Stretching & Rehab Routines
-          </h3>
-          <p className="mt-2">
-            For gentle routines, use predictable intervals:{" "}
-            <strong>30 to 60 seconds</strong> on,
-            <strong> 10 to 30 seconds</strong> rest, repeat for a set number of
-            rounds. If you’re following a plan from a professional, match their
-            timings exactly and keep the display visible.
-          </p>
-        </article>
-
-        {/* Battery / performance tips */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
-            Reliability & Battery Tips
-          </h3>
-          <p className="mt-2">
-            Keep the timer in the foreground when possible for the smoothest
-            updates. On phones, lower screen brightness and use fullscreen to
-            avoid accidental taps. If you need a repeating routine, enable{" "}
-            <strong>Loop</strong> on the countdown.
-          </p>
-        </article>
-
-        {/* Low connectivity */}
-        <article className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
-          <h3 className="text-xl font-bold text-amber-900">
-            Low-Connectivity Friendly Habits
-          </h3>
-          <p className="mt-2">
-            If you’re somewhere with unreliable internet, open the page once
-            before you need it, then keep the tab open. For events, consider a
-            quick test run (start, pause, reset) so you know sound and
-            fullscreen behave the way you expect on that device.
-          </p>
-        </article>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h3 className="text-2xl font-bold">Frequently Asked Questions</h3>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              My countdown breaks when I click a new preset. Fixed?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Selecting a preset now safely resets the duration and pauses
-              the timer so you can start when ready.
-            </div>
-          </details>
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I switch phases in Pomodoro or skip in HIIT?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Use the Switch/Skip button or press <strong>N</strong> while the
-              card is focused.
-            </div>
-          </details>
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Do you save my last settings?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              The timers are designed to be stateless for reliability. You can
-              bookmark presets or keep the page open for quick reuse.
-            </div>
-          </details>
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I use it fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. On the Countdown, click <em>Fullscreen</em> or press{" "}
-              <strong>F</strong> while focused.
-            </div>
-          </details>
+          <article className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+            <h3 className="text-base font-semibold text-sky-700">
+              Workouts and intervals
+            </h3>
+            <p className="mt-2 text-slate-700 leading-relaxed">
+              Configure work/rest rounds and let the interval timer run the full
+              session hands-free.
+            </p>
+          </article>
         </div>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

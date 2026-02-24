@@ -1,8 +1,13 @@
 // app/routes/debt-repayment-timer.tsx
 import type { Route } from "./+types/debt-repayment-timer";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/debt-repayment-timer/HowItWorks";
+import Disclaimer from "~/clients/components/debt-repayment-timer/Disclaimer";
+import FAQ from "~/clients/components/debt-repayment-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/debt-repayment-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/debt-repayment-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -45,7 +50,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -65,13 +70,14 @@ function clamp(n: number, min: number, max: number) {
 
 const pad2 = (n: number) => n.toString().padStart(2, "0");
 
-function msToClock(ms: number) {
+function msToClockWithDays(ms: number) {
   const t = Math.max(0, Math.floor(ms));
   const s = Math.floor(t / 1000);
   const d = Math.floor(s / 86400);
   const h = Math.floor((s % 86400) / 3600);
   const m = Math.floor((s % 3600) / 60);
   const sec = s % 60;
+
   if (d > 0) return `${d}d ${pad2(h)}:${pad2(m)}:${pad2(sec)}`;
   if (h > 0) return `${h}:${pad2(m)}:${pad2(sec)}`;
   return `${m}:${pad2(sec)}`;
@@ -110,11 +116,123 @@ function formatMoney(n: number, currency = "USD") {
 }
 
 function safeDateInputValue(d: Date) {
-  // YYYY-MM-DD for <input type="date">
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line string into its container by adjusting font size.
+ * Binary search for max font-size that fits both width and height.
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: React.RefObject<HTMLElement | null>;
+  textRef: React.RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* =========================================================
@@ -125,16 +243,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -159,13 +288,84 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+const Chip = ({
+  active,
+  children,
+  onClick,
+  disabled,
+}: {
+  active?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
+      active
+        ? "bg-slate-900 text-white hover:bg-slate-800"
+        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    DEBT REPAYMENT TIMER CARD
@@ -173,12 +373,20 @@ const Btn = ({
 type Mode = "payoff-date" | "duration";
 
 function DebtRepaymentTimerCard() {
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
 
   const [mode, setMode] = useState<Mode>("payoff-date");
 
-  // Inputs
-  const [currency, setCurrency] = useState("USD");
+  const currencies = useMemo(
+    () => ["USD", "CAD", "EUR", "GBP", "AUD", "NZD", "JPY"] as const,
+    [],
+  );
+
+  const [currency, setCurrency] = useState<(typeof currencies)[number]>("USD");
   const [startingBalance, setStartingBalance] = useState<number>(5000);
   const [targetBalance, setTargetBalance] = useState<number>(0);
 
@@ -189,65 +397,75 @@ function DebtRepaymentTimerCard() {
     d.setMonth(d.getMonth() + 6);
     return safeDateInputValue(d);
   });
-
   const [durationDays, setDurationDays] = useState<number>(180);
 
   const [running, setRunning] = useState(false);
   const rafRef = useRef<number | null>(null);
-  const endTsRef = useRef<number | null>(null);
-
   const [remainingMs, setRemainingMs] = useState<number>(0);
+  const [nowTs, setNowTs] = useState<number>(() => Date.now());
 
-  const startTs = useMemo(
-    () => new Date(startDate + "T00:00:00").getTime(),
-    [startDate],
-  );
+  const startTs = useMemo(() => {
+    const ts = new Date(startDate + "T00:00:00").getTime();
+    return Number.isFinite(ts) ? ts : Date.now();
+  }, [startDate]);
 
   const endTs = useMemo(() => {
     if (mode === "payoff-date") {
-      return new Date(payoffDate + "T00:00:00").getTime();
+      const ts = new Date(payoffDate + "T00:00:00").getTime();
+      return Number.isFinite(ts) ? ts : startTs;
     }
     return startTs + durationDays * 86400_000;
   }, [mode, payoffDate, startTs, durationDays]);
 
   const totalMs = Math.max(0, endTs - startTs);
-
-  // Derived: progress from time elapsed
-  const nowTs = Date.now();
-  const elapsedMs = clamp(nowTs - startTs, 0, totalMs);
-  const progress = totalMs === 0 ? 0 : elapsedMs / totalMs;
+  const invalidDates = endTs <= startTs;
 
   const principalToPay = Math.max(0, startingBalance - targetBalance);
+
+  const progress = useMemo(() => {
+    if (totalMs <= 0) return 0;
+    const p = (nowTs - startTs) / totalMs;
+    return clamp(p, 0, 1);
+  }, [nowTs, startTs, totalMs]);
+
+  const pct = Math.round(progress * 100);
   const estPaid = principalToPay * progress;
   const estRemaining = Math.max(0, principalToPay - estPaid);
 
-  // Countdown display uses endTs
+  const shownRemaining = msToClockWithDays(
+    Math.ceil(remainingMs / 1000) * 1000,
+  );
+
+  // keep remaining in sync when inputs change
   useEffect(() => {
-    // initialize remaining
-    setRemainingMs(Math.max(0, endTs - Date.now()));
+    const n = Date.now();
+    setNowTs(n);
+    setRemainingMs(Math.max(0, endTs - n));
     setRunning(false);
-    endTsRef.current = null;
+
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
   }, [endTs]);
 
+  // RAF loop while running
   useEffect(() => {
     if (!running) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
-      endTsRef.current = null;
       return;
     }
 
-    if (!endTsRef.current) endTsRef.current = endTs;
-
     const tick = () => {
-      const rem = Math.max(0, (endTsRef.current ?? Date.now()) - Date.now());
+      const n = Date.now();
+      setNowTs(n);
+
+      const rem = Math.max(0, endTs - n);
       setRemainingMs(rem);
 
       if (rem <= 0) {
         setRunning(false);
-        endTsRef.current = null;
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
         return;
       }
 
@@ -262,363 +480,384 @@ function DebtRepaymentTimerCard() {
   }, [running, endTs]);
 
   function startPause() {
-    setRunning((r) => !r);
-    endTsRef.current = null;
+    if (invalidDates) return;
+
+    setRunning((r) => {
+      const next = !r;
+      const n = Date.now();
+      setNowTs(n);
+      setRemainingMs(Math.max(0, endTs - n));
+      return next;
+    });
   }
 
   function reset() {
+    const n = Date.now();
+    setNowTs(n);
     setRunning(false);
-    setRemainingMs(Math.max(0, endTs - Date.now()));
-    endTsRef.current = null;
+    setRemainingMs(Math.max(0, endTs - n));
   }
 
-  const shownRemaining = msToClock(Math.ceil(remainingMs / 1000) * 1000);
+  const statusLabel = invalidDates
+    ? "Fix dates"
+    : remainingMs <= 0
+      ? "Reached"
+      : running
+        ? "Running"
+        : "Ready";
 
-  const pct = Math.round(progress * 100);
+  const displayTone = invalidDates
+    ? "border-rose-200 bg-rose-50 text-rose-950"
+    : remainingMs <= 10_000 && running
+      ? "border-rose-200 bg-amber-50 text-rose-950"
+      : "border-slate-200 bg-slate-50 text-slate-950";
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownRemaining, statusLabel, isFs, running, invalidDates],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
+    const k = e.key.toLowerCase();
+
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     }
   };
 
-  const invalidDates = endTs <= startTs;
-
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Debt Repayment Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            A simple payoff countdown plus an estimated progress bar. It’s a
-            motivation tool, not a calculator for interest or exact
-            amortization.
-          </p>
-        </div>
-
-        <Btn
-          kind="ghost"
-          onClick={() =>
-            displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-          }
-          className="py-2"
-        >
-          Fullscreen
-        </Btn>
-      </div>
-
-      {/* Mode */}
-      <div className="mt-6 flex flex-wrap gap-2">
-        {[
-          { id: "payoff-date", label: "Payoff date" },
-          { id: "duration", label: "Duration (days)" },
-        ].map((x) => (
-          <button
-            key={x.id}
-            type="button"
-            onClick={() => setMode(x.id as Mode)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              mode === x.id
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {x.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Inputs */}
-      <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <label className="block text-sm font-semibold text-amber-950">
-          Currency
-          <select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          >
-            {["USD", "CAD", "GBP", "EUR", "AUD"].map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Starting balance
-          <input
-            type="number"
-            min={0}
-            step={50}
-            value={startingBalance}
-            onChange={(e) =>
-              setStartingBalance(clamp(Number(e.target.value || 0), 0, 1e9))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Target balance
-          <input
-            type="number"
-            min={0}
-            step={50}
-            value={targetBalance}
-            onChange={(e) =>
-              setTargetBalance(clamp(Number(e.target.value || 0), 0, 1e9))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-slate-600">
-            Typically 0. If you’re aiming for a partial payoff, set a non-zero
-            target.
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Debt Repayment Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={running ? "solid" : "ghost"}
+              onClick={startPause}
+              className="py-1 text-sm"
+              disabled={invalidDates}
+            >
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
           </div>
-        </label>
-      </div>
+        }
+      />
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <label className="block text-sm font-semibold text-amber-950">
-          Start date
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h2 className="text-xl font-extrabold text-sky-700">
+                Debt Repayment Timer
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Set a payoff date or a duration. This is a countdown and a
+                simple time-based progress estimate.
+              </p>
+            </div>
 
-        {mode === "payoff-date" ? (
-          <label className="block text-sm font-semibold text-amber-950">
-            Payoff date
-            <input
-              type="date"
-              value={payoffDate}
-              onChange={(e) => setPayoffDate(e.target.value)}
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-            <div className="mt-1 text-xs text-slate-600">
-              Countdown ends at midnight on this date (local time).
+            <div className="flex flex-wrap items-center gap-3 ml-auto">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
             </div>
-          </label>
-        ) : (
-          <label className="block text-sm font-semibold text-amber-950">
-            Duration (days)
-            <input
-              type="number"
-              min={1}
-              max={3650}
-              value={durationDays}
-              onChange={(e) =>
-                setDurationDays(clamp(Number(e.target.value || 1), 1, 3650))
-              }
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-            <div className="mt-1 text-xs text-slate-600">
-              Example: 180 days is about 6 months.
-            </div>
-          </label>
+          </div>
         )}
 
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause} disabled={invalidDates}>
-            {running ? "Pause" : "Start"}
-          </Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
-
-      {invalidDates ? (
-        <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-950">
-          End date must be after start date.
-        </div>
-      ) : null}
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 280 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.85;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(84px, 16vw, 220px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.06em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.75;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
-        <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 280 }}
-        >
-          <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-2">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              Time remaining
+        {/* Mode + Inputs (normal only) */}
+        {!isFs && (
+          <>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Chip
+                active={mode === "payoff-date"}
+                onClick={() => setMode("payoff-date")}
+                disabled={running}
+              >
+                Payoff date
+              </Chip>
+              <Chip
+                active={mode === "duration"}
+                onClick={() => setMode("duration")}
+                disabled={running}
+              >
+                Duration (days)
+              </Chip>
             </div>
 
-            <div className="font-mono text-5xl font-extrabold tracking-widest sm:text-6xl md:text-7xl">
-              {shownRemaining}
-            </div>
+            <div className="mt-4 grid gap-4 lg:grid-cols-3">
+              <label className="block text-sm font-semibold text-slate-900">
+                Currency
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as any)}
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                  disabled={running}
+                >
+                  {currencies.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-            <div className="mt-2 grid w-full gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                  Progress (time)
-                </div>
-                <div className="mt-1 text-2xl font-extrabold text-amber-950">
-                  {pct}%
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                  Est. paid (linear)
-                </div>
-                <div className="mt-1 text-2xl font-extrabold text-amber-950">
-                  {formatMoney(estPaid, currency)}
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                  Est. remaining
-                </div>
-                <div className="mt-1 text-2xl font-extrabold text-amber-950">
-                  {formatMoney(estRemaining, currency)}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-3 w-full">
-              <div className="h-3 w-full overflow-hidden rounded-full bg-white ring-1 ring-amber-200">
-                <div
-                  className="h-full bg-amber-700"
-                  style={{ width: `${clamp(progress * 100, 0, 100)}%` }}
+              <label className="block text-sm font-semibold text-slate-900">
+                Starting balance
+                <input
+                  type="number"
+                  min={0}
+                  step={50}
+                  value={startingBalance}
+                  onChange={(e) =>
+                    setStartingBalance(
+                      clamp(Number(e.target.value || 0), 0, 1e9),
+                    )
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                  disabled={running}
                 />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-900">
+                Target balance
+                <input
+                  type="number"
+                  min={0}
+                  step={50}
+                  value={targetBalance}
+                  onChange={(e) =>
+                    setTargetBalance(clamp(Number(e.target.value || 0), 0, 1e9))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                  disabled={running}
+                />
+              </label>
+            </div>
+
+            <div className="mt-4 grid gap-4 lg:grid-cols-3">
+              <label className="block text-sm font-semibold text-slate-900">
+                Start date
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                  disabled={running}
+                />
+              </label>
+
+              {mode === "payoff-date" ? (
+                <label className="block text-sm font-semibold text-slate-900">
+                  Payoff date
+                  <input
+                    type="date"
+                    value={payoffDate}
+                    onChange={(e) => setPayoffDate(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                    disabled={running}
+                  />
+                </label>
+              ) : (
+                <label className="block text-sm font-semibold text-slate-900">
+                  Duration (days)
+                  <input
+                    type="number"
+                    min={1}
+                    max={3650}
+                    value={durationDays}
+                    onChange={(e) =>
+                      setDurationDays(
+                        clamp(Number(e.target.value || 1), 1, 3650),
+                      )
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                    disabled={running}
+                  />
+                </label>
+              )}
+
+              <div className="flex items-end gap-3">
+                <Btn onClick={startPause} disabled={invalidDates}>
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
               </div>
-              <div className="mt-2 text-xs text-slate-600">
-                This “estimated paid” assumes linear progress across time (not
-                interest math).
+            </div>
+
+            {invalidDates ? (
+              <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-950">
+                End date must be after start date.
               </div>
+            ) : null}
+          </>
+        )}
+
+        {/* Display */}
+        <div
+          ref={displayBoxRef}
+          className={[
+            "mt-4 flex flex-col items-center justify-center rounded-2xl border font-mono font-extrabold",
+            displayTone,
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 300,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
+        >
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {shownRemaining}
+          </span>
+
+          <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Progress (time)
+              </div>
+              <div className="mt-1 text-2xl font-extrabold text-slate-950">
+                {pct}%
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Est. paid (linear)
+              </div>
+              <div className="mt-1 text-2xl font-extrabold text-slate-950">
+                {formatMoney(estPaid, currency)}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Est. remaining
+              </div>
+              <div className="mt-1 text-2xl font-extrabold text-slate-950">
+                {formatMoney(estRemaining, currency)}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 w-full max-w-3xl">
+            <div className="h-3 w-full overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
+              <div
+                className="h-full bg-amber-500"
+                style={{ width: `${clamp(progress * 100, 0, 100)}%` }}
+              />
             </div>
           </div>
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Debt payoff countdown</div>
-            <div className="fs-time">{shownRemaining}</div>
-            <div className="fs-sub">
-              Progress {pct}% · Est. remaining{" "}
-              {formatMoney(estRemaining, currency)}
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <Chip
+                active={mode === "payoff-date"}
+                onClick={() => setMode("payoff-date")}
+                disabled={running}
+              >
+                Payoff date
+              </Chip>
+              <Chip
+                active={mode === "duration"}
+                onClick={() => setMode("duration")}
+                disabled={running}
+              >
+                Duration
+              </Chip>
+
+              <div className="h-5 w-px bg-slate-200 mx-1 hidden sm:block" />
+
+              {currencies.map((c) => (
+                <Chip
+                  key={c}
+                  active={c === currency}
+                  onClick={() => setCurrency(c)}
+                  disabled={running}
+                >
+                  {c}
+                </Chip>
+              ))}
             </div>
-            <div className="fs-sub">
-              Space start/pause · R reset · F fullscreen
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div className="flex items-center gap-2">
+                <Btn
+                  kind={running ? "solid" : "ghost"}
+                  onClick={startPause}
+                  disabled={invalidDates}
+                >
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+              </div>
+
+              <div className="text-xs text-slate-600 sm:text-sm">
+                Tap time to start/pause · Space start/pause · R reset · F
+                fullscreen
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Disclosures */}
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        <div className="font-extrabold text-amber-950">Disclosures</div>
-        <ul className="mt-2 list-disc space-y-2 pl-5 leading-relaxed">
-          <li>
-            This is a <strong>planning and motivation timer</strong>. It does
-            not calculate interest, minimum payments, compounding, or
-            lender-specific rules.
-          </li>
-          <li>
-            “Estimated paid/remaining” uses a <strong>linear</strong> time-based
-            estimate. Real repayment progress may differ.
-          </li>
-          <li>
-            This tool runs{" "}
-            <strong>in your browser while the page is open</strong>. Background
-            tabs may update less often depending on the browser.
-          </li>
-          <li>
-            This page is not financial advice. For decisions, consider a
-            qualified professional.
-          </li>
-        </ul>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -627,8 +866,10 @@ function DebtRepaymentTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function DebtRepaymentTimerPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/debt-repayment-timer";
+export default function DebtRepaymentTimerPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/debt-repayment-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -638,7 +879,7 @@ export default function DebtRepaymentTimerPage({}: Route.ComponentProps) {
         name: "Debt Repayment Timer",
         url,
         description:
-          "Debt repayment timer with payoff countdown and estimated progress. Includes disclosures and honest limitations.",
+          "Debt repayment timer with payoff countdown and simple time-based progress estimate.",
       },
       {
         "@type": "BreadcrumbList",
@@ -647,7 +888,7 @@ export default function DebtRepaymentTimerPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -657,157 +898,48 @@ export default function DebtRepaymentTimerPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a debt repayment timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A debt repayment timer is a payoff countdown that helps you stay motivated by showing the time remaining until a target date or duration ends.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this calculate interest and monthly payments?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "No. This page is a planning and motivation tool. It does not calculate interest, amortization, or lender-specific rules.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Why does it show “estimated paid/remaining”?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Those values are a simple linear estimate based on time elapsed between your start and end dates. Real progress may differ.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Will it keep running if I close the tab?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "It runs while the page is open. Background tabs may update less often depending on your browser.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Debt Repayment Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Debt Repayment Timer (Debt Payoff Countdown)
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Debt Repayment Timer (Payoff Countdown)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A simple <strong>debt payoff timer</strong> to keep you motivated.
-            Set a payoff date or duration, track time remaining, and see a
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Set a payoff date or duration, then run a big countdown and a simple
             time-based progress estimate.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <DebtRepaymentTimerCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free debt payoff timer and debt repayment countdown
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              A <strong>debt repayment timer</strong> is a payoff countdown that
-              helps you stay consistent. Seeing time remaining can be
-              motivating, especially when paired with a simple plan and regular
-              payments.
-            </p>
-
-            <p>
-              This page intentionally keeps math simple: it shows a countdown
-              and a time-based progress estimate. If you need interest and
-              payment math, use a dedicated payoff calculator. For quick finance
-              learning, try{" "}
-              <a
-                href="https://financequizzes.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold hover:underline"
-              >
-                FinanceQuizzes
-              </a>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <DebtRepaymentTimerCard />
         </div>
+
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Debt Repayment Timer</span>
+        </p>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Debt Repayment Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a real debt payoff calculator?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              No. It’s a payoff countdown and motivation tool. It does not
-              calculate interest, amortization, or lender rules.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why does it show estimated paid and remaining?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Those values are a simple linear estimate based on time elapsed
-              between your start and end dates. Real progress may differ.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I use a duration instead of a payoff date?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Switch to Duration mode and enter the number of days.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does it keep running if I close the tab?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              It runs while the page is open. Background tabs may update less
-              often depending on the browser.
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

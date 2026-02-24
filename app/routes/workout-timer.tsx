@@ -1,7 +1,16 @@
 // app/routes/workout-timer.tsx
 import type { Route } from "./+types/workout-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +42,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -74,7 +83,137 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (same style as other pages)
+async function toggleFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) {
+    await el.requestFullscreen().catch(() => {});
+  } else {
+    await document.exitFullscreen().catch(() => {});
+  }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * Fixes "slow scale-in" by computing in useLayoutEffect (before paint),
+ * and by avoiding initial render at minPx.
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  // Start large so we don't visibly grow from a tiny size.
+  const [fontPx, setFontPx] = useState<number>(maxPx);
+
+  const compute = useCallback(() => {
+    const c = containerRef.current;
+    const t = textRef.current;
+    if (!c || !t) return;
+
+    const rect = c.getBoundingClientRect();
+    const availW = Math.max(0, rect.width - paddingAllowancePx);
+    const availH = Math.max(0, rect.height - paddingAllowancePx);
+    if (availW <= 0 || availH <= 0) return;
+
+    const el = t as HTMLElement;
+    const originalFontSize = el.style.fontSize;
+
+    const fits = (px: number) => {
+      el.style.fontSize = `${px}px`;
+      const tr = el.getBoundingClientRect();
+      return tr.width <= availW && tr.height <= availH;
+    };
+
+    let lo = minPx;
+    let hi = maxPx;
+    let best = minPx;
+
+    if (fits(maxPx)) {
+      best = maxPx;
+    } else {
+      for (let i = 0; i < 16; i++) {
+        const mid = Math.floor((lo + hi) / 2);
+        if (fits(mid)) {
+          best = mid;
+          lo = mid + 1;
+        } else {
+          hi = mid - 1;
+        }
+      }
+    }
+
+    el.style.fontSize = originalFontSize;
+
+    setFontPx((prev) => (prev === best ? prev : best));
+  }, [containerRef, textRef, minPx, maxPx, paddingAllowancePx]);
+
+  // Compute before paint so the user never sees the intermediate size.
+  useLayoutEffect(() => {
+    compute();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  // Recompute on resize/orientation/fullscreen layout changes.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let raf: number | null = null;
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    // One more compute after listeners attach (still fast)
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+  }, [compute, containerRef]);
+
+  return fontPx;
+}
+
+// WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -114,14 +253,6 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
 /* =========================================================
    UI PRIMITIVES
 ========================================================= */
@@ -130,16 +261,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -164,13 +306,59 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    WORKOUT TIMER CARD (rounds + rest)
@@ -180,9 +368,9 @@ type Phase = "work" | "rest";
 function WorkoutTimerCard() {
   const beep = useBeep();
 
-  // Defaults that map to “boxing round timer” but also usable for gym circuits
-  const [workMin, setWorkMin] = useState(3); // round length
-  const [restMin, setRestMin] = useState(1); // rest between rounds
+  // Defaults map to classic boxing rounds but work for circuits too
+  const [workMin, setWorkMin] = useState(3);
+  const [restMin, setRestMin] = useState(1);
   const [rounds, setRounds] = useState(3);
 
   const [phase, setPhase] = useState<Phase>("work");
@@ -192,45 +380,76 @@ function WorkoutTimerCard() {
   const [sound, setSound] = useState(true);
   const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(true);
 
-  // Internal timer state (ms remaining in current phase)
-  const [remaining, setRemaining] = useState(workMin * 60 * 1000);
+  const workMs = useMemo(() => Math.max(0, workMin * 60 * 1000), [workMin]);
+  const restMs = useMemo(() => Math.max(0, restMin * 60 * 1000), [restMin]);
+
+  // Displayed remaining ms, updated only when the displayed second changes.
+  const [shownRemainingMs, setShownRemainingMs] = useState(workMs);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+
+  const remainingMsRef = useRef<number>(workMs);
+  const shownMsRef = useRef<number>(workMs);
   const lastBeepSecondRef = useRef<number | null>(null);
 
-  // Keep remaining aligned when config changes (only when not running)
-  useEffect(() => {
-    if (running) return;
-    setPhase("work");
-    setRoundIdx(1);
-    setRemaining(workMin * 60 * 1000);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }, [workMin, restMin, rounds, running]);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
 
   const workPresets = useMemo(() => [1, 2, 3, 4, 5], []);
-  const restPresets = useMemo(() => [0.25, 0.5, 1, 2, 3], []); // 15s, 30s, 1m...
+  const restPresets = useMemo(() => [0, 0.25, 0.5, 1, 2, 3], []);
   const roundsPresets = useMemo(() => [2, 3, 4, 5, 6, 8, 10, 12], []);
 
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  const hardResetToConfig = useCallback(() => {
+    setRunning(false);
+    setPhase("work");
+    setRoundIdx(1);
+    remainingMsRef.current = workMs;
+    shownMsRef.current = Math.ceil(workMs / 1000) * 1000;
+    setShownRemainingMs(shownMsRef.current);
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+    stopRaf();
+  }, [workMs]);
+
+  // Keep timer aligned when config changes (only when not running)
+  useEffect(() => {
+    if (running) return;
+    hardResetToConfig();
+  }, [workMin, restMin, rounds, running, hardResetToConfig]);
+
+  // Main RAF loop (updates state only when shown second changes)
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       endRef.current = null;
       lastBeepSecondRef.current = null;
       return;
     }
 
+    // Resume: if no end time, set it from current remaining
     if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
+      endRef.current = performance.now() + remainingMsRef.current;
     }
 
     const tick = () => {
       const now = performance.now();
       const rem = Math.max(0, (endRef.current ?? now) - now);
-      setRemaining(rem);
+      remainingMsRef.current = rem;
+
+      const shown = Math.ceil(rem / 1000) * 1000;
+      if (shownMsRef.current !== shown) {
+        shownMsRef.current = shown;
+        setShownRemainingMs(shown);
+      }
 
       if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
         const secLeft = Math.ceil(rem / 1000);
@@ -245,29 +464,31 @@ function WorkoutTimerCard() {
         lastBeepSecondRef.current = null;
 
         if (sound) {
-          // Different tones for phase transitions
           if (phase === "work") beep(520, 260);
           else beep(740, 220);
         }
 
-        // Transition
+        // Transition rules
         if (phase === "work") {
-          if (restMin > 0) {
+          if (restMs > 0) {
             setPhase("rest");
-            const next = Math.max(0, restMin * 60 * 1000);
-            setRemaining(next);
-            endRef.current = performance.now() + next;
+            remainingMsRef.current = restMs;
+            const nextShown = Math.ceil(restMs / 1000) * 1000;
+            shownMsRef.current = nextShown;
+            setShownRemainingMs(nextShown);
+            endRef.current = performance.now() + restMs;
             rafRef.current = requestAnimationFrame(tick);
             return;
           }
 
-          // No rest: advance round immediately
           if (roundIdx < rounds) {
             setRoundIdx((r) => r + 1);
             setPhase("work");
-            const next = workMin * 60 * 1000;
-            setRemaining(next);
-            endRef.current = performance.now() + next;
+            remainingMsRef.current = workMs;
+            const nextShown = Math.ceil(workMs / 1000) * 1000;
+            shownMsRef.current = nextShown;
+            setShownRemainingMs(nextShown);
+            endRef.current = performance.now() + workMs;
             rafRef.current = requestAnimationFrame(tick);
             return;
           }
@@ -276,13 +497,15 @@ function WorkoutTimerCard() {
           return;
         }
 
-        // Rest ended: next round or finish
+        // phase === "rest"
         if (roundIdx < rounds) {
           setRoundIdx((r) => r + 1);
           setPhase("work");
-          const next = workMin * 60 * 1000;
-          setRemaining(next);
-          endRef.current = performance.now() + next;
+          remainingMsRef.current = workMs;
+          const nextShown = Math.ceil(workMs / 1000) * 1000;
+          shownMsRef.current = nextShown;
+          setShownRemainingMs(nextShown);
+          endRef.current = performance.now() + workMs;
           rafRef.current = requestAnimationFrame(tick);
           return;
         }
@@ -295,385 +518,423 @@ function WorkoutTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
+    return () => stopRaf();
   }, [
     running,
-    remaining,
     sound,
     finalCountdownBeeps,
     beep,
     phase,
     roundIdx,
     rounds,
-    workMin,
-    restMin,
+    workMs,
+    restMs,
   ]);
 
-  function reset() {
-    setRunning(false);
-    setPhase("work");
-    setRoundIdx(1);
-    setRemaining(workMin * 60 * 1000);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
   function startPause() {
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
+    setRunning((r) => {
+      const next = !r;
+      if (next) {
+        // Starting or resuming
+        endRef.current = performance.now() + remainingMsRef.current;
+      } else {
+        // Pausing
+        endRef.current = null;
+      }
+      lastBeepSecondRef.current = null;
+      return next;
+    });
+  }
+
+  function reset() {
+    hardResetToConfig();
   }
 
   function skipPhase() {
-    // Only meaningful while running or paused mid-session
+    // Works while running or paused mid-session
     endRef.current = null;
     lastBeepSecondRef.current = null;
 
     if (phase === "work") {
-      if (restMin > 0) {
+      if (restMs > 0) {
         setPhase("rest");
-        setRemaining(restMin * 60 * 1000);
+        remainingMsRef.current = restMs;
       } else if (roundIdx < rounds) {
         setRoundIdx((r) => r + 1);
         setPhase("work");
-        setRemaining(workMin * 60 * 1000);
+        remainingMsRef.current = workMs;
       } else {
         setRunning(false);
+        remainingMsRef.current = 0;
       }
-      return;
+    } else {
+      // rest -> next work or finish
+      if (roundIdx < rounds) {
+        setRoundIdx((r) => r + 1);
+        setPhase("work");
+        remainingMsRef.current = workMs;
+      } else {
+        setRunning(false);
+        remainingMsRef.current = 0;
+      }
     }
 
-    // phase === "rest"
-    if (roundIdx < rounds) {
-      setRoundIdx((r) => r + 1);
-      setPhase("work");
-      setRemaining(workMin * 60 * 1000);
-    } else {
-      setRunning(false);
+    const nextShown = Math.ceil(remainingMsRef.current / 1000) * 1000;
+    shownMsRef.current = nextShown;
+    setShownRemainingMs(nextShown);
+
+    if (running) {
+      endRef.current = performance.now() + remainingMsRef.current;
     }
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const shownTime = msToClock(shownRemainingMs);
+  const phaseLabel = phase === "work" ? "Work" : restMs > 0 ? "Rest" : "Next";
+  const statusLabel = running
+    ? "Running"
+    : shownRemainingMs > 0
+      ? "Paused"
+      : "Ready";
+  const urgent =
+    running && remainingMsRef.current > 0 && remainingMsRef.current <= 10_000;
+
+  // This is the fix: useFitText now computes before paint, so no slow scale-in.
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, phase, roundIdx, rounds, urgent],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
+
+  const controlsLocked = running;
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "n") {
+    } else if (k === "n") {
       skipPhase();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
-  const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
-
-  const phaseLabel = phase === "work" ? "Work" : restMin > 0 ? "Rest" : "Next";
-  const phaseColor = phase === "work" ? "text-amber-950" : "text-slate-900";
-
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Workout Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Gym intervals and boxing rounds. Set round length, rest, and number
-            of rounds. Fullscreen and simple shortcuts included.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-amber-950">
-            Round (work)
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Workout Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={skipPhase} className="py-1 text-sm">
+              Next
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
           </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {workPresets.map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setWorkMin(m)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  m === workMin
-                    ? "bg-amber-700 text-white hover:bg-amber-800"
-                    : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-                }`}
+        }
+      />
+
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Workout Timer (Rounds + Rest)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Configure work, rest, and rounds. Start, pause, skip to next,
+                reset, and go fullscreen.
+              </p>
+            </div>
+
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
+
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={finalCountdownBeeps}
+                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                  disabled={!sound}
+                />
+                Final beeps
+              </label>
+
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
               >
-                {m}m
-              </button>
-            ))}
+                Fullscreen
+              </Btn>
+            </div>
           </div>
-          <label className="mt-3 block text-sm font-semibold text-amber-950">
-            Custom minutes
-            <input
-              type="number"
-              min={0.25}
-              max={30}
-              step={0.25}
-              value={workMin}
-              onChange={(e) =>
-                setWorkMin(clamp(Number(e.target.value || 0.25), 0.25, 30))
-              }
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </label>
-        </div>
+        )}
 
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-amber-950">
-            Rest
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {restPresets.map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setRestMin(m)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  m === restMin
-                    ? "bg-amber-700 text-white hover:bg-amber-800"
-                    : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-                }`}
-              >
-                {m < 1 ? `${Math.round(m * 60)}s` : `${m}m`}
-              </button>
-            ))}
-          </div>
-          <label className="mt-3 block text-sm font-semibold text-amber-950">
-            Custom minutes
-            <input
-              type="number"
-              min={0}
-              max={30}
-              step={0.25}
-              value={restMin}
-              onChange={(e) =>
-                setRestMin(clamp(Number(e.target.value || 0), 0, 30))
-              }
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </label>
-          <div className="mt-2 text-xs text-slate-700">
-            Tip: set Rest to <strong>0</strong> for back-to-back rounds.
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-amber-950">
-            Rounds
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {roundsPresets.map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRounds(r)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  r === rounds
-                    ? "bg-amber-700 text-white hover:bg-amber-800"
-                    : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-                }`}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-          <label className="mt-3 block text-sm font-semibold text-amber-950">
-            Custom rounds
-            <input
-              type="number"
-              min={1}
-              max={50}
-              value={rounds}
-              onChange={(e) =>
-                setRounds(clamp(Number(e.target.value || 1), 1, 50))
-              }
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </label>
-        </div>
-      </div>
-
-      {/* Start / reset / skip */}
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-        <Btn kind="ghost" onClick={reset}>
-          Reset
-        </Btn>
-        <Btn
-          kind="ghost"
-          onClick={skipPhase}
-          disabled={rounds <= 1 && phase === "work"}
-        >
-          Next
-        </Btn>
-        <div className="text-xs text-slate-600">
-          Shortcut: <strong>N</strong> next phase/round
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : phase === "work"
-              ? "border-amber-300 bg-amber-50 text-amber-950"
-              : "border-slate-300 bg-slate-50 text-slate-900"
-        }`}
-        style={{ minHeight: 260 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:16px;
-              }
-
-              [data-fs-container]:fullscreen .fs-top{
-                width:min(900px, 92vw);
-                display:flex;
-                justify-content:space-between;
-                font: 800 16px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.14em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 260 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            urgent ? "border-rose-300 bg-rose-50" : "border-slate-200",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 300,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-2">
-            <div
-              className={`text-xs font-extrabold uppercase tracking-widest ${phaseColor}`}
-            >
-              {phaseLabel} · Round {roundIdx}/{rounds}
-            </div>
-            <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-              <span className="text-6xl sm:text-7xl md:text-8xl">
-                {shownTime}
-              </span>
-            </div>
-            <div className="text-xs text-slate-600">
-              Space start/pause · R reset · N next · F fullscreen
-            </div>
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {phaseLabel} · Round {roundIdx}/{rounds} · {statusLabel}
           </div>
-        </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-top">
-              <div>{phase === "work" ? "Work" : "Rest"}</div>
-              <div>
-                Round {roundIdx}/{rounds}
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-center justify-between gap-3">
+                <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  Space = Start/Pause · N = Next · R = Reset · F = Fullscreen
+                </div>
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  Tap time to Start/Pause
+                </div>
               </div>
             </div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-help">
-              Space start/pause · R reset · N next · F fullscreen
+          )}
+        </div>
+
+        {/* Settings + controls (normal only) */}
+        {!isFs && (
+          <>
+            <div className="mt-4 grid gap-4 lg:grid-cols-3">
+              {/* Work */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                  Work (round)
+                </div>
+
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {workPresets.map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      disabled={controlsLocked}
+                      onClick={() => setWorkMin(m)}
+                      className={[
+                        "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                        controlsLocked ? "cursor-not-allowed opacity-60" : "",
+                        m === workMin
+                          ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                          : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                      ].join(" ")}
+                    >
+                      {m}m
+                    </button>
+                  ))}
+                </div>
+
+                <label className="mt-3 block text-sm font-semibold text-slate-900">
+                  Custom minutes
+                  <input
+                    type="number"
+                    min={0.25}
+                    max={60}
+                    step={0.25}
+                    value={workMin}
+                    disabled={controlsLocked}
+                    onChange={(e) =>
+                      setWorkMin(
+                        clamp(Number(e.target.value || 0.25), 0.25, 60),
+                      )
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+                </label>
+              </div>
+
+              {/* Rest */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                  Rest
+                </div>
+
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {restPresets.map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      disabled={controlsLocked}
+                      onClick={() => setRestMin(m)}
+                      className={[
+                        "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                        controlsLocked ? "cursor-not-allowed opacity-60" : "",
+                        m === restMin
+                          ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                          : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                      ].join(" ")}
+                    >
+                      {m === 0
+                        ? "0"
+                        : m < 1
+                          ? `${Math.round(m * 60)}s`
+                          : `${m}m`}
+                    </button>
+                  ))}
+                </div>
+
+                <label className="mt-3 block text-sm font-semibold text-slate-900">
+                  Custom minutes
+                  <input
+                    type="number"
+                    min={0}
+                    max={60}
+                    step={0.25}
+                    value={restMin}
+                    disabled={controlsLocked}
+                    onChange={(e) =>
+                      setRestMin(clamp(Number(e.target.value || 0), 0, 60))
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+                </label>
+
+                <div className="mt-2 text-xs text-slate-600">
+                  Set Rest to <strong>0</strong> for back-to-back rounds.
+                </div>
+              </div>
+
+              {/* Rounds */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                  Rounds
+                </div>
+
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {roundsPresets.map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      disabled={controlsLocked}
+                      onClick={() => setRounds(r)}
+                      className={[
+                        "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                        controlsLocked ? "cursor-not-allowed opacity-60" : "",
+                        r === rounds
+                          ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                          : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                      ].join(" ")}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+
+                <label className="mt-3 block text-sm font-semibold text-slate-900">
+                  Custom rounds
+                  <input
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={rounds}
+                    disabled={controlsLocked}
+                    onChange={(e) =>
+                      setRounds(clamp(Number(e.target.value || 1), 1, 50))
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="flex flex-wrap items-center gap-3">
+                <Btn kind="solid" onClick={startPause}>
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={skipPhase}>
+                  Next
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+              </div>
+
+              <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                Shortcuts: Space start/pause · N next · R reset · F fullscreen
+              </div>
+            </div>
+          </>
+        )}
+
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · N next · R reset · F
+              fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {phaseLabel} · Round {roundIdx}/{rounds} · {statusLabel}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · N next · F fullscreen
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -685,7 +946,7 @@ function WorkoutTimerCard() {
 export default function WorkoutTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/workout-timer";
+  const url = "https://www.ilovetimers.com/workout-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -695,7 +956,7 @@ export default function WorkoutTimerPage({
         name: "Workout Timer",
         url,
         description:
-          "Fullscreen workout timer for gym intervals and boxing rounds. Round + rest mode, big countdown, optional sound, and keyboard shortcuts.",
+          "Fullscreen workout timer for intervals and rounds. Configure work, rest, and rounds with optional sound and keyboard shortcuts.",
       },
       {
         "@type": "BreadcrumbList",
@@ -704,7 +965,7 @@ export default function WorkoutTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -714,237 +975,29 @@ export default function WorkoutTimerPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a workout timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A workout timer is a countdown tool used to structure training sessions. It helps you time work intervals and rest periods for circuits, conditioning, and rounds.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Is this a boxing round timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Set Round (work) to 3 minutes, Rest to 1 minute, and choose your number of rounds. The timer automatically alternates work and rest.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use it for circuits at the gym?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Set shorter work intervals for stations and adjust rest as needed. Use Fullscreen for easy viewing on a phone stand, tablet, or TV.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, N skips to the next phase or round, and F toggles fullscreen while the card is focused.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Workout Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Workout Timer
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>workout timer</strong> for the <strong>gym</strong>{" "}
-            and a <strong>boxing round timer</strong> for rounds and rest, with
-            a true fullscreen view.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <WorkoutTimerCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Boxing rounds with rest
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Set <strong>3:00</strong> work and <strong>1:00</strong> rest for
-              classic rounds. The timer automatically alternates phases.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Gym circuits and conditioning
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use shorter work intervals for stations and adjust rest based on
-              intensity. Fullscreen stays readable at a distance.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Simple controls, fast flow
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use <strong>N</strong> to skip to the next phase or round, and{" "}
-              <strong>R</strong> to reset. Great for coaching and group
-              sessions.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free workout timer for the gym and boxing rounds
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>workout timer</strong> is designed for interval-based
-              training. Use it as a <strong>gym timer</strong> for circuits,
-              stations, and conditioning, or as a{" "}
-              <strong>boxing round timer</strong> for rounds with rest.
-            </p>
-
-            <p>
-              Set your round (work) time, rest time, and number of rounds. Press
-              Start and the timer will alternate work and rest automatically.
-              Fullscreen mode keeps the display clean and readable without extra
-              clutter.
-            </p>
-
-            <p>
-              If you want a dedicated interval tool, try{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
-              </Link>
-              . For a basic countdown, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For general time tracking, use{" "}
-              <Link to="/stopwatch" className="font-semibold hover:underline">
-                Stopwatch
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Workout timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Work and rest intervals for circuits, training stations, and
-                conditioning blocks.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Gym timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Set your station time and rest, then keep the countdown visible
-                during the session.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Boxing round timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Classic 3 minute rounds with 1 minute rest, or customize for bag
-                work and sparring.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Workout Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a workout timer or a gym timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Both. It works as a gym timer for circuits and as a workout timer
-              for interval training with work and rest.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I set it up as a boxing round timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Set Round (work) to <strong>3 minutes</strong>, Rest to{" "}
-              <strong>1 minute</strong>, and choose your number of rounds. Press
-              Start and it will alternate automatically.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I skip to the next round?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Click <strong>Next</strong> or press <strong>N</strong> to
-              skip to the next phase or round.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>N</strong> next phase/round • <strong>F</strong>{" "}
-              fullscreen (when focused).
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Workout Timer</span>
+        </p>
       </section>
     </main>
   );

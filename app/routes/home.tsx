@@ -128,6 +128,22 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
 /* =========================================================
    LIGHTWEIGHT UI PRIMITIVES
 ========================================================= */
@@ -136,16 +152,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`h-full rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-300/60 ${className}`}
+    className={[
+      "relative h-full bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "rounded-2xl border border-slate-200/80 p-5 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -200,6 +227,55 @@ const Btn = ({
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  left,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/90 px-3 py-2 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+          {left}
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit fullscreen (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/90 px-3 py-2 backdrop-blur">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
    COUNTDOWN TIMER (accurate via absolute time)
 ========================================================= */
@@ -214,7 +290,10 @@ function CountdownTimer() {
   const [loop, setLoop] = useState(false);
   const [sound, setSound] = useState(true);
   const [inputStr, setInputStr] = useState("05:00");
-  const displayRef = useRef<HTMLDivElement>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
   const rafRef = useRef<number | null>(null);
   const endTimeRef = useRef<number | null>(null);
 
@@ -314,8 +393,8 @@ function CountdownTimer() {
       onStartPause();
     } else if (e.key.toLowerCase() === "r") {
       onReset();
-    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
-      toggleFullscreen(displayRef.current);
+    } else if (e.key.toLowerCase() === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     }
   };
 
@@ -325,104 +404,214 @@ function CountdownTimer() {
 
   return (
     <Card
+      cardRef={cardRef}
       tabIndex={0}
       onKeyDown={onKeyDown}
+      isFullscreen={isFs}
       className="col-span-2 lg:col-span-1"
     >
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-sky-700">Countdown Timer</h3>
+      <FullscreenTopBar
+        show={isFs}
+        title="Countdown Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        left={
+          <div className="flex items-center gap-3 text-sm text-slate-700">
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={sound}
+                onChange={(e) => setSound(e.target.checked)}
+                className="accent-amber-500"
+              />
+              Sound
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={loop}
+                onChange={(e) => setLoop(e.target.checked)}
+                className="accent-amber-500"
+              />
+              Loop
+            </label>
+          </div>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={status === "running" ? "solid" : "ghost"}
+              onClick={onStartPause}
+              className="py-1 text-sm"
+            >
+              {status === "running" ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={onReset} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex items-center gap-3 text-sm text-slate-600">
-          <label className="inline-flex cursor-pointer items-center gap-1">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-              className="accent-amber-500"
-            />
-            Sound
-          </label>
-          <label className="inline-flex cursor-pointer items-center gap-1">
-            <input
-              type="checkbox"
-              checked={loop}
-              onChange={(e) => setLoop(e.target.checked)}
-              className="accent-amber-500"
-            />
-            Loop
-          </label>
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayRef.current && toggleFullscreen(displayRef.current)
-            }
-            className="py-1 text-sm"
-          >
-            Fullscreen
-          </Btn>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold text-sky-700">
+              Countdown Timer
+            </h3>
+
+            <div className="flex items-center gap-3 text-sm text-slate-600">
+              <label className="inline-flex cursor-pointer items-center gap-1">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Sound
+              </label>
+              <label className="inline-flex cursor-pointer items-center gap-1">
+                <input
+                  type="checkbox"
+                  checked={loop}
+                  onChange={(e) => setLoop(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Loop
+              </label>
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-1 text-sm"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
+
+        {/* Display */}
+        <div
+          className={[
+            "mt-3 flex items-center justify-center rounded-2xl border font-mono font-extrabold tracking-widest",
+            urgent
+              ? "border-rose-200 bg-amber-50 text-rose-950"
+              : "border-slate-200 bg-slate-50 text-slate-950",
+            isFs ? "mx-4 flex-1 p-6" : "p-6",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 140,
+            fontSize: isFs ? "8rem" : "4.25rem",
+            lineHeight: "1",
+            marginTop: isFs ? "4.25rem" : undefined, // clears top bar
+            marginBottom: isFs ? "4.25rem" : undefined, // clears bottom bar
+            userSelect: "none",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) onStartPause();
+          }}
+          role={isFs ? "button" : undefined}
+          tabIndex={isFs ? -1 : undefined}
+          title={isFs ? "Click to start/pause" : undefined}
+        >
+          {msToClock(remainingMs)}
         </div>
-      </div>
 
-      <div
-        ref={displayRef}
-        className={`mt-3 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${
-          urgent
-            ? "border-rose-200 bg-amber-50 text-rose-950"
-            : "border-slate-200 bg-slate-50 text-slate-950"
-        }`}
-        style={{ minHeight: 140, fontSize: "4.25rem", lineHeight: "1" }}
-        aria-live="polite"
-      >
-        {msToClock(remainingMs)}
-      </div>
+        {/* Normal (non-fullscreen) controls */}
+        {!isFs && (
+          <>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {presets.map((m) => (
+                <Chip
+                  key={m}
+                  active={durationMs === m * 60 * 1000 && status !== "running"}
+                  onClick={() => onPreset(m)}
+                >
+                  {m}m
+                </Chip>
+              ))}
+            </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        {presets.map((m) => (
-          <Chip
-            key={m}
-            active={durationMs === m * 60 * 1000 && status !== "running"}
-            onClick={() => onPreset(m)}
-          >
-            {m}m
-          </Chip>
-        ))}
-      </div>
+            <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto_auto]">
+              <div className="flex items-center gap-2">
+                <input
+                  inputMode="numeric"
+                  value={inputStr}
+                  onChange={(e) => {
+                    if (status === "running") setStatus("paused");
+                    setInputStr(e.target.value);
+                  }}
+                  onBlur={onSet}
+                  placeholder="mm:ss or ss"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                />
+                <Btn kind="ghost" onClick={onSet}>
+                  Set
+                </Btn>
+              </div>
+              <Btn onClick={onStartPause}>
+                {status === "running" ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={onReset}>
+                Reset
+              </Btn>
+            </div>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto_auto]">
-        <div className="flex items-center gap-2">
-          <input
-            inputMode="numeric"
-            value={inputStr}
-            onChange={(e) => {
-              if (status === "running") setStatus("paused");
-              setInputStr(e.target.value);
-            }}
-            onBlur={onSet}
-            placeholder="mm:ss or ss"
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-          />
-          <Btn kind="ghost" onClick={onSet}>
-            Set
-          </Btn>
-        </div>
-        <Btn onClick={onStartPause}>
-          {status === "running" ? "Pause" : "Start"}
-        </Btn>
-        <Btn kind="ghost" onClick={onReset}>
-          Reset
-        </Btn>
-      </div>
+            {done && (
+              <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-900">
+                Time’s up. Press Start to run again or pick a preset.
+              </div>
+            )}
 
-      {done && (
-        <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-900">
-          Time’s up. Press Start to run again or pick a preset.
-        </div>
-      )}
+            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              Shortcuts: <strong className="text-slate-900">Space</strong>{" "}
+              start/pause • <strong className="text-slate-900">R</strong> reset
+              • <strong className="text-slate-900">F</strong> fullscreen.
+            </div>
+          </>
+        )}
 
-      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
-        Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
-        • <strong className="text-slate-900">R</strong> reset •{" "}
-        <strong className="text-slate-900">F</strong> fullscreen.
+        {/* Fullscreen bottom controls: always visible, no scrolling */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              {presets.map((m) => (
+                <Chip
+                  key={m}
+                  active={durationMs === m * 60 * 1000 && status !== "running"}
+                  onClick={() => onPreset(m)}
+                >
+                  {m}m
+                </Chip>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-2">
+                <input
+                  inputMode="numeric"
+                  value={inputStr}
+                  onChange={(e) => {
+                    if (status === "running") setStatus("paused");
+                    setInputStr(e.target.value);
+                  }}
+                  onBlur={onSet}
+                  placeholder="mm:ss or ss"
+                  className="w-40 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                />
+                <Btn kind="ghost" onClick={onSet} className="py-1 text-sm">
+                  Set
+                </Btn>
+              </div>
+
+              <div className="hidden sm:block text-sm text-slate-600">
+                Space start/pause • R reset • F fullscreen
+              </div>
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -437,7 +626,9 @@ function StopwatchCard() {
   const [laps, setLaps] = useState<number[]>([]);
   const rafRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
-  const displayRef = useRef<HTMLDivElement>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
 
   useEffect(() => {
     if (!running) {
@@ -488,105 +679,178 @@ function StopwatchCard() {
       reset();
     } else if (e.key.toLowerCase() === "l") {
       lap();
-    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
-      toggleFullscreen(displayRef.current);
+    } else if (e.key.toLowerCase() === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     }
   }
 
   const total = msToClockMs(elapsed);
+
   const lapTotals = laps.reduce(
     (acc, l, i) => acc.concat([(acc[i - 1] ?? 0) + l]),
     [] as number[],
   );
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown}>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold text-sky-700">Stopwatch</h3>
-          <span
-            className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${
-              running
-                ? "border-emerald-200 bg-emerald-50 text-emerald-900"
-                : "border-slate-200 bg-slate-50 text-slate-700"
-            }`}
-          >
-            {running ? "RUNNING" : "PAUSED"}
-          </span>
-        </div>
-        <Btn
-          kind="ghost"
-          onClick={() =>
-            displayRef.current && toggleFullscreen(displayRef.current)
-          }
-          className="py-1 text-sm"
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Stopwatch"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={running ? "solid" : "ghost"}
+              onClick={() => setRunning((r) => !r)}
+              className="py-1 text-sm"
+            >
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={lap} className="py-1 text-sm">
+              Lap
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
+
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-sky-700">Stopwatch</h3>
+              <span
+                className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${
+                  running
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                    : "border-slate-200 bg-slate-50 text-slate-700"
+                }`}
+              >
+                {running ? "RUNNING" : "PAUSED"}
+              </span>
+            </div>
+            <Btn
+              kind="ghost"
+              onClick={() =>
+                cardRef.current && toggleFullscreen(cardRef.current)
+              }
+              className="py-1 text-sm"
+            >
+              Fullscreen
+            </Btn>
+          </div>
+        )}
+
+        <div
+          className={`mt-3 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${
+            running
+              ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+              : "border-slate-200 bg-slate-50 text-slate-950"
+          }`}
+          style={{
+            minHeight: isFs ? 0 : 110,
+            fontSize: isFs ? "7rem" : "3.25rem",
+            lineHeight: "1",
+            marginTop: isFs ? "4.25rem" : undefined,
+            marginBottom: isFs ? "4.25rem" : undefined,
+            userSelect: "none",
+          }}
+          onClick={() => {
+            if (isFs) setRunning((r) => !r);
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Click to start/pause" : undefined}
         >
-          Fullscreen
-        </Btn>
-      </div>
-
-      <div
-        ref={displayRef}
-        className={`mt-3 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${
-          running
-            ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-            : "border-slate-200 bg-slate-50 text-slate-950"
-        }`}
-        style={{ minHeight: 110, fontSize: "3.25rem", lineHeight: "1" }}
-      >
-        {total}
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-3">
-        <Btn onClick={() => setRunning((r) => !r)}>
-          {running ? "Pause" : "Start"}
-        </Btn>
-        <Btn kind="ghost" onClick={reset}>
-          Reset
-        </Btn>
-        <Btn kind="ghost" onClick={lap}>
-          Lap
-        </Btn>
-      </div>
-
-      {laps.length > 0 && (
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-slate-900">
-                <th className="py-1 text-left">#</th>
-                <th className="py-1 text-left">Lap</th>
-                <th className="py-1 text-left">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {laps.map((l, i) => {
-                const isLatest = i === laps.length - 1;
-                return (
-                  <tr
-                    key={i}
-                    className={`border-t ${
-                      isLatest
-                        ? "border-emerald-200 bg-emerald-50/60"
-                        : "border-slate-200"
-                    }`}
-                  >
-                    <td className="py-1">Lap {i + 1}</td>
-                    <td className="py-1">{msToClockMs(l)}</td>
-                    <td className="py-1">{msToClockMs(lapTotals[i] ?? 0)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          {total}
         </div>
-      )}
 
-      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
-        Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
-        • <strong className="text-slate-900">R</strong> reset •{" "}
-        <strong className="text-slate-900">L</strong> lap •{" "}
-        <strong className="text-slate-900">F</strong> fullscreen.
+        {!isFs && (
+          <>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Btn onClick={() => setRunning((r) => !r)}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+              <Btn kind="ghost" onClick={lap}>
+                Lap
+              </Btn>
+            </div>
+
+            {laps.length > 0 && (
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-slate-900">
+                      <th className="py-1 text-left">#</th>
+                      <th className="py-1 text-left">Lap</th>
+                      <th className="py-1 text-left">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {laps.map((l, i) => {
+                      const isLatest = i === laps.length - 1;
+                      return (
+                        <tr
+                          key={i}
+                          className={`border-t ${
+                            isLatest
+                              ? "border-emerald-200 bg-emerald-50/60"
+                              : "border-slate-200"
+                          }`}
+                        >
+                          <td className="py-1">Lap {i + 1}</td>
+                          <td className="py-1">{msToClockMs(l)}</td>
+                          <td className="py-1">
+                            {msToClockMs(lapTotals[i] ?? 0)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              Shortcuts: <strong className="text-slate-900">Space</strong>{" "}
+              start/pause • <strong className="text-slate-900">R</strong> reset
+              • <strong className="text-slate-900">L</strong> lap •{" "}
+              <strong className="text-slate-900">F</strong> fullscreen.
+            </div>
+          </>
+        )}
+
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2">
+              <span
+                className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${
+                  running
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                    : "border-slate-200 bg-slate-50 text-slate-700"
+                }`}
+              >
+                {running ? "RUNNING" : "PAUSED"}
+              </span>
+              <div className="text-sm text-slate-600">
+                Space start/pause • R reset • L lap • F fullscreen
+              </div>
+            </div>
+
+            <div className="text-sm text-slate-700">
+              Laps are available in normal view.
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -608,7 +872,9 @@ function PomodoroCard() {
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayRef = useRef<HTMLDivElement>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
 
   const durFor = (p: "work" | "break" | "done") =>
     p === "work"
@@ -725,8 +991,8 @@ function PomodoroCard() {
       resetAll();
     } else if (e.key.toLowerCase() === "n") {
       nextPhase();
-    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
-      toggleFullscreen(displayRef.current);
+    } else if (e.key.toLowerCase() === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     }
   }
 
@@ -745,97 +1011,160 @@ function PomodoroCard() {
         : "border-slate-200 bg-slate-50 text-slate-500";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown}>
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-sky-700">
-          Pomodoro Focus Timer
-        </h3>
-        <Btn
-          kind="ghost"
-          onClick={() =>
-            displayRef.current && toggleFullscreen(displayRef.current)
-          }
-          className="py-1 text-sm"
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Pomodoro"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={running ? "solid" : "ghost"}
+              onClick={() => setRunning((r) => !r)}
+              className="py-1 text-sm"
+            >
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={nextPhase} className="py-1 text-sm">
+              Skip →
+            </Btn>
+            <Btn kind="ghost" onClick={resetAll} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
+
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold text-sky-700">
+              Pomodoro Focus Timer
+            </h3>
+            <Btn
+              kind="ghost"
+              onClick={() =>
+                cardRef.current && toggleFullscreen(cardRef.current)
+              }
+              className="py-1 text-sm"
+            >
+              Fullscreen
+            </Btn>
+          </div>
+        )}
+
+        {!isFs && (
+          <div className="mt-1 text-sm leading-relaxed text-slate-600">
+            Auto-advances between work and break cycles with accurate timing.
+          </div>
+        )}
+
+        {!isFs && (
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <label className="block text-sm">
+              <span className="text-slate-900">Work (min)</span>
+              <input
+                type="number"
+                min={1}
+                max={180}
+                value={workMin}
+                onChange={(e) =>
+                  setWorkMin(clamp(Number(e.target.value || 0), 1, 180))
+                }
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="text-slate-900">Break (min)</span>
+              <input
+                type="number"
+                min={1}
+                max={60}
+                value={breakMin}
+                onChange={(e) =>
+                  setBreakMin(clamp(Number(e.target.value || 0), 1, 60))
+                }
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="text-slate-900">Cycles</span>
+              <input
+                type="number"
+                min={1}
+                max={12}
+                value={cycles}
+                onChange={(e) =>
+                  setCycles(clamp(Number(e.target.value || 0), 1, 12))
+                }
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+          </div>
+        )}
+
+        <div
+          className={`mt-4 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${displayTone}`}
+          style={{
+            minHeight: isFs ? 0 : 110,
+            fontSize: isFs ? "7rem" : "3.25rem",
+            lineHeight: "1",
+            marginTop: isFs ? "4.25rem" : undefined,
+            marginBottom: isFs ? "4.25rem" : undefined,
+            userSelect: "none",
+          }}
+          onClick={() => {
+            if (isFs) setRunning((r) => !r);
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Click to start/pause" : undefined}
         >
-          Fullscreen
-        </Btn>
-      </div>
+          {msToClock(Math.ceil(remaining / 1000) * 1000)}
+        </div>
 
-      <div className="mt-1 text-sm leading-relaxed text-slate-600">
-        Auto-advances between work and break cycles with accurate timing.
-      </div>
+        {!isFs && (
+          <>
+            <div className="mt-2 text-sm text-slate-600">
+              Phase: <strong className="text-slate-900">{phaseLabel}</strong>
+            </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <label className="block text-sm">
-          <span className="text-slate-900">Work (min)</span>
-          <input
-            type="number"
-            min={1}
-            max={180}
-            value={workMin}
-            onChange={(e) =>
-              setWorkMin(clamp(Number(e.target.value || 0), 1, 180))
-            }
-            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="text-slate-900">Break (min)</span>
-          <input
-            type="number"
-            min={1}
-            max={60}
-            value={breakMin}
-            onChange={(e) =>
-              setBreakMin(clamp(Number(e.target.value || 0), 1, 60))
-            }
-            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="text-slate-900">Cycles</span>
-          <input
-            type="number"
-            min={1}
-            max={12}
-            value={cycles}
-            onChange={(e) =>
-              setCycles(clamp(Number(e.target.value || 0), 1, 12))
-            }
-            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-          />
-        </label>
-      </div>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Btn onClick={() => setRunning((r) => !r)}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={resetAll}>
+                Reset
+              </Btn>
+              <Btn kind="ghost" onClick={nextPhase}>
+                Skip →
+              </Btn>
+            </div>
 
-      <div
-        ref={displayRef}
-        className={`mt-4 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${displayTone}`}
-        style={{ minHeight: 110, fontSize: "3.25rem", lineHeight: "1" }}
-      >
-        {msToClock(Math.ceil(remaining / 1000) * 1000)}
-      </div>
+            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              Shortcuts: <strong className="text-slate-900">Space</strong>{" "}
+              start/pause • <strong className="text-slate-900">R</strong> reset
+              • <strong className="text-slate-900">N</strong> skip •{" "}
+              <strong className="text-slate-900">F</strong> fullscreen.
+            </div>
+          </>
+        )}
 
-      <div className="mt-2 text-sm text-slate-600">
-        Phase: <strong className="text-slate-900">{phaseLabel}</strong>
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-3">
-        <Btn onClick={() => setRunning((r) => !r)}>
-          {running ? "Pause" : "Start"}
-        </Btn>
-        <Btn kind="ghost" onClick={resetAll}>
-          Reset
-        </Btn>
-        <Btn kind="ghost" onClick={nextPhase}>
-          Skip →
-        </Btn>
-      </div>
-
-      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
-        Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
-        • <strong className="text-slate-900">R</strong> reset •{" "}
-        <strong className="text-slate-900">N</strong> skip •{" "}
-        <strong className="text-slate-900">F</strong> fullscreen.
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-sm text-slate-700">
+              Phase:{" "}
+              <span className="font-semibold text-slate-900">{phaseLabel}</span>
+            </div>
+            <div className="text-sm text-slate-600">
+              Space start/pause • R reset • N skip • F fullscreen
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -859,10 +1188,12 @@ function HIITCard() {
   const [step, setStep] = useState<StepName>("warmup");
   const [roundIdx, setRoundIdx] = useState(0);
   const [remaining, setRemaining] = useState(warm * 1000);
-  const displayRef = useRef<HTMLDivElement>(null);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
 
   const durFor = (s: StepName) =>
     s === "warmup"
@@ -984,8 +1315,8 @@ function HIITCard() {
       resetAll();
     } else if (e.key.toLowerCase() === "n") {
       skip();
-    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
-      toggleFullscreen(displayRef.current);
+    } else if (e.key.toLowerCase() === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     }
   }
 
@@ -1028,81 +1359,156 @@ function HIITCard() {
             : "border-slate-200 bg-slate-50 text-slate-500";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown}>
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold text-sky-700">
-          HIIT / Interval Timer
-        </h3>
-        <Btn
-          kind="ghost"
-          onClick={() =>
-            displayRef.current && toggleFullscreen(displayRef.current)
-          }
-          className="py-1 text-sm"
-        >
-          Fullscreen
-        </Btn>
-      </div>
-
-      <div className="mt-1 text-sm leading-relaxed text-slate-600">
-        Auto-runs through all rounds with accurate timing.
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-5">
-        <LabeledNumber
-          label="Warm-up (s)"
-          value={warm}
-          set={setWarm}
-          max={600}
-        />
-        <LabeledNumber label="Work (s)" value={work} set={setWork} max={600} />
-        <LabeledNumber label="Rest (s)" value={rest} set={setRest} max={600} />
-        <LabeledNumber label="Rounds" value={rounds} set={setRounds} max={50} />
-        <LabeledNumber
-          label="Cool-down (s)"
-          value={cool}
-          set={setCool}
-          max={600}
-        />
-      </div>
-
-      <div
-        ref={displayRef}
-        className={`mt-4 rounded-2xl border p-6 ${displayTone}`}
-        style={{ minHeight: 120 }}
-        aria-live="polite"
-      >
-        <div className="flex items-baseline justify-between gap-3">
-          <div className="text-sm font-semibold uppercase tracking-wide opacity-90">
-            {phaseLabel}
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="HIIT / Interval Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={running ? "solid" : "ghost"}
+              onClick={() => setRunning((r) => !r)}
+              className="py-1 text-sm"
+            >
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={skip} className="py-1 text-sm">
+              Skip →
+            </Btn>
+            <Btn kind="ghost" onClick={resetAll} className="py-1 text-sm">
+              Reset
+            </Btn>
           </div>
-          <div className="text-sm font-semibold opacity-90">{roundLabel}</div>
-        </div>
+        }
+      />
+
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold text-sky-700">
+              HIIT / Interval Timer
+            </h3>
+            <Btn
+              kind="ghost"
+              onClick={() =>
+                cardRef.current && toggleFullscreen(cardRef.current)
+              }
+              className="py-1 text-sm"
+            >
+              Fullscreen
+            </Btn>
+          </div>
+        )}
+
+        {!isFs && (
+          <div className="mt-1 text-sm leading-relaxed text-slate-600">
+            Auto-runs through all rounds with accurate timing.
+          </div>
+        )}
+
+        {!isFs && (
+          <div className="mt-4 grid gap-3 sm:grid-cols-5">
+            <LabeledNumber
+              label="Warm-up (s)"
+              value={warm}
+              set={setWarm}
+              max={600}
+            />
+            <LabeledNumber
+              label="Work (s)"
+              value={work}
+              set={setWork}
+              max={600}
+            />
+            <LabeledNumber
+              label="Rest (s)"
+              value={rest}
+              set={setRest}
+              max={600}
+            />
+            <LabeledNumber
+              label="Rounds"
+              value={rounds}
+              set={setRounds}
+              max={50}
+            />
+            <LabeledNumber
+              label="Cool-down (s)"
+              value={cool}
+              set={setCool}
+              max={600}
+            />
+          </div>
+        )}
+
         <div
-          className="mt-2 flex items-center justify-center font-mono font-extrabold tracking-widest"
-          style={{ fontSize: "3rem", lineHeight: "1" }}
+          className={`mt-4 rounded-2xl border p-6 ${displayTone}`}
+          style={{
+            minHeight: isFs ? 0 : 120,
+            marginTop: isFs ? "4.25rem" : undefined,
+            marginBottom: isFs ? "4.25rem" : undefined,
+            userSelect: "none",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) setRunning((r) => !r);
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Click to start/pause" : undefined}
         >
-          {msToClock(Math.ceil(remaining / 1000) * 1000)}
+          <div className="flex items-baseline justify-between gap-3">
+            <div className="text-sm font-semibold uppercase tracking-wide opacity-90">
+              {phaseLabel}
+            </div>
+            <div className="text-sm font-semibold opacity-90">{roundLabel}</div>
+          </div>
+          <div
+            className="mt-2 flex items-center justify-center font-mono font-extrabold tracking-widest"
+            style={{ fontSize: isFs ? "7rem" : "3rem", lineHeight: "1" }}
+          >
+            {msToClock(Math.ceil(remaining / 1000) * 1000)}
+          </div>
         </div>
-      </div>
 
-      <div className="mt-4 flex flex-wrap gap-3">
-        <Btn onClick={() => setRunning((r) => !r)}>
-          {running ? "Pause" : "Start"}
-        </Btn>
-        <Btn kind="ghost" onClick={resetAll}>
-          Reset
-        </Btn>
-        <Btn kind="ghost" onClick={skip}>
-          Skip →
-        </Btn>
-      </div>
+        {!isFs && (
+          <>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Btn onClick={() => setRunning((r) => !r)}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={resetAll}>
+                Reset
+              </Btn>
+              <Btn kind="ghost" onClick={skip}>
+                Skip →
+              </Btn>
+            </div>
 
-      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
-        Shortcuts: <strong className="text-slate-900">Space</strong> start/pause
-        • <strong className="text-slate-900">R</strong> reset •{" "}
-        <strong className="text-slate-900">N</strong> skip •{" "}
-        <strong className="text-slate-900">F</strong> fullscreen.
+            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              Shortcuts: <strong className="text-slate-900">Space</strong>{" "}
+              start/pause • <strong className="text-slate-900">R</strong> reset
+              • <strong className="text-slate-900">N</strong> skip •{" "}
+              <strong className="text-slate-900">F</strong> fullscreen.
+            </div>
+          </>
+        )}
+
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-sm text-slate-700">
+              {phaseLabel} • {roundLabel}
+            </div>
+            <div className="text-sm text-slate-600">
+              Space start/pause • R reset • N skip • F fullscreen
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );

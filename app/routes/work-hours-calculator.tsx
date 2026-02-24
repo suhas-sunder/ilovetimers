@@ -1,7 +1,7 @@
 // app/routes/work-hours-calculator.tsx
 import type { Route } from "./+types/work-hours-calculator";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +33,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -177,7 +177,11 @@ const Card = ({
   <div
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -202,8 +206,8 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -211,7 +215,7 @@ const Btn = ({
 );
 
 const MiniPill = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-950">
+  <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700">
     {children}
   </span>
 );
@@ -236,7 +240,6 @@ function WorkHoursCalculatorCard() {
     const base = calcWorkedMinutes(startMin, endMin, breakMin);
     if (!base.ok) return base;
 
-    // Optional rounding of paid minutes
     if (roundTo > 0) {
       const roundedPaid =
         Math.round(base.paidMin / roundTo) * (roundTo as number);
@@ -302,7 +305,6 @@ function WorkHoursCalculatorCard() {
   const paidDec = result.ok
     ? minutesToDecimalHours(result.paidMin, decimalPlaces)
     : "—";
-
   const shiftHHMM = result.ok ? minutesToHhMm(result.shiftMin) : "—";
 
   const summaryLine =
@@ -311,23 +313,26 @@ function WorkHoursCalculatorCard() {
       : "";
 
   const copyPayload = result.ok
-    ? `Paid: ${paidHHMM} (${paidDec} hrs). Shift: ${shiftHHMM}. Break: ${
-        result.breakMin
-      } min.${result.overnight ? " Overnight shift." : ""}`
+    ? `Paid: ${paidHHMM} (${paidDec} hrs). Shift: ${shiftHHMM}. Break: ${result.breakMin} min.${result.overnight ? " Overnight shift." : ""}`
     : "";
 
+  const statusLabel = result.ok
+    ? result.overnight
+      ? "Overnight shift"
+      : "Same day"
+    : "Fix inputs";
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
+    <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
+          <h1 className="text-xl font-extrabold text-sky-700">
             Work Hours Calculator
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Payroll-style hours: enter <strong>Start</strong>,{" "}
-            <strong>End</strong>, and subtract a <strong>break</strong>. Works
-            for overnight shifts.
+          </h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Enter start, end, and subtract a break. Supports overnight shifts.
           </p>
+
           {summaryLine ? (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <MiniPill>{summaryLine}</MiniPill>
@@ -337,11 +342,16 @@ function WorkHoursCalculatorCard() {
               {roundTo > 0 ? (
                 <MiniPill>Rounded to {roundTo} min</MiniPill>
               ) : null}
+              <MiniPill>{statusLabel}</MiniPill>
             </div>
-          ) : null}
+          ) : (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <MiniPill>{statusLabel}</MiniPill>
+            </div>
+          )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="ml-auto flex flex-wrap items-center gap-3">
           <Btn
             kind="ghost"
             onClick={() => result.ok && copy("Copied", copyPayload)}
@@ -356,10 +366,70 @@ function WorkHoursCalculatorCard() {
         </div>
       </div>
 
+      {/* Big Result Display */}
+      <div
+        className={[
+          "mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6",
+          "text-slate-950",
+        ].join(" ")}
+        aria-live="polite"
+      >
+        {result.ok ? (
+          <div className="flex flex-col gap-4">
+            <div>
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                Paid time (after break)
+              </div>
+              <div className="mt-2 flex flex-wrap items-baseline gap-4">
+                <div className="font-mono font-extrabold leading-none text-[56px] sm:text-[76px]">
+                  {paidHHMM}
+                </div>
+                <div className="text-lg font-bold text-slate-700 sm:text-xl">
+                  {paidDec} hrs
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-3">
+              <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
+                  Total shift
+                </div>
+                <div className="text-sm font-extrabold text-slate-900">
+                  {shiftHHMM}
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
+                  Break
+                </div>
+                <div className="text-sm font-extrabold text-slate-900">
+                  {result.breakMin} min
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
+                  Overnight?
+                </div>
+                <div className="text-sm font-extrabold text-slate-900">
+                  {result.overnight ? "Yes" : "No"}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="text-sm font-semibold text-slate-700">
+            {result.error}
+          </div>
+        )}
+      </div>
+
       {/* Inputs */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+      <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <label className="block">
-          <div className="text-sm font-extrabold text-amber-950">
+          <div className="text-sm font-extrabold text-slate-900">
             Start time
           </div>
           <div className="mt-1 flex items-center gap-2">
@@ -367,60 +437,64 @@ function WorkHoursCalculatorCard() {
               type="time"
               value={start}
               onChange={(e) => setStart(e.target.value)}
-              className="w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
             />
             <Btn kind="ghost" onClick={setNowStart} className="px-3 py-2">
               Now
             </Btn>
           </div>
-          <div className="mt-1 text-xs text-amber-900">
+          <div className="mt-1 text-xs text-slate-600">
             Shortcut: <span className="font-semibold">S</span> sets Start to now
           </div>
         </label>
 
         <label className="block">
-          <div className="text-sm font-extrabold text-amber-950">End time</div>
+          <div className="text-sm font-extrabold text-slate-900">End time</div>
           <div className="mt-1 flex items-center gap-2">
             <input
               type="time"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className="w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
             />
             <Btn kind="ghost" onClick={setNowEnd} className="px-3 py-2">
               Now
             </Btn>
           </div>
-          <div className="mt-1 text-xs text-amber-900">
+          <div className="mt-1 text-xs text-slate-600">
             Shortcut: <span className="font-semibold">E</span> sets End to now
           </div>
         </label>
 
         <label className="block">
-          <div className="text-sm font-extrabold text-amber-950">
+          <div className="text-sm font-extrabold text-slate-900">
             Subtract break (minutes)
           </div>
           <input
             type="number"
+            inputMode="numeric"
             min={0}
             max={24 * 60}
             value={breakMin}
-            onChange={(e) =>
-              setBreakMin(clamp(Number(e.target.value || 0), 0, 24 * 60))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            onChange={(e) => {
+              const raw = e.target.value;
+              const next = raw === "" ? 0 : Number(raw);
+              setBreakMin(clamp(Number.isFinite(next) ? next : 0, 0, 24 * 60));
+            }}
+            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
           />
-          <div className="mt-1 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-2">
             {[0, 15, 30, 45, 60].map((b) => (
               <button
                 key={b}
                 type="button"
                 onClick={() => setBreakMin(b)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
+                className={[
+                  "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
                   b === breakMin
-                    ? "bg-amber-700 text-white hover:bg-amber-800"
-                    : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-                }`}
+                    ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                    : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                ].join(" ")}
               >
                 {b}m
               </button>
@@ -429,10 +503,10 @@ function WorkHoursCalculatorCard() {
         </label>
       </div>
 
-      {/* Options + Results */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-sm font-extrabold text-amber-950">Options</div>
+      {/* Options */}
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="text-sm font-extrabold text-slate-900">Options</div>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <label className="block">
@@ -442,7 +516,7 @@ function WorkHoursCalculatorCard() {
               <select
                 value={decimalPlaces}
                 onChange={(e) => setDecimalPlaces(Number(e.target.value))}
-                className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 font-semibold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               >
                 {[0, 1, 2, 3, 4].map((d) => (
                   <option key={d} value={d}>
@@ -459,7 +533,7 @@ function WorkHoursCalculatorCard() {
               <select
                 value={roundTo}
                 onChange={(e) => setRoundTo(Number(e.target.value) as any)}
-                className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 font-semibold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               >
                 <option value={0}>No rounding</option>
                 <option value={5}>Nearest 5 min</option>
@@ -469,33 +543,25 @@ function WorkHoursCalculatorCard() {
             </label>
           </div>
 
-          <div className="mt-4 rounded-xl border border-amber-200 bg-white p-3 text-sm text-amber-900">
-            <div className="font-extrabold text-amber-950">Notes</div>
-            <ul className="mt-2 list-disc pl-5 space-y-1">
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+            <div className="font-extrabold text-slate-900">Shortcuts</div>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
               <li>
-                If End is earlier than Start, this assumes an{" "}
-                <strong>overnight shift</strong> (into the next day).
+                <strong>S</strong> start now, <strong>E</strong> end now
               </li>
               <li>
-                “Decimal hours” are useful for payroll systems (example: 7:30 =
-                7.50).
-              </li>
-              <li>
-                Shortcut: <strong>C</strong> copies a compact summary.{" "}
-                <strong>R</strong> resets.
+                <strong>C</strong> copy paid time, <strong>R</strong> reset
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <div className="text-sm font-extrabold text-amber-950">
-                Results
-              </div>
-              <div className="mt-1 text-xs text-amber-900">
-                Copyable payroll hours
+              <div className="text-sm font-extrabold text-slate-900">Copy</div>
+              <div className="mt-1 text-xs text-slate-600">
+                Copy a compact payroll string
               </div>
             </div>
 
@@ -510,72 +576,34 @@ function WorkHoursCalculatorCard() {
             </Btn>
           </div>
 
-          <div className="mt-3 rounded-xl border border-amber-200 bg-white p-4">
-            {result.ok ? (
-              <div className="space-y-3">
-                <div>
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                    Paid time (after break)
-                  </div>
-                  <div className="mt-1 flex flex-wrap items-baseline gap-3">
-                    <div className="text-4xl font-extrabold text-amber-950">
-                      {paidHHMM}
-                    </div>
-                    <div className="text-lg font-bold text-amber-900">
-                      {paidDec} hrs
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid gap-2 sm:grid-cols-3">
-                  <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                    <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-                      Total shift
-                    </div>
-                    <div className="text-sm font-extrabold text-amber-950">
-                      {shiftHHMM}
-                    </div>
-                  </div>
-
-                  <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                    <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-                      Break
-                    </div>
-                    <div className="text-sm font-extrabold text-amber-950">
-                      {result.breakMin} min
-                    </div>
-                  </div>
-
-                  <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
-                    <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-                      Overnight?
-                    </div>
-                    <div className="text-sm font-extrabold text-amber-950">
-                      {result.overnight ? "Yes" : "No"}
-                    </div>
-                  </div>
-                </div>
+          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="text-xs font-semibold text-slate-600">
+                Tip: click the card once so shortcuts work.
               </div>
-            ) : (
-              <div className="text-sm font-semibold text-amber-900">
-                {result.error}
+              <div className="text-xs text-slate-600">
+                {lastCopied ? (
+                  <span className="rounded-lg border border-slate-200 bg-white px-2 py-1 font-semibold text-slate-900">
+                    {lastCopied}
+                  </span>
+                ) : (
+                  <span>Shortcuts: S, E, C, R</span>
+                )}
               </div>
-            )}
+            </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-              Shortcuts: S start now · E end now · C copy · R reset
-            </div>
-            <div className="text-xs text-slate-600">
-              {lastCopied ? (
-                <span className="rounded-lg border border-amber-200 bg-white px-2 py-1 font-semibold text-amber-950">
-                  {lastCopied}
-                </span>
-              ) : (
-                <span>Tip: click the card once so shortcuts work.</span>
-              )}
-            </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Btn
+              kind="ghost"
+              onClick={() => result.ok && copy("Copied", copyPayload)}
+              disabled={!result.ok}
+            >
+              Copy summary
+            </Btn>
+            <Btn kind="ghost" onClick={reset}>
+              Reset
+            </Btn>
           </div>
         </div>
       </div>
@@ -587,7 +615,7 @@ function WorkHoursCalculatorCard() {
    PAGE
 ========================================================= */
 export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/work-hours-calculator";
+  const url = "https://www.ilovetimers.com/work-hours-calculator";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -606,7 +634,7 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -616,161 +644,29 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "How do I calculate hours worked with a break?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Subtract the break minutes from the total time between start and end. This calculator does it instantly and shows both HH:MM and decimal hours.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this work for overnight shifts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. If the end time is earlier than the start time, the calculator assumes the shift continues into the next day.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are decimal hours?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Decimal hours convert minutes into a fraction of an hour (example: 7:30 becomes 7.50). Many payroll systems prefer this format.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I round time to the nearest 15 minutes?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Use the rounding option to round paid time to the nearest 5, 10, or 15 minutes.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Work Hours Calculator</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Work Hours Calculator (Start, End, Break)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            Built for payroll and time tracking. Enter <strong>start</strong>{" "}
-            and <strong>end</strong>, subtract a <strong>break</strong>, and get{" "}
-            <strong>HH:MM</strong> plus <strong>decimal hours</strong>.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <WorkHoursCalculatorCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Payroll-style time worked calculator
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              A stopwatch is for timing something live. A{" "}
-              <strong>work hours calculator</strong> is different: you already
-              know the <strong>start time</strong>, <strong>end time</strong>,
-              and your <strong>break</strong>, and you need accurate payroll
-              hours fast.
-            </p>
-
-            <p>
-              This calculator handles <strong>overnight shifts</strong> (end
-              time earlier than start time) and can show results as{" "}
-              <strong>decimal hours</strong> for timecards.
-            </p>
-
-            <p>
-              If you need a live timer instead, try{" "}
-              <Link to="/stopwatch" className="font-semibold hover:underline">
-                Stopwatch
-              </Link>{" "}
-              or{" "}
-              <Link to="/countdown" className="font-semibold hover:underline">
-                Countdown
-              </Link>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
+        <div>
+          <WorkHoursCalculatorCard />
         </div>
-      </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Work Hours Calculator FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I calculate time worked with a break?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Calculate the total time between Start and End, then subtract
-              break minutes. The “Paid time” result is what you typically enter
-              for payroll.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What if my shift goes past midnight?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              If End is earlier than Start, this assumes the shift continues
-              into the next day and marks it as an overnight shift.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why does payroll use decimal hours?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Many systems store time as a number. Example: 7 hours 30 minutes
-              becomes 7.50 hours.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I round to the nearest 15 minutes?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Use the rounding dropdown to round paid time to 5, 10, or 15
-              minutes.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Work Hours Calculator</span>
+        </p>
       </section>
     </main>
   );

@@ -1,8 +1,20 @@
 // app/routes/epoch-unix-time-clock.tsx
 import type { Route } from "./+types/epoch-unix-time-clock";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/epoch-unix-time-clock/HowItWorks";
+import Disclaimer from "~/clients/components/epoch-unix-time-clock/Disclaimer";
+import FAQ from "~/clients/components/epoch-unix-time-clock/FAQ";
+import KeyboardShortcuts from "~/clients/components/epoch-unix-time-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/epoch-unix-time-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -47,7 +59,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
 
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -79,6 +91,22 @@ async function toggleFullscreen(el: HTMLElement) {
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
 }
 
 function safeInt(n: number) {
@@ -121,24 +149,130 @@ async function copyToClipboard(text: string) {
   }
 }
 
+/**
+ * Fit a single-line string into its container by adjusting font size.
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 28,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
-   UI PRIMITIVES (matches your site)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -163,13 +297,59 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-semibold text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-semibold text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    EPOCH / UNIX TIME CLOCK CARD
@@ -179,16 +359,18 @@ function EpochUnixTimeClockCard() {
   const [mode, setMode] = useState<"live" | "freeze">("live");
   const [copied, setCopied] = useState<string | null>(null);
 
-  const fsRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
 
-  // Live ticker
+  const secondsBoxRef = useRef<HTMLDivElement>(null);
+  const secondsTextRef = useRef<HTMLSpanElement>(null);
+
   useEffect(() => {
     if (mode !== "live") return;
-    const t = window.setInterval(() => setNow(new Date()), 100);
+    const t = window.setInterval(() => setNow(new Date()), 50);
     return () => window.clearInterval(t);
   }, [mode]);
 
-  // Copy toast
   useEffect(() => {
     if (!copied) return;
     const t = window.setTimeout(() => setCopied(null), 1200);
@@ -202,267 +384,255 @@ function EpochUnixTimeClockCard() {
   const localStr = useMemo(() => formatDateTimeLocal(now), [now]);
   const utcStr = useMemo(() => formatDateTimeUTC(now), [now]);
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isTypingTarget(e.target)) return;
+  const secondsFitPx = useFitText({
+    containerRef: secondsBoxRef,
+    textRef: secondsTextRef,
+    deps: [unixSeconds, isFs, mode],
+    minPx: 52,
+    maxPx: isFs ? 520 : 240,
+    paddingAllowancePx: isFs ? 72 : 64,
+  });
 
-    if (e.key.toLowerCase() === "f" && fsRef.current) {
-      toggleFullscreen(fsRef.current);
-    } else if (e.key === " ") {
-      e.preventDefault();
-      setMode((m) => (m === "live" ? "freeze" : "live"));
-    } else if (e.key.toLowerCase() === "c") {
-      // default copy seconds
-      void (async () => {
-        const ok = await copyToClipboard(String(unixSeconds));
-        if (ok) setCopied("Copied seconds");
-      })();
-    }
-  };
+  const statusLabel = mode === "live" ? "Live" : "Frozen";
 
   const doCopy = async (label: string, value: string) => {
     const ok = await copyToClipboard(value);
     if (ok) setCopied(label);
   };
 
+  function snapNow() {
+    setNow(new Date());
+  }
+
+  function toggleLiveFreeze() {
+    setMode((m) => (m === "live" ? "freeze" : "live"));
+  }
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
+
+    if (e.key === " ") {
+      e.preventDefault();
+      toggleLiveFreeze();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
+    } else if (k === "c") {
+      void doCopy("Copied seconds", String(unixSeconds));
+    } else if (k === "m") {
+      void doCopy("Copied milliseconds", String(unixMillis));
+    } else if (k === "n") {
+      snapNow();
+    }
+  };
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Epoch / Unix Time Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            A live <strong>Unix timestamp clock</strong> showing epoch time in{" "}
-            <strong>seconds</strong> and <strong>milliseconds</strong>, plus
-            local and UTC date-time. Copy-friendly and fullscreen-ready.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={mode === "live"}
-              onChange={(e) => setMode(e.target.checked ? "live" : "freeze")}
-            />
-            Live
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() => setNow(new Date())}
-            disabled={mode === "live"}
-          >
-            Snap now
-          </Btn>
-
-          <Btn
-            kind="ghost"
-            onClick={() => fsRef.current && toggleFullscreen(fsRef.current)}
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={fsRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 280 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Unix Time Clock (seconds)"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind="solid"
+              onClick={toggleLiveFreeze}
+              className="py-1 text-sm"
+            >
+              {mode === "live" ? "Freeze" : "Live"}
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={() => void doCopy("Copied seconds", String(unixSeconds))}
+              className="py-1 text-sm"
+            >
+              Copy s
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={() =>
+                void doCopy("Copied milliseconds", String(unixMillis))
               }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(56px, 10vw, 150px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.06em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 800 clamp(14px, 2.2vw, 22px)/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
-        <div
-          data-shell="normal"
-          className="h-full w-full flex-col items-center justify-center p-6"
-          style={{ minHeight: 280 }}
-        >
-          <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-            Current Unix timestamp
+              className="py-1 text-sm"
+            >
+              Copy ms
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={snapNow}
+              className="py-1 text-sm"
+              disabled={mode === "live"}
+            >
+              Snap
+            </Btn>
           </div>
+        }
+      />
 
-          <div className="mt-3 grid w-full max-w-4xl gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Seconds
-              </div>
-              <div className="mt-2 font-mono text-3xl font-extrabold tracking-wider text-amber-950">
-                {unixSeconds}
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Btn
-                  kind="ghost"
-                  onClick={() =>
-                    void doCopy("Copied seconds", String(unixSeconds))
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={mode === "live"}
+                  onChange={(e) =>
+                    setMode(e.target.checked ? "live" : "freeze")
                   }
-                >
-                  Copy
-                </Btn>
-              </div>
+                />
+                Live
+              </label>
+
+              <Btn
+                kind="ghost"
+                onClick={snapNow}
+                disabled={mode === "live"}
+                className="py-2"
+              >
+                Snap now
+              </Btn>
+
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  void doCopy("Copied seconds", String(unixSeconds))
+                }
+                className="py-2"
+              >
+                Copy seconds
+              </Btn>
+
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  void doCopy("Copied milliseconds", String(unixMillis))
+                }
+                className="py-2"
+              >
+                Copy milliseconds
+              </Btn>
             </div>
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+            <div className="sm:ml-auto flex items-center gap-2">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
+
+        <div
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) toggleLiveFreeze();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to toggle Live or Freeze" : undefined}
+        >
+          {copied && (
+            <div className="pointer-events-none absolute right-3 top-3 rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 backdrop-blur">
+              {copied}
+            </div>
+          )}
+
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            Unix Time (seconds) · {statusLabel}
+          </div>
+
+          <div
+            ref={secondsBoxRef}
+            className="mt-3 flex w-full max-w-6xl items-center justify-center"
+            style={{ height: isFs ? "44vh" : "120px" }}
+          >
+            <span
+              ref={secondsTextRef}
+              className="inline-block text-center font-mono font-extrabold tracking-widest text-slate-950"
+              style={{
+                fontSize: `${secondsFitPx}px`,
+                lineHeight: "1",
+                transform: "translateZ(0)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {unixSeconds}
+            </span>
+          </div>
+
+          <div className="mt-4 grid w-full max-w-5xl gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                 Milliseconds
               </div>
-              <div className="mt-2 font-mono text-3xl font-extrabold tracking-wider text-amber-950">
+              <div className="mt-2 break-all font-mono text-xl font-extrabold tracking-wide text-slate-900 sm:text-2xl">
                 {unixMillis}
               </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Btn
-                  kind="ghost"
-                  onClick={() =>
-                    void doCopy("Copied milliseconds", String(unixMillis))
-                  }
-                >
-                  Copy
-                </Btn>
-              </div>
             </div>
-          </div>
 
-          <div className="mt-5 grid w-full max-w-4xl gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                 Local time
               </div>
-              <div className="mt-2 text-sm font-semibold text-amber-950">
+              <div className="mt-2 text-sm font-semibold text-slate-800">
                 {localStr}
               </div>
             </div>
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                 UTC time
               </div>
-              <div className="mt-2 text-sm font-semibold text-amber-950">
+              <div className="mt-2 text-sm font-semibold text-slate-800">
                 {utcStr}
               </div>
             </div>
           </div>
 
-          <div className="mt-5 rounded-xl border border-amber-200 bg-white/60 px-3 py-2 text-xs font-semibold text-amber-950 text-center">
-            Shortcuts: Space live/freeze · C copy seconds · F fullscreen
-          </div>
-
-          {copied && (
-            <div className="mt-3 text-xs font-bold text-amber-900">
-              {copied}
+          {!isFs && (
+            <div className="mt-4 rounded-xl border border-slate-200 bg-white px-3 py-2 text-center text-xs font-semibold text-slate-700">
+              Shortcuts: Space live or freeze · C copy seconds · M copy
+              milliseconds · N snap now · F fullscreen
             </div>
           )}
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Unix Time</div>
-            <div className="fs-time">{unixSeconds}</div>
-            <div className="fs-sub">Milliseconds: {unixMillis}</div>
-            <div className="fs-help">
-              Space live/freeze · C copy seconds · F fullscreen
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap to live or freeze · Space live or freeze · C copy seconds · M
+              copy milliseconds · N snap now · F fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Footer tips */}
-      <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-            What is Unix time?
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-amber-800">
-            Unix time (epoch time) counts seconds since{" "}
-            <strong>Jan 1, 1970 (UTC)</strong>. It is widely used in logs, APIs,
-            and systems programming.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-            Seconds vs milliseconds
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-amber-800">
-            Many APIs use seconds, while JavaScript <code>Date.now()</code> uses
-            milliseconds. This page shows both to prevent mistakes.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-            Freeze mode
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-amber-800">
-            Turn Live off to freeze a specific timestamp and copy it accurately.
-          </p>
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -474,14 +644,14 @@ function EpochUnixTimeClockCard() {
 export default function EpochUnixTimeClockPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/epoch-unix-time-clock";
+  const url = "https://www.ilovetimers.com/epoch-unix-time-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Epoch / Unix Time Clock",
+        name: "Unix Time Clock",
         url,
         description:
           "Live Unix timestamp clock showing epoch time in seconds and milliseconds, plus local and UTC date-time.",
@@ -493,56 +663,19 @@ export default function EpochUnixTimeClockPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
             position: 2,
-            name: "Epoch / Unix Time Clock",
+            name: "Unix Time Clock",
             item: url,
           },
         ],
       },
       {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is epoch time (Unix time)?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Epoch time (Unix time) is the number of seconds since Jan 1, 1970 00:00:00 UTC. It is commonly used in logs and APIs.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Why do some timestamps use milliseconds?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "JavaScript and many client-side tools represent time in milliseconds for higher precision. Some APIs use seconds, others use milliseconds.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I copy the Unix timestamp quickly?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Use the Copy buttons, or press C to copy the seconds value. You can also freeze the clock by turning Live off.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this show UTC and local time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. The page shows both your local date-time and UTC date-time to reduce timezone confusion.",
-            },
-          },
-        ],
-      },
-      {
         "@type": "SoftwareApplication",
-        name: "Epoch / Unix Time Clock",
+        name: "Unix Time Clock",
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web",
         url,
@@ -552,142 +685,44 @@ export default function EpochUnixTimeClockPage({
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Epoch / Unix Time Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Epoch / Unix Time Clock
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Unix Time Clock (Epoch Timestamp)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A live <strong>Unix timestamp</strong> clock showing epoch time in{" "}
-            <strong>seconds</strong> and <strong>milliseconds</strong>, plus UTC
-            and local time.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Current epoch time in seconds and milliseconds, plus local and UTC
+            time. Copy fast and go fullscreen.
           </p>
         </div>
       </section>
 
-      {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <EpochUnixTimeClockCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Current Unix time (epoch timestamp) in seconds and milliseconds
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              If you searched for a <strong>Unix time clock</strong> or{" "}
-              <strong>current epoch timestamp</strong>, this page is built for
-              quick copy and clarity. Unix time counts from{" "}
-              <strong>Jan 1, 1970 (UTC)</strong>. Many systems store timestamps
-              this way because it avoids timezone issues.
-            </p>
-
-            <p>
-              One common mistake is mixing <strong>seconds</strong> and{" "}
-              <strong>milliseconds</strong>. JavaScript uses milliseconds (for
-              example, <code>Date.now()</code>), while many APIs and logs use
-              seconds. This clock shows both formats together so you can copy
-              the right one instantly.
-            </p>
-
-            <p>
-              Need conversions? Add a dedicated converter route later (epoch →
-              date-time and date-time → epoch). For now, this page focuses on
-              the “live timestamp” intent: view, copy, fullscreen.
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <EpochUnixTimeClockCard />
         </div>
+
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Unix Time Clock</span>
+        </p>
+
+        <span className="sr-only">Build: {nowISO}</span>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-10">
-        <div className="text-xs text-slate-600">Build: {nowISO}</div>
-      </section>
-      <EpochFaqSection />
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
-  );
-}
-
-/* =========================================================
-   FAQ (VISIBLE) + JSON-LD
-========================================================= */
-
-const EPOCH_FAQ = [
-  {
-    q: "What is epoch time (Unix time)?",
-    a: "Epoch time (Unix time) is the number of seconds since Jan 1, 1970 00:00:00 UTC. It’s commonly used in logs, databases, and APIs.",
-  },
-  {
-    q: "Why do some timestamps use milliseconds?",
-    a: "JavaScript (Date.now()) uses milliseconds for higher precision. Many APIs and logs use seconds. Mixing them is a common bug, so this page shows both.",
-  },
-  {
-    q: "How do I copy the Unix timestamp quickly?",
-    a: "Use the Copy buttons, or press C to copy the seconds value. Turn Live off to freeze a specific timestamp and copy it accurately.",
-  },
-  {
-    q: "Does this show UTC and local time?",
-    a: "Yes. The page shows both your local date-time and UTC date-time to prevent timezone confusion.",
-  },
-  {
-    q: "What does Live vs Freeze mean?",
-    a: "Live updates continuously. Freeze stops updates so the timestamp stays fixed while you copy or screenshot it.",
-  },
-  {
-    q: "Can I use fullscreen?",
-    a: "Yes. Click Fullscreen or press F while the card is focused.",
-  },
-] as const;
-
-function EpochFaqSection() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: EPOCH_FAQ.map((it) => ({
-      "@type": "Question",
-      name: it.q,
-      acceptedAnswer: { "@type": "Answer", text: it.a },
-    })),
-  };
-
-  return (
-    <section className="mx-auto max-w-7xl px-4 pb-12">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
-      <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-bold text-amber-950">
-          Epoch / Unix Time Clock FAQ
-        </h2>
-
-        <div className="mt-4 space-y-4">
-          {EPOCH_FAQ.map((it, i) => (
-            <div key={i}>
-              <h3 className="font-semibold text-amber-950">{it.q}</h3>
-              <p className="mt-1 text-amber-800 leading-relaxed">{it.a}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }

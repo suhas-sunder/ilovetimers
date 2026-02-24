@@ -1,8 +1,20 @@
 // app/routes/emom-timer.tsx
 import type { Route } from "./+types/emom-timer";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/emom-timer/HowItWorks";
+import Disclaimer from "~/clients/components/emom-timer/Disclaimer";
+import FAQ from "~/clients/components/emom-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/emom-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/emom-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -44,7 +56,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -91,6 +103,120 @@ async function toggleFullscreen(el: HTMLElement) {
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* WebAudio beep */
@@ -141,16 +267,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -162,31 +299,80 @@ const Btn = ({
   onClick,
   className = "",
   disabled,
+  ariaPressed,
 }: {
   kind?: "solid" | "ghost";
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
   disabled?: boolean;
+  ariaPressed?: boolean;
 }) => (
   <button
     type="button"
     onClick={onClick}
     disabled={disabled}
+    aria-pressed={ariaPressed}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
    EMOM TIMER CARD
 ========================================================= */
-type Phase = "idle" | "prep" | "emom" | "done";
+type Mode = "idle" | "prep" | "emom" | "done";
 
 function EmomTimerCard() {
   const beep = useBeep();
@@ -200,59 +386,126 @@ function EmomTimerCard() {
   const [sound, setSound] = useState(true);
   const [finalBeeps, setFinalBeeps] = useState(true);
 
-  const [phase, setPhase] = useState<Phase>("idle");
-
-  // display
-  const [remainingInMinute, setRemainingInMinute] = useState(60_000);
-  const [minuteIndex, setMinuteIndex] = useState(0); // 0-based (0..rounds-1)
+  const [mode, setMode] = useState<Mode>("idle");
+  const [running, setRunning] = useState(false);
 
   const rafRef = useRef<number | null>(null);
   const startPerfRef = useRef<number | null>(null);
+  const baseElapsedRef = useRef<number>(0); // ms accumulated before current run segment
+  const modeStartBaseRef = useRef<number>(0); // base elapsed at mode start (prep start or emom start)
 
-  const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
   const lastMinuteMarkRef = useRef<number | null>(null);
+
+  const elapsedLiveRef = useRef<number>(0);
+  const [uiTick, setUiTick] = useState(0);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
 
   function stopRaf() {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
   }
 
-  function reset() {
-    stopRaf();
-    startPerfRef.current = null;
-    setPhase("idle");
-    setMinuteIndex(0);
-    setRemainingInMinute(60_000);
-    lastBeepSecondRef.current = null;
-    lastMinuteMarkRef.current = null;
+  function computeElapsed(nowPerf: number) {
+    const start = startPerfRef.current ?? nowPerf;
+    const seg = running ? nowPerf - start : 0;
+    return baseElapsedRef.current + seg;
   }
 
-  function start() {
+  function hardReset() {
     stopRaf();
-    setMinuteIndex(0);
+    setMode("idle");
+    setRunning(false);
+
+    startPerfRef.current = null;
+    baseElapsedRef.current = 0;
+    modeStartBaseRef.current = 0;
+
     lastBeepSecondRef.current = null;
     lastMinuteMarkRef.current = null;
 
-    // Start at prep if > 0, else go straight into EMOM.
+    elapsedLiveRef.current = 0;
+    setUiTick((x) => x + 1);
+  }
+
+  function startFresh() {
+    stopRaf();
+
+    const startInPrep = prepSeconds > 0;
+    setMode(startInPrep ? "prep" : "emom");
+    setRunning(true);
+
     startPerfRef.current = performance.now();
-    setPhase(prepSeconds > 0 ? "prep" : "emom");
+    baseElapsedRef.current = 0;
+    modeStartBaseRef.current = 0;
+
+    lastBeepSecondRef.current = null;
+    lastMinuteMarkRef.current = null;
+
+    elapsedLiveRef.current = 0;
+    setUiTick((x) => x + 1);
+  }
+
+  function pause() {
+    if (!running) return;
+    const now = performance.now();
+    const elapsed = computeElapsed(now);
+    baseElapsedRef.current = elapsed;
+    startPerfRef.current = null;
+    setRunning(false);
+    elapsedLiveRef.current = elapsed;
+    setUiTick((x) => x + 1);
+  }
+
+  function resume() {
+    if (running) return;
+    if (mode !== "prep" && mode !== "emom") return;
+    startPerfRef.current = performance.now();
+    setRunning(true);
+  }
+
+  function startPauseToggle() {
+    if (mode === "idle" || mode === "done") {
+      startFresh();
+      return;
+    }
+    if (running) pause();
+    else resume();
+  }
+
+  function toggleSound() {
+    setSound((s) => !s);
+  }
+
+  function toggleFinalBeeps() {
+    setFinalBeeps((b) => !b);
   }
 
   useEffect(() => {
-    if (phase === "idle" || phase === "done") {
+    if (!running) {
+      stopRaf();
+      return;
+    }
+    if (mode !== "prep" && mode !== "emom") {
       stopRaf();
       return;
     }
 
+    const prepMs = clamp(prepSeconds, 0, 60) * 1000;
+    const totalEmomMs = clamp(rounds, 1, 120) * 60_000;
+
     const tick = () => {
       const now = performance.now();
-      const start = startPerfRef.current ?? now;
-      const elapsed = now - start;
+      const elapsed = computeElapsed(now);
+      elapsedLiveRef.current = elapsed;
 
-      if (phase === "prep") {
-        const rem = Math.max(0, prepSeconds * 1000 - elapsed);
-        setRemainingInMinute(rem);
+      if (mode === "prep") {
+        const rem = Math.max(0, prepMs - (elapsed - modeStartBaseRef.current));
 
         if (sound && finalBeeps && rem > 0 && rem <= 5_000) {
           const secLeft = Math.ceil(rem / 1000);
@@ -263,37 +516,40 @@ function EmomTimerCard() {
         }
 
         if (rem <= 0) {
-          // transition to emom
           if (sound) beep(660, 160, 0.1);
-          startPerfRef.current = performance.now();
-          setPhase("emom");
-          setRemainingInMinute(60_000);
-          setMinuteIndex(0);
+
+          // Transition to EMOM
+          setMode("emom");
+          modeStartBaseRef.current = elapsed; // mark EMOM start at current elapsed
           lastBeepSecondRef.current = null;
           lastMinuteMarkRef.current = null;
-          rafRef.current = requestAnimationFrame(tick);
-          return;
+
+          // Force UI update immediately on transition
+          setUiTick((x) => x + 1);
+        } else {
+          // keep UI in sync without re-rendering every frame
+          // (still re-renders frequently enough to look smooth)
+          setUiTick((x) => x + 1);
         }
 
         rafRef.current = requestAnimationFrame(tick);
         return;
       }
 
-      // EMOM phase
-      // elapsed in EMOM
-      const emomElapsed = elapsed;
-      const totalEmomMs = rounds * 60_000;
+      // EMOM
+      const emomElapsed = Math.max(0, elapsed - modeStartBaseRef.current);
 
       if (emomElapsed >= totalEmomMs) {
-        setPhase("done");
+        setMode("done");
+        setRunning(false);
         stopRaf();
-        setMinuteIndex(rounds);
-        setRemainingInMinute(0);
+
         if (sound) {
-          // finishing chime
           beep(660, 160, 0.1);
           window.setTimeout(() => beep(880, 160, 0.1), 220);
         }
+
+        setUiTick((x) => x + 1);
         return;
       }
 
@@ -301,18 +557,11 @@ function EmomTimerCard() {
       const intoMinute = emomElapsed % 60_000;
       const remInMinute = Math.max(0, 60_000 - intoMinute);
 
-      setMinuteIndex(currentMinute);
-      setRemainingInMinute(remInMinute);
-
-      // Minute boundary cue: when currentMinute changes, beep once.
-      if (sound) {
-        if (lastMinuteMarkRef.current !== currentMinute) {
-          lastMinuteMarkRef.current = currentMinute;
-          beep(520, 140, 0.1);
-        }
+      if (sound && lastMinuteMarkRef.current !== currentMinute) {
+        lastMinuteMarkRef.current = currentMinute;
+        beep(520, 140, 0.1);
       }
 
-      // Final 5 seconds cue inside each minute (optional)
       if (sound && finalBeeps && remInMinute > 0 && remInMinute <= 5_000) {
         const secLeft = Math.ceil(remInMinute / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
@@ -320,341 +569,406 @@ function EmomTimerCard() {
           beep(880, 80, 0.06);
         }
       } else {
-        // reset so the beeps are correct at the end of next minute
         if (remInMinute > 5_000) lastBeepSecondRef.current = null;
       }
 
+      setUiTick((x) => x + 1);
       rafRef.current = requestAnimationFrame(tick);
     };
 
     rafRef.current = requestAnimationFrame(tick);
     return () => stopRaf();
-  }, [phase, rounds, prepSeconds, sound, finalBeeps, beep]);
+  }, [running, mode, rounds, prepSeconds, sound, finalBeeps, beep]);
 
-  const isRunning = phase === "prep" || phase === "emom";
-  const shownTime =
-    phase === "emom"
-      ? msToClock(Math.ceil(remainingInMinute / 1000) * 1000)
-      : msToClock(Math.ceil(remainingInMinute / 1000) * 1000);
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isTypingTarget(e.target)) return;
+  const prepMs = clamp(prepSeconds, 0, 60) * 1000;
+  const totalEmomMs = clamp(rounds, 1, 120) * 60_000;
 
-    if (e.key === " ") {
-      e.preventDefault();
-      if (phase === "idle" || phase === "done") start();
-      else reset(); // simple: space toggles start/reset for EMOM
-    } else if (e.key.toLowerCase() === "r") {
-      reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "s") {
-      setSound((x) => !x);
+  const effectiveElapsed = (() => {
+    if (running && (mode === "prep" || mode === "emom")) {
+      // derived from refs during render, based on latest uiTick
+      const now = performance.now();
+      return computeElapsed(now);
     }
-  };
+    return elapsedLiveRef.current;
+  })();
 
-  const label =
-    phase === "prep"
-      ? "Get ready"
-      : phase === "emom"
-        ? `Minute ${minuteIndex + 1} of ${rounds}`
-        : phase === "done"
+  const isActive = mode === "prep" || mode === "emom";
+  const isLocked = isActive || mode === "done";
+
+  const prepRemaining =
+    mode === "prep"
+      ? Math.max(0, prepMs - (effectiveElapsed - modeStartBaseRef.current))
+      : prepMs;
+
+  const emomElapsed =
+    mode === "emom"
+      ? Math.max(0, effectiveElapsed - modeStartBaseRef.current)
+      : 0;
+
+  const currentMinute = mode === "emom" ? Math.floor(emomElapsed / 60_000) : 0;
+
+  const remainingInMinute =
+    mode === "emom" ? Math.max(0, 60_000 - (emomElapsed % 60_000)) : 60_000;
+
+  const shownTimeMs =
+    mode === "prep" ? prepRemaining : mode === "emom" ? remainingInMinute : 0;
+
+  const shownTime = msToClock(Math.ceil(shownTimeMs / 1000) * 1000);
+
+  const statusLabel =
+    mode === "prep"
+      ? running
+        ? "Get ready"
+        : "Paused"
+      : mode === "emom"
+        ? running
+          ? `Minute ${currentMinute + 1} of ${rounds}`
+          : "Paused"
+        : mode === "done"
           ? "Complete"
           : "Ready";
 
-  return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">EMOM Timer</h2>
-          <p className="mt-1 text-base text-slate-700">
-            Every Minute On the Minute: you start a new round at the top of each
-            minute. Great for CrossFit-style conditioning and pacing.
-          </p>
-        </div>
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [
+      shownTime,
+      isFs,
+      running,
+      mode,
+      rounds,
+      prepSeconds,
+      sound,
+      finalBeeps,
+      uiTick,
+    ],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(e.target)) return;
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalBeeps}
-              onChange={(e) => setFinalBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
+    const k = e.key.toLowerCase();
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+    if (e.key === " ") {
+      e.preventDefault();
+      startPauseToggle();
+    } else if (k === "r") {
+      hardReset();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "s") {
+      toggleSound();
+    } else if (k === "b") {
+      if (sound) toggleFinalBeeps();
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
 
-      {/* Settings */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-sm font-extrabold text-amber-950">
-            Total minutes (rounds)
-          </div>
+  const fsRightControls = (
+    <div className="flex items-center gap-2">
+      <Btn kind="solid" onClick={startPauseToggle} className="py-1 text-sm">
+        {mode === "idle" || mode === "done"
+          ? "Start"
+          : running
+            ? "Pause"
+            : "Resume"}
+      </Btn>
 
-          <div className="mt-3 flex flex-wrap gap-2">
-            {presetsRounds.map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setRounds(m)}
-                disabled={isRunning}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:opacity-60 ${
-                  m === rounds
-                    ? "bg-amber-700 text-white hover:bg-amber-800"
-                    : "bg-white text-amber-950 hover:bg-amber-100 border border-amber-200"
-                }`}
-              >
-                {m}m
-              </button>
-            ))}
-          </div>
+      <Btn kind="ghost" onClick={hardReset} className="py-1 text-sm">
+        Reset
+      </Btn>
 
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <label className="block text-sm font-semibold text-amber-950">
-              Rounds
-              <input
-                type="number"
-                min={1}
-                max={120}
-                value={rounds}
-                disabled={isRunning}
-                onChange={(e) =>
-                  setRounds(clamp(Number(e.target.value || 1), 1, 120))
-                }
-                className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-              />
-            </label>
-
-            <div className="text-xs text-slate-600 sm:pt-6">
-              One round starts every minute. Finish your work, then rest until
-              the next minute.
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-sm font-extrabold text-amber-950">
-            Prep countdown (optional)
-          </div>
-
-          <div className="mt-3 flex flex-wrap gap-2">
-            {prepPresets.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setPrepSeconds(s)}
-                disabled={isRunning}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:opacity-60 ${
-                  s === prepSeconds
-                    ? "bg-amber-700 text-white hover:bg-amber-800"
-                    : "bg-white text-amber-950 hover:bg-amber-100 border border-amber-200"
-                }`}
-              >
-                {s === 0 ? "None" : `${s}s`}
-              </button>
-            ))}
-          </div>
-
-          <label className="mt-3 block text-sm font-semibold text-amber-950">
-            Prep seconds
-            <input
-              type="number"
-              min={0}
-              max={60}
-              value={prepSeconds}
-              disabled={isRunning}
-              onChange={(e) =>
-                setPrepSeconds(clamp(Number(e.target.value || 0), 0, 60))
-              }
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </label>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="mt-5 flex flex-wrap gap-3">
-        <Btn onClick={start} disabled={isRunning}>
-          Start
-        </Btn>
-        <Btn kind="ghost" onClick={reset}>
-          Reset
-        </Btn>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 280 }}
-        aria-live="polite"
+      <Btn
+        kind="ghost"
+        onClick={toggleSound}
+        className="py-1 text-sm"
+        ariaPressed={sound}
       >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
+        Sound: {sound ? "On" : "Off"}
+      </Btn>
 
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
+      <Btn
+        kind="ghost"
+        onClick={toggleFinalBeeps}
+        className="py-1 text-sm"
+        disabled={!sound}
+        ariaPressed={finalBeeps}
+      >
+        Final: {finalBeeps ? "On" : "Off"}
+      </Btn>
+    </div>
+  );
 
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
+  return (
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="EMOM Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={fsRightControls}
+      />
 
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.85;
-              }
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-sm font-extrabold text-slate-900">
+                Total minutes (rounds)
+              </div>
 
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
+              <div className="mt-3 flex flex-wrap gap-2">
+                {presetsRounds.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setRounds(m)}
+                    disabled={isLocked}
+                    className={[
+                      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:opacity-60",
+                      m === rounds
+                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                    ].join(" ")}
+                  >
+                    {m}m
+                  </button>
+                ))}
+              </div>
 
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.75;
-                text-align:center;
-              }
-            `,
-          }}
-        />
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <label className="block text-sm font-semibold text-slate-900">
+                  Rounds
+                  <input
+                    type="number"
+                    min={1}
+                    max={120}
+                    value={rounds}
+                    disabled={isLocked}
+                    onChange={(e) =>
+                      setRounds(clamp(Number(e.target.value || 1), 1, 120))
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  />
+                </label>
 
-        {/* Normal shell */}
+                <div className="text-xs text-slate-600 sm:pt-6">
+                  One round starts every minute. Work, then rest until the next
+                  minute starts.
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-sm font-extrabold text-slate-900">
+                Prep countdown (optional)
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                {prepPresets.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setPrepSeconds(s)}
+                    disabled={isLocked}
+                    className={[
+                      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:opacity-60",
+                      s === prepSeconds
+                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                    ].join(" ")}
+                  >
+                    {s === 0 ? "None" : `${s}s`}
+                  </button>
+                ))}
+              </div>
+
+              <label className="mt-3 block text-sm font-semibold text-slate-900">
+                Prep seconds
+                <input
+                  type="number"
+                  min={0}
+                  max={60}
+                  value={prepSeconds}
+                  disabled={isLocked}
+                  onChange={(e) =>
+                    setPrepSeconds(clamp(Number(e.target.value || 0), 0, 60))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                />
+              </label>
+
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSound((x) => !x)}
+                  className={[
+                    "cursor-pointer rounded-lg border px-3 py-2 text-sm font-semibold transition",
+                    sound
+                      ? "border-amber-300 bg-amber-50 text-slate-900 hover:bg-amber-100"
+                      : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                  ].join(" ")}
+                  aria-pressed={sound}
+                >
+                  Sound {sound ? "On" : "Off"} (S)
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setFinalBeeps((x) => !x)}
+                  disabled={!sound}
+                  className={[
+                    "cursor-pointer rounded-lg border px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60",
+                    finalBeeps
+                      ? "border-amber-300 bg-amber-50 text-slate-900 hover:bg-amber-100"
+                      : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                  ].join(" ")}
+                  aria-pressed={finalBeeps}
+                >
+                  Final beeps {finalBeeps ? "On" : "Off"} (B)
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Controls bar (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center gap-3">
+              <Btn kind="solid" onClick={startPauseToggle}>
+                {mode === "idle" || mode === "done"
+                  ? "Start"
+                  : running
+                    ? "Pause"
+                    : "Resume"}
+              </Btn>
+              <Btn kind="ghost" onClick={hardReset}>
+                Reset
+              </Btn>
+            </div>
+
+            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · R reset · F fullscreen · S sound ·
+              B final beeps
+            </div>
+          </div>
+        )}
+
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 280 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPauseToggle();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start, pause, or resume" : undefined}
         >
-          <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-2">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              {label}
-            </div>
-
-            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
-              {phase === "done" ? "0:00" : shownTime}
-            </div>
-
-            {phase === "emom" ? (
-              <div className="mt-3 grid w-full gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                  <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                    Round
-                  </div>
-                  <div className="mt-1 text-2xl font-extrabold text-amber-950">
-                    {minuteIndex + 1} / {rounds}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                  <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                    Work window
-                  </div>
-                  <div className="mt-1 text-sm font-semibold text-slate-700">
-                    Do your reps, then rest until the next minute starts.
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                  <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                    Cue
-                  </div>
-                  <div className="mt-1 text-sm font-semibold text-slate-700">
-                    Beep at each minute start (and optional final beeps).
-                  </div>
-                </div>
-              </div>
-            ) : phase === "prep" ? (
-              <div className="mt-2 text-xs text-slate-600">
-                Prep ends, then minute 1 starts immediately.
-              </div>
-            ) : phase === "done" ? (
-              <div className="mt-2 rounded-xl border border-amber-200 bg-white px-4 py-3 text-sm font-semibold text-amber-950">
-                EMOM complete. Nice work.
-              </div>
-            ) : (
-              <div className="mt-2 text-xs text-slate-600">
-                Set rounds + prep, then press Start.
-              </div>
-            )}
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
           </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {mode === "done" ? "0:00" : shownTime}
+          </span>
+
+          {/* Fullscreen compact overlay */}
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Status
+                  </div>
+                  <div className="text-xs font-semibold text-slate-700">
+                    {mode === "prep"
+                      ? `Prep ${prepSeconds}s`
+                      : mode === "emom"
+                        ? `Round ${currentMinute + 1} / ${rounds}`
+                        : mode === "done"
+                          ? "Complete"
+                          : `Rounds ${rounds} · Prep ${prepSeconds}s`}
+                  </div>
+                  <div className="text-[11px] font-semibold text-slate-600">
+                    Sound {sound ? "On" : "Off"}
+                    {sound ? ` · Final ${finalBeeps ? "On" : "Off"}` : ""}
+                  </div>
+                </div>
+
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  Space = Start/Pause
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">{label}</div>
-            <div className="fs-time">
-              {phase === "done" ? "0:00" : shownTime}
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · R reset · F
+              fullscreen · S sound · B final beeps
             </div>
-            <div className="fs-help">
-              {phase === "emom"
-                ? `Round ${minuteIndex + 1} / ${rounds} · Beep each minute start`
-                : `Rounds ${rounds} · Prep ${prepSeconds}s`}
-            </div>
-            <div className="fs-help">
-              Space start/reset · R reset · F fullscreen · S sound
+            <div className="text-xs font-semibold text-slate-700">
+              {running ? "Running" : mode === "idle" ? "Ready" : "Paused"}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/reset · R reset · F fullscreen · S sound
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -664,7 +978,7 @@ function EmomTimerCard() {
    PAGE
 ========================================================= */
 export default function EmomTimerPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/emom-timer";
+  const url = "https://www.ilovetimers.com/emom-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -683,164 +997,54 @@ export default function EmomTimerPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "EMOM Timer", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is an EMOM timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "EMOM stands for Every Minute On the Minute. A new round starts at the top of each minute. You do your work, then rest until the next minute begins.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How many rounds should I set?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Common EMOMs are 8, 10, 12, 15, or 20 minutes depending on the workout and intensity.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does the timer beep at each minute?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. It beeps at each minute start so you know exactly when a new round begins. You can also enable optional final beeps in the last 5 seconds of each minute.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use it on a phone or gym screen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Use fullscreen for a clean high-contrast display on a phone, tablet, TV, or projector.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">EMOM Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
             EMOM Timer (Every Minute On the Minute)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>EMOM timer</strong> with minute-by-minute round
-            tracking, optional prep countdown, sound cues, and fullscreen mode.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Set rounds and an optional prep countdown, then run a clear,
+            gym-readable minute timer with sound cues and fullscreen mode.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <EmomTimerCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free EMOM timer for CrossFit-style workouts
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              An <strong>EMOM timer</strong> (Every Minute On the Minute) starts
-              a new round at the top of each minute. You complete your reps as
-              fast as you can, then use the remaining time to rest before the
-              next minute begins.
-            </p>
-
-            <p>
-              Set the total number of minutes (rounds), add a short prep
-              countdown if needed, and use fullscreen for a clean gym-friendly
-              display. If you want interval blocks with separate work/rest
-              phases, use{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT Timer
-              </Link>{" "}
-              or{" "}
-              <Link
-                to="/tabata-timer"
-                className="font-semibold hover:underline"
-              >
-                Tabata Timer
-              </Link>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <EmomTimerCard />
         </div>
+
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">EMOM Timer</span>
+        </p>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">EMOM Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What does EMOM mean?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              EMOM means Every Minute On the Minute. A new round starts exactly
-              when each minute begins.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does it beep at each minute start?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. It beeps at the start of each minute. You can also enable
-              optional beeps in the final 5 seconds of each minute.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What’s a good EMOM length?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Common EMOMs are 8–20 minutes depending on intensity. Longer EMOMs
-              (20–30) are often used at lower intensity.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I use fullscreen on a phone or TV?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Fullscreen is designed for high contrast and readability in a
-              gym setting.
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

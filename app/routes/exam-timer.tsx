@@ -1,8 +1,20 @@
 // app/routes/exam-timer.tsx
 import type { Route } from "./+types/exam-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/exam-timer/HowItWorks";
+import Disclaimer from "~/clients/components/exam-timer/Disclaimer";
+import FAQ from "~/clients/components/exam-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/exam-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/exam-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -46,7 +58,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -102,9 +114,7 @@ function useBeep() {
       const Ctx = window.AudioContext || (window as any).webkitAudioContext;
       const ctx = (ctxRef.current ??= new Ctx());
 
-      if (ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
 
       const o = ctx.createOscillator();
       const g = ctx.createGain();
@@ -135,6 +145,119 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
    UI PRIMITIVES
 ========================================================= */
@@ -143,16 +266,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -177,13 +311,59 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    EXAM TIMER CARD
@@ -191,8 +371,6 @@ const Btn = ({
 function ExamTimerCard() {
   const beep = useBeep();
 
-  // Good defaults for “timed practice”:
-  // short drills, section blocks, and full-length blocks.
   const presetsMin = useMemo(
     () => [5, 10, 15, 20, 25, 30, 35, 40, 45, 60, 75, 90, 120, 180],
     [],
@@ -205,39 +383,55 @@ function ExamTimerCard() {
   const [sound, setSound] = useState(true);
   const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
 
-  // Exam-specific options
   const [warnings, setWarnings] = useState(true);
   const [warnAt5Min, setWarnAt5Min] = useState(true);
   const [warnAt1Min, setWarnAt1Min] = useState(true);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
 
   const lastBeepSecondRef = useRef<number | null>(null);
   const warned5Ref = useRef(false);
   const warned1Ref = useRef(false);
 
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  const totalMs = minutes * 60 * 1000;
+
+  const remainingRef = useRef<number>(remaining);
   useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
+    remainingRef.current = remaining;
+  }, [remaining]);
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  useEffect(() => {
+    setRemaining(totalMs);
     setRunning(false);
     endRef.current = null;
     lastBeepSecondRef.current = null;
     warned5Ref.current = false;
     warned1Ref.current = false;
-  }, [minutes]);
+    stopRaf();
+  }, [totalMs]);
 
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       endRef.current = null;
       lastBeepSecondRef.current = null;
       return;
     }
 
     if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
+      endRef.current = performance.now() + remainingRef.current;
     }
 
     const tick = () => {
@@ -245,7 +439,6 @@ function ExamTimerCard() {
       const rem = Math.max(0, (endRef.current ?? now) - now);
       setRemaining(rem);
 
-      // Optional warnings (single beeps)
       if (sound && warnings) {
         if (warnAt5Min && !warned5Ref.current && rem > 0 && rem <= 5 * 60_000) {
           warned5Ref.current = true;
@@ -257,7 +450,6 @@ function ExamTimerCard() {
         }
       }
 
-      // Optional final beeps (last 5 seconds)
       if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
         const secLeft = Math.ceil(rem / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
@@ -278,13 +470,9 @@ function ExamTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
+    return () => stopRaf();
   }, [
     running,
-    remaining,
     sound,
     warnings,
     warnAt5Min,
@@ -293,13 +481,18 @@ function ExamTimerCard() {
     beep,
   ]);
 
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
+
   function reset() {
     setRunning(false);
-    setRemaining(minutes * 60 * 1000);
+    setRemaining(totalMs);
     endRef.current = null;
     lastBeepSecondRef.current = null;
     warned5Ref.current = false;
     warned1Ref.current = false;
+    stopRaf();
   }
 
   function startPause() {
@@ -311,256 +504,365 @@ function ExamTimerCard() {
     setMinutes(m);
   }
 
+  const urgent = running && remaining > 0 && remaining <= 60_000;
+  const midWarn = running && remaining > 60_000 && remaining <= 5 * 60_000;
+  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
+
+  const statusLabel = running
+    ? "Running"
+    : remaining < totalMs && remaining > 0
+      ? "Paused"
+      : "Ready";
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [
+      shownTime,
+      isFs,
+      running,
+      minutes,
+      sound,
+      warnings,
+      warnAt1Min,
+      warnAt5Min,
+      finalCountdownBeeps,
+    ],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
-  const urgent = running && remaining > 0 && remaining <= 60_000; // last minute
-  const midWarn = running && remaining > 60_000 && remaining <= 5 * 60_000; // last 5
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
+  const disableTimeSetting = running;
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Exam Timer</h2>
-          <p className="mt-1 text-base text-slate-700">
-            Built for timed practice. Big digits, long presets, optional warning
-            beeps, fullscreen, and simple shortcuts.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Exam Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={warnings}
-              onChange={(e) => setWarnings(e.target.checked)}
-              disabled={!sound}
-            />
-            Warnings
-          </label>
+        {/* Controls (normal only) */}
+        {!isFs && (
+          <div className="mt-4 space-y-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-3">
+                <Btn kind="solid" onClick={startPause}>
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+              </div>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
+              <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                Shortcuts: Space start/pause · R reset · F fullscreen
+              </div>
+            </div>
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                  className="cursor-pointer"
+                />
+                Sound
+              </label>
 
-      {/* Warning toggles */}
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-          <input
-            type="checkbox"
-            checked={warnAt5Min}
-            onChange={(e) => setWarnAt5Min(e.target.checked)}
-            disabled={!sound || !warnings}
-          />
-          5 min warning
-        </label>
+              <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={warnings}
+                  onChange={(e) => setWarnings(e.target.checked)}
+                  disabled={!sound}
+                  className="cursor-pointer"
+                />
+                Warnings
+              </label>
 
-        <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-          <input
-            type="checkbox"
-            checked={warnAt1Min}
-            onChange={(e) => setWarnAt1Min(e.target.checked)}
-            disabled={!sound || !warnings}
-          />
-          1 min warning
-        </label>
-      </div>
+              <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={finalCountdownBeeps}
+                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                  disabled={!sound}
+                  className="cursor-pointer"
+                />
+                Final beeps
+              </label>
 
-      {/* Presets + custom */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
+              <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={warnAt5Min}
+                  onChange={(e) => setWarnAt5Min(e.target.checked)}
+                  disabled={!sound || !warnings}
+                  className="cursor-pointer"
+                />
+                5 min warning
+              </label>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
-          <input
-            type="number"
-            min={1}
-            max={360}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 360))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
+              <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={warnAt1Min}
+                  onChange={(e) => setWarnAt1Min(e.target.checked)}
+                  disabled={!sound || !warnings}
+                  className="cursor-pointer"
+                />
+                1 min warning
+              </label>
+            </div>
 
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {presetsMin.map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setPreset(m)}
+                  disabled={disableTimeSetting}
+                  className={[
+                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                    disableTimeSetting ? "cursor-not-allowed opacity-60" : "",
+                    m === minutes
+                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                      : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                  ].join(" ")}
+                >
+                  {m}m
+                </button>
+              ))}
+            </div>
 
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : midWarn
-              ? "border-amber-300 bg-amber-50 text-amber-950"
-              : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 240 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+              <label className="block text-sm font-semibold text-slate-900">
+                Custom minutes
+                <input
+                  type="number"
+                  min={1}
+                  max={360}
+                  value={minutes}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 1), 1, 360))
+                  }
+                  disabled={disableTimeSetting}
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                />
+              </label>
 
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
+              <div className="flex items-end gap-3">
+                <Btn onClick={startPause} disabled={false}>
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+              </div>
+            </div>
+          </div>
+        )}
 
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            urgent
+              ? "ring-2 ring-rose-200"
+              : midWarn
+                ? "ring-2 ring-amber-200"
+                : "",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-2">
-            <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-              <span className="text-6xl sm:text-7xl md:text-8xl">
-                {shownTime}
-              </span>
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+
+          {!isFs && (
+            <div className="mt-2 text-xs text-slate-600">
+              Space start/pause · R reset · F fullscreen
+            </div>
+          )}
+
+          {!isFs && warnings && (warnAt5Min || warnAt1Min) ? (
+            <div className="mt-1 text-xs text-slate-600">
+              Warnings: {warnAt5Min ? "5m" : ""}{" "}
+              {warnAt5Min && warnAt1Min ? "·" : ""} {warnAt1Min ? "1m" : ""}
+              {finalCountdownBeeps ? " · last 5s" : ""}
+            </div>
+          ) : null}
+
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Settings
+                  </div>
+                  <div className="text-xs font-semibold text-slate-700">
+                    {sound ? "Sound on" : "Sound off"}
+                    {sound && warnings && (warnAt5Min || warnAt1Min)
+                      ? ` · Warnings ${warnAt5Min ? "5m" : ""}${warnAt5Min && warnAt1Min ? " + " : ""}${warnAt1Min ? "1m" : ""}`
+                      : ""}
+                    {sound && finalCountdownBeeps ? " · Final beeps" : ""}
+                  </div>
+                </div>
+
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  Tap time to start/pause
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSound((v) => !v)}
+                className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-slate-50"
+              >
+                Sound: {sound ? "On" : "Off"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setWarnings((v) => !v)}
+                disabled={!sound}
+                className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Warnings: {warnings ? "On" : "Off"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFinalCountdownBeeps((v) => !v)}
+                disabled={!sound}
+                className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Final beeps: {finalCountdownBeeps ? "On" : "Off"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setWarnAt5Min((v) => !v)}
+                disabled={!sound || !warnings}
+                className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                5m: {warnAt5Min ? "On" : "Off"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setWarnAt1Min((v) => !v)}
+                disabled={!sound || !warnings}
+                className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                1m: {warnAt1Min ? "On" : "Off"}
+              </button>
+            </div>
+
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
+            </div>
+          </div>
+
+          <div className="mt-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · R reset · F
+              fullscreen
             </div>
             <div className="text-xs text-slate-600">
-              Space start/pause · R reset · F fullscreen
-            </div>
-            {warnings && (warnAt5Min || warnAt1Min) ? (
-              <div className="text-xs text-slate-600">
-                Warnings: {warnAt5Min ? "5m" : ""}{" "}
-                {warnAt5Min && warnAt1Min ? "·" : ""} {warnAt1Min ? "1m" : ""}
-              </div>
-            ) : null}
-          </div>
-        </div>
-
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Exam Timer</div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+              Duration: {minutes} min
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -572,7 +874,7 @@ function ExamTimerCard() {
 export default function ExamTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/exam-timer";
+  const url = "https://www.ilovetimers.com/exam-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -582,7 +884,7 @@ export default function ExamTimerPage({
         name: "Exam Timer",
         url,
         description:
-          "Fullscreen exam timer for tests, SAT-style practice, and timed drills. Big countdown, long presets, optional warnings, and keyboard shortcuts.",
+          "Fullscreen exam timer for tests and timed practice with big countdown, presets, optional warnings, and keyboard shortcuts.",
       },
       {
         "@type": "BreadcrumbList",
@@ -591,7 +893,7 @@ export default function ExamTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -601,242 +903,49 @@ export default function ExamTimerPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is an exam timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "An exam timer is a countdown clock used to manage time during a test or timed practice. It helps you pace sections and finish on time without constantly checking the clock.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Is this a good SAT timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. You can pick longer presets (like 35, 60, 75, 90, or 120 minutes) or enter a custom time for a specific SAT-style section or full practice block.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I get a 5-minute or 1-minute warning?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Turn on Warnings and choose 5-minute and/or 1-minute warning beeps. You can also enable Final beeps for the last 5 seconds.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the timer card is focused.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Exam Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Exam Timer
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Exam Timer (Fullscreen Countdown)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>exam timer</strong> for <strong>tests</strong>,{" "}
-            <strong>SAT timing</strong>, and <strong>timed practice</strong>{" "}
-            with presets and a true fullscreen view.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Big, readable countdown with presets, custom minutes, optional
+            beeps, and keyboard shortcuts.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <ExamTimerCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Built for timed practice
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use it as a <strong>test timer</strong> for section drills, mock
-              exams, or pacing practice. Big digits reduce distraction.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              SAT style timing presets
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Long presets help for sections and full blocks. Try{" "}
-              <strong>35</strong>, <strong>60</strong>, <strong>75</strong>,{" "}
-              <strong>90</strong>, or <strong>120</strong> minutes, or set a
-              custom time that matches your practice test.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Optional warnings
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Turn on Warnings for a quick beep at <strong>5 minutes</strong>{" "}
-              and <strong>1 minute</strong> remaining. Use Fullscreen for
-              distraction free timing.
-            </p>
-          </div>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Exam Timer</span>
+        </p>
       </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free exam timer for test day pacing, SAT timing, and timed practice
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>exam timer</strong> is a simple{" "}
-              <strong>test timer</strong> for anyone doing timed practice at
-              home, in class, or in a study group. Set a time limit, press
-              Start, and keep the countdown visible so you can focus on
-              questions instead of watching the clock.
-            </p>
-
-            <p>
-              For standardized tests, use it as a <strong>SAT timer</strong> by
-              setting the minutes to match your section length. For drills, pick
-              shorter presets. For full mocks, choose longer blocks like 120
-              minutes or set a custom duration.
-            </p>
-
-            <p>
-              If you want a general tool, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For quiet rooms, keep Sound off. For structured work and break
-              cycles, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Test timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Keep yourself honest during practice tests and timed sections.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                SAT timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Match your section length with presets or custom minutes, then
-                run fullscreen for focus.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Timed practice
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Optional 5 minute and 1 minute warnings help pacing without
-                constant checking.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Exam Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this an exam timer or a test timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Both. It is a countdown designed for exams, quizzes, practice
-              tests, and any timed section.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I use this as an SAT timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Set the minutes to match your practice section, then use
-              Fullscreen for a clean, distraction free view.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does it have warnings?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Turn on Warnings for a beep at 5 minutes and/or 1 minute
-              remaining. You can also enable Final beeps for the last 5 seconds.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen (when focused).
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

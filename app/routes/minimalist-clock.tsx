@@ -1,7 +1,15 @@
 // app/routes/minimalist-clock.tsx
 import type { Route } from "./+types/minimalist-clock";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -23,17 +31,19 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://www.ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
-
 
 /* =========================================================
    LOADER
@@ -63,6 +73,22 @@ async function toggleFullscreen(el: HTMLElement) {
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
 }
 
 function safeTimeZone() {
@@ -117,28 +143,126 @@ function formatTimeString(
     : `${pad2(h)}:${pad2(mm)} ${ampm}`;
 }
 
-function splitDigits(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
-  const hh24 = d.getHours();
-  const mm = d.getMinutes();
-  const ss = d.getSeconds();
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
 
-  let hh = hh24;
-  let ampm = "";
-  if (!opts.use24) {
-    const t = to12h(hh24);
-    hh = t.h;
-    ampm = t.ampm;
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
+async function copyToClipboard(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // fallback
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "true");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      ta.style.top = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch {
+      return false;
+    }
   }
-
-  const H = pad2(hh);
-  const M = pad2(mm);
-  const S = pad2(ss);
-
-  const digits = opts.showSeconds
-    ? [H[0], H[1], M[0], M[1], S[0], S[1]]
-    : [H[0], H[1], M[0], M[1]];
-
-  return { digits, ampm };
 }
 
 /* =========================================================
@@ -149,16 +273,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -183,124 +318,65 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
-/* =========================================================
-   MINIMAL DIGIT (monospace, no flip, ultra stable)
-========================================================= */
-type MinimalSize = "md" | "xl";
-
-function MinimalDigit({
-  value,
-  size,
-  dark,
-  id,
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
 }: {
-  value: string;
-  size: MinimalSize;
-  dark: boolean;
-  id: string;
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
 }) {
-  const dims =
-    size === "xl"
-      ? { w: 150, h: 190, font: "clamp(96px, 10vw, 160px)", radius: 24 }
-      : { w: 108, h: 140, font: "clamp(62px, 6.8vw, 110px)", radius: 20 };
-
-  const palette = dark
-    ? {
-        frame: "rgba(255,255,255,.14)",
-        bg: "rgba(255,255,255,.06)",
-        text: "rgba(255,255,255,.92)",
-        shadow: "rgba(0,0,0,.55)",
-      }
-    : {
-        frame: "rgba(180,83,9,.22)",
-        bg: "rgba(255,255,255,.92)",
-        text: "rgba(69,26,3,.92)",
-        shadow: "rgba(69,26,3,.14)",
-      };
-
+  if (!show) return null;
   return (
-    <div
-      className="relative select-none"
-      style={{
-        width: dims.w,
-        height: dims.h,
-        borderRadius: dims.radius,
-        border: `1px solid ${palette.frame}`,
-        background: palette.bg,
-        boxShadow: `0 16px 44px ${palette.shadow}`,
-      }}
-      aria-label={`digit ${value}`}
-      data-min-id={id}
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontFamily:
-            'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-          fontSize: dims.font,
-          fontWeight: 900,
-          letterSpacing: ".08em",
-          color: palette.text,
-          lineHeight: 1,
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          fontVariantNumeric: "tabular-nums",
-          fontFeatureSettings: '"tnum" 1, "lnum" 1',
-          paddingTop: size === "xl" ? 6 : 4,
-        }}
-      >
-        {value}
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
       </div>
     </div>
   );
 }
 
-function MinimalColon({ size, dark }: { size: MinimalSize; dark: boolean }) {
-  const dot = size === "xl" ? 12 : 9;
-  const gap = size === "xl" ? 34 : 22;
-  const color = dark ? "rgba(255,255,255,.70)" : "rgba(120,53,15,.55)";
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
   return (
-    <div
-      className="flex flex-col items-center justify-center"
-      style={{ gap }}
-      aria-hidden
-    >
-      <div
-        style={{
-          width: dot,
-          height: dot,
-          borderRadius: 999,
-          background: color,
-        }}
-      />
-      <div
-        style={{
-          width: dot,
-          height: dot,
-          borderRadius: 999,
-          background: color,
-        }}
-      />
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
     </div>
   );
 }
 
 /* =========================================================
-   MINIMALIST CLOCK CARD
+   MINIMALIST CLOCK CARD (big readable time, fits container)
 ========================================================= */
-function MinimalistClockCard() {
-  const [now, setNow] = useState<Date>(() => new Date());
+function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
+  const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [use24, setUse24] = useState(true);
   const [showSeconds, setShowSeconds] = useState(true);
   const [showDate, setShowDate] = useState(true);
@@ -308,27 +384,20 @@ function MinimalistClockCard() {
   const [copied, setCopied] = useState(false);
 
   const tz = useMemo(() => safeTimeZone(), []);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
 
   const idleRef = useRef<number | null>(null);
   const [uiHidden, setUiHidden] = useState(false);
-
-  useEffect(() => {
-    const ms = showSeconds ? 1000 : 15000;
-    const t = window.setInterval(() => setNow(new Date()), ms);
-    return () => window.clearInterval(t);
-  }, [showSeconds]);
-
-  const { digits, ampm } = useMemo(
-    () => splitDigits(now, { use24, showSeconds }),
-    [now, use24, showSeconds],
-  );
 
   const timeText = useMemo(
     () => formatTimeString(now, { use24, showSeconds }),
     [now, use24, showSeconds],
   );
-
   const dateText = useMemo(() => formatDateLine(now), [now]);
 
   const copyText = useMemo(() => {
@@ -336,15 +405,14 @@ function MinimalistClockCard() {
     return `Minimalist Clock\n${timeText} (${tz})\n${showDate ? dateText + "\n" : ""}ISO: ${iso}`;
   }, [now, timeText, tz, dateText, showDate]);
 
-  const copy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(copyText);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1200);
-    } catch {
-      // ignore
-    }
-  }, [copyText]);
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [timeText, isFs, showSeconds, use24],
+    minPx: 56,
+    maxPx: isFs ? 560 : 360,
+    paddingAllowancePx: isFs ? 64 : 76,
+  });
 
   const bumpIdle = useCallback(() => {
     if (!zen) return;
@@ -371,12 +439,51 @@ function MinimalistClockCard() {
     };
   }, [bumpIdle]);
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  // Accurate-ish ticking: snap to next second or next 15s bucket.
+  useEffect(() => {
+    let t: number | null = null;
+
+    const schedule = () => {
+      const d = new Date();
+      setNow(d);
+
+      const ms = d.getMilliseconds();
+      const s = d.getSeconds();
+
+      let delay = 1000 - ms;
+      if (!showSeconds) {
+        // update every 15 seconds, aligned
+        const next = (Math.floor(s / 15) + 1) * 15;
+        const secToNext = (next >= 60 ? 60 : next) - s;
+        delay = secToNext * 1000 - ms;
+        if (delay < 250) delay += 15000; // guard
+      }
+
+      t = window.setTimeout(schedule, delay);
+    };
+
+    schedule();
+    return () => {
+      if (t) window.clearTimeout(t);
+    };
+  }, [showSeconds]);
+
+  const doCopy = useCallback(async () => {
+    const ok = await copyToClipboard(copyText);
+    if (!ok) return;
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1200);
+  }, [copyText]);
+
+  const softHidden = zen && uiHidden;
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
-    if (k === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+
+    if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     } else if (k === "s") {
       setShowSeconds((v) => !v);
     } else if (k === "t") {
@@ -387,7 +494,9 @@ function MinimalistClockCard() {
       setZen((v) => !v);
       setUiHidden(false);
     } else if (k === "c") {
-      void copy();
+      void doCopy();
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
@@ -395,344 +504,198 @@ function MinimalistClockCard() {
     showSeconds ? "seconds on" : "seconds off"
   }`;
 
-  const softHidden = zen && uiHidden;
+  const controls = (
+    <div className="flex flex-wrap items-center gap-2">
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+        <input
+          type="checkbox"
+          checked={showSeconds}
+          onChange={(e) => setShowSeconds(e.target.checked)}
+        />
+        Seconds
+      </label>
+
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+        <input
+          type="checkbox"
+          checked={use24}
+          onChange={(e) => setUse24(e.target.checked)}
+        />
+        24-hour
+      </label>
+
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+        <input
+          type="checkbox"
+          checked={showDate}
+          onChange={(e) => setShowDate(e.target.checked)}
+        />
+        Date
+      </label>
+
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+        <input
+          type="checkbox"
+          checked={zen}
+          onChange={(e) => setZen(e.target.checked)}
+        />
+        Zen
+      </label>
+
+      <Btn kind="ghost" onClick={() => void doCopy()} className="py-2">
+        {copied ? "Copied" : "Copy"}
+      </Btn>
+
+      {!isFs ? (
+        <Btn
+          kind="ghost"
+          onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
+          className="py-2"
+        >
+          Fullscreen
+        </Btn>
+      ) : null}
+    </div>
+  );
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Minimalist Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            A clean <strong>minimalist clock</strong> with big stable digits.
-            Fullscreen works great as an <strong>aesthetic clock online</strong>{" "}
-            display.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Minimalist Clock"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={controls}
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={showSeconds}
-              onChange={(e) => setShowSeconds(e.target.checked)}
-            />
-            Seconds
-          </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs ? (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Minimalist Clock
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Big readable time display with fullscreen and simple toggles.
+              </p>
+            </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              {controls}
+            </div>
+          </div>
+        ) : null}
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={use24}
-              onChange={(e) => setUse24(e.target.checked)}
-            />
-            24-hour
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={showDate}
-              onChange={(e) => setShowDate(e.target.checked)}
-            />
-            Date
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={zen}
-              onChange={(e) => setZen(e.target.checked)}
-            />
-            Zen
-          </label>
-
-          <Btn kind="ghost" onClick={copy} className="py-2">
-            {copied ? "Copied" : "Copy"}
-          </Btn>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 440 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container] .fadeSoft{
-                transition: opacity 220ms ease;
-              }
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:6vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1700px, 96vw);
-                height:100%;
-                display:grid;
-                align-content:center;
-                justify-items:center;
-                gap:22px;
-              }
-
-              [data-fs-container]:fullscreen .fs-row{
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                gap:22px;
-                width:100%;
-              }
-
-              [data-fs-container]:fullscreen .fs-top{
-                font: 800 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.16em;
-                text-transform:uppercase;
-                opacity:.86;
-                text-align:center;
-                color: rgba(255,255,255,.90);
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 20px/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.14em;
-                opacity:.92;
-                text-align:center;
-                white-space:nowrap;
-                color: rgba(255,255,255,.92);
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 700 13px/1.25 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.78;
-                text-align:center;
-                color: rgba(255,255,255,.82);
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 440 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 360,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+            background: isFs ? "#0b0b0c" : undefined,
+            color: isFs ? "#ffffff" : undefined,
+            borderColor: isFs ? "rgba(255,255,255,.14)" : undefined,
+          }}
+          aria-live="polite"
+          onMouseMove={() => bumpIdle()}
+          onTouchStart={() => bumpIdle()}
+          onClick={() => {
+            if (isFs) bumpIdle();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Move/tap to show controls if Zen is on" : undefined}
         >
-          <div className="w-full max-w-[980px]">
-            <div className="rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">
-              <div
-                className={`text-center fadeSoft ${softHidden ? "opacity-0" : "opacity-100"}`}
-              >
-                <div className="text-xs font-bold uppercase tracking-widest text-amber-800">
-                  {metaLine}
-                </div>
-              </div>
+          <div
+            className={[
+              "text-xs font-extrabold uppercase tracking-widest",
+              isFs ? "text-white/80" : "text-slate-700",
+              "transition-opacity duration-200",
+              softHidden ? "opacity-0" : "opacity-100",
+            ].join(" ")}
+          >
+            {metaLine}
+          </div>
 
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-5">
-                <MinimalDigit
-                  value={digits[0]}
-                  dark={false}
-                  size="md"
-                  id="h1"
-                />
-                <MinimalDigit
-                  value={digits[1]}
-                  dark={false}
-                  size="md"
-                  id="h2"
-                />
-                <MinimalColon dark={false} size="md" />
-                <MinimalDigit
-                  value={digits[2]}
-                  dark={false}
-                  size="md"
-                  id="m1"
-                />
-                <MinimalDigit
-                  value={digits[3]}
-                  dark={false}
-                  size="md"
-                  id="m2"
-                />
-                {showSeconds ? (
-                  <>
-                    <MinimalColon dark={false} size="md" />
-                    <MinimalDigit
-                      value={digits[4]}
-                      dark={false}
-                      size="md"
-                      id="s1"
-                    />
-                    <MinimalDigit
-                      value={digits[5]}
-                      dark={false}
-                      size="md"
-                      id="s2"
-                    />
-                  </>
-                ) : null}
-                {!use24 ? (
-                  <div
-                    className="ml-2 text-amber-950"
-                    style={{
-                      fontWeight: 900,
-                      letterSpacing: ".18em",
-                      fontSize: 22,
-                    }}
-                  >
-                    {ampm}
-                  </div>
-                ) : null}
-              </div>
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+              whiteSpace: "nowrap",
+              fontVariantNumeric: "tabular-nums",
+              fontFeatureSettings: '"tnum" 1, "lnum" 1',
+              color: isFs ? "rgba(255,255,255,.94)" : undefined,
+            }}
+          >
+            {timeText}
+          </span>
 
-              <div
-                className={`mt-6 text-center fadeSoft ${softHidden ? "opacity-0" : "opacity-100"}`}
-              >
-                <div className="font-mono text-lg font-bold tracking-widest text-amber-900">
-                  {timeText}
-                </div>
-                {showDate ? (
-                  <div className="mt-2 text-sm font-semibold text-amber-800">
-                    {dateText}
-                  </div>
-                ) : null}
-              </div>
-
-              <div
-                className={`mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900 fadeSoft ${
-                  softHidden ? "opacity-0" : "opacity-100"
-                }`}
-              >
-                <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                  Screensaver tips
-                </div>
-                <ul className="mt-2 space-y-1">
-                  <li>
-                    Press <strong>F</strong> for fullscreen.
-                  </li>
-                  <li>
-                    Turn on <strong>Zen</strong> to hide labels after a moment.
-                  </li>
-                  <li>
-                    If your device sleeps, raise your screen timeout in system
-                    settings.
-                  </li>
-                </ul>
-              </div>
-
-              <div
-                className={`mt-5 text-center text-xs font-semibold text-amber-800 fadeSoft ${softHidden ? "opacity-0" : "opacity-100"}`}
-              >
-                Shortcuts: F fullscreen · S seconds · T 12/24 · D date · Z zen ·
-                C copy
-              </div>
+          {showDate ? (
+            <div
+              className={[
+                "mt-3 text-center text-sm font-semibold",
+                isFs ? "text-white/80" : "text-slate-700",
+                "transition-opacity duration-200",
+                softHidden ? "opacity-0" : "opacity-100",
+              ].join(" ")}
+            >
+              {dateText}
             </div>
+          ) : null}
+
+          <div
+            className={[
+              "mt-4 text-center text-xs font-semibold",
+              isFs ? "text-white/75" : "text-slate-600",
+              "transition-opacity duration-200",
+              softHidden ? "opacity-0" : "opacity-100",
+            ].join(" ")}
+          >
+            {isFs
+              ? "Esc exits fullscreen"
+              : "Tip: click the card so shortcuts work"}
           </div>
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div
-              className={`fs-top fadeSoft ${softHidden ? "opacity-0" : "opacity-100"}`}
-            >
-              Minimalist Clock
-            </div>
+        {!isFs ? (
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+            Shortcuts: F fullscreen · S seconds · T 12/24 · D date · Z zen · C
+            copy
+          </div>
+        ) : null}
 
-            <div className="fs-row">
-              <MinimalDigit value={digits[0]} dark size="xl" id="fh1" />
-              <MinimalDigit value={digits[1]} dark size="xl" id="fh2" />
-              <MinimalColon dark size="xl" />
-              <MinimalDigit value={digits[2]} dark size="xl" id="fm1" />
-              <MinimalDigit value={digits[3]} dark size="xl" id="fm2" />
-              {showSeconds ? (
-                <>
-                  <MinimalColon dark size="xl" />
-                  <MinimalDigit value={digits[4]} dark size="xl" id="fs1" />
-                  <MinimalDigit value={digits[5]} dark size="xl" id="fs2" />
-                </>
-              ) : null}
-              {!use24 ? (
-                <div
-                  className="ml-3 text-white/90"
-                  style={{
-                    fontWeight: 900,
-                    letterSpacing: ".18em",
-                    fontSize: 28,
-                  }}
-                >
-                  {ampm}
-                </div>
-              ) : null}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Shortcuts: F fullscreen · S seconds · T 12/24 · D date · Z zen · C
+              copy
             </div>
-
             <div
-              className={`fs-time fadeSoft ${softHidden ? "opacity-0" : "opacity-100"}`}
+              className={[
+                "text-xs font-semibold text-slate-700 transition-opacity duration-200",
+                softHidden ? "opacity-0" : "opacity-100",
+              ].join(" ")}
             >
-              {timeText}
-            </div>
-
-            <div
-              className={`fs-sub fadeSoft ${softHidden ? "opacity-0" : "opacity-100"}`}
-            >
-              {tz} · {use24 ? "24-hour" : "12-hour"} ·{" "}
-              {showSeconds ? "seconds on" : "seconds off"}
-              {showDate ? ` · ${dateText}` : ""}
-            </div>
-
-            <div
-              className={`fs-sub fadeSoft ${softHidden ? "opacity-0" : "opacity-100"}`}
-            >
-              F fullscreen · S seconds · T 12/24 · D date · Z zen · C copy
+              {metaLine}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: F fullscreen · S seconds · T 12/24 · D date · Z zen · C
-          copy
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -741,8 +704,10 @@ function MinimalistClockCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function MinimalistClockPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/minimalist-clock";
+export default function MinimalistClockPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/minimalist-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -752,7 +717,7 @@ export default function MinimalistClockPage({}: Route.ComponentProps) {
         name: "Minimalist Clock",
         url,
         description:
-          "Minimalist clock and aesthetic clock online with big stable digits, fullscreen screensaver mode, Zen UI hiding, and options for seconds, date, and 12/24-hour time.",
+          "Minimalist online clock with big readable digits, fullscreen display, Zen UI hiding, and options for seconds, date, and 12/24-hour time.",
       },
       {
         "@type": "BreadcrumbList",
@@ -761,7 +726,7 @@ export default function MinimalistClockPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -771,233 +736,29 @@ export default function MinimalistClockPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a minimalist clock?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A minimalist clock focuses on a clean, simple time display. This page shows large stable digits with optional seconds and date, plus a Zen mode that fades extra UI.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I use this as an aesthetic clock online or screensaver?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Click Fullscreen (or press F), then enable Zen so the extra UI fades away after a moment. Leave it open on a monitor, tablet, or TV. If your device sleeps, increase screen timeout in system settings.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I switch between 12-hour and 24-hour time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Toggle 24-hour in the controls or press T while the card is focused.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I hide seconds and the date?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Toggle Seconds and Date in the controls. Keyboard shortcuts are S for seconds and D for date.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Minimalist Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Minimalist Clock Online
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A free <strong>minimalist clock</strong> with big clean digits. Use
-            fullscreen for an <strong>aesthetic clock online</strong>{" "}
-            screensaver-style display.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <MinimalistClockCard />
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Screensaver setup
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              For the cleanest look: click <strong>Fullscreen</strong> (or press{" "}
-              <strong>F</strong>) and enable <strong>Zen</strong>. Zen fades the
-              extra UI text after a short idle period, so you only see the time.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Customize the clock
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Toggle <strong>Seconds</strong> for a steady rhythm, switch{" "}
-              <strong>12/24-hour</strong> time, and show or hide the{" "}
-              <strong>Date</strong>. The layout stays stable so it works well on
-              a second monitor.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-              <li>
-                <strong>S</strong> = Seconds
-              </li>
-              <li>
-                <strong>T</strong> = 12/24-hour
-              </li>
-              <li>
-                <strong>D</strong> = Date
-              </li>
-              <li>
-                <strong>Z</strong> = Zen
-              </li>
-              <li>
-                <strong>C</strong> = Copy
-              </li>
-            </ul>
-          </div>
+      <section className="mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
+        <div>
+          <MinimalistClockCard initialNowISO={nowISO} />
         </div>
-      </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Minimalist clock and aesthetic clock online
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This is a free <strong>minimalist clock</strong> and{" "}
-              <strong>aesthetic clock online</strong> with large, readable
-              digits. It is designed for desk setups, wall displays, and
-              screensaver-style clock use.
-            </p>
-
-            <p>
-              For a clean aesthetic: press <strong>F</strong> to enter
-              fullscreen, then enable <strong>Zen</strong>. After a short idle
-              period, Zen fades away the extra text so you only see the time.
-              Move your mouse or tap the screen to bring the UI back.
-            </p>
-
-            <p>
-              Want fewer updates? Turn off <strong>Seconds</strong> to show only
-              hours and minutes. Prefer a calendar feel? Toggle{" "}
-              <strong>Date</strong> on. You can also switch between{" "}
-              <strong>12-hour</strong> and <strong>24-hour</strong> time. Use{" "}
-              <strong>Copy</strong> to copy the current time and time zone.
-            </p>
-
-            <p>
-              More clocks:{" "}
-              <Link
-                to="/digital-clock"
-                className="font-semibold hover:underline"
-              >
-                Digital Clock
-              </Link>{" "}
-              ·{" "}
-              <Link
-                to="/retro-flip-clock"
-                className="font-semibold hover:underline"
-              >
-                Retro Flip Clock
-              </Link>{" "}
-              ·{" "}
-              <Link
-                to="/roman-numeral-clock"
-                className="font-semibold hover:underline"
-              >
-                Roman Numeral Clock
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Minimalist Clock FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I use this as a fullscreen minimalist clock?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
-              while the card is focused. Enable <strong>Zen</strong> to hide
-              extra text after a moment.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this an aesthetic clock online?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. The design is intentionally minimal so the time stays the
-              focus. Fullscreen plus Zen gives a clean screensaver look.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I hide seconds or the date?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Use the toggles, or press <strong>S</strong> for seconds and{" "}
-              <strong>D</strong> for date.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why does my screen still turn off?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Your device power settings control screen timeout. If you want it
-              always on, raise screen timeout in your system settings.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Minimalist Clock</span>
+        </p>
       </section>
     </main>
   );

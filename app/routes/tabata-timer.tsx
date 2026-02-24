@@ -1,7 +1,15 @@
 // app/routes/tabata-timer.tsx
 import type { Route } from "./+types/tabata-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +41,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -74,7 +82,7 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (same style as other pages)
+// WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -122,6 +130,120 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
    UI PRIMITIVES
 ========================================================= */
@@ -130,16 +252,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -164,118 +297,216 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
-   TABATA TIMER CARD (20/10 x 8 defaults)
+   TABATA TIMER CARD
 ========================================================= */
 type Phase = "work" | "rest";
 
 function TabataTimerCard() {
   const beep = useBeep();
 
-  // Classic Tabata defaults: 20s work / 10s rest x 8
+  // Defaults: 20s work / 10s rest x 8
   const [workSec, setWorkSec] = useState(20);
   const [restSec, setRestSec] = useState(10);
   const [rounds, setRounds] = useState(8);
 
-  const [phase, setPhase] = useState<Phase>("work");
-  const [roundIdx, setRoundIdx] = useState(1);
-
-  const [running, setRunning] = useState(false);
   const [sound, setSound] = useState(true);
   const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(true);
 
-  // Internal timer state (ms remaining in current phase)
-  const [remaining, setRemaining] = useState(workSec * 1000);
+  const [phase, setPhase] = useState<Phase>("work");
+  const [roundIdx, setRoundIdx] = useState(1);
+  const [running, setRunning] = useState(false);
 
-  const rafRef = useRef<number | null>(null);
+  // Displayed remaining (snappy, second-aligned)
+  const [displayRemainingMs, setDisplayRemainingMs] = useState(workSec * 1000);
+
+  // Internal high-res timing
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const remainingMsRef = useRef<number>(workSec * 1000);
+
+  const lastShownMsRef = useRef<number>(workSec * 1000);
   const lastBeepSecondRef = useRef<number | null>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  const quickWork = useMemo(() => [10, 15, 20, 30, 40, 45], []);
+  const quickRest = useMemo(() => [0, 5, 10, 15, 20, 30], []);
+  const quickRounds = useMemo(() => [4, 6, 8, 10, 12, 16], []);
+
+  const totalTimeMs = useMemo(() => {
+    const w = Math.max(0, workSec) * 1000;
+    const r = Math.max(0, restSec) * 1000;
+    const n = Math.max(1, rounds);
+    return n * w + Math.max(0, n - 1) * r;
+  }, [workSec, restSec, rounds]);
+
+  const totalText = useMemo(() => {
+    const totalSec = Math.round(totalTimeMs / 1000);
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    return `${m}:${pad2(s)}`;
+  }, [totalTimeMs]);
+
+  const statusLabel = useMemo(() => {
+    if (running) return phase === "work" ? "Work" : "Rest";
+    if (displayRemainingMs <= 0) return "Done";
+    return phase === "work" ? "Ready" : "Ready";
+  }, [running, phase, displayRemainingMs]);
+
+  const shownTime = useMemo(
+    () => msToClock(displayRemainingMs),
+    [displayRemainingMs],
+  );
+
+  const progress = useMemo(() => {
+    if (totalTimeMs <= 0) return 0;
+
+    const w = Math.max(0, workSec) * 1000;
+    const r = Math.max(0, restSec) * 1000;
+    const n = Math.max(1, rounds);
+
+    const currentTotal = phase === "work" ? w : r;
+    const currentRemaining = clamp(
+      remainingMsRef.current,
+      0,
+      Math.max(1, currentTotal),
+    );
+    const currentDone = clamp(currentTotal - currentRemaining, 0, currentTotal);
+
+    const completedRounds = clamp(roundIdx - 1, 0, n);
+
+    let doneBefore = completedRounds * (w + r);
+    if (phase === "rest") doneBefore += w;
+
+    const raw = doneBefore + currentDone;
+    return clamp(raw / totalTimeMs, 0, 1);
+  }, [
+    totalTimeMs,
+    workSec,
+    restSec,
+    rounds,
+    phase,
+    roundIdx,
+    displayRemainingMs,
+  ]);
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, running, phase, roundIdx, rounds],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
 
   // Keep aligned when config changes (only when not running)
   useEffect(() => {
     if (running) return;
+
     setPhase("work");
     setRoundIdx(1);
-    setRemaining(workSec * 1000);
+
+    const next = Math.max(0, Math.floor(workSec * 1000));
+    remainingMsRef.current = next;
     endRef.current = null;
+
+    const shown = Math.ceil(next / 1000) * 1000;
+    lastShownMsRef.current = shown;
+    setDisplayRemainingMs(shown);
+
     lastBeepSecondRef.current = null;
   }, [workSec, restSec, rounds, running]);
 
-  const quickWork = useMemo(() => [10, 15, 20, 30, 40, 45], []);
-  const quickRest = useMemo(() => [5, 10, 15, 20, 30], []);
-  const quickRounds = useMemo(() => [4, 6, 8, 10, 12, 16], []);
-
-  const totalTimeMs = useMemo(() => {
-    // total = rounds * work + (rounds - 1) * rest (rest after last round not necessary)
-    const w = workSec * 1000;
-    const r = restSec * 1000;
-    const n = rounds;
-    return n * w + Math.max(0, n - 1) * r;
-  }, [workSec, restSec, rounds]);
-
-  const elapsedMs = useMemo(() => {
-    // Approx total elapsed for progress bar: total - (remaining + remaining future phases)
-    // Keep it simple and stable: estimate by counting completed rounds/phases plus current phase progress.
-    const w = workSec * 1000;
-    const r = restSec * 1000;
-
-    const currentPhaseTotal = phase === "work" ? w : r;
-    const currentDone = clamp(
-      currentPhaseTotal - remaining,
-      0,
-      currentPhaseTotal,
-    );
-
-    const completedRounds = roundIdx - 1;
-
-    // Completed segments before current phase:
-    // For each completed round: work + rest (except after last completed round if we are currently in work of next round)
-    // If we are in work of roundIdx, we have completed completedRounds full cycles of (work+rest)
-    // If we are in rest of roundIdx, we have completed completedRounds cycles + current round work
-    let base = completedRounds * (w + r);
-
-    if (phase === "rest") {
-      base += w;
-    }
-
-    // If on last round and we don't require rest after final work, totalTimeMs already accounts for (n-1) rests
-    // base might include an extra rest when completedRounds includes a round whose rest isn't part of total
-    // Guard by clamping final progress later.
-    return base + currentDone;
-  }, [workSec, restSec, roundIdx, phase, remaining]);
-
-  const progress = useMemo(() => {
-    if (totalTimeMs <= 0) return 0;
-    return clamp(elapsedMs / totalTimeMs, 0, 1);
-  }, [elapsedMs, totalTimeMs]);
-
+  // Timer loop (snappy digits, minimal re-render)
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       endRef.current = null;
       lastBeepSecondRef.current = null;
       return;
     }
 
     if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
+      endRef.current = performance.now() + remainingMsRef.current;
     }
 
     const tick = () => {
       const now = performance.now();
       const rem = Math.max(0, (endRef.current ?? now) - now);
-      setRemaining(rem);
+      remainingMsRef.current = rem;
 
+      // Update displayed digits only when the shown second changes
+      const shown = Math.ceil(rem / 1000) * 1000;
+      if (shown !== lastShownMsRef.current) {
+        lastShownMsRef.current = shown;
+        setDisplayRemainingMs(shown);
+      }
+
+      // Final countdown beeps: 3..2..1
       if (sound && finalCountdownBeeps && rem > 0 && rem <= 3_000) {
         const secLeft = Math.ceil(rem / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
@@ -289,34 +520,44 @@ function TabataTimerCard() {
         lastBeepSecondRef.current = null;
 
         if (sound) {
-          // Distinct tones make it obvious: work->rest vs rest->work
+          // Work->Rest lower tone, Rest->Work higher tone
           if (phase === "work") beep(520, 240);
           else beep(760, 200);
         }
 
-        // Transition
         if (phase === "work") {
-          // If this was the final work interval, finish (no mandatory rest after)
+          // If final work interval, finish (no mandatory rest after)
           if (roundIdx >= rounds) {
             setRunning(false);
             return;
           }
 
           // Go to rest
+          const next = Math.max(0, Math.floor(restSec * 1000));
           setPhase("rest");
-          const next = Math.max(0, restSec * 1000);
-          setRemaining(next);
+          remainingMsRef.current = next;
           endRef.current = performance.now() + next;
+
+          const nextShown = Math.ceil(next / 1000) * 1000;
+          lastShownMsRef.current = nextShown;
+          setDisplayRemainingMs(nextShown);
+
           rafRef.current = requestAnimationFrame(tick);
           return;
         }
 
-        // phase === "rest" -> next round work
+        // Rest -> next round work
         setRoundIdx((r) => Math.min(rounds, r + 1));
         setPhase("work");
-        const next = Math.max(0, workSec * 1000);
-        setRemaining(next);
+
+        const next = Math.max(0, Math.floor(workSec * 1000));
+        remainingMsRef.current = next;
         endRef.current = performance.now() + next;
+
+        const nextShown = Math.ceil(next / 1000) * 1000;
+        lastShownMsRef.current = nextShown;
+        setDisplayRemainingMs(nextShown);
+
         rafRef.current = requestAnimationFrame(tick);
         return;
       }
@@ -325,13 +566,9 @@ function TabataTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
+    return () => stopRaf();
   }, [
     running,
-    remaining,
     sound,
     finalCountdownBeeps,
     beep,
@@ -346,18 +583,42 @@ function TabataTimerCard() {
     setRunning(false);
     setPhase("work");
     setRoundIdx(1);
-    setRemaining(workSec * 1000);
+
+    const next = Math.max(0, Math.floor(workSec * 1000));
+    remainingMsRef.current = next;
     endRef.current = null;
+
+    const shown = Math.ceil(next / 1000) * 1000;
+    lastShownMsRef.current = shown;
+    setDisplayRemainingMs(shown);
+
     lastBeepSecondRef.current = null;
+    stopRaf();
   }
 
   function startPause() {
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
+    setRunning((r) => {
+      const next = !r;
+
+      if (next) {
+        // Starting: ensure endRef aligns to current remaining
+        endRef.current = performance.now() + remainingMsRef.current;
+      } else {
+        // Pausing: freeze remaining
+        if (endRef.current) {
+          const now = performance.now();
+          remainingMsRef.current = Math.max(0, endRef.current - now);
+        }
+        endRef.current = null;
+      }
+
+      lastBeepSecondRef.current = null;
+      return next;
+    });
   }
 
   function next() {
-    // Skip to next phase/round
+    // Skip to next phase/round, keep running state
     endRef.current = null;
     lastBeepSecondRef.current = null;
 
@@ -366,375 +627,362 @@ function TabataTimerCard() {
         setRunning(false);
         return;
       }
+
       setPhase("rest");
-      setRemaining(restSec * 1000);
+      const nextMs = Math.max(0, Math.floor(restSec * 1000));
+      remainingMsRef.current = nextMs;
+
+      const shown = Math.ceil(nextMs / 1000) * 1000;
+      lastShownMsRef.current = shown;
+      setDisplayRemainingMs(shown);
+
+      if (running) endRef.current = performance.now() + nextMs;
       return;
     }
 
-    // rest -> next work
+    // Rest -> next work
     setRoundIdx((r) => Math.min(rounds, r + 1));
     setPhase("work");
-    setRemaining(workSec * 1000);
+
+    const nextMs = Math.max(0, Math.floor(workSec * 1000));
+    remainingMsRef.current = nextMs;
+
+    const shown = Math.ceil(nextMs / 1000) * 1000;
+    lastShownMsRef.current = shown;
+    setDisplayRemainingMs(shown);
+
+    if (running) endRef.current = performance.now() + nextMs;
   }
 
   function setClassic() {
+    if (running) return;
     setWorkSec(20);
     setRestSec(10);
     setRounds(8);
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "n") {
+    } else if (k === "n") {
       next();
-    } else if (e.key.toLowerCase() === "c") {
+    } else if (k === "c") {
       setClassic();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
-  const urgent = running && remaining > 0 && remaining <= 6_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
+  const urgent =
+    running && remainingMsRef.current > 0 && remainingMsRef.current <= 6_000;
 
-  const phaseLabel = phase === "work" ? "Work" : "Rest";
+  const headerRight = (
+    <div className="flex flex-wrap items-center gap-2">
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+        <input
+          type="checkbox"
+          checked={sound}
+          onChange={(e) => setSound(e.target.checked)}
+        />
+        Sound
+      </label>
 
-  const totalText = useMemo(() => {
-    const totalSec = Math.round(totalTimeMs / 1000);
-    const m = Math.floor(totalSec / 60);
-    const s = totalSec % 60;
-    return `${m}:${pad2(s)}`;
-  }, [totalTimeMs]);
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+        <input
+          type="checkbox"
+          checked={finalCountdownBeeps}
+          onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+          disabled={!sound}
+        />
+        Final beeps
+      </label>
+
+      <Btn
+        kind="ghost"
+        onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
+        className="py-2"
+      >
+        Fullscreen
+      </Btn>
+    </div>
+  );
+
+  const fsRight = (
+    <div className="flex items-center gap-2">
+      <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+        {running ? "Pause" : "Start"}
+      </Btn>
+      <Btn kind="ghost" onClick={next} className="py-1 text-sm">
+        Next
+      </Btn>
+      <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+        Reset
+      </Btn>
+      <Btn
+        kind="ghost"
+        onClick={setClassic}
+        className="py-1 text-sm"
+        disabled={running}
+      >
+        Classic
+      </Btn>
+    </div>
+  );
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Tabata Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Classic <strong>Tabata 20/10 × 8</strong> by default. Alternate work
-            and rest automatically with big fullscreen intervals.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Tabata Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={fsRight}
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Config */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-amber-950">
-            Work (seconds)
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Tabata Timer (20/10 Intervals)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Classic Tabata defaults (20s work, 10s rest, 8 rounds). Start,
+                pause, next, reset, and fullscreen with big readable intervals.
+              </p>
+            </div>
+            <div className="ml-auto">{headerRight}</div>
           </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {quickWork.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setWorkSec(s)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  s === workSec
-                    ? "bg-amber-700 text-white hover:bg-amber-800"
-                    : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-                }`}
-              >
-                {s}s
-              </button>
-            ))}
-          </div>
-          <label className="mt-3 block text-sm font-semibold text-amber-950">
-            Custom
-            <input
-              type="number"
-              min={5}
-              max={600}
-              value={workSec}
-              onChange={(e) =>
-                setWorkSec(clamp(Number(e.target.value || 5), 5, 600))
-              }
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </label>
-        </div>
+        )}
 
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-amber-950">
-            Rest (seconds)
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {quickRest.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setRestSec(s)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  s === restSec
-                    ? "bg-amber-700 text-white hover:bg-amber-800"
-                    : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-                }`}
-              >
-                {s}s
-              </button>
-            ))}
-          </div>
-          <label className="mt-3 block text-sm font-semibold text-amber-950">
-            Custom
-            <input
-              type="number"
-              min={0}
-              max={600}
-              value={restSec}
-              onChange={(e) =>
-                setRestSec(clamp(Number(e.target.value || 0), 0, 600))
-              }
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </label>
-          <div className="mt-2 text-xs text-slate-700">
-            Tabata default is <strong>10s</strong> rest.
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-amber-950">
-            Rounds
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {quickRounds.map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRounds(r)}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  r === rounds
-                    ? "bg-amber-700 text-white hover:bg-amber-800"
-                    : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-                }`}
-              >
-                {r}
-              </button>
-            ))}
-          </div>
-          <label className="mt-3 block text-sm font-semibold text-amber-950">
-            Custom
-            <input
-              type="number"
-              min={1}
-              max={50}
-              value={rounds}
-              onChange={(e) =>
-                setRounds(clamp(Number(e.target.value || 1), 1, 50))
-              }
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </label>
-          <div className="mt-2 text-xs text-slate-700">
-            Total time (no rest after last work): <strong>{totalText}</strong>
-          </div>
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-        <Btn kind="ghost" onClick={reset}>
-          Reset
-        </Btn>
-        <Btn kind="ghost" onClick={next}>
-          Next
-        </Btn>
-        <Btn kind="ghost" onClick={setClassic}>
-          Classic 20/10 × 8
-        </Btn>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : phase === "work"
-              ? "border-amber-300 bg-amber-50 text-amber-950"
-              : "border-slate-300 bg-slate-50 text-slate-900"
-        }`}
-        style={{ minHeight: 280 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:16px;
-              }
-
-              [data-fs-container]:fullscreen .fs-top{
-                width:min(900px, 92vw);
-                display:flex;
-                justify-content:space-between;
-                font: 800 16px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.14em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-bar{
-                width:min(900px, 92vw);
-                height:10px;
-                border-radius:999px;
-                background:rgba(255,255,255,.14);
-                overflow:hidden;
-              }
-              [data-fs-container]:fullscreen .fs-bar > div{
-                height:100%;
-                width:var(--p, 0%);
-                background:rgba(255,255,255,.75);
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 280 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            urgent
+              ? "border-rose-300 bg-rose-50"
+              : phase === "work"
+                ? "border-amber-200"
+                : "border-slate-200",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-3">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              {phaseLabel} · Round {roundIdx}/{rounds} · Total {totalText}
-            </div>
-
-            <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-              <span className="text-6xl sm:text-7xl md:text-8xl">
-                {shownTime}
-              </span>
-            </div>
-
-            <div className="w-full max-w-xl">
-              <div className="h-2 w-full overflow-hidden rounded-full bg-amber-200">
-                <div
-                  className="h-full bg-amber-700"
-                  style={{ width: `${Math.round(progress * 100)}%` }}
-                />
-              </div>
-              <div className="mt-2 text-center text-xs text-slate-600">
-                Space start/pause · R reset · N next · F fullscreen · C classic
-              </div>
-            </div>
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {phase === "work" ? "Work" : "Rest"} · Round {roundIdx}/{rounds} ·
+            Total {totalText} · {statusLabel}
           </div>
-        </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div
-            className="fs-inner"
-            style={{ ["--p" as any]: `${Math.round(progress * 100)}%` }}
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
           >
-            <div className="fs-top">
-              <div>{phase === "work" ? "Work" : "Rest"}</div>
-              <div>
-                Round {roundIdx}/{rounds}
-              </div>
+            {shownTime}
+          </span>
+
+          {/* Progress */}
+          <div className="mt-4 w-full max-w-3xl">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+              <div
+                className="h-full bg-amber-500"
+                style={{ width: `${Math.round(progress * 100)}%` }}
+              />
             </div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-bar">
-              <div style={{ width: `${Math.round(progress * 100)}%` }} />
-            </div>
-            <div className="fs-help">
-              Space start/pause · R reset · N next · F fullscreen
+            <div className="mt-2 text-center text-xs font-semibold text-slate-600">
+              Space start/pause · N next · R reset · F fullscreen · C classic
             </div>
           </div>
         </div>
-      </div>
+        {/* Config (normal only) */}
+        {!isFs && (
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                Work (seconds)
+              </div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {quickWork.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => !running && setWorkSec(s)}
+                    disabled={running}
+                    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                      s === workSec
+                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                        : "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                    }`}
+                  >
+                    {s}s
+                  </button>
+                ))}
+              </div>
+              <label className="mt-3 block text-sm font-semibold text-slate-900">
+                Custom
+                <input
+                  type="number"
+                  min={5}
+                  max={600}
+                  value={workSec}
+                  disabled={running}
+                  onChange={(e) =>
+                    setWorkSec(clamp(Number(e.target.value || 5), 5, 600))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:bg-slate-50"
+                />
+              </label>
+            </div>
 
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · N next · F fullscreen · C
-          classic
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so shortcuts work immediately.
-        </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                Rest (seconds)
+              </div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {quickRest.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => !running && setRestSec(s)}
+                    disabled={running}
+                    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                      s === restSec
+                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                        : "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                    }`}
+                  >
+                    {s}s
+                  </button>
+                ))}
+              </div>
+              <label className="mt-3 block text-sm font-semibold text-slate-900">
+                Custom
+                <input
+                  type="number"
+                  min={0}
+                  max={600}
+                  value={restSec}
+                  disabled={running}
+                  onChange={(e) =>
+                    setRestSec(clamp(Number(e.target.value || 0), 0, 600))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:bg-slate-50"
+                />
+              </label>
+              <div className="mt-2 text-xs text-slate-600">
+                Tabata default rest is <strong>10s</strong>.
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                Rounds
+              </div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {quickRounds.map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => !running && setRounds(r)}
+                    disabled={running}
+                    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                      r === rounds
+                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                        : "bg-slate-100 text-slate-900 hover:bg-slate-200"
+                    }`}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+              <label className="mt-3 block text-sm font-semibold text-slate-900">
+                Custom
+                <input
+                  type="number"
+                  min={1}
+                  max={50}
+                  value={rounds}
+                  disabled={running}
+                  onChange={(e) =>
+                    setRounds(clamp(Number(e.target.value || 1), 1, 50))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:bg-slate-50"
+                />
+              </label>
+              <div className="mt-2 text-xs text-slate-600">
+                Total (no rest after last work): <strong>{totalText}</strong>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Actions (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
+            <Btn kind="ghost" onClick={reset}>
+              Reset
+            </Btn>
+            <Btn kind="ghost" onClick={next}>
+              Next
+            </Btn>
+            <Btn kind="ghost" onClick={setClassic} disabled={running}>
+              Classic 20/10 × 8
+            </Btn>
+
+            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · N next · R reset · F fullscreen · C
+              classic
+            </div>
+          </div>
+        )}
+
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · N next · R reset · F
+              fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {phase === "work" ? "Work" : "Rest"} · Round {roundIdx}/{rounds}
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -746,7 +994,7 @@ function TabataTimerCard() {
 export default function TabataTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/tabata-timer";
+  const url = "https://www.ilovetimers.com/tabata-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -765,250 +1013,34 @@ export default function TabataTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Tabata Timer", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a Tabata timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A Tabata timer is an interval timer that alternates short work and rest periods. The classic Tabata protocol is 20 seconds of work and 10 seconds of rest for 8 rounds.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What does Tabata 20/10 × 8 mean?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "It means 20 seconds of work followed by 10 seconds of rest, repeated for 8 rounds. This page starts with those exact defaults so you can press Start immediately.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I change the intervals?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Adjust Work seconds, Rest seconds, and Rounds. The timer will alternate automatically and stop after the final work interval.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, N skips to the next interval, F toggles fullscreen, and C restores the classic 20/10 × 8 defaults while the card is focused.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Tabata Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Tabata Timer (20/10 × 8)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A simple <strong>Tabata interval timer</strong> with the classic{" "}
-            <strong>20 seconds work / 10 seconds rest</strong> for{" "}
-            <strong>8 rounds</strong> pre-filled. Press Start and go.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <TabataTimerCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Classic Tabata defaults (20/10 × 8)
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              This timer starts at <strong>20 seconds work</strong>,{" "}
-              <strong>10 seconds rest</strong>, repeated for{" "}
-              <strong>8 rounds</strong>. That is the well-known “Tabata 20/10”
-              format.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Fullscreen intervals for workouts
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use Fullscreen for a clean dark display with huge digits. It is
-              easy to follow on a phone stand, tablet, or TV during HIIT
-              sessions.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Customize any interval timer
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Change work seconds, rest seconds, or rounds to match your
-              training. Use <strong>C</strong> to instantly restore classic
-              defaults.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free Tabata timer (20/10) and Tabata interval timer for HIIT
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>Tabata timer 20 10</strong> is an interval timer that
-              alternates short work and rest periods. The classic Tabata setup
-              is <strong>20 seconds work</strong> and{" "}
-              <strong>10 seconds rest</strong> for <strong>8 rounds</strong> and
-              that is exactly what this page loads with.
-            </p>
-
-            <p>
-              In practice, you pick an exercise, go hard for 20 seconds, rest
-              for 10 seconds, and repeat until you finish the rounds. Fullscreen
-              mode keeps the display readable and the phase changes obvious.
-            </p>
-
-            <p>
-              If you want a broader workout tool with rounds and longer times,
-              try{" "}
-              <Link
-                to="/workout-timer"
-                className="font-semibold hover:underline"
-              >
-                Workout Timer
-              </Link>
-              . For a dedicated interval page, use{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
-              </Link>
-              . For a basic countdown, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Tabata timer 20/10
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Pre-filled classic protocol: 20 seconds work, 10 seconds rest, 8
-                rounds.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Tabata interval timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Easily customize work, rest, and rounds for any interval
-                workout.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Fullscreen HIIT display
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Large digits and clear phase labels make it easy to follow
-                during training.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Tabata Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What does Tabata 20/10 × 8 mean?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              It means <strong>20 seconds work</strong>, then{" "}
-              <strong>10 seconds rest</strong>, repeated for{" "}
-              <strong>8 rounds</strong>. This page loads with those defaults.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How long is a full Tabata set?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              With 20/10 × 8 and no rest after the final work interval, the
-              total time is <strong>4 minutes</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I customize the intervals?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Change Work seconds, Rest seconds, and Rounds. Use the
-              Classic button (or <strong>C</strong>) to restore 20/10 × 8
-              instantly.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>N</strong> next interval • <strong>F</strong> fullscreen •{" "}
-              <strong>C</strong> classic defaults (when focused).
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Tabata Timer</span>
+        </p>
       </section>
     </main>
   );

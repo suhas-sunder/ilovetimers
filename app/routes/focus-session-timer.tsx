@@ -1,8 +1,13 @@
 // app/routes/focus-session-timer.tsx
 import type { Route } from "./+types/focus-session-timer";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/focus-session-timer/HowItWorks";
+import Disclaimer from "~/clients/components/focus-session-timer/Disclaimer";
+import FAQ from "~/clients/components/focus-session-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/focus-session-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/focus-session-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -45,7 +50,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -92,6 +97,118 @@ async function toggleFullscreen(el: HTMLElement) {
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* WebAudio beep */
@@ -142,16 +259,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -176,13 +304,59 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    FOCUS SESSION CARD
@@ -191,51 +365,72 @@ function FocusSessionCard() {
   const beep = useBeep();
 
   const presetsMin = useMemo(
-    () => [15, 20, 25, 30, 35, 40, 45, 50, 60, 75, 90],
+    () => [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 75, 90],
     [],
   );
 
   const [minutes, setMinutes] = useState(45);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
+
+  // Accuracy fix: anchor to absolute end time.
   const [running, setRunning] = useState(false);
+  const [endAtEpochMs, setEndAtEpochMs] = useState<number | null>(null);
+  const [remainingMs, setRemainingMs] = useState<number>(() => 45 * 60 * 1000);
+
+  const remainingRef = useRef<number>(45 * 60 * 1000);
+  useEffect(() => {
+    remainingRef.current = remainingMs;
+  }, [remainingMs]);
 
   const [sound, setSound] = useState(true);
   const [finalBeeps, setFinalBeeps] = useState(true);
 
   const rafRef = useRef<number | null>(null);
-  const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
 
   const [completed, setCompleted] = useState(false);
 
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  function setRemainingHard(ms: number) {
+    const v = Math.max(0, Math.floor(ms));
+    remainingRef.current = v;
+    setRemainingMs(v);
+  }
+
+  // When minutes changes, reset session.
   useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
+    const ms = minutes * 60 * 1000;
     setRunning(false);
+    setEndAtEpochMs(null);
     setCompleted(false);
-    endRef.current = null;
     lastBeepSecondRef.current = null;
+    stopRaf();
+    setRemainingHard(ms);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minutes]);
 
+  // Main tick loop (no dependency on remainingMs).
   useEffect(() => {
-    if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      endRef.current = null;
-      lastBeepSecondRef.current = null;
+    if (!running || !endAtEpochMs) {
+      stopRaf();
       return;
     }
 
-    setCompleted(false);
-
-    if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
-    }
-
     const tick = () => {
-      const now = performance.now();
-      const rem = Math.max(0, (endRef.current ?? now) - now);
-      setRemaining(rem);
+      const now = Date.now();
+      const rem = Math.max(0, endAtEpochMs - now);
+
+      remainingRef.current = rem;
+      setRemainingMs(rem);
 
       if (sound && finalBeeps && rem > 0 && rem <= 5_000) {
         const secLeft = Math.ceil(rem / 1000);
@@ -246,11 +441,12 @@ function FocusSessionCard() {
       }
 
       if (rem <= 0) {
-        endRef.current = null;
         setRunning(false);
+        setEndAtEpochMs(null);
         lastBeepSecondRef.current = null;
         setCompleted(true);
         if (sound) beep(660, 220, 0.07);
+        stopRaf();
         return;
       }
 
@@ -258,24 +454,37 @@ function FocusSessionCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, remaining, sound, finalBeeps, beep]);
+    return () => stopRaf();
+  }, [running, endAtEpochMs, sound, finalBeeps, beep]);
+
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
   function reset() {
     setRunning(false);
-    setRemaining(minutes * 60 * 1000);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
+    setEndAtEpochMs(null);
     setCompleted(false);
+    lastBeepSecondRef.current = null;
+    stopRaf();
+    setRemainingHard(minutes * 60 * 1000);
   }
 
   function startPause() {
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
-    setCompleted(false);
+    setRunning((r) => {
+      const next = !r;
+
+      if (next) {
+        const now = Date.now();
+        setEndAtEpochMs(now + remainingRef.current);
+      } else {
+        setEndAtEpochMs(null);
+      }
+
+      lastBeepSecondRef.current = null;
+      setCompleted(false);
+      return next;
+    });
   }
 
   function setPreset(m: number) {
@@ -285,228 +494,276 @@ function FocusSessionCard() {
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
+    const k = e.key.toLowerCase();
+
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "s") {
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "s") {
       setSound((x) => !x);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
-  const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
+  const urgent = running && remainingMs > 0 && remainingMs <= 10_000;
+  const shownTime = msToClock(Math.ceil(remainingMs / 1000) * 1000);
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, urgent, running, completed],
+    minPx: 58,
+    maxPx: isFs ? 560 : 420,
+    paddingAllowancePx: isFs ? 72 : 84,
+  });
+
+  const statusLabel = running ? "Running" : completed ? "Complete" : "Ready";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Focus Session Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            One clean countdown for deep work. No cycles, no clutter. Set a
-            session length and lock in.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Focus Session Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
+            <label className="hidden sm:inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900">
+              <input
+                type="checkbox"
+                checked={sound}
+                onChange={(e) => setSound(e.target.checked)}
+              />
+              Sound
+            </label>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalBeeps}
-              onChange={(e) => setFinalBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Presets */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
-
-      {/* Custom minutes + controls */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Session length (minutes)
-          <input
-            type="number"
-            min={1}
-            max={240}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 240))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-slate-600">
-            Common: 25 (quick), 45 (deep), 60–90 (long session).
+            <label className="hidden sm:inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900">
+              <input
+                type="checkbox"
+                checked={finalBeeps}
+                onChange={(e) => setFinalBeeps(e.target.checked)}
+                disabled={!sound}
+              />
+              Final beeps
+            </label>
           </div>
-        </label>
+        }
+      />
 
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <div className="text-sm font-extrabold text-slate-900">
+                Focus Session Timer
+              </div>
+              <div className="mt-1 text-sm text-slate-600">
+                One clean countdown for deep work. Pick a length and start.
+              </div>
+            </div>
 
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 240 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
 
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={finalBeeps}
+                  onChange={(e) => setFinalBeeps(e.target.checked)}
+                  disabled={!sound}
+                />
+                Final beeps
+              </label>
 
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
+        {/* Presets (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {presetsMin.map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setPreset(m)}
+                className={[
+                  "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                  m === minutes
+                    ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                    : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                ].join(" ")}
+              >
+                {m}m
+              </button>
+            ))}
+          </div>
+        )}
 
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.85;
-              }
+        {/* Custom minutes + controls (normal only) */}
+        {!isFs && (
+          <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+            <label className="block text-sm font-semibold text-slate-900">
+              Session length (minutes)
+              <input
+                type="number"
+                min={1}
+                max={240}
+                value={minutes}
+                onChange={(e) =>
+                  setMinutes(clamp(Number(e.target.value || 1), 1, 240))
+                }
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
 
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
+            <div className="flex items-end gap-3">
+              <Btn kind="solid" onClick={startPause}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+            </div>
+          </div>
+        )}
 
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.75;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            urgent ? "border-rose-200" : "border-slate-200",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 380,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-2">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              Remaining
-            </div>
-            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
-              {shownTime}
-            </div>
-
-            {completed ? (
-              <div className="mt-2 rounded-xl border border-amber-200 bg-white px-4 py-3 text-sm font-semibold text-amber-950">
-                Session complete. Stand up, drink water, and take a 2–5 minute
-                break.
-              </div>
-            ) : (
-              <div className="mt-2 text-xs text-slate-600">
-                Runs while the page is open. Background tabs may update less
-                often.
-              </div>
-            )}
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
           </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {shownTime}
+          </span>
+
+          {completed ? (
+            <div className="mt-5 w-full max-w-[980px]">
+              <div className="rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
+                  Break time
+                </div>
+                <div className="mt-2 text-lg font-extrabold text-slate-900 sm:text-xl">
+                  Session complete.
+                </div>
+                <div className="mt-2 text-base font-semibold text-slate-700 sm:text-lg">
+                  Stand up, drink water, and take a 2 to 5 minute break.
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {/* Fullscreen hint chip */}
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Session
+                  </div>
+                  <div className="mt-1 text-sm font-semibold text-slate-900">
+                    {minutes} minutes{urgent ? " · final seconds" : ""}
+                  </div>
+                </div>
+
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  Tap timer to start or pause
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Focus session</div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-help">
-              Space start/pause · R reset · F fullscreen · S sound
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap timer to start/pause · Space start/pause · R reset · F
+              fullscreen · S sound
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
             </div>
           </div>
-        </div>
-      </div>
+        </FullscreenBottomBar>
 
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen · S sound
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        {/* Shortcuts (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · R reset · F fullscreen · S sound
+            </div>
+            <div className="text-xs text-slate-600">
+              Tip: click the card once so keyboard shortcuts work immediately.
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );
@@ -515,8 +772,10 @@ function FocusSessionCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function FocusSessionTimerPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/focus-session-timer";
+export default function FocusSessionTimerPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/focus-session-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -535,7 +794,7 @@ export default function FocusSessionTimerPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -545,158 +804,49 @@ export default function FocusSessionTimerPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a focus session timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A focus session timer is a single countdown used for deep work. You set a session length, start the timer, and work until it finishes.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How is this different from a Pomodoro timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Pomodoro uses work/break cycles. This page is just one clean focus countdown with no automatic cycles.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does it keep running if I close the tab?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "It runs while the page is open. Some browsers may reduce timer update frequency in background tabs.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, F toggles fullscreen, and S toggles sound while the card is focused.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Focus Session Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Focus Session Timer (Deep Work Countdown)
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Focus Session Timer (Single Deep Work Countdown)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            Set a single session length, start the countdown, and work. No
-            cycles. No clutter. Built for fullscreen focus.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Choose one session length, start a distraction-free countdown, and
+            go fullscreen.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <FocusSessionCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free focus session timer for deep work
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              A <strong>focus session timer</strong> is a single countdown used
-              to protect a block of time for deep work. Pick a session length,
-              start the timer, and focus until it ends.
-            </p>
-
-            <p>
-              If you prefer structured cycles with automatic breaks, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro Timer
-              </Link>
-              . For meeting timing, try{" "}
-              <Link
-                to="/meeting-timer"
-                className="font-semibold hover:underline"
-              >
-                Meeting Timer
-              </Link>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <FocusSessionCard />
         </div>
+
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Focus Session Timer</span>
+        </p>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Focus Session Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How long should a focus session be?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Common choices are 25 minutes for a quick session, 45 minutes for
-              deep work, and 60–90 minutes for longer tasks.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How is this different from a Pomodoro timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Pomodoro uses work/break cycles. This is one clean countdown for a
-              single block of focus.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Will it keep running in the background?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              It runs while the page is open, but background tabs may update
-              less often depending on the browser.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Space start/pause • R reset • F fullscreen • S sound (when the
-              card is focused).
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

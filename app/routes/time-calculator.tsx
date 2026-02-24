@@ -1,7 +1,14 @@
 // app/routes/time-calculator.tsx
 import type { Route } from "./+types/time-calculator";
 import { json } from "@remix-run/node";
-import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +40,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -98,9 +105,12 @@ function fromSeconds(total: number): { sign: 1 | -1; v: HMSD } {
   return { sign, v: { d, h, m, s } };
 }
 
+// "Clock-like" display string.
+// - If days exist: "2d 03:04:05"
+// - Else: "3:04:05"
+// - Negative: prefixed with "-"
 function formatHMSD(sign: 1 | -1, v: HMSD) {
   const prefix = sign < 0 ? "-" : "";
-  // Show days only if nonzero
   if (v.d > 0) {
     return `${prefix}${v.d}d ${pad2(v.h)}:${pad2(v.m)}:${pad2(v.s)}`;
   }
@@ -142,6 +152,104 @@ function formatClockFromSeconds(secSinceMidnight: number) {
   return `${pad2(hh)}:${pad2(mm)}:${pad2(ss)}`;
 }
 
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
    UI PRIMITIVES
 ========================================================= */
@@ -159,7 +267,11 @@ const Card = ({
   <div
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -184,8 +296,8 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -204,21 +316,97 @@ const TabBtn = ({
   <button
     type="button"
     onClick={onClick}
-    className={`cursor-pointer rounded-full px-4 py-2 text-sm font-extrabold transition ${
+    className={[
+      "cursor-pointer rounded-full px-4 py-2 text-sm font-extrabold transition",
       active
-        ? "bg-amber-700 text-white hover:bg-amber-800"
-        : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-    }`}
+        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+    ].join(" ")}
   >
     {children}
   </button>
 );
 
 const MiniPill = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-950">
+  <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700">
     {children}
   </span>
 );
+
+/* =========================================================
+   BIG RESULT DISPLAY (CLOCK-LIKE)
+========================================================= */
+function BigResultDisplay({
+  label,
+  bigText,
+  subText,
+  right,
+  status,
+}: {
+  label: string;
+  bigText: string;
+  subText?: string;
+  right?: React.ReactNode;
+  status?: string;
+}) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+
+  const fitPx = useFitText({
+    containerRef: boxRef,
+    textRef,
+    deps: [bigText, status, label],
+    minPx: 52,
+    maxPx: 360,
+    paddingAllowancePx: 72,
+  });
+
+  return (
+    <div
+      ref={boxRef}
+      className={[
+        "relative mt-4 flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-6 text-slate-950",
+      ].join(" ")}
+      style={{ minHeight: 280, userSelect: "none" }}
+      aria-live="polite"
+    >
+      <div className="absolute left-3 top-3 flex items-center gap-2 sm:left-5 sm:top-5">
+        <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
+          {label}
+        </div>
+        {status ? (
+          <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-slate-700">
+            {status}
+          </span>
+        ) : null}
+      </div>
+
+      {right ? (
+        <div className="absolute right-3 top-3 sm:right-5 sm:top-5">
+          {right}
+        </div>
+      ) : null}
+
+      <span
+        ref={textRef}
+        className="mt-6 inline-block text-center font-mono font-extrabold tracking-widest"
+        style={{
+          fontSize: `${fitPx}px`,
+          lineHeight: "1",
+          transform: "translateZ(0)",
+        }}
+      >
+        {bigText}
+      </span>
+
+      {subText ? (
+        <div className="mt-3 text-center text-sm font-semibold text-slate-700">
+          {subText}
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 /* =========================================================
    ADD/SUBTRACT CARD (D/H/M/S)
@@ -247,35 +435,35 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
     window.setTimeout(() => setLastCopied(null), 900);
   }, []);
 
-  const setField = (which: "a" | "b", key: keyof HMSD) => (v: string) => {
-    const n = clamp(Number(v || 0), 0, key === "d" ? 9999 : 59);
-    const max = key === "h" ? 23 : key === "m" || key === "s" ? 59 : 9999;
-    const val = clamp(Math.floor(n), 0, max);
-    if (which === "a") setA((x) => ({ ...x, [key]: val }));
-    else setB((x) => ({ ...x, [key]: val }));
-  };
+  const setField = useCallback(
+    (which: "a" | "b", key: keyof HMSD) => (v: string) => {
+      const max = key === "h" ? 23 : key === "m" || key === "s" ? 59 : 9999;
+      const n = clamp(Number(v || 0), 0, max);
+      const val = clamp(Math.floor(n), 0, max);
+      if (which === "a") setA((x) => ({ ...x, [key]: val }));
+      else setB((x) => ({ ...x, [key]: val }));
+    },
+    [],
+  );
 
-  const resultText = `${formatHMSD(out.sign, out.v)} (${formatWords(
-    out.sign,
-    out.v,
-  )})`;
+  const big = formatHMSD(out.sign, out.v);
+  const words = formatWords(out.sign, out.v);
+
+  const resultText = `${big} (${words})`;
 
   return (
-    <Card className="p-6">
+    <Card>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="text-xl font-extrabold text-amber-950">
-            {mode === "add"
-              ? "Add Time Calculator"
-              : "Subtract Time Calculator"}
+        <div className="min-w-0">
+          <h2 className="text-xl font-extrabold text-sky-700">
+            {mode === "add" ? "Add time" : "Subtract time"}
           </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Add or subtract durations using days, hours, minutes, and seconds.
-            Supports negative results.
+          <p className="mt-1 text-sm text-slate-600">
+            Use days, hours, minutes, and seconds. Subtract can go negative.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="ml-auto flex flex-wrap items-center gap-3">
           <Btn kind="ghost" onClick={reset} className="py-2">
             Reset
           </Btn>
@@ -285,10 +473,24 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        {/* A */}
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-sm font-extrabold text-amber-950">Time A</div>
+      <BigResultDisplay
+        label="Result"
+        bigText={big}
+        subText={words}
+        status={mode === "add" ? "Add" : "Subtract"}
+      />
+
+      {lastCopied ? (
+        <div className="mt-3 text-xs font-semibold text-slate-600">
+          <span className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1">
+            {lastCopied}
+          </span>
+        </div>
+      ) : null}
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+          <div className="text-sm font-extrabold text-slate-900">Time A</div>
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {(["d", "h", "m", "s"] as const).map((k) => (
               <label key={`a-${k}`} className="block">
@@ -307,16 +509,16 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
                   max={k === "d" ? 9999 : k === "h" ? 23 : 59}
                   value={a[k]}
                   onChange={(e) => setField("a", k)(e.target.value)}
-                  className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  inputMode="numeric"
                 />
               </label>
             ))}
           </div>
         </div>
 
-        {/* B */}
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-sm font-extrabold text-amber-950">Time B</div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+          <div className="text-sm font-extrabold text-slate-900">Time B</div>
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {(["d", "h", "m", "s"] as const).map((k) => (
               <label key={`b-${k}`} className="block">
@@ -335,34 +537,13 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
                   max={k === "d" ? 9999 : k === "h" ? 23 : 59}
                   value={b[k]}
                   onChange={(e) => setField("b", k)(e.target.value)}
-                  className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  inputMode="numeric"
                 />
               </label>
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Result */}
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-white p-4">
-        <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-          Result
-        </div>
-        <div className="mt-2 flex flex-col gap-1">
-          <div className="text-4xl font-extrabold text-amber-950">
-            {formatHMSD(out.sign, out.v)}
-          </div>
-          <div className="text-sm font-semibold text-amber-900">
-            {formatWords(out.sign, out.v)}
-          </div>
-        </div>
-        {lastCopied ? (
-          <div className="mt-3 text-xs font-semibold text-slate-600">
-            <span className="rounded-lg border border-amber-200 bg-amber-50 px-2 py-1">
-              {lastCopied}
-            </span>
-          </div>
-        ) : null}
       </div>
     </Card>
   );
@@ -413,29 +594,30 @@ function DurationCard() {
     const hh = pad2(d.getHours());
     const mm = pad2(d.getMinutes());
     const ss = pad2(d.getSeconds());
-    setStart(`${hh}:${mm}`);
+    setStart(includeSeconds ? `${hh}:${mm}:${ss}` : `${hh}:${mm}`);
     setEnd(includeSeconds ? `${hh}:${mm}:${ss}` : `${hh}:${mm}`);
   }, [includeSeconds]);
 
-  const shown = useMemo(() => {
-    if (!res.ok) return "";
+  const big = useMemo(() => {
+    if (!res.ok) return "—";
     const v = res.out.v;
-    const sign = res.out.sign;
-    // duration is always non-negative here, but keep format stable
-    const base =
-      v.d > 0
-        ? `${v.d}d ${pad2(v.h)}:${pad2(v.m)}:${pad2(v.s)}`
-        : `${v.h}:${pad2(v.m)}:${pad2(v.s)}`;
-
     if (!includeSeconds) {
-      // hide seconds by zeroing in display
-      const h =
-        v.d > 0 ? `${v.d}d ${pad2(v.h)}:${pad2(v.m)}` : `${v.h}:${pad2(v.m)}`;
-      return sign < 0 ? `-${h}` : h;
+      return v.d > 0
+        ? `${v.d}d ${pad2(v.h)}:${pad2(v.m)}`
+        : `${v.h}:${pad2(v.m)}`;
     }
-
-    return sign < 0 ? `-${base}` : base;
+    return v.d > 0
+      ? `${v.d}d ${pad2(v.h)}:${pad2(v.m)}:${pad2(v.s)}`
+      : `${v.h}:${pad2(v.m)}:${pad2(v.s)}`;
   }, [res, includeSeconds]);
+
+  const words = useMemo(() => {
+    if (!res.ok) return "";
+    return (
+      formatWords(res.out.sign, res.out.v) +
+      (res.overnight ? " (crosses midnight)" : "")
+    );
+  }, [res]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
@@ -446,26 +628,24 @@ function DurationCard() {
     } else if (k === "c") {
       e.preventDefault();
       if (res.ok) {
-        const copyText = `Duration: ${shown}${res.overnight ? " (overnight)" : ""}`;
+        const copyText = `Duration: ${big}${res.overnight ? " (overnight)" : ""}`;
         copy(copyText);
       }
     }
   };
 
   const copyText = res.ok
-    ? `Duration: ${shown}${res.overnight ? " (overnight)" : ""}`
+    ? `Duration: ${big}${res.overnight ? " (overnight)" : ""}`
     : "";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
+    <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Time Duration Calculator
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Find the duration between two times. If End is earlier than Start,
-            it assumes the duration crosses midnight.
+        <div className="min-w-0">
+          <h2 className="text-xl font-extrabold text-sky-700">Duration</h2>
+          <p className="mt-1 text-sm text-slate-600">
+            Duration between two times. If End is earlier than Start, it crosses
+            midnight.
           </p>
           {res.ok ? (
             <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -477,20 +657,19 @@ function DurationCard() {
           ) : null}
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
+        <div className="ml-auto flex flex-wrap items-center gap-3">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
             <input
               type="checkbox"
               checked={includeSeconds}
               onChange={(e) => {
                 const on = e.target.checked;
                 setIncludeSeconds(on);
-                // normalize input to match mode
+
                 if (!on) {
                   setStart((v) => v.slice(0, 5));
                   setEnd((v) => v.slice(0, 5));
                 } else {
-                  // keep seconds at :00 if missing
                   setStart((v) => (v.length === 5 ? `${v}:00` : v));
                   setEnd((v) => (v.length === 5 ? `${v}:00` : v));
                 }
@@ -513,63 +692,53 @@ function DurationCard() {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+      <BigResultDisplay
+        label={res.ok ? "Duration" : "Duration"}
+        bigText={res.ok ? big : "—"}
+        subText={res.ok ? words : res.error}
+        status={
+          res.ok && res.overnight ? "Overnight" : res.ok ? "OK" : "Invalid"
+        }
+      />
+
+      {lastCopied ? (
+        <div className="mt-3 text-xs font-semibold text-slate-600">
+          <span className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1">
+            {lastCopied}
+          </span>
+        </div>
+      ) : null}
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
         <label className="block">
-          <div className="text-sm font-extrabold text-amber-950">
+          <div className="text-sm font-extrabold text-slate-900">
             Start time
           </div>
           <input
             value={start}
             onChange={(e) => setStart(e.target.value)}
             placeholder={includeSeconds ? "09:00:00" : "09:00"}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+            inputMode="numeric"
           />
-          <div className="mt-1 text-xs text-amber-900">
+          <div className="mt-1 text-xs text-slate-600">
             Format: {includeSeconds ? "HH:MM:SS" : "HH:MM"} (24-hour)
           </div>
         </label>
 
         <label className="block">
-          <div className="text-sm font-extrabold text-amber-950">End time</div>
+          <div className="text-sm font-extrabold text-slate-900">End time</div>
           <input
             value={end}
             onChange={(e) => setEnd(e.target.value)}
             placeholder={includeSeconds ? "17:00:00" : "17:00"}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+            inputMode="numeric"
           />
-          <div className="mt-1 text-xs text-amber-900">
+          <div className="mt-1 text-xs text-slate-600">
             Shortcut: N now · C copy duration
           </div>
         </label>
-      </div>
-
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-white p-4">
-        <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-          Duration
-        </div>
-        {res.ok ? (
-          <div className="mt-2 flex flex-col gap-1">
-            <div className="text-4xl font-extrabold text-amber-950">
-              {shown}
-            </div>
-            <div className="text-sm font-semibold text-amber-900">
-              {formatWords(res.out.sign, res.out.v)}
-              {res.overnight ? " (crosses midnight)" : ""}
-            </div>
-          </div>
-        ) : (
-          <div className="mt-2 text-sm font-semibold text-amber-900">
-            {res.error}
-          </div>
-        )}
-
-        {lastCopied ? (
-          <div className="mt-3 text-xs font-semibold text-slate-600">
-            <span className="rounded-lg border border-amber-200 bg-amber-50 px-2 py-1">
-              {lastCopied}
-            </span>
-          </div>
-        ) : null}
       </div>
     </Card>
   );
@@ -590,28 +759,48 @@ function TimeCalculatorCard() {
 
   return (
     <div onKeyDown={onKeyDown} tabIndex={0} className="focus:outline-none">
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <TabBtn active={tab === "add"} onClick={() => setTab("add")}>
-          Add time
-        </TabBtn>
-        <TabBtn active={tab === "subtract"} onClick={() => setTab("subtract")}>
-          Subtract time
-        </TabBtn>
-        <TabBtn active={tab === "duration"} onClick={() => setTab("duration")}>
-          Duration
-        </TabBtn>
-        <div className="ml-1 text-xs font-semibold text-slate-600">
-          Keyboard: 1 Add · 2 Subtract · 3 Duration
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-xl font-extrabold text-sky-700">
+            Time Calculator
+          </h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Add durations, subtract durations, or find the duration between two
+            times.
+          </p>
+        </div>
+
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <TabBtn active={tab === "add"} onClick={() => setTab("add")}>
+            Add
+          </TabBtn>
+          <TabBtn
+            active={tab === "subtract"}
+            onClick={() => setTab("subtract")}
+          >
+            Subtract
+          </TabBtn>
+          <TabBtn
+            active={tab === "duration"}
+            onClick={() => setTab("duration")}
+          >
+            Duration
+          </TabBtn>
+          <div className="ml-1 text-xs font-semibold text-slate-600">
+            Keyboard: 1 Add · 2 Subtract · 3 Duration
+          </div>
         </div>
       </div>
 
-      {tab === "add" ? (
-        <AddSubtractCard mode="add" />
-      ) : tab === "subtract" ? (
-        <AddSubtractCard mode="subtract" />
-      ) : (
-        <DurationCard />
-      )}
+      <div className="mt-4">
+        {tab === "add" ? (
+          <AddSubtractCard mode="add" />
+        ) : tab === "subtract" ? (
+          <AddSubtractCard mode="subtract" />
+        ) : (
+          <DurationCard />
+        )}
+      </div>
     </div>
   );
 }
@@ -620,7 +809,7 @@ function TimeCalculatorCard() {
    PAGE
 ========================================================= */
 export default function TimeCalculatorPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/time-calculator";
+  const url = "https://www.ilovetimers.com/time-calculator";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -639,7 +828,7 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -649,155 +838,27 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "How do I add time (hours, minutes, seconds)?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Enter Time A and Time B as durations, then the calculator adds them and shows the result in HH:MM:SS (and days when needed).",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I subtract time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Enter Time A and Time B as durations. The calculator computes A minus B and can display negative results if B is larger.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I calculate time duration between two times?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Use the Duration tab, enter a start time and end time. If the end time is earlier, it assumes the duration crosses midnight.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Time Calculator</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Time Calculator
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            One page for <strong>add time</strong>,{" "}
-            <strong>subtract time</strong>, and <strong>time duration</strong>.
-            Instant results, copy buttons, and sane handling of midnight.
-          </p>
+      <section className="mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
+        <div>
+          <TimeCalculatorCard />
         </div>
-      </section>
 
-      {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <TimeCalculatorCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Add time, subtract time, or calculate a duration
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>time calculator</strong> covers three common use
-              cases: adding durations (like 1h 20m + 45m), subtracting
-              durations, and calculating the time between a{" "}
-              <strong>start time</strong> and an <strong>end time</strong>.
-            </p>
-
-            <p>
-              The Duration tab uses a practical rule: if the end time is earlier
-              than the start time, it assumes the interval crosses midnight.
-            </p>
-
-            <p>
-              If you need payroll style hours, use{" "}
-              <Link
-                to="/work-hours-calculator"
-                className="font-semibold hover:underline"
-              >
-                Work Hours Calculator
-              </Link>
-              . If you need a 24-hour converter, use{" "}
-              <Link
-                to="/military-time-converter"
-                className="font-semibold hover:underline"
-              >
-                Military Time Converter
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Time Calculator FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can this add and subtract days too?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. The Add and Subtract tabs include a Days field. Results show
-              days when the total exceeds 24 hours.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Will it show negative results when subtracting?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. If Time B is larger than Time A, the result is negative.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does Duration handle overnight time differences?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. If End is earlier than Start, it assumes the duration crosses
-              midnight and labels it as overnight.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a stopwatch?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              No. This is for calculations with known inputs. For live timing,
-              use a stopwatch or countdown.
-            </div>
-          </details>
-        </div>
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Time Calculator</span>
+        </p>
       </section>
     </main>
   );

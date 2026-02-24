@@ -43,7 +43,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -90,7 +90,15 @@ function randInt(min: number, max: number) {
   return Math.floor(Math.random() * (b - a + 1)) + a;
 }
 
-// WebAudio beep (same style as other pages)
+async function toggleFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) {
+    await el.requestFullscreen().catch(() => {});
+  } else {
+    await document.exitFullscreen().catch(() => {});
+  }
+}
+
+/* WebAudio beep */
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -100,7 +108,7 @@ function useBeep() {
     };
   }, []);
 
-  return useCallback((freq = 880, duration = 120) => {
+  return useCallback((freq = 880, duration = 120, gain = 0.1) => {
     try {
       const Ctx = window.AudioContext || (window as any).webkitAudioContext;
       const ctx = (ctxRef.current ??= new Ctx());
@@ -113,7 +121,7 @@ function useBeep() {
       const g = ctx.createGain();
       o.type = "sine";
       o.frequency.value = freq;
-      g.gain.value = 0.1;
+      g.gain.value = gain;
 
       o.connect(g);
       g.connect(ctx.destination);
@@ -130,32 +138,149 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
+function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: React.RefObject<HTMLElement | null>;
+  textRef: React.RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* =========================================================
-   UI PRIMITIVES (same style as Home/Pomodoro)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -180,13 +305,87 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+const Chip = ({
+  active,
+  children,
+  onClick,
+  disabled,
+}: {
+  active?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
+      active
+        ? "bg-slate-900 text-white hover:bg-slate-800"
+        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  left,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+          {left}
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    CHAOS TIMER CARD
@@ -213,6 +412,10 @@ function ChaosTimerCard() {
   // Timer state
   const [running, setRunning] = useState(false);
   const [remaining, setRemaining] = useState(0);
+  const remainingRef = useRef<number>(0);
+  useEffect(() => {
+    remainingRef.current = remaining;
+  }, [remaining]);
 
   // Session state
   const [currentInterval, setCurrentInterval] = useState(1);
@@ -221,12 +424,68 @@ function ChaosTimerCard() {
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
+  const hasStartedRef = useRef(false);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  // Refs to avoid stale state inside rAF tick
+  const modeRef = useRef<Mode>(mode);
+  const intervalCountRef = useRef<number>(intervalCount);
+  const currentIntervalRef = useRef<number>(currentInterval);
+  const nextDurationRef = useRef<number>(nextDurationSec);
+  const rangeRef = useRef<{ min: number; max: number }>({
+    min: minSec,
+    max: maxSec,
+  });
+  const soundRef = useRef<boolean>(sound);
+  const beepEachIntervalRef = useRef<boolean>(beepEachInterval);
+  const finalCountdownBeepsRef = useRef<boolean>(finalCountdownBeeps);
+
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
+
+  useEffect(() => {
+    intervalCountRef.current = intervalCount;
+  }, [intervalCount]);
+
+  useEffect(() => {
+    currentIntervalRef.current = currentInterval;
+  }, [currentInterval]);
+
+  useEffect(() => {
+    nextDurationRef.current = nextDurationSec;
+  }, [nextDurationSec]);
+
+  useEffect(() => {
+    rangeRef.current = { min: minSec, max: maxSec };
+  }, [minSec, maxSec]);
+
+  useEffect(() => {
+    soundRef.current = sound;
+  }, [sound]);
+
+  useEffect(() => {
+    beepEachIntervalRef.current = beepEachInterval;
+  }, [beepEachInterval]);
+
+  useEffect(() => {
+    finalCountdownBeepsRef.current = finalCountdownBeeps;
+  }, [finalCountdownBeeps]);
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
 
   function normalizeRange() {
-    const min = clamp(minSec, 1, 3600);
-    const max = clamp(maxSec, 1, 3600);
+    const min = clamp(rangeRef.current.min, 1, 3600);
+    const max = clamp(rangeRef.current.max, 1, 3600);
     return min <= max ? { min, max } : { min: max, max: min };
   }
 
@@ -235,35 +494,116 @@ function ChaosTimerCard() {
     return randInt(min, max);
   }
 
-  function primeNext() {
-    setNextDurationSec(rollDuration());
-  }
+  function primeFromSettings() {
+    stopRaf();
+    setRunning(false);
+    hasStartedRef.current = false;
 
-  // Initialize durations
-  useEffect(() => {
     const d = rollDuration();
+    const preview = rollDuration();
+
+    currentIntervalRef.current = 1;
+    nextDurationRef.current = preview;
+
+    setCurrentInterval(1);
     setCurrentDurationSec(d);
     setRemaining(d * 1000);
-    setRunning(false);
-    setCurrentInterval(1);
+    setNextDurationSec(preview);
+
     endRef.current = null;
     lastBeepSecondRef.current = null;
-    setNextDurationSec(rollDuration());
+  }
+
+  function resetSession() {
+    primeFromSettings();
+  }
+
+  // Re-prime when core settings change
+  useEffect(() => {
+    primeFromSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [minSec, maxSec, mode]);
+  }, [minSec, maxSec, mode, intervalCount]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
+
+  function startNew() {
+    stopRaf();
+    lastBeepSecondRef.current = null;
+    hasStartedRef.current = true;
+
+    // If we are at 0 (or finished), reroll fresh session first
+    if (remainingRef.current <= 0) {
+      const d = rollDuration();
+      const preview = rollDuration();
+
+      currentIntervalRef.current = 1;
+      nextDurationRef.current = preview;
+
+      setCurrentInterval(1);
+      setCurrentDurationSec(d);
+      setRemaining(d * 1000);
+      setNextDurationSec(preview);
+    }
+
+    const remNow = Math.max(0, remainingRef.current);
+    endRef.current = performance.now() + remNow;
+    setRunning(true);
+  }
+
+  function resume() {
+    stopRaf();
+    lastBeepSecondRef.current = null;
+    endRef.current = performance.now() + Math.max(0, remainingRef.current);
+    setRunning(true);
+  }
+
+  function startPause() {
+    // Prime audio context on gesture
+    if (!running && soundRef.current) beep(0, 1, 0);
+
+    if (running) {
+      setRunning(false);
+      endRef.current = null;
+      lastBeepSecondRef.current = null;
+      stopRaf();
+      return;
+    }
+
+    // If never started, start fresh
+    if (!hasStartedRef.current) {
+      startNew();
+      return;
+    }
+
+    // If completed in intervals mode, reset to a fresh session
+    if (
+      modeRef.current === "intervals" &&
+      currentIntervalRef.current > intervalCountRef.current
+    ) {
+      resetSession();
+      return;
+    }
+
+    // If remaining is 0, reset and start
+    if (remainingRef.current <= 0) {
+      resetSession();
+      startNew();
+      return;
+    }
+
+    resume();
+  }
 
   // Timer loop
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       endRef.current = null;
       lastBeepSecondRef.current = null;
       return;
-    }
-
-    if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
     }
 
     const tick = () => {
@@ -271,11 +611,16 @@ function ChaosTimerCard() {
       const rem = Math.max(0, (endRef.current ?? now) - now);
       setRemaining(rem);
 
-      if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
+      if (
+        soundRef.current &&
+        finalCountdownBeepsRef.current &&
+        rem > 0 &&
+        rem <= 5_000
+      ) {
         const secLeft = Math.ceil(rem / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
           lastBeepSecondRef.current = secLeft;
-          beep(880, 110);
+          beep(880, 90, 0.07);
         }
       }
 
@@ -283,36 +628,51 @@ function ChaosTimerCard() {
         endRef.current = null;
         lastBeepSecondRef.current = null;
 
-        if (sound && (beepEachInterval || mode === "single")) {
-          beep(660, 220);
+        if (
+          soundRef.current &&
+          (beepEachIntervalRef.current || modeRef.current === "single")
+        ) {
+          beep(660, 160, 0.1);
         }
 
-        if (mode === "single") {
+        if (modeRef.current === "single") {
           setRunning(false);
+          hasStartedRef.current = false;
+          stopRaf();
           return;
         }
 
-        // intervals mode: advance
-        setCurrentInterval((i) => {
-          const nextI = i + 1;
-          return nextI;
-        });
+        // intervals mode: advance or stop exactly at count
+        const iNow = currentIntervalRef.current;
+        const count = intervalCountRef.current;
 
-        setCurrentDurationSec((_) => {
-          const d = nextDurationSec || rollDuration();
-          setRemaining(d * 1000);
-          // roll a new preview for the next after that
-          setNextDurationSec(rollDuration());
-          return d;
-        });
-
-        // stop if reached count
-        if (currentInterval >= intervalCount) {
+        if (iNow >= count) {
+          // Finished last interval
+          setCurrentInterval(count + 1);
           setRunning(false);
+          hasStartedRef.current = false;
+          stopRaf();
           return;
         }
 
-        // continue running: set endRef when effect sees remaining update
+        const nextI = iNow + 1;
+        const d =
+          nextDurationRef.current > 0
+            ? nextDurationRef.current
+            : rollDuration();
+        const preview = rollDuration();
+
+        currentIntervalRef.current = nextI;
+        nextDurationRef.current = preview;
+
+        setCurrentInterval(nextI);
+        setCurrentDurationSec(d);
+        setRemaining(d * 1000);
+        setNextDurationSec(preview);
+
+        endRef.current = performance.now() + d * 1000;
+
+        rafRef.current = requestAnimationFrame(tick);
         return;
       }
 
@@ -320,392 +680,457 @@ function ChaosTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [
-    running,
-    remaining,
-    sound,
-    finalCountdownBeeps,
-    beep,
-    mode,
-    beepEachInterval,
-    currentInterval,
-    intervalCount,
-    nextDurationSec,
-  ]);
+    return () => stopRaf();
+  }, [running, beep]);
 
-  // Ensure we stop exactly at intervalCount in intervals mode
-  useEffect(() => {
-    if (mode !== "intervals") return;
-    if (!running) return;
-    if (currentInterval > intervalCount) {
-      setRunning(false);
-    }
-  }, [currentInterval, intervalCount, mode, running]);
-
-  function resetSession() {
-    const d = rollDuration();
-    setRunning(false);
-    setCurrentInterval(1);
-    setCurrentDurationSec(d);
-    setRemaining(d * 1000);
-    setNextDurationSec(rollDuration());
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }
-
-  function startPause() {
-    // prime audio on gesture
-    if (!running && sound) beep(0, 1);
-
-    // Guard for intervals mode: if already completed, reset first
-    if (!running && mode === "intervals" && currentInterval > intervalCount) {
-      resetSession();
-    }
-
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
-  }
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isTypingTarget(e.target)) return;
-
-    if (e.key === " ") {
-      e.preventDefault();
-      startPause();
-    } else if (e.key.toLowerCase() === "r") {
-      resetSession();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    }
-  };
-
-  const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
-
-  const rangeText = useMemo(() => {
-    const { min, max } = normalizeRange();
-    return `${min}s–${max}s`;
+  const { min: normMin, max: normMax } = useMemo(() => {
+    const min = clamp(minSec, 1, 3600);
+    const max = clamp(maxSec, 1, 3600);
+    return min <= max ? { min, max } : { min: max, max: min };
   }, [minSec, maxSec]);
+
+  const rangeText = `${normMin}s–${normMax}s`;
+
+  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
+  const urgent = running && remaining > 0 && remaining <= 10_000;
+
+  const completedIntervals =
+    mode === "intervals" && currentInterval > intervalCount;
+
+  const statusLabel = !running
+    ? completedIntervals
+      ? "Done"
+      : hasStartedRef.current
+        ? "Paused"
+        : "Ready"
+    : mode === "intervals"
+      ? "Intervals running"
+      : "Random timer running";
+
+  const displayTone = urgent
+    ? "border-rose-200 bg-amber-50 text-rose-950"
+    : "border-slate-200 bg-slate-50 text-slate-950";
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [
+      shownTime,
+      statusLabel,
+      isFs,
+      running,
+      mode,
+      currentInterval,
+      intervalCount,
+      urgent,
+    ],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
 
   const progressText =
     mode === "intervals"
       ? `${Math.min(currentInterval, intervalCount)}/${intervalCount}`
       : "Single";
 
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
+
+    if (e.key === " ") {
+      e.preventDefault();
+      startPause();
+    } else if (k === "r") {
+      resetSession();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "s") {
+      setSound((x) => !x);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Chaos Timer</h2>
-          <p className="mt-1 text-base text-slate-700">
-            A <strong>random timer</strong> and{" "}
-            <strong>random interval timer</strong>. Generate random durations
-            for training, games, classroom drills, and chaos workouts.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Chaos Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        left={
+          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={sound}
+                onChange={(e) => setSound(e.target.checked)}
+                className="accent-amber-500"
+              />
+              Sound
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={beepEachInterval}
+                onChange={(e) => setBeepEachInterval(e.target.checked)}
+                disabled={!sound || mode !== "intervals"}
+                className="accent-amber-500"
+              />
+              Beep each interval
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={finalCountdownBeeps}
+                onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                disabled={!sound}
+                className="accent-amber-500"
+              />
+              Final beeps
+            </label>
+          </div>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={running ? "solid" : "ghost"}
+              onClick={startPause}
+              className="py-1 text-sm"
+            >
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={resetSession} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Sound
+              </label>
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={beepEachInterval}
+                  onChange={(e) => setBeepEachInterval(e.target.checked)}
+                  disabled={!sound || mode !== "intervals"}
+                  className="accent-amber-500"
+                />
+                Beep each interval
+              </label>
 
-      {/* Mode */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setMode("single")}
-          className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-            mode === "single"
-              ? "bg-amber-700 text-white hover:bg-amber-800"
-              : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-          }`}
-        >
-          Random timer
-        </button>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={finalCountdownBeeps}
+                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                  disabled={!sound}
+                  className="accent-amber-500"
+                />
+                Final beeps
+              </label>
 
-        <button
-          type="button"
-          onClick={() => setMode("intervals")}
-          className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-            mode === "intervals"
-              ? "bg-amber-700 text-white hover:bg-amber-800"
-              : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-          }`}
-        >
-          Random interval timer
-        </button>
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-        <span className="mx-1 text-xs font-semibold text-amber-800">
-          Range: {rangeText}
-        </span>
+        {/* Controls bar (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center gap-3">
+              <Btn kind="solid" onClick={startPause}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={resetSession}>
+                Reset
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => sound && beep(880, 140, 0.08)}
+                disabled={!sound}
+              >
+                Test beep
+              </Btn>
+            </div>
 
-        <Btn kind="ghost" onClick={resetSession} className="py-1.5">
-          Reroll
-        </Btn>
-      </div>
+            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · R reset · F fullscreen · S sound
+            </div>
+          </div>
+        )}
 
-      {/* Inputs */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-4">
-        <label className="block text-sm font-semibold text-amber-950">
-          Min seconds
-          <input
-            type="number"
-            min={1}
-            max={3600}
-            value={minSec}
-            onChange={(e) =>
-              setMinSec(clamp(Number(e.target.value || 1), 1, 3600))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Max seconds
-          <input
-            type="number"
-            min={1}
-            max={3600}
-            value={maxSec}
-            onChange={(e) =>
-              setMaxSec(clamp(Number(e.target.value || 45), 1, 3600))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Intervals
-          <input
-            type="number"
-            min={1}
-            max={500}
-            value={intervalCount}
-            onChange={(e) =>
-              setIntervalCount(clamp(Number(e.target.value || 10), 1, 500))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            disabled={mode !== "intervals"}
-          />
-        </label>
-
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={resetSession}>
-            Reset
-          </Btn>
-        </div>
-      </div>
-
-      {/* Sound options */}
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-          <input
-            type="checkbox"
-            checked={beepEachInterval}
-            onChange={(e) => setBeepEachInterval(e.target.checked)}
-            disabled={!sound || mode !== "intervals"}
-          />
-          Beep each interval
-        </label>
-
-        <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-          <input
-            type="checkbox"
-            checked={finalCountdownBeeps}
-            onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-            disabled={!sound}
-          />
-          Final beeps
-        </label>
-
-        <Btn
-          kind="ghost"
-          onClick={() => sound && beep(880, 140)}
-          disabled={!sound}
-        >
-          Test beep
-        </Btn>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 260 }}
-        aria-live="polite"
-      >
-        {/* Fullscreen CSS */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:16px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 20px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(92px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 800 18px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full p-6"
-          style={{ minHeight: 260 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border",
+            displayTone,
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 300,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="grid gap-4 sm:grid-cols-2 sm:items-start">
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Remaining
-              </div>
-              <div className="mt-2 font-mono text-6xl font-extrabold tracking-widest">
-                {shownTime}
-              </div>
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-                  <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                    Mode
-                  </div>
-                  <div className="mt-1 font-extrabold text-amber-950">
-                    {mode === "intervals" ? "Intervals" : "Single"}
-                  </div>
-                </div>
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
 
-                <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-                  <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                    Progress
-                  </div>
-                  <div className="mt-1 font-mono text-2xl font-extrabold">
-                    {progressText}
-                  </div>
-                </div>
+          <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Session
+              </div>
+              <div className="mt-1 text-base font-extrabold text-slate-950">
+                {mode === "intervals"
+                  ? "Random interval timer"
+                  : "Random timer"}
+              </div>
+              <div className="mt-2 text-sm font-semibold text-slate-700">
+                Range {rangeText}
+                {mode === "intervals" ? ` · Progress ${progressText}` : ""}
               </div>
             </div>
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                This interval
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Interval details
               </div>
-              <div className="mt-2 font-mono text-4xl font-extrabold tracking-wide">
-                {currentDurationSec}s
+              <div className="mt-1 text-sm font-semibold text-slate-700">
+                This interval:{" "}
+                <span className="font-mono font-extrabold text-slate-950">
+                  {currentDurationSec}s
+                </span>
               </div>
-
-              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-                Next interval preview: <strong>{nextDurationSec}s</strong>
-                <div className="mt-2 text-xs text-amber-800">
-                  Reroll resets the session and generates new random durations.
-                </div>
+              <div className="mt-1 text-sm font-semibold text-slate-700">
+                Next preview:{" "}
+                <span className="font-mono font-extrabold text-slate-950">
+                  {nextDurationSec}s
+                </span>
+              </div>
+              <div className="mt-2 text-xs text-slate-600">
+                Tap time to start/pause in fullscreen
               </div>
             </div>
           </div>
+
+          {!isFs && (
+            <div className="mt-3 text-xs text-slate-600">
+              Tip: click the card once so keyboard shortcuts work immediately.
+            </div>
+          )}
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Chaos Timer</div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-sub">
-              {mode === "intervals"
-                ? `Interval ${Math.min(currentInterval, intervalCount)} of ${intervalCount}`
-                : "Random timer"}
-              {" · "}
-              Range {rangeText}
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-sm font-extrabold text-slate-900">Mode</div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Chip
+                  active={mode === "single"}
+                  onClick={() => setMode("single")}
+                  disabled={running}
+                >
+                  Random timer
+                </Chip>
+                <Chip
+                  active={mode === "intervals"}
+                  onClick={() => setMode("intervals")}
+                  disabled={running}
+                >
+                  Random interval timer
+                </Chip>
+              </div>
+
+              <div className="mt-4 text-sm font-extrabold text-slate-900">
+                Random range (seconds)
+              </div>
+
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <label className="block text-sm font-semibold text-slate-900">
+                  Min seconds
+                  <input
+                    type="number"
+                    min={1}
+                    max={3600}
+                    value={minSec}
+                    disabled={running}
+                    onChange={(e) =>
+                      setMinSec(clamp(Number(e.target.value || 1), 1, 3600))
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                  />
+                </label>
+
+                <label className="block text-sm font-semibold text-slate-900">
+                  Max seconds
+                  <input
+                    type="number"
+                    min={1}
+                    max={3600}
+                    value={maxSec}
+                    disabled={running}
+                    onChange={(e) =>
+                      setMaxSec(clamp(Number(e.target.value || 45), 1, 3600))
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                  />
+                </label>
+              </div>
+
+              <div className="mt-2 text-xs text-slate-600">
+                If min is greater than max, the tool swaps them automatically.
+              </div>
             </div>
-            <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-sm font-extrabold text-slate-900">
+                Intervals (interval mode)
+              </div>
+
+              <label className="mt-3 block text-sm font-semibold text-slate-900">
+                Intervals
+                <input
+                  type="number"
+                  min={1}
+                  max={500}
+                  value={intervalCount}
+                  disabled={running || mode !== "intervals"}
+                  onChange={(e) =>
+                    setIntervalCount(
+                      clamp(Number(e.target.value || 10), 1, 500),
+                    )
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                />
+              </label>
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                  <input
+                    type="checkbox"
+                    checked={beepEachInterval}
+                    onChange={(e) => setBeepEachInterval(e.target.checked)}
+                    disabled={!sound || mode !== "intervals"}
+                    className="accent-amber-500"
+                  />
+                  Beep each interval
+                </label>
+
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                  <input
+                    type="checkbox"
+                    checked={finalCountdownBeeps}
+                    onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                    disabled={!sound}
+                    className="accent-amber-500"
+                  />
+                  Final beeps
+                </label>
+              </div>
+
+              <div className="mt-3 text-xs text-slate-600">
+                In interval mode, the tool previews the next random duration.
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <Chip
+                active={mode === "single"}
+                onClick={() => !running && setMode("single")}
+                disabled={running}
+              >
+                Random timer
+              </Chip>
+              <Chip
+                active={mode === "intervals"}
+                onClick={() => !running && setMode("intervals")}
+                disabled={running}
+              >
+                Random intervals
+              </Chip>
+              <div className="text-xs font-semibold text-slate-600">
+                Range {rangeText}
+                {mode === "intervals" ? ` · ${progressText}` : ""}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div className="flex items-center gap-2">
+                <Btn kind={running ? "solid" : "ghost"} onClick={startPause}>
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={resetSession}>
+                  Reset
+                </Btn>
+              </div>
+
+              <div className="text-xs text-slate-600 sm:text-sm">
+                Tap time to start/pause · Space · R · F · S
+              </div>
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -717,7 +1142,7 @@ function ChaosTimerCard() {
 export default function ChaosTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/chaos-timer";
+  const url = "https://www.ilovetimers.com/chaos-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -736,7 +1161,7 @@ export default function ChaosTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -746,234 +1171,42 @@ export default function ChaosTimerPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a random timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A random timer generates a countdown duration randomly within a range. It is useful for games, drills, and surprise timing.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What is a random interval timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A random interval timer generates a sequence of random countdowns. Each interval has a random duration within your chosen range, which is useful for training, reaction games, and classroom drills.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I control the random range?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Set the minimum and maximum seconds. The timer will choose random durations within that range.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets and rerolls, and F toggles fullscreen while the card is focused.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Chaos Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Chaos Timer
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Chaos Timer (Random Interval Timer)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A <strong>random timer</strong> and{" "}
-            <strong>random interval timer</strong> for training and games. Set a
-            range, roll random durations, and go fullscreen.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Set a random range, then run a single random countdown or a sequence
+            of random intervals. Fullscreen has a big, readable display with tap
+            to start and pause.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <ChaosTimerCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Random durations (no pattern)
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Useful when you want unpredictability: reaction drills, tag games,
-              classroom games, or surprise work blocks.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Random interval timer for training
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Set a range like <strong>10s–45s</strong> and a number of
-              intervals. Each interval rerolls a new duration.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset / Reroll
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free random timer and random interval timer
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>random timer</strong> generates a countdown duration
-              at random within your chosen range. Use it for games, drills, and
-              any activity where predictable timing makes things boring.
-            </p>
-
-            <p>
-              In <strong>random interval timer</strong> mode, the tool rolls a
-              new random duration each interval. That makes it useful for
-              training sessions where you want varied work blocks without doing
-              math.
-            </p>
-
-            <p>
-              If you want structured intervals instead of randomness, use{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
-              </Link>{" "}
-              or a standard{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Random timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                One random countdown duration. Reroll anytime.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Random interval timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Multiple random intervals in a row for workouts and games.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Fullscreen
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Big digits with a dark, high-contrast display.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Chaos Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How does the random interval timer work?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Set a minimum and maximum duration, choose the number of
-              intervals, and press Start. Each time an interval ends, the next
-              interval rerolls a random duration within your range.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I reroll the random durations?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Press R or click Reroll. It resets the session and generates
-              new random durations.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does this random timer work in fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Press Fullscreen (or F) while the card is focused for a dark
-              view with huge digits.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong>{" "}
-              reset/reroll • <strong>F</strong> fullscreen (when focused).
-            </div>
-          </details>
-        </div>
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Chaos Timer</span>
+        </p>
       </section>
     </main>
   );

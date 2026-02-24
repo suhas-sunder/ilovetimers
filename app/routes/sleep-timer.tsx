@@ -1,7 +1,16 @@
 // app/routes/sleep-timer.tsx
 import type { Route } from "./+types/sleep-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +42,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -80,6 +89,123 @@ async function toggleFullscreen(el: HTMLElement) {
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ *
+ * NOTE: Start large (maxPx) so the first paint is big and readable,
+ * then converge quickly to the best fit. This avoids the "slow loading numbers" feel.
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(maxPx);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* WebAudio beep (soft chime-ish) */
@@ -130,16 +256,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -164,13 +301,90 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
+function TogglePill({
+  checked,
+  onChange,
+  label,
+  disabled,
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  label: string;
+  disabled?: boolean;
+}) {
+  return (
+    <label
+      className={[
+        "inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold",
+        disabled
+          ? "border-slate-200 bg-slate-50 text-slate-400"
+          : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+      ].join(" ")}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        disabled={disabled}
+      />
+      {label}
+    </label>
+  );
+}
 
 /* =========================================================
    SLEEP TIMER CARD
@@ -180,52 +394,76 @@ function SleepTimerCard() {
 
   const presetsMin = useMemo(() => [5, 10, 15, 20, 30, 45, 60, 90, 120], []);
   const [minutes, setMinutes] = useState(30);
+
   const [remaining, setRemaining] = useState(minutes * 60 * 1000);
+  const remainingRef = useRef<number>(minutes * 60 * 1000);
+
   const [running, setRunning] = useState(false);
 
   const [sound, setSound] = useState(true);
   const [softAlarm, setSoftAlarm] = useState(true);
-
   const [dimMode, setDimMode] = useState(false);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
 
   useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
+    remainingRef.current = remaining;
+  }, [remaining]);
+
+  // When minutes changes, reset to that duration and stop.
+  useEffect(() => {
+    const next = minutes * 60 * 1000;
+    setRemaining(next);
+    remainingRef.current = next;
+
     setRunning(false);
     endRef.current = null;
+    stopRaf();
   }, [minutes]);
 
+  // Main timing loop (fixed: does NOT depend on "remaining", so it stays snappy).
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       endRef.current = null;
       return;
     }
 
     if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
+      endRef.current = performance.now() + remainingRef.current;
     }
 
     const tick = () => {
       const now = performance.now();
       const rem = Math.max(0, (endRef.current ?? now) - now);
+
+      // Keep ref in sync for instant pause/resume accuracy.
+      remainingRef.current = rem;
       setRemaining(rem);
 
       if (rem <= 0) {
         endRef.current = null;
         setRunning(false);
+        stopRaf();
 
-        // Soft alarm: 3 gentle tones
+        // Alarm
         if (sound && softAlarm) {
           beep(523.25, 160, 0.05);
           window.setTimeout(() => beep(659.25, 160, 0.05), 260);
           window.setTimeout(() => beep(783.99, 200, 0.05), 520);
         } else if (sound) {
-          // single beep
           beep(660, 220, 0.07);
         }
         return;
@@ -235,254 +473,306 @@ function SleepTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, remaining, sound, softAlarm, beep]);
+    return () => stopRaf();
+  }, [running, sound, softAlarm, beep]);
+
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
   function reset() {
+    const next = minutes * 60 * 1000;
     setRunning(false);
-    setRemaining(minutes * 60 * 1000);
+    setRemaining(next);
+    remainingRef.current = next;
     endRef.current = null;
+    stopRaf();
   }
 
   function startPause() {
-    setRunning((r) => !r);
+    setRunning((r) => {
+      const next = !r;
+      if (!next) {
+        // pausing: freeze remaining precisely
+        endRef.current = null;
+        stopRaf();
+      } else {
+        // starting: endRef gets set in effect using remainingRef
+      }
+      return next;
+    });
   }
 
   function setPreset(m: number) {
     setMinutes(m);
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const statusLabel = remaining <= 0 ? "Done" : running ? "Running" : "Ready";
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "d") {
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "d") {
       setDimMode((x) => !x);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
+  // Round display to whole seconds, but keep internal ms for accuracy.
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, running, dimMode],
+    minPx: 56,
+    maxPx: isFs ? 560 : 380,
+    paddingAllowancePx: isFs ? 72 : 72,
+  });
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Sleep Timer</h2>
-          <p className="mt-1 text-base text-slate-700">
-            A simple <strong>online sleep timer</strong> with a countdown, dim
-            mode, fullscreen, and an optional soft alarm.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+      className={dimMode && isFs ? "bg-black text-white" : ""}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Sleep Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Sleep Timer (Countdown + Fullscreen)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Set a countdown, optionally dim the display, and use fullscreen
+                for a clean, readable timer.
+              </p>
+            </div>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={softAlarm}
-              onChange={(e) => setSoftAlarm(e.target.checked)}
-              disabled={!sound}
-            />
-            Soft alarm
-          </label>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={dimMode}
-              onChange={(e) => setDimMode(e.target.checked)}
-            />
-            Dim mode
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Presets + custom */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
-          <input
-            type="number"
-            min={1}
-            max={360}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 360))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 ${
-          dimMode ? "bg-black text-white" : "bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 260 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#000000;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.85;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.75;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 260 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border text-slate-950",
+            dimMode
+              ? "bg-black text-white border-slate-800"
+              : "bg-slate-50 border-slate-200",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-2">
+          <div
+            className={[
+              "text-xs font-extrabold uppercase tracking-widest",
+              dimMode ? "text-white/70" : "text-slate-700",
+            ].join(" ")}
+          >
+            {statusLabel}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+
+          {isFs && (
             <div
-              className={`text-xs font-extrabold uppercase tracking-widest ${dimMode ? "text-white/70" : "text-slate-700"}`}
+              className={[
+                "pointer-events-none absolute left-3 right-3 top-3",
+                "sm:left-6 sm:right-6 sm:top-5",
+              ].join(" ")}
             >
-              Sleep countdown
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div
+                    className={[
+                      "text-[11px] font-extrabold uppercase tracking-widest",
+                      dimMode ? "text-white/60" : "text-slate-600",
+                    ].join(" ")}
+                  >
+                    Tips
+                  </div>
+                  <div
+                    className={[
+                      "rounded-lg border px-2 py-1 text-xs font-semibold backdrop-blur",
+                      dimMode
+                        ? "border-white/15 bg-white/10 text-white/80"
+                        : "border-slate-200 bg-white/85 text-slate-700",
+                    ].join(" ")}
+                  >
+                    Tap time to start/pause · D toggles dim
+                  </div>
+                </div>
+
+                <div
+                  className={[
+                    "hidden sm:block rounded-full border px-3 py-1 text-xs font-semibold backdrop-blur",
+                    dimMode
+                      ? "border-white/15 bg-white/10 text-white/80"
+                      : "border-slate-200 bg-white/85 text-slate-700",
+                  ].join(" ")}
+                >
+                  Space = Start/Pause
+                </div>
+              </div>
             </div>
-            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
-              {shownTime}
+          )}
+        </div>
+
+        {/* Controls (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <TogglePill
+                checked={sound}
+                onChange={(v) => {
+                  setSound(v);
+                  if (!v) setSoftAlarm(true); // keep consistent default when re-enabled
+                }}
+                label="Sound"
+              />
+              <TogglePill
+                checked={softAlarm}
+                onChange={setSoftAlarm}
+                label="Soft alarm"
+                disabled={!sound}
+              />
+              <TogglePill
+                checked={dimMode}
+                onChange={setDimMode}
+                label="Dim mode"
+              />
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex flex-wrap items-center gap-2">
+                {presetsMin.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setPreset(m)}
+                    className={[
+                      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                      m === minutes
+                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                    ].join(" ")}
+                  >
+                    {m}m
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <label className="block text-sm font-semibold text-slate-900">
+                  Minutes
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={1}
+                    max={360}
+                    value={minutes}
+                    onChange={(e) =>
+                      setMinutes(clamp(Number(e.target.value || 1), 1, 360))
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  />
+                </label>
+
+                <div className="flex items-center gap-3">
+                  <Btn kind="solid" onClick={startPause}>
+                    {running ? "Pause" : "Start"}
+                  </Btn>
+                  <Btn kind="ghost" onClick={reset}>
+                    Reset
+                  </Btn>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · R reset · F fullscreen · D dim
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Sleep timer</div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-help">
-              Space start/pause · R reset · F fullscreen · D dim
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · R reset · F
+              fullscreen · D dim
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Honest browser disclosure */}
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        <div className="font-extrabold text-amber-950">
-          About “screen off timer”
-        </div>
-        <p className="mt-2 leading-relaxed">
-          Browsers cannot reliably turn your screen off. This page can{" "}
-          <strong>dim the display</strong> (Dim mode) and run a countdown{" "}
-          <strong>while the tab is open</strong>. Your device’s screen sleep and
-          power settings still control actual screen-off behavior.
-        </p>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen · D dim
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -491,8 +781,10 @@ function SleepTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function SleepTimerPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/sleep-timer";
+export default function SleepTimerPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/sleep-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -511,172 +803,34 @@ export default function SleepTimerPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Sleep Timer", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a sleep timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A sleep timer is a countdown you start before sleep so something can stop, alert you, or help you keep track of time.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can an online sleep timer turn my screen off?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Not reliably. Browsers cannot force the device screen to turn off. This page can dim the display and run while the tab is open, but your device power settings control screen-off behavior.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does the timer keep running if I close the tab?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "It runs while the page is open. Browsers may reduce timer update frequency in background tabs to save power.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What is a soft alarm?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A soft alarm uses gentle tones instead of a harsh beep. You can toggle it on or off.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Sleep Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Sleep Timer (Online + Dim Mode)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A simple <strong>sleep timer</strong> with presets, fullscreen, and{" "}
-            <strong>dim mode</strong>. Includes an optional{" "}
-            <strong>soft alarm</strong>.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <SleepTimerCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free online sleep timer with a simple countdown
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              A <strong>sleep timer</strong> is a countdown you start before
-              bed. You can use it to time a relaxation routine, set a limit for
-              a screen session, or run a gentle countdown while you fall asleep.
-            </p>
-
-            <p>
-              If you searched for a <strong>screen off timer</strong>, here’s
-              the honest part: web pages can’t force your device to turn the
-              screen off. This page includes <strong>dim mode</strong> to reduce
-              glare, but your operating system’s power settings control actual
-              screen sleep.
-            </p>
-
-            <p>
-              For quiet sessions, use{" "}
-              <Link
-                to="/silent-timer"
-                className="font-semibold hover:underline"
-              >
-                Silent Timer
-              </Link>
-              . For guided calm breathing, use{" "}
-              <Link
-                to="/breathing-timer"
-                className="font-semibold hover:underline"
-              >
-                Breathing Timer
-              </Link>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <SleepTimerCard />
         </div>
-      </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Sleep Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can this act as a “screen off timer”?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Not directly. Browsers can’t reliably turn your screen off. Use
-              Dim mode here, and set your device’s screen sleep settings for
-              true screen-off behavior.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Will the timer still run in the background?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              It runs while the page is open, but some browsers reduce update
-              frequency in background tabs to save power.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is a soft alarm?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              It’s a gentle set of tones instead of a harsh beep. You can toggle
-              it on or off.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What’s a good duration for a sleep timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Common choices are 20 to 45 minutes for winding down, or 60 to 90
-              minutes if you want a longer cutoff.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Sleep Timer</span>
+        </p>
       </section>
     </main>
   );

@@ -1,7 +1,7 @@
 // app/routes/time-zone-converter.tsx
 import type { Route } from "./+types/time-zone-converter";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +33,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -47,6 +47,8 @@ export function loader() {
 /* =========================================================
    UTILS
 ========================================================= */
+const pad2 = (n: number) => n.toString().padStart(2, "0");
+
 function isTypingTarget(target: EventTarget | null) {
   const el = target as HTMLElement | null;
   if (!el) return false;
@@ -67,11 +69,21 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
-function clamp(n: number, min: number, max: number) {
-  return Math.min(Math.max(n, min), max);
-}
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
 
-const pad2 = (n: number) => n.toString().padStart(2, "0");
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
 
 function safeParseJSON<T>(raw: string | null): T | null {
   if (!raw) return null;
@@ -99,47 +111,56 @@ function tryGuessUserTimeZone() {
   }
 }
 
-function formatInTimeZone(
-  date: Date,
-  timeZone: string,
-  opts?: Intl.DateTimeFormatOptions,
-) {
-  const base: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    ...opts,
-    timeZone,
-  };
-  return new Intl.DateTimeFormat(undefined, base).format(date);
+function parseLocalDateTime(dateStr: string, timeStr: string) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr.trim());
+  if (!m) return null;
+
+  const t = /^(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(timeStr.trim());
+  if (!t) return null;
+
+  const year = Number(m[1]);
+  const month = Number(m[2]);
+  const day = Number(m[3]);
+  const hour = Number(t[1]);
+  const minute = Number(t[2]);
+  const second = Number(t[3] ?? "0");
+
+  if (
+    !Number.isFinite(year) ||
+    !Number.isFinite(month) ||
+    !Number.isFinite(day) ||
+    !Number.isFinite(hour) ||
+    !Number.isFinite(minute) ||
+    !Number.isFinite(second)
+  )
+    return null;
+
+  if (month < 1 || month > 12) return null;
+  if (day < 1 || day > 31) return null;
+  if (hour < 0 || hour > 23) return null;
+  if (minute < 0 || minute > 59) return null;
+  if (second < 0 || second > 59) return null;
+
+  return { year, month, day, hour, minute, second };
 }
 
-function tzAbbr(date: Date, timeZone: string) {
+function isValidTz(id: string) {
+  if (id === "UTC") return true;
   try {
-    const parts = new Intl.DateTimeFormat(undefined, {
-      timeZone,
-      timeZoneName: "short",
-    }).formatToParts(date);
-    return parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+    new Intl.DateTimeFormat(undefined, { timeZone: id }).format(new Date());
+    return true;
   } catch {
-    return "";
+    return false;
   }
 }
 
+function normalizeTz(id: string) {
+  return isValidTz(id) ? id : "UTC";
+}
+
 /**
- * Convert a local date/time (YYYY-MM-DD + HH:mm[:ss]) that the user intends in `fromTz`
- * into an absolute Date (UTC instant), DST-aware.
- *
- * Approach:
- * - Take the components as if they were UTC (Date.UTC).
- * - Find the offset between that "guess instant" and how that instant renders in `fromTz`.
- * - Adjust by that offset.
- * - Run a couple iterations to converge.
+ * Convert a local date/time that the user intends in `fromTz` into an absolute Date (UTC instant), DST-aware.
+ * Iterative approach to resolve offset changes around DST boundaries.
  */
 function dateFromZonedComponents(args: {
   year: number;
@@ -191,10 +212,9 @@ function dateFromZonedComponents(args: {
   for (let i = 0; i < 3; i++) {
     const zp = getZonedParts(guessUtcMs);
     const renderedAsUtcMs = Date.UTC(zp.y, zp.mo - 1, zp.da, zp.h, zp.mi, zp.s);
-    const offsetMs = renderedAsUtcMs - guessUtcMs; // tz offset at that instant
-    // If we want desired local components, we adjust guess by the offset between desired and rendered.
-    // This essentially solves: local(desired) == format(fromTz, guessInstant)
+    const offsetMs = renderedAsUtcMs - guessUtcMs;
     const next = desiredUtcMs - offsetMs;
+
     if (Math.abs(next - guessUtcMs) < 1000) {
       guessUtcMs = next;
       break;
@@ -205,39 +225,6 @@ function dateFromZonedComponents(args: {
   return new Date(guessUtcMs);
 }
 
-function parseLocalDateTime(dateStr: string, timeStr: string) {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr.trim());
-  if (!m) return null;
-
-  const t = /^(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(timeStr.trim());
-  if (!t) return null;
-
-  const year = Number(m[1]);
-  const month = Number(m[2]);
-  const day = Number(m[3]);
-  const hour = Number(t[1]);
-  const minute = Number(t[2]);
-  const second = Number(t[3] ?? "0");
-
-  if (
-    !Number.isFinite(year) ||
-    !Number.isFinite(month) ||
-    !Number.isFinite(day) ||
-    !Number.isFinite(hour) ||
-    !Number.isFinite(minute) ||
-    !Number.isFinite(second)
-  )
-    return null;
-
-  if (month < 1 || month > 12) return null;
-  if (day < 1 || day > 31) return null;
-  if (hour < 0 || hour > 23) return null;
-  if (minute < 0 || minute > 59) return null;
-  if (second < 0 || second > 59) return null;
-
-  return { year, month, day, hour, minute, second };
-}
-
 function buildShareUrl(args: {
   fromTz: string;
   toTz: string;
@@ -246,7 +233,7 @@ function buildShareUrl(args: {
   showSeconds: boolean;
 }) {
   try {
-    const u = new URL("https://ilovetimers.com/time-zone-converter");
+    const u = new URL("https://www.ilovetimers.com/time-zone-converter");
     u.searchParams.set("from", args.fromTz);
     u.searchParams.set("to", args.toTz);
     u.searchParams.set("date", args.date);
@@ -266,16 +253,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -303,8 +301,8 @@ const Btn = ({
     title={title}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -326,15 +324,62 @@ const Chip = ({
     type="button"
     onClick={onClick}
     title={title}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
+    className={[
+      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
       active
-        ? "bg-amber-700 text-white hover:bg-amber-800"
-        : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-    }`}
+        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+    ].join(" ")}
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    TIME ZONE LIST
@@ -413,24 +458,67 @@ const TZ_OPTS: TzOpt[] = [
   { id: "UTC", label: "UTC", region: "UTC" },
 ];
 
-function isValidTz(id: string) {
-  if (id === "UTC") return true;
-  try {
-    // throws if invalid
-    new Intl.DateTimeFormat(undefined, { timeZone: id }).format(new Date());
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function normalizeTz(id: string) {
-  return isValidTz(id) ? id : "UTC";
-}
-
 function getOptLabel(id: string) {
   const hit = TZ_OPTS.find((x) => x.id === id);
   return hit?.label ?? id;
+}
+
+/* =========================================================
+   FORMATTER CACHE (keeps UI snappy)
+========================================================= */
+type FormatKey = string;
+type FormatBundle = {
+  main: Intl.DateTimeFormat;
+  tzName: Intl.DateTimeFormat;
+};
+
+const formatterCache = new Map<FormatKey, FormatBundle>();
+
+function getFormatters(timeZone: string, showSeconds: boolean) {
+  const key = `${timeZone}::${showSeconds ? "1" : "0"}`;
+  const hit = formatterCache.get(key);
+  if (hit) return hit;
+
+  const base: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone,
+  };
+
+  const main = new Intl.DateTimeFormat(undefined, {
+    ...base,
+    ...(showSeconds ? { second: "2-digit" } : {}),
+  });
+
+  const tzName = new Intl.DateTimeFormat(undefined, {
+    timeZone,
+    timeZoneName: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  const bundle = { main, tzName };
+  formatterCache.set(key, bundle);
+  return bundle;
+}
+
+function formatInTimeZone(date: Date, timeZone: string, showSeconds: boolean) {
+  return getFormatters(timeZone, showSeconds).main.format(date);
+}
+
+function tzAbbr(date: Date, timeZone: string) {
+  try {
+    const parts = getFormatters(timeZone, true).tzName.formatToParts(date);
+    return parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+  } catch {
+    return "";
+  }
 }
 
 /* =========================================================
@@ -447,43 +535,61 @@ type PersistedV1 = {
 
 const LS_KEY = "ilovetimers:time-zone-converter:v1";
 
-function TimeZoneConverterCard() {
-  const fsRef = useRef<HTMLDivElement>(null);
+function deriveDefaultLocalStrings(nowISO: string) {
+  const now = new Date(nowISO);
+  const y = now.getFullYear();
+  const mo = pad2(now.getMonth() + 1);
+  const da = pad2(now.getDate());
+  const hh = pad2(now.getHours());
+  const mi = pad2(now.getMinutes());
+  const ss = pad2(now.getSeconds());
+  return {
+    date: `${y}-${mo}-${da}`,
+    timeNoSec: `${hh}:${mi}`,
+    timeWithSec: `${hh}:${mi}:${ss}`,
+  };
+}
+
+function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const toTzRef = useRef<string>("UTC");
+
+  const defaults = useMemo(() => deriveDefaultLocalStrings(nowISO), [nowISO]);
+
+  // Initialize state synchronously (snappy first paint).
+  const [fromTz, setFromTz] = useState<string>(() => {
+    if (typeof window === "undefined") return "UTC";
+    return normalizeTz(tryGuessUserTimeZone());
+  });
+  const [toTz, setToTz] = useState<string>(() => "UTC");
+
+  const [dateStr, setDateStr] = useState<string>(() => defaults.date);
+  const [timeStr, setTimeStr] = useState<string>(() => defaults.timeNoSec);
+  const [showSeconds, setShowSeconds] = useState<boolean>(() => false);
 
   const [hydrated, setHydrated] = useState(false);
-
-  const [fromTz, setFromTz] = useState<string>("UTC");
-  const [toTz, setToTz] = useState<string>("America/New_York");
-
-  const [dateStr, setDateStr] = useState<string>(""); // YYYY-MM-DD
-  const [timeStr, setTimeStr] = useState<string>("09:00"); // HH:mm[:ss]
-  const [showSeconds, setShowSeconds] = useState<boolean>(false);
-
   const [copied, setCopied] = useState<string | null>(null);
 
-  // Hydrate: URL params first, then localStorage, then defaults
+  // Keep ref in sync (fixes swap correctness).
   useEffect(() => {
-    const now = new Date();
-    const y = now.getFullYear();
-    const mo = pad2(now.getMonth() + 1);
-    const da = pad2(now.getDate());
-    const hh = pad2(now.getHours());
-    const mi = pad2(now.getMinutes());
-    const ss = pad2(now.getSeconds());
+    toTzRef.current = toTz;
+  }, [toTz]);
 
-    const defaultDate = `${y}-${mo}-${da}`;
-    const defaultTime = `${hh}:${mi}`;
+  // Hydrate from URL + localStorage once on mount, but do not block first paint.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
     let next: PersistedV1 = {
       v: 1,
       fromTz: normalizeTz(tryGuessUserTimeZone()),
       toTz: "UTC",
-      date: defaultDate,
-      time: defaultTime,
+      date: defaults.date,
+      time: defaults.timeNoSec,
       showSeconds: false,
     };
 
-    // localStorage
     const saved = safeParseJSON<PersistedV1>(
       window.localStorage.getItem(LS_KEY),
     );
@@ -498,7 +604,6 @@ function TimeZoneConverterCard() {
       };
     }
 
-    // URL params override
     try {
       const u = new URL(window.location.href);
       const pFrom = u.searchParams.get("from");
@@ -516,28 +621,32 @@ function TimeZoneConverterCard() {
       // ignore
     }
 
-    // If showSeconds but time is missing seconds, add from "now"
+    // Normalize time format based on showSeconds.
+    const currentSs = pad2(new Date().getSeconds());
     if (next.showSeconds && /^\d{2}:\d{2}$/.test(next.time)) {
-      next.time = `${next.time}:${ss}`;
+      next.time = `${next.time}:${currentSs}`;
     }
-    // If not showing seconds but time has seconds, drop them
     if (!next.showSeconds && /^\d{2}:\d{2}:\d{2}$/.test(next.time)) {
       next.time = next.time.slice(0, 5);
     }
 
+    // Apply.
     setFromTz(next.fromTz);
     setToTz(next.toTz);
     setDateStr(next.date);
-    setTimeStr(
-      next.time || (next.showSeconds ? `${defaultTime}:${ss}` : defaultTime),
-    );
     setShowSeconds(next.showSeconds);
+    setTimeStr(
+      next.time ||
+        (next.showSeconds ? defaults.timeWithSec : defaults.timeNoSec),
+    );
+
     setHydrated(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persist
+  // Persist changes.
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || typeof window === "undefined") return;
     const toSave: PersistedV1 = {
       v: 1,
       fromTz,
@@ -553,12 +662,24 @@ function TimeZoneConverterCard() {
     }
   }, [hydrated, fromTz, toTz, dateStr, timeStr, showSeconds]);
 
-  // Copied toast
+  // Copied toast.
   useEffect(() => {
     if (!copied) return;
     const t = window.setTimeout(() => setCopied(null), 1200);
     return () => window.clearTimeout(t);
   }, [copied]);
+
+  const tzGroups = useMemo(() => {
+    const groups = new Map<string, TzOpt[]>();
+    for (const o of TZ_OPTS) {
+      if (!groups.has(o.region)) groups.set(o.region, []);
+      groups.get(o.region)!.push(o);
+    }
+    return Array.from(groups.entries()).map(([region, list]) => ({
+      region,
+      list,
+    }));
+  }, []);
 
   const parsed = useMemo(
     () => parseLocalDateTime(dateStr, timeStr),
@@ -568,11 +689,10 @@ function TimeZoneConverterCard() {
   const fromInstant = useMemo(() => {
     if (!parsed) return null;
     try {
-      const d = dateFromZonedComponents({
+      return dateFromZonedComponents({
         ...parsed,
         fromTz: normalizeTz(fromTz),
       });
-      return d;
     } catch {
       return null;
     }
@@ -583,12 +703,8 @@ function TimeZoneConverterCard() {
     const fromId = normalizeTz(fromTz);
     const toId = normalizeTz(toTz);
 
-    const baseOpts: Intl.DateTimeFormatOptions = showSeconds
-      ? {}
-      : { second: undefined as any };
-
-    const fromText = formatInTimeZone(fromInstant, fromId, baseOpts);
-    const toText = formatInTimeZone(fromInstant, toId, baseOpts);
+    const fromText = formatInTimeZone(fromInstant, fromId, showSeconds);
+    const toText = formatInTimeZone(fromInstant, toId, showSeconds);
 
     const fromAb = tzAbbr(fromInstant, fromId);
     const toAb = tzAbbr(fromInstant, toId);
@@ -602,27 +718,24 @@ function TimeZoneConverterCard() {
     };
   }, [fromInstant, fromTz, toTz, showSeconds]);
 
+  const invalidInput = hydrated && (!parsed || !fromInstant);
+
   const swap = () => {
-    setFromTz((a) => {
-      setToTz(a);
-      return toTz;
+    setFromTz((curFrom) => {
+      const curTo = toTzRef.current;
+      setToTz(curFrom);
+      return curTo;
     });
   };
 
   const setNow = () => {
-    const now = new Date();
-    const y = now.getFullYear();
-    const mo = pad2(now.getMonth() + 1);
-    const da = pad2(now.getDate());
-    const hh = pad2(now.getHours());
-    const mi = pad2(now.getMinutes());
-    const ss = pad2(now.getSeconds());
-    setDateStr(`${y}-${mo}-${da}`);
-    setTimeStr(showSeconds ? `${hh}:${mi}:${ss}` : `${hh}:${mi}`);
+    const d = deriveDefaultLocalStrings(new Date().toISOString());
+    setDateStr(d.date);
+    setTimeStr(showSeconds ? d.timeWithSec : d.timeNoSec);
   };
 
   const onCopy = async () => {
-    if (!preview || !fromInstant) return;
+    if (!preview) return;
 
     const fromLabel = getOptLabel(normalizeTz(fromTz));
     const toLabel = getOptLabel(normalizeTz(toTz));
@@ -661,14 +774,17 @@ function TimeZoneConverterCard() {
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
-    if (e.key.toLowerCase() === "f" && fsRef.current) {
-      toggleFullscreen(fsRef.current);
-    } else if (e.key.toLowerCase() === "s") {
+    const k = e.key.toLowerCase();
+    if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "s") {
       swap();
-    } else if (e.key.toLowerCase() === "n") {
+    } else if (k === "n") {
       setNow();
-    } else if (e.key.toLowerCase() === "c") {
+    } else if (k === "c") {
       void onCopy();
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
@@ -686,267 +802,284 @@ function TimeZoneConverterCard() {
     [],
   );
 
-  const tzGroups = useMemo(() => {
-    const groups = new Map<string, TzOpt[]>();
-    for (const o of TZ_OPTS) {
-      if (!groups.has(o.region)) groups.set(o.region, []);
-      groups.get(o.region)!.push(o);
-    }
-    return Array.from(groups.entries()).map(([region, list]) => ({
-      region,
-      list,
-    }));
-  }, []);
-
-  const invalidInput = hydrated && (!parsed || !fromInstant);
+  const statusLabel = preview
+    ? invalidInput
+      ? "Invalid input"
+      : "Ready"
+    : "Enter date and time";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Time Zone Converter
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Convert a date and time between time zones with DST awareness. Copy
-            results, swap zones, and go fullscreen.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={showSeconds}
-              onChange={(e) => {
-                const next = e.target.checked;
-                setShowSeconds(next);
-                setTimeStr((cur) => {
-                  const now = new Date();
-                  const ss = pad2(now.getSeconds());
-                  if (next) {
-                    if (/^\d{2}:\d{2}$/.test(cur)) return `${cur}:${ss}`;
-                    return cur;
-                  } else {
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Time Zone Converter"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+              <input
+                type="checkbox"
+                checked={showSeconds}
+                onChange={(e) => {
+                  const next = e.target.checked;
+                  setShowSeconds(next);
+                  setTimeStr((cur) => {
+                    const ss = pad2(new Date().getSeconds());
+                    if (next) {
+                      if (/^\d{2}:\d{2}$/.test(cur)) return `${cur}:${ss}`;
+                      return cur;
+                    }
                     if (/^\d{2}:\d{2}:\d{2}$/.test(cur)) return cur.slice(0, 5);
                     return cur;
-                  }
-                });
-              }}
-            />
-            Seconds
-          </label>
+                  });
+                }}
+              />
+              Seconds
+            </label>
 
-          <Btn kind="ghost" onClick={swap} title="Swap zones (S)">
-            Swap
-          </Btn>
-          <Btn kind="ghost" onClick={setNow} title="Set to now (N)">
-            Now
-          </Btn>
-          <Btn
-            kind="ghost"
-            onClick={onCopy}
-            disabled={!preview}
-            title="Copy (C)"
-          >
-            Copy
-          </Btn>
-          <Btn
-            kind="ghost"
-            onClick={onCopyLink}
-            disabled={!shareUrl}
-            title="Copy share link"
-          >
-            Share
-          </Btn>
-          <Btn
-            kind="ghost"
-            onClick={() => fsRef.current && toggleFullscreen(fsRef.current)}
-            title="Fullscreen (F)"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+            <Btn
+              kind="ghost"
+              onClick={swap}
+              className="py-1 text-sm"
+              title="Swap (S)"
+            >
+              Swap
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={setNow}
+              className="py-1 text-sm"
+              title="Now (N)"
+            >
+              Now
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={onCopy}
+              className="py-1 text-sm"
+              disabled={!preview}
+              title="Copy (C)"
+            >
+              Copy
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={onCopyLink}
+              className="py-1 text-sm"
+              disabled={!shareUrl}
+              title="Share link"
+            >
+              Share
+            </Btn>
+          </div>
+        }
+      />
 
-      {/* Quick pairs */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {quickPairs.map((p) => (
-          <Chip
-            key={p.label}
-            onClick={() => {
-              setFromTz(p.a);
-              setToTz(p.b);
-            }}
-            title={`${p.a} → ${p.b}`}
-          >
-            {p.label}
-          </Chip>
-        ))}
-      </div>
-
-      {/* Inputs */}
-      <div className="mt-4 grid gap-3 lg:grid-cols-4">
-        <label className="block text-sm font-semibold text-amber-950">
-          Date
-          <input
-            type="date"
-            value={dateStr}
-            onChange={(e) => setDateStr(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Time {showSeconds ? "(HH:MM:SS)" : "(HH:MM)"}
-          <input
-            inputMode="numeric"
-            value={timeStr}
-            onChange={(e) => setTimeStr(e.target.value)}
-            placeholder={showSeconds ? "09:30:00" : "09:30"}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          From time zone
-          <select
-            value={fromTz}
-            onChange={(e) => setFromTz(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          >
-            {tzGroups.map((g) => (
-              <optgroup key={g.region} label={g.region}>
-                {g.list.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.label}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          To time zone
-          <select
-            value={toTz}
-            onChange={(e) => setToTz(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          >
-            {tzGroups.map((g) => (
-              <optgroup key={g.region} label={g.region}>
-                {g.list.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.label}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={fsRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          invalidInput
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 280 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 900 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.14em;
-                text-transform:uppercase;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(56px, 7.8vw, 120px)/1.05 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.04em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 800 clamp(14px, 2.2vw, 24px)/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.06em;
-                text-transform:uppercase;
-                opacity:.86;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.78;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
-        <div
-          data-shell="normal"
-          className="h-full w-full flex-col gap-4 p-6"
-          style={{ minHeight: 280 }}
-        >
-          {!preview ? (
-            <div className="rounded-2xl border border-rose-200 bg-white p-4 text-sm text-rose-900">
-              Enter a valid date and time (for example 2026-01-18 and{" "}
-              {showSeconds ? "09:30:00" : "09:30"}).
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Time Zone Converter
+              </h1>
             </div>
-          ) : (
-            <>
-              <div className="grid gap-4 lg:grid-cols-2">
-                <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                  <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={showSeconds}
+                  onChange={(e) => {
+                    const next = e.target.checked;
+                    setShowSeconds(next);
+                    setTimeStr((cur) => {
+                      const ss = pad2(new Date().getSeconds());
+                      if (next) {
+                        if (/^\d{2}:\d{2}$/.test(cur)) return `${cur}:${ss}`;
+                        return cur;
+                      }
+                      if (/^\d{2}:\d{2}:\d{2}$/.test(cur))
+                        return cur.slice(0, 5);
+                      return cur;
+                    });
+                  }}
+                />
+                Seconds
+              </label>
+
+              <Btn
+                kind="ghost"
+                onClick={swap}
+                className="py-2"
+                title="Swap (S)"
+              >
+                Swap
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={setNow}
+                className="py-2"
+                title="Now (N)"
+              >
+                Now
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={onCopy}
+                className="py-2"
+                disabled={!preview}
+                title="Copy (C)"
+              >
+                Copy
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={onCopyLink}
+                className="py-2"
+                disabled={!shareUrl}
+                title="Share link"
+              >
+                Share
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+                title="Fullscreen (F)"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
+
+        {!isFs && (
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {quickPairs.map((p) => (
+              <Chip
+                key={p.label}
+                onClick={() => {
+                  setFromTz(p.a);
+                  setToTz(p.b);
+                }}
+                title={`${p.a} → ${p.b}`}
+              >
+                {p.label}
+              </Chip>
+            ))}
+          </div>
+        )}
+
+        {/* Inputs */}
+        <div className={isFs ? "mx-2 mt-3 sm:mx-4" : "mt-4"}>
+          <div className="grid gap-3 lg:grid-cols-4">
+            <label className="block text-sm font-semibold text-slate-900">
+              Date
+              <input
+                type="date"
+                value={dateStr}
+                onChange={(e) => setDateStr(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-900">
+              Time {showSeconds ? "(HH:MM:SS)" : "(HH:MM)"}
+              <input
+                inputMode="numeric"
+                value={timeStr}
+                onChange={(e) => setTimeStr(e.target.value)}
+                placeholder={showSeconds ? "09:30:00" : "09:30"}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-900">
+              From time zone
+              <select
+                value={fromTz}
+                onChange={(e) => setFromTz(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              >
+                {tzGroups.map((g) => (
+                  <optgroup key={g.region} label={g.region}>
+                    {g.list.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-900">
+              To time zone
+              <select
+                value={toTz}
+                onChange={(e) => setToTz(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              >
+                {tzGroups.map((g) => (
+                  <optgroup key={g.region} label={g.region}>
+                    {g.list.map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+
+        {/* Display */}
+        <div
+          className={[
+            "relative mt-4 rounded-2xl border bg-slate-50 text-slate-950",
+            invalidInput ? "border-rose-200 bg-rose-50" : "border-slate-200",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+        >
+          <div className="p-3 sm:p-6">
+            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+              {statusLabel}
+            </div>
+
+            {!preview ? (
+              <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+                Enter a valid date and time.
+              </div>
+            ) : (
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                     From
                   </div>
-                  <div className="mt-1 text-sm font-bold text-amber-950">
+                  <div className="mt-1 text-sm font-bold text-slate-900">
                     {getOptLabel(normalizeTz(fromTz))}
                   </div>
-                  <div className="mt-3 font-mono text-3xl font-extrabold tracking-wider text-amber-950">
+                  <div
+                    className={[
+                      "mt-3 font-mono font-extrabold tracking-wider text-slate-900",
+                      isFs ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl",
+                    ].join(" ")}
+                  >
                     {preview.fromText}
                   </div>
                   <div className="mt-2 text-xs font-semibold text-slate-600">
@@ -954,105 +1087,60 @@ function TimeZoneConverterCard() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                  <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                     To
                   </div>
-                  <div className="mt-1 text-sm font-bold text-amber-950">
+                  <div className="mt-1 text-sm font-bold text-slate-900">
                     {getOptLabel(normalizeTz(toTz))}
                   </div>
-                  <div className="mt-3 font-mono text-3xl font-extrabold tracking-wider text-amber-950">
+                  <div
+                    className={[
+                      "mt-3 font-mono font-extrabold tracking-wider text-slate-900",
+                      isFs ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl",
+                    ].join(" ")}
+                  >
                     {preview.toText}
                   </div>
                   <div className="mt-2 text-xs font-semibold text-slate-600">
                     {preview.toAb ? `Abbr: ${preview.toAb}` : " "}
                   </div>
                 </div>
-              </div>
 
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                  Details
-                </div>
-                <div className="mt-2 grid gap-2 md:grid-cols-3">
-                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
-                    <div className="text-[11px] font-bold uppercase tracking-wide text-amber-800">
-                      Same instant
-                    </div>
-                    <div className="mt-1 text-sm font-semibold text-amber-950">
-                      {preview.iso}
-                    </div>
+                <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                    ISO
                   </div>
-                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
-                    <div className="text-[11px] font-bold uppercase tracking-wide text-amber-800">
-                      Shortcuts
-                    </div>
-                    <div className="mt-1 text-sm font-semibold text-amber-950">
-                      S swap · N now · C copy · F fullscreen
-                    </div>
+                  <div className="mt-2 break-all font-mono text-sm font-semibold text-slate-900">
+                    {preview.iso}
                   </div>
-                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
-                    <div className="text-[11px] font-bold uppercase tracking-wide text-amber-800">
-                      Share
+
+                  <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="text-xs font-semibold text-slate-600">
+                      Shortcuts: S swap · N now · C copy · F fullscreen
                     </div>
-                    <div className="mt-1 text-sm font-semibold text-amber-950">
-                      Copy link to reuse settings
-                    </div>
+                    {copied && (
+                      <div className="text-xs font-extrabold text-slate-900">
+                        {copied}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-
-              {copied && (
-                <div className="text-center text-xs font-bold text-amber-900">
-                  {copied}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Time Zone Conversion</div>
-            <div className="fs-time">
-              {preview ? (
-                <>
-                  <div>{getOptLabel(normalizeTz(fromTz))}</div>
-                  <div className="opacity-90">{preview.fromText}</div>
-                  <div className="mt-3">{getOptLabel(normalizeTz(toTz))}</div>
-                  <div className="opacity-90">{preview.toText}</div>
-                </>
-              ) : (
-                "Enter date and time"
-              )}
-            </div>
-            <div className="fs-sub">{preview ? `ISO ${preview.iso}` : " "}</div>
-            <div className="fs-help">
-              S swap · N now · C copy · F fullscreen
-            </div>
+            )}
           </div>
-        </div>
-      </div>
 
-      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Saved to this browser (local storage). Share creates a link with your
-          settings.
+          <FullscreenBottomBar show={isFs}>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-xs text-slate-600 sm:text-sm">
+                S swap · N now · C copy · F fullscreen · Esc exit
+              </div>
+              <div className="text-xs font-semibold text-slate-700">
+                {copied ? copied : statusLabel}
+              </div>
+            </div>
+          </FullscreenBottomBar>
         </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
-      </div>
-
-      {/* Small note on DST */}
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        <div className="font-extrabold text-amber-950">DST note</div>
-        <p className="mt-2 leading-relaxed">
-          Daylight saving can make some local times ambiguous or invalid on
-          transition days. This converter uses the browser’s time zone data and
-          resolves conversions to an absolute instant.
-        </p>
       </div>
     </Card>
   );
@@ -1061,8 +1149,10 @@ function TimeZoneConverterCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function TimeZoneConverterPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/time-zone-converter";
+export default function TimeZoneConverterPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/time-zone-converter";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -1072,7 +1162,7 @@ export default function TimeZoneConverterPage({}: Route.ComponentProps) {
         name: "Time Zone Converter",
         url,
         description:
-          "Convert a date and time between time zones with DST-aware results, copy-friendly output, share links, and fullscreen display.",
+          "Convert time between time zones instantly with DST-aware results, copy-friendly output, share links, and fullscreen display.",
       },
       {
         "@type": "BreadcrumbList",
@@ -1081,50 +1171,13 @@ export default function TimeZoneConverterPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Time Zone Converter",
             item: url,
-          },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "How does this time zone converter handle DST?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "It uses the browser’s time zone database to convert your input into an absolute instant, then formats that instant in the destination time zone. DST changes are applied automatically.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What does “From” mean?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "“From” is the time zone you intended the input date and time to be in. The converter interprets your input as a local time in that zone.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I share a conversion?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Use Share to copy a link that includes your zones, date, time, and seconds setting.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this save my settings?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Your selected zones and input time are saved to local storage in this browser on this device.",
-            },
           },
         ],
       },
@@ -1140,195 +1193,25 @@ export default function TimeZoneConverterPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Time Zone Converter</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Time Zone Converter
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            Convert time between time zones with DST handling. Copy results,
-            swap zones, and share a link that preserves your settings.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <TimeZoneConverterCard />
-
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Fast workflow</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Pick zones, set date and time, then copy the result or share a
-              link. Use <strong>Swap</strong> when you just want the reverse.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">DST-aware</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Daylight saving is applied automatically based on the selected
-              time zones and the chosen date.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>S</strong> = Swap zones
-              </li>
-              <li>
-                <strong>N</strong> = Set to now
-              </li>
-              <li>
-                <strong>C</strong> = Copy results
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <TimeZoneConverterCard nowISO={nowISO} />
         </div>
-      </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free time zone converter for scheduling across regions
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>time zone converter</strong> helps you convert a{" "}
-              <strong>specific date and time</strong> between time zones. Choose
-              the zone you mean for the input time (From), then select the zone
-              you want to convert to (To). The result is calculated using your
-              browser’s time zone data, so <strong>DST changes</strong> are
-              applied automatically.
-            </p>
-
-            <p>
-              If you coordinate meetings across teams, the most common mistake
-              is converting “today at 9” without considering daylight saving or
-              a future date where DST rules differ. This tool keeps the date
-              attached to the conversion so you get the right answer for the day
-              you care about.
-            </p>
-
-            <p>
-              Want a live clock instead? Try{" "}
-              <Link to="/world-clock" className="font-semibold hover:underline">
-                World Clock
-              </Link>{" "}
-              or a{" "}
-              <Link
-                to="/atomic-clock"
-                className="font-semibold hover:underline"
-              >
-                Clock
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                DST-aware conversion
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Automatically applies daylight saving for the selected date.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Copy and share
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Copy results or a shareable link that preserves settings.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Saved settings
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Remembers your zones and input time in local storage.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ (BOTTOM, always rendered) */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Time Zone Converter FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How does this time zone converter handle DST?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              It converts your input into an absolute instant and then formats
-              that instant in the destination time zone. Daylight saving is
-              applied automatically based on the date and time zone rules.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What does “From” mean?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              “From” is the time zone you intended your input date and time to
-              be in. The converter treats your input as a local time in that
-              zone.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I share a conversion?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Click <strong>Share</strong> to copy a link that includes the
-              zones, date, time, and seconds setting so someone else sees the
-              same conversion.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does it save my settings?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Your inputs are saved to local storage in this browser on
-              this device.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Time Zone Converter</span>
+        </p>
       </section>
     </main>
   );

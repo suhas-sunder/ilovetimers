@@ -3,6 +3,11 @@ import type { Route } from "./+types/alarm-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
+import Disclaimer from "~/clients/components/alarm-timer/Disclaimer";
+import FAQ from "~/clients/components/alarm-timer/FAQ";
+import HowItWorks from "~/clients/components/alarm-timer/HowItWorks";
+import KeyboardShortcuts from "~/clients/components/alarm-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/alarm-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -36,7 +41,7 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:url", content: url },
     {
       property: "og:image",
-      content: `${url.replace("/alarm-timer", "")}/og-image.jpg`,
+      content: `https://www.ilovetimers.com/og-image.jpg`,
     },
 
     { name: "twitter:card", content: "summary_large_image" },
@@ -44,7 +49,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -85,7 +90,7 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (same style as other pages)
+// WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -133,6 +138,123 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: React.RefObject<HTMLElement | null>;
+  textRef: React.RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        // force reflow read
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      // quick clamp: if even max fits, use it
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    // initial
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
    UI PRIMITIVES
 ========================================================= */
@@ -141,16 +263,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -175,19 +308,87 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+const Chip = ({
+  active,
+  children,
+  onClick,
+}: {
+  active?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition ${
+      active
+        ? "bg-slate-900 text-white hover:bg-slate-800"
+        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  left,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+          {left}
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
    ALARM TIMER CARD
-   - Honest about "works while page is open"
-   - Browser limitations
-   - Sound needs user gesture; background throttling possible
 ========================================================= */
 function AlarmTimerCard() {
   const beep = useBeep();
@@ -204,14 +405,18 @@ function AlarmTimerCard() {
   const [sound, setSound] = useState(true);
   const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(true);
 
-  // Alarm behavior: repeat beeps until Stop is pressed (or for a max duration)
   const [alarming, setAlarming] = useState(false);
   const alarmIntervalRef = useRef<number | null>(null);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
 
   // When minutes changes, reset timer
   useEffect(() => {
@@ -220,6 +425,7 @@ function AlarmTimerCard() {
     setRunning(false);
     endRef.current = null;
     lastBeepSecondRef.current = null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minutes]);
 
   // Cleanup on unmount
@@ -231,12 +437,10 @@ function AlarmTimerCard() {
   function startAlarm() {
     setAlarming(true);
 
-    // Repeating alarm beeps (basic + reliable)
     if (alarmIntervalRef.current)
       window.clearInterval(alarmIntervalRef.current);
     alarmIntervalRef.current = window.setInterval(() => {
       if (!sound) return;
-      // alternating tone gives more "alarm" feel without needing audio files
       beep(880, 160, 0.12);
       window.setTimeout(() => beep(660, 180, 0.12), 180);
     }, 700);
@@ -249,7 +453,6 @@ function AlarmTimerCard() {
       alarmIntervalRef.current = null;
     }
     if (!silentCleanup && sound) {
-      // subtle "stop" blip (optional)
       beep(520, 90, 0.08);
     }
   }
@@ -284,8 +487,6 @@ function AlarmTimerCard() {
         endRef.current = null;
         setRunning(false);
         lastBeepSecondRef.current = null;
-
-        // Trigger alarm loop at end
         startAlarm();
         return;
       }
@@ -309,7 +510,6 @@ function AlarmTimerCard() {
   }
 
   function startPause() {
-    // if alarm is ringing, Start/Pause should stop it and reset to set time
     if (alarming) {
       stopAlarm(true);
       setRemaining(minutes * 60 * 1000);
@@ -335,12 +535,11 @@ function AlarmTimerCard() {
       startPause();
     } else if (e.key.toLowerCase() === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+    } else if (e.key.toLowerCase() === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     } else if (e.key.toLowerCase() === "s") {
       setSound((v) => !v);
     } else if (e.key.toLowerCase() === "x") {
-      // dedicated "stop alarm" shortcut
       if (alarming) stopAlarm(true);
     }
   };
@@ -348,230 +547,251 @@ function AlarmTimerCard() {
   const urgent = running && remaining > 0 && remaining <= 10_000;
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
+  const displayTone = alarming
+    ? "border-rose-200 bg-rose-50 text-rose-950"
+    : urgent
+      ? "border-rose-200 bg-amber-50 text-rose-950"
+      : "border-slate-200 bg-slate-50 text-slate-950";
+
+  // Fit the time text as large as possible without clipping
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    // padding inside display box plus a little safety
+    paddingAllowancePx: isFs ? 48 : 56,
+  });
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Alarm Timer</h2>
-          <p className="mt-1 text-base text-slate-700">
-            A simple <strong>timer alarm online</strong> with a loud repeating
-            alarm at the end. Big digits, presets, fullscreen, and keyboard
-            shortcuts.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Alarm Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        left={
+          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={sound}
+                onChange={(e) => setSound(e.target.checked)}
+                className="accent-amber-500"
+              />
+              Sound
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={finalCountdownBeeps}
+                onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                disabled={!sound}
+                className="accent-amber-500"
+              />
+              Final beeps
+            </label>
+          </div>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={running ? "solid" : "ghost"}
+              onClick={startPause}
+              className="py-1 text-sm"
+            >
+              {alarming ? "Stop alarm" : running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-wrap items-center gap-3 ml-auto">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Sound
+              </label>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={finalCountdownBeeps}
+                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                  disabled={!sound}
+                  className="accent-amber-500"
+                />
+                Final beeps
+              </label>
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-      {/* Presets */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
+        {/* Presets + inputs (normal only) */}
+        {!isFs && (
+          <>
+            <div className="mt-5 flex flex-wrap items-center gap-2">
+              {presetsMin.map((m) => (
+                <Chip
+                  key={m}
+                  active={m === minutes}
+                  onClick={() => setPreset(m)}
+                >
+                  {m}m
+                </Chip>
+              ))}
+            </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
-          <input
-            type="number"
-            min={1}
-            max={180}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
+            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+              <label className="block text-sm font-semibold text-slate-900">
+                Custom minutes
+                <input
+                  type="number"
+                  min={1}
+                  max={180}
+                  value={minutes}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 1), 1, 180))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                />
+              </label>
 
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>
-            {alarming ? "Stop alarm" : running ? "Pause" : "Start"}
-          </Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
+              <div className="flex items-end gap-3">
+                <Btn onClick={startPause}>
+                  {alarming ? "Stop alarm" : running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+              </div>
+            </div>
+          </>
+        )}
 
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          alarming
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : urgent
-              ? "border-rose-300 bg-rose-50 text-rose-950"
-              : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 240 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display (big as possible, responsive, no clipping) */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          ref={displayBoxRef}
+          className={[
+            "mt-4 flex items-center justify-center rounded-2xl border font-mono font-extrabold",
+            displayTone,
+            // kill unnecessary padding on mobile, but keep some breathing room
+            "p-3 sm:p-6",
+            // on fullscreen: use the screen, no dead space
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 240,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-2">
-            <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-              <span className="text-6xl sm:text-7xl md:text-8xl">
-                {shownTime}
-              </span>
+          <span
+            ref={timeTextRef}
+            className={[
+              "inline-block text-center",
+              // tracking that looks good on desktop can cause clipping on narrow phones
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              // helps prevent tiny overflows due to font rendering
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+        </div>
+
+        {/* Fullscreen bottom controls (tight on mobile) */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              {presetsMin.map((m) => (
+                <Chip
+                  key={m}
+                  active={m === minutes}
+                  onClick={() => setPreset(m)}
+                >
+                  {m}m
+                </Chip>
+              ))}
             </div>
 
-            <div className="text-xs text-slate-600">
-              Space start/pause · R reset · F fullscreen · S sound
-              {alarming ? " · Alarm ringing" : ""}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-slate-700">
+                  Minutes
+                </span>
+                <input
+                  type="number"
+                  min={1}
+                  max={180}
+                  value={minutes}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 1), 1, 180))
+                  }
+                  className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                />
+              </div>
+
+              <div className="text-xs text-slate-600 sm:text-sm">
+                Space start/pause • R reset • F fullscreen • S sound
+                {alarming ? " • Alarm ringing (X stops)" : ""}
+              </div>
             </div>
           </div>
-        </div>
+        </FullscreenBottomBar>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Alarm Timer</div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-help">
-              Space start/pause · R reset · F fullscreen · S sound
-              {alarming ? " · Alarm ringing" : ""}
+        {/* Honest limitation block (normal only) */}
+        {!isFs && (
+          <>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900">
+                Shortcuts: Space start/pause • R reset • F fullscreen • S sound
+                • X stop alarm
+              </div>
+              <div className="text-xs text-slate-600">
+                Tip: click the card once so keyboard shortcuts work immediately.
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Honest limitation block */}
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-        <div className="text-sm font-extrabold text-amber-950">
-          Important: this timer alarm works while the page is open
-        </div>
-        <div className="mt-2 space-y-2 text-sm text-amber-900">
-          <p>
-            Browsers do not guarantee timers and alarms will run perfectly if
-            you close the tab, fully quit the browser, or your device suspends
-            the page (sleep mode). This tool is designed for when you can keep
-            the page open.
-          </p>
-          <p>
-            If you need an alarm that works when the browser is closed, use your
-            phone’s built-in alarm or a dedicated timer app.
-          </p>
-          <p className="text-xs text-slate-700">
-            Tip: keep the tab open, keep your device awake, and allow audio if
-            your browser asks. Some browsers block sound until you interact with
-            the page (click Start).
-          </p>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen · S sound · X
-          stop alarm
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+          </>
+        )}
       </div>
     </Card>
   );
@@ -583,7 +803,7 @@ function AlarmTimerCard() {
 export default function AlarmTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/alarm-timer";
+  const url = "https://www.ilovetimers.com/alarm-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -602,246 +822,52 @@ export default function AlarmTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Alarm Timer", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is an alarm timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "An alarm timer is a countdown that plays an alarm when it reaches zero. This page provides an online alarm timer with big digits and fullscreen mode.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this countdown alarm work if I close the tab?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "No. Like most browser-based timers, it is designed to work while the page is open. If you close the tab, quit the browser, or your device suspends the page, the alarm may not fire reliably.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Why might the alarm sound not play?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Some browsers block audio until you interact with the page. Click Start once and allow audio if prompted. Also note that background tabs can be throttled on some devices.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, F toggles fullscreen, S toggles sound, and X stops the alarm while the card is focused.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Alarm Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
             Alarm Timer (Countdown Alarm Online)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A simple <strong>alarm timer</strong> and{" "}
-            <strong>countdown alarm</strong> with a repeating sound at the end.
-            Big digits and fullscreen for visibility.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            A simple alarm timer and countdown alarm with a repeating sound at
+            the end. Big digits and fullscreen for visibility.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <AlarmTimerCard />
         </div>
-
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Countdown alarm that’s easy to see
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen mode shows huge digits. Useful for cooking, workouts,
-              and reminders while you keep the page open.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Works while the page is open
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              This is an online timer. If you close the tab, quit the browser,
-              or your device suspends the page, the alarm might not fire. That’s
-              a browser limitation, not a “you” problem.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Sound can be blocked without interaction
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Some browsers require a click before audio is allowed. Press Start
-              once and allow audio if prompted.
-            </p>
-          </div>
-        </div>
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Alarm Timer</span>
+        </p>
       </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free alarm timer and countdown alarm online (with honest browser
-            limitations)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>alarm timer</strong> is a{" "}
-              <strong>countdown alarm</strong> you run in your browser. Set a
-              duration, start the timer, and it plays a repeating alarm when it
-              reaches zero.
-            </p>
-
-            <p>
-              Be aware of a key limitation: it’s an online timer, so it is
-              designed to work <strong>while the page is open</strong>. If you
-              close the tab, quit the browser, or your device goes to sleep,
-              browsers may pause or throttle background work and the alarm may
-              not trigger reliably.
-            </p>
-
-            <p>
-              If you need a guaranteed alarm that works when the browser is
-              closed, use your phone’s built-in alarm clock or a dedicated timer
-              app. This tool is best for on-screen visibility and quick use.
-            </p>
-
-            <p>
-              Want a non-alarm version? Use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . Need a stopwatch? Use{" "}
-              <Link to="/stopwatch" className="font-semibold hover:underline">
-                Stopwatch
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Alarm timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Plays a repeating alarm at the end of the countdown.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Timer alarm online
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Runs in your browser and is easy to see on screen.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Countdown alarm
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Works best while the page is open and your device stays awake.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Alarm Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does this alarm timer work if I close the browser?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              No. It is designed to work while the page is open. Closing the
-              tab, quitting the browser, or letting your device sleep can
-              prevent the alarm from firing reliably.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why do browser timers have limitations?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Browsers and operating systems save battery and CPU by throttling
-              or suspending background pages. That can delay timers and block
-              audio when a page is not active.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why might the sound not play?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Many browsers block audio until you interact with the page. Click
-              Start once and allow audio if prompted. Also note that background
-              tabs may be throttled on some devices.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen • <strong>S</strong> sound •{" "}
-              <strong>X</strong> stop alarm (when focused).
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

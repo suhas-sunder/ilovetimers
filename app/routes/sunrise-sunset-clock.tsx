@@ -1,7 +1,14 @@
 // app/routes/sunrise-sunset-clock.tsx
 import type { Route } from "./+types/sunrise-sunset-clock";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +40,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -72,6 +79,22 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
 function safeTimeZone() {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
@@ -80,43 +103,27 @@ function safeTimeZone() {
   }
 }
 
-function formatTimeInZone(
-  date: Date,
-  timeZone: string,
-  opts: { use24: boolean; showSeconds: boolean },
-) {
-  const { use24, showSeconds } = opts;
+function makeTimeFormatter(args: {
+  timeZone: string;
+  use24: boolean;
+  showSeconds: boolean;
+}) {
+  const { timeZone, use24, showSeconds } = args;
+
   try {
-    const fmt = new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat(undefined, {
       timeZone,
       hour: "2-digit",
       minute: "2-digit",
       second: showSeconds ? "2-digit" : undefined,
       hour12: !use24,
     });
-    return fmt
-      .format(date)
-      .replace(/\u200e/g, "")
-      .trim();
   } catch {
-    // Fallback: local formatting only
-    const h = date.getHours();
-    const m = date.getMinutes();
-    const s = date.getSeconds();
-    if (use24) {
-      return showSeconds
-        ? `${pad2(h)}:${pad2(m)}:${pad2(s)}`
-        : `${pad2(h)}:${pad2(m)}`;
-    }
-    const ampm = h >= 12 ? "PM" : "AM";
-    const h12 = h % 12 || 12;
-    return showSeconds
-      ? `${pad2(h12)}:${pad2(m)}:${pad2(s)} ${ampm}`
-      : `${pad2(h12)}:${pad2(m)} ${ampm}`;
+    return null;
   }
 }
 
-function formatDateLineInZone(date: Date, timeZone: string) {
+function makeDateFormatter(timeZone: string) {
   try {
     return new Intl.DateTimeFormat(undefined, {
       timeZone,
@@ -124,13 +131,53 @@ function formatDateLineInZone(date: Date, timeZone: string) {
       year: "numeric",
       month: "long",
       day: "2-digit",
-    })
+    });
+  } catch {
+    return null;
+  }
+}
+
+function formatWithFallbackTime(args: {
+  date: Date;
+  fmt: Intl.DateTimeFormat | null;
+  use24: boolean;
+  showSeconds: boolean;
+}) {
+  const { date, fmt, use24, showSeconds } = args;
+  if (fmt)
+    return fmt
       .format(date)
       .replace(/\u200e/g, "")
       .trim();
-  } catch {
-    return date.toDateString();
+
+  const h = date.getHours();
+  const m = date.getMinutes();
+  const s = date.getSeconds();
+
+  if (use24) {
+    return showSeconds
+      ? `${pad2(h)}:${pad2(m)}:${pad2(s)}`
+      : `${pad2(h)}:${pad2(m)}`;
   }
+
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 || 12;
+  return showSeconds
+    ? `${pad2(h12)}:${pad2(m)}:${pad2(s)} ${ampm}`
+    : `${pad2(h12)}:${pad2(m)} ${ampm}`;
+}
+
+function formatWithFallbackDate(args: {
+  date: Date;
+  fmt: Intl.DateTimeFormat | null;
+}) {
+  const { date, fmt } = args;
+  if (fmt)
+    return fmt
+      .format(date)
+      .replace(/\u200e/g, "")
+      .trim();
+  return date.toDateString();
 }
 
 function msToClock(ms: number) {
@@ -148,6 +195,105 @@ function toISODate(d: Date) {
   const m = pad2(d.getUTCMonth() + 1);
   const day = pad2(d.getUTCDate());
   return `${y}-${m}-${day}`;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ *
+ * Note: starts at maxPx so the first paint is big and snappy.
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(maxPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* =========================================================
@@ -190,23 +336,34 @@ async function fetchSunTimes(args: {
 }
 
 /* =========================================================
-   UI PRIMITIVES (same style as your timers)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -231,13 +388,59 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    CLOCK CARD
@@ -251,7 +454,7 @@ function SunriseSunsetClockCard() {
   const [use24, setUse24] = useState(true);
   const [showSeconds, setShowSeconds] = useState(true);
 
-  const [now, setNow] = useState<Date>(() => new Date());
+  const [nowMs, setNowMs] = useState<number>(() => Date.now());
 
   const [locMode, setLocMode] = useState<LocMode>("device");
   const [lat, setLat] = useState<number>(40.7128);
@@ -273,16 +476,61 @@ function SunriseSunsetClockCard() {
     dayLengthSec: number;
   }>(null);
 
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
 
-  // Live tick
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  // Live tick (uses ms number to avoid extra Date allocations in state)
   useEffect(() => {
-    const t = window.setInterval(
-      () => setNow(new Date()),
-      showSeconds ? 1000 : 5000,
-    );
-    return () => window.clearInterval(t);
+    let t: number | null = null;
+
+    const interval = showSeconds ? 1000 : 5000;
+
+    // Align updates close to boundaries for nicer "snap"
+    const kick = () => {
+      setNowMs(Date.now());
+      t = window.setInterval(() => setNowMs(Date.now()), interval);
+    };
+
+    const delay = showSeconds ? 1000 - (Date.now() % 1000) : 0;
+    const starter = window.setTimeout(() => kick(), delay);
+
+    return () => {
+      window.clearTimeout(starter);
+      if (t) window.clearInterval(t);
+    };
   }, [showSeconds]);
+
+  // Memoized formatters (this fixes the "slow to render" feeling on some devices)
+  const timeFmt = useMemo(
+    () => makeTimeFormatter({ timeZone, use24, showSeconds }),
+    [timeZone, use24, showSeconds],
+  );
+  const timeFmtNoSec = useMemo(
+    () => makeTimeFormatter({ timeZone, use24, showSeconds: false }),
+    [timeZone, use24],
+  );
+  const dateFmt = useMemo(() => makeDateFormatter(timeZone), [timeZone]);
+
+  const nowDate = useMemo(() => new Date(nowMs), [nowMs]);
+
+  const nowText = useMemo(
+    () =>
+      formatWithFallbackTime({
+        date: nowDate,
+        fmt: timeFmt,
+        use24,
+        showSeconds,
+      }),
+    [nowDate, timeFmt, use24, showSeconds],
+  );
+
+  const dateText = useMemo(
+    () => formatWithFallbackDate({ date: nowDate, fmt: dateFmt }),
+    [nowDate, dateFmt],
+  );
 
   // Device location
   useEffect(() => {
@@ -341,7 +589,7 @@ function SunriseSunsetClockCard() {
           sunset: new Date(t1.sunset),
           dayLengthSec: Number(t1.day_length) || 0,
         });
-      } catch (e: any) {
+      } catch {
         if (cancelled) return;
         setErr(
           "Could not load sunrise/sunset. Check your connection or try manual coordinates.",
@@ -353,7 +601,6 @@ function SunriseSunsetClockCard() {
       }
     }
 
-    // Only fetch when coords are valid-ish
     const okLat = Number.isFinite(lat) && Math.abs(lat) <= 90;
     const okLng = Number.isFinite(lng) && Math.abs(lng) <= 180;
     if (okLat && okLng) run();
@@ -368,24 +615,14 @@ function SunriseSunsetClockCard() {
     };
   }, [lat, lng]);
 
-  const nowText = useMemo(
-    () => formatTimeInZone(now, timeZone, { use24, showSeconds }),
-    [now, timeZone, use24, showSeconds],
-  );
-
-  const dateText = useMemo(
-    () => formatDateLineInZone(now, timeZone),
-    [now, timeZone],
-  );
-
   // Determine next event and progress
   const derived = useMemo(() => {
     if (!sunToday || !sunTomorrow) return null;
 
-    const n = now.getTime();
+    const n = nowMs;
+
     const sunrise = sunToday.sunrise.getTime();
     const sunset = sunToday.sunset.getTime();
-
     const nextSunrise = sunTomorrow.sunrise.getTime();
 
     const isDay = n >= sunrise && n < sunset;
@@ -399,38 +636,33 @@ function SunriseSunsetClockCard() {
         isDay: true,
         sunrise: sunToday.sunrise,
         sunset: sunToday.sunset,
-        nextLabel: "Sunset",
+        nextLabel: "Sunset" as const,
         nextAt: sunToday.sunset,
         msToNext: Math.max(0, sunset - n),
         progressLabel: "Daylight progress",
         pct,
-        totalMs: total,
-        doneMs: done,
       };
     }
 
-    // Night: next event is sunrise (today if before sunrise, otherwise tomorrow)
     if (n < sunrise) {
-      const prevSunset = sunrise - 12 * 60 * 60 * 1000; // not accurate, but used only for "night bar" fallback
-      const total = sunrise - prevSunset;
-      const done = n - prevSunset;
+      // Approx night progress. We do not have yesterday sunset without extra API calls.
+      const approxPrevSunset = sunrise - 12 * 60 * 60 * 1000;
+      const total = sunrise - approxPrevSunset;
+      const done = n - approxPrevSunset;
       const pct = total > 0 ? clamp(done / total, 0, 1) : 0;
 
       return {
         isDay: false,
         sunrise: sunToday.sunrise,
         sunset: sunToday.sunset,
-        nextLabel: "Sunrise",
+        nextLabel: "Sunrise" as const,
         nextAt: sunToday.sunrise,
         msToNext: Math.max(0, sunrise - n),
         progressLabel: "Night (approx) until sunrise",
         pct,
-        totalMs: total,
-        doneMs: done,
       };
     }
 
-    // After sunset: until tomorrow sunrise
     const total = nextSunrise - sunset;
     const done = n - sunset;
     const pct = total > 0 ? clamp(done / total, 0, 1) : 0;
@@ -439,505 +671,374 @@ function SunriseSunsetClockCard() {
       isDay: false,
       sunrise: sunToday.sunrise,
       sunset: sunToday.sunset,
-      nextLabel: "Sunrise",
+      nextLabel: "Sunrise" as const,
       nextAt: sunTomorrow.sunrise,
       msToNext: Math.max(0, nextSunrise - n),
       progressLabel: "Night progress",
       pct,
-      totalMs: total,
-      doneMs: done,
     };
-  }, [sunToday, sunTomorrow, now]);
+  }, [sunToday, sunTomorrow, nowMs]);
 
   const sunriseText = useMemo(() => {
     if (!derived) return "--";
-    return formatTimeInZone(derived.sunrise, timeZone, {
+    return formatWithFallbackTime({
+      date: derived.sunrise,
+      fmt: timeFmtNoSec,
       use24,
       showSeconds: false,
     });
-  }, [derived, timeZone, use24]);
+  }, [derived, timeFmtNoSec, use24]);
 
   const sunsetText = useMemo(() => {
     if (!derived) return "--";
-    return formatTimeInZone(derived.sunset, timeZone, {
+    return formatWithFallbackTime({
+      date: derived.sunset,
+      fmt: timeFmtNoSec,
       use24,
       showSeconds: false,
     });
-  }, [derived, timeZone, use24]);
+  }, [derived, timeFmtNoSec, use24]);
 
   const nextAtText = useMemo(() => {
     if (!derived) return "--";
-    return formatTimeInZone(derived.nextAt, timeZone, {
+    return formatWithFallbackTime({
+      date: derived.nextAt,
+      fmt: timeFmtNoSec,
       use24,
       showSeconds: false,
     });
-  }, [derived, timeZone, use24]);
+  }, [derived, timeFmtNoSec, use24]);
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const shownTime = nowText;
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, use24, showSeconds, timeZone],
+    minPx: 52,
+    maxPx: isFs ? 520 : 220,
+    paddingAllowancePx: isFs ? 56 : 80,
+  });
+
+  const statusLabel = derived
+    ? derived.isDay
+      ? "Daytime"
+      : "Night"
+    : loading
+      ? "Loading"
+      : "Ready";
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
-    if (k === "f" && displayWrapRef.current)
-      toggleFullscreen(displayWrapRef.current);
-    if (k === "t") setUse24((v) => !v);
-    if (k === "s") setShowSeconds((v) => !v);
-    if (k === "l") setLocMode((m) => (m === "device" ? "manual" : "device"));
+
+    if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "t") {
+      setUse24((v) => !v);
+    } else if (k === "s") {
+      setShowSeconds((v) => !v);
+    } else if (k === "l") {
+      setLocMode((m) => (m === "device" ? "manual" : "device"));
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
+    }
   };
 
+  const progressPct = derived ? Math.round(derived.pct * 100) : 0;
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Sunrise & Sunset Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Live sunrise and sunset times, daylight progress, and time until the
-            next event.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={showSeconds}
-              onChange={(e) => setShowSeconds(e.target.checked)}
-            />
-            Seconds
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={use24}
-              onChange={(e) => setUse24(e.target.checked)}
-            />
-            24-hour
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="mt-5 grid gap-3 lg:grid-cols-3">
-        <label className="block text-sm font-semibold text-amber-950">
-          Time zone (display)
-          <input
-            value={timeZone}
-            onChange={(e) => setTimeZone(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            placeholder="America/New_York"
-          />
-          <div className="mt-1 text-xs text-amber-800">
-            Tip: use your device zone or enter one like Europe/Berlin, UTC,
-            Asia/Tokyo.
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Sunrise & Sunset Clock"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind="ghost"
+              onClick={() => setShowSeconds((v) => !v)}
+              className="py-1 text-sm"
+            >
+              {showSeconds ? "Seconds: On" : "Seconds: Off"}
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={() => setUse24((v) => !v)}
+              className="py-1 text-sm"
+            >
+              {use24 ? "24h" : "12h"}
+            </Btn>
           </div>
-        </label>
+        }
+      />
 
-        <label className="block text-sm font-semibold text-amber-950">
-          Location mode
-          <select
-            value={locMode}
-            onChange={(e) => setLocMode(e.target.value as LocMode)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          >
-            <option value="device">Use my device location</option>
-            <option value="manual">Manual latitude/longitude</option>
-          </select>
-          <div className="mt-1 text-xs text-amber-800">
-            {locMode === "device"
-              ? locStatus ||
-                "Uses browser geolocation (you may need to allow it)."
-              : "Enter coordinates for any place on Earth."}
-          </div>
-        </label>
-
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block text-sm font-semibold text-amber-950">
-            Latitude
-            <input
-              type="number"
-              step="0.0001"
-              min={-90}
-              max={90}
-              value={lat}
-              onChange={(e) =>
-                setLat(clamp(Number(e.target.value || 0), -90, 90))
-              }
-              disabled={locMode === "device"}
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60"
-            />
-          </label>
-          <label className="block text-sm font-semibold text-amber-950">
-            Longitude
-            <input
-              type="number"
-              step="0.0001"
-              min={-180}
-              max={180}
-              value={lng}
-              onChange={(e) =>
-                setLng(clamp(Number(e.target.value || 0), -180, 180))
-              }
-              disabled={locMode === "device"}
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60"
-            />
-          </label>
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 420 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1200px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:16px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 20px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(72px, 14vw, 200px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-                white-space:nowrap;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 800 18px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
-        <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 420 }}
-        >
-          <div className="flex w-full max-w-5xl flex-col gap-4">
-            <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                {locMode === "device" ? "Device location" : "Manual location"} ·{" "}
-                {timeZone}
-              </div>
-              <div className="text-xs font-semibold text-amber-800">
-                Lat {lat.toFixed(4)} · Lng {lng.toFixed(4)}
-              </div>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Sunrise & Sunset Clock
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Live sunrise and sunset times, daylight progress, and time until
+                the next event.
+              </p>
             </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-            <div className="grid gap-3 md:grid-cols-2">
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                  Current time
+        {/* Display */}
+        <div
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 420,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs && cardRef.current) {
+              // Tap to toggle seconds in fullscreen (keeps it useful without extra UI)
+              setShowSeconds((v) => !v);
+            }
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to toggle seconds" : undefined}
+        >
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {shownTime}
+          </span>
+
+          {/* Info grid */}
+          <div className="mt-4 w-full max-w-5xl">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                  Date
                 </div>
-                <div className="mt-2 font-mono text-5xl font-extrabold tracking-widest text-amber-950 sm:text-6xl">
-                  {nowText}
-                </div>
-                <div className="mt-2 text-sm font-semibold text-amber-900">
+                <div className="mt-2 text-sm font-semibold text-slate-900">
                   {dateText}
                 </div>
-              </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                  Next event
-                </div>
-                <div className="mt-2 text-2xl font-extrabold text-amber-950">
-                  {derived ? derived.nextLabel : "Loading..."}
-                </div>
-                <div className="mt-1 text-sm font-semibold text-amber-900">
-                  At {nextAtText}
-                </div>
-                <div className="mt-3 font-mono text-3xl font-extrabold tracking-widest text-amber-950">
-                  {derived ? msToClock(derived.msToNext) : "--:--"}
-                </div>
-                <div className="mt-1 text-xs text-amber-800">
-                  Time until{" "}
-                  {derived ? derived.nextLabel.toLowerCase() : "next"}
+                <div className="mt-1 text-xs text-slate-600">
+                  {locMode === "device" ? "Device location" : "Manual location"}{" "}
+                  · {timeZone || "Local"}
                 </div>
               </div>
-            </div>
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                    Today
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    <span className="rounded-full bg-amber-500/30 px-3 py-1 text-xs font-semibold text-amber-900">
-                      Sunrise {sunriseText}
-                    </span>
-                    <span className="rounded-full bg-amber-500/30 px-3 py-1 text-xs font-semibold text-amber-900">
-                      Sunset {sunsetText}
-                    </span>
-                    <span className="rounded-full bg-amber-500/30 px-3 py-1 text-xs font-semibold text-amber-900">
-                      {derived
-                        ? derived.isDay
-                          ? "Daytime"
-                          : "Night"
-                        : "Loading"}
-                    </span>
-                  </div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                  Today
                 </div>
-
-                <div className="text-xs font-semibold text-amber-800">
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                    Sunrise {sunriseText}
+                  </span>
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                    Sunset {sunsetText}
+                  </span>
+                  <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                    Lat {lat.toFixed(4)} · Lng {lng.toFixed(4)}
+                  </span>
+                </div>
+                <div className="mt-2 text-xs text-slate-600">
                   {loading ? "Loading sunrise/sunset..." : err ? err : ""}
                 </div>
               </div>
 
-              <div className="mt-4">
-                <div className="flex items-center justify-between text-xs font-semibold text-amber-800">
-                  <span>{derived ? derived.progressLabel : "Progress"}</span>
-                  <span>
-                    {derived ? `${Math.round(derived.pct * 100)}%` : "--%"}
-                  </span>
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                  Next event
                 </div>
-
-                <div className="mt-2 h-4 w-full overflow-hidden rounded-full border border-amber-200 bg-amber-50">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: `${derived ? Math.round(derived.pct * 100) : 0}%`,
-                      background: derived?.isDay
-                        ? "linear-gradient(90deg, rgba(34,197,94,.65), rgba(245,158,11,.65))"
-                        : "linear-gradient(90deg, rgba(59,130,246,.55), rgba(147,51,234,.55))",
-                    }}
-                  />
+                <div className="mt-2 text-base font-extrabold text-slate-900">
+                  {derived ? derived.nextLabel : loading ? "Loading..." : "—"}
                 </div>
-
-                <div className="mt-2 text-xs text-amber-800">
-                  Note: sunrise and sunset are fetched in UTC and then displayed
-                  in the time zone you entered. For best accuracy, use a time
-                  zone that matches your chosen location.
+                <div className="mt-1 text-xs font-semibold text-slate-700">
+                  At {nextAtText}
+                </div>
+                <div className="mt-3 font-mono text-3xl font-extrabold tracking-widest text-slate-900">
+                  {derived ? msToClock(derived.msToNext) : "--:--"}
+                </div>
+                <div className="mt-1 text-xs text-slate-600">
+                  Time until{" "}
+                  {derived ? derived.nextLabel.toLowerCase() : "next event"}
                 </div>
               </div>
             </div>
 
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-              Shortcuts: F fullscreen · T 12/24 · S seconds · L toggle location
-              mode
-            </div>
-          </div>
-        </div>
-
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Sunrise & Sunset Clock</div>
-            <div className="fs-time">{nowText}</div>
-            <div className="fs-sub">
-              {timeZone} · Lat {lat.toFixed(4)} · Lng {lng.toFixed(4)}
-            </div>
-
-            <div className="w-full" style={{ maxWidth: 980 }}>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                  gap: 12,
-                  marginTop: 8,
-                }}
-              >
-                <div
-                  style={{
-                    border: "1px solid rgba(255,255,255,.18)",
-                    borderRadius: 16,
-                    padding: 14,
-                    background: "rgba(255,255,255,.06)",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontWeight: 800,
-                      opacity: 0.85,
-                      letterSpacing: ".12em",
-                      textTransform: "uppercase",
-                      fontSize: 12,
-                    }}
-                  >
-                    Sunrise
-                  </div>
-                  <div
-                    style={{
-                      marginTop: 8,
-                      fontFamily:
-                        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace",
-                      fontWeight: 900,
-                      fontSize: 40,
-                      letterSpacing: ".08em",
-                    }}
-                  >
-                    {sunriseText}
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    border: "1px solid rgba(255,255,255,.18)",
-                    borderRadius: 16,
-                    padding: 14,
-                    background: "rgba(255,255,255,.06)",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontWeight: 800,
-                      opacity: 0.85,
-                      letterSpacing: ".12em",
-                      textTransform: "uppercase",
-                      fontSize: 12,
-                    }}
-                  >
-                    Sunset
-                  </div>
-                  <div
-                    style={{
-                      marginTop: 8,
-                      fontFamily:
-                        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace",
-                      fontWeight: 900,
-                      fontSize: 40,
-                      letterSpacing: ".08em",
-                    }}
-                  >
-                    {sunsetText}
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    border: "1px solid rgba(255,255,255,.18)",
-                    borderRadius: 16,
-                    padding: 14,
-                    background: "rgba(255,255,255,.06)",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontWeight: 800,
-                      opacity: 0.85,
-                      letterSpacing: ".12em",
-                      textTransform: "uppercase",
-                      fontSize: 12,
-                    }}
-                  >
-                    Next {derived ? derived.nextLabel : "Event"}
-                  </div>
-                  <div
-                    style={{
-                      marginTop: 8,
-                      fontFamily:
-                        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace",
-                      fontWeight: 900,
-                      fontSize: 40,
-                      letterSpacing: ".08em",
-                    }}
-                  >
-                    {derived ? msToClock(derived.msToNext) : "--:--"}
-                  </div>
-                </div>
+            <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
+                <span>{derived ? derived.progressLabel : "Progress"}</span>
+                <span>{derived ? `${progressPct}%` : "--%"}</span>
               </div>
 
-              <div
-                style={{
-                  marginTop: 14,
-                  opacity: 0.86,
-                  textAlign: "center",
-                  fontWeight: 800,
-                }}
-              >
-                {derived ? derived.progressLabel : "Progress"} ·{" "}
-                {derived ? `${Math.round(derived.pct * 100)}%` : "--%"}
-              </div>
-              <div
-                style={{
-                  marginTop: 8,
-                  height: 14,
-                  borderRadius: 999,
-                  overflow: "hidden",
-                  border: "1px solid rgba(255,255,255,.18)",
-                  background: "rgba(255,255,255,.06)",
-                }}
-              >
+              <div className="mt-2 h-4 w-full overflow-hidden rounded-full border border-slate-200 bg-slate-50">
                 <div
+                  className="h-full rounded-full"
                   style={{
-                    height: "100%",
-                    width: `${derived ? Math.round(derived.pct * 100) : 0}%`,
+                    width: `${derived ? progressPct : 0}%`,
                     background: derived?.isDay
-                      ? "linear-gradient(90deg, rgba(34,197,94,.72), rgba(245,158,11,.72))"
-                      : "linear-gradient(90deg, rgba(59,130,246,.72), rgba(147,51,234,.72))",
+                      ? "linear-gradient(90deg, rgba(34,197,94,.60), rgba(245,158,11,.60))"
+                      : "linear-gradient(90deg, rgba(59,130,246,.55), rgba(147,51,234,.55))",
                   }}
                 />
               </div>
-            </div>
 
-            <div className="fs-help">
-              F fullscreen · T 12/24 · S seconds · L toggle location mode
+              {!isFs && (
+                <div className="mt-2 text-xs text-slate-600">
+                  Sunrise and sunset are fetched as UTC timestamps and displayed
+                  in the time zone you entered.
+                </div>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Settings */}
+        {!isFs && (
+          <div className="mt-4 grid gap-3 lg:grid-cols-3">
+            <label className="block text-sm font-semibold text-slate-900">
+              Time zone (display)
+              <input
+                value={timeZone}
+                onChange={(e) => setTimeZone(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                placeholder="America/New_York"
+              />
+              <div className="mt-1 text-xs text-slate-600">
+                Use your device zone or enter one like Europe/Berlin, UTC,
+                Asia/Tokyo.
+              </div>
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-900">
+              Location mode
+              <select
+                value={locMode}
+                onChange={(e) => setLocMode(e.target.value as LocMode)}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              >
+                <option value="device">Use my device location</option>
+                <option value="manual">Manual latitude/longitude</option>
+              </select>
+              <div className="mt-1 text-xs text-slate-600">
+                {locMode === "device"
+                  ? locStatus ||
+                    "Uses browser geolocation (you may need to allow it)."
+                  : "Enter coordinates for any place on Earth."}
+              </div>
+            </label>
+
+            <div className="grid grid-cols-2 gap-3">
+              <label className="block text-sm font-semibold text-slate-900">
+                Latitude
+                <input
+                  type="number"
+                  step="0.0001"
+                  min={-90}
+                  max={90}
+                  value={lat}
+                  onChange={(e) =>
+                    setLat(clamp(Number(e.target.value || 0), -90, 90))
+                  }
+                  disabled={locMode === "device"}
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                />
+              </label>
+              <label className="block text-sm font-semibold text-slate-900">
+                Longitude
+                <input
+                  type="number"
+                  step="0.0001"
+                  min={-180}
+                  max={180}
+                  value={lng}
+                  onChange={(e) =>
+                    setLng(clamp(Number(e.target.value || 0), -180, 180))
+                  }
+                  disabled={locMode === "device"}
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                />
+              </label>
+            </div>
+
+            <div className="lg:col-span-3 flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={showSeconds}
+                  onChange={(e) => setShowSeconds(e.target.checked)}
+                />
+                Seconds
+              </label>
+
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={use24}
+                  onChange={(e) => setUse24(e.target.checked)}
+                />
+                24-hour
+              </label>
+
+              <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                Shortcuts: F fullscreen · T 12/24 · S seconds · L location mode
+              </div>
+            </div>
+          </div>
+        )}
+
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to toggle seconds · F fullscreen · T 12/24 · S seconds ·
+              L location mode
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -947,9 +1048,9 @@ function SunriseSunsetClockCard() {
    PAGE
 ========================================================= */
 export default function SunriseSunsetClockPage({
-  loaderData: { nowISO },
+  loaderData: { nowISO: _nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/sunrise-sunset-clock";
+  const url = "https://www.ilovetimers.com/sunrise-sunset-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -968,7 +1069,7 @@ export default function SunriseSunsetClockPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -978,190 +1079,29 @@ export default function SunriseSunsetClockPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "Does this show sunrise and sunset for my location?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. If you allow location access, it uses your device coordinates. You can also enter latitude and longitude manually.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I check sunrise and sunset for another city?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Switch to manual mode and enter the coordinates for that place. You can also change the display time zone.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Why are sunrise and sunset times shown in a specific time zone?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Sunrise and sunset are fetched as UTC timestamps and then displayed using the time zone you choose. For best results, pick a time zone that matches your chosen location.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I use fullscreen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Click Fullscreen or press F while the card is focused to show a large, readable display.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Sunrise & Sunset Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Sunrise & Sunset Clock
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A live <strong>sunrise and sunset</strong> display with daylight
-            progress and a countdown to the next event.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
         <div>
           <SunriseSunsetClockCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Time until sunset
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              See how much daylight is left and how far you are into the day or
-              night.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Any location</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use your device location, or enter latitude and longitude for any
-              city.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-              <li>
-                <strong>T</strong> = 12/24 toggle
-              </li>
-              <li>
-                <strong>S</strong> = Seconds toggle
-              </li>
-              <li>
-                <strong>L</strong> = Location mode toggle
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free sunrise and sunset clock
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This page shows <strong>today’s sunrise</strong> and{" "}
-              <strong>sunset</strong> times for your location, plus a live
-              countdown to the next event. If you allow location access, it uses
-              your device coordinates. You can also enter latitude and longitude
-              manually.
-            </p>
-
-            <p>
-              Want other clocks? Try{" "}
-              <Link
-                to="/digital-clock"
-                className="font-semibold hover:underline"
-              >
-                Digital Clock
-              </Link>{" "}
-              or{" "}
-              <Link to="/utc-clock" className="font-semibold hover:underline">
-                UTC Clock
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Sunrise & Sunset Clock FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I check sunrise and sunset for another city?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Switch to manual coordinates and enter the city’s latitude and
-              longitude. You can also set the display time zone.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why might the time zone not match the location?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Sunrise and sunset are fetched as UTC timestamps and then
-              displayed using the time zone you type in. For best accuracy, use
-              a time zone that matches the chosen location.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I use fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
-              while the card is focused.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Sunrise & Sunset Clock</span>
+        </p>
       </section>
     </main>
   );

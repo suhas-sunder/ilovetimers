@@ -1,7 +1,14 @@
 // app/routes/multiple-timers.tsx
 import type { Route } from "./+types/multiple-timers";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +40,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -74,7 +81,31 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (same style as other pages)
+async function toggleFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) {
+    await el.requestFullscreen().catch(() => {});
+  } else {
+    await document.exitFullscreen().catch(() => {});
+  }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+// WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -114,18 +145,10 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
 /* =========================================================
    LOCAL CACHE (PERSISTENCE)
 ========================================================= */
-const STORAGE_KEY = "ilovetimers:multiple-timers:v1";
+const STORAGE_KEY = "ilovetimers:multiple-timers:v2";
 
 type StoredTimer = {
   id: string;
@@ -135,7 +158,7 @@ type StoredTimer = {
 };
 
 type StoredState = {
-  v: 1;
+  v: 2;
   savedAt: number;
   sound: boolean;
   finalCountdownBeeps: boolean;
@@ -165,23 +188,34 @@ function saveStoredState(state: StoredState) {
 }
 
 /* =========================================================
-   UI PRIMITIVES
+   UI PRIMITIVES (MATCH NEW STYLE)
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -206,15 +240,61 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
         : kind === "danger"
-          ? `cursor-pointer rounded-lg bg-rose-700 px-4 py-2 font-medium text-white hover:bg-rose-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-          : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+          ? `cursor-pointer rounded-lg bg-rose-700 px-4 py-2 font-semibold text-white hover:bg-rose-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+          : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    MULTIPLE TIMERS CARD
@@ -236,85 +316,179 @@ function uid() {
 
 function MultipleTimersCard() {
   const beep = useBeep();
-
   const presetsMin = useMemo(() => [1, 2, 3, 5, 7, 10, 12, 15, 20, 25, 30], []);
 
-  const initial = useMemo(() => {
-    // default state (current behavior)
-    const defaults = {
-      sound: true,
-      finalCountdownBeeps: false,
-      timers: [
-        {
-          id: uid(),
-          label: "Timer A",
-          seconds: 5 * 60,
-          remainingMs: 5 * 60 * 1000,
-          running: false,
-          alarming: false,
-          endAt: null,
-          lastBeepSec: null,
-        },
-        {
-          id: uid(),
-          label: "Timer B",
-          seconds: 10 * 60,
-          remainingMs: 10 * 60 * 1000,
-          running: false,
-          alarming: false,
-          endAt: null,
-          lastBeepSec: null,
-        },
-      ] as TimerItem[],
-    };
-
-    const stored = loadStoredState();
-    if (!stored || stored.v !== 1) return defaults;
-
-    const restoredTimers: TimerItem[] = (stored.timers || [])
-      .filter((t) => t && typeof t.id === "string")
-      .map((t) => {
-        const seconds = clamp(Number(t.seconds || 0), 1, 24 * 60 * 60);
-        const remainingMs = clamp(
-          Number(t.remainingMs || 0),
-          0,
-          seconds * 1000,
-        );
-
-        return {
-          id: t.id,
-          label: String(t.label || "Timer"),
-          seconds,
-          remainingMs,
-          running: false, // restore paused (predictable)
-          alarming: false, // never restore alarming
-          endAt: null,
-          lastBeepSec: null,
-        };
-      });
-
-    return {
-      sound: !!stored.sound,
-      finalCountdownBeeps: !!stored.finalCountdownBeeps,
-      timers: restoredTimers.length ? restoredTimers : defaults.timers,
-    };
-  }, []);
-
-  const [sound, setSound] = useState(initial.sound);
-  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(
-    initial.finalCountdownBeeps,
+  const defaultTimers: TimerItem[] = useMemo(
+    () => [
+      {
+        id: "timer-a",
+        label: "Timer A",
+        seconds: 5 * 60,
+        remainingMs: 5 * 60 * 1000,
+        running: false,
+        alarming: false,
+        endAt: null,
+        lastBeepSec: null,
+      },
+      {
+        id: "timer-b",
+        label: "Timer B",
+        seconds: 10 * 60,
+        remainingMs: 10 * 60 * 1000,
+        running: false,
+        alarming: false,
+        endAt: null,
+        lastBeepSec: null,
+      },
+    ],
+    [],
   );
 
-  // Start with two timers by default (matches keyword intent), but restore if cached
-  const [timers, setTimers] = useState<TimerItem[]>(initial.timers);
+  const [sound, setSound] = useState(true);
+  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
+  const [timers, setTimers] = useState<TimerItem[]>(defaultTimers);
+
+  // ✅ real hydration gate: persist only after restored state has committed
+  const [hydrated, setHydrated] = useState(false);
+
+  // Latest-state refs for rAF + alarm loops
+  const timersRef = useRef<TimerItem[]>(defaultTimers);
+  useEffect(() => {
+    timersRef.current = timers;
+  }, [timers, defaultTimers]);
+
+  const soundRef = useRef(sound);
+  useEffect(() => {
+    soundRef.current = sound;
+  }, [sound]);
+
+  const finalBeepsRef = useRef(finalCountdownBeeps);
+  useEffect(() => {
+    finalBeepsRef.current = finalCountdownBeeps;
+  }, [finalCountdownBeeps]);
 
   const rafRef = useRef<number | null>(null);
-  const fsRef = useRef<HTMLDivElement>(null);
+  const alarmIntervalRef = useRef<number | null>(null);
 
-  // Persist timers + settings
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const stopRaf = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }, []);
+
+  const startRafIfNeeded = useCallback(() => {
+    if (rafRef.current) return;
+
+    rafRef.current = requestAnimationFrame(function tick() {
+      const now = performance.now();
+
+      setTimers((prev) => {
+        let changed = false;
+
+        const next = prev.map((t) => {
+          if (!t.running) return t;
+
+          const endAt = t.endAt ?? now + t.remainingMs;
+          const rem = Math.max(0, endAt - now);
+
+          if (
+            soundRef.current &&
+            finalBeepsRef.current &&
+            rem > 0 &&
+            rem <= 5_000
+          ) {
+            const secLeft = Math.ceil(rem / 1000);
+            if (t.lastBeepSec !== secLeft) {
+              const pitch = 740 + (t.id.charCodeAt(0) % 5) * 40;
+              beep(pitch, 70, 0.08);
+              changed = true;
+              return { ...t, endAt, remainingMs: rem, lastBeepSec: secLeft };
+            }
+          }
+
+          if (rem <= 0) {
+            changed = true;
+            return {
+              ...t,
+              running: false,
+              alarming: true,
+              endAt: null,
+              remainingMs: 0,
+              lastBeepSec: null,
+            };
+          }
+
+          if (rem !== t.remainingMs || t.endAt !== endAt) {
+            changed = true;
+            return { ...t, endAt, remainingMs: rem };
+          }
+
+          return t;
+        });
+
+        return changed ? next : prev;
+      });
+
+      const anyRunning = timersRef.current.some((t) => t.running);
+      if (anyRunning) rafRef.current = requestAnimationFrame(tick);
+      else rafRef.current = null;
+    });
+  }, [beep]);
+
   useEffect(() => {
+    const anyRunning = timers.some((t) => t.running);
+    if (anyRunning) startRafIfNeeded();
+    else stopRaf();
+  }, [timers, startRafIfNeeded, stopRaf]);
+
+  useEffect(() => stopRaf, [stopRaf]);
+
+  // Restore persisted state after mount
+  useEffect(() => {
+    const stored = loadStoredState();
+
+    if (stored && stored.v === 2) {
+      const restoredTimers: TimerItem[] = (stored.timers || [])
+        .filter((t) => t && typeof t.id === "string")
+        .map((t) => {
+          const seconds = clamp(Number(t.seconds || 0), 1, 24 * 60 * 60);
+          const remainingMs = clamp(
+            Number(t.remainingMs || 0),
+            0,
+            seconds * 1000,
+          );
+
+          return {
+            id: t.id,
+            label: String(t.label || "Timer"),
+            seconds,
+            remainingMs,
+            running: false,
+            alarming: false,
+            endAt: null,
+            lastBeepSec: null,
+          };
+        });
+
+      setSound(!!stored.sound);
+      setFinalCountdownBeeps(!!stored.finalCountdownBeeps);
+      setTimers(restoredTimers.length ? restoredTimers : defaultTimers);
+    } else {
+      setTimers(defaultTimers);
+    }
+
+    // ✅ triggers a re-render; persist effect will run on the next commit
+    setHydrated(true);
+  }, [defaultTimers]);
+
+  // Persist (only after hydration)
+  useEffect(() => {
+    if (!hydrated) return;
+
     const stored: StoredState = {
-      v: 1,
+      v: 2,
       savedAt: Date.now(),
       sound,
       finalCountdownBeeps,
@@ -327,12 +501,11 @@ function MultipleTimersCard() {
     };
 
     saveStoredState(stored);
-  }, [timers, sound, finalCountdownBeeps]);
+  }, [hydrated, timers, sound, finalCountdownBeeps]);
 
-  // Alarm tick for any timer that is alarming
-  const alarmIntervalRef = useRef<number | null>(null);
+  const anyAlarming = timers.some((t) => t.alarming);
+
   useEffect(() => {
-    const anyAlarming = timers.some((t) => t.alarming);
     if (!anyAlarming) {
       if (alarmIntervalRef.current) {
         window.clearInterval(alarmIntervalRef.current);
@@ -344,8 +517,7 @@ function MultipleTimersCard() {
     if (alarmIntervalRef.current) return;
 
     alarmIntervalRef.current = window.setInterval(() => {
-      if (!sound) return;
-      // "multi-timer" alarm feel: short alternating tones
+      if (!soundRef.current) return;
       beep(880, 130, 0.11);
       window.setTimeout(() => beep(660, 160, 0.11), 150);
     }, 750);
@@ -356,64 +528,7 @@ function MultipleTimersCard() {
         alarmIntervalRef.current = null;
       }
     };
-  }, [timers, sound, beep]);
-
-  // Main rAF loop: updates all running timers
-  useEffect(() => {
-    const anyRunning = timers.some((t) => t.running);
-    if (!anyRunning) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      return;
-    }
-
-    const tick = () => {
-      const now = performance.now();
-
-      setTimers((prev) =>
-        prev.map((t) => {
-          if (!t.running) return t;
-
-          // initialize endAt on first run frame
-          const endAt = t.endAt ?? now + t.remainingMs;
-          const rem = Math.max(0, endAt - now);
-
-          // optional final beeps per timer (last 5s)
-          if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
-            const secLeft = Math.ceil(rem / 1000);
-            if (t.lastBeepSec !== secLeft) {
-              // small per-timer beep, slightly different pitch per index via hash
-              const pitch = 740 + (t.id.charCodeAt(0) % 5) * 40;
-              beep(pitch, 70, 0.08);
-              return { ...t, endAt, remainingMs: rem, lastBeepSec: secLeft };
-            }
-          }
-
-          if (rem <= 0) {
-            // finished: stop + start alarming
-            return {
-              ...t,
-              running: false,
-              alarming: true,
-              endAt: null,
-              remainingMs: 0,
-              lastBeepSec: null,
-            };
-          }
-
-          return { ...t, endAt, remainingMs: rem };
-        }),
-      );
-
-      rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [timers, sound, finalCountdownBeeps, beep]);
+  }, [anyAlarming, beep]);
 
   function addTimer() {
     setTimers((prev) => [
@@ -466,7 +581,6 @@ function MultipleTimersCard() {
       prev.map((t) => {
         if (t.id !== id) return t;
 
-        // If alarming, stop alarm and reset to configured duration
         if (t.alarming) {
           return {
             ...t,
@@ -479,12 +593,27 @@ function MultipleTimersCard() {
         }
 
         if (t.running) {
-          // pause: freeze remaining, clear endAt
-          return { ...t, running: false, endAt: null, lastBeepSec: null };
+          const now = performance.now();
+          const rem = Math.max(0, (t.endAt ?? now + t.remainingMs) - now);
+          return {
+            ...t,
+            running: false,
+            endAt: null,
+            remainingMs: rem,
+            lastBeepSec: null,
+          };
         }
 
-        // start: keep remaining as-is, set running true; endAt will be set in rAF loop
-        return { ...t, running: true, lastBeepSec: null };
+        const base = t.remainingMs > 0 ? t.remainingMs : t.seconds * 1000;
+        const now = performance.now();
+        return {
+          ...t,
+          running: true,
+          alarming: false,
+          endAt: now + base,
+          remainingMs: base,
+          lastBeepSec: null,
+        };
       }),
     );
   }
@@ -513,24 +642,37 @@ function MultipleTimersCard() {
   }
 
   function startAll() {
+    const now = performance.now();
     setTimers((prev) =>
-      prev.map((t) =>
-        t.alarming
-          ? t
-          : t.running
-            ? t
-            : { ...t, running: true, lastBeepSec: null },
-      ),
+      prev.map((t) => {
+        if (t.alarming || t.running) return t;
+        const base = t.remainingMs > 0 ? t.remainingMs : t.seconds * 1000;
+        return {
+          ...t,
+          running: true,
+          alarming: false,
+          endAt: now + base,
+          remainingMs: base,
+          lastBeepSec: null,
+        };
+      }),
     );
   }
 
   function pauseAll() {
+    const now = performance.now();
     setTimers((prev) =>
-      prev.map((t) =>
-        t.running
-          ? { ...t, running: false, endAt: null, lastBeepSec: null }
-          : t,
-      ),
+      prev.map((t) => {
+        if (!t.running) return t;
+        const rem = Math.max(0, (t.endAt ?? now + t.remainingMs) - now);
+        return {
+          ...t,
+          running: false,
+          endAt: null,
+          remainingMs: rem,
+          lastBeepSec: null,
+        };
+      }),
     );
   }
 
@@ -551,161 +693,189 @@ function MultipleTimersCard() {
     setTimers((prev) => prev.map((t) => ({ ...t, alarming: false })));
   }
 
+  const anyRunning = timers.some((t) => t.running);
+  const statusLabel = anyAlarming ? "Alarm" : anyRunning ? "Running" : "Ready";
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
+    const k = e.key.toLowerCase();
+
     if (e.key === " ") {
       e.preventDefault();
-      // Space toggles start/pause all
-      const anyRunning = timers.some((t) => t.running);
       anyRunning ? pauseAll() : startAll();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       resetAll();
-    } else if (e.key.toLowerCase() === "x") {
+    } else if (k === "x") {
       stopAllAlarms();
-    } else if (e.key.toLowerCase() === "a") {
+    } else if (k === "a") {
       addTimer();
-    } else if (e.key.toLowerCase() === "f" && fsRef.current) {
-      toggleFullscreen(fsRef.current);
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
-  const anyRunning = timers.some((t) => t.running);
-  const anyAlarming = timers.some((t) => t.alarming);
-
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Multiple Timers
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Run <strong>two timers at once</strong> (or more). Each timer has
-            its own countdown, start/pause, and alarm. Designed for cooking,
-            classrooms, workouts, and labs.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Multiple Timers"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind="solid"
+              onClick={anyRunning ? pauseAll : startAll}
+              className="py-1 text-sm"
+            >
+              {anyRunning ? "Pause all" : "Start all"}
+            </Btn>
+            <Btn kind="ghost" onClick={addTimer} className="py-1 text-sm">
+              Add
+            </Btn>
+            <Btn kind="ghost" onClick={resetAll} className="py-1 text-sm">
+              Reset
+            </Btn>
+            <Btn
+              kind="danger"
+              onClick={stopAllAlarms}
+              className="py-1 text-sm"
+              disabled={!anyAlarming}
+            >
+              Stop alarms
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Multiple Timers (Run Two or More at Once)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Run parallel countdowns with big digits, per-timer controls, and
+                optional sound.
+              </p>
+            </div>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
 
-          <Btn
-            kind="ghost"
-            onClick={() => fsRef.current && toggleFullscreen(fsRef.current)}
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={finalCountdownBeeps}
+                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                  disabled={!sound}
+                />
+                Final beeps
+              </label>
 
-      {/* Global controls */}
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <Btn onClick={anyRunning ? pauseAll : startAll}>
-          {anyRunning ? "Pause all" : "Start all"}
-        </Btn>
-        <Btn kind="ghost" onClick={resetAll}>
-          Reset all
-        </Btn>
-        <Btn kind="ghost" onClick={addTimer}>
-          Add timer
-        </Btn>
-        <Btn kind="danger" onClick={stopAllAlarms} disabled={!anyAlarming}>
-          Stop alarms
-        </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-        <div className="ml-auto text-xs text-slate-600">
-          Tip: run parallel timers, each with its own duration and alarm.
-        </div>
-      </div>
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center gap-3">
+              <Btn onClick={anyRunning ? pauseAll : startAll}>
+                {anyRunning ? "Pause all" : "Start all"}
+              </Btn>
+              <Btn kind="ghost" onClick={resetAll}>
+                Reset all
+              </Btn>
+              <Btn kind="ghost" onClick={addTimer}>
+                Add timer
+              </Btn>
+              <Btn
+                kind="danger"
+                onClick={stopAllAlarms}
+                disabled={!anyAlarming}
+              >
+                Stop alarms
+              </Btn>
+            </div>
 
-      {/* Fullscreen container: grid of timer tiles */}
-      <div
-        ref={fsRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-                padding:3vh 3vw;
-                overflow:auto;
-              }
-              [data-fs-container]:fullscreen .tile{
-                background: rgba(255,255,255,.06);
-                border: 1px solid rgba(255,255,255,.16);
-              }
-              [data-fs-container]:fullscreen .tileLabel,
-              [data-fs-container]:fullscreen .tileMeta{
-                color: rgba(255,255,255,.88);
-              }
-              [data-fs-container]:fullscreen .tileTime{
-                color: #ffffff;
-              }
-              [data-fs-container]:fullscreen .tileBtnSolid{
-                background:#ffffff;
-                color:#0b0b0c;
-              }
-              [data-fs-container]:fullscreen .tileBtnGhost{
-                background: rgba(255,255,255,.12);
-                color:#ffffff;
-              }
-            `,
+            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause all · R reset · A add · X stop alarms ·
+              F fullscreen
+            </div>
+          </div>
+        )}
+
+        {/* Grid */}
+        <div
+          className={[
+            "relative mt-4 rounded-2xl border border-slate-200 bg-slate-50",
+            "p-3 sm:p-4",
+            isFs ? "mx-2 sm:mx-4 flex-1 overflow-auto" : "",
+          ].join(" ")}
+          style={{
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            overflowAnchor: "none",
           }}
-        />
-
-        <div className="p-5">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {timers.map((t) => {
+        >
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {timers.map((t, idx) => {
               const urgent =
                 t.running && t.remainingMs > 0 && t.remainingMs <= 10_000;
               const shown = msToClock(Math.ceil(t.remainingMs / 1000) * 1000);
 
+              const tileTone = t.alarming
+                ? "border-rose-200 bg-rose-50"
+                : urgent
+                  ? "border-rose-200 bg-rose-50"
+                  : "border-slate-200 bg-white";
+
+              const timeSize = isFs
+                ? "text-[clamp(2.8rem,7vw,6rem)]"
+                : "text-[clamp(2.4rem,6vw,4.8rem)]";
+
               return (
                 <div
                   key={t.id}
-                  className={`tile rounded-2xl border-2 bg-white p-4 shadow-sm ${
-                    t.alarming
-                      ? "border-rose-300 bg-rose-50"
-                      : urgent
-                        ? "border-rose-300 bg-rose-50"
-                        : "border-amber-300 bg-white"
-                  }`}
+                  className={[
+                    "rounded-2xl border shadow-sm",
+                    tileTone,
+                    isFs ? "p-4 sm:p-5" : "p-4",
+                  ].join(" ")}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <input
                         value={t.label}
                         onChange={(e) => updateLabel(t.id, e.target.value)}
-                        className="tileLabel w-full rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-sm font-extrabold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                        className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-extrabold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                        aria-label={`Label for timer ${idx + 1}`}
                       />
-                      <div className="tileMeta mt-1 text-xs text-slate-600">
+                      <div className="mt-1 text-xs font-semibold text-slate-600">
                         {t.alarming
                           ? "Alarm ringing"
                           : t.running
@@ -717,7 +887,7 @@ function MultipleTimersCard() {
                     <button
                       type="button"
                       onClick={() => removeTimer(t.id)}
-                      className="text-xs font-semibold text-slate-600 hover:underline"
+                      className="cursor-pointer text-xs font-semibold text-slate-600 hover:underline"
                       title="Remove timer"
                       aria-label="Remove timer"
                     >
@@ -725,34 +895,42 @@ function MultipleTimersCard() {
                     </button>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-center font-mono font-extrabold tracking-widest">
-                    <div className="tileTime text-5xl sm:text-6xl text-amber-950">
+                  <div className="mt-3 flex items-center justify-center">
+                    <div
+                      className={`font-mono font-extrabold tracking-widest text-slate-900 ${timeSize}`}
+                    >
                       {shown}
                     </div>
                   </div>
 
                   {/* Presets */}
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {presetsMin.map((m) => (
-                      <button
-                        key={m}
-                        type="button"
-                        onClick={() => setPreset(t.id, m)}
-                        className={`cursor-pointer rounded-full px-3 py-1 text-xs font-semibold transition ${
-                          Math.round(t.seconds / 60) === m && !t.running
-                            ? "bg-amber-700 text-white hover:bg-amber-800"
-                            : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-                        }`}
-                        title="Sets duration and resets this timer"
-                      >
-                        {m}m
-                      </button>
-                    ))}
+                    {presetsMin.map((m) => {
+                      const active =
+                        Math.round(t.seconds / 60) === m &&
+                        !t.running &&
+                        !t.alarming;
+                      return (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setPreset(t.id, m)}
+                          className={
+                            active
+                              ? "cursor-pointer rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-amber-400"
+                              : "cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-50"
+                          }
+                          title="Sets duration and resets this timer"
+                        >
+                          {m}m
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {/* Custom */}
                   <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr]">
-                    <label className="block text-xs font-semibold text-amber-950">
+                    <label className="block text-xs font-semibold text-slate-900">
                       Minutes
                       <input
                         type="number"
@@ -768,11 +946,11 @@ function MultipleTimersCard() {
                           const secs = t.seconds % 60;
                           setSeconds(t.id, mins * 60 + secs);
                         }}
-                        className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-2 py-2 text-sm text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                       />
                     </label>
 
-                    <label className="block text-xs font-semibold text-amber-950">
+                    <label className="block text-xs font-semibold text-slate-900">
                       Seconds
                       <input
                         type="number"
@@ -788,7 +966,7 @@ function MultipleTimersCard() {
                           const mins = Math.floor(t.seconds / 60);
                           setSeconds(t.id, mins * 60 + secs);
                         }}
-                        className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-2 py-2 text-sm text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                       />
                     </label>
                   </div>
@@ -798,11 +976,11 @@ function MultipleTimersCard() {
                     <button
                       type="button"
                       onClick={() => startPause(t.id)}
-                      className={`tileBtnSolid cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold ${
+                      className={
                         t.alarming
-                          ? "bg-rose-700 text-white hover:bg-rose-800"
-                          : "bg-amber-700 text-white hover:bg-amber-800"
-                      }`}
+                          ? "cursor-pointer rounded-lg bg-rose-700 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-800"
+                          : "cursor-pointer rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-400"
+                      }
                     >
                       {t.alarming
                         ? "Stop alarm"
@@ -814,7 +992,7 @@ function MultipleTimersCard() {
                     <button
                       type="button"
                       onClick={() => resetOne(t.id)}
-                      className="tileBtnGhost cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 text-sm font-semibold text-amber-950 hover:bg-amber-400"
+                      className="cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
                     >
                       Reset
                     </button>
@@ -823,28 +1001,29 @@ function MultipleTimersCard() {
                       type="button"
                       onClick={() => stopAlarmOne(t.id)}
                       disabled={!t.alarming}
-                      className="tileBtnGhost cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 text-sm font-semibold text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
                       title="Stops only the alarm state (does not reset time)"
                     >
                       Silence
                     </button>
                   </div>
-
-                  <div className="mt-3 text-[11px] text-slate-600">
-                    Per-timer controls: Start/Pause, Reset, and its own alarm at
-                    zero.
-                  </div>
                 </div>
               );
             })}
           </div>
-
-          {/* Shortcuts */}
-          <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-            Shortcuts: Space start/pause all · R reset all · A add timer · X
-            stop alarms · F fullscreen
-          </div>
         </div>
+
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Space start/pause all · R reset · A add · X stop alarms · F
+              fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -854,9 +1033,9 @@ function MultipleTimersCard() {
    PAGE
 ========================================================= */
 export default function MultipleTimersPage({
-  loaderData: { nowISO },
+  loaderData: { nowISO: _nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/multiple-timers";
+  const url = "https://www.ilovetimers.com/multiple-timers";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -875,7 +1054,7 @@ export default function MultipleTimersPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -885,231 +1064,29 @@ export default function MultipleTimersPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What are multiple timers?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Multiple timers let you run two timers at once (or more). Each timer counts down independently so you can track separate tasks in parallel.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I run two timers at once?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Set a duration for Timer A and Timer B, then press Start on each timer (or use Start all). They run independently and alarm when they hit zero.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I add more timers?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Click Add timer (or press A). You can run parallel timers for cooking, classrooms, workouts, and labs.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses all timers, R resets all, A adds a timer, X stops alarms, and F toggles fullscreen while the card is focused.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Multiple Timers</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Multiple Timers (Two Timers at Once)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            Run <strong>multiple timers</strong> in parallel. Perfect when you
-            need <strong>two timers at once</strong> for cooking, classrooms,
-            workouts, or labs.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <MultipleTimersCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Two timers at once (default)
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              The page starts with two timers so you can immediately run
-              parallel countdowns. Add more if you need them.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Independent controls
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Each timer has its own Start/Pause and Reset. Use Start all and
-              Pause all when you want everything synchronized.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Fullscreen grid
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen turns the timer list into a high-contrast grid so you
-              can see multiple countdowns from farther away.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free multiple timers: run parallel timers (two timers at once or
-            more)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This page is built for situations where one timer is not enough.
-              Use it as <strong>multiple timers</strong> to run two or more
-              independent countdowns. That makes it ideal for cooking multiple
-              dishes, managing classroom stations, timing workout sets, or
-              running lab steps.
-            </p>
-
-            <p>
-              Each timer has its own duration and alarm, so you can track tasks
-              in parallel without constantly resetting a single timer. If you
-              want timers to start together, use <strong>Start all</strong>. If
-              you need everything to stop immediately, use{" "}
-              <strong>Pause all</strong> or <strong>Stop alarms</strong>.
-            </p>
-
-            <p>
-              For a single countdown, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For a stopwatch, use{" "}
-              <Link to="/stopwatch" className="font-semibold hover:underline">
-                Stopwatch
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Multiple timers
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Run several countdowns at the same time.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Two timers at once
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Starts with Timer A and Timer B, ready to use.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Parallel timers
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Each timer runs independently with its own alarm.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Multiple Timers FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I run two timers at once?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. The page starts with Timer A and Timer B. Set each duration
-              and press Start on each timer (or use Start all).
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I add more than two timers?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Click <strong>Add timer</strong> (or press <strong>A</strong>
-              ) to add more parallel timers.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Do timers run independently?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Each timer has its own Start/Pause, Reset, and alarm at zero.
-              Global buttons help when you want everything synchronized.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause all • <strong>R</strong> reset
-              all • <strong>A</strong> add timer • <strong>X</strong> stop
-              alarms • <strong>F</strong> fullscreen (when focused).
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Multiple Timers</span>
+        </p>
       </section>
     </main>
   );

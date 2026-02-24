@@ -3,6 +3,11 @@ import type { Route } from "./+types/analog-clock";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
+import Disclaimer from "~/clients/components/analog-clock/Disclaimer";
+import FAQ from "~/clients/components/analog-clock/FAQ";
+import HowItWorks from "~/clients/components/analog-clock/HowItWorks";
+import KeyboardShortcuts from "~/clients/components/analog-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/analog-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -34,17 +39,19 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://www.ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
-
 
 /* =========================================================
    LOADER
@@ -99,7 +106,7 @@ function calcAngles(d: Date, smooth: boolean) {
 }
 
 /* =========================================================
-   UI PRIMITIVES (same style as Home/Pomodoro)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
@@ -115,7 +122,11 @@ const Card = ({
   <div
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -140,8 +151,8 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -187,45 +198,39 @@ function AnalogClockCard() {
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
-    if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
+    const k = e.key.toLowerCase();
+
+    if (k === "f" && displayWrapRef.current) {
       toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "s") {
+    } else if (k === "s") {
       setShowSecondsHand((v) => !v);
-    } else if (e.key.toLowerCase() === "m") {
+    } else if (k === "m") {
       setSmoothSeconds((v) => !v);
     }
   };
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Analog Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Clean analog clock face with fullscreen. Toggle seconds hand and
-            smooth motion.
-          </p>
-        </div>
-
+    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-4 sm:p-6">
+      {/* Controls */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
         <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
             <input
               type="checkbox"
               checked={showSecondsHand}
               onChange={(e) => setShowSecondsHand(e.target.checked)}
+              className="accent-amber-500"
             />
             Seconds hand
           </label>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
             <input
               type="checkbox"
               checked={smoothSeconds}
               onChange={(e) => setSmoothSeconds(e.target.checked)}
               disabled={!showSecondsHand}
+              className="accent-amber-500"
             />
             Smooth
           </label>
@@ -246,11 +251,10 @@ function AnalogClockCard() {
       <div
         ref={displayWrapRef}
         data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
+        className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 text-slate-950"
         style={{ minHeight: 420 }}
         aria-live="off"
       >
-        {/* Fullscreen CSS: keep your existing pattern */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -310,7 +314,7 @@ function AnalogClockCard() {
           style={{ minHeight: 420 }}
         >
           <div className="flex w-full flex-col items-center justify-center gap-4">
-            <div className="text-xs font-bold uppercase tracking-wide text-amber-800 text-center">
+            <div className="text-center text-xs font-bold uppercase tracking-wide text-slate-600">
               Local analog clock · {tz}
             </div>
 
@@ -324,7 +328,7 @@ function AnalogClockCard() {
               />
             </div>
 
-            <div className="text-xs font-semibold text-amber-800 text-center">
+            <div className="text-center text-xs font-semibold text-slate-600">
               Shortcuts: F fullscreen · S seconds hand · M smooth
             </div>
           </div>
@@ -352,9 +356,9 @@ function AnalogClockCard() {
         </div>
       </div>
 
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
+      {/* Footer hint */}
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900">
           Shortcuts: F fullscreen · S seconds hand · M smooth
         </div>
         <div className="text-xs text-slate-600">
@@ -366,11 +370,7 @@ function AnalogClockCard() {
 }
 
 /* =========================================================
-   CLOCK SVG (fixes the styling issues)
-   - Perfect centering
-   - Consistent ticks
-   - Clean hands with correct pivots
-   - Looks good in normal and fullscreen
+   CLOCK SVG
 ========================================================= */
 function ClockFaceSvg({
   hourDeg,
@@ -389,25 +389,24 @@ function ClockFaceSvg({
   const cx = 50;
   const cy = 50;
 
-  const faceFill = dark ? "#0b0b0c" : "#fff7ed";
-  const ringStroke = dark ? "rgba(255,255,255,.22)" : "rgba(180,83,9,.40)";
-  const innerStroke = dark ? "rgba(255,255,255,.10)" : "rgba(180,83,9,.18)";
+  const faceFill = dark ? "#0b0b0c" : "#f8fafc"; // slate-50-ish
+  const ringStroke = dark ? "rgba(255,255,255,.22)" : "rgba(15,23,42,.18)"; // slate-900 alpha
+  const innerStroke = dark ? "rgba(255,255,255,.10)" : "rgba(15,23,42,.10)";
 
-  const tickMajor = dark ? "rgba(255,255,255,.78)" : "rgba(120,53,15,.70)";
-  const tickMinor = dark ? "rgba(255,255,255,.32)" : "rgba(120,53,15,.35)";
+  const tickMajor = dark ? "rgba(255,255,255,.78)" : "rgba(30,41,59,.70)";
+  const tickMinor = dark ? "rgba(255,255,255,.32)" : "rgba(30,41,59,.30)";
 
-  const handHour = dark ? "rgba(255,255,255,.92)" : "rgba(69,26,3,.92)";
-  const handMin = dark ? "rgba(255,255,255,.88)" : "rgba(69,26,3,.88)";
+  const handHour = dark ? "rgba(255,255,255,.92)" : "rgba(15,23,42,.92)";
+  const handMin = dark ? "rgba(255,255,255,.88)" : "rgba(15,23,42,.86)";
   const handSec = dark ? "rgba(255,255,255,.70)" : "rgba(159,18,57,.88)";
 
-  const centerFill = dark ? "rgba(255,255,255,.92)" : "rgba(69,26,3,.92)";
+  const centerFill = dark ? "rgba(255,255,255,.92)" : "rgba(15,23,42,.92)";
 
   // ring geometry
   const outerR = 48;
   const innerR = 45;
 
   // hand geometry
-  // Pivots at (50,50). Hands extend up from pivot.
   const hourLen = 22;
   const minLen = 32;
   const secLen = 36;
@@ -416,7 +415,6 @@ function ClockFaceSvg({
   const minW = 3.8;
   const secW = 2.0;
 
-  // small tail behind center for nicer look
   const hourTail = 4;
   const minTail = 5;
   const secTail = 8;
@@ -435,8 +433,7 @@ function ClockFaceSvg({
 
     for (let i = 0; i < 60; i++) {
       const isMajor = i % 5 === 0;
-      const ang = (i * 6 * Math.PI) / 180; // radians, 0 at 12? This is 0 at 3 o'clock.
-      // Convert so 0 is at 12 o'clock: subtract 90 degrees.
+      const ang = (i * 6 * Math.PI) / 180;
       const a = ang - Math.PI / 2;
 
       const rOuter = 44.2;
@@ -459,8 +456,6 @@ function ClockFaceSvg({
     return out;
   }, [tickMajor, tickMinor]);
 
-  // Optional subtle numerals for better aesthetics and usability.
-  // Keep minimal: 12, 3, 6, 9 only.
   const numerals = useMemo(() => {
     const items = [
       { t: "12", deg: 0 },
@@ -480,7 +475,7 @@ function ClockFaceSvg({
     });
   }, []);
 
-  const numeralFill = dark ? "rgba(255,255,255,.78)" : "rgba(120,53,15,.75)";
+  const numeralFill = dark ? "rgba(255,255,255,.78)" : "rgba(30,41,59,.70)";
 
   return (
     <div className="aspect-square w-full">
@@ -490,7 +485,6 @@ function ClockFaceSvg({
         role="img"
         aria-label="Analog clock"
       >
-        {/* Face */}
         <circle
           cx={cx}
           cy={cy}
@@ -508,7 +502,6 @@ function ClockFaceSvg({
           strokeWidth="1.2"
         />
 
-        {/* Ticks */}
         {ticks.map((t, idx) => (
           <line
             key={idx}
@@ -522,7 +515,6 @@ function ClockFaceSvg({
           />
         ))}
 
-        {/* Numerals (subtle) */}
         {numerals.map((n) => (
           <text
             key={n.t}
@@ -542,9 +534,7 @@ function ClockFaceSvg({
           </text>
         ))}
 
-        {/* Hands group: rotate around center. Use 0 deg at 12. */}
         <g style={{ filter: handShadow }}>
-          {/* Hour hand */}
           <g transform={`rotate(${hourDeg} ${cx} ${cy})`}>
             <line
               x1={cx}
@@ -557,7 +547,6 @@ function ClockFaceSvg({
             />
           </g>
 
-          {/* Minute hand */}
           <g transform={`rotate(${minDeg} ${cx} ${cy})`}>
             <line
               x1={cx}
@@ -570,7 +559,6 @@ function ClockFaceSvg({
             />
           </g>
 
-          {/* Seconds hand */}
           {showSecondsHand ? (
             <g transform={`rotate(${secDeg} ${cx} ${cy})`}>
               <line
@@ -582,7 +570,6 @@ function ClockFaceSvg({
                 strokeWidth={secW}
                 strokeLinecap="round"
               />
-              {/* seconds counterweight dot */}
               <circle
                 cx={cx}
                 cy={cy + 12}
@@ -594,7 +581,6 @@ function ClockFaceSvg({
           ) : null}
         </g>
 
-        {/* Center cap */}
         <circle cx={cx} cy={cy} r="2.4" fill={centerFill} />
         <circle
           cx={cx}
@@ -613,7 +599,7 @@ function ClockFaceSvg({
 export default function AnalogClockPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/analog-clock";
+  const url = "https://www.ilovetimers.com/analog-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -632,201 +618,53 @@ export default function AnalogClockPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Analog Clock", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "Does this analog clock show my local time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. The analog clock uses your device’s local time and time zone settings.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I hide the seconds hand?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Toggle Seconds hand off or press S while the card is focused.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What is smooth motion?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Smooth motion makes the seconds hand sweep continuously instead of ticking once per second.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I use fullscreen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Click Fullscreen or press F while the card is focused to show the clock on a clean dark screen.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Analog Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Analog Clock
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Analog Clock (Fullscreen + Seconds Hand)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>analog clock</strong> with a readable clock face,
-            seconds hand, smooth motion, and fullscreen mode.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Go fullscreen and toggle the seconds hand and smooth motion. Use
+            keyboard shortcuts after focusing the card.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <AnalogClockCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Perfect for wall displays
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use fullscreen on a TV, projector, or second monitor for a clean
-              wall-clock style display.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Seconds hand and smooth sweep
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Toggle the seconds hand, and enable smooth motion if you want a
-              continuous sweep instead of a tick.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-              <li>
-                <strong>S</strong> = Seconds hand
-              </li>
-              <li>
-                <strong>M</strong> = Smooth motion
-              </li>
-            </ul>
-          </div>
-        </div>
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Analog Clock</span>
+        </p>
       </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free online analog clock
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This page is a simple <strong>analog clock</strong> with a clean
-              clock face. It uses your device’s local time, so it matches the
-              time zone settings on your phone or computer.
-            </p>
-
-            <p>
-              Want a digital clock instead? Try{" "}
-              <Link
-                to="/current-local-time"
-                className="font-semibold hover:underline"
-              >
-                Current Local Time
-              </Link>
-              . Need a reference standard? Try{" "}
-              <Link to="/utc-clock" className="font-semibold hover:underline">
-                UTC Clock
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Analog Clock FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does this analog clock show my local time?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. It uses your device’s local time and time zone settings.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I hide the seconds hand?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Seconds hand</strong> off (or press{" "}
-              <strong>S</strong>).
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is smooth motion?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Smooth motion makes the seconds hand sweep continuously instead of
-              ticking once per second.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I use fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
-              while the card is focused.
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

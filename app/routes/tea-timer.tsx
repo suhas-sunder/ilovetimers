@@ -1,7 +1,15 @@
 // app/routes/tea-timer.tsx
 import type { Route } from "./+types/tea-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +41,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -122,24 +130,140 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * SNAPPY VERSION:
+ * - Start big immediately
+ * - One-pass clamp-down instead of slow binary search loops
+ * - Still responsive on resize
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(maxPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+      if (availW <= 0 || availH <= 0) return;
+
+      const el = t as HTMLElement;
+      const original = el.style.fontSize;
+
+      // start big
+      let size = maxPx;
+      el.style.fontSize = `${size}px`;
+
+      // fast clamp down
+      while (
+        size > minPx &&
+        (el.getBoundingClientRect().width > availW ||
+          el.getBoundingClientRect().height > availH)
+      ) {
+        size -= Math.max(8, Math.floor(size * 0.1));
+        el.style.fontSize = `${size}px`;
+      }
+
+      el.style.fontSize = original;
+      setFontPx(Math.max(minPx, Math.min(maxPx, size)));
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(schedule);
+    ro.observe(container);
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
-   UI PRIMITIVES (same style as Home/Pomodoro)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -164,13 +288,92 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function ToggleChip({
+  label,
+  checked,
+  onChange,
+  disabled,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <label
+      className={[
+        "cursor-pointer select-none inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold",
+        disabled
+          ? "border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed"
+          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
+      ].join(" ")}
+      title={disabled ? "Disabled" : undefined}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.checked)}
+        className={disabled ? "cursor-not-allowed" : "cursor-pointer"}
+      />
+      {label}
+    </label>
+  );
+}
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    TEA TIMER CARD
@@ -267,7 +470,18 @@ function TeaTimerCard() {
   const [minutes, setMinutes] = useState(2);
   const [seconds, setSeconds] = useState(0);
 
-  const [remaining, setRemaining] = useState((minutes * 60 + seconds) * 1000);
+  const initialMs = useMemo(
+    () => (minutes * 60 + seconds) * 1000,
+    [minutes, seconds],
+  );
+
+  const [remaining, setRemaining] = useState<number>(initialMs);
+  const remainingRef = useRef<number>(initialMs);
+
+  useEffect(() => {
+    remainingRef.current = remaining;
+  }, [remaining]);
+
   const [running, setRunning] = useState(false);
 
   const [sound, setSound] = useState(true);
@@ -275,46 +489,67 @@ function TeaTimerCard() {
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
+  const lastShownRef = useRef<string>("");
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  const isMatcha = preset === "matcha";
+  const disableStart = isMatcha || minutes * 60 + seconds <= 0;
 
   // Apply preset
   useEffect(() => {
     const p = TEA_PRESETS.find((x) => x.key === preset);
     if (!p) return;
+
     setMinutes(p.minutes);
     setSeconds(p.seconds);
+
     setRunning(false);
     endRef.current = null;
     lastBeepSecondRef.current = null;
-    setRemaining((p.minutes * 60 + p.seconds) * 1000);
+    stopRaf();
+
+    const ms = (p.minutes * 60 + p.seconds) * 1000;
+    remainingRef.current = ms;
+    setRemaining(ms);
+    lastShownRef.current = msToClock(Math.ceil(ms / 1000) * 1000);
   }, [preset]);
 
-  // When custom time changes
+  // When custom time changes, stop and reset to that duration
   useEffect(() => {
-    setRemaining((minutes * 60 + seconds) * 1000);
     setRunning(false);
     endRef.current = null;
     lastBeepSecondRef.current = null;
-  }, [minutes, seconds]);
+    stopRaf();
+
+    remainingRef.current = initialMs;
+    setRemaining(initialMs);
+    lastShownRef.current = msToClock(Math.ceil(initialMs / 1000) * 1000);
+  }, [initialMs]);
 
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      endRef.current = null;
-      lastBeepSecondRef.current = null;
+      stopRaf();
       return;
     }
 
     if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
+      endRef.current = performance.now() + remainingRef.current;
     }
 
     const tick = () => {
       const now = performance.now();
       const rem = Math.max(0, (endRef.current ?? now) - now);
-      setRemaining(rem);
 
       if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
         const secLeft = Math.ceil(rem / 1000);
@@ -325,293 +560,322 @@ function TeaTimerCard() {
       }
 
       if (rem <= 0) {
+        remainingRef.current = 0;
+        setRemaining(0);
+        lastShownRef.current = "0:00";
         endRef.current = null;
         setRunning(false);
         lastBeepSecondRef.current = null;
+        stopRaf();
         if (sound) beep(660, 220);
         return;
+      }
+
+      const shown = msToClock(Math.ceil(rem / 1000) * 1000);
+      if (shown !== lastShownRef.current) {
+        lastShownRef.current = shown;
+        remainingRef.current = rem;
+        setRemaining(rem);
+      } else {
+        remainingRef.current = rem;
       }
 
       rafRef.current = requestAnimationFrame(tick);
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, remaining, sound, finalCountdownBeeps, beep]);
+    return () => stopRaf();
+  }, [running, sound, finalCountdownBeeps, beep]);
+
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
   function reset() {
     setRunning(false);
-    setRemaining((minutes * 60 + seconds) * 1000);
     endRef.current = null;
     lastBeepSecondRef.current = null;
+    stopRaf();
+
+    remainingRef.current = initialMs;
+    setRemaining(initialMs);
+    lastShownRef.current = msToClock(Math.ceil(initialMs / 1000) * 1000);
   }
 
   function startPause() {
-    // prime audio on gesture
+    if (disableStart) return;
+
     if (!running && sound) beep(0, 1);
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
+
+    setRunning((r) => {
+      const next = !r;
+
+      if (next) {
+        endRef.current = performance.now() + remainingRef.current;
+      } else {
+        const now = performance.now();
+        const rem = Math.max(0, (endRef.current ?? now) - now);
+        remainingRef.current = rem;
+        setRemaining(rem);
+        endRef.current = null;
+      }
+
+      lastBeepSecondRef.current = null;
+      return next;
+    });
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isTypingTarget(e.target)) return;
-
-    if (e.key === " ") {
-      e.preventDefault();
-      startPause();
-    } else if (e.key.toLowerCase() === "r") {
-      reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    }
-  };
-
   const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
+  const shownTime = useMemo(
+    () => msToClock(Math.ceil(remaining / 1000) * 1000),
+    [remaining],
+  );
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, urgent, running, minutes, seconds, preset],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
 
   const presetNote = useMemo(() => {
     const p = TEA_PRESETS.find((x) => x.key === preset);
     return p?.note ?? "";
   }, [preset]);
 
-  const isMatcha = preset === "matcha";
+  const statusLabel = running ? "Running" : remaining > 0 ? "Ready" : "Done";
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
+
+    if (e.key === " ") {
+      e.preventDefault();
+      startPause();
+    } else if (k === "r") {
+      reset();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Tea Timer</h2>
-          <p className="mt-1 text-base text-slate-700">
-            A simple <strong>tea timer</strong> with pre-filled steep times for{" "}
-            <strong>green tea</strong> and other common teas. Big digits,
-            optional sound, and fullscreen.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Tea Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <ToggleChip label="Sound" checked={sound} onChange={setSound} />
+            <ToggleChip
+              label="Final beeps"
               checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+              onChange={setFinalCountdownBeeps}
               disabled={!sound}
             />
-            Final beeps
-          </label>
+            <Btn
+              kind="solid"
+              onClick={startPause}
+              className="py-1 text-sm"
+              disabled={disableStart}
+            >
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={reset}
+              className="py-1 text-sm"
+              disabled={isMatcha}
+            >
+              Reset
+            </Btn>
+          </div>
+        }
+      />
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">Tea Timer</h1>
+              <p className="mt-1 text-sm text-slate-600">
+                One-click steep presets with a big countdown, optional sound,
+                and fullscreen.
+              </p>
+            </div>
 
-      {/* Presets */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {TEA_PRESETS.map((p) => (
-          <button
-            key={p.key}
-            type="button"
-            onClick={() => setPreset(p.key)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              p.key === preset
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <ToggleChip label="Sound" checked={sound} onChange={setSound} />
+              <ToggleChip
+                label="Final beeps"
+                checked={finalCountdownBeeps}
+                onChange={setFinalCountdownBeeps}
+                disabled={!sound}
+              />
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-      {/* Custom time */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Minutes
-          <input
-            type="number"
-            min={0}
-            max={60}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 0), 0, 60))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            disabled={isMatcha}
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Seconds
-          <input
-            type="number"
-            min={0}
-            max={59}
-            value={seconds}
-            onChange={(e) =>
-              setSeconds(clamp(Number(e.target.value || 0), 0, 59))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            disabled={isMatcha}
-          />
-        </label>
-
-        <div className="flex items-end gap-3">
-          <Btn
-            onClick={startPause}
-            disabled={isMatcha || minutes * 60 + seconds <= 0}
-          >
-            {running ? "Pause" : "Start"}
-          </Btn>
-          <Btn kind="ghost" onClick={reset} disabled={isMatcha}>
-            Reset
-          </Btn>
-        </div>
-      </div>
-
-      {/* Preset note */}
-      <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-          Preset note
-        </div>
-        <div className="mt-1 text-sm font-semibold text-amber-950">
-          {isMatcha ? "Matcha is usually whisked, not steeped." : presetNote}
-        </div>
-        <div className="mt-2 text-sm text-amber-900">
-          Adjust based on leaf size, water temperature, and taste. These are
-          quick defaults, not strict rules.
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 240 }}
-        aria-live="polite"
-      >
-        {/* Fullscreen CSS: show ONLY fullscreen shell in fullscreen */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border text-slate-950",
+            urgent
+              ? "border-rose-200 bg-rose-50"
+              : "border-slate-200 bg-slate-50",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-3">
-            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-              {TEA_PRESETS.find((x) => x.key === preset)?.label ?? "Tea"}{" "}
-              {isMatcha ? "(no steep)" : "steep time"}
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold tracking-widest",
+              isFs ? "tracking-wide sm:tracking-widest" : "",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+        </div>
+        {!isFs && (
+          <>
+            <div className="mt-5 flex flex-wrap items-center gap-2">
+              {TEA_PRESETS.map((p) => (
+                <button
+                  key={p.key}
+                  type="button"
+                  onClick={() => setPreset(p.key)}
+                  className={[
+                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                    p.key === preset
+                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
+                  ].join(" ")}
+                >
+                  {p.label}
+                </button>
+              ))}
             </div>
 
-            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
-              {shownTime}
+            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+              <label className="block text-sm font-semibold text-slate-700">
+                Minutes
+                <input
+                  type="number"
+                  min={0}
+                  max={60}
+                  value={minutes}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 0), 0, 60))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  disabled={isMatcha}
+                />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-700">
+                Seconds
+                <input
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={seconds}
+                  onChange={(e) =>
+                    setSeconds(clamp(Number(e.target.value || 0), 0, 59))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  disabled={isMatcha}
+                />
+              </label>
+
+              <div className="flex items-end gap-3">
+                <Btn
+                  onClick={startPause}
+                  disabled={disableStart}
+                  className="min-w-[92px]"
+                >
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset} disabled={isMatcha}>
+                  Reset
+                </Btn>
+              </div>
             </div>
 
-            <div className="text-xs font-semibold text-amber-800">
+            <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Preset note
+              </div>
+              <div className="mt-1 text-sm font-semibold text-slate-900">
+                {isMatcha
+                  ? "Matcha is usually whisked, not steeped."
+                  : presetNote}
+              </div>
+            </div>
+          </>
+        )}
+
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
               Shortcuts: Space start/pause · R reset · F fullscreen
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Tea Timer</div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · R reset · F
+              fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {urgent ? "Final seconds" : statusLabel}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -620,8 +884,10 @@ function TeaTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function TeaTimerPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/tea-timer";
+export default function TeaTimerPage({
+  loaderData: { nowISO: _nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/tea-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -640,7 +906,7 @@ export default function TeaTimerPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -650,238 +916,27 @@ export default function TeaTimerPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a tea timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A tea timer is a simple countdown that helps you steep tea for a chosen amount of time. Pick a tea type or set a custom time, start the timer, and stop steeping when it hits zero.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What is a green tea timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A green tea timer is a tea timer with shorter default steep times. Green tea can turn bitter when steeped too long, so presets like 2 to 3 minutes are common starting points.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Are the steep times exact?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "No. Presets are quick defaults. The best steep time depends on the tea, water temperature, leaf size, and taste preferences.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this steep timer work in fullscreen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Press Fullscreen (or F) while the timer card is focused for a dark, high-contrast display with very large digits.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Tea Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Tea Timer
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A simple <strong>tea timer</strong> with pre-filled steep times.
-            Great for <strong>green tea</strong>, black tea, oolong, herbal tea,
-            and more.
-          </p>
-        </div>
-      </section>
-
-      {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
         <div>
           <TeaTimerCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Pre-filled steep times
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Pick a tea type and start immediately. Presets are designed as
-              practical defaults, and you can tweak the time.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Green tea timer (quick by default)
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Green tea usually steeps shorter than black tea. Use the preset as
-              a baseline, then adjust based on taste.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free steep timer for tea (including green tea)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>tea timer</strong> is a fast{" "}
-              <strong>steep timer</strong> for everyday brewing. Choose a tea
-              type to load a common steep time, then press Start. You can also
-              set a custom time if your tea or cup size needs it.
-            </p>
-
-            <p>
-              Use the <strong>green tea timer</strong> preset for a quick
-              baseline and adjust to avoid bitterness. Herbal blends and larger
-              leaves often benefit from a longer steep.
-            </p>
-
-            <p>
-              If you want a general tool, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For cooking, you might also like{" "}
-              <Link to="/egg-timer" className="font-semibold hover:underline">
-                Egg Timer
-              </Link>{" "}
-              or{" "}
-              <Link to="/pasta-timer" className="font-semibold hover:underline">
-                Pasta Timer
-              </Link>{" "}
-              if you add those pages later.
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Tea timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                One-click steep presets, big countdown, and fast reset.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Green tea timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Shorter defaults so you can avoid over-steeping and bitterness.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Steep timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Clean fullscreen view with optional sound and final beeps.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Tea Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is a steep timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              A steep timer is a countdown timer used for tea. It helps you stop
-              steeping at the right time so the flavor stays consistent.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What steep time should I use for green tea?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Many green teas are steeped around 2 to 3 minutes. This page
-              includes a green tea preset you can adjust based on taste and
-              water temperature.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I change the steep time?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Use the preset buttons to start quickly, then adjust minutes
-              and seconds for your preference.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen (when focused).
-            </div>
-          </details>
-        </div>
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Tea Timer</span>
+        </p>
       </section>
     </main>
   );

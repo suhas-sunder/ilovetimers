@@ -1,7 +1,14 @@
 // app/routes/stopwatch.tsx
 import type { Route } from "./+types/stopwatch";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +40,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -47,9 +54,6 @@ export function loader() {
 /* =========================================================
    UTILS
 ========================================================= */
-function clamp(n: number, min: number, max: number) {
-  return Math.min(Math.max(n, min), max);
-}
 const pad2 = (n: number) => n.toString().padStart(2, "0");
 const pad3 = (n: number) => n.toString().padStart(3, "0");
 
@@ -61,8 +65,6 @@ function msToClockMs(ms: number) {
   const s = totalSeconds % 60;
   const msPart = t % 1000;
 
-  // Keep it readable but still “millisecond stopwatch”
-  // h:mm:ss.mmm OR m:ss.mmm
   return h > 0
     ? `${h}:${pad2(m)}:${pad2(s)}.${pad3(msPart)}`
     : `${m}:${pad2(s)}.${pad3(msPart)}`;
@@ -110,24 +112,149 @@ async function copyToClipboard(text: string) {
   }
 }
 
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
-   UI PRIMITIVES (same style as Home)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -152,100 +279,163 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
-   STOPWATCH (page version)
-   Includes:
-   - laps table
-   - keyboard shortcuts
-   - fullscreen
-   - copy laps
+   STOPWATCH CARD
 ========================================================= */
+type Lap = { n: number; totalMs: number; splitMs: number };
+
 function StopwatchCard() {
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
-  const [laps, setLaps] = useState<number[]>([]);
-  const [copied, setCopied] = useState<"idle" | "ok" | "fail">("idle");
 
   const rafRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number | null>(null);
-  const displayRef = useRef<HTMLDivElement>(null);
+  const startRef = useRef<number | null>(null);
+  const baseRef = useRef<number>(0);
+
+  const elapsedRef = useRef<number>(0);
+  useEffect(() => {
+    elapsedRef.current = elapsed;
+  }, [elapsed]);
+
+  const [laps, setLaps] = useState<Lap[]>([]);
+  const lastLapTotalRef = useRef<number>(0);
+
+  const [copied, setCopied] = useState<"idle" | "ok" | "fail">("idle");
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
 
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      startTimeRef.current = null;
+      stopRaf();
+      startRef.current = null;
       return;
     }
 
-    if (!startTimeRef.current) {
-      startTimeRef.current = performance.now() - elapsed;
-    }
+    startRef.current = performance.now();
 
     const tick = () => {
       const now = performance.now();
-      setElapsed(now - (startTimeRef.current ?? now));
+      const delta = now - (startRef.current ?? now);
+      const next = baseRef.current + delta;
+      setElapsed(next);
       rafRef.current = requestAnimationFrame(tick);
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, elapsed]);
+    return () => stopRaf();
+  }, [running]);
 
-  const lapTotals = useMemo(() => {
-    const totals: number[] = [];
-    let sum = 0;
-    for (const l of laps) {
-      sum += l;
-      totals.push(sum);
-    }
-    return totals;
-  }, [laps]);
-
-  function reset() {
-    setRunning(false);
-    setElapsed(0);
-    setLaps([]);
-    startTimeRef.current = null;
-    setCopied("idle");
-  }
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
   function startPause() {
     setCopied("idle");
-    setRunning((r) => !r);
+    setRunning((r) => {
+      const next = !r;
+      baseRef.current = elapsedRef.current;
+      return next;
+    });
+  }
+
+  function resetAll() {
+    setCopied("idle");
+    setRunning(false);
+    setElapsed(0);
+    baseRef.current = 0;
+    setLaps([]);
+    lastLapTotalRef.current = 0;
+    stopRaf();
+    startRef.current = null;
   }
 
   function lap() {
     setCopied("idle");
-    if (!running && elapsed === 0) return;
+    const nowElapsed = elapsedRef.current;
+    if (nowElapsed <= 0) return;
 
-    setLaps((xs) => {
-      const prevTotal = xs.reduce((a, b) => a + b, 0);
-      return [...xs, elapsed - prevTotal];
-    });
+    const split = nowElapsed - lastLapTotalRef.current;
+    lastLapTotalRef.current = nowElapsed;
+
+    setLaps((prev) => [
+      { n: prev.length + 1, totalMs: nowElapsed, splitMs: split },
+      ...prev,
+    ]);
   }
 
   const copyText = useMemo(() => {
     const lines: string[] = [];
-    lines.push("Lap,Lap Time,Total Time");
-    for (let i = 0; i < laps.length; i++) {
-      const lapMs = laps[i] ?? 0;
-      const totalMs = lapTotals[i] ?? 0;
-      lines.push(`${i + 1},${msToClockMs(lapMs)},${msToClockMs(totalMs)}`);
+    lines.push("Lap,Split Time,Total Time");
+    const ordered = [...laps].reverse(); // oldest -> newest for exporting
+    for (let i = 0; i < ordered.length; i++) {
+      const l = ordered[i]!;
+      lines.push(`${l.n},${msToClockMs(l.splitMs)},${msToClockMs(l.totalMs)}`);
     }
     return lines.join("\n");
-  }, [laps, lapTotals]);
+  }, [laps]);
 
   async function copyLaps() {
     if (laps.length === 0) return;
@@ -254,155 +444,287 @@ function StopwatchCard() {
     window.setTimeout(() => setCopied("idle"), 1200);
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const shownTime = msToClockMs(elapsed);
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, running, laps.length],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
+
+  const statusLabel = running ? "Running" : elapsed > 0 ? "Paused" : "Ready";
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
-      reset();
-    } else if (e.key.toLowerCase() === "l") {
+    } else if (k === "r") {
+      resetAll();
+    } else if (k === "l") {
       lap();
-    } else if (e.key.toLowerCase() === "c") {
+    } else if (k === "c") {
       copyLaps();
-    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
-      toggleFullscreen(displayRef.current);
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (e.key === "Escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
-  const statusBadge = running ? "RUNNING" : "PAUSED";
-  const latestLapIdx = laps.length - 1;
+  const fsLaps = laps.slice(0, 6);
+  const hasLaps = fsLaps.length > 0;
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Stopwatch"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-extrabold text-amber-950">Stopwatch</h2>
-            <span
-              className={`rounded-full px-2 py-0.5 text-xs font-extrabold tracking-wide ${
-                running
-                  ? "bg-emerald-100 text-emerald-900"
-                  : "bg-slate-100 text-slate-700"
-              }`}
-            >
-              {statusBadge}
-            </span>
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={lap} className="py-1 text-sm">
+              Lap
+            </Btn>
+            <Btn kind="ghost" onClick={copyLaps} className="py-1 text-sm">
+              Copy
+            </Btn>
+            <Btn kind="ghost" onClick={resetAll} className="py-1 text-sm">
+              Reset
+            </Btn>
           </div>
-          <p className="mt-1 text-base text-slate-700">
-            Millisecond display, lap splits, running totals, fullscreen, and
-            one-click copy.
-          </p>
-        </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayRef.current && toggleFullscreen(displayRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Stopwatch (Milliseconds + Laps)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Start/pause, record laps (splits), reset, copy CSV, and use a big
+                fullscreen display.
+              </p>
+            </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-      {/* Display */}
-      <div
-        ref={displayRef}
-        className={`mt-6 flex items-center justify-center rounded-2xl border-2 p-6 font-mono font-extrabold tracking-widest ${
-          running
-            ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 220 }}
-        aria-live="polite"
-      >
-        <span className="text-6xl sm:text-7xl md:text-8xl">
-          {msToClockMs(elapsed)}
-        </span>
-      </div>
-
-      {/* Controls + shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-          <Btn kind="ghost" onClick={lap}>
-            Lap
-          </Btn>
-          <Btn kind="ghost" onClick={copyLaps} disabled={laps.length === 0}>
-            Copy laps
-          </Btn>
-        </div>
-
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · L lap · C copy · F fullscreen
-        </div>
-      </div>
-
-      {copied !== "idle" && (
+        {/* Display */}
         <div
-          className={`mt-3 rounded-lg px-3 py-2 text-sm font-semibold ${
-            copied === "ok"
-              ? "bg-emerald-100 text-emerald-900"
-              : "bg-rose-100 text-rose-900"
-          }`}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          {copied === "ok" ? "Copied to clipboard." : "Could not copy."}
-        </div>
-      )}
-
-      {/* Laps table */}
-      {laps.length > 0 && (
-        <div className="mt-6 overflow-x-auto rounded-2xl border border-amber-200 bg-white">
-          <table className="w-full text-sm">
-            <thead className="bg-amber-50">
-              <tr className="text-amber-950">
-                <th className="px-4 py-3 text-left font-extrabold">#</th>
-                <th className="px-4 py-3 text-left font-extrabold">Lap</th>
-                <th className="px-4 py-3 text-left font-extrabold">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {laps.map((l, i) => {
-                const total = lapTotals[i] ?? 0;
-                const isLatest = i === latestLapIdx;
-                return (
-                  <tr
-                    key={i}
-                    className={`border-t ${
-                      isLatest
-                        ? "border-emerald-200 bg-emerald-50/60"
-                        : "border-amber-200"
-                    }`}
-                  >
-                    <td className="px-4 py-3 font-semibold text-slate-700">
-                      {i + 1}
-                    </td>
-                    <td className="px-4 py-3 font-mono font-semibold text-slate-900">
-                      {msToClockMs(l)}
-                    </td>
-                    <td className="px-4 py-3 font-mono font-semibold text-slate-900">
-                      {msToClockMs(total)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-
-          <div className="border-t border-amber-200 px-4 py-3 text-sm text-slate-700">
-            Copy format: <span className="font-semibold">CSV</span> (Lap, Lap
-            Time, Total Time).
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
           </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+
+          {/* Fullscreen lap overlay */}
+          {isFs && (
+            <div
+              className={[
+                "pointer-events-none absolute left-3 right-3 top-3",
+                "sm:left-6 sm:right-6 sm:top-5",
+              ].join(" ")}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Laps
+                  </div>
+
+                  {!hasLaps ? (
+                    <div className="text-xs font-semibold text-slate-600">
+                      Press Lap (L) to record splits
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-1">
+                      {fsLaps.map((l) => (
+                        <div
+                          key={l.n}
+                          className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white/85 px-2 py-1 backdrop-blur"
+                        >
+                          <div className="text-xs font-semibold text-slate-900">
+                            Lap {l.n}
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="text-xs font-extrabold text-slate-900">
+                              {msToClockMs(l.totalMs)}
+                            </div>
+                            <div className="text-[11px] font-semibold text-slate-700">
+                              +{msToClockMs(l.splitMs)}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  L = Lap
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Controls bar (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center gap-3">
+              <Btn kind="solid" onClick={startPause}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={lap} disabled={elapsed <= 0}>
+                Lap
+              </Btn>
+              <Btn kind="ghost" onClick={copyLaps} disabled={laps.length === 0}>
+                Copy laps
+              </Btn>
+              <Btn kind="ghost" onClick={resetAll}>
+                Reset
+              </Btn>
+            </div>
+
+            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · L lap · C copy · R reset · F
+              fullscreen
+            </div>
+          </div>
+        )}
+
+        {copied !== "idle" && !isFs && (
+          <div
+            className={[
+              "mt-3 rounded-lg px-3 py-2 text-sm font-semibold",
+              copied === "ok"
+                ? "bg-emerald-100 text-emerald-900"
+                : "bg-rose-100 text-rose-900",
+            ].join(" ")}
+          >
+            {copied === "ok" ? "Copied to clipboard." : "Could not copy."}
+          </div>
+        )}
+
+        {/* Laps (normal only) */}
+        {!isFs && (
+          <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-sm font-extrabold text-slate-900">Laps</div>
+              <div className="text-xs font-semibold text-slate-600">
+                Most recent first · Split is time since previous lap
+              </div>
+            </div>
+
+            {laps.length === 0 ? (
+              <div className="mt-3 text-sm text-slate-700">
+                Press <strong>Lap</strong> (or <strong>L</strong>) to record
+                splits.
+              </div>
+            ) : (
+              <div className="mt-3 space-y-2">
+                {laps.slice(0, 12).map((l) => (
+                  <div
+                    key={l.n}
+                    className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="text-sm font-semibold text-slate-900">
+                      Lap {l.n}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="text-sm font-extrabold text-slate-900">
+                        Total {msToClockMs(l.totalMs)}
+                      </div>
+                      <div className="text-xs font-semibold text-slate-700">
+                        Split {msToClockMs(l.splitMs)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {laps.length > 0 && (
+              <div className="mt-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                Copy format: CSV (Lap, Split Time, Total Time)
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · L lap · C copy · R
+              reset · F fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
+            </div>
+          </div>
+        </FullscreenBottomBar>
+      </div>
     </Card>
   );
 }
@@ -413,7 +735,7 @@ function StopwatchCard() {
 export default function StopwatchPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/stopwatch";
+  const url = "https://www.ilovetimers.com/stopwatch";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -423,7 +745,7 @@ export default function StopwatchPage({
         name: "Stopwatch",
         url,
         description:
-          "Free online stopwatch with laps and millisecond precision. Fullscreen display, keyboard shortcuts, and one-click copy for lap splits and totals.",
+          "Free online stopwatch with laps and millisecond precision. Fullscreen display, keyboard shortcuts, and copy for lap splits and totals.",
       },
       {
         "@type": "BreadcrumbList",
@@ -432,53 +754,13 @@ export default function StopwatchPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
-          },
-          { "@type": "ListItem", position: 2, name: "Stopwatch", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "Is this an accurate online stopwatch?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. It tracks elapsed time using absolute timestamps to avoid drift and stays accurate even if the browser briefly slows down.",
-            },
+            item: "https://www.ilovetimers.com/",
           },
           {
-            "@type": "Question",
-            name: "Does this stopwatch support laps?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Press Lap (or L) to record lap splits and totals in a table.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I copy lap times?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Click Copy laps (or press C) to copy lap data as CSV for spreadsheets.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use fullscreen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Click Fullscreen or press F while the stopwatch card is focused.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, L records a lap, C copies laps, and F toggles fullscreen (when focused).",
-            },
+            "@type": "ListItem",
+            position: 2,
+            name: "Stopwatch",
+            item: url,
           },
         ],
       },
@@ -486,230 +768,25 @@ export default function StopwatchPage({
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Stopwatch</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Stopwatch
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            Free <strong>online stopwatch</strong> with laps and{" "}
-            <strong>millisecond precision</strong>. Fullscreen, keyboard
-            shortcuts, and one-click copy for lap splits.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <StopwatchCard />
         </div>
 
-        {/* Quick-use hints: below, responsive */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Best uses</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use a stopwatch when you want <strong>elapsed time</strong>{" "}
-              instead of a deadline. Great for training splits, labs,
-              speedcubing, drills, and timing practice.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Laps & splits</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Hit <strong>Lap</strong> to record each split. The table shows lap
-              time and running total so you can compare consistency across
-              rounds.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>L</strong> = Lap
-              </li>
-              <li>
-                <strong>C</strong> = Copy laps
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section (under TimerMenuLinks) */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Online stopwatch with laps (millisecond stopwatch)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>online stopwatch</strong> is designed for fast,
-              accurate timing. Press <strong>Start</strong> to begin, then
-              record <strong>laps</strong> to capture splits. The display shows
-              <strong> millisecond precision</strong> so you can time drills and
-              repeats without rounding guesswork.
-            </p>
-
-            <p>
-              For training and experiments, the lap table helps you compare
-              consistency. Each row includes the <strong>lap time</strong> and
-              the <strong>total elapsed time</strong>. Use{" "}
-              <strong>Copy laps</strong> to paste the results into notes or
-              spreadsheets.
-            </p>
-
-            <p>
-              For visibility on shared screens, use{" "}
-              <strong>fullscreen stopwatch</strong> mode. Click the card once to
-              focus it, then use keyboard shortcuts: <strong>Space</strong> to
-              start/pause, <strong>R</strong> to reset, <strong>L</strong> for
-              lap,
-              <strong> C</strong> to copy, and <strong>F</strong> for
-              fullscreen.
-            </p>
-
-            <p>
-              If you need a fixed deadline instead of elapsed time, use the{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For focus cycles, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>
-              , and for intervals use{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Training splits
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Time sprints, circuits, and repeats with laps to track
-                performance across rounds.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Labs & experiments
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Record multiple trials using laps, then copy results as CSV for
-                analysis.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Speedcubing & drills
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Use a clean, fast stopwatch to track solve times and split
-                consistency.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Stopwatch FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this stopwatch accurate?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. It uses absolute timestamps to minimize drift and remains
-              accurate even if the browser momentarily slows down.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do laps work?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Press <strong>Lap</strong> (or <strong>L</strong>) to store a
-              split. The table shows lap time and total time.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I copy lap times?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Click <strong>Copy laps</strong> (or press <strong>C</strong>) to
-              copy lap data as CSV for spreadsheets.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I use fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Click Fullscreen or press <strong>F</strong> while the card
-              is focused.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>L</strong> lap • <strong>C</strong> copy •{" "}
-              <strong>F</strong> fullscreen.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Stopwatch</span>
+        </p>
       </section>
     </main>
   );

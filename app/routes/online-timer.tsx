@@ -1,7 +1,15 @@
 // app/routes/online-timer.tsx
 import type { Route } from "./+types/online-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +41,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -74,15 +82,125 @@ function isTypingTarget(target: EventTarget | null) {
 }
 
 async function toggleFullscreen(el: HTMLElement) {
-  // Prefer the "display box" inside the card if it exists
-  const target =
-    (el.querySelector?.("[data-fullscreen-root]") as HTMLElement | null) ?? el;
-
   if (!document.fullscreenElement) {
-    await target.requestFullscreen().catch(() => {});
+    await el.requestFullscreen().catch(() => {});
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 // WebAudio beep (same style as other pages)
@@ -133,41 +251,30 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-      active
-        ? "bg-amber-700 text-white hover:bg-amber-800"
-        : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-    }`}
-  >
-    {children}
-  </button>
 );
 
 const Btn = ({
@@ -189,13 +296,82 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-semibold text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-semibold text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+const Chip = ({
+  active,
+  children,
+  onClick,
+}: {
+  active?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={[
+      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+      active
+        ? "bg-slate-900 text-white hover:bg-slate-800"
+        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+    ].join(" ")}
+  >
+    {children}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    ONLINE TIMER TOOL (broad intent = safe default countdown)
@@ -203,8 +379,14 @@ const Btn = ({
 function OnlineTimerCard() {
   const beep = useBeep();
   const presets = useMemo(() => [1, 2, 3, 5, 10, 15, 20, 25, 30, 45, 60], []);
+
   const [durationMs, setDurationMs] = useState(5 * 60 * 1000);
   const [remainingMs, setRemainingMs] = useState(durationMs);
+  const remainingRef = useRef<number>(durationMs);
+  useEffect(() => {
+    remainingRef.current = remainingMs;
+  }, [remainingMs]);
+
   const [status, setStatus] = useState<"idle" | "running" | "paused" | "done">(
     "idle",
   );
@@ -213,312 +395,430 @@ function OnlineTimerCard() {
   const [loop, setLoop] = useState(false);
   const [inputStr, setInputStr] = useState("05:00");
 
-  const displayRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
   const endTimeRef = useRef<number | null>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  const stopRaf = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }, []);
 
   useEffect(() => {
     setInputStr(msToClock(durationMs));
   }, [durationMs]);
 
-  useEffect(() => {
-    if (status !== "running") {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+  const safeReset = useCallback(
+    (to?: number) => {
+      const ms = clamp(to ?? durationMs, 0, 24 * 3600 * 1000);
+      setDurationMs(ms);
+      setRemainingMs(ms);
+      remainingRef.current = ms;
+      setStatus("idle");
       endTimeRef.current = null;
-      return;
+      stopRaf();
+    },
+    [durationMs, stopRaf],
+  );
+
+  const parseInputToMs = useCallback((str: string) => {
+    const raw = str.trim();
+    if (!raw) return 0;
+
+    const parts = raw
+      .split(":")
+      .map((p) => p.trim())
+      .filter((p) => p.length > 0);
+
+    const nums = parts.map((p) => Number(p));
+    if (nums.some((n) => !Number.isFinite(n) || n < 0)) return 0;
+
+    let ms = 0;
+
+    if (nums.length === 1) {
+      // seconds
+      ms = nums[0] * 1000;
+    } else if (nums.length === 2) {
+      // mm:ss
+      ms = (nums[0] * 60 + nums[1]) * 1000;
+    } else {
+      // h:mm:ss (use last 3 parts)
+      const s = nums[nums.length - 1] ?? 0;
+      const m = nums[nums.length - 2] ?? 0;
+      const h = nums[nums.length - 3] ?? 0;
+      ms = (h * 3600 + m * 60 + s) * 1000;
     }
 
-    if (!endTimeRef.current) {
-      endTimeRef.current = performance.now() + remainingMs;
-    }
+    return clamp(ms, 0, 24 * 3600 * 1000);
+  }, []);
+
+  const onSet = useCallback(() => {
+    const ms = parseInputToMs(inputStr);
+    safeReset(ms);
+  }, [inputStr, parseInputToMs, safeReset]);
+
+  const onPreset = useCallback(
+    (m: number) => {
+      safeReset(m * 60 * 1000);
+    },
+    [safeReset],
+  );
+
+  const onStartPause = useCallback(() => {
+    setStatus((s) => {
+      if (s === "running") {
+        const now = performance.now();
+        const rem = Math.max(0, (endTimeRef.current ?? now) - now);
+        endTimeRef.current = null;
+        stopRaf();
+        setRemainingMs(rem);
+        remainingRef.current = rem;
+        return rem <= 0 ? "done" : "paused";
+      }
+
+      // Start / restart
+      const base =
+        s === "done" ? durationMs : Math.max(0, remainingRef.current);
+      const nextRemaining = base <= 0 ? durationMs : base;
+
+      setRemainingMs(nextRemaining);
+      remainingRef.current = nextRemaining;
+      endTimeRef.current = performance.now() + nextRemaining;
+      return "running";
+    });
+  }, [durationMs, stopRaf]);
+
+  const onReset = useCallback(() => {
+    safeReset();
+  }, [safeReset]);
+
+  useEffect(() => {
+    if (status !== "running") return;
+
+    stopRaf();
 
     const tick = () => {
       const now = performance.now();
       const rem = Math.max(0, (endTimeRef.current ?? now) - now);
+
       setRemainingMs(rem);
+      remainingRef.current = rem;
 
       if (rem <= 0) {
         if (sound) beep();
+
         if (loop) {
-          endTimeRef.current = performance.now() + durationMs;
+          const nextEnd = performance.now() + durationMs;
+          endTimeRef.current = nextEnd;
           setRemainingMs(durationMs);
-        } else {
-          setStatus("done");
-          endTimeRef.current = null;
+          remainingRef.current = durationMs;
+          rafRef.current = requestAnimationFrame(tick);
           return;
         }
+
+        endTimeRef.current = null;
+        stopRaf();
+        setStatus("done");
+        return;
       }
 
       rafRef.current = requestAnimationFrame(tick);
     };
 
     rafRef.current = requestAnimationFrame(tick);
+
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      endTimeRef.current = null;
+      stopRaf();
     };
-  }, [status, durationMs, remainingMs, loop, sound, beep]);
+  }, [status, durationMs, loop, sound, beep, stopRaf]);
 
-  function safeReset(to?: number) {
-    const ms = to ?? durationMs;
-    setDurationMs(ms);
-    setRemainingMs(ms);
-    setStatus("idle");
-    endTimeRef.current = null;
-  }
+  useEffect(() => {
+    return () => stopRaf();
+  }, [stopRaf]);
 
-  function parseInputToMs(str: string) {
-    const parts = str
-      .trim()
-      .split(":")
-      .map((p) => p.trim());
-    let ms = 0;
+  const urgent = status === "running" && remainingMs > 0 && remainingMs <= 10_000;
 
-    if (parts.length === 1) {
-      const n = Number(parts[0] || "0");
-      ms = n * 1000;
-    } else if (parts.length === 2) {
-      const m = Number(parts[0] || "0");
-      const s = Number(parts[1] || "0");
-      ms = (m * 60 + s) * 1000;
-    } else {
-      const h = Number(parts[0] || "0");
-      const m = Number(parts[1] || "0");
-      const s = Number(parts[2] || "0");
-      ms = (h * 3600 + m * 60 + s) * 1000;
-    }
+  const statusLabel =
+    status === "running"
+      ? "Running"
+      : status === "paused"
+        ? "Paused"
+        : status === "done"
+          ? "Done"
+          : "Ready";
 
-    return clamp(ms, 0, 24 * 3600 * 1000);
-  }
+  const shownTime = msToClock(Math.ceil(remainingMs / 1000) * 1000);
 
-  function onSet() {
-    const ms = parseInputToMs(inputStr);
-    safeReset(ms);
-  }
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, status, durationMs, urgent],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
 
-  const onPreset = (m: number) => safeReset(m * 60 * 1000);
-
-  const onStartPause = () => {
-    if (status === "running") {
-      setStatus("paused");
-      return;
-    }
-    if (status === "done") {
-      setRemainingMs(durationMs);
-      setStatus("running");
-      return;
-    }
-    if (remainingMs <= 0) setRemainingMs(durationMs);
-    setStatus("running");
-  };
-
-  const onReset = () => safeReset();
-
-  const urgent =
-    status === "running" && remainingMs > 0 && remainingMs <= 10_000;
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       onStartPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       onReset();
-    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
-      toggleFullscreen(displayRef.current);
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Online Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            A simple, reliable <strong>online timer</strong>. Pick a preset, set
-            a custom time, go fullscreen, and control it by keyboard.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={loop}
-              onChange={(e) => setLoop(e.target.checked)}
-            />
-            Loop
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayRef.current && toggleFullscreen(displayRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      <div
-        ref={displayRef}
-        data-fullscreen-root
-        className={`mt-6 rounded-2xl border-2 p-6 ${
-          urgent
-            ? "border-rose-200 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 220 }}
-        aria-live="polite"
-      >
-        {/* Fullscreen polish: center + scale + clean background */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-        /* Make fullscreen look intentional (centered, huge digits, no "shabby" padding) */
-        :fullscreen[data-fullscreen-root]{
-          margin:0 !important;
-          padding:0 !important;
-          border:none !important;
-          border-radius:0 !important;
-          width:100vw !important;
-          height:100vh !important;
-          display:flex !important;
-          flex-direction:column !important;
-          align-items:center !important;
-          justify-content:center !important;
-          background:#0b0b0c !important; /* deep neutral */
-          color:#ffffff !important;
-        }
-
-        /* Hide small UI chrome in fullscreen */
-        :fullscreen [data-fs-hide]{
-          display:none !important;
-        }
-
-        /* Big, centered time in fullscreen */
-        :fullscreen [data-fs-time]{
-          font-size: clamp(64px, 18vw, 220px) !important;
-          line-height: 1 !important;
-          letter-spacing: 0.08em !important;
-          text-align:center !important;
-          font-weight: 900 !important;
-          width: 100% !important;
-        }
-
-        /* Secondary line under timer (optional) */
-        :fullscreen [data-fs-sub]{
-          margin-top: 16px !important;
-          font-size: clamp(14px, 3vw, 28px) !important;
-          opacity: 0.85 !important;
-          font-weight: 700 !important;
-          letter-spacing: 0.06em !important;
-          text-transform: uppercase !important;
-        }
-      `,
-          }}
-        />
-
-        <div className="flex items-baseline justify-between gap-3" data-fs-hide>
-          <div className="text-sm font-extrabold uppercase tracking-wide opacity-95">
-            Countdown
-          </div>
-          <div className="text-sm font-semibold opacity-95">
-            {status === "running"
-              ? "Running"
-              : status === "paused"
-                ? "Paused"
-                : status === "done"
-                  ? "Done"
-                  : "Ready"}
-          </div>
-        </div>
-
-        <div className="mt-6 flex items-center justify-center font-mono font-extrabold tracking-widest">
-          <span
-            className="text-6xl sm:text-7xl md:text-8xl leading-none"
-            data-fs-time
-          >
-            {msToClock(remainingMs)}
-          </span>
-        </div>
-
-        {/* Optional: tiny label in fullscreen only (kept hidden in normal view by being empty-ish) */}
-        <div data-fs-sub className="hidden">
-          {/* This node exists for fullscreen styling; leave it empty or add text if you want */}
-        </div>
-
-        <div
-          className="mt-6 flex flex-wrap items-center justify-center gap-2"
-          data-fs-hide
-        >
-          {presets.map((m) => (
-            <Chip
-              key={m}
-              active={durationMs === m * 60 * 1000 && status !== "running"}
-              onClick={() => onPreset(m)}
-            >
-              {m}m
-            </Chip>
-          ))}
-        </div>
-
-        <div
-          className="mt-6 mx-auto grid w-full max-w-3xl gap-3 md:grid-cols-[1fr_auto_auto]"
-          data-fs-hide
-        >
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Online Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
           <div className="flex items-center gap-2">
-            <input
-              inputMode="numeric"
-              value={inputStr}
-              onChange={(e) => {
-                if (status === "running") setStatus("paused");
-                setInputStr(e.target.value);
-              }}
-              onBlur={onSet}
-              placeholder="mm:ss or ss"
-              className="w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-            <Btn kind="ghost" onClick={onSet}>
-              Set
+            <Btn kind="solid" onClick={onStartPause} className="py-1 text-sm">
+              {status === "running"
+                ? "Pause"
+                : status === "done"
+                  ? "Restart"
+                  : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={onReset} className="py-1 text-sm">
+              Reset
             </Btn>
           </div>
+        }
+      />
 
-          <Btn onClick={onStartPause}>
-            {status === "running"
-              ? "Pause"
-              : status === "done"
-                ? "Restart"
-                : "Start"}
-          </Btn>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Online Timer (Countdown)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Fast presets, custom time, sound + loop, and a big fullscreen
+                display.
+              </p>
+            </div>
 
-          <Btn kind="ghost" onClick={onReset}>
-            Reset
-          </Btn>
-        </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
 
+              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={loop}
+                  onChange={(e) => setLoop(e.target.checked)}
+                />
+                Loop
+              </label>
+
+              <Btn
+                kind="ghost"
+                onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
+
+        {/* Controls bar (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center gap-3">
+              <Btn kind="solid" onClick={onStartPause}>
+                {status === "running"
+                  ? "Pause"
+                  : status === "done"
+                    ? "Restart"
+                    : "Start"}
+              </Btn>
+
+              <Btn kind="ghost" onClick={onReset}>
+                Reset
+              </Btn>
+            </div>
+
+            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · R reset · F fullscreen
+            </div>
+          </div>
+        )}
+
+        {/* Display */}
         <div
-          className="mt-5 rounded-xl border border-amber-200 bg-white/60 px-3 py-2 text-xs font-semibold text-amber-950 text-center"
-          data-fs-hide
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            urgent ? "border-rose-200 bg-rose-50" : "border-slate-200",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) onStartPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          Shortcuts: Space start/pause · R reset · F fullscreen
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            Countdown
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+
+          <div className="mt-3 text-xs font-semibold text-slate-700">
+            {statusLabel}
+          </div>
+
+          {/* Presets + input (normal only) */}
+          {!isFs && (
+            <>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+                {presets.map((m) => (
+                  <Chip
+                    key={m}
+                    active={durationMs === m * 60 * 1000 && status !== "running"}
+                    onClick={() => onPreset(m)}
+                  >
+                    {m}m
+                  </Chip>
+                ))}
+              </div>
+
+              <div className="mt-6 mx-auto grid w-full max-w-3xl gap-3 md:grid-cols-[1fr_auto]">
+                <div className="flex items-center gap-2">
+                  <input
+                    inputMode="numeric"
+                    value={inputStr}
+                    onChange={(e) => {
+                      if (status === "running") {
+                        // Pause cleanly when editing
+                        const now = performance.now();
+                        const rem = Math.max(
+                          0,
+                          (endTimeRef.current ?? now) - now,
+                        );
+                        endTimeRef.current = null;
+                        stopRaf();
+                        setRemainingMs(rem);
+                        remainingRef.current = rem;
+                        setStatus(rem <= 0 ? "done" : "paused");
+                      }
+                      setInputStr(e.target.value);
+                    }}
+                    onBlur={onSet}
+                    placeholder="mm:ss or ss"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  />
+                  <Btn kind="ghost" onClick={onSet}>
+                    Set
+                  </Btn>
+                </div>
+
+                <div className="flex items-center justify-end gap-2">
+                  <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                    <input
+                      type="checkbox"
+                      checked={sound}
+                      onChange={(e) => setSound(e.target.checked)}
+                    />
+                    Sound
+                  </label>
+
+                  <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                    <input
+                      type="checkbox"
+                      checked={loop}
+                      onChange={(e) => setLoop(e.target.checked)}
+                    />
+                    Loop
+                  </label>
+                </div>
+              </div>
+            </>
+          )}
         </div>
+
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · R reset · F fullscreen
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
+
+              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={loop}
+                  onChange={(e) => setLoop(e.target.checked)}
+                />
+                Loop
+              </label>
+
+              <div className="text-xs font-semibold text-slate-700">
+                {statusLabel}
+              </div>
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -528,13 +828,10 @@ function OnlineTimerCard() {
    PAGE
 ========================================================= */
 export default function OnlineTimerPage({
-  loaderData: { nowISO },
+  loaderData: { nowISO: _nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/online-timer";
+  const url = "https://www.ilovetimers.com/online-timer";
 
-  /* =========================
-   JSON-LD (update)
-========================= */
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -543,7 +840,7 @@ export default function OnlineTimerPage({
         name: "Online Timer",
         url,
         description:
-          "Free online timer website with a fast countdown timer: presets, custom input, loop mode, sound toggle, fullscreen, and keyboard shortcuts.",
+          "Start a free online countdown timer instantly with presets, custom time, sound, loop, fullscreen, and keyboard shortcuts.",
       },
       {
         "@type": "BreadcrumbList",
@@ -552,69 +849,13 @@ export default function OnlineTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
-          },
-          { "@type": "ListItem", position: 2, name: "Online Timer", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "How do I set a timer for 10 minutes (or any duration)?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Choose a preset like 10m, or type a custom time using mm:ss (like 10:00) or h:mm:ss (like 1:00:00), then press Set and Start.",
-            },
+            item: "https://www.ilovetimers.com/",
           },
           {
-            "@type": "Question",
-            name: "Can I set a 1 minute timer, 2 minute timer, or 5 minute timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Use the preset chips for common times, or type your own duration (for example 1:00, 2:00, or 5:00) and press Set.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I set a timer for seconds (like 10 seconds or 30 seconds)?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Type seconds directly (like 10 or 30) or use mm:ss (like 0:10 or 0:30), then press Set and Start.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this online timer work on phones and laptops?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. The timer is responsive and works on phones, tablets, laptops, and desktops.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use this timer fullscreen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Click Fullscreen or press F while the timer card is focused.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I turn sound off or loop the timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Toggle Sound off to run silently. Enable Loop to repeat the same countdown automatically.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What keyboard shortcuts are supported?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts or pauses, R resets, and F toggles fullscreen (when the timer card is focused).",
-            },
+            "@type": "ListItem",
+            position: 2,
+            name: "Online Timer",
+            item: url,
           },
         ],
       },
@@ -622,252 +863,25 @@ export default function OnlineTimerPage({
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Online Timer</span>
-          </p>
 
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Online Timer (Timer Website)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A fast, clean <strong>timer website</strong> for everyday timing:
-            presets, custom input, sound toggle, loop, fullscreen, and keyboard
-            shortcuts.
-          </p>
-        </div>
-      </section>
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <OnlineTimerCard />
-
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Quick start</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Click a preset (like <strong>5m</strong>), then press{" "}
-              <strong>Start</strong>. For an exact duration, type{" "}
-              <strong>mm:ss</strong> and press <strong>Set</strong>.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Fullscreen</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              For projectors and shared screens, use fullscreen so the digits
-              are readable from across the room.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <OnlineTimerCard />
         </div>
-      </section>
-      {/* SEO Section (broad intent, without spam) */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Set a timer fast (minutes, seconds, or custom)
-          </h2>
 
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              If you searched for an <strong>online timer</strong>, a{" "}
-              <strong>timer website</strong>, or something like{" "}
-              <strong>set a timer for 10 minutes</strong>, this page is built
-              for that exact job: pick a preset, press Start, and you are done.
-            </p>
-
-            <p>
-              Popular timer settings people use daily include short bursts like
-              a <strong>10 second timer</strong> or{" "}
-              <strong>30 second timer</strong>, quick tasks like a{" "}
-              <strong>1 minute timer</strong> and{" "}
-              <strong>2 minute timer</strong>, and common work blocks like a{" "}
-              <strong>5 minute timer</strong>, <strong>10 minute timer</strong>,{" "}
-              <strong>15 minute timer</strong>, <strong>20 minute timer</strong>
-              , <strong>25 minute timer</strong>, and{" "}
-              <strong>30 minute timer</strong>. For longer sessions, use a{" "}
-              <strong>40 minute timer</strong>, <strong>45 minute timer</strong>
-              , or <strong>60 minute timer</strong>.
-            </p>
-
-            <p>
-              Want something specific that is not in the chips? Type your own
-              duration using <strong>mm:ss</strong> (like <strong>08:00</strong>
-              ) or <strong>h:mm:ss</strong> (like <strong>1:15:00</strong>),
-              then press <strong>Set</strong>. This is useful for exact requests
-              such as a <strong>7 minute timer</strong>,{" "}
-              <strong>12 minute timer</strong>, <strong>16 minute timer</strong>
-              , or <strong>27 minute timer</strong>.
-            </p>
-
-            <p>
-              Use <strong>Fullscreen</strong> for visibility on a projector or
-              shared screen, and control everything by keyboard after clicking
-              the card once:
-              <strong> Space</strong> to start or pause, <strong>R</strong> to
-              reset, and <strong>F</strong> for fullscreen. Toggle{" "}
-              <strong>Sound</strong> off for a silent timer, or enable{" "}
-              <strong>Loop</strong> for repeating intervals.
-            </p>
-
-            <p>
-              Need a different tool? Try{" "}
-              <Link to="/stopwatch" className="font-semibold hover:underline">
-                Stopwatch
-              </Link>{" "}
-              for elapsed time and laps,{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              for focus cycles, or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT / Interval
-              </Link>{" "}
-              for work/rest rounds.
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Quick presets
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                One tap for common picks like 1m, 5m, 10m, 15m, 20m, 30m, 45m,
-                and 60m.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Exact durations
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Set any time you need with mm:ss or h:mm:ss, then press Set.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Presentation ready
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen mode makes the digits readable across a room.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Online Timer FAQ</h2>
-
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I set a timer for 10 minutes (or any duration)?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Choose a preset (like <strong>10m</strong>) or type a custom time
-              using <strong>mm:ss</strong> (like <strong>10:00</strong>) or{" "}
-              <strong>h:mm:ss</strong> (like <strong>1:00:00</strong>). Press{" "}
-              <strong>Set</strong>, then press <strong>Start</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I set a 1 minute timer, 2 minute timer, or 5 minute timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Use the preset chips for common times, or type your own
-              duration (for example <strong>1:00</strong>, <strong>2:00</strong>
-              , or <strong>5:00</strong>) and press <strong>Set</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I set a timer for seconds (like 10 seconds or 30 seconds)?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Type seconds directly (like <strong>10</strong> or{" "}
-              <strong>30</strong>) or use <strong>mm:ss</strong> (like{" "}
-              <strong>0:10</strong> or <strong>0:30</strong>). Press{" "}
-              <strong>Set</strong>, then press <strong>Start</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does this online timer work on phones and laptops?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. The timer is responsive and works on phones, tablets,
-              laptops, and desktops.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I use it fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
-              while the timer card is focused.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I turn sound off or loop the timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off to run silently. Enable{" "}
-              <strong>Loop</strong> to repeat the same countdown automatically.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What shortcuts are supported?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause · <strong>R</strong> reset ·{" "}
-              <strong>F</strong> fullscreen (when focused).
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Online Timer</span>
+        </p>
       </section>
     </main>
   );

@@ -1,8 +1,21 @@
 // app/routes/hiit-timer.tsx
 import type { Route } from "./+types/hiit-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/hiit-timer/HowItWorks";
+import Disclaimer from "~/clients/components/hiit-timer/Disclaimer";
+import FAQ from "~/clients/components/hiit-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/hiit-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/hiit-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -46,7 +59,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -94,7 +107,120 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
-// WebAudio beep (same style as other pages)
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * Uses ResizeObserver + rAF and binary search.
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
+// WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -135,23 +261,34 @@ function useBeep() {
 }
 
 /* =========================================================
-   UI PRIMITIVES (same style as Home)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -176,15 +313,15 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
-function LabeledNumberStrong({
+function LabeledNumber({
   label,
   value,
   set,
@@ -192,6 +329,7 @@ function LabeledNumberStrong({
   max,
   suffix,
   hint,
+  disabled,
 }: {
   label: string;
   value: number;
@@ -200,27 +338,77 @@ function LabeledNumberStrong({
   max: number;
   suffix?: string;
   hint?: string;
+  disabled?: boolean;
 }) {
   return (
-    <label className="block text-sm font-semibold text-amber-950">
-      <div className="flex items-baseline justify-between gap-2">
-        <span>
+    <label className="block text-sm font-semibold text-slate-900">
+      <div className="flex items-baseline gap-2">
+        <span className="min-w-0">
           {label}{" "}
           {suffix ? <span className="text-slate-600">{suffix}</span> : null}
         </span>
-        {hint ? (
-          <span className="text-xs font-medium text-slate-600">{hint}</span>
-        ) : null}
       </div>
+
       <input
         type="number"
         min={min}
         max={max}
         value={value}
+        disabled={disabled}
         onChange={(e) => set(clamp(Number(e.target.value || 0), min, max))}
-        className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
       />
+
+      {hint ? (
+        <div className="mt-1 text-xs font-medium text-slate-600">{hint}</div>
+      ) : null}
     </label>
+  );
+}
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
   );
 }
 
@@ -232,7 +420,7 @@ type Step = "warmup" | "work" | "rest" | "cooldown" | "done";
 function HIITCard() {
   const beep = useBeep();
 
-  // Strong defaults: Tabata-ish, but with warm/cool included
+  // Defaults
   const [warmSec, setWarmSec] = useState(30);
   const [workSec, setWorkSec] = useState(20);
   const [restSec, setRestSec] = useState(10);
@@ -249,8 +437,28 @@ function HIITCard() {
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  const remainingRef = useRef<number>(remaining);
+  useEffect(() => {
+    remainingRef.current = remaining;
+  }, [remaining]);
+
+  const stepRef = useRef<Step>(step);
+  useEffect(() => {
+    stepRef.current = step;
+  }, [step]);
+
+  const roundIdxRef = useRef<number>(roundIdx);
+  useEffect(() => {
+    roundIdxRef.current = roundIdx;
+  }, [roundIdx]);
 
   const warmMs = useMemo(() => warmSec * 1000, [warmSec]);
   const workMs = useMemo(() => workSec * 1000, [workSec]);
@@ -265,6 +473,11 @@ function HIITCard() {
     return 0;
   }
 
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
   // Reset predictably when settings change
   useEffect(() => {
     setRunning(false);
@@ -273,20 +486,20 @@ function HIITCard() {
     setRemaining(durFor("warmup"));
     endRef.current = null;
     lastBeepSecondRef.current = null;
+    stopRaf();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [warmMs, workMs, restMs, coolMs, rounds]);
 
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       endRef.current = null;
       lastBeepSecondRef.current = null;
       return;
     }
 
     if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
+      endRef.current = performance.now() + remainingRef.current;
     }
 
     const tick = () => {
@@ -294,11 +507,10 @@ function HIITCard() {
       const rem = Math.max(0, (endRef.current ?? now) - now);
       setRemaining(rem);
 
-      // Optional final beeps for the last 3 seconds of WORK only
       if (
         sound &&
         finalCountdownBeeps &&
-        step === "work" &&
+        stepRef.current === "work" &&
         rem > 0 &&
         rem <= 3_000
       ) {
@@ -315,8 +527,8 @@ function HIITCard() {
         lastBeepSecondRef.current = null;
 
         if (sound) {
-          // distinct tones: work->rest or rest->work
-          const freq = step === "work" ? 660 : 980;
+          const s = stepRef.current;
+          const freq = s === "work" ? 660 : 980;
           beep(freq, 180);
         }
 
@@ -328,11 +540,8 @@ function HIITCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, remaining, sound, finalCountdownBeeps, beep, step]);
+    return () => stopRaf();
+  }, [running, sound, finalCountdownBeeps, beep]);
 
   function startStep(next: Step) {
     const d = durFor(next);
@@ -350,18 +559,20 @@ function HIITCard() {
     setRemaining(durFor("warmup"));
     endRef.current = null;
     lastBeepSecondRef.current = null;
+    stopRaf();
   }
 
   function startPause() {
-    if (step === "done") {
+    const s = stepRef.current;
+
+    if (s === "done") {
       resetAll();
       setRunning(true);
       endRef.current = performance.now() + durFor("warmup");
       return;
     }
 
-    // If current step duration is 0, treat Start as Next
-    if (durFor(step) === 0) {
+    if (durFor(s) === 0) {
       skipNext();
       return;
     }
@@ -371,21 +582,21 @@ function HIITCard() {
   }
 
   function advanceStep() {
-    // warmup -> first work
-    if (step === "warmup") {
+    const s = stepRef.current;
+    const r = roundIdxRef.current;
+
+    if (s === "warmup") {
       setRoundIdx(0);
       startStep("work");
       return;
     }
 
-    // work -> rest (if rest > 0) else directly to next work/cooldown
-    if (step === "work") {
+    if (s === "work") {
       if (restMs > 0) {
         startStep("rest");
         return;
       }
-      // no rest
-      const next = roundIdx + 1;
+      const next = r + 1;
       if (next < rounds) {
         setRoundIdx(next);
         startStep("work");
@@ -395,9 +606,8 @@ function HIITCard() {
       return;
     }
 
-    // rest -> next round work or cooldown
-    if (step === "rest") {
-      const next = roundIdx + 1;
+    if (s === "rest") {
+      const next = r + 1;
       if (next < rounds) {
         setRoundIdx(next);
         startStep("work");
@@ -407,16 +617,15 @@ function HIITCard() {
       return;
     }
 
-    // cooldown -> done
-    if (step === "cooldown") {
+    if (s === "cooldown") {
       setStep("done");
       setRemaining(0);
       setRunning(false);
       endRef.current = null;
+      stopRaf();
       return;
     }
 
-    // done -> reset
     resetAll();
   }
 
@@ -424,21 +633,26 @@ function HIITCard() {
     setRunning(false);
     endRef.current = null;
     lastBeepSecondRef.current = null;
+    stopRaf();
     advanceStep();
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       resetAll();
-    } else if (e.key.toLowerCase() === "n") {
+    } else if (k === "n") {
       skipNext();
-    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
-      toggleFullscreen(displayRef.current);
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
@@ -462,22 +676,40 @@ function HIITCard() {
           ? "Finish"
           : "Done";
 
-  const displayTone =
-    step === "work"
-      ? "border-rose-200 bg-rose-50 text-rose-950"
-      : step === "rest"
-        ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-        : step === "warmup"
-          ? "border-amber-300 bg-amber-50 text-amber-950"
-          : step === "cooldown"
-            ? "border-sky-200 bg-sky-50 text-sky-950"
-            : "border-slate-200 bg-slate-50 text-slate-600";
+  const statusLabel =
+    step === "done"
+      ? "Done"
+      : running
+        ? "Running"
+        : remaining > 0
+          ? "Paused"
+          : "Ready";
+
+  const timeText =
+    step === "done" ? "0:00" : msToClock(Math.ceil(remaining / 1000) * 1000);
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [timeText, isFs, running, step, roundIdx, rounds],
+    minPx: 64,
+    maxPx: isFs ? 560 : 360,
+    paddingAllowancePx: isFs ? 56 : 72,
+  });
 
   const urgent =
     running && remaining > 0 && remaining <= 10_000 && step === "work";
 
-  const timeText =
-    step === "done" ? "0:00" : msToClock(Math.ceil(remaining / 1000) * 1000);
+  const phaseChip =
+    step === "work"
+      ? "bg-rose-50 text-rose-900 border-rose-200"
+      : step === "rest"
+        ? "bg-emerald-50 text-emerald-900 border-emerald-200"
+        : step === "warmup"
+          ? "bg-amber-50 text-amber-900 border-amber-200"
+          : step === "cooldown"
+            ? "bg-sky-50 text-sky-900 border-sky-200"
+            : "bg-slate-50 text-slate-700 border-slate-200";
 
   function applyTabata() {
     setWarmSec(0);
@@ -504,192 +736,294 @@ function HIITCard() {
   }
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            HIIT / Interval Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Warm-up, work/rest rounds, and cooldown. Includes Tabata presets,
-            skip/next, sound, fullscreen, and keyboard shortcuts.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayRef.current && toggleFullscreen(displayRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Settings */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-8">
-          <div className="grid gap-3 sm:grid-cols-5">
-            <LabeledNumberStrong
-              label="Warm-up"
-              suffix="(sec)"
-              value={warmSec}
-              set={setWarmSec}
-              min={0}
-              max={600}
-              hint="0 = skip"
-            />
-            <LabeledNumberStrong
-              label="Work"
-              suffix="(sec)"
-              value={workSec}
-              set={setWorkSec}
-              min={1}
-              max={600}
-            />
-            <LabeledNumberStrong
-              label="Rest"
-              suffix="(sec)"
-              value={restSec}
-              set={setRestSec}
-              min={0}
-              max={600}
-              hint="0 = none"
-            />
-            <LabeledNumberStrong
-              label="Rounds"
-              value={rounds}
-              set={setRounds}
-              min={1}
-              max={50}
-            />
-            <LabeledNumberStrong
-              label="Cool-down"
-              suffix="(sec)"
-              value={coolSec}
-              set={setCoolSec}
-              min={0}
-              max={600}
-              hint="0 = skip"
-            />
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="HIIT Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {running ? "Pause" : step === "done" ? "Restart" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={skipNext} className="py-1 text-sm">
+              Next
+            </Btn>
+            <Btn kind="ghost" onClick={resetAll} className="py-1 text-sm">
+              Reset
+            </Btn>
           </div>
+        }
+      />
 
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <label className="inline-flex items-center gap-2 text-sm font-semibold text-amber-950">
-              <input
-                type="checkbox"
-                checked={finalCountdownBeeps}
-                onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-                disabled={!sound}
-              />
-              Final 3-2-1 beeps (work only)
-            </label>
-            <span className="text-sm text-slate-600">
-              Only when Sound is on.
-            </span>
-          </div>
-        </div>
-
-        <div className="lg:col-span-4">
-          <div className="h-full rounded-2xl border border-amber-200 bg-amber-50 p-4">
-            <div className="text-sm font-extrabold text-amber-950 uppercase tracking-wide">
-              Quick presets
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                HIIT Timer (Intervals: Warm-up, Work, Rest, Rounds, Cool-down)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Set intervals, run rounds, skip next, toggle sound cues, and go
+                fullscreen.
+              </p>
             </div>
 
-            <div className="mt-3 grid gap-2">
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  className="cursor-pointer"
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
+
               <Btn
                 kind="ghost"
-                onClick={applyTabata}
-                className="justify-center"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
               >
-                Tabata 20/10 × 8
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={applyIntervals}
-                className="justify-center"
-              >
-                Intervals 40/20 × 10
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={applyBoxing}
-                className="justify-center"
-              >
-                Boxing 3:00/1:00 × 6
+                Fullscreen
               </Btn>
             </div>
-
-            <p className="mt-3 text-sm text-slate-700">
-              Presets load values. Press <strong>Start</strong> when ready.
-            </p>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Display */}
-      <div
-        ref={displayRef}
-        className={`mt-6 rounded-2xl border-2 p-6 ${displayTone}`}
-        style={{ minHeight: 220 }}
-        aria-live="polite"
-      >
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-          <div className="text-sm font-extrabold uppercase tracking-wide opacity-95">
-            {step === "done"
-              ? "Done"
-              : step === "work"
-                ? "Work"
-                : step === "rest"
-                  ? "Rest"
-                  : step === "warmup"
-                    ? "Warm-up"
-                    : "Cool-down"}
-          </div>
-          <div className="text-sm font-semibold opacity-95">
-            {phaseLabel} · {roundLabel}
-          </div>
-        </div>
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <div className="mt-4 grid gap-4 lg:grid-cols-12">
+            {/* Settings */}
+            <div className="lg:col-span-9">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                  <LabeledNumber
+                    label="Warm-up"
+                    suffix="(sec)"
+                    value={warmSec}
+                    set={setWarmSec}
+                    min={0}
+                    max={600}
+                    hint="0 = skip"
+                  />
+                  <LabeledNumber
+                    label="Work"
+                    suffix="(sec)"
+                    value={workSec}
+                    set={setWorkSec}
+                    min={1}
+                    max={600}
+                  />
+                  <LabeledNumber
+                    label="Rest"
+                    suffix="(sec)"
+                    value={restSec}
+                    set={setRestSec}
+                    min={0}
+                    max={600}
+                    hint="0 = none"
+                  />
+                  <LabeledNumber
+                    label="Rounds"
+                    value={rounds}
+                    set={setRounds}
+                    min={1}
+                    max={50}
+                  />
+                  <LabeledNumber
+                    label="Cool-down"
+                    suffix="(sec)"
+                    value={coolSec}
+                    set={setCoolSec}
+                    min={0}
+                    max={600}
+                    hint="0 = skip"
+                  />
 
+                  {/* Final beeps spans full row */}
+                  <div className="col-span-2 sm:col-span-3 lg:col-span-5">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                      <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-900">
+                        <input
+                          className="cursor-pointer"
+                          type="checkbox"
+                          checked={finalCountdownBeeps}
+                          onChange={(e) =>
+                            setFinalCountdownBeeps(e.target.checked)
+                          }
+                          disabled={!sound}
+                        />
+                        Final 3-2-1 beeps (work only)
+                      </label>
+                      <span className="text-sm text-slate-600">
+                        Only when Sound is on.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Presets */}
+            <div className="lg:col-span-3">
+              <div className="h-full rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="text-sm font-extrabold text-sky-700 uppercase tracking-wide">
+                  Quick presets
+                </div>
+
+                <div className="mt-3 grid gap-2">
+                  <Btn
+                    kind="ghost"
+                    onClick={applyTabata}
+                    className="justify-center"
+                  >
+                    Tabata 20/10 × 8
+                  </Btn>
+                  <Btn
+                    kind="ghost"
+                    onClick={applyIntervals}
+                    className="justify-center"
+                  >
+                    Intervals 40/20 × 10
+                  </Btn>
+                  <Btn
+                    kind="ghost"
+                    onClick={applyBoxing}
+                    className="justify-center"
+                  >
+                    Boxing 3:00/1:00 × 6
+                  </Btn>
+                </div>
+
+                <p className="mt-3 text-sm text-slate-600">
+                  Presets load values. Press <strong>Start</strong> when ready.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Display */}
         <div
-          className={`mt-5 flex items-center justify-center font-mono font-extrabold tracking-widest ${
-            urgent ? "text-rose-950" : ""
-          }`}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 p-3 text-slate-950 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 260,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <span className="text-6xl sm:text-7xl md:text-8xl">{timeText}</span>
-        </div>
-      </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center gap-2">
+              <span
+                className={[
+                  "rounded-full border px-3 py-1 text-xs font-extrabold uppercase tracking-widest",
+                  phaseChip,
+                ].join(" ")}
+              >
+                {phaseLabel}
+              </span>
+              <span className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                {roundLabel}
+              </span>
+            </div>
 
-      {/* Controls + shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-3">
-          <Btn onClick={startPause}>
-            {running ? "Pause" : step === "done" ? "Restart" : "Start"}
-          </Btn>
-          <Btn kind="ghost" onClick={resetAll}>
-            Reset
-          </Btn>
-          <Btn kind="ghost" onClick={skipNext}>
-            Next →
-          </Btn>
+            <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+              {statusLabel}
+            </div>
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-4 inline-block text-center font-mono font-extrabold tracking-widest",
+              urgent ? "text-rose-900" : "text-slate-950",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {timeText}
+          </span>
+
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Controls
+                  </div>
+                  <div className="text-xs font-semibold text-slate-600">
+                    Tap time to start/pause · N next · R reset · F fullscreen
+                  </div>
+                </div>
+
+                <div className="hidden sm:flex items-center gap-2">
+                  <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                    Space = Start/Pause
+                  </div>
+                  <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                    N = Next
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · N next · F fullscreen
-        </div>
+        {/* Controls (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap gap-3">
+              <Btn onClick={startPause}>
+                {running ? "Pause" : step === "done" ? "Restart" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={resetAll}>
+                Reset
+              </Btn>
+              <Btn kind="ghost" onClick={skipNext}>
+                Next →
+              </Btn>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · R reset · N next · F fullscreen
+            </div>
+          </div>
+        )}
+
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · N next · R reset · F
+              fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -701,7 +1035,7 @@ function HIITCard() {
 export default function HIITTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/hiit-timer";
+  const url = "https://www.ilovetimers.com/hiit-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -720,7 +1054,7 @@ export default function HIITTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -730,268 +1064,36 @@ export default function HIITTimerPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a HIIT timer or interval timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A HIIT (interval) timer alternates work and rest periods for a set number of rounds. Many workouts add a warm-up and cool-down, and Tabata is a popular 20 seconds work / 10 seconds rest format.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this work as a Tabata timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Use the Tabata preset (20/10 × 8). You can keep warm-up and cool-down at 0 seconds to skip them, or add them if you want.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I skip to the next interval?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Click Next (or press N) to advance immediately to the next phase.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I run it fullscreen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Click Fullscreen or press F while the timer card is focused.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, N goes to the next phase, and F toggles fullscreen while the card is focused.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">HIIT Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            HIIT / Interval Timer
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A curated <strong>HIIT timer</strong> and{" "}
-            <strong>interval timer</strong> built for real workouts: warm-up,
-            work/rest rounds, cooldown, Tabata presets, next/skip, sound,
-            fullscreen, and keyboard shortcuts.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <HIITCard />
         </div>
 
-        {/* Quick-use hints: below, responsive */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              What interval users expect
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Clear phase labels, big readable digits, fast “next” control, and
-              fullscreen for gym TVs. This page is tuned for that: run the
-              workout without fighting the UI.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Tabata timer</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              The classic format is <strong>20 seconds work</strong> and{" "}
-              <strong>10 seconds rest</strong> for <strong>8 rounds</strong>.
-              Use the Tabata preset to load it instantly.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>N</strong> = Next interval
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">HIIT Timer</span>
+        </p>
       </section>
 
-      {/* SEO Section (under TimerMenuLinks) */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free HIIT timer and interval timer (Tabata + work/rest)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>HIIT timer</strong> is a simple{" "}
-              <strong>interval timer</strong> for workouts that alternate{" "}
-              <strong>work</strong> and <strong>rest</strong>. Set a warm-up,
-              choose your work/rest durations, set rounds, and optionally add a
-              cool-down. The timer runs in your browser and stays accurate even
-              if your device slows or the tab loses focus briefly.
-            </p>
-
-            <p>
-              For <strong>Tabata</strong>, use the preset (20/10 × 8). For other
-              routines, adjust the seconds to match your program. Use{" "}
-              <strong>Next</strong> (or <strong>N</strong>) to skip ahead, and
-              fullscreen the display for gyms, mirrors, TVs, or projector
-              setups.
-            </p>
-
-            <p>
-              Looking for a different timer style? Use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown
-              </Link>{" "}
-              for fixed deadlines,{" "}
-              <Link to="/stopwatch" className="font-semibold hover:underline">
-                Stopwatch
-              </Link>{" "}
-              for elapsed time and laps, or{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              for focus cycles.
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Tabata
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Load the classic 20s work / 10s rest × 8 rounds preset, then
-                press Start.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Circuits
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Configure longer work blocks (30 to 60s) with rest and repeat
-                for the rounds you need.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Fullscreen gym use
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Use fullscreen so the phase and time are readable from across
-                the room. Control with Space, N, and R.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">HIIT Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this an interval timer and a Tabata timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Tabata is a specific interval format (20 seconds work / 10
-              seconds rest for 8 rounds). Use the preset to load it.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I skip to the next interval?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Press <strong>N</strong> or click <strong>Next</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I set warm-up and cool-down to 0?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Set them to 0 seconds to skip those phases.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I run it fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Click Fullscreen or press <strong>F</strong> while focused.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>N</strong> next • <strong>F</strong> fullscreen (when
-              focused).
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

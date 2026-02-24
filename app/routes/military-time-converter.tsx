@@ -1,7 +1,15 @@
 // app/routes/military-time-converter.tsx
 import type { Route } from "./+types/military-time-converter";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +41,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -48,10 +56,6 @@ export function loader() {
    UTILS
 ========================================================= */
 const pad2 = (n: number) => n.toString().padStart(2, "0");
-
-function clamp(n: number, min: number, max: number) {
-  return Math.min(Math.max(n, min), max);
-}
 
 function isTypingTarget(target: EventTarget | null) {
   const el = target as HTMLElement | null;
@@ -104,7 +108,6 @@ function parseMilitary(input: string): ParseResult {
     };
   }
 
-  // Accept formats like: 1730, 0730, 530, 5:30, 17:30, 0000, 2400
   const hasColon = raw.includes(":");
   let h = 0;
   let m = 0;
@@ -121,6 +124,7 @@ function parseMilitary(input: string): ParseResult {
         error: "Use a valid format like 17:30 or 5:30.",
       };
     }
+
     const hh = cleanDigits(parts[0]);
     const mm = cleanDigits(parts[1]);
 
@@ -151,15 +155,12 @@ function parseMilitary(input: string): ParseResult {
     }
 
     if (d.length === 1 || d.length === 2) {
-      // Treat as hour only, minutes 00
       h = Number(d);
       m = 0;
     } else if (d.length === 3) {
-      // 530 -> 5:30
       h = Number(d.slice(0, 1));
       m = Number(d.slice(1));
     } else {
-      // take last 2 as minutes, rest as hours (handles 4+ digits, but we validate)
       h = Number(d.slice(0, d.length - 2));
       m = Number(d.slice(d.length - 2));
     }
@@ -176,7 +177,6 @@ function parseMilitary(input: string): ParseResult {
     };
   }
 
-  // Special case: 2400 is sometimes used for midnight.
   if (h === 24 && m === 0) {
     const normalized = "2400";
     return {
@@ -221,8 +221,8 @@ type ParseStandardResult = {
   valid: boolean;
   h24: number;
   m: number;
-  normalized: string; // e.g., "5:30 PM"
-  military: string; // e.g., "1730"
+  normalized: string;
+  military: string;
   error?: string;
 };
 
@@ -355,6 +355,128 @@ async function copyToClipboard(text: string) {
   }
 }
 
+async function toggleFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) {
+    await el.requestFullscreen().catch(() => {});
+  } else {
+    await document.exitFullscreen().catch(() => {});
+  }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 28,
+  maxPx = 260,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
    UI PRIMITIVES
 ========================================================= */
@@ -363,16 +485,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -397,8 +530,8 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -417,33 +550,123 @@ const ChipBtn = ({
   <button
     type="button"
     onClick={onClick}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
+    className={[
+      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
       active
-        ? "bg-amber-700 text-white hover:bg-amber-800"
-        : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-    }`}
+        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+    ].join(" ")}
   >
     {children}
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
    TOOL CARD
 ========================================================= */
+type ActiveField = "mil" | "std";
+
 function MilitaryTimeConverterCard() {
   const [militaryInput, setMilitaryInput] = useState("1730");
   const [standardInput, setStandardInput] = useState("5:30 PM");
+  const [activeField, setActiveField] = useState<ActiveField>("mil");
 
   const [lastCopied, setLastCopied] = useState<string | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
 
   const mil = useMemo(() => parseMilitary(militaryInput), [militaryInput]);
   const std = useMemo(() => parseStandard(standardInput), [standardInput]);
 
-  const copy = useCallback(async (label: string, text: string) => {
-    const ok = await copyToClipboard(text);
-    setLastCopied(ok ? label : "Copy failed");
-    window.setTimeout(() => setLastCopied(null), 900);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const displayTextRef = useRef<HTMLSpanElement>(null);
+
+  const shownLabel =
+    activeField === "mil" ? "Standard time (AM/PM)" : "Military time (24-hour)";
+
+  const shownValue = useMemo(() => {
+    if (activeField === "mil") return mil.valid ? mil.standard : "—";
+    return std.valid ? std.military : "—";
+  }, [activeField, mil.valid, mil.standard, std.valid, std.military]);
+
+  // Reserve width to reduce jitter (monospace + fixed ch width for the display value)
+  const shownMinCh = activeField === "mil" ? 10 : 6;
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: displayTextRef,
+    deps: [shownValue, shownLabel, isFs, activeField],
+    minPx: 44,
+    maxPx: isFs ? 380 : 220,
+    paddingAllowancePx: isFs ? 72 : 80,
+  });
+
+  const clearToastTimer = useCallback(() => {
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = null;
   }, []);
+
+  useEffect(() => {
+    return () => clearToastTimer();
+  }, [clearToastTimer]);
+
+  const copy = useCallback(
+    async (label: string, text: string) => {
+      const ok = await copyToClipboard(text);
+      setLastCopied(ok ? label : "Copy failed");
+      clearToastTimer();
+      toastTimerRef.current = window.setTimeout(() => setLastCopied(null), 900);
+    },
+    [clearToastTimer],
+  );
 
   const fillNow = useCallback(() => {
     const d = new Date();
@@ -453,14 +676,39 @@ function MilitaryTimeConverterCard() {
     const stdText = formatStandard(h, m);
     setMilitaryInput(milText);
     setStandardInput(stdText);
+    setActiveField("mil");
   }, []);
+
+  const clearAll = useCallback(() => {
+    setMilitaryInput("");
+    setStandardInput("");
+    clearToastTimer();
+    setLastCopied(null);
+    setActiveField("mil");
+  }, [clearToastTimer]);
 
   const quick = useMemo(
     () => ["0000", "0030", "0600", "1200", "1730", "2359", "2400"],
     [],
   );
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const setFromMilitary = useCallback((next: string) => {
+    setActiveField("mil");
+    setMilitaryInput(next);
+
+    const parsed = parseMilitary(next);
+    if (parsed.valid) setStandardInput(parsed.standard);
+  }, []);
+
+  const setFromStandard = useCallback((next: string) => {
+    setActiveField("std");
+    setStandardInput(next);
+
+    const parsed = parseStandard(next);
+    if (parsed.valid) setMilitaryInput(parsed.military);
+  }, []);
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
@@ -485,195 +733,375 @@ function MilitaryTimeConverterCard() {
 
     if (k === "r") {
       e.preventDefault();
-      setMilitaryInput("");
-      setStandardInput("");
+      clearAll();
       return;
+    }
+
+    if (k === "f" && cardRef.current) {
+      e.preventDefault();
+      toggleFullscreen(cardRef.current);
+      return;
+    }
+
+    if (k === "escape" && isFs) {
+      e.preventDefault();
+      document.exitFullscreen().catch(() => {});
     }
   };
 
+  const statusLabel =
+    activeField === "mil"
+      ? mil.valid
+        ? "Valid military input"
+        : "Invalid military input"
+      : std.valid
+        ? "Valid standard input"
+        : "Invalid standard input";
+
+  const isPrimaryValid = activeField === "mil" ? mil.valid : std.valid;
+
+  const onCopyPrimary = useCallback(() => {
+    if (activeField === "mil") {
+      if (mil.valid) copy("Standard", mil.standard);
+    } else {
+      if (std.valid) copy("Military", std.military);
+    }
+  }, [activeField, mil.valid, mil.standard, std.valid, std.military, copy]);
+
+  // Reserve error/note area to prevent layout shift
+  const milFootnote =
+    mil.valid && mil.note ? mil.note : mil.valid ? "" : mil.error || "";
+  const stdFootnote = std.valid ? "" : std.error || "";
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Military Time Converter
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Paste a number like <strong>1730</strong> and get the{" "}
-            <strong>AM/PM</strong> result instantly. Also includes reverse
-            conversion.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Btn kind="ghost" onClick={fillNow} className="py-2">
-            Use current time
-          </Btn>
-          <Btn
-            kind="ghost"
-            onClick={() => {
-              setMilitaryInput("");
-              setStandardInput("");
-            }}
-            className="py-2"
-          >
-            Clear
-          </Btn>
-        </div>
-      </div>
-
-      {/* Quick examples */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        <div className="mr-1 text-sm font-semibold text-amber-950">
-          Examples:
-        </div>
-        {quick.map((q) => (
-          <ChipBtn
-            key={q}
-            onClick={() => {
-              setMilitaryInput(q);
-              const parsed = parseMilitary(q);
-              if (parsed.valid) setStandardInput(parsed.standard);
-            }}
-            active={cleanDigits(militaryInput) === q}
-          >
-            {q}
-          </ChipBtn>
-        ))}
-      </div>
-
-      {/* Two-way converter */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        {/* Military -> Standard */}
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="text-sm font-extrabold text-amber-950">
-                Military (24-hour)
-              </div>
-              <div className="mt-1 text-xs text-amber-900">
-                Try 1730, 0730, 5:30, 17:30, 0000
-              </div>
-            </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Military Time Converter"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
             <Btn
-              kind="ghost"
-              onClick={() => {
-                if (mil.valid) copy("Standard", mil.standard);
-              }}
-              disabled={!mil.valid}
+              kind="solid"
+              onClick={onCopyPrimary}
+              className="py-1 text-sm"
+              disabled={!isPrimaryValid}
             >
-              Copy result
+              Copy
+            </Btn>
+            <Btn kind="ghost" onClick={fillNow} className="py-1 text-sm">
+              Now
+            </Btn>
+            <Btn kind="ghost" onClick={clearAll} className="py-1 text-sm">
+              Clear
             </Btn>
           </div>
+        }
+      />
 
-          <label className="mt-3 block">
-            <span className="sr-only">Military time input</span>
-            <input
-              inputMode="numeric"
-              value={militaryInput}
-              onChange={(e) => setMilitaryInput(e.target.value)}
-              placeholder="1730"
-              className="w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </label>
-
-          <div className="mt-3 rounded-xl border border-amber-200 bg-white p-3">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              Standard time (AM/PM)
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Military Time Converter (24-Hour ⇄ AM/PM)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Type either format. The other side updates when your input is
+                valid. Big result display, copy, quick examples, and fullscreen.
+              </p>
             </div>
 
-            {mil.valid ? (
-              <div className="mt-1 flex flex-col gap-1">
-                <div className="text-3xl font-extrabold text-amber-950">
-                  {mil.standard}
-                </div>
-                <div className="text-sm text-slate-700">
-                  Normalized military:{" "}
-                  <span className="font-semibold">{mil.normalized}</span>
-                </div>
-                {mil.note ? (
-                  <div className="mt-1 text-sm text-amber-900">{mil.note}</div>
-                ) : null}
-              </div>
-            ) : (
-              <div className="mt-1 text-sm font-semibold text-amber-900">
-                {mil.error}
-              </div>
-            )}
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Standard -> Military */}
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="text-sm font-extrabold text-amber-950">
-                Standard (AM/PM)
-              </div>
-              <div className="mt-1 text-xs text-amber-900">
-                Try 5:30 PM, 12 AM, 9 PM
-              </div>
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center gap-3">
+              <Btn kind="ghost" onClick={fillNow}>
+                Use current time
+              </Btn>
+              <Btn kind="ghost" onClick={clearAll}>
+                Clear
+              </Btn>
+              <Btn
+                kind="solid"
+                onClick={onCopyPrimary}
+                disabled={!isPrimaryValid}
+              >
+                Copy result
+              </Btn>
             </div>
-            <Btn
-              kind="ghost"
-              onClick={() => {
-                if (std.valid) copy("Military", std.military);
+
+            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: N now · C copy AM/PM · M copy military · R clear · F
+              fullscreen
+            </div>
+          </div>
+        )}
+
+        {!isFs && (
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <div className="mr-1 text-sm font-semibold text-slate-900">
+              Examples:
+            </div>
+            {quick.map((q) => (
+              <ChipBtn
+                key={q}
+                onClick={() => setFromMilitary(q)}
+                active={cleanDigits(militaryInput) === q}
+              >
+                {q}
+              </ChipBtn>
+            ))}
+          </div>
+        )}
+
+        {/* Big Display (fixed internal layout to avoid shifting) */}
+        <div
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 230,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) onCopyPrimary();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to copy the current result" : undefined}
+        >
+          <div className="flex h-full flex-col items-center justify-center">
+            <div className="h-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
+              {shownLabel}
+            </div>
+
+            <span
+              ref={displayTextRef}
+              className={[
+                "mt-3 inline-block text-center font-mono font-extrabold tabular-nums",
+                isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+              ].join(" ")}
+              style={{
+                fontSize: `${fitFontPx}px`,
+                lineHeight: "1",
+                transform: "translateZ(0)",
+                minWidth: `${shownMinCh}ch`,
               }}
-              disabled={!std.valid}
             >
-              Copy result
-            </Btn>
-          </div>
-
-          <label className="mt-3 block">
-            <span className="sr-only">Standard time input</span>
-            <input
-              value={standardInput}
-              onChange={(e) => setStandardInput(e.target.value)}
-              placeholder="5:30 PM"
-              className="w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </label>
-
-          <div className="mt-3 rounded-xl border border-amber-200 bg-white p-3">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              Military time (24-hour)
-            </div>
-
-            {std.valid ? (
-              <div className="mt-1 flex flex-col gap-1">
-                <div className="text-3xl font-extrabold text-amber-950">
-                  {std.military}
-                </div>
-                <div className="text-sm text-slate-700">
-                  Normalized standard:{" "}
-                  <span className="font-semibold">{std.normalized}</span>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-1 text-sm font-semibold text-amber-900">
-                {std.error}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Copy toast */}
-      <div className="mt-4 flex items-center justify-between gap-3">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: N current time · C copy AM/PM result · M copy military
-          result · R clear
-        </div>
-        <div className="text-xs text-slate-600">
-          {lastCopied ? (
-            <span className="rounded-lg border border-amber-200 bg-white px-2 py-1 font-semibold text-amber-950">
-              {lastCopied}
+              {shownValue}
             </span>
-          ) : (
-            <span>Tip: click the card once so shortcuts work.</span>
+
+            {/* Fixed-height status row */}
+            <div className="mt-4 h-4 text-xs font-semibold text-slate-700">
+              {statusLabel}
+            </div>
+          </div>
+
+          {isFs && (
+            <div className="absolute right-3 top-3 hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+              Tap result to copy
+            </div>
           )}
         </div>
+
+        {/* Inputs */}
+        <div className={isFs ? "mx-2 sm:mx-4" : ""}>
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            {/* Military -> Standard */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-sm font-extrabold text-slate-900">
+                    Military (24-hour)
+                  </div>
+                  <div className="mt-1 text-xs text-slate-600">
+                    Try 1730, 0730, 5:30, 17:30, 0000, 2400
+                  </div>
+                </div>
+
+                <Btn
+                  kind="ghost"
+                  onClick={() => mil.valid && copy("Standard", mil.standard)}
+                  disabled={!mil.valid}
+                  className="py-2"
+                >
+                  Copy AM/PM
+                </Btn>
+              </div>
+
+              <label className="mt-3 block">
+                <span className="sr-only">Military time input</span>
+                <input
+                  inputMode="numeric"
+                  value={militaryInput}
+                  onChange={(e) => setFromMilitary(e.target.value)}
+                  onFocus={() => setActiveField("mil")}
+                  placeholder="1730"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                />
+              </label>
+
+              {/* Result box with reserved content height */}
+              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                  Standard time (AM/PM)
+                </div>
+
+                <div className="mt-1 min-h-[92px]">
+                  {/* Value row (reserved) */}
+                  <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tabular-nums">
+                    {mil.valid ? mil.standard : "—"}
+                  </div>
+
+                  {/* Sub row (reserved) */}
+                  <div className="mt-1 text-sm text-slate-700">
+                    {mil.valid ? (
+                      <>
+                        Normalized military:{" "}
+                        <span className="font-semibold">{mil.normalized}</span>
+                      </>
+                    ) : (
+                      <span className="opacity-0">
+                        Normalized military: 0000
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Footnote row (reserved) */}
+                  <div className="mt-1 min-h-[20px] text-sm text-slate-700">
+                    {milFootnote ? (
+                      milFootnote
+                    ) : (
+                      <span className="opacity-0">.</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Standard -> Military */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-sm font-extrabold text-slate-900">
+                    Standard (AM/PM)
+                  </div>
+                  <div className="mt-1 text-xs text-slate-600">
+                    Try 5:30 PM, 12 AM, 9 PM, 12:05 am
+                  </div>
+                </div>
+
+                <Btn
+                  kind="ghost"
+                  onClick={() => std.valid && copy("Military", std.military)}
+                  disabled={!std.valid}
+                  className="py-2"
+                >
+                  Copy military
+                </Btn>
+              </div>
+
+              <label className="mt-3 block">
+                <span className="sr-only">Standard time input</span>
+                <input
+                  value={standardInput}
+                  onChange={(e) => setFromStandard(e.target.value)}
+                  onFocus={() => setActiveField("std")}
+                  placeholder="5:30 PM"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                />
+              </label>
+
+              {/* Result box with reserved content height */}
+              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                  Military time (24-hour)
+                </div>
+
+                <div className="mt-1 min-h-[92px]">
+                  <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tabular-nums">
+                    {std.valid ? std.military : "—"}
+                  </div>
+
+                  <div className="mt-1 text-sm text-slate-700">
+                    {std.valid ? (
+                      <>
+                        Normalized standard:{" "}
+                        <span className="font-semibold">{std.normalized}</span>
+                      </>
+                    ) : (
+                      <span className="opacity-0">
+                        Normalized standard: 12:00 PM
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-1 min-h-[20px] text-sm text-slate-700">
+                    {stdFootnote ? (
+                      stdFootnote
+                    ) : (
+                      <span className="opacity-0">.</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {!isFs && (
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                Tip: click the card once so shortcuts work.
+              </div>
+              <div className="text-xs text-slate-600">
+                {lastCopied ? (
+                  <span className="rounded-lg border border-slate-200 bg-white px-2 py-1 font-semibold text-slate-900">
+                    {lastCopied}
+                  </span>
+                ) : (
+                  <span className="opacity-0">Copied</span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap result to copy · N now · C copy AM/PM · M copy military · R
+              clear · F fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {lastCopied ? `Copied: ${lastCopied}` : statusLabel}
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -683,7 +1111,7 @@ function MilitaryTimeConverterCard() {
    PAGE
 ========================================================= */
 export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/military-time-converter";
+  const url = "https://www.ilovetimers.com/military-time-converter";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -702,7 +1130,7 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -712,170 +1140,29 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is military time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Military time is 24-hour time written without AM or PM. Example: 1730 means 17:30, which is 5:30 PM.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What does 0000 mean in military time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "0000 means midnight, which is 12:00 AM in standard time.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Is 2400 a valid military time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "You may see 2400 used to mean midnight at the end of a day. This converter treats 2400 as 00:00.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I convert military time to AM/PM quickly?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "If the hour is 13 to 23, subtract 12 and use PM. If the hour is 00, it is 12 AM. If the hour is 12, it is 12 PM.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Military Time Converter</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Military Time Converter (24-Hour to AM/PM)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            Convert a number like <strong>1730</strong> to{" "}
-            <strong>5:30 PM</strong> instantly. Also converts AM/PM back to
-            military time.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <MilitaryTimeConverterCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Convert 24-hour time fast (with normalization)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This page is built for the most common intent: you already have a{" "}
-              <strong>military time number</strong> (like 1730) and you want the
-              answer immediately. Paste it in, and the result updates instantly.
-            </p>
-
-            <p>
-              It also accepts common variations like <strong>17:30</strong>,{" "}
-              <strong>5:30</strong>, and <strong>0730</strong>. If your input is
-              valid, it shows a normalized military value (four digits) so you
-              can copy something clean.
-            </p>
-
-            <p>
-              Want to keep time on screen instead? Try{" "}
-              <Link
-                to="/retro-flip-clock"
-                className="font-semibold hover:underline"
-              >
-                Retro Flip Clock
-              </Link>{" "}
-              or use a{" "}
-              <Link to="/countdown" className="font-semibold hover:underline">
-                Countdown
-              </Link>{" "}
-              if your goal is timing an activity.
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <MilitaryTimeConverterCard />
         </div>
-      </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Military Time Converter FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is 1730 in standard time?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              1730 is 17:30 in 24-hour time, which is <strong>5:30 PM</strong>{" "}
-              in standard time.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is 0000 in standard time?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              0000 is midnight, which is <strong>12:00 AM</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is 1200 in standard time?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              1200 is noon, which is <strong>12:00 PM</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is 2400 valid?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              You may see 2400 used to mean midnight at the end of a day. This
-              converter treats 2400 as 00:00.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does this accept colons?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. You can enter 17:30 or 5:30, and it will normalize to 1730 or
-              0530 internally.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Military Time Converter</span>
+        </p>
       </section>
     </main>
   );

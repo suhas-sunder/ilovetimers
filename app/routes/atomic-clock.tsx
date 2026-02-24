@@ -3,6 +3,11 @@ import type { Route } from "./+types/atomic-clock";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
+import Disclaimer from "~/clients/components/atomic-clock/Disclaimer";
+import FAQ from "~/clients/components/atomic-clock/FAQ";
+import HowItWorks from "~/clients/components/atomic-clock/HowItWorks";
+import KeyboardShortcuts from "~/clients/components/atomic-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/atomic-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -46,7 +51,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -76,11 +81,8 @@ function isTypingTarget(target: EventTarget | null) {
 }
 
 async function toggleFullscreen(el: HTMLElement) {
-  const target =
-    (el.querySelector?.("[data-fullscreen-root]") as HTMLElement | null) ?? el;
-
   if (!document.fullscreenElement) {
-    await target.requestFullscreen().catch(() => {});
+    await el.requestFullscreen().catch(() => {});
   } else {
     await document.exitFullscreen().catch(() => {});
   }
@@ -101,6 +103,120 @@ function fmtHMS(d: Date) {
   return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
 }
 
+function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: React.RefObject<HTMLElement | null>;
+  textRef: React.RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
    UI PRIMITIVES
 ========================================================= */
@@ -109,16 +225,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -146,177 +273,358 @@ const Btn = ({
     title={title}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-semibold text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-semibold text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  left,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+          {left}
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
-   ATOMIC CLOCK CARD (SIMULATED UI)
+   ATOMIC CLOCK CARD
 ========================================================= */
 function AtomicClockCard() {
   const [now, setNow] = useState(() => new Date());
   const [showMs, setShowMs] = useState(true);
   const [live, setLive] = useState(true);
 
-  const fsWrapRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
+  const intervalRef = useRef<number | null>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  const stopTicks = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+    if (intervalRef.current) window.clearInterval(intervalRef.current);
+    intervalRef.current = null;
+  };
+
+  // Improve UX: focus the card once so shortcuts work immediately (without extra UI text)
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      if (!cardRef.current) return;
+      const ae = document.activeElement as HTMLElement | null;
+      const okToSteal =
+        !ae || ae === document.body || ae === document.documentElement;
+      if (okToSteal) cardRef.current.focus();
+    }, 0);
+    return () => window.clearTimeout(t);
+  }, []);
 
   useEffect(() => {
-    if (!live) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      return;
+    stopTicks();
+
+    if (!live) return;
+
+    if (showMs) {
+      const tick = () => {
+        setNow(new Date());
+        rafRef.current = requestAnimationFrame(tick);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+      return () => stopTicks();
     }
 
-    const tick = () => {
-      setNow(new Date());
-      rafRef.current = requestAnimationFrame(tick);
-    };
+    // No milliseconds: update on second boundary for stability
+    const update = () => setNow(new Date());
+    update();
 
-    rafRef.current = requestAnimationFrame(tick);
+    const msToNextSecond = 1000 - new Date().getMilliseconds();
+    const t = window.setTimeout(() => {
+      update();
+      intervalRef.current = window.setInterval(
+        update,
+        1000,
+      ) as unknown as number;
+    }, msToNextSecond);
+
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      window.clearTimeout(t);
+      stopTicks();
     };
-  }, [live]);
+  }, [live, showMs]);
+
+  useEffect(() => {
+    return () => stopTicks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const display = useMemo(() => {
     return showMs ? fmtHMSMs(now) : fmtHMS(now);
   }, [now, showMs]);
 
+  const statusLabel = live ? "Live" : "Frozen";
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [display, statusLabel, isFs, live, showMs],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       setLive((v) => !v);
-    } else if (e.key.toLowerCase() === "m") {
+    } else if (k === "m") {
       setShowMs((v) => !v);
-    } else if (e.key.toLowerCase() === "f" && fsWrapRef.current) {
-      toggleFullscreen(fsWrapRef.current);
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     }
   };
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Atomic Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Precision-style clock display with fullscreen and shortcuts.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Atomic Clock"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        left={
+          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={live}
+                onChange={(e) => setLive(e.target.checked)}
+                className="accent-amber-500"
+              />
+              Live
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={showMs}
+                onChange={(e) => setShowMs(e.target.checked)}
+                className="accent-amber-500"
+              />
+              Milliseconds
+            </label>
+          </div>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={live ? "solid" : "ghost"}
+              onClick={() => setLive((v) => !v)}
+              className="py-1 text-sm"
+            >
+              {live ? "Freeze" : "Resume"}
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={live}
-              onChange={(e) => setLive(e.target.checked)}
-            />
-            Live
-          </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-wrap items-center gap-3 ml-auto">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={live}
+                  onChange={(e) => setLive(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Live
+              </label>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={showMs}
-              onChange={(e) => setShowMs(e.target.checked)}
-            />
-            Milliseconds
-          </label>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={showMs}
+                  onChange={(e) => setShowMs(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Milliseconds
+              </label>
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              fsWrapRef.current && toggleFullscreen(fsWrapRef.current)
-            }
-            title="Fullscreen (F)"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+                title="Fullscreen (F)"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-      <div
-        ref={fsWrapRef}
-        data-fullscreen-root
-        className="mt-6 rounded-2xl border-2 border-amber-300 bg-amber-50 p-6 text-amber-950"
-        style={{ minHeight: 260 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              :fullscreen[data-fullscreen-root]{
-                margin:0 !important;
-                padding:0 !important;
-                border:none !important;
-                border-radius:0 !important;
-                width:100vw !important;
-                height:100vh !important;
-                display:flex !important;
-                flex-direction:column !important;
-                align-items:center !important;
-                justify-content:center !important;
-                background:#0b0b0c !important;
-                color:#ffffff !important;
-              }
-
-              :fullscreen [data-fs-hide]{ display:none !important; }
-
-              :fullscreen [data-fs-time]{
-                font-size: clamp(56px, 14vw, 200px) !important;
-                line-height: 1 !important;
-                letter-spacing: 0.06em !important;
-                text-align:center !important;
-                font-weight: 900 !important;
-                width: 100% !important;
-              }
-
-              :fullscreen [data-fs-sub]{
-                margin-top: 18px !important;
-                font-size: clamp(14px, 2.6vw, 26px) !important;
-                opacity: 0.85 !important;
-                font-weight: 700 !important;
-                letter-spacing: 0.08em !important;
-                text-transform: uppercase !important;
-                text-align:center !important;
-              }
-            `,
+        {/* Display */}
+        <div
+          ref={displayBoxRef}
+          className={[
+            "mt-4 flex flex-col items-center justify-center rounded-2xl border font-mono font-extrabold",
+            "border-slate-200 bg-slate-50 text-slate-950",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
           }}
-        />
-
-        <div className="flex items-center justify-between gap-3" data-fs-hide>
-          <div className="text-xs font-extrabold uppercase tracking-wide text-amber-800">
-            Live time
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) setLive((v) => !v);
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to freeze or resume" : undefined}
+        >
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
           </div>
-          <div className="text-xs font-semibold text-amber-800">
-            Shortcuts: Space live/freeze · M ms toggle · F fullscreen
-          </div>
-        </div>
 
-        <div className="mt-6 flex items-center justify-center font-mono font-extrabold tracking-widest">
+          {/* Controls (normal only) */}
+          {!isFs && (
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
+              <Btn onClick={() => setLive((v) => !v)}>
+                {live ? "Freeze" : "Resume"}
+              </Btn>
+              <Btn kind="ghost" onClick={() => setShowMs((v) => !v)}>
+                {showMs ? "Hide ms" : "Show ms"}
+              </Btn>
+            </div>
+          )}
+
+          {/* Shortcuts (normal only, compact) */}
+          {!isFs && (
+            <div className="mt-3 text-xs font-semibold text-slate-600">
+              Shortcuts: Space freeze/resume · M toggle ms · F fullscreen
+            </div>
+          )}
+
           <span
-            className="text-5xl sm:text-6xl md:text-7xl leading-none"
-            data-fs-time
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
           >
             {display}
           </span>
         </div>
 
-        <div
-          className="mt-4 text-center text-xs font-semibold text-amber-800"
-          data-fs-sub
-        >
-          Reference display only (not a certified time source)
-        </div>
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={live}
+                  onChange={(e) => setLive(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Live
+              </label>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={showMs}
+                  onChange={(e) => setShowMs(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Milliseconds
+              </label>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div className="flex items-center gap-2">
+                <Btn
+                  kind={live ? "solid" : "ghost"}
+                  onClick={() => setLive((v) => !v)}
+                >
+                  {live ? "Freeze" : "Resume"}
+                </Btn>
+                <Btn kind="ghost" onClick={() => setShowMs((v) => !v)}>
+                  {showMs ? "Hide ms" : "Show ms"}
+                </Btn>
+              </div>
+
+              <div className="text-xs text-slate-600 sm:text-sm">
+                Tap time to freeze/resume · Space freeze/resume · M ms · F
+                fullscreen
+              </div>
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -325,8 +633,12 @@ function AtomicClockCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function AtomicClockPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/atomic-clock";
+export default function AtomicClockPage({
+  loaderData: { nowISO: _nowISO },
+}: Route.ComponentProps) {
+  void _nowISO;
+
+  const url = "https://www.ilovetimers.com/atomic-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -345,130 +657,54 @@ export default function AtomicClockPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Atomic Clock", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "Is this a real atomic clock?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "No. This is a browser-based time display styled like an atomic clock. It shows your device time and is not a certified atomic time source.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Why can the time differ from official sources?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Your device clock can drift and may be corrected periodically by your operating system. Network conditions and system settings can also affect accuracy.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I use fullscreen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Click Fullscreen or press F while the clock card is focused.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I show or hide milliseconds?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Toggle Milliseconds or press M.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Atomic Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Atomic Clock
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Online Atomic Clock (Milliseconds + Fullscreen)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A precision-style <strong>atomic clock</strong> display with
-            optional milliseconds and fullscreen mode.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            View your current device time with optional milliseconds. Use
+            fullscreen for a big, readable display, plus keyboard shortcuts.
           </p>
         </div>
       </section>
 
-      {/* Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-8">
-        <AtomicClockCard />
-      </section>
-
-      {/* FAQ (rendered at bottom) */}
-      <section id="faq">
-        <h2 className="text-2xl font-bold">Atomic Clock FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a real atomic clock?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              No. This page is a browser-based display styled like an atomic
-              clock. It shows your device time and is not a certified atomic
-              time source.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why can the time differ from official sources?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Your device clock can drift and may be corrected periodically by
-              your operating system. Network conditions and system settings can
-              also affect accuracy.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I use fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
-              while the clock card is focused.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I show or hide milliseconds?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Milliseconds</strong> or press{" "}
-              <strong>M</strong>.
-            </div>
-          </details>
+      {/* Main Tool */}
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <AtomicClockCard />
         </div>
+
+        {/* Breadcrumb (bottom only, intentional) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Atomic Clock</span>
+        </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

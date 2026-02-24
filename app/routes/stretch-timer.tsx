@@ -1,7 +1,14 @@
 // app/routes/stretch-timer.tsx
 import type { Route } from "./+types/stretch-timer";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -17,6 +24,18 @@ export function meta({}: Route.MetaArgs) {
   return [
     { title },
     { name: "description", content: description },
+    {
+      name: "keywords",
+      content: [
+        "stretch timer",
+        "mobility timer",
+        "yoga stretch timer",
+        "stretch and rest timer",
+        "interval stretch timer",
+        "fullscreen stretch timer",
+        "stretch hold timer",
+      ].join(", "),
+    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
 
     { property: "og:title", content: title },
@@ -33,7 +52,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -53,9 +72,8 @@ function clamp(n: number, min: number, max: number) {
 
 const pad2 = (n: number) => n.toString().padStart(2, "0");
 
-function msToClock(ms: number) {
-  const t = Math.max(0, Math.floor(ms));
-  const s = Math.floor(t / 1000);
+function secToClock(secTotal: number) {
+  const s = Math.max(0, Math.floor(secTotal));
   const m = Math.floor(s / 60);
   const sec = s % 60;
   return `${m}:${pad2(sec)}`;
@@ -79,6 +97,120 @@ async function toggleFullscreen(el: HTMLElement) {
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* WebAudio cue */
@@ -129,16 +261,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -163,13 +306,83 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+const ToggleChip = ({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  label: string;
+}) => (
+  <button
+    type="button"
+    onClick={() => onChange(!checked)}
+    className={[
+      "cursor-pointer select-none rounded-lg border px-3 py-2 text-sm font-semibold",
+      checked
+        ? "border-amber-200 bg-amber-50 text-slate-900 hover:bg-amber-100"
+        : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
+    ].join(" ")}
+    aria-pressed={checked}
+  >
+    {label}: {checked ? "On" : "Off"}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    STRETCH TIMER CARD
@@ -182,7 +395,6 @@ type Preset = {
   stretchSec: number;
   restSec: number;
   rounds: number;
-  note: string;
 };
 
 const PRESETS: Preset[] = [
@@ -192,7 +404,6 @@ const PRESETS: Preset[] = [
     stretchSec: 45,
     restSec: 15,
     rounds: 10,
-    note: "Quick mobility circuit. Great warm-up.",
   },
   {
     id: "yoga",
@@ -200,7 +411,6 @@ const PRESETS: Preset[] = [
     stretchSec: 60,
     restSec: 15,
     rounds: 8,
-    note: "Longer holds with short resets.",
   },
   {
     id: "deep",
@@ -208,7 +418,6 @@ const PRESETS: Preset[] = [
     stretchSec: 90,
     restSec: 30,
     rounds: 6,
-    note: "Slower pace for deeper stretches.",
   },
   {
     id: "custom",
@@ -216,7 +425,6 @@ const PRESETS: Preset[] = [
     stretchSec: 45,
     restSec: 15,
     rounds: 10,
-    note: "Tune the interval lengths and rounds.",
   },
 ];
 
@@ -238,13 +446,34 @@ function StretchTimerCard() {
   const [running, setRunning] = useState(false);
   const [phase, setPhase] = useState<Phase>("stretch");
   const [roundIndex, setRoundIndex] = useState(1);
-  const [phaseMsLeft, setPhaseMsLeft] = useState(stretchSec * 1000);
+
+  // Render state: only update once per second for snappy UI (prevents heavy rerenders).
+  const [secLeft, setSecLeft] = useState(stretchSec);
+  const secLeftRef = useRef(secLeft);
+  useEffect(() => {
+    secLeftRef.current = secLeft;
+  }, [secLeft]);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+  const msLeftRef = useRef<number>(stretchSec * 1000);
 
-  // Apply preset
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  function phaseDurationMs(p: Phase) {
+    return (p === "stretch" ? stretchSec : restSec) * 1000;
+  }
+
+  // Apply preset values (except custom)
   useEffect(() => {
     if (presetId === "custom") return;
     setStretchSec(preset.stretchSec);
@@ -257,42 +486,54 @@ function StretchTimerCard() {
     setRunning(false);
     setPhase("stretch");
     setRoundIndex(1);
-    setPhaseMsLeft(stretchSec * 1000);
+
+    const ms = stretchSec * 1000;
+    msLeftRef.current = ms;
     endRef.current = null;
+
+    const nextSec = Math.max(0, Math.ceil(ms / 1000));
+    setSecLeft(nextSec);
   }, [stretchSec, restSec, rounds]);
 
-  function phaseDurationMs(p: Phase) {
-    return (p === "stretch" ? stretchSec : restSec) * 1000;
-  }
-
+  // Main tick (RAF, but state updates only when displayed second changes)
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       endRef.current = null;
       return;
     }
 
     if (!endRef.current) {
-      endRef.current = performance.now() + phaseMsLeft;
+      endRef.current = performance.now() + msLeftRef.current;
     }
 
     const tick = () => {
       const now = performance.now();
-      const rem = Math.max(0, (endRef.current ?? now) - now);
-      setPhaseMsLeft(rem);
+      const end = endRef.current ?? now;
+      const remMs = Math.max(0, end - now);
+      msLeftRef.current = remMs;
 
-      if (rem <= 0) {
-        // phase transition
+      const nextSec = Math.max(0, Math.ceil(remMs / 1000));
+      if (nextSec !== secLeftRef.current) {
+        secLeftRef.current = nextSec;
+        setSecLeft(nextSec);
+      }
+
+      if (remMs <= 0) {
+        // transition
         if (phase === "stretch") {
           if (restSec > 0) {
             setPhase("rest");
             const ms = phaseDurationMs("rest");
-            setPhaseMsLeft(ms);
+            msLeftRef.current = ms;
             endRef.current = performance.now() + ms;
+
+            const s = Math.max(0, Math.ceil(ms / 1000));
+            secLeftRef.current = s;
+            setSecLeft(s);
+
             if (sound) beep(520, 110, 0.07);
           } else {
-            // no rest: advance round
             const nextRound = roundIndex + 1;
             if (nextRound > rounds) {
               setRunning(false);
@@ -300,15 +541,21 @@ function StretchTimerCard() {
               if (sound) beep(660, 220, 0.08);
               return;
             }
+
             setRoundIndex(nextRound);
             setPhase("stretch");
+
             const ms = phaseDurationMs("stretch");
-            setPhaseMsLeft(ms);
+            msLeftRef.current = ms;
             endRef.current = performance.now() + ms;
+
+            const s = Math.max(0, Math.ceil(ms / 1000));
+            secLeftRef.current = s;
+            setSecLeft(s);
+
             if (sound) beep(740, 110, 0.07);
           }
         } else {
-          // rest -> next stretch round
           const nextRound = roundIndex + 1;
           if (nextRound > rounds) {
             setRunning(false);
@@ -316,11 +563,18 @@ function StretchTimerCard() {
             if (sound) beep(660, 220, 0.08);
             return;
           }
+
           setRoundIndex(nextRound);
           setPhase("stretch");
+
           const ms = phaseDurationMs("stretch");
-          setPhaseMsLeft(ms);
+          msLeftRef.current = ms;
           endRef.current = performance.now() + ms;
+
+          const s = Math.max(0, Math.ceil(ms / 1000));
+          secLeftRef.current = s;
+          setSecLeft(s);
+
           if (sound) beep(740, 110, 0.07);
         }
       }
@@ -329,304 +583,345 @@ function StretchTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
+    return () => stopRaf();
+  }, [running, phase, roundIndex, rounds, stretchSec, restSec, sound, beep]);
 
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [
-    running,
-    phase,
-    phaseMsLeft,
-    roundIndex,
-    rounds,
-    stretchSec,
-    restSec,
-    sound,
-    beep,
-  ]);
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
   function startPause() {
-    setRunning((r) => !r);
-    endRef.current = null;
+    setRunning((r) => {
+      const next = !r;
+      endRef.current = null; // re-anchor timer on resume
+      return next;
+    });
   }
 
   function reset() {
     setRunning(false);
     setPhase("stretch");
     setRoundIndex(1);
-    setPhaseMsLeft(stretchSec * 1000);
+
+    const ms = stretchSec * 1000;
+    msLeftRef.current = ms;
     endRef.current = null;
+
+    const s = Math.max(0, Math.ceil(ms / 1000));
+    secLeftRef.current = s;
+    setSecLeft(s);
   }
 
-  function skipPhase() {
-    // Force phase to end quickly
-    setPhaseMsLeft(0);
+  function nextPhase() {
+    if (!running) return;
+    msLeftRef.current = 0;
     endRef.current = performance.now();
+    secLeftRef.current = 0;
+    setSecLeft(0);
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "n") {
-      if (running) skipPhase();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "s") {
+    } else if (k === "n") {
+      nextPhase();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "s") {
       setSound((x) => !x);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
   const label = phase === "stretch" ? "Stretch" : "Rest";
-  const phaseColor =
-    phase === "stretch"
-      ? "border-amber-300 bg-amber-50 text-amber-950"
-      : "border-slate-300 bg-slate-50 text-slate-900";
+  const statusLabel = running
+    ? "Running"
+    : secLeft < (phase === "stretch" ? stretchSec : restSec)
+      ? "Paused"
+      : "Ready";
 
-  const shown = msToClock(Math.ceil(phaseMsLeft / 1000) * 1000);
+  const shownTime = secToClock(secLeft);
 
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, running, phase, roundIndex, rounds],
+    minPx: 56,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
+
+  const isCustom = presetId === "custom";
   const totalRoundsText = `${roundIndex} / ${rounds}`;
-  const presetNote = preset.note;
+
+  const phaseChipClass =
+    phase === "stretch"
+      ? "border-amber-200 bg-amber-50 text-slate-900"
+      : "border-slate-200 bg-slate-50 text-slate-900";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Stretch Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            A <strong>mobility timer</strong> and{" "}
-            <strong>yoga stretch timer</strong> for stretch + rest intervals.
-            Simple, readable, and built for fullscreen.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Stretch Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <ToggleChip
               checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
+              onChange={(v) => setSound(v)}
+              label="Sound"
             />
-            Sound
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Preset + settings */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <label className="block text-sm font-semibold text-amber-950">
-          Preset
-          <select
-            value={presetId}
-            onChange={(e) => setPresetId(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          >
-            {PRESETS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-          <div className="mt-1 text-xs text-slate-600">{presetNote}</div>
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Stretch (seconds)
-          <input
-            type="number"
-            min={10}
-            max={600}
-            value={stretchSec}
-            onChange={(e) =>
-              setStretchSec(clamp(Number(e.target.value || 10), 10, 600))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Rest (seconds)
-          <input
-            type="number"
-            min={0}
-            max={600}
-            value={restSec}
-            onChange={(e) =>
-              setRestSec(clamp(Number(e.target.value || 0), 0, 600))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Rounds
-          <input
-            type="number"
-            min={1}
-            max={100}
-            value={rounds}
-            onChange={(e) =>
-              setRounds(clamp(Number(e.target.value || 1), 1, 100))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-slate-600">
-            Total time ≈{" "}
-            <strong>
-              {Math.round(((stretchSec + restSec) * rounds) / 60)} minutes
-            </strong>{" "}
-            (approx).
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={nextPhase}
+              className="py-1 text-sm"
+              disabled={!running}
+            >
+              Next
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
           </div>
-        </label>
+        }
+      />
 
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-          <Btn kind="ghost" onClick={skipPhase} disabled={!running}>
-            Next
-          </Btn>
-        </div>
-      </div>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Stretch Timer (Stretch + Rest Intervals)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Alternate stretch and rest intervals, track rounds, and use a
+                big fullscreen countdown.
+              </p>
+            </div>
 
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${phaseColor}`}
-        style={{ minHeight: 280 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <ToggleChip
+                checked={sound}
+                onChange={(v) => setSound(v)}
+                label="Sound"
+              />
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-phase{
-                font: 900 clamp(40px, 6vw, 90px)/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.02em;
-                text-align:center;
-                text-transform:uppercase;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(90px, 16vw, 220px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 700 16px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="w-full p-6"
-          style={{ minHeight: 280 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 320,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="mx-auto flex max-w-3xl flex-col items-center justify-center gap-2">
+          <div className="flex items-center gap-2">
+            <div
+              className={[
+                "rounded-full border px-3 py-1 text-xs font-extrabold uppercase tracking-widest",
+                phaseChipClass,
+              ].join(" ")}
+            >
+              {label}
+            </div>
             <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
               Round {totalRoundsText}
             </div>
-            <div className="text-2xl font-extrabold">{label}</div>
-            <div className="font-mono text-7xl font-extrabold tracking-widest sm:text-8xl">
-              {shown}
+          </div>
+
+          <div className="mt-2 text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            {statusLabel}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Settings
+                  </div>
+                  <div className="text-xs font-semibold text-slate-700">
+                    {stretchSec}s stretch · {restSec}s rest · {rounds} rounds
+                  </div>
+                </div>
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  N = Next
+                </div>
+              </div>
             </div>
-            <div className="mt-2 text-sm font-semibold text-slate-700">
-              Stretch {stretchSec}s · Rest {restSec}s · Rounds {rounds}
+          )}
+        </div>
+
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <div className="mt-5 grid gap-3 lg:grid-cols-3">
+            <label className="block text-sm font-semibold text-slate-900">
+              Preset
+              <select
+                value={presetId}
+                onChange={(e) => setPresetId(e.target.value)}
+                className="mt-1 w-full cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              >
+                {PRESETS.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+              <div className="mt-1 text-xs text-slate-600">
+                {isCustom
+                  ? "Custom preset lets you edit all values."
+                  : "Changing presets updates the interval values."}
+              </div>
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-900">
+              Stretch (seconds)
+              <input
+                type="number"
+                inputMode="numeric"
+                min={5}
+                max={600}
+                value={stretchSec}
+                onChange={(e) =>
+                  setStretchSec(clamp(Number(e.target.value || 5), 5, 600))
+                }
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-900">
+              Rest (seconds)
+              <input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={600}
+                value={restSec}
+                onChange={(e) =>
+                  setRestSec(clamp(Number(e.target.value || 0), 0, 600))
+                }
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-900 lg:col-span-2">
+              Rounds
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={100}
+                value={rounds}
+                onChange={(e) =>
+                  setRounds(clamp(Number(e.target.value || 1), 1, 100))
+                }
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+              <div className="mt-1 text-xs text-slate-600">
+                Total time (approx):{" "}
+                <strong>
+                  {Math.round(((stretchSec + restSec) * rounds) / 60)} minutes
+                </strong>
+              </div>
+            </label>
+
+            <div className="flex items-end gap-3 lg:col-span-1">
+              <Btn kind="solid" onClick={startPause}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+              <Btn kind="ghost" onClick={nextPhase} disabled={!running}>
+                Next
+              </Btn>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-phase">{label}</div>
-            <div className="fs-time">{shown}</div>
-            <div className="fs-sub">
-              Round {totalRoundsText} · {stretchSec}s stretch · {restSec}s rest
+        {/* Shortcuts (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · N next · R reset · F fullscreen · S
+              sound
             </div>
-            <div className="fs-sub">
-              Space start/pause · N next · R reset · F fullscreen · S sound
+            <div className="text-xs text-slate-600">
+              Tip: click the card once so keyboard shortcuts work immediately.
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · N next · R reset · F fullscreen · S
-          sound
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
-      </div>
-
-      {/* Safety note */}
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        <div className="font-extrabold text-amber-950">Note</div>
-        <p className="mt-2 leading-relaxed">
-          Stretch gently and stay within a comfortable range. If you feel pain,
-          stop. This timer is a simple pacing tool, not medical advice.
-        </p>
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · N next · R reset · F
+              fullscreen · S sound
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {label} · Round {totalRoundsText} · {statusLabel}
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -635,8 +930,10 @@ function StretchTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function StretchTimerPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/stretch-timer";
+export default function StretchTimerPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/stretch-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -655,7 +952,7 @@ export default function StretchTimerPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -665,161 +962,29 @@ export default function StretchTimerPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a stretch timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A stretch timer helps you hold stretches for a set time and optionally rest between holds, often in rounds.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I use this as a mobility timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Choose a preset like 45 seconds stretch and 15 seconds rest, then run multiple rounds to cycle through movements.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use this as a yoga stretch timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Use longer stretch holds like 60 to 90 seconds and short rests between positions.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does it keep running if I close the tab?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "It runs while the page is open. Some browsers may reduce update frequency in background tabs.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Stretch Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Stretch Timer (Mobility + Yoga Stretch Holds)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A simple <strong>stretch timer</strong> for mobility routines and
-            yoga stretching. Set stretch/rest intervals, pick rounds, and go
-            fullscreen.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <StretchTimerCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free stretch timer for mobility and yoga stretching
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              A <strong>stretch timer</strong> helps you hold a stretch for a
-              set amount of time and optionally rest before the next hold. This
-              is useful for mobility warmups, cooldown routines, and yoga
-              stretch sessions.
-            </p>
-
-            <p>
-              For a quick mobility circuit, try{" "}
-              <strong>45 seconds stretch</strong> and{" "}
-              <strong>15 seconds rest</strong>. For deeper holds, try{" "}
-              <strong>60 to 90 seconds</strong> with a short rest between
-              positions.
-            </p>
-
-            <p>
-              Want a more general interval tool? Use{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT / Interval Timer
-              </Link>
-              . For strict rest counting, try{" "}
-              <Link to="/rest-timer" className="font-semibold hover:underline">
-                Rest Timer
-              </Link>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
+        <div>
+          <StretchTimerCard />
         </div>
-      </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Stretch Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is a mobility timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              A mobility timer is used to time mobility movements and holds in
-              intervals, often with short rests between moves.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How long should I hold a stretch?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Many routines use 30 to 60 seconds. Deeper holds often use 60 to
-              90 seconds, depending on comfort and experience.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I skip to the next stretch/rest phase?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Use the <strong>Next</strong> button (or press{" "}
-              <strong>N</strong>) while running.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does it keep running if I close the tab?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              It runs while the page is open. Some browsers may reduce update
-              frequency in background tabs.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Stretch Timer</span>
+        </p>
       </section>
     </main>
   );

@@ -1,8 +1,13 @@
 // app/routes/debt-clock.tsx
 import type { Route } from "./+types/debt-clock";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/debt-clock/HowItWorks";
+import Disclaimer from "~/clients/components/debt-clock/Disclaimer";
+import FAQ from "~/clients/components/debt-clock/FAQ";
+import KeyboardShortcuts from "~/clients/components/debt-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/debt-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -45,7 +50,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -83,13 +88,18 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
-function formatMoney(n: number, currency = "USD") {
+function formatMoney(
+  n: number,
+  currency = "USD",
+  opts?: { maximumFractionDigits?: number; minimumFractionDigits?: number },
+) {
   const safe = Number.isFinite(n) ? n : 0;
   try {
     return new Intl.NumberFormat(undefined, {
       style: "currency",
       currency,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: opts?.maximumFractionDigits ?? 0,
+      minimumFractionDigits: opts?.minimumFractionDigits ?? 0,
     }).format(safe);
   } catch {
     const sign = safe < 0 ? "-" : "";
@@ -98,12 +108,120 @@ function formatMoney(n: number, currency = "USD") {
   }
 }
 
-function formatNumber(n: number) {
-  const safe = Number.isFinite(n) ? n : 0;
-  return Math.round(safe).toLocaleString();
+const SECONDS_PER_YEAR = 365.25 * 24 * 3600;
+
+function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
 }
 
-const SECONDS_PER_YEAR = 365.25 * 24 * 3600;
+/**
+ * Fit a single-line string into its container by adjusting font size.
+ * - ResizeObserver + rAF
+ * - Binary search for max font-size that fits width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 520,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: React.RefObject<HTMLElement | null>;
+  textRef: React.RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
 
 /* =========================================================
    UI PRIMITIVES
@@ -113,16 +231,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -147,27 +276,98 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+const Chip = ({
+  active,
+  children,
+  onClick,
+  disabled,
+}: {
+  active?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
+      active
+        ? "bg-slate-900 text-white hover:bg-slate-800"
+        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  left,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+          {left}
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
    DATA (DEMO PRESETS)
-   NOTE: These are intentionally labeled as demo numbers.
-   Users can (and should) replace them with their preferred sources.
 ========================================================= */
 type Preset = {
   id: string;
   label: string;
   currency: string;
   baseDebt: number;
-  yearlyChange: number; // can be negative
-  asOfLabel: string; // plain text
-  notes: string;
+  yearlyChange: number;
+  asOfLabel: string;
 };
 
 const PRESETS: Preset[] = [
@@ -175,28 +375,25 @@ const PRESETS: Preset[] = [
     id: "world-demo",
     label: "World (demo)",
     currency: "USD",
-    baseDebt: 300_000_000_000_000, // 300T
-    yearlyChange: 9_000_000_000_000, // +9T / year
+    baseDebt: 300_000_000_000_000,
+    yearlyChange: 9_000_000_000_000,
     asOfLabel: "Demo preset (replace with your source)",
-    notes: "This is a demo starting point, not an official figure.",
   },
   {
     id: "us-demo",
     label: "United States (demo)",
     currency: "USD",
-    baseDebt: 34_000_000_000_000, // 34T
-    yearlyChange: 1_200_000_000_000, // +1.2T / year
+    baseDebt: 34_000_000_000_000,
+    yearlyChange: 1_200_000_000_000,
     asOfLabel: "Demo preset (replace with your source)",
-    notes: "Use your preferred published total and an average yearly change.",
   },
   {
     id: "canada-demo",
     label: "Canada (demo)",
     currency: "CAD",
-    baseDebt: 1_400_000_000_000, // 1.4T
-    yearlyChange: 55_000_000_000, // +55B / year
+    baseDebt: 1_400_000_000_000,
+    yearlyChange: 55_000_000_000,
     asOfLabel: "Demo preset (replace with your source)",
-    notes: "Currency is CAD in this preset.",
   },
   {
     id: "custom",
@@ -205,7 +402,6 @@ const PRESETS: Preset[] = [
     baseDebt: 0,
     yearlyChange: 0,
     asOfLabel: "Your inputs",
-    notes: "Enter any starting value and yearly change rate.",
   },
 ];
 
@@ -214,10 +410,10 @@ const PRESETS: Preset[] = [
 ========================================================= */
 function DebtClockCard() {
   const [presetId, setPresetId] = useState<string>("world-demo");
-
-  const preset = useMemo(() => {
-    return PRESETS.find((p) => p.id === presetId) ?? PRESETS[0];
-  }, [presetId]);
+  const preset = useMemo(
+    () => PRESETS.find((p) => p.id === presetId) ?? PRESETS[0],
+    [presetId],
+  );
 
   const [currency, setCurrency] = useState(preset.currency);
   const [baseDebt, setBaseDebt] = useState(preset.baseDebt);
@@ -227,12 +423,42 @@ function DebtClockCard() {
   const [running, setRunning] = useState(true);
 
   const rafRef = useRef<number | null>(null);
-  const startPerfRef = useRef<number | null>(null);
-  const startEpochMsRef = useRef<number | null>(null);
+  const startPerfRef = useRef<number>(performance.now());
+  const anchorBaseRef = useRef<number>(preset.baseDebt);
 
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+  const [nowDebt, setNowDebt] = useState<number>(preset.baseDebt);
+  const nowDebtRef = useRef<number>(preset.baseDebt);
 
-  // Apply preset values when preset changes (except when preset is custom, user controls)
+  useEffect(() => {
+    nowDebtRef.current = nowDebt;
+  }, [nowDebt]);
+
+  const perSecond = useMemo(() => {
+    const yc = Number.isFinite(yearlyChange) ? yearlyChange : 0;
+    return yc / SECONDS_PER_YEAR;
+  }, [yearlyChange]);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const amountTextRef = useRef<HTMLSpanElement>(null);
+
+  const formattedNow = useMemo(
+    () => formatMoney(nowDebt, currency),
+    [nowDebt, currency],
+  );
+  const formattedYear = useMemo(
+    () => formatMoney(yearlyChange, currency),
+    [yearlyChange, currency],
+  );
+  const formattedPerSecond = useMemo(() => {
+    const abs = Math.abs(perSecond);
+    const maxFd = abs >= 1000 ? 0 : abs >= 10 ? 2 : 3;
+    return formatMoney(perSecond, currency, { maximumFractionDigits: maxFd });
+  }, [perSecond, currency]);
+
+  // Apply preset values on preset change (except custom)
   useEffect(() => {
     const p = preset;
     if (p.id === "custom") return;
@@ -242,76 +468,65 @@ function DebtClockCard() {
     setYearlyChange(p.yearlyChange);
     setAsOfLabel(p.asOfLabel);
 
-    // Reset clock anchor for consistency
+    anchorBaseRef.current = p.baseDebt;
     startPerfRef.current = performance.now();
-    startEpochMsRef.current = Date.now();
+    setNowDebt(p.baseDebt);
+    nowDebtRef.current = p.baseDebt;
   }, [preset]);
 
-  // Initialize anchors once
+  // If baseDebt changes while running, snap to that new base.
   useEffect(() => {
+    if (!running) return;
+    anchorBaseRef.current = baseDebt;
     startPerfRef.current = performance.now();
-    startEpochMsRef.current = Date.now();
-  }, []);
-
-  const perSecond = useMemo(() => {
-    return (
-      (Number.isFinite(yearlyChange) ? yearlyChange : 0) / SECONDS_PER_YEAR
-    );
-  }, [yearlyChange]);
-
-  const [nowDebt, setNowDebt] = useState(baseDebt);
-
-  // Keep nowDebt in sync if base changes while paused
-  useEffect(() => {
-    if (!running) setNowDebt(baseDebt);
+    setNowDebt(baseDebt);
+    nowDebtRef.current = baseDebt;
   }, [baseDebt, running]);
+
+  // If rate changes while running, keep continuity from current displayed debt.
+  useEffect(() => {
+    if (!running) return;
+    anchorBaseRef.current = nowDebtRef.current;
+    startPerfRef.current = performance.now();
+  }, [perSecond, running]);
+
+  const stopRaf = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }, []);
 
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       return;
     }
 
-    if (!startPerfRef.current) startPerfRef.current = performance.now();
-
     const tick = () => {
-      const elapsedSeconds =
-        (performance.now() - (startPerfRef.current ?? performance.now())) /
-        1000;
-
-      const next = baseDebt + perSecond * elapsedSeconds;
+      const elapsedSeconds = (performance.now() - startPerfRef.current) / 1000;
+      const next = anchorBaseRef.current + perSecond * elapsedSeconds;
       setNowDebt(next);
-
       rafRef.current = requestAnimationFrame(tick);
     };
 
     rafRef.current = requestAnimationFrame(tick);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, baseDebt, perSecond]);
+    return () => stopRaf();
+  }, [running, perSecond, stopRaf]);
 
   function reset() {
+    anchorBaseRef.current = baseDebt;
     startPerfRef.current = performance.now();
-    startEpochMsRef.current = Date.now();
     setNowDebt(baseDebt);
+    nowDebtRef.current = baseDebt;
   }
 
   function startPause() {
     setRunning((r) => {
       const next = !r;
       if (next) {
-        // restarting: re-anchor at current debt so it continues smoothly
-        // We treat the current displayed debt as the new base.
+        anchorBaseRef.current = nowDebtRef.current;
         startPerfRef.current = performance.now();
-        startEpochMsRef.current = Date.now();
-        setBaseDebt((prev) => {
-          // ensure we keep the displayed value as base
-          return nowDebt;
-        });
+      } else {
+        stopRaf();
       }
       return next;
     });
@@ -322,10 +537,10 @@ function DebtClockCard() {
       const payload = [
         `Debt Clock: ${preset.label}`,
         `As of: ${asOfLabel}`,
-        `Current (estimated): ${formatMoney(nowDebt, currency)}`,
+        `Current (estimated): ${formatMoney(nowDebtRef.current, currency)}`,
         `Starting: ${formatMoney(baseDebt, currency)}`,
         `Yearly change: ${formatMoney(yearlyChange, currency)} / year`,
-        `Per second: ${formatMoney(perSecond, currency)} / second`,
+        `Per second: ${formatMoney(perSecond, currency, { maximumFractionDigits: 3 })} / second`,
         `Disclosure: Estimated counter based on provided starting value and average rate.`,
       ].join("\n");
       await navigator.clipboard.writeText(payload);
@@ -336,316 +551,318 @@ function DebtClockCard() {
 
   const signLabel = perSecond >= 0 ? "increasing" : "decreasing";
 
-  const disclosure = (
-    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-      <div className="font-extrabold text-amber-950">Disclosure</div>
-      <p className="mt-2 leading-relaxed">
-        This debt clock is an <strong>estimate</strong>. It updates a starting
-        debt value using an average yearly change rate. It is for visualization
-        and education. It may not match official totals or any real-time
-        government figure.
-      </p>
-      <p className="mt-2 leading-relaxed">
-        If you want it to reflect a specific source, paste that source’s latest
-        published total into “Starting debt” and use a rate you trust for
-        “Yearly change”.
-      </p>
-    </div>
-  );
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: amountTextRef,
+    deps: [formattedNow, isFs, running],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 72 : 72,
+  });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
+    const k = e.key.toLowerCase();
+
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "c") {
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "c") {
       copy();
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Debt Clock</h2>
-          <p className="mt-1 text-base text-slate-700">
-            An estimated live counter for national or world debt. Pick a preset
-            or enter your own starting debt and yearly change.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Preset + inputs */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <label className="block text-sm font-semibold text-amber-950">
-          Preset
-          <select
-            value={presetId}
-            onChange={(e) => setPresetId(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          >
-            {PRESETS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-          <div className="mt-1 text-xs text-slate-600">{preset.notes}</div>
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Starting debt
-          <input
-            type="number"
-            min={0}
-            step={1}
-            value={Math.max(0, Math.round(baseDebt))}
-            onChange={(e) =>
-              setBaseDebt(
-                clamp(Number(e.target.value || 0), 0, 1_000_000_000_000_000),
-              )
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-slate-600">
-            Tip: paste a published total from your preferred source.
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Debt Clock"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        left={
+          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+              {preset.label}
+            </div>
           </div>
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Yearly change (can be negative)
-          <input
-            type="number"
-            step={1}
-            value={Math.round(yearlyChange)}
-            onChange={(e) =>
-              setYearlyChange(
-                clamp(
-                  Number(e.target.value || 0),
-                  -1_000_000_000_000_000,
-                  1_000_000_000_000_000,
-                ),
-              )
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-slate-600">
-            Example: +1.2T/year means the counter rises over time.
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={running ? "solid" : "ghost"}
+              onClick={startPause}
+              className="py-1 text-sm"
+            >
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
+            <Btn kind="ghost" onClick={copy} className="py-1 text-sm">
+              Copy
+            </Btn>
           </div>
-        </label>
-      </div>
+        }
+      />
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <label className="block text-sm font-semibold text-amber-950">
-          Currency
-          <select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          >
-            <option value="USD">USD ($)</option>
-            <option value="CAD">CAD ($)</option>
-            <option value="EUR">EUR (€)</option>
-            <option value="GBP">GBP (£)</option>
-            <option value="AUD">AUD ($)</option>
-            <option value="JPY">JPY (¥)</option>
-          </select>
-        </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-wrap items-center gap-3 ml-auto">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-        <label className="block text-sm font-semibold text-amber-950 lg:col-span-2">
-          “As of” label (shown in disclosures)
-          <input
-            type="text"
-            value={asOfLabel}
-            onChange={(e) => setAsOfLabel(e.target.value)}
-            placeholder="e.g. Source X, 2025-12-31"
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-      </div>
-
-      {/* Controls */}
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-        <Btn kind="ghost" onClick={reset}>
-          Reset
-        </Btn>
-        <Btn kind="ghost" onClick={copy}>
-          Copy
-        </Btn>
-
-        <div className="ml-auto rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen · C copy
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 260 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1500px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-amount{
-                font: 900 clamp(64px, 12vw, 190px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.03em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 700 16px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 260 }}
+          ref={displayBoxRef}
+          className={[
+            "mt-4 flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-3">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              Current estimated debt
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            Current estimated debt
+          </div>
+
+          <span
+            ref={amountTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold text-slate-950",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {formattedNow}
+          </span>
+
+          <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Rate
+              </div>
+              <div className="mt-1 text-sm font-semibold text-slate-700">
+                <span className="font-extrabold text-slate-950">
+                  {formattedYear}
+                </span>{" "}
+                / year ·{" "}
+                <span className="font-extrabold text-slate-950">
+                  {formattedPerSecond}
+                </span>{" "}
+                / second ({signLabel})
+              </div>
+              <div className="mt-1 text-xs text-slate-600">
+                As of: <span className="font-semibold">{asOfLabel}</span> ·
+                Estimate
+              </div>
             </div>
 
-            <div className="text-center font-mono text-5xl font-extrabold tracking-wider sm:text-6xl md:text-7xl">
-              {formatMoney(nowDebt, currency)}
-            </div>
-
-            <div className="text-sm font-semibold text-slate-700">
-              Rate:{" "}
-              <span className="font-extrabold text-amber-950">
-                {formatMoney(yearlyChange, currency)}
-              </span>{" "}
-              / year ·{" "}
-              <span className="font-extrabold text-amber-950">
-                {formatMoney(perSecond, currency)}
-              </span>{" "}
-              / second ({signLabel})
-            </div>
-
-            <div className="text-xs text-slate-600">
-              As of: <span className="font-semibold">{asOfLabel}</span> · This
-              is an estimate.
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Shortcuts
+              </div>
+              <div className="mt-1 text-sm font-semibold text-slate-700">
+                Space start/pause · R reset · F fullscreen · C copy
+              </div>
             </div>
           </div>
+
+          {!isFs && (
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+              <Btn kind="ghost" onClick={copy}>
+                Copy
+              </Btn>
+            </div>
+          )}
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Debt Clock</div>
-            <div className="fs-amount">{formatMoney(nowDebt, currency)}</div>
-            <div className="fs-sub">
-              {preset.label} · As of {asOfLabel}
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-sm font-extrabold text-slate-900">
+                Preset
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                {PRESETS.map((p) => (
+                  <Chip
+                    key={p.id}
+                    active={p.id === presetId}
+                    onClick={() => setPresetId(p.id)}
+                  >
+                    {p.label}
+                  </Chip>
+                ))}
+              </div>
+
+              <div className="mt-3 text-xs text-slate-600">
+                Demo presets are placeholders. Use Custom with your own numbers
+                if you want.
+              </div>
             </div>
-            <div className="fs-sub">
-              {formatMoney(yearlyChange, currency)} per year ·{" "}
-              {formatMoney(perSecond, currency)} per second
-            </div>
-            <div className="fs-sub">
-              Space start/pause · R reset · F fullscreen · C copy
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-sm font-extrabold text-slate-900">
+                Inputs
+              </div>
+
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <label className="block text-sm font-semibold text-slate-900">
+                  Currency
+                  <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  >
+                    <option value="USD">USD ($)</option>
+                    <option value="CAD">CAD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="AUD">AUD ($)</option>
+                    <option value="JPY">JPY (¥)</option>
+                  </select>
+                </label>
+
+                <label className="block text-sm font-semibold text-slate-900">
+                  Starting debt
+                  <input
+                    type="number"
+                    min={0}
+                    step={1}
+                    value={Math.max(0, Math.round(baseDebt))}
+                    onChange={(e) => {
+                      const v = clamp(
+                        Number(e.target.value || 0),
+                        0,
+                        1_000_000_000_000_000,
+                      );
+                      setBaseDebt(v);
+                      if (presetId !== "custom") setPresetId("custom");
+                    }}
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  />
+                </label>
+
+                <label className="block text-sm font-semibold text-slate-900 sm:col-span-2">
+                  Yearly change (can be negative)
+                  <input
+                    type="number"
+                    step={1}
+                    value={Math.round(yearlyChange)}
+                    onChange={(e) => {
+                      const v = clamp(
+                        Number(e.target.value || 0),
+                        -1_000_000_000_000_000,
+                        1_000_000_000_000_000,
+                      );
+                      setYearlyChange(v);
+                      if (presetId !== "custom") setPresetId("custom");
+                    }}
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  />
+                </label>
+
+                <label className="block text-sm font-semibold text-slate-900 sm:col-span-2">
+                  “As of” label
+                  <input
+                    type="text"
+                    value={asOfLabel}
+                    onChange={(e) => {
+                      setAsOfLabel(e.target.value);
+                      if (presetId !== "custom") setPresetId("custom");
+                    }}
+                    placeholder="e.g. Source X, 2025-12-31"
+                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  />
+                </label>
+              </div>
+
+              <div className="mt-3 text-xs text-slate-600">
+                This is an estimated counter based on your starting value and
+                average rate.
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Disclosures */}
-      <div className="mt-6">{disclosure}</div>
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              {PRESETS.map((p) => (
+                <Chip
+                  key={p.id}
+                  active={p.id === presetId}
+                  onClick={() => setPresetId(p.id)}
+                >
+                  {p.id === "custom" ? "Custom" : p.label}
+                </Chip>
+              ))}
+            </div>
 
-      {/* Quick-use hints */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold text-amber-950">How it works</h3>
-          <p className="mt-2 leading-relaxed text-amber-800">
-            The counter starts at your “Starting debt” value and moves by an
-            average rate derived from “Yearly change”. It is a smooth
-            visualization, not a real-time ledger.
-          </p>
-        </div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div className="flex items-center gap-2">
+                <Btn kind={running ? "solid" : "ghost"} onClick={startPause}>
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+                <Btn kind="ghost" onClick={copy}>
+                  Copy
+                </Btn>
+              </div>
 
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold text-amber-950">
-            Make it accurate for your source
-          </h3>
-          <p className="mt-2 leading-relaxed text-amber-800">
-            Use a published total for “Starting debt”, and an average yearly
-            change you trust. Then set the “As of” label to document where the
-            numbers came from.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold text-amber-950">Use fullscreen</h3>
-          <p className="mt-2 leading-relaxed text-amber-800">
-            Fullscreen is built for TVs and projectors. It is useful for
-            classrooms, presentations, or sharing a single number clearly.
-          </p>
-        </div>
+              <div className="text-xs text-slate-600 sm:text-sm">
+                Tap number to start/pause · Space start/pause · R reset · C copy
+              </div>
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -657,7 +874,7 @@ function DebtClockCard() {
 export default function DebtClockPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/debt-clock";
+  const url = "https://www.ilovetimers.com/debt-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -667,7 +884,7 @@ export default function DebtClockPage({
         name: "Debt Clock",
         url,
         description:
-          "Estimated live debt clock for national or world debt using a starting value and average yearly change rate. Includes disclosures and fullscreen.",
+          "Debt clock (estimated) for national or world debt using a starting value and average yearly change rate with fullscreen display.",
       },
       {
         "@type": "BreadcrumbList",
@@ -676,172 +893,53 @@ export default function DebtClockPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Debt Clock", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a debt clock?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A debt clock is a counter that visualizes debt changing over time. Most debt clocks estimate a smooth rate of change using published totals and an average growth rate.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Is this an official real-time government number?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "No. This page shows an estimated counter based on the inputs you provide. Official totals are typically published on schedules and may be calculated differently.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Do I need an API or external data?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "No. You can use any published starting value and an average yearly change rate. The clock uses those inputs to animate an estimate.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does it keep running if I close the tab?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "It updates while the page is open. Browsers may reduce update frequency in background tabs to save power.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Debt Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Debt Clock (Estimated National and World Debt Counter)
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Debt Clock (Live Counter + Fullscreen)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A <strong>debt clock</strong> is usually a live-looking counter for{" "}
-            <strong>world debt</strong> or <strong>national debt</strong>. This
-            page provides that style of visualization with clear disclosures,
-            plus a custom mode so you can match your own source.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Pick a preset or enter a starting debt and yearly change rate to
+            simulate a running total.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <DebtClockCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            What this debt clock shows (and what it does not)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              Most “debt clock” pages online are visualizations. They start with
-              a published debt total and animate a smooth rate of change. That
-              is useful for intuition, but it is not the same thing as an
-              official ledger or a government reporting schedule.
-            </p>
-            <p>
-              This page is explicit about that. It uses your starting value and
-              your yearly change rate to produce a live estimate. If you want it
-              to reflect a specific source, enter the latest published total and
-              document it in the “As of” label.
-            </p>
-            <p>
-              For time tools, try{" "}
-              <Link
-                to="/event-countdown"
-                className="font-semibold hover:underline"
-              >
-                Event Countdown
-              </Link>{" "}
-              or{" "}
-              <Link
-                to="/productivity-timer"
-                className="font-semibold hover:underline"
-              >
-                Productivity Timer
-              </Link>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <DebtClockCard />
         </div>
+
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Debt Clock</span>
+        </p>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Debt Clock FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a real-time official debt number?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              No. It is an estimated counter based on a starting value and an
-              average rate of change.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why do debt clocks differ across websites?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Different sites use different sources, update dates, and rate
-              assumptions. Some include or exclude categories of debt, and some
-              smooth over time differently.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I enter my own numbers?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Choose the Custom preset, paste a published total into
-              “Starting debt”, and set your yearly change rate.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does it work offline?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Once loaded, it runs in your browser. The live counter does not
-              require external data feeds.
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

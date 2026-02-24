@@ -3,14 +3,19 @@ import type { Route } from "./+types/egg-timer";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/egg-timer/HowItWorks";
+import Disclaimer from "~/clients/components/egg-timer/Disclaimer";
+import FAQ from "~/clients/components/egg-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/egg-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/egg-timer/PopularUseCases";
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Egg Timer (Soft, Medium & Hard Boiled Presets)";
+  const title = "Egg Timer (Soft, Jammy, Medium, Hard) + Fullscreen";
   const description =
-    "Free egg timer for perfectly boiled eggs. One-click presets for soft, medium, and hard boiled eggs with a big readable countdown, optional sound, and fullscreen mode.";
+    "Free egg timer with presets for soft, jammy, medium, and hard boiled eggs. Big countdown, optional sound, final beeps, and fullscreen mode.";
 
   const url = "https://www.ilovetimers.com/egg-timer";
 
@@ -23,6 +28,7 @@ export function meta({}: Route.MetaArgs) {
         "egg timer",
         "boiled egg timer",
         "soft boiled egg timer",
+        "jammy egg timer",
         "medium boiled egg timer",
         "hard boiled egg timer",
         "egg boiling timer",
@@ -34,17 +40,14 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    {
-      property: "og:image",
-      content: "https://www.ilovetimers.com/og-image.jpg",
-    },
+    { property: "og:image", content: "https://www.ilovetimers.com/og-image.jpg" },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -85,7 +88,15 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (same style as other pages)
+async function toggleFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) {
+    await el.requestFullscreen().catch(() => {});
+  } else {
+    await document.exitFullscreen().catch(() => {});
+  }
+}
+
+/* WebAudio beep */
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -95,7 +106,7 @@ function useBeep() {
     };
   }, []);
 
-  return useCallback((freq = 880, duration = 160) => {
+  return useCallback((freq = 880, duration = 160, gain = 0.1) => {
     try {
       const Ctx = window.AudioContext || (window as any).webkitAudioContext;
       const ctx = (ctxRef.current ??= new Ctx());
@@ -108,7 +119,7 @@ function useBeep() {
       const g = ctx.createGain();
       o.type = "sine";
       o.frequency.value = freq;
-      g.gain.value = 0.1;
+      g.gain.value = gain;
 
       o.connect(g);
       g.connect(ctx.destination);
@@ -125,32 +136,149 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
+function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: React.RefObject<HTMLElement | null>;
+  textRef: React.RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* =========================================================
-   UI PRIMITIVES (same style as Home/Pomodoro)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -175,82 +303,114 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+const Chip = ({
+  active,
+  children,
+  onClick,
+  disabled,
+}: {
+  active?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
+      active
+        ? "bg-slate-900 text-white hover:bg-slate-800"
+        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  left,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+          {left}
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
    EGG TIMER CARD
 ========================================================= */
-type DonenessKey =
-  | "soft"
-  | "medium"
-  | "hard"
-  | "jammy"
-  | "very_hard"
-  | "poached";
-
 type EggPreset = {
-  key: DonenessKey;
+  key: string;
   label: string;
-  minutes: number;
-  seconds: number;
-  note: string;
+  m: number;
+  s: number;
 };
-
-const EGG_PRESETS: EggPreset[] = [
-  {
-    key: "soft",
-    label: "Soft",
-    minutes: 6,
-    seconds: 0,
-    note: "6:00 (runny yolk, set whites)",
-  },
-  {
-    key: "jammy",
-    label: "Jammy",
-    minutes: 7,
-    seconds: 0,
-    note: "7:00 (creamy/jammy yolk)",
-  },
-  {
-    key: "medium",
-    label: "Medium",
-    minutes: 8,
-    seconds: 0,
-    note: "8:00 (mostly set, slightly creamy)",
-  },
-  {
-    key: "hard",
-    label: "Hard",
-    minutes: 10,
-    seconds: 0,
-    note: "10:00 (fully set yolk)",
-  },
-  {
-    key: "very_hard",
-    label: "Very hard",
-    minutes: 12,
-    seconds: 0,
-    note: "12:00 (extra firm)",
-  },
-  {
-    key: "poached",
-    label: "Poached",
-    minutes: 3,
-    seconds: 30,
-    note: "3:30 (classic poach)",
-  },
-];
 
 function EggTimerCard() {
   const beep = useBeep();
 
-  const [preset, setPreset] = useState<DonenessKey>("soft");
+  const presets = useMemo<EggPreset[]>(
+    () => [
+      { key: "soft", label: "Soft", m: 6, s: 0 },
+      { key: "jammy", label: "Jammy", m: 7, s: 0 },
+      { key: "medium", label: "Medium", m: 8, s: 0 },
+      { key: "hard", label: "Hard", m: 10, s: 0 },
+      { key: "veryhard", label: "Very hard", m: 12, s: 0 },
+    ],
+    [],
+  );
+
+  const [presetKey, setPresetKey] = useState<string>("soft");
+
   const [minutes, setMinutes] = useState(6);
   const [seconds, setSeconds] = useState(0);
 
@@ -262,35 +422,91 @@ function EggTimerCard() {
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
+  const hasStartedRef = useRef(false);
 
-  // Apply preset
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  const totalMs = (minutes * 60 + seconds) * 1000;
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  function reset() {
+    setRunning(false);
+    setRemaining(totalMs);
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+    hasStartedRef.current = false;
+    stopRaf();
+  }
+
+  // Apply preset to minutes/seconds and reset
   useEffect(() => {
-    const p = EGG_PRESETS.find((x) => x.key === preset);
+    const p = presets.find((x) => x.key === presetKey);
     if (!p) return;
-    setMinutes(p.minutes);
-    setSeconds(p.seconds);
-    setRunning(false);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-    setRemaining((p.minutes * 60 + p.seconds) * 1000);
-  }, [preset]);
 
-  // When custom time changes
-  useEffect(() => {
-    setRemaining((minutes * 60 + seconds) * 1000);
+    setMinutes(p.m);
+    setSeconds(p.s);
+
     setRunning(false);
     endRef.current = null;
     lastBeepSecondRef.current = null;
+    hasStartedRef.current = false;
+    stopRaf();
+    setRemaining((p.m * 60 + p.s) * 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presetKey, presets]);
+
+  // When minutes/seconds change manually, reset timer cleanly
+  useEffect(() => {
+    setRunning(false);
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+    hasStartedRef.current = false;
+    stopRaf();
+    setRemaining((minutes * 60 + seconds) * 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minutes, seconds]);
 
   useEffect(() => {
-    if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+    return () => stopRaf();
+  }, []);
+
+  function startPause() {
+    if (totalMs <= 0) return;
+
+    if (running) {
+      setRunning(false);
       endRef.current = null;
       lastBeepSecondRef.current = null;
+      stopRaf();
+      return;
+    }
+
+    lastBeepSecondRef.current = null;
+
+    if (!hasStartedRef.current || remaining <= 0) {
+      hasStartedRef.current = true;
+      setRemaining(totalMs);
+      endRef.current = performance.now() + totalMs;
+      setRunning(true);
+      return;
+    }
+
+    endRef.current = performance.now() + remaining;
+    setRunning(true);
+  }
+
+  useEffect(() => {
+    if (!running) {
+      stopRaf();
       return;
     }
 
@@ -307,7 +523,7 @@ function EggTimerCard() {
         const secLeft = Math.ceil(rem / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
           lastBeepSecondRef.current = secLeft;
-          beep(880, 110);
+          beep(880, 100, 0.09);
         }
       }
 
@@ -315,7 +531,14 @@ function EggTimerCard() {
         endRef.current = null;
         setRunning(false);
         lastBeepSecondRef.current = null;
-        if (sound) beep(660, 220);
+        hasStartedRef.current = false;
+
+        if (sound) {
+          beep(660, 180, 0.12);
+          window.setTimeout(() => beep(880, 200, 0.12), 220);
+        }
+
+        stopRaf();
         return;
       }
 
@@ -323,275 +546,302 @@ function EggTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
+    return () => stopRaf();
   }, [running, remaining, sound, finalCountdownBeeps, beep]);
-
-  function reset() {
-    setRunning(false);
-    setRemaining((minutes * 60 + seconds) * 1000);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-  }
-
-  function startPause() {
-    // prime audio on gesture
-    if (!running && sound) beep(0, 1);
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
-  }
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isTypingTarget(e.target)) return;
-
-    if (e.key === " ") {
-      e.preventDefault();
-      startPause();
-    } else if (e.key.toLowerCase() === "r") {
-      reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    }
-  };
 
   const urgent = running && remaining > 0 && remaining <= 10_000;
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
-  const presetNote = useMemo(() => {
-    const p = EGG_PRESETS.find((x) => x.key === preset);
-    return p?.note ?? "";
-  }, [preset]);
+  const displayTone = urgent
+    ? "border-rose-200 bg-amber-50 text-rose-950"
+    : "border-slate-200 bg-slate-50 text-slate-950";
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 48 : 56,
+  });
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
+
+    if (e.key === " ") {
+      e.preventDefault();
+      startPause();
+    } else if (k === "r") {
+      reset();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "s") {
+      setSound((v) => !v);
+    }
+  };
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Egg Timer</h2>
-          <p className="mt-1 text-base text-slate-700">
-            A fast <strong>egg timer</strong> for boiled eggs. One-click presets
-            for <strong>soft</strong>, <strong>medium</strong>, and{" "}
-            <strong>hard</strong> (plus jammy). Big digits, optional sound, and
-            fullscreen.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Egg Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        left={
+          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={sound}
+                onChange={(e) => setSound(e.target.checked)}
+                className="accent-amber-500"
+              />
+              Sound
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={finalCountdownBeeps}
+                onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                disabled={!sound}
+                className="accent-amber-500"
+              />
+              Final beeps
+            </label>
+          </div>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={running ? "solid" : "ghost"}
+              onClick={startPause}
+              className="py-1 text-sm"
+              disabled={totalMs <= 0}
+            >
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-wrap items-center gap-3 ml-auto">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Sound
+              </label>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={finalCountdownBeeps}
+                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                  disabled={!sound}
+                  className="accent-amber-500"
+                />
+                Final beeps
+              </label>
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+              <Btn
+                kind="ghost"
+                onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-      {/* Presets */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {EGG_PRESETS.map((p) => (
-          <button
-            key={p.key}
-            type="button"
-            onClick={() => setPreset(p.key)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              p.key === preset
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
+        {/* Presets + inputs (normal only) */}
+        {!isFs && (
+          <>
+            <div className="mt-5 flex flex-wrap items-center gap-2">
+              {presets.map((p) => (
+                <Chip
+                  key={p.key}
+                  active={p.key === presetKey}
+                  onClick={() => setPresetKey(p.key)}
+                  disabled={running}
+                >
+                  {p.label}
+                </Chip>
+              ))}
+            </div>
 
-      {/* Custom time */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Minutes
-          <input
-            type="number"
-            min={0}
-            max={60}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 0), 0, 60))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
+            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+              <label className="block text-sm font-semibold text-slate-900">
+                Minutes
+                <input
+                  type="number"
+                  min={0}
+                  max={60}
+                  value={minutes}
+                  disabled={running}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 0), 0, 60))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                />
+              </label>
 
-        <label className="block text-sm font-semibold text-amber-950">
-          Seconds
-          <input
-            type="number"
-            min={0}
-            max={59}
-            value={seconds}
-            onChange={(e) =>
-              setSeconds(clamp(Number(e.target.value || 0), 0, 59))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
+              <label className="block text-sm font-semibold text-slate-900">
+                Seconds
+                <input
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={seconds}
+                  disabled={running}
+                  onChange={(e) =>
+                    setSeconds(clamp(Number(e.target.value || 0), 0, 59))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                />
+              </label>
 
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause} disabled={minutes * 60 + seconds <= 0}>
-            {running ? "Pause" : "Start"}
-          </Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
+              <div className="flex items-end gap-3">
+                <Btn onClick={startPause} disabled={totalMs <= 0}>
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+              </div>
+            </div>
+          </>
+        )}
 
-      {/* Quick doneness cue */}
-      <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-          Selected preset
-        </div>
-        <div className="mt-1 text-sm font-semibold text-amber-950">
-          {presetNote}
-        </div>
-        <div className="mt-2 text-sm text-amber-900">
-          These are common starting points for large eggs in simmering water.
-          Adjust for fridge-cold eggs, altitude, and preference.
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 240 }}
-        aria-live="polite"
-      >
-        {/* Fullscreen CSS: show ONLY fullscreen shell in fullscreen */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 240 }}
+          ref={displayBoxRef}
+          className={[
+            "mt-4 flex items-center justify-center rounded-2xl border font-mono font-extrabold",
+            displayTone,
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 240,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-3">
-            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-              {EGG_PRESETS.find((x) => x.key === preset)?.label ?? "Egg"} timer
+          <span
+            ref={timeTextRef}
+            className={[
+              "inline-block text-center",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+        </div>
+
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              {presets.map((p) => (
+                <Chip
+                  key={p.key}
+                  active={p.key === presetKey}
+                  onClick={() => setPresetKey(p.key)}
+                  disabled={running}
+                >
+                  {p.label}
+                </Chip>
+              ))}
             </div>
 
-            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
-              {shownTime}
-            </div>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-slate-700">
+                  Time
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  max={60}
+                  value={minutes}
+                  disabled={running}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 0), 0, 60))
+                  }
+                  className="w-20 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                />
+                <span className="text-slate-600">:</span>
+                <input
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={seconds}
+                  disabled={running}
+                  onChange={(e) =>
+                    setSeconds(clamp(Number(e.target.value || 0), 0, 59))
+                  }
+                  className="w-20 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+                />
+                <Btn
+                  kind={running ? "solid" : "ghost"}
+                  onClick={startPause}
+                  disabled={totalMs <= 0}
+                >
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+              </div>
 
-            <div className="text-xs font-semibold text-amber-800">
-              Shortcuts: Space start/pause · R reset · F fullscreen
+              <div className="text-xs text-slate-600 sm:text-sm">
+                Tap time to start/pause • Space start/pause • R reset • F fullscreen • S sound
+              </div>
             </div>
           </div>
-        </div>
+        </FullscreenBottomBar>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Egg Timer</div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+        {/* Footer (normal only) */}
+        {!isFs && (
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900">
+              Shortcuts: Space start/pause • R reset • F fullscreen • S sound
+            </div>
+            <div className="text-xs text-slate-600">
+              Tip: click the card once so keyboard shortcuts work immediately.
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        )}
       </div>
     </Card>
   );
@@ -603,7 +853,7 @@ function EggTimerCard() {
 export default function EggTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/egg-timer";
+  const url = "https://www.ilovetimers.com/egg-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -613,7 +863,7 @@ export default function EggTimerPage({
         name: "Egg Timer",
         url,
         description:
-          "An egg timer for boiled eggs with soft, medium, and hard presets, plus fullscreen and optional sound.",
+          "Egg timer with soft, jammy, medium, and hard presets, optional sound, final beeps, and fullscreen display.",
       },
       {
         "@type": "BreadcrumbList",
@@ -622,250 +872,54 @@ export default function EggTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Egg Timer",
-            item: url,
-          },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "How long do you boil eggs for soft, medium, and hard?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Common starting points are about 6 minutes for soft-boiled, 8 minutes for medium, and 10 minutes for hard-boiled eggs. Actual timing can vary by egg size, starting temperature, and altitude.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this boiled egg timer work for soft, medium, and hard eggs?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Use the one-click presets for soft, medium, and hard boiled eggs, or set a custom time for your preferred doneness.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Should I start timing eggs from cold water or boiling water?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Many timing guides assume you start timing once the water is gently boiling or simmering. If you start from cold water, the total time can be longer and less consistent.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the timer card is focused.",
-            },
-          },
+          { "@type": "ListItem", position: 2, name: "Egg Timer", item: url },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Egg Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Egg Timer
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Egg Timer (Soft, Jammy, Medium, Hard)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A simple <strong>egg timer</strong> with one-click presets for{" "}
-            <strong>soft</strong>, <strong>medium</strong>, and{" "}
-            <strong>hard</strong> boiled eggs.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Choose a preset or set a custom time, then run a big countdown with
+            optional sound, final beeps, and fullscreen mode.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <EggTimerCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Soft, medium, hard presets
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Tap a preset and start. If your eggs are extra large or
-              fridge-cold, add a bit of time.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Reduce overcooking
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              When the timer ends, move eggs to an ice bath to stop cooking fast
-              and reduce the gray yolk ring.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
-        </div>
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Egg Timer</span>
+        </p>
       </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free boiled egg timer (soft, medium, hard)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>egg timer</strong> is a quick{" "}
-              <strong>boiled egg timer</strong> with presets for{" "}
-              <strong>soft</strong>, <strong>medium</strong>, and{" "}
-              <strong>hard</strong> boiled eggs. Pick your doneness, press
-              Start, and stop the cook when the countdown hits zero.
-            </p>
-
-            <p>
-              Timing depends on egg size and starting temperature. Many people
-              start the timer when the water is gently boiling or simmering. If
-              you start from cold water, you will usually need more time.
-            </p>
-
-            <p>
-              If you want a general-purpose tool, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For tea and coffee, use{" "}
-              <Link to="/tea-timer" className="font-semibold hover:underline">
-                Tea Timer
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Soft boiled
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Runny center with set whites. Good for toast dipping.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Medium / jammy
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Creamy yolk that is not fully firm. Popular for ramen eggs.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Hard boiled
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fully set yolk for salads, meal prep, and snacks.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Egg Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How long for soft, medium, and hard boiled eggs?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Common starting points are about <strong>6 minutes</strong> for
-              soft,
-              <strong> 8 minutes</strong> for medium, and{" "}
-              <strong>10 minutes</strong> for hard boiled eggs, counted once the
-              water is gently boiling or simmering. Adjust for egg size and
-              starting temperature.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Do I start timing in cold water or boiling water?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Many timing guides assume you start timing once the water is
-              gently boiling or simmering. Starting from cold water usually
-              increases the time and can be less consistent.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why use an ice bath after boiling?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              An ice bath stops cooking quickly, making timing more accurate and
-              helping prevent overcooked yolks.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen (when focused).
-            </div>
-          </details>
-        </div>
-      </section>
+      
+            <HowItWorks />
+            <KeyboardShortcuts />
+            <PopularUseCases />
+            <FAQ />
+            <Disclaimer />
     </main>
   );
 }

@@ -1,7 +1,14 @@
 // app/routes/metronome.tsx
 import type { Route } from "./+types/metronome";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +40,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -67,6 +74,22 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
 }
@@ -79,28 +102,133 @@ function safeTimeZone() {
   }
 }
 
-function fmtBpm(bpm: number) {
-  return `${Math.round(bpm)} BPM`;
+/**
+ * Fit a single-line text into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* =========================================================
-   UI PRIMITIVES (match your style)
+   UI PRIMITIVES (match your updated style)
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -128,36 +256,56 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
-function StatPill({
-  label,
-  value,
-  hint,
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
 }: {
-  label: string;
-  value: string;
-  hint?: string;
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
 }) {
+  if (!show) return null;
   return (
-    <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
-      <div className="text-[11px] font-extrabold uppercase tracking-widest text-amber-800">
-        {label}
-      </div>
-      <div className="mt-1 text-base font-extrabold text-amber-950">
-        {value}
-      </div>
-      {hint ? (
-        <div className="mt-1 text-xs font-semibold text-amber-900/70">
-          {hint}
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
         </div>
-      ) : null}
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
     </div>
   );
 }
@@ -177,10 +325,8 @@ function playTick(opts: {
   const { ctx, when, mode, accent } = opts;
   const volume = clamp(opts.volume, 0, 1);
 
-  // Keep headroom. Accent is noticeably louder, not just slightly.
   const peak = (accent ? 1.0 : 0.6) * volume;
 
-  // One master gain per tick for consistent envelope
   const g = ctx.createGain();
   g.gain.setValueAtTime(0.0001, when);
   g.gain.exponentialRampToValueAtTime(Math.max(0.0001, peak), when + 0.003);
@@ -190,7 +336,6 @@ function playTick(opts: {
   if (mode === "beep") {
     const o = ctx.createOscillator();
     o.type = "sine";
-    // Two clearly different tones, no ambiguity
     o.frequency.setValueAtTime(accent ? 1200 : 880, when);
     o.connect(g);
     o.start(when);
@@ -199,7 +344,6 @@ function playTick(opts: {
   }
 
   if (mode === "wood") {
-    // Short, warm "wood block" using a triangle + lowpass
     const o = ctx.createOscillator();
     o.type = "triangle";
     o.frequency.setValueAtTime(accent ? 520 : 420, when);
@@ -215,7 +359,6 @@ function playTick(opts: {
     return;
   }
 
-  // mode === "click": bright, sharp click using filtered noise
   const buffer = ctx.createBuffer(
     1,
     Math.floor(ctx.sampleRate * 0.03),
@@ -256,7 +399,7 @@ const TS_OPTIONS = [
   { beats: 7, label: "7/8 (7)" },
 ] as const;
 
-type Subdivision = 1 | 2 | 3 | 4; // quarter/eighth/triplet/sixteenth
+type Subdivision = 1 | 2 | 3 | 4;
 
 function subLabel(s: Subdivision) {
   if (s === 1) return "Quarter";
@@ -286,9 +429,15 @@ function MetronomeCard() {
   const [copied, setCopied] = useState(false);
 
   const tz = useMemo(() => safeTimeZone(), []);
-  const wrapRef = useRef<HTMLDivElement>(null);
 
-  // Visual pulse state (driven by scheduled ticks, not by UI timers)
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  // Display fitting
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const bpmTextRef = useRef<HTMLSpanElement>(null);
+
+  // Visual pulse state (driven by scheduled ticks)
   const [pulse, setPulse] = useState<{
     n: number;
     beat: number; // 1..beatsPerBar
@@ -358,15 +507,13 @@ function MetronomeCard() {
       // ignore
     }
 
-    // Reset phase so bar downbeat is correct on start
     tickIndexRef.current = 0;
     nextTimeRef.current = ctx.currentTime + 0.06;
-
     runningRef.current = true;
     setIsRunning(true);
 
-    const lookAheadSec = 0.12; // schedule ahead for stability
-    const intervalMs = 25; // stable scheduling without RAF throttling issues
+    const lookAheadSec = 0.12;
+    const intervalMs = 25;
 
     timerRef.current = window.setInterval(() => {
       if (!runningRef.current) return;
@@ -391,7 +538,6 @@ function MetronomeCard() {
 
         const isSubDownbeat = subIndex === 0;
         const isBarDownbeat = isSubDownbeat && beatIndex === 0;
-
         const accent = Boolean(s.accentDownbeat && isBarDownbeat);
 
         playTick({
@@ -402,8 +548,6 @@ function MetronomeCard() {
           volume: s.volume,
         });
 
-        // Visual pulse: update every subdivision (so you can see subdivisions),
-        // but highlight beat 1 more strongly.
         setPulse((p) => ({
           n: p.n + 1,
           beat: beatIndex + 1,
@@ -454,7 +598,6 @@ function MetronomeCard() {
       }
     }
 
-    // unlock audio on mobile without starting metronome
     try {
       const ctx = await ensureAudio();
       if (ctx.state === "suspended") await ctx.resume();
@@ -463,20 +606,25 @@ function MetronomeCard() {
     }
   }, [ensureAudio]);
 
+  const bpmInt = clamp(Math.round(bpm), 20, 400);
+  const bpmBigText = `${bpmInt}`;
+
+  const statusLabel = isRunning ? "Running" : "Stopped";
+
   // Copy settings
   const copyText = useMemo(() => {
     const lines: string[] = [];
     lines.push("Online Metronome");
-    lines.push(`BPM: ${Math.round(bpm)}`);
+    lines.push(`BPM: ${bpmInt}`);
     lines.push(`Time signature: ${beatsPerBar}/4`);
     lines.push(`Subdivision: ${subLabel(subdivision)}`);
     lines.push(`Accent downbeat: ${accentDownbeat ? "On" : "Off"}`);
     lines.push(`Sound: ${mode}`);
     lines.push(`Volume: ${Math.round(volume * 100)}%`);
     lines.push(`Time zone: ${tz}`);
-    lines.push("https://ilovetimers.com/metronome");
+    lines.push("https://www.ilovetimers.com/metronome");
     return lines.join("\n");
-  }, [accentDownbeat, beatsPerBar, bpm, mode, subdivision, tz, volume]);
+  }, [accentDownbeat, beatsPerBar, bpmInt, mode, subdivision, tz, volume]);
 
   const copy = useCallback(async () => {
     try {
@@ -488,567 +636,447 @@ function MetronomeCard() {
     }
   }, [copyText]);
 
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: bpmTextRef,
+    deps: [bpmBigText, isFs, isRunning, beatsPerBar, subdivision],
+    minPx: 72,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 64 : 72,
+  });
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
-    if (k === "f" && wrapRef.current) {
-      void toggleFullscreen(wrapRef.current);
-      return;
-    }
-    if (k === " " || k === "spacebar" || k === "enter") {
+
+    if (e.key === " ") {
       e.preventDefault();
       if (isRunning) stop();
       else void start();
       return;
     }
+
+    if (k === "enter") {
+      e.preventDefault();
+      if (isRunning) stop();
+      else void start();
+      return;
+    }
+
     if (k === "arrowup") {
       e.preventDefault();
       setBpm((v) => clamp(v + (e.shiftKey ? 5 : 1), 20, 400));
       return;
     }
+
     if (k === "arrowdown") {
       e.preventDefault();
       setBpm((v) => clamp(v - (e.shiftKey ? 5 : 1), 20, 400));
       return;
     }
+
     if (k === "t") {
       e.preventDefault();
       void tapTempo();
       return;
     }
+
     if (k === "c") {
       e.preventDefault();
       void copy();
       return;
     }
+
+    if (k === "f" && cardRef.current) {
+      void toggleFullscreen(cardRef.current);
+      return;
+    }
+
+    if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
+    }
   };
 
-  // Fullscreen gets its own stylized shell, like your Morse layout
-  const stageAccent =
+  const pulseRing =
     pulse.accent && accentDownbeat ? "ring-emerald-400" : "ring-amber-400";
-  const stageBg =
-    pulse.accent && accentDownbeat ? "bg-emerald-500/15" : "bg-amber-500/20";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Metronome</h2>
-          <p className="mt-1 text-base text-slate-700">
-            A free <strong>online metronome</strong> and{" "}
-            <strong>tempo timer</strong>. Accurate Web Audio scheduling, tap
-            tempo, accents, and subdivisions.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Metronome"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={isRunning ? "ghost" : "solid"}
+              onClick={() => (isRunning ? stop() : void start())}
+              className="py-1 text-sm"
+              title="Start/Stop (Space)"
+            >
+              {isRunning ? "Stop" : "Start"}
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={() => void tapTempo()}
+              className="py-1 text-sm"
+              title="Tap tempo (T)"
+            >
+              Tap
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={() => setBpm((v) => clamp(v - 5, 20, 400))}
+              className="py-1 text-sm"
+              title="BPM -5"
+            >
+              -5
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={() => setBpm((v) => clamp(v + 5, 20, 400))}
+              className="py-1 text-sm"
+              title="BPM +5"
+            >
+              +5
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <Btn
-            kind="ghost"
-            onClick={() => void tapTempo()}
-            className="py-2"
-            title="Tap tempo (T)"
-          >
-            Tap tempo
-          </Btn>
-
-          <Btn
-            kind="ghost"
-            onClick={copy}
-            className="py-2"
-            title="Copy settings (C)"
-          >
-            {copied ? "Copied" : "Copy"}
-          </Btn>
-
-          <Btn
-            kind="ghost"
-            onClick={() => wrapRef.current && toggleFullscreen(wrapRef.current)}
-            className="py-2"
-            title="Fullscreen (F)"
-          >
-            Fullscreen
-          </Btn>
-
-          <Btn
-            kind={isRunning ? "ghost" : "solid"}
-            onClick={() => (isRunning ? stop() : void start())}
-            className="py-2"
-            title="Start/Stop (Space)"
-          >
-            {isRunning ? "Stop" : "Start"}
-          </Btn>
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={wrapRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:block;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:5vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1500px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:20px;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 900 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.18em;
-                text-transform:uppercase;
-                opacity:.90;
-                color: rgba(255,255,255,.92);
-              }
-
-              [data-fs-container]:fullscreen .fs-bpm{
-                font: 900 clamp(54px, 7.8vw, 120px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.08em;
-                color: rgba(255,255,255,.96);
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 700 14px/1.35 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.84;
-                color: rgba(255,255,255,.86);
-                max-width: 80ch;
-              }
-
-              [data-fs-container]:fullscreen .fs-stage{
-                width:min(1200px, 96vw);
-                border-radius: 22px;
-                border: 1px solid rgba(255,255,255,.14);
-                background: rgba(255,255,255,.06);
-                padding: 26px 22px;
-              }
-
-              [data-fs-container]:fullscreen .fs-pulse{
-                width:min(980px, 92vw);
-                height: min(32vh, 280px);
-                border-radius: 22px;
-                border: 1px solid rgba(255,255,255,.14);
-                background: rgba(255,255,255,.04);
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                position:relative;
-                overflow:hidden;
-              }
-
-              [data-fs-container]:fullscreen .fs-hint{
-                position:absolute;
-                bottom:14px;
-                left:14px;
-                right:14px;
-                font: 800 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.14em;
-                text-transform:uppercase;
-                opacity:.78;
-                color: rgba(255,255,255,.82);
-              }
-
-              @keyframes pulsePop{
-                0% { transform: scale(.78); opacity:.55; }
-                100% { transform: scale(1); opacity:1; }
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
-        <div data-shell="normal" className="w-full p-6">
-          <div className="w-full max-w-[980px] mx-auto">
-            <div className="rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">
-              <div className="grid gap-4 lg:grid-cols-3">
-                <StatPill
-                  label="Tempo"
-                  value={fmtBpm(bpm)}
-                  hint="Arrow keys change BPM"
-                />
-                <StatPill
-                  label="Meter"
-                  value={`${beatsPerBar}/4`}
-                  hint={accentDownbeat ? "Beat 1 accented" : "No accent"}
-                />
-                <StatPill
-                  label="Subdivision"
-                  value={subLabel(subdivision)}
-                  hint={isRunning ? "Running" : "Stopped"}
-                />
-              </div>
-
-              <div className="mt-6 grid gap-4 lg:grid-cols-3">
-                {/* BPM */}
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
-                    BPM
-                  </div>
-                  <div className="mt-3 flex items-center gap-3">
-                    <Btn
-                      kind="ghost"
-                      onClick={() => setBpm((v) => clamp(v - 1, 20, 400))}
-                      className="px-3"
-                    >
-                      -
-                    </Btn>
-                    <input
-                      type="range"
-                      min={20}
-                      max={400}
-                      value={bpm}
-                      onChange={(e) => setBpm(parseInt(e.target.value, 10))}
-                      className="w-full"
-                    />
-                    <Btn
-                      kind="ghost"
-                      onClick={() => setBpm((v) => clamp(v + 1, 20, 400))}
-                      className="px-3"
-                    >
-                      +
-                    </Btn>
-                  </div>
-
-                  <div className="mt-3 flex items-center justify-between gap-3">
-                    <input
-                      type="number"
-                      value={bpm}
-                      min={20}
-                      max={400}
-                      onChange={(e) =>
-                        setBpm(
-                          clamp(parseInt(e.target.value || "120", 10), 20, 400),
-                        )
-                      }
-                      className="w-28 rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm font-extrabold text-amber-950"
-                    />
-                    <div className="text-xs font-semibold text-amber-900/70">
-                      Space starts/stops
-                    </div>
-                  </div>
-                </div>
-
-                {/* Rhythm */}
-                <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
-                    Rhythm
-                  </div>
-
-                  <div className="mt-3 grid gap-3">
-                    <label className="text-xs font-bold text-amber-900/80">
-                      Time signature
-                    </label>
-                    <select
-                      value={beatsPerBar}
-                      onChange={(e) =>
-                        setBeatsPerBar(parseInt(e.target.value, 10))
-                      }
-                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm font-bold text-amber-950"
-                    >
-                      {TS_OPTIONS.map((o) => (
-                        <option key={o.beats} value={o.beats}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-
-                    <label className="text-xs font-bold text-amber-900/80">
-                      Subdivision
-                    </label>
-                    <select
-                      value={subdivision}
-                      onChange={(e) =>
-                        setSubdivision(
-                          parseInt(e.target.value, 10) as Subdivision,
-                        )
-                      }
-                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm font-bold text-amber-950"
-                    >
-                      <option value={1}>Quarter (1)</option>
-                      <option value={2}>Eighth (2)</option>
-                      <option value={3}>Triplet (3)</option>
-                      <option value={4}>Sixteenth (4)</option>
-                    </select>
-
-                    <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-                      <input
-                        type="checkbox"
-                        checked={accentDownbeat}
-                        onChange={(e) => setAccentDownbeat(e.target.checked)}
-                      />
-                      Accent beat 1
-                    </label>
-                  </div>
-                </div>
-
-                {/* Sound */}
-                <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
-                    Sound
-                  </div>
-
-                  <div className="mt-3 grid gap-3">
-                    <label className="text-xs font-bold text-amber-900/80">
-                      Click type
-                    </label>
-                    <select
-                      value={mode}
-                      onChange={(e) => setMode(e.target.value as ClickMode)}
-                      className="w-full rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm font-bold text-amber-950"
-                    >
-                      <option value="click">Click (bright)</option>
-                      <option value="wood">Wood (warm)</option>
-                      <option value="beep">Beep (tone)</option>
-                    </select>
-
-                    <label className="text-xs font-bold text-amber-900/80">
-                      Volume
-                    </label>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="range"
-                        min={0}
-                        max={100}
-                        value={Math.round(volume * 100)}
-                        onChange={(e) =>
-                          setVolume(
-                            clamp(parseInt(e.target.value, 10) / 100, 0, 1),
-                          )
-                        }
-                        className="w-full"
-                      />
-                      <div className="min-w-[52px] text-right text-xs font-extrabold text-amber-950">
-                        {Math.round(volume * 100)}%
-                      </div>
-                    </div>
-
-                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-semibold text-amber-900/80">
-                      If your sound still feels the same, you are probably on
-                      tiny speakers. Try headphones and switch between Beep and
-                      Click.
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Visual pulse */}
-              <div className="mt-6 rounded-2xl border border-amber-200 bg-white p-5">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
-                      Visual pulse
-                    </div>
-                    <div className="mt-1 text-sm font-semibold text-slate-700">
-                      Beat <strong>{pulse.beat}</strong> of {beatsPerBar} · Sub{" "}
-                      <strong>{pulse.sub}</strong> of {subdivision} ·{" "}
-                      {pulse.accent && accentDownbeat ? "Accent" : "Tick"}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Btn
-                      kind={isRunning ? "ghost" : "solid"}
-                      onClick={() => (isRunning ? stop() : void start())}
-                      className="px-5 py-3"
-                    >
-                      {isRunning ? "Stop" : "Start"}
-                    </Btn>
-                    <Btn
-                      kind="ghost"
-                      onClick={() => setBpm((v) => clamp(v - 5, 20, 400))}
-                    >
-                      -5
-                    </Btn>
-                    <Btn
-                      kind="ghost"
-                      onClick={() => setBpm((v) => clamp(v + 5, 20, 400))}
-                    >
-                      +5
-                    </Btn>
-                  </div>
-                </div>
-
-                <div className="mt-5">
-                  <div
-                    className={`relative mx-auto flex h-32 w-full max-w-[720px] items-center justify-center rounded-2xl border border-amber-200 ${stageBg}`}
-                  >
-                    <div
-                      key={pulse.n}
-                      className={`h-16 w-16 rounded-full ring-4 ${stageAccent}`}
-                      style={{ animation: "pulsePop 180ms ease-out" }}
-                      aria-hidden
-                    />
-                    <div className="absolute bottom-3 text-xs font-extrabold uppercase tracking-widest text-amber-900/70">
-                      Space start/stop · T tap tempo · F fullscreen · C copy
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900">
-                <div className="text-xs font-extrabold uppercase tracking-wide text-amber-800">
-                  Shortcuts
-                </div>
-                <ul className="mt-2 space-y-1">
-                  <li>
-                    <strong>Space</strong> or <strong>Enter</strong> =
-                    Start/Stop
-                  </li>
-                  <li>
-                    <strong>Arrow Up/Down</strong> = BPM ±1 (hold Shift for ±5)
-                  </li>
-                  <li>
-                    <strong>T</strong> = Tap tempo
-                  </li>
-                  <li>
-                    <strong>F</strong> = Fullscreen
-                  </li>
-                  <li>
-                    <strong>C</strong> = Copy settings
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mt-4 text-center text-xs font-semibold text-slate-600">
-                Accuracy note: timing is scheduled on the Web Audio clock.
-                Bluetooth speakers can add delay, but the beat interval stays
-                consistent.
-              </div>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Online Metronome (Tap Tempo + Accurate BPM)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Set BPM, tap tempo, choose time signature and subdivisions, and
+                practice with a clear visual and audio pulse.
+              </p>
+            </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn kind="ghost" onClick={copy} className="py-2" title="Copy (C)">
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => void tapTempo()}
+                className="py-2"
+                title="Tap tempo (T)"
+              >
+                Tap tempo
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
+                className="py-2"
+                title="Fullscreen (F)"
+              >
+                Fullscreen
+              </Btn>
+              <Btn
+                kind={isRunning ? "ghost" : "solid"}
+                onClick={() => (isRunning ? stop() : void start())}
+                className="py-2"
+                title="Start/Stop (Space)"
+              >
+                {isRunning ? "Stop" : "Start"}
+              </Btn>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Online Metronome</div>
-
-            <div className="fs-bpm">{fmtBpm(bpm)}</div>
-
-            <div className="fs-sub">
-              {beatsPerBar}/4 · {subLabel(subdivision)} ·{" "}
-              {accentDownbeat ? "Accent beat 1" : "No accent"} · Sound: {mode} ·
-              Volume {Math.round(volume * 100)}%
-            </div>
-
-            <div className="fs-pulse">
-              <div
-                key={pulse.n}
-                className={`h-20 w-20 rounded-full ring-4 ${
-                  pulse.accent && accentDownbeat
-                    ? "ring-emerald-400"
-                    : "ring-white/70"
-                }`}
-                style={{ animation: "pulsePop 180ms ease-out" }}
-                aria-hidden
-              />
-              <div className="fs-hint">
-                Beat {pulse.beat}/{beatsPerBar} · Sub {pulse.sub}/{subdivision}{" "}
-                · Space start/stop · T tap · F fullscreen
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            {/* Tempo */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                Tempo
               </div>
-            </div>
 
-            <div className="fs-stage">
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => (isRunning ? stop() : void start())}
-                  className={`rounded-2xl px-7 py-4 font-extrabold tracking-widest ${
-                    isRunning
-                      ? "bg-white/10 text-white hover:bg-white/15"
-                      : "bg-emerald-500/20 text-white hover:bg-emerald-500/25"
-                  }`}
-                  style={{ letterSpacing: ".18em", textTransform: "uppercase" }}
+              <div className="mt-3 flex items-center gap-3">
+                <Btn
+                  kind="ghost"
+                  onClick={() => setBpm((v) => clamp(v - 1, 20, 400))}
+                  className="px-3"
+                  title="BPM -1"
                 >
-                  {isRunning ? "Stop" : "Start"}
-                </button>
+                  -
+                </Btn>
 
-                <button
-                  type="button"
-                  onClick={() => void tapTempo()}
-                  className="rounded-2xl bg-white/10 px-6 py-4 font-extrabold text-white hover:bg-white/15"
-                  style={{ letterSpacing: ".14em", textTransform: "uppercase" }}
+                <input
+                  type="range"
+                  min={20}
+                  max={400}
+                  value={bpmInt}
+                  onChange={(e) => setBpm(parseInt(e.target.value, 10))}
+                  className="w-full"
+                  aria-label="BPM slider"
+                />
+
+                <Btn
+                  kind="ghost"
+                  onClick={() => setBpm((v) => clamp(v + 1, 20, 400))}
+                  className="px-3"
+                  title="BPM +1"
                 >
-                  Tap tempo
-                </button>
+                  +
+                </Btn>
+              </div>
 
-                <button
-                  type="button"
-                  onClick={() => setBpm((v) => clamp(v - 5, 20, 400))}
-                  className="rounded-2xl bg-white/10 px-5 py-4 font-extrabold text-white hover:bg-white/15"
-                  style={{ letterSpacing: ".14em", textTransform: "uppercase" }}
-                >
-                  -5
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setBpm((v) => clamp(v + 5, 20, 400))}
-                  className="rounded-2xl bg-white/10 px-5 py-4 font-extrabold text-white hover:bg-white/15"
-                  style={{ letterSpacing: ".14em", textTransform: "uppercase" }}
-                >
-                  +5
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setMode((m) =>
-                      m === "click" ? "wood" : m === "wood" ? "beep" : "click",
-                    )
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <input
+                  type="number"
+                  value={bpmInt}
+                  min={20}
+                  max={400}
+                  onChange={(e) =>
+                    setBpm(clamp(parseInt(e.target.value || "120", 10), 20, 400))
                   }
-                  className="rounded-2xl bg-white/10 px-6 py-4 font-extrabold text-white hover:bg-white/15"
-                  style={{ letterSpacing: ".14em", textTransform: "uppercase" }}
-                >
-                  Sound: {mode}
-                </button>
+                  className="w-28 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-extrabold text-slate-900"
+                  aria-label="BPM number"
+                />
+
+                <div className="text-xs font-semibold text-slate-600">
+                  Arrow keys BPM (Shift ±5)
+                </div>
+              </div>
+            </div>
+
+            {/* Rhythm */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                Rhythm
               </div>
 
-              <div className="mt-4 text-center text-xs font-semibold text-white/80">
-                Space start/stop · Arrow keys BPM · T tap tempo · F fullscreen ·
-                C copy
+              <div className="mt-3 grid gap-3">
+                <label className="text-xs font-bold text-slate-700">
+                  Time signature
+                </label>
+                <select
+                  value={beatsPerBar}
+                  onChange={(e) => setBeatsPerBar(parseInt(e.target.value, 10))}
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-900"
+                >
+                  {TS_OPTIONS.map((o) => (
+                    <option key={o.beats} value={o.beats}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+
+                <label className="text-xs font-bold text-slate-700">
+                  Subdivision
+                </label>
+                <select
+                  value={subdivision}
+                  onChange={(e) =>
+                    setSubdivision(parseInt(e.target.value, 10) as Subdivision)
+                  }
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-900"
+                >
+                  <option value={1}>Quarter (1)</option>
+                  <option value={2}>Eighth (2)</option>
+                  <option value={3}>Triplet (3)</option>
+                  <option value={4}>Sixteenth (4)</option>
+                </select>
+
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                  <input
+                    type="checkbox"
+                    checked={accentDownbeat}
+                    onChange={(e) => setAccentDownbeat(e.target.checked)}
+                  />
+                  Accent beat 1
+                </label>
+              </div>
+            </div>
+
+            {/* Sound */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                Sound
+              </div>
+
+              <div className="mt-3 grid gap-3">
+                <label className="text-xs font-bold text-slate-700">
+                  Click type
+                </label>
+                <select
+                  value={mode}
+                  onChange={(e) => setMode(e.target.value as ClickMode)}
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-900"
+                >
+                  <option value="click">Click (bright)</option>
+                  <option value="wood">Wood (warm)</option>
+                  <option value="beep">Beep (tone)</option>
+                </select>
+
+                <label className="text-xs font-bold text-slate-700">Volume</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={Math.round(volume * 100)}
+                    onChange={(e) =>
+                      setVolume(clamp(parseInt(e.target.value, 10) / 100, 0, 1))
+                    }
+                    className="w-full"
+                    aria-label="Volume slider"
+                  />
+                  <div className="min-w-[52px] text-right text-xs font-extrabold text-slate-900">
+                    {Math.round(volume * 100)}%
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs font-semibold text-slate-700">
+                  If the sounds feel similar on tiny speakers, try headphones and
+                  switch between Beep and Click.
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Footer row */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/stop · Arrow keys BPM · T tap tempo · F
-          fullscreen · C copy
+        {/* Display */}
+        <div
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 320,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) {
+              if (isRunning) stop();
+              else void start();
+            }
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or stop" : undefined}
+        >
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
+
+          <div className="mt-2 flex items-baseline gap-3">
+            <span
+              ref={bpmTextRef}
+              className={[
+                "inline-block text-center font-mono font-extrabold",
+                isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+              ].join(" ")}
+              style={{
+                fontSize: `${fitFontPx}px`,
+                lineHeight: "1",
+                transform: "translateZ(0)",
+              }}
+            >
+              {bpmBigText}
+            </span>
+            <span className="text-sm font-extrabold uppercase tracking-widest text-slate-600">
+              BPM
+            </span>
+          </div>
+
+          <div className="mt-4 flex flex-col items-center gap-2">
+            <div
+              key={pulse.n}
+              className={`h-16 w-16 rounded-full ring-4 ${pulseRing}`}
+              style={{ animation: "pulsePop 180ms ease-out" }}
+              aria-hidden
+            />
+            <div className="text-sm font-semibold text-slate-700">
+              Beat <strong>{pulse.beat}</strong> / {beatsPerBar} · Sub{" "}
+              <strong>{pulse.sub}</strong> / {subdivision} ·{" "}
+              {pulse.accent && accentDownbeat ? "Accent" : "Tick"}
+            </div>
+          </div>
+
+          {/* Fullscreen hint overlay */}
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Settings
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                      {beatsPerBar}/4
+                    </div>
+                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                      {subLabel(subdivision)}
+                    </div>
+                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                      Sound: {mode}
+                    </div>
+                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                      Vol {Math.round(volume * 100)}%
+                    </div>
+                  </div>
+                </div>
+
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  Space = Start/Stop
+                </div>
+              </div>
+            </div>
+          )}
+
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+                @keyframes pulsePop{
+                  0% { transform: scale(.82); opacity:.55; }
+                  100% { transform: scale(1); opacity:1; }
+                }
+              `,
+            }}
+          />
         </div>
-        <div className="text-xs text-slate-600">Time zone: {tz}</div>
+
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap display to start/stop · Space start/stop · T tap · Arrow keys
+              BPM · F fullscreen · C copy
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              Time zone: {tz}
+            </div>
+          </div>
+        </FullscreenBottomBar>
+
+        {/* Footer row (normal only) */}
+        {!isFs && (
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space/Enter start/stop · Arrow keys BPM · T tap · F
+              fullscreen · C copy
+            </div>
+            <div className="text-xs text-slate-600">Time zone: {tz}</div>
+          </div>
+        )}
       </div>
     </Card>
   );
@@ -1057,8 +1085,10 @@ function MetronomeCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function MetronomePage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/metronome";
+export default function MetronomePage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/metronome";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -1077,201 +1107,39 @@ export default function MetronomePage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Metronome", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "How do I use the online metronome?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Set your BPM, press Start, and practice with the clicks. Use Tap tempo to match a song. You can change time signature, subdivision, and downbeat accent.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Is this metronome accurate?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "The click timing is scheduled on the Web Audio clock, which is designed for stable timing. Bluetooth speakers can add playback delay, but the interval stays consistent.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Why does time signature feel subtle?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Time signature changes the bar length and the accented downbeat. Turn on Accent beat 1 to make the bar boundary obvious, especially in 5/4 or 7/8.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What keyboard shortcuts are supported?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space or Enter starts and stops. Arrow Up or Down changes BPM. T taps tempo, F toggles fullscreen, and C copies your current settings.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Metronome</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Online Metronome
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A free <strong>online metronome</strong> and{" "}
-            <strong>tempo timer</strong> with tap tempo, accents, subdivisions,
-            and fullscreen.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <MetronomeCard />
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Tap tempo</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Tap a steady beat a few times and the BPM updates. This is the
-              fastest way to match a song without guessing.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Accents and bars
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Time signature sets how many beats are in each bar. Turn on Accent
-              beat 1 to clearly hear the start of each bar.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Practice in fullscreen
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen uses a dedicated stage with a big pulse and minimal
-              controls, so it works well on a second monitor.
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <MetronomeCard />
         </div>
-      </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Online metronome and tempo timer
-          </h2>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Metronome</span>
+        </p>
 
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This free <strong>online metronome</strong> keeps a steady beat at
-              your chosen BPM. It is also a simple <strong>tempo timer</strong>{" "}
-              for practice, drills, and rhythm training.
-            </p>
-
-            <p>
-              Use <strong>tap tempo</strong> to find BPM quickly, choose a{" "}
-              <strong>time signature</strong> to match your music, and add a{" "}
-              <strong>downbeat accent</strong> so bar starts are obvious.
-              Subdivision adds extra clicks inside each beat.
-            </p>
-
-            <p>
-              More tools:{" "}
-              <Link
-                to="/reaction-time-test"
-                className="font-semibold hover:underline"
-              >
-                Reaction Time Test
-              </Link>{" "}
-              ·{" "}
-              <Link
-                to="/retro-flip-clock"
-                className="font-semibold hover:underline"
-              >
-                Retro Flip Clock
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Metronome FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why does the sound not play until I click?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Most browsers block audio until a user gesture. Starting,
-              stopping, or tapping tempo unlocks audio.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is the beat actually accurate?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Ticks are scheduled using the Web Audio time base. Output
-              devices can add delay, especially Bluetooth, but the interval
-              stays steady.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is subdivision?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Subdivision controls how many clicks happen within each beat:
-              eighths are 2, triplets are 3, and sixteenths are 4.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Space or Enter starts and stops. Arrow keys change BPM. T taps
-              tempo, F toggles fullscreen, and C copies settings.
-            </div>
-          </details>
-        </div>
+        {/* Loader data is available if you need it later; keeping to avoid unused loader changes */}
+        <span className="sr-only" aria-hidden>
+          {nowISO}
+        </span>
       </section>
     </main>
   );

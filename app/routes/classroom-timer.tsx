@@ -46,7 +46,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -87,7 +87,15 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (same style as other pages)
+async function toggleFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) {
+    await el.requestFullscreen().catch(() => {});
+  } else {
+    await document.exitFullscreen().catch(() => {});
+  }
+}
+
+/* WebAudio beep */
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -97,20 +105,18 @@ function useBeep() {
     };
   }, []);
 
-  return useCallback((freq = 880, duration = 160) => {
+  return useCallback((freq = 880, duration = 140, gain = 0.1) => {
     try {
       const Ctx = window.AudioContext || (window as any).webkitAudioContext;
       const ctx = (ctxRef.current ??= new Ctx());
 
-      if (ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
 
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.type = "sine";
       o.frequency.value = freq;
-      g.gain.value = 0.1;
+      g.gain.value = gain;
 
       o.connect(g);
       g.connect(ctx.destination);
@@ -127,12 +133,116 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
+function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * Uses ResizeObserver + rAF, binary-searching the best font size.
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: React.RefObject<HTMLElement | null>;
+  textRef: React.RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* =========================================================
@@ -143,16 +253,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -177,13 +298,87 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+const Chip = ({
+  active,
+  children,
+  onClick,
+  disabled,
+}: {
+  active?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
+      active
+        ? "bg-slate-900 text-white hover:bg-slate-800"
+        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  left,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+          {left}
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    CLASSROOM TIMER CARD
@@ -198,7 +393,10 @@ function ClassroomTimerCard() {
 
   const [label, setLabel] = useState("Classroom Timer");
   const [minutes, setMinutes] = useState(5);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
+
+  const baseMs = minutes * 60 * 1000;
+
+  const [remaining, setRemaining] = useState(baseMs);
   const [running, setRunning] = useState(false);
 
   const [sound, setSound] = useState(true);
@@ -207,30 +405,91 @@ function ClassroomTimerCard() {
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
-
   const lastBeepSecondRef = useRef<number | null>(null);
   const endedRef = useRef(false);
 
-  useEffect(() => {
-    setRemaining(minutes * 60 * 1000);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  // Layout stability: lock the time line to a fixed character width so digits don't reflow.
+  // 1) tabular-nums: monospaced digits
+  // 2) minWidth on the time line: reserve max width (H:MM:SS -> 7 chars, no-hours -> 4 chars)
+  const timeMinWidthCh = useMemo(() => (minutes >= 60 ? 7 : 5), [minutes]);
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  function reset() {
     setRunning(false);
+    setRemaining(baseMs);
     endRef.current = null;
     lastBeepSecondRef.current = null;
     endedRef.current = false;
+    stopRaf();
+  }
+
+  useEffect(() => {
+    setRunning(false);
+    setRemaining(baseMs);
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+    endedRef.current = false;
+    stopRaf();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [minutes]);
 
   useEffect(() => {
-    if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+    return () => stopRaf();
+  }, []);
+
+  function startPause() {
+    if (running) {
+      setRunning(false);
       endRef.current = null;
       lastBeepSecondRef.current = null;
+      stopRaf();
       return;
     }
 
-    if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
+    const startMs = remaining <= 0 ? baseMs : remaining;
+
+    endedRef.current = false;
+    lastBeepSecondRef.current = null;
+    endRef.current = performance.now() + Math.max(0, startMs);
+
+    if (remaining <= 0) setRemaining(startMs);
+    setRunning(true);
+  }
+
+  function setPreset(m: number) {
+    setMinutes(m);
+  }
+
+  function addSeconds(deltaSeconds: number) {
+    const delta = deltaSeconds * 1000;
+
+    setRemaining((r) => {
+      const next = clamp(r + delta, 0, 3 * 60 * 60 * 1000);
+
+      if (running && endRef.current) {
+        endRef.current = endRef.current + delta;
+      }
+
+      if (delta > 0 && next > 0) endedRef.current = false;
+
+      return next;
+    });
+  }
+
+  useEffect(() => {
+    if (!running) {
+      stopRaf();
+      return;
     }
 
     const tick = () => {
@@ -242,7 +501,7 @@ function ClassroomTimerCard() {
         const secLeft = Math.ceil(rem / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
           lastBeepSecondRef.current = secLeft;
-          beep(880, 110);
+          beep(880, 110, 0.07);
         }
       }
 
@@ -250,15 +509,15 @@ function ClassroomTimerCard() {
         endRef.current = null;
         setRunning(false);
         lastBeepSecondRef.current = null;
+        stopRaf();
 
         if (!endedRef.current) {
           endedRef.current = true;
           if (sound && endChime) {
-            // simple 2-tone chime
-            beep(660, 180);
-            window.setTimeout(() => beep(990, 220), 220);
+            beep(660, 180, 0.1);
+            window.setTimeout(() => beep(990, 220, 0.1), 220);
           } else if (sound && !endChime) {
-            beep(660, 220);
+            beep(660, 220, 0.1);
           }
         }
         return;
@@ -268,316 +527,339 @@ function ClassroomTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, remaining, sound, finalCountdownBeeps, endChime, beep]);
+    return () => stopRaf();
+  }, [running, sound, finalCountdownBeeps, endChime, beep]);
 
-  function reset() {
-    setRunning(false);
-    setRemaining(minutes * 60 * 1000);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
-    endedRef.current = false;
-  }
+  const displayMs =
+    running || remaining <= 0 || remaining !== baseMs ? remaining : baseMs;
+  const shownTime = msToClock(Math.ceil(displayMs / 1000) * 1000);
 
-  function startPause() {
-    endedRef.current = false;
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
-  }
+  const urgent = running && remaining > 0 && remaining <= 10_000;
+  const finished = !running && remaining <= 0;
 
-  function setPreset(m: number) {
-    setMinutes(m);
-  }
+  const statusLabel = finished ? "Time is up" : running ? "Running" : "Ready";
 
-  function addSeconds(deltaSeconds: number) {
-    const delta = deltaSeconds * 1000;
-    setRemaining((r) => {
-      const next = clamp(r + delta, 0, 3 * 60 * 60 * 1000);
-      if (running && endRef.current) {
-        endRef.current = endRef.current + delta;
-      }
-      return next;
-    });
-    endedRef.current = false;
-  }
+  const displayTone = finished
+    ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+    : urgent
+      ? "border-rose-200 bg-amber-50 text-rose-950"
+      : "border-slate-200 bg-slate-50 text-slate-950";
+
+  // IMPORTANT: don't include shownTime in deps to prevent font-size recalculation on every second.
+  // The text width is stabilized via tabular-nums + minWidth, so it can stay steady.
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [statusLabel, isFs, running, finished, minutes],
+    minPx: 56,
+    maxPx: isFs ? 560 : 360,
+    paddingAllowancePx: isFs ? 72 : 80,
+  });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
+    const k = e.key.toLowerCase();
+
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key === "+") {
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "+") {
       addSeconds(60);
-    } else if (e.key === "-") {
+    } else if (k === "-") {
       addSeconds(-60);
     }
   };
 
-  const urgent = running && remaining > 0 && remaining <= 10_000;
-  const finished = !running && remaining <= 0;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
-
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Classroom Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Built for teachers. Big digits for smartboards, quick presets for
-            transitions, optional sound, and simple keyboard shortcuts.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Classroom Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        left={
+          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={sound}
+                onChange={(e) => setSound(e.target.checked)}
+                className="accent-amber-500"
+              />
+              Sound
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={finalCountdownBeeps}
+                onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                disabled={!sound}
+                className="accent-amber-500"
+              />
+              Final beeps
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={endChime}
+                onChange={(e) => setEndChime(e.target.checked)}
+                disabled={!sound}
+                className="accent-amber-500"
+              />
+              End chime
+            </label>
+          </div>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind={running ? "solid" : "ghost"}
+              onClick={startPause}
+              className="py-1 text-sm"
+            >
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-wrap ml-auto items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Sound
+              </label>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={finalCountdownBeeps}
+                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                  disabled={!sound}
+                  className="accent-amber-500"
+                />
+                Final beeps
+              </label>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={endChime}
-              onChange={(e) => setEndChime(e.target.checked)}
-              disabled={!sound}
-            />
-            End chime
-          </label>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={endChime}
+                  onChange={(e) => setEndChime(e.target.checked)}
+                  disabled={!sound}
+                  className="accent-amber-500"
+                />
+                End chime
+              </label>
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-      {/* Presets */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
+        {!isFs && (
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            {presetsMin.map((m) => (
+              <Chip
+                key={m}
+                active={m === minutes}
+                onClick={() => setPreset(m)}
+                disabled={running}
+              >
+                {m}m
+              </Chip>
+            ))}
+          </div>
+        )}
 
-      {/* Custom minutes + label */}
-      <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
-          <input
-            type="number"
-            min={1}
-            max={180}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Label (optional)
-          <input
-            type="text"
-            value={label}
-            onChange={(e) => setLabel(e.target.value.slice(0, 40))}
-            placeholder="Transition, Centers, Quiz..."
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
-
-      {/* Quick adjust */}
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <Btn kind="ghost" onClick={() => addSeconds(-60)}>
-          -1 min
-        </Btn>
-        <Btn kind="ghost" onClick={() => addSeconds(60)}>
-          +1 min
-        </Btn>
-        <Btn kind="ghost" onClick={() => addSeconds(300)}>
-          +5 min
-        </Btn>
-        <div className="text-xs text-slate-600">
-          Shortcuts: + adds 1 minute · - removes 1 minute
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          finished
-            ? "border-emerald-300 bg-emerald-50 text-emerald-950"
-            : urgent
-              ? "border-rose-300 bg-rose-50 text-rose-950"
-              : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 260 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1600px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 900 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.92;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 260px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 800 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.86;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-state{
-                margin-top:2px;
-                font: 900 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.10em;
-                text-transform:uppercase;
-                opacity:.86;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 260 }}
+          ref={displayBoxRef}
+          className={[
+            "mt-4 flex flex-col items-center justify-center rounded-2xl border font-mono font-extrabold",
+            displayTone,
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={(e) => {
+            if (isFs && e.target === e.currentTarget) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click empty space to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-3">
-            <div className="text-sm font-extrabold uppercase tracking-widest text-slate-700">
-              {label.trim() ? label : "Classroom Timer"}
-            </div>
-            <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-              <span className="text-6xl sm:text-7xl md:text-8xl">
-                {shownTime}
-              </span>
-            </div>
-            <div className="text-xs text-slate-600">
-              Space start/pause · R reset · F fullscreen · + / - adjust
-            </div>
-            {finished ? (
-              <div className="mt-1 rounded-full bg-emerald-600 px-4 py-2 text-sm font-extrabold text-white">
-                Time is up
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {label.trim() ? label.trim() : "Classroom Timer"}
+          </div>
+
+          <div className="mt-2 text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            {statusLabel}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center tabular-nums",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+              // Reserve a stable width so the fit algorithm and layout don't jump as digits change.
+              minWidth: `${timeMinWidthCh}ch`,
+            }}
+          >
+            {shownTime}
+          </span>
+
+          <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Quick adjust
               </div>
-            ) : null}
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <Btn kind="ghost" onClick={() => addSeconds(-60)}>
+                  -1 min
+                </Btn>
+                <Btn kind="ghost" onClick={() => addSeconds(60)}>
+                  +1 min
+                </Btn>
+                <Btn kind="ghost" onClick={() => addSeconds(300)}>
+                  +5 min
+                </Btn>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Shortcuts
+              </div>
+              <div className="mt-1 text-sm font-semibold text-slate-700">
+                Space start/pause · R reset · F fullscreen · + add 1 min · - sub
+                1 min
+              </div>
+            </div>
           </div>
+
+          {!isFs && (
+            <div className="mt-3 text-xs text-slate-600">
+              Tip: click the card once so keyboard shortcuts work immediately.
+            </div>
+          )}
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">{label.trim() ? label : "Classroom"}</div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-sub">
-              Space start/pause · R reset · F fullscreen · + / - adjust
-            </div>
-            <div className="fs-state">
-              {finished ? "TIME IS UP" : running ? "RUNNING" : "READY"}
+        {!isFs && (
+          <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_1fr_auto]">
+            <label className="block text-sm font-semibold text-slate-900">
+              Minutes
+              <input
+                type="number"
+                min={1}
+                max={180}
+                value={minutes}
+                disabled={running}
+                onChange={(e) =>
+                  setMinutes(clamp(Number(e.target.value || 1), 1, 180))
+                }
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+              />
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-900">
+              Label (optional)
+              <input
+                type="text"
+                value={label}
+                disabled={running}
+                onChange={(e) => setLabel(e.target.value.slice(0, 40))}
+                placeholder="Transition, Quiz, Centers..."
+                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
+              />
+            </label>
+
+            <div className="flex items-end gap-3">
+              <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Shortcuts note */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen · + / - adjust
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so shortcuts work immediately.
-        </div>
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              {presetsMin.map((m) => (
+                <Chip
+                  key={m}
+                  active={m === minutes}
+                  onClick={() => setMinutes(m)}
+                  disabled={running}
+                >
+                  {m}m
+                </Chip>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div className="flex items-center gap-2">
+                <Btn kind="ghost" onClick={() => addSeconds(-60)}>
+                  -1 min
+                </Btn>
+                <Btn kind="ghost" onClick={() => addSeconds(60)}>
+                  +1 min
+                </Btn>
+                <Btn kind="ghost" onClick={() => addSeconds(300)}>
+                  +5 min
+                </Btn>
+                <Btn kind={running ? "solid" : "ghost"} onClick={startPause}>
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+              </div>
+
+              <div className="text-xs text-slate-600 sm:text-sm">
+                Tap empty space to start/pause · Space · R · + · -
+              </div>
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -589,7 +871,9 @@ function ClassroomTimerCard() {
 export default function ClassroomTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/classroom-timer";
+  void nowISO;
+
+  const url = "https://www.ilovetimers.com/classroom-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -608,7 +892,7 @@ export default function ClassroomTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -618,250 +902,41 @@ export default function ClassroomTimerPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a classroom timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A classroom timer is a large countdown clock used by teachers to keep activities on schedule. It is commonly shown on a smartboard or projector so students can see the remaining time from across the room.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Is this a smartboard timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Use Fullscreen (or press F) for a clean dark view with huge digits that works well on smartboards, projectors, and TVs.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use this timer silently?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Turn Sound off. The timer still runs normally and stays visible on screen.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, F toggles fullscreen, and + or - adjusts the remaining time by one minute while the card is focused.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Classroom Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Classroom Timer
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Classroom Timer (Fullscreen Countdown)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>classroom timer</strong> for teachers and a true{" "}
-            <strong>smartboard timer</strong> in fullscreen. Designed for
-            readability, quick control, and simple routines.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Big, readable countdown for smartboards and projectors. Use presets
+            or set minutes, then run fullscreen with simple controls.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <ClassroomTimerCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Made for teacher visibility
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use Fullscreen for a dark view with huge digits. It stays readable
-              across the classroom on smartboards and projectors.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Fast presets for classroom routines
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Try <strong>1 to 3 minutes</strong> for transitions,{" "}
-              <strong>5 to 10</strong> for warm ups, and{" "}
-              <strong>15 to 30</strong> for centers or independent work.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Simple shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-              <li>
-                <strong>+</strong> / <strong>-</strong> = Add / remove 1 minute
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free classroom timer for teachers and smartboards
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>classroom timer</strong> is a simple{" "}
-              <strong>timer for teachers</strong> that keeps lessons moving.
-              Pick a preset, press Start, and display the countdown where
-              students can see it. It works well as a{" "}
-              <strong>smartboard timer</strong> because fullscreen is clean,
-              high contrast, and easy to read from the back of the room.
-            </p>
-
-            <p>
-              Use the Label box for quick context like “Transition”, “Centers”,
-              or “Quiz”. Need flexibility mid activity? Use the + and - buttons
-              (or keyboard) to add or remove time without restarting.
-            </p>
-
-            <p>
-              If you want an all purpose option, try{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For quiet work time, toggle Sound off. For structured work and
-              break blocks, use{" "}
-              <Link
-                to="/pomodoro-timer"
-                className="font-semibold hover:underline"
-              >
-                Pomodoro
-              </Link>{" "}
-              or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Classroom routines
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Use 1 to 3 minutes for transitions, 5 to 10 for warm ups, and 15
-                to 30 for stations and centers.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Smartboard friendly
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen reduces visual clutter and keeps the countdown
-                readable at a distance.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Flexible control
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Adjust time on the fly with + and - without resetting the whole
-                activity.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Classroom Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a classroom timer or a smartboard timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Both. It is a classroom countdown designed to be shown on a
-              smartboard, projector, or TV with big readable digits.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I make it look good on a smartboard?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Use <strong>Fullscreen</strong> (or press <strong>F</strong>) for
-              a dark high contrast display with very large digits.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I run it without sound?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle <strong>Sound</strong> off for silent work time. The
-              countdown still runs normally.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I add a minute without restarting?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Use the +1 min button or press <strong>+</strong>. Use{" "}
-              <strong>-</strong> to subtract a minute.
-            </div>
-          </details>
-        </div>
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Classroom Timer</span>
+        </p>
       </section>
     </main>
   );

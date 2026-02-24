@@ -1,8 +1,21 @@
 // app/routes/event-countdown.tsx
 import type { Route } from "./+types/event-countdown";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/event-countdown/HowItWorks";
+import Disclaimer from "~/clients/components/event-countdown/Disclaimer";
+import FAQ from "~/clients/components/event-countdown/FAQ";
+import KeyboardShortcuts from "~/clients/components/event-countdown/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/event-countdown/PopularUseCases";
 
 /* =========================================================
    META
@@ -45,7 +58,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -59,13 +72,9 @@ export function loader() {
 /* =========================================================
    UTILS
 ========================================================= */
-function clamp(n: number, min: number, max: number) {
-  return Math.min(Math.max(n, min), max);
-}
-
 const pad2 = (n: number) => n.toString().padStart(2, "0");
 
-function msToClock(ms: number) {
+function msToClockShort(ms: number) {
   const t = Math.max(0, Math.floor(ms));
   const s = Math.floor(t / 1000);
   const h = Math.floor(s / 3600);
@@ -74,7 +83,7 @@ function msToClock(ms: number) {
   return h > 0 ? `${h}:${pad2(m)}:${pad2(sec)}` : `${m}:${pad2(sec)}`;
 }
 
-function msToLong(ms: number) {
+function msToClockLong(ms: number) {
   const totalSec = Math.max(0, Math.floor(ms / 1000));
   const days = Math.floor(totalSec / 86400);
   const h = Math.floor((totalSec % 86400) / 3600);
@@ -97,7 +106,6 @@ function isTypingTarget(target: EventTarget | null) {
 }
 
 function toLocalInputValue(d: Date) {
-  // "YYYY-MM-DDTHH:mm" in local time
   const year = d.getFullYear();
   const month = pad2(d.getMonth() + 1);
   const day = pad2(d.getDate());
@@ -107,13 +115,12 @@ function toLocalInputValue(d: Date) {
 }
 
 function parseLocalDateTime(value: string) {
-  // value is "YYYY-MM-DDTHH:mm" from <input type="datetime-local">
-  // Date(value) treats it as local in most browsers. We'll construct explicitly.
   const [datePart, timePart] = value.split("T");
   if (!datePart || !timePart) return null;
 
   const [y, mo, d] = datePart.split("-").map(Number);
   const [h, mi] = timePart.split(":").map(Number);
+
   if (
     !Number.isFinite(y) ||
     !Number.isFinite(mo) ||
@@ -128,7 +135,52 @@ function parseLocalDateTime(value: string) {
   return Number.isNaN(dt.getTime()) ? null : dt;
 }
 
-// WebAudio beep (same style as other pages)
+function clamp(n: number, min: number, max: number) {
+  return Math.min(Math.max(n, min), max);
+}
+
+function safeJsonParse<T>(raw: string | null): T | null {
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function uid() {
+  try {
+    return crypto.randomUUID();
+  } catch {
+    return `evt_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  }
+}
+
+async function toggleFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) {
+    await el.requestFullscreen().catch(() => {});
+  } else {
+    await document.exitFullscreen().catch(() => {});
+  }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+// WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -168,12 +220,184 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * Uses ResizeObserver + rAF and binary search.
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
+/* =========================================================
+   LOCAL STORAGE
+========================================================= */
+type StoredEvent = {
+  id: string;
+  name: string;
+  targetValue: string; // datetime-local value
+  sound: boolean;
+  finalBeeps: boolean;
+  createdAt: number;
+};
+
+type StoredStateV1 = {
+  v: 1;
+  selectedId: string;
+  events: StoredEvent[];
+};
+
+const LS_KEY = "ilovetimers:event-countdown:v1";
+
+function makeDefaultEvent(now = Date.now()): StoredEvent {
+  return {
+    id: uid(),
+    name: "My Event",
+    targetValue: toLocalInputValue(new Date(now + 60 * 60 * 1000)),
+    sound: true,
+    finalBeeps: false,
+    createdAt: now,
+  };
+}
+
+function normalizeState(input: any): StoredStateV1 {
+  const fallbackEvent = makeDefaultEvent();
+  const fallback: StoredStateV1 = {
+    v: 1,
+    selectedId: fallbackEvent.id,
+    events: [fallbackEvent],
+  };
+
+  if (!input || typeof input !== "object") return fallback;
+  if (input.v !== 1) return fallback;
+
+  const eventsRaw = Array.isArray(input.events) ? input.events : [];
+  const events: StoredEvent[] = eventsRaw
+    .map((e: any) => {
+      if (!e || typeof e !== "object") return null;
+
+      const id = typeof e.id === "string" && e.id ? e.id : "";
+      const name = typeof e.name === "string" ? e.name : "My Event";
+      const targetValue =
+        typeof e.targetValue === "string" && e.targetValue.includes("T")
+          ? e.targetValue
+          : fallbackEvent.targetValue;
+
+      const sound = typeof e.sound === "boolean" ? e.sound : true;
+      const finalBeeps =
+        typeof e.finalBeeps === "boolean" ? e.finalBeeps : false;
+
+      const createdAt =
+        typeof e.createdAt === "number" && Number.isFinite(e.createdAt)
+          ? e.createdAt
+          : Date.now();
+
+      if (!id) return null;
+
+      return { id, name, targetValue, sound, finalBeeps, createdAt };
+    })
+    .filter(Boolean) as StoredEvent[];
+
+  const safeEvents = events.length > 0 ? events : [fallbackEvent];
+
+  const selectedId =
+    typeof input.selectedId === "string" && input.selectedId
+      ? input.selectedId
+      : safeEvents[0].id;
+
+  const finalSelectedId = safeEvents.some((e) => e.id === selectedId)
+    ? selectedId
+    : safeEvents[0].id;
+
+  return { v: 1, selectedId: finalSelectedId, events: safeEvents };
 }
 
 /* =========================================================
@@ -184,16 +408,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -218,54 +453,128 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
    EVENT COUNTDOWN CARD
-   - Count down to a specific local date/time
-   - Honest "page must stay open" note
-   - Also includes duration-based workaround (copy minutes to Countdown Timer)
 ========================================================= */
 function EventCountdownCard() {
   const beep = useBeep();
 
-  const [eventName, setEventName] = useState("My Event");
-  const [targetValue, setTargetValue] = useState(() =>
-    toLocalInputValue(new Date(Date.now() + 60 * 60 * 1000)),
-  );
+  const [store, setStore] = useState<StoredStateV1>(() => normalizeState(null));
+  const [hydrated, setHydrated] = useState(false);
 
+  // Runtime-only
   const [running, setRunning] = useState(false);
-  const [sound, setSound] = useState(true);
-  const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
-
   const [remaining, setRemaining] = useState<number>(0);
   const [status, setStatus] = useState<"idle" | "counting" | "past" | "done">(
     "idle",
   );
 
   const rafRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
 
-  const targetDate = useMemo(
-    () => parseLocalDateTime(targetValue),
-    [targetValue],
-  );
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  const selectedEvent = useMemo(() => {
+    return (
+      store.events.find((e) => e.id === store.selectedId) ?? store.events[0]
+    );
+  }, [store]);
+
+  const targetDate = useMemo(() => {
+    return parseLocalDateTime(selectedEvent?.targetValue ?? "");
+  }, [selectedEvent?.targetValue]);
 
   const computeRemaining = useCallback(() => {
     if (!targetDate) return 0;
     return Math.max(0, targetDate.getTime() - Date.now());
   }, [targetDate]);
 
-  // Initialize remaining when target changes (and stop running)
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  // Load from localStorage once on mount.
+  useEffect(() => {
+    const loaded = safeJsonParse<StoredStateV1>(localStorage.getItem(LS_KEY));
+    const normalized = normalizeState(loaded);
+    setStore(normalized);
+    setHydrated(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist whenever store changes (after hydration).
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(store));
+    } catch {
+      // ignore
+    }
+  }, [store, hydrated]);
+
+  // When selected event or its target changes, refresh remaining and stop running.
   useEffect(() => {
     setRunning(false);
+    stopRaf();
     lastBeepSecondRef.current = null;
 
     if (!targetDate) {
@@ -282,12 +591,13 @@ function EventCountdownCard() {
       setRemaining(ms);
       setStatus("idle");
     }
-  }, [targetDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store.selectedId, selectedEvent?.targetValue, targetDate]);
 
+  // Tick loop
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       lastBeepSecondRef.current = null;
       return;
     }
@@ -296,7 +606,10 @@ function EventCountdownCard() {
       const rem = computeRemaining();
       setRemaining(rem);
 
-      if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
+      const sound = !!selectedEvent?.sound;
+      const finalBeeps = !!selectedEvent?.finalBeeps;
+
+      if (sound && finalBeeps && rem > 0 && rem <= 5_000) {
         const secLeft = Math.ceil(rem / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
           lastBeepSecondRef.current = secLeft;
@@ -309,6 +622,7 @@ function EventCountdownCard() {
         setStatus("done");
         lastBeepSecondRef.current = null;
         if (sound) beep(660, 240, 0.12);
+        stopRaf();
         return;
       }
 
@@ -317,26 +631,38 @@ function EventCountdownCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, computeRemaining, sound, finalCountdownBeeps, beep]);
+    return () => stopRaf();
+  }, [
+    running,
+    computeRemaining,
+    beep,
+    selectedEvent?.sound,
+    selectedEvent?.finalBeeps,
+  ]);
+
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
   function startPause() {
     if (!targetDate) return;
+
     const ms = targetDate.getTime() - Date.now();
     if (ms <= 0) {
       setStatus("past");
       setRemaining(0);
+      setRunning(false);
+      stopRaf();
       return;
     }
-    setRunning((r) => !r);
+
     lastBeepSecondRef.current = null;
+    setRunning((r) => !r);
   }
 
   function reset() {
     setRunning(false);
+    stopRaf();
     lastBeepSecondRef.current = null;
 
     const ms = computeRemaining();
@@ -344,27 +670,122 @@ function EventCountdownCard() {
     setStatus(ms > 0 ? "idle" : "past");
   }
 
-  function setPresetHours(h: number) {
-    const d = new Date(Date.now() + h * 60 * 60 * 1000);
-    setTargetValue(toLocalInputValue(d));
+  function updateSelectedEvent(patch: Partial<StoredEvent>) {
+    setStore((prev) => {
+      const events = prev.events.map((e) =>
+        e.id === prev.selectedId ? { ...e, ...patch } : e,
+      );
+      return { ...prev, events };
+    });
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  function selectEvent(id: string) {
+    setRunning(false);
+    stopRaf();
+    lastBeepSecondRef.current = null;
+    setStore((prev) => ({ ...prev, selectedId: id }));
+  }
+
+  // NEW: creates a fresh event with default values
+  function addNewEvent() {
+    const now = Date.now();
+    const next = makeDefaultEvent(now);
+
+    setRunning(false);
+    stopRaf();
+    lastBeepSecondRef.current = null;
+
+    setStore((prev) => ({
+      ...prev,
+      events: [next, ...prev.events],
+      selectedId: next.id,
+    }));
+  }
+
+  // DUPLICATE: clones the selected event (name, target, toggles)
+  function duplicateSelectedEvent() {
+    const now = Date.now();
+    const base = selectedEvent ?? makeDefaultEvent(now);
+
+    const next: StoredEvent = {
+      ...base,
+      id: uid(),
+      name: base.name ? `${base.name} (Copy)` : "Event (Copy)",
+      createdAt: now,
+    };
+
+    setRunning(false);
+    stopRaf();
+    lastBeepSecondRef.current = null;
+
+    setStore((prev) => ({
+      ...prev,
+      events: [next, ...prev.events],
+      selectedId: next.id,
+    }));
+  }
+
+  function deleteSelectedEvent() {
+    setRunning(false);
+    stopRaf();
+    lastBeepSecondRef.current = null;
+
+    setStore((prev) => {
+      if (prev.events.length <= 1) {
+        const only = prev.events[0];
+        const resetEvent: StoredEvent = {
+          ...only,
+          name: "My Event",
+          targetValue: toLocalInputValue(new Date(Date.now() + 60 * 60 * 1000)),
+          sound: true,
+          finalBeeps: false,
+          createdAt: Date.now(),
+        };
+        return { ...prev, events: [resetEvent], selectedId: resetEvent.id };
+      }
+
+      const idx = prev.events.findIndex((e) => e.id === prev.selectedId);
+      const nextEvents = prev.events.filter((e) => e.id !== prev.selectedId);
+      const nextIdx = clamp(idx, 0, nextEvents.length - 1);
+      const nextSelectedId = nextEvents[nextIdx]?.id ?? nextEvents[0].id;
+
+      return { ...prev, events: nextEvents, selectedId: nextSelectedId };
+    });
+  }
+
+  function setPresetHours(h: number) {
+    const d = new Date(Date.now() + h * 60 * 60 * 1000);
+    updateSelectedEvent({ targetValue: toLocalInputValue(d) });
+  }
+
+  function adjustTargetHours(deltaHours: number) {
+    const base = targetDate ?? new Date();
+    const next = new Date(base.getTime() + deltaHours * 60 * 60 * 1000);
+    updateSelectedEvent({ targetValue: toLocalInputValue(next) });
+  }
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
   const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownShort = msToClock(Math.ceil(remaining / 1000) * 1000);
-  const shownLong = msToLong(remaining);
+
+  const roundedMs = Math.ceil(remaining / 1000) * 1000;
+  const shownLong = msToClockLong(roundedMs);
+  const shownShort = msToClockShort(roundedMs);
 
   const readableTarget = targetDate
     ? targetDate.toLocaleString(undefined, {
@@ -377,287 +798,377 @@ function EventCountdownCard() {
       })
     : "";
 
-  const durationWorkaroundMinutes = Math.max(1, Math.ceil(remaining / 60000));
+  const statusLabel =
+    status === "past"
+      ? "Past"
+      : status === "done"
+        ? "Done"
+        : running
+          ? "Running"
+          : remaining > 0
+            ? "Ready"
+            : "Ready";
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [
+      shownLong,
+      isFs,
+      running,
+      urgent,
+      status,
+      selectedEvent?.name,
+      selectedEvent?.targetValue,
+      store.events.length,
+      store.selectedId,
+    ],
+    minPx: 56,
+    maxPx: isFs ? 520 : 380,
+    paddingAllowancePx: isFs ? 64 : 72,
+  });
+
+  const canStart = !!targetDate && remaining > 0;
+
+  const sortedEvents = useMemo(() => {
+    return store.events.slice().sort((a, b) => b.createdAt - a.createdAt);
+  }, [store.events]);
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Event Countdown
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            A live <strong>countdown to date</strong> and{" "}
-            <strong>countdown to time</strong>. Choose a date/time and run a big
-            fullscreen countdown to your event.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Inputs */}
-      <div className="mt-6 grid gap-3 lg:grid-cols-3">
-        <label className="block text-sm font-semibold text-amber-950">
-          Event name
-          <input
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            placeholder="My Event"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Date & time (local)
-          <input
-            type="datetime-local"
-            value={targetValue}
-            onChange={(e) => setTargetValue(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-slate-600">
-            Uses your device’s local time.
-          </div>
-        </label>
-
-        <div className="flex flex-wrap items-end gap-2">
-          <Btn onClick={startPause} disabled={!targetDate}>
-            {running ? "Pause" : "Start"}
-          </Btn>
-          <Btn kind="ghost" onClick={reset} disabled={!targetDate}>
-            Refresh
-          </Btn>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setPresetHours(1)}
-              className="cursor-pointer rounded-full bg-amber-500/30 px-3 py-1 text-sm font-semibold text-amber-950 hover:bg-amber-400"
-              title="Set target to 1 hour from now"
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Event Countdown"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn
+              kind="solid"
+              onClick={startPause}
+              className="py-1 text-sm"
+              disabled={!canStart && !running}
             >
-              +1h
-            </button>
-            <button
-              type="button"
-              onClick={() => setPresetHours(2)}
-              className="cursor-pointer rounded-full bg-amber-500/30 px-3 py-1 text-sm font-semibold text-amber-950 hover:bg-amber-400"
-              title="Set target to 2 hours from now"
-            >
-              +2h
-            </button>
-            <button
-              type="button"
-              onClick={() => setPresetHours(24)}
-              className="cursor-pointer rounded-full bg-amber-500/30 px-3 py-1 text-sm font-semibold text-amber-950 hover:bg-amber-400"
-              title="Set target to 24 hours from now"
-            >
-              +24h
-            </button>
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
           </div>
-        </div>
-      </div>
+        }
+      />
 
-      {/* Status line */}
-      <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-        {!targetDate ? (
-          <div className="text-sm font-semibold text-amber-950">
-            Pick a valid date and time to start the event countdown.
-          </div>
-        ) : status === "past" ? (
-          <div className="text-sm font-semibold text-rose-900">
-            That date/time is in the past. Pick a future date/time.
-          </div>
-        ) : status === "done" ? (
-          <div className="text-sm font-semibold text-emerald-900">
-            {eventName || "Event"} reached. Countdown finished.
-          </div>
-        ) : (
-          <div className="text-sm font-semibold text-amber-950">
-            Counting down to{" "}
-            <span className="font-extrabold">{eventName || "your event"}</span>{" "}
-            <span className="text-slate-700">({readableTarget})</span>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            {/* Status line (normal only) */}
+            {!isFs && (
+              <div className="mt-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm">
+                {!targetDate ? (
+                  <div className="font-semibold text-slate-900">
+                    Pick a valid date and time to start.
+                  </div>
+                ) : status === "past" ? (
+                  <div className="font-semibold text-rose-700">
+                    That date/time is in the past.
+                  </div>
+                ) : status === "done" ? (
+                  <div className="font-semibold text-emerald-700">
+                    {(selectedEvent?.name || "Event").trim() || "Event"}{" "}
+                    reached.
+                  </div>
+                ) : (
+                  <div className="font-semibold text-slate-900">
+                    Target:{" "}
+                    <span className="font-extrabold">{readableTarget}</span>
+                  </div>
+                )}
+
+                <div className="mt-1 text-xs font-semibold text-slate-600">
+                  Shortcuts: Space start/pause · R reset · F fullscreen
+                </div>
+              </div>
+            )}
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
           </div>
         )}
 
-        {/* Workaround line (captures intent even if user wants duration-only) */}
-        {targetDate && remaining > 0 ? (
-          <div className="mt-2 text-sm text-amber-900">
-            Need a duration-only timer instead? Use{" "}
-            <strong>{durationWorkaroundMinutes} minutes</strong> on the{" "}
-            <Link
-              to="/countdown-timer"
-              className="font-semibold hover:underline"
-            >
-              Countdown Timer
-            </Link>{" "}
-            page.
-          </div>
-        ) : null}
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 260 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1500px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:20px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(88px, 16vw, 220px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.08em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 260 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            urgent ? "ring-2 ring-rose-300/50" : "",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-2">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              {eventName || "Event countdown"}
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {(selectedEvent?.name || "Event").trim() || "Event"}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownLong}
+          </span>
+
+          <div className="mt-3 text-sm font-semibold text-slate-700">
+            {shownShort}
+          </div>
+
+          {/* Fullscreen overlays */}
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Status
+                  </div>
+                  <div className="text-xs font-semibold text-slate-700">
+                    {statusLabel}
+                    {targetDate && status !== "past" && status !== "done" ? (
+                      <span className="ml-2 text-slate-600">
+                        Target: {readableTarget}
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  Space = Start/Pause
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
+            {/* Row 1: event selector + event actions */}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="min-w-0 flex-1">
+                <label className="block text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                  Saved events
+                </label>
+                <select
+                  value={store.selectedId}
+                  onChange={(e) => selectEvent(e.target.value)}
+                  className="cursor-pointer mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                >
+                  {sortedEvents.map((ev) => (
+                    <option key={ev.id} value={ev.id}>
+                      {ev.name || "Untitled Event"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                <Btn kind="ghost" onClick={addNewEvent} className="px-3 py-2">
+                  New
+                </Btn>
+                <Btn
+                  kind="ghost"
+                  onClick={duplicateSelectedEvent}
+                  className="px-3 py-2"
+                >
+                  Duplicate
+                </Btn>
+                <Btn
+                  kind="ghost"
+                  onClick={deleteSelectedEvent}
+                  className="px-3 py-2"
+                  disabled={store.events.length <= 1}
+                >
+                  Delete
+                </Btn>
+              </div>
             </div>
 
-            <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-              <span className="text-6xl sm:text-7xl md:text-8xl">
-                {shownShort}
-              </span>
+            {/* Row 2: name + datetime */}
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <label className="block text-sm font-semibold text-slate-900">
+                Event name
+                <input
+                  value={selectedEvent?.name ?? ""}
+                  onChange={(e) =>
+                    updateSelectedEvent({ name: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  placeholder="My Event"
+                />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-900">
+                Date & time (local)
+                <input
+                  type="datetime-local"
+                  value={selectedEvent?.targetValue ?? ""}
+                  onChange={(e) =>
+                    updateSelectedEvent({ targetValue: e.target.value })
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                />
+              </label>
             </div>
 
-            <div className="text-sm font-semibold text-slate-700">
-              {shownLong}
-            </div>
+            {/* Row 3: run controls + toggles + presets */}
+            <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-wrap items-center gap-2">
+                <Btn onClick={startPause} disabled={!canStart && !running}>
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset} disabled={!targetDate}>
+                  Reset
+                </Btn>
 
-            <div className="text-xs text-slate-600">
-              Space start/pause · R refresh · F fullscreen
+                <div className="ml-0 flex flex-wrap items-center gap-2 lg:ml-2">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                    <input
+                      type="checkbox"
+                      checked={!!selectedEvent?.sound}
+                      onChange={(e) =>
+                        updateSelectedEvent({ sound: e.target.checked })
+                      }
+                    />
+                    Sound
+                  </label>
+
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                    <input
+                      type="checkbox"
+                      checked={!!selectedEvent?.finalBeeps}
+                      onChange={(e) =>
+                        updateSelectedEvent({ finalBeeps: e.target.checked })
+                      }
+                      disabled={!selectedEvent?.sound}
+                    />
+                    Final beeps
+                  </label>
+                </div>
+              </div>
+
+              {/* Time adjust chips */}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-semibold text-slate-600">
+                    Adjust:
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => adjustTargetHours(-1)}
+                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                    title="Subtract 1 hour"
+                  >
+                    -1h
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => adjustTargetHours(-2)}
+                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                    title="Subtract 2 hours"
+                  >
+                    -2h
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => adjustTargetHours(-24)}
+                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                    title="Subtract 24 hours"
+                  >
+                    -24h
+                  </button>
+
+                  <span className="mx-1 text-xs font-semibold text-slate-400">
+                    |
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => adjustTargetHours(1)}
+                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                    title="Add 1 hour"
+                  >
+                    +1h
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => adjustTargetHours(2)}
+                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                    title="Add 2 hours"
+                  >
+                    +2h
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => adjustTargetHours(24)}
+                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
+                    title="Add 24 hours"
+                  >
+                    +24h
+                  </button>
+                </div>
+
+                <div className="ml-1 text-xs font-semibold text-slate-600">
+                  Saved in your browser
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">{eventName || "Event Countdown"}</div>
-            <div className="fs-time">{shownLong}</div>
-            {targetDate ? (
-              <div className="fs-sub">Target: {readableTarget}</div>
-            ) : null}
-            <div className="fs-help">
-              Space start/pause · R refresh · F fullscreen
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · R reset · F
+              fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Honest limitation block */}
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-        <div className="text-sm font-extrabold text-amber-950">
-          Important: this countdown runs while the page is open
-        </div>
-        <div className="mt-2 space-y-2 text-sm text-amber-900">
-          <p>
-            Browsers do not guarantee background timers if you close the tab,
-            quit the browser, or your device suspends the page. This event
-            countdown is meant for a screen that stays on (like a laptop,
-            smartboard, or projector).
-          </p>
-          <p>
-            If you need a guaranteed alarm when the browser is closed, use your
-            phone’s alarm clock.
-          </p>
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -667,9 +1178,9 @@ function EventCountdownCard() {
    PAGE
 ========================================================= */
 export default function EventCountdownPage({
-  loaderData: { nowISO },
+  loaderData: { nowISO: _nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/event-countdown";
+  const url = "https://www.ilovetimers.com/event-countdown";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -679,7 +1190,7 @@ export default function EventCountdownPage({
         name: "Event Countdown",
         url,
         description:
-          "Event countdown that counts down to a specific date and time. Big fullscreen display, optional sound, and simple controls. Includes a duration-based workaround.",
+          "Event countdown that counts down to a specific date and time. Big fullscreen display, optional sound, and simple controls.",
       },
       {
         "@type": "BreadcrumbList",
@@ -688,7 +1199,7 @@ export default function EventCountdownPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -698,239 +1209,49 @@ export default function EventCountdownPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is an event countdown?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "An event countdown is a timer that counts down to a specific date and time, like a birthday, meeting, launch, or holiday.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I count down to a date and time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Enter the target date and time (local), then press Start. The timer updates in real time and shows the remaining time until the target.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What if I only need a duration-based workaround?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "If you don’t want an absolute date, you can use the regular Countdown Timer. This page shows the remaining time in minutes so you can copy that duration into a simple countdown.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Will the countdown keep running if I close the tab?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "No. Browsers can pause or throttle timers when a tab is closed, the browser is quit, or the device sleeps. This is designed to run while the page stays open on screen.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Event Countdown</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
+      {/* Minimal header */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
             Event Countdown (Countdown to Date & Time)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>event countdown</strong> for a screen. Count down to
-            a specific <strong>date</strong> and <strong>time</strong>, then
-            show it fullscreen.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Count down to an exact date and time with a big, readable fullscreen
+            display.
           </p>
         </div>
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <EventCountdownCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Countdown to date and time
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Set an exact target time for meetings, launches, classroom
-              deadlines, or events. The countdown updates live based on the
-              current clock.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Fullscreen for displays
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen is designed for projectors and TVs, with big text and
-              minimal clutter.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Duration-based workaround
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              If you don’t want absolute dates, use the remaining minutes shown
-              here and run a normal{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>{" "}
-              instead.
-            </p>
-          </div>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Event Countdown</span>
+        </p>
       </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free event countdown: countdown to a date and time online
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>event countdown</strong> is built for exact targets:
-              a <strong>countdown to date</strong> and{" "}
-              <strong>countdown to time</strong>. Pick when your event starts
-              and show the remaining time on a screen.
-            </p>
-
-            <p>
-              If you’re running this on a projector, classroom display, or
-              second monitor, use Fullscreen. The layout is intentionally
-              simple, with large digits and minimal distractions.
-            </p>
-
-            <p>
-              Don’t need absolute dates? Use the duration-based workaround: look
-              at the remaining minutes and start a normal countdown on{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              .
-            </p>
-
-            <p>
-              Browser reality check: this is designed to work while the page is
-              open. Closing the tab, quitting the browser, or letting your
-              device sleep can pause timers and prevent alarms.
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Event countdown
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Count down to a specific moment.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Countdown to date
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Set a target day and time (local).
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Countdown to time
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Big fullscreen display for screens.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Event Countdown FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I count down to a specific date and time?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Choose a date/time in the picker (local time), then press Start.
-              The countdown updates live until it reaches zero.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What if the date/time picker isn’t what I want?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Use the duration workaround: take the remaining minutes shown on
-              this page and run a standard countdown instead.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Will it keep counting if I close the tab?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              No. Browsers can pause or throttle background tabs, and closing
-              the tab stops the page completely. This is built to run on a
-              screen that stays open.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I use it in fullscreen for a projector?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Click Fullscreen (or press <strong>F</strong>) for big
-              high-contrast text.
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

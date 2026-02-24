@@ -1,7 +1,15 @@
 // app/routes/pomodoro-timer.tsx
 import type { Route } from "./+types/pomodoro-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +41,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -81,7 +89,23 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
-// WebAudio beep (same style as other pages)
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+// WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -121,24 +145,133 @@ function useBeep() {
   }, []);
 }
 
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
-   UI PRIMITIVES (same style as Home)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -163,13 +296,59 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    POMODORO
@@ -197,8 +376,28 @@ function PomodoroCard() {
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
+
+  const remainingRef = useRef<number>(remaining);
+  useEffect(() => {
+    remainingRef.current = remaining;
+  }, [remaining]);
+
+  const phaseRef = useRef<Phase>(phase);
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
+
+  const runningRef = useRef<boolean>(running);
+  useEffect(() => {
+    runningRef.current = running;
+  }, [running]);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
 
   const workMs = useMemo(() => workMin * 60 * 1000, [workMin]);
   const shortBreakMs = useMemo(
@@ -214,27 +413,49 @@ function PomodoroCard() {
     return 0;
   }
 
-  useEffect(() => {
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  function applyDurationsReset() {
     setRunning(false);
     setPhase("work");
     setCycleIdx(0);
     setRemaining(durFor("work"));
     endRef.current = null;
     lastBeepSecondRef.current = null;
+    stopRaf();
+  }
+
+  useEffect(() => {
+    applyDurationsReset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workMs, shortBreakMs, longBreakMs, cycles]);
 
+  // If long break is disabled while currently in long break, end the routine cleanly.
+  useEffect(() => {
+    if (!useLongBreak && phaseRef.current === "longBreak") {
+      setPhase("done");
+      setRemaining(0);
+      setRunning(false);
+      endRef.current = null;
+      lastBeepSecondRef.current = null;
+      stopRaf();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useLongBreak]);
+
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       endRef.current = null;
       lastBeepSecondRef.current = null;
       return;
     }
 
     if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
+      endRef.current = performance.now() + remainingRef.current;
     }
 
     const tick = () => {
@@ -252,16 +473,19 @@ function PomodoroCard() {
 
       if (rem <= 0) {
         endRef.current = null;
+        stopRaf();
         setRunning(false);
         lastBeepSecondRef.current = null;
 
         if (sound) {
-          const freq = phase === "work" ? 660 : 980;
+          const freq = phaseRef.current === "work" ? 660 : 980;
           beep(freq, 180);
         }
 
         if (autoAdvance) {
-          window.setTimeout(() => advancePhase(), 20);
+          window.setTimeout(() => {
+            advancePhase();
+          }, 20);
         }
         return;
       }
@@ -270,19 +494,8 @@ function PomodoroCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [
-    running,
-    remaining,
-    sound,
-    finalCountdownBeeps,
-    autoAdvance,
-    beep,
-    phase,
-  ]);
+    return () => stopRaf();
+  }, [running, sound, finalCountdownBeeps, autoAdvance, beep]);
 
   function startPhase(next: Phase) {
     const d = durFor(next);
@@ -294,27 +507,37 @@ function PomodoroCard() {
   }
 
   function resetAll() {
-    setRunning(false);
-    setPhase("work");
-    setCycleIdx(0);
-    setRemaining(durFor("work"));
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
+    applyDurationsReset();
   }
 
   function startPause() {
-    if (phase === "done") {
-      resetAll();
-      setRunning(true);
+    if (phaseRef.current === "done") {
+      // Restart fresh
+      setPhase("work");
+      setCycleIdx(0);
+      setRemaining(durFor("work"));
       endRef.current = performance.now() + durFor("work");
+      lastBeepSecondRef.current = null;
+      setRunning(true);
       return;
     }
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
+
+    setRunning((r) => {
+      const next = !r;
+      if (next) {
+        endRef.current = performance.now() + remainingRef.current;
+      } else {
+        endRef.current = null;
+      }
+      lastBeepSecondRef.current = null;
+      return next;
+    });
   }
 
   function advancePhase() {
-    if (phase === "work") {
+    const p = phaseRef.current;
+
+    if (p === "work") {
       const isLastWorkSession = cycleIdx + 1 >= cycles;
 
       if (isLastWorkSession) {
@@ -324,6 +547,9 @@ function PomodoroCard() {
           setPhase("done");
           setRemaining(0);
           setRunning(false);
+          endRef.current = null;
+          lastBeepSecondRef.current = null;
+          stopRaf();
         }
         return;
       }
@@ -332,7 +558,7 @@ function PomodoroCard() {
       return;
     }
 
-    if (phase === "shortBreak" || phase === "longBreak") {
+    if (p === "shortBreak" || p === "longBreak") {
       setCycleIdx((i) => i + 1);
       startPhase("work");
       return;
@@ -342,224 +568,352 @@ function PomodoroCard() {
   }
 
   function skipNext() {
-    setRunning(false);
+    stopRaf();
     endRef.current = null;
     lastBeepSecondRef.current = null;
+    setRunning(false);
     advancePhase();
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       resetAll();
-    } else if (e.key.toLowerCase() === "n") {
+    } else if (k === "n") {
       skipNext();
-    } else if (e.key.toLowerCase() === "f" && displayRef.current) {
-      toggleFullscreen(displayRef.current);
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
   const phaseLabel =
     phase === "work"
-      ? `Focus (Work) ${Math.min(cycleIdx + 1, cycles)}/${cycles}`
+      ? `Work ${Math.min(cycleIdx + 1, cycles)}/${cycles}`
       : phase === "shortBreak"
-        ? `Short Break ${Math.min(cycleIdx + 1, cycles)}/${cycles}`
+        ? `Short break ${Math.min(cycleIdx + 1, cycles)}/${cycles}`
         : phase === "longBreak"
-          ? `Long Break (Finish) ${cycles}/${cycles}`
+          ? `Long break ${cycles}/${cycles}`
           : "Complete";
+
+  const statusLabel = running ? "Running" : remaining > 0 ? "Paused" : "Ready";
 
   const displayTone =
     phase === "work"
-      ? "border-rose-200 bg-rose-50 text-rose-950"
+      ? "border-rose-200 bg-rose-50"
       : phase === "shortBreak"
-        ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+        ? "border-emerald-200 bg-emerald-50"
         : phase === "longBreak"
-          ? "border-sky-200 bg-sky-50 text-sky-950"
-          : "border-slate-200 bg-slate-50 text-slate-600";
+          ? "border-sky-200 bg-sky-50"
+          : "border-slate-200 bg-slate-50";
+
+  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, running, phase, cycleIdx, cycles],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
 
   const urgent =
     running && remaining > 0 && remaining <= 10_000 && phase === "work";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Pomodoro Focus Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Default <strong>25/5</strong>. Adjust timings, run cycles, use long
-            break, and control everything by keyboard.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={autoAdvance}
-              onChange={(e) => setAutoAdvance(e.target.checked)}
-            />
-            Auto
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayRef.current && toggleFullscreen(displayRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Settings */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-8">
-          <div className="grid gap-3 sm:grid-cols-3">
-            <LabeledNumberStrong
-              label="Work (minutes)"
-              value={workMin}
-              set={setWorkMin}
-              min={1}
-              max={180}
-            />
-            <LabeledNumberStrong
-              label="Break (minutes)"
-              value={shortBreakMin}
-              set={setShortBreakMin}
-              min={1}
-              max={60}
-            />
-            <LabeledNumberStrong
-              label="Cycles"
-              value={cycles}
-              set={setCycles}
-              min={1}
-              max={12}
-            />
-          </div>
-
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <label className="inline-flex items-center gap-2 text-sm font-semibold text-amber-950">
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Pomodoro Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <label className="hidden sm:inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50">
               <input
                 type="checkbox"
-                checked={finalCountdownBeeps}
-                onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-                disabled={!sound}
+                checked={sound}
+                onChange={(e) => setSound(e.target.checked)}
               />
-              Final 3-2-1 beeps
+              Sound
             </label>
-            <span className="text-sm text-slate-600">
-              Only when Sound is on.
-            </span>
+
+            <label className="hidden sm:inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+              <input
+                type="checkbox"
+                checked={autoAdvance}
+                onChange={(e) => setAutoAdvance(e.target.checked)}
+              />
+              Auto
+            </label>
+
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {running ? "Pause" : phase === "done" ? "Restart" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={skipNext} className="py-1 text-sm">
+              Next
+            </Btn>
+            <Btn kind="ghost" onClick={resetAll} className="py-1 text-sm">
+              Reset
+            </Btn>
           </div>
-        </div>
+        }
+      />
 
-        <div className="lg:col-span-4">
-          <div className="h-full rounded-2xl border border-amber-200 bg-amber-50 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="text-sm font-extrabold text-amber-950 uppercase tracking-wide">
-                Long break
-              </div>
-
-              <label className="inline-flex items-center gap-2 text-sm font-semibold text-amber-950">
-                <input
-                  type="checkbox"
-                  checked={useLongBreak}
-                  onChange={(e) => setUseLongBreak(e.target.checked)}
-                />
-                After last cycle
-              </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Pomodoro Timer (25/5 Focus Cycles)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Work and break cycles with clear countdown, reliable phase
+                switching, fullscreen, and keyboard control.
+              </p>
             </div>
 
-            <label className="mt-3 block text-sm font-semibold text-amber-950">
-              Minutes
-              <input
-                type="number"
-                min={1}
-                max={90}
-                value={longBreakMin}
-                onChange={(e) =>
-                  setLongBreakMin(clamp(Number(e.target.value || 0), 1, 90))
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
+
+              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={autoAdvance}
+                  onChange={(e) => setAutoAdvance(e.target.checked)}
+                />
+                Auto
+              </label>
+
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
                 }
-                disabled={!useLongBreak}
-                className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60"
-              />
-            </label>
-
-            <p className="mt-2 text-sm text-slate-700">
-              Common choice: 10 to 20 minutes.
-            </p>
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Display */}
-      <div
-        ref={displayRef}
-        className={`mt-6 rounded-2xl border-2 p-6 ${displayTone}`}
-        style={{ minHeight: 220 }}
-        aria-live="polite"
-      >
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-          <div className="text-sm font-extrabold uppercase tracking-wide opacity-95">
-            {phase === "done" ? "Done" : phase === "work" ? "Focus" : "Break"}
-          </div>
-          <div className="text-sm font-semibold opacity-95">{phaseLabel}</div>
-        </div>
-
+        {/* Display */}
         <div
-          className={`mt-5 flex items-center justify-center font-mono font-extrabold tracking-widest ${
-            urgent ? "text-rose-950" : ""
-          }`}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border text-slate-950",
+            "p-3 sm:p-6",
+            displayTone,
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <span className="text-6xl sm:text-7xl md:text-8xl">
-            {msToClock(Math.ceil(remaining / 1000) * 1000)}
+          <div className="flex w-full items-baseline justify-between gap-3">
+            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+              {phase === "done" ? "Done" : phase === "work" ? "Work" : "Break"}
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {phaseLabel}
+            </div>
+          </div>
+
+          <div className="mt-2 text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+              urgent ? "text-rose-950" : "",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
           </span>
+
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Controls
+                  </div>
+                  <div className="text-xs font-semibold text-slate-600">
+                    Tap time or Space to start/pause. N next. R reset. F
+                    fullscreen.
+                  </div>
+                </div>
+
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  {phaseLabel}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+        {/* Controls + shortcuts (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center gap-3">
+              <Btn kind="solid" onClick={startPause}>
+                {running ? "Pause" : phase === "done" ? "Restart" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={skipNext}>
+                Next →
+              </Btn>
+              <Btn kind="ghost" onClick={resetAll}>
+                Reset
+              </Btn>
+            </div>
+
+            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause · N next · R reset · F fullscreen
+            </div>
+          </div>
+        )}
+
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <div className="mt-5 grid gap-4 lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <div className="grid gap-3 sm:grid-cols-3">
+                <LabeledNumberStrong
+                  label="Work (minutes)"
+                  value={workMin}
+                  set={setWorkMin}
+                  min={1}
+                  max={180}
+                />
+                <LabeledNumberStrong
+                  label="Break (minutes)"
+                  value={shortBreakMin}
+                  set={setShortBreakMin}
+                  min={1}
+                  max={60}
+                />
+                <LabeledNumberStrong
+                  label="Cycles"
+                  value={cycles}
+                  set={setCycles}
+                  min={1}
+                  max={12}
+                />
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <label className="inline-flex cursor-pointer select-none items-center gap-2 text-sm font-semibold text-slate-800">
+                  <input
+                    type="checkbox"
+                    checked={finalCountdownBeeps}
+                    onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                    disabled={!sound}
+                  />
+                  Final 3-2-1 beeps
+                </label>
+                <span className="text-sm text-slate-600">
+                  Only when Sound is on.
+                </span>
+              </div>
+            </div>
+
+            <div className="lg:col-span-4">
+              <div className="h-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="text-sm font-extrabold text-slate-900 uppercase tracking-wide">
+                    Long break
+                  </div>
+
+                  <label className="inline-flex cursor-pointer select-none items-center gap-2 text-sm font-semibold text-slate-800">
+                    <input
+                      type="checkbox"
+                      checked={useLongBreak}
+                      onChange={(e) => setUseLongBreak(e.target.checked)}
+                    />
+                    After last cycle
+                  </label>
+                </div>
+
+                <label className="mt-3 block text-sm font-semibold text-slate-800">
+                  Minutes
+                  <input
+                    type="number"
+                    min={1}
+                    max={90}
+                    value={longBreakMin}
+                    onChange={(e) =>
+                      setLongBreakMin(clamp(Number(e.target.value || 0), 1, 90))
+                    }
+                    disabled={!useLongBreak}
+                    className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:opacity-60"
+                  />
+                </label>
+
+                <div className="mt-3 text-sm text-slate-600">
+                  Typical: 10 to 20 minutes.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Manual-advance hint (normal only) */}
+        {!isFs && !autoAdvance && remaining === 0 && phase !== "done" && (
+          <div className="mt-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800">
+            Phase finished. Press <strong>Next</strong> to continue.
+          </div>
+        )}
+
+        {/* Fullscreen bottom info */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · N next · R reset · F
+              fullscreen
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
-
-      {/* Controls + shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-3">
-          <Btn onClick={startPause}>
-            {running ? "Pause" : phase === "done" ? "Restart" : "Start"}
-          </Btn>
-          <Btn kind="ghost" onClick={resetAll}>
-            Reset
-          </Btn>
-          <Btn kind="ghost" onClick={skipNext}>
-            Next →
-          </Btn>
-        </div>
-
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · N next · F fullscreen
-        </div>
-      </div>
-
-      {!autoAdvance && remaining === 0 && phase !== "done" && (
-        <div className="mt-3 rounded-lg bg-amber-500/30 px-3 py-2 text-sm font-semibold text-amber-950">
-          Phase finished. Press <strong>Next</strong> to continue.
-        </div>
-      )}
     </Card>
   );
 }
@@ -578,7 +932,7 @@ function LabeledNumberStrong({
   max: number;
 }) {
   return (
-    <label className="block text-sm font-semibold text-amber-950">
+    <label className="block text-sm font-semibold text-slate-800">
       {label}
       <input
         type="number"
@@ -586,7 +940,7 @@ function LabeledNumberStrong({
         max={max}
         value={value}
         onChange={(e) => set(clamp(Number(e.target.value || 0), min, max))}
-        className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
       />
     </label>
   );
@@ -595,10 +949,8 @@ function LabeledNumberStrong({
 /* =========================================================
    PAGE
 ========================================================= */
-export default function PomodoroTimerPage({
-  loaderData: { nowISO },
-}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/pomodoro-timer";
+export default function PomodoroTimerPage({}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/pomodoro-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -617,7 +969,7 @@ export default function PomodoroTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -627,274 +979,29 @@ export default function PomodoroTimerPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a Pomodoro timer (25/5 timer)?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A Pomodoro timer alternates focused work and short breaks. The common 25/5 routine means 25 minutes of work followed by a 5 minute break, repeated for multiple cycles.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I change work, break, and cycles?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Set Work minutes, Break minutes, and Cycles. You can also enable a long break after the final work session.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does it auto-switch between work and break?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Auto-advance is on by default. If you turn it off, you can press Next to move to the next phase manually.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I skip to the next phase?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Press Next (or N) to skip to the next phase immediately.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, N advances to the next phase, and F toggles fullscreen while the card is focused.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Pomodoro Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Pomodoro Timer
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A curated <strong>25/5 Pomodoro timer</strong> built for serious
-            focus: customizable work/breaks, cycles, long break, next/skip,
-            sound, fullscreen, and keyboard shortcuts.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <PomodoroCard />
         </div>
 
-        {/* Quick-use hints: below, responsive */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              What Pomodoro users expect
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Clear phases, reliable auto-switching, a long break option, and
-              controls that don’t get in your way. This page is tuned for that:
-              focus first, settings second.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Study timer workflow
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use classic <strong>25/5</strong>, repeat for 4 cycles, then take
-              a longer break. If you’re doing deep work, try{" "}
-              <strong>50/10</strong>.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>N</strong> = Next phase
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section (under TimerMenuLinks) */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free Pomodoro timer (25/5 focus timer) for study and deep work
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>Pomodoro timer</strong> is a simple, high-trust{" "}
-              <strong>focus timer</strong> built for people who actually use the
-              Pomodoro technique. Start with the classic{" "}
-              <strong>25/5 timer</strong>: 25 minutes of focused work, then a 5
-              minute break. Repeat for multiple cycles to stay consistent
-              without burning out.
-            </p>
-
-            <p>
-              Customize <strong>work</strong>, <strong>break</strong>, and{" "}
-              <strong>cycles</strong> to match your routine. If you want the
-              typical “bigger reset” at the end, enable a{" "}
-              <strong>long break</strong> after the final cycle. You can also
-              turn <strong>Auto</strong> off to control phase changes manually.
-            </p>
-
-            <p>
-              Use <strong>Next</strong> (or <strong>N</strong>) to skip ahead if
-              you finish early. Sound alerts mark phase changes, and the
-              optional final <strong>3-2-1</strong> beeps help you wrap up
-              cleanly. For maximum visibility, use fullscreen and control with
-              the keyboard after clicking the timer card once to focus it.
-            </p>
-
-            <p>
-              Need a different timing style? Use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown
-              </Link>{" "}
-              for fixed deadlines,{" "}
-              <Link to="/stopwatch" className="font-semibold hover:underline">
-                Stopwatch
-              </Link>{" "}
-              for elapsed time and laps, or{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT
-              </Link>{" "}
-              for work/rest intervals.
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Study timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Keep sessions structured: 25/5 for homework, 50/10 for deep
-                work, or your own custom cycle.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Focus timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Clear phases reduce context switching: work, break, repeat, then
-                a long break at the end.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Team-friendly
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Turn Auto off for group study or meetings and advance phases
-                only when the room is ready.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Pomodoro Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this a real 25/5 Pomodoro timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. It defaults to 25 minutes work and 5 minutes break, and you
-              can customize the routine.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does it auto-switch between work and break?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Auto is on by default. Turn it off to advance manually using{" "}
-              <strong>Next</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I do a long break after the last cycle?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Enable Long break and set the long break minutes.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I skip to the next phase?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Press <strong>N</strong> or click <strong>Next</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>N</strong> next • <strong>F</strong> fullscreen (when
-              focused).
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Pomodoro Timer</span>
+        </p>
       </section>
     </main>
   );

@@ -1,6 +1,14 @@
+// app/routes/moon-phase-clock.tsx
 import type { Route } from "./+types/moon-phase-clock";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -32,7 +40,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -100,7 +108,7 @@ function formatLocalDateTime(d: Date | null) {
   }).format(d);
 }
 
-// WebAudio beep (same style as other pages)
+// WebAudio beep (safe unlock + beep)
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -118,6 +126,9 @@ function useBeep() {
       if (ctx.state === "suspended") {
         ctx.resume().catch(() => {});
       }
+
+      // Unlock-only call
+      if (!freq || freq <= 0) return;
 
       const o = ctx.createOscillator();
       const g = ctx.createGain();
@@ -148,13 +159,123 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
    LUNAR MODEL (fast, dependency-free, stable for UI)
-   Uses synodic month with a reference new moon.
 ========================================================= */
 const SYNODIC_MONTH_DAYS = 29.530588853;
-
-// Reference new moon: 2000-01-06 18:14 UTC (commonly used epoch)
 const NEW_MOON_REF_UTC_MS = Date.UTC(2000, 0, 6, 18, 14, 0);
 
 type MajorPhase = "New Moon" | "First Quarter" | "Full Moon" | "Last Quarter";
@@ -165,12 +286,10 @@ function normalize01(x: number) {
 }
 
 function illuminationFromPhaseFraction(f: number) {
-  // 0 new -> 0, 0.5 full -> 1
   return 0.5 * (1 - Math.cos(2 * Math.PI * f));
 }
 
 function phaseNameFromFraction(f: number) {
-  // Stable label bands
   if (f < 0.03 || f >= 0.97) return "New Moon";
   if (f < 0.22) return "Waxing Crescent";
   if (f < 0.28) return "First Quarter";
@@ -189,7 +308,7 @@ function getMoonInfo(at: Date) {
     ((daysSinceRef % SYNODIC_MONTH_DAYS) + SYNODIC_MONTH_DAYS) %
     SYNODIC_MONTH_DAYS;
 
-  const phaseFraction = normalize01(ageDays / SYNODIC_MONTH_DAYS); // 0=new, 0.5=full
+  const phaseFraction = normalize01(ageDays / SYNODIC_MONTH_DAYS);
   const illumination = illuminationFromPhaseFraction(phaseFraction);
   const phaseLabel = phaseNameFromFraction(phaseFraction);
 
@@ -229,23 +348,34 @@ function getMoonInfo(at: Date) {
 }
 
 /* =========================================================
-   UI PRIMITIVES (matches your site)
+   UI PRIMITIVES (matches updated styling)
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -270,28 +400,74 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-semibold text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-semibold text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 function PhaseBar({ phaseFraction }: { phaseFraction: number }) {
   const pct = Math.round(phaseFraction * 100);
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between text-xs font-semibold text-amber-800">
+      <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
         <span>New</span>
         <span>First Quarter</span>
         <span>Full</span>
         <span>Last Quarter</span>
         <span>New</span>
       </div>
-      <div className="mt-2 h-3 w-full overflow-hidden rounded-full border border-amber-200 bg-white">
+      <div className="mt-2 h-3 w-full overflow-hidden rounded-full border border-slate-200 bg-white">
         <div
-          className="h-full bg-amber-700"
+          className="h-full bg-amber-500"
           style={{ width: `${clamp(pct, 0, 100)}%` }}
         />
       </div>
@@ -306,17 +482,22 @@ function PhaseBar({ phaseFraction }: { phaseFraction: number }) {
 function MoonPhaseClockCard() {
   const beep = useBeep();
 
+  const [live, setLive] = useState(true);
   const [sound, setSound] = useState(true);
   const [finalBeeps, setFinalBeeps] = useState(true);
 
-  const [live, setLive] = useState(true);
   const [dateStr, setDateStr] = useState(() => toISODateInputValue(new Date()));
   const [hour, setHour] = useState(12);
   const [minute, setMinute] = useState(0);
 
   const [now, setNow] = useState(() => new Date());
 
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+  const clockCardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(clockCardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
   const lastBeepSecondRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -337,16 +518,16 @@ function MoonPhaseClockCard() {
 
   const info = useMemo(() => getMoonInfo(at), [at]);
 
-  const nextMs = Math.max(0, info.nextMajor.at.getTime() - at.getTime());
-  const urgent = live && nextMs > 0 && nextMs <= 10_000;
+  const nextMsRaw = Math.max(0, info.nextMajor.at.getTime() - at.getTime());
+  const urgent = live && nextMsRaw > 0 && nextMsRaw <= 10_000;
 
-  // Beeps only make sense in live mode
+  // Final beeps only in live mode
   useEffect(() => {
     if (!live) return;
     if (!sound || !finalBeeps) return;
 
-    if (nextMs > 0 && nextMs <= 5_000) {
-      const secLeft = Math.ceil(nextMs / 1000);
+    if (nextMsRaw > 0 && nextMsRaw <= 5_000) {
+      const secLeft = Math.ceil(nextMsRaw / 1000);
       if (lastBeepSecondRef.current !== secLeft) {
         lastBeepSecondRef.current = secLeft;
         beep(880, 110);
@@ -355,362 +536,348 @@ function MoonPhaseClockCard() {
       lastBeepSecondRef.current = null;
     }
 
-    if (nextMs === 0) {
+    if (nextMsRaw === 0) {
       beep(660, 220);
       lastBeepSecondRef.current = null;
     }
-  }, [live, nextMs, sound, finalBeeps, beep]);
+  }, [live, nextMsRaw, sound, finalBeeps, beep]);
+
+  const shownCountdown = live
+    ? msToClock(Math.ceil(nextMsRaw / 1000) * 1000)
+    : msToClock(Math.ceil(nextMsRaw / 1000) * 1000);
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownCountdown, isFs, urgent, live, info.nextMajor.name],
+    minPx: 64,
+    maxPx: isFs ? 560 : 520,
+    paddingAllowancePx: isFs ? 92 : 84,
+  });
+
+  const illuminationPct = Math.round(info.illumination * 100);
+  const ageStr = `${info.ageDays.toFixed(1)} days`;
+
+  const statusLabel = live ? "Live" : "Manual";
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
-    if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+    const k = e.key.toLowerCase();
+    if (k === "f" && clockCardRef.current) {
+      toggleFullscreen(clockCardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
-  const illuminationPct = Math.round(info.illumination * 100);
-  const ageStr = `${info.ageDays.toFixed(1)} days`;
-  const countdown = live ? msToClock(nextMs) : "–";
+  const enterManual = useCallback(() => {
+    setLive(false);
+  }, []);
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Moon Phase Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            A live <strong>moon phase clock</strong> showing the{" "}
-            <strong>current moon phase</strong>, illumination estimate, moon
-            age, and the next major phase.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={live}
-              onChange={(e) => setLive(e.target.checked)}
-            />
-            Live
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-              disabled={!live}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalBeeps}
-              onChange={(e) => setFinalBeeps(e.target.checked)}
-              disabled={!live || !sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-4">
-        <label className="block text-sm font-semibold text-amber-950">
-          Date
-          <input
-            type="date"
-            value={dateStr}
-            onChange={(e) => setDateStr(e.target.value)}
-            disabled={live}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Hour
-          <input
-            type="number"
-            min={0}
-            max={23}
-            value={hour}
-            onChange={(e) => setHour(clamp(Number(e.target.value || 0), 0, 23))}
-            disabled={live}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Minute
-          <input
-            type="number"
-            min={0}
-            max={59}
-            value={minute}
-            onChange={(e) =>
-              setMinute(clamp(Number(e.target.value || 0), 0, 59))
-            }
-            disabled={live}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60"
-          />
-        </label>
-
-        <div className="flex flex-col gap-3">
-          <div className="text-sm font-semibold text-amber-950">Quick</div>
-          <div className="flex gap-3">
+    <Card
+      cardRef={clockCardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Moon Phase Clock"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
             <Btn
               kind="ghost"
-              onClick={() => {
-                const d = new Date();
-                setDateStr(toISODateInputValue(d));
-                setHour(12);
-                setMinute(0);
-              }}
-              disabled={live}
+              onClick={() => setLive((v) => !v)}
+              className="py-1 text-sm"
             >
-              Set to noon
+              {live ? "Live: On" : "Live: Off"}
             </Btn>
             <Btn
-              onClick={() => {
-                if (sound) beep(0, 1);
-                setLive(true);
-              }}
+              kind="ghost"
+              onClick={() => setSound((v) => !v)}
+              className="py-1 text-sm"
             >
-              Now
+              {sound ? "Sound: On" : "Sound: Off"}
             </Btn>
           </div>
-          <div className="text-xs text-slate-600">
-            Shortcut: <strong>F</strong> fullscreen
+        }
+      />
+
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Moon Phase Clock
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Big live countdown to the next major phase, plus phase,
+                illumination, and age.
+              </p>
+            </div>
+
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={live}
+                  onChange={(e) => setLive(e.target.checked)}
+                  className="cursor-pointer"
+                />
+                Live
+              </label>
+
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                  className="cursor-pointer"
+                />
+                Sound
+              </label>
+
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={finalBeeps}
+                  onChange={(e) => setFinalBeeps(e.target.checked)}
+                  disabled={!sound}
+                  className="cursor-pointer"
+                />
+                Final beeps
+              </label>
+
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  clockCardRef.current && toggleFullscreen(clockCardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
           </div>
+        )}
+
+        {/* BIG CLOCK AREA (dominant) */}
+        <div
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border text-slate-950",
+            urgent
+              ? "border-rose-200 bg-rose-50"
+              : "border-slate-200 bg-slate-50",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 520,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            // click-to-focus behavior (helps keyboard shortcuts without breaking inputs)
+            clockCardRef.current?.focus();
+          }}
+        >
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            Next major phase countdown
+          </div>
+
+          <div className="mt-2 text-sm font-semibold text-slate-700 text-center">
+            Next:{" "}
+            <strong className="text-slate-900">{info.nextMajor.name}</strong>{" "}
+            <span className="text-slate-300">•</span>{" "}
+            {formatLocalTime(info.nextMajor.at)}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-4 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {live ? shownCountdown : shownCountdown}
+          </span>
+
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+              Status: <span className="text-slate-900">{statusLabel}</span>
+            </div>
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+              Phase: <span className="text-slate-900">{info.phaseLabel}</span>
+            </div>
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+              Illumination:{" "}
+              <span className="text-slate-900">{illuminationPct}%</span>
+            </div>
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+              Age: <span className="text-slate-900">{ageStr}</span>
+            </div>
+          </div>
+
+          {!isFs && (
+            <div className="mt-5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 text-center">
+              Shortcuts: F fullscreen · Esc exit
+            </div>
+          )}
         </div>
-      </div>
 
-      {/* Results */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_.65fr]">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-          <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-            Current moon phase
-          </div>
-          <div className="mt-1 text-2xl font-extrabold text-amber-950">
-            {info.phaseLabel}
-          </div>
+        {/* CONTROLS (always interactable; editing switches to Manual) */}
+        {!isFs && (
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <label className="block text-sm font-semibold text-slate-900">
+              Date
+              <input
+                type="date"
+                value={dateStr}
+                onChange={(e) => {
+                  setDateStr(e.target.value);
+                  enterManual();
+                }}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Illumination
+            <label className="block text-sm font-semibold text-slate-900">
+              Hour
+              <input
+                type="number"
+                min={0}
+                max={23}
+                value={hour}
+                onChange={(e) => {
+                  setHour(clamp(Number(e.target.value || 0), 0, 23));
+                  enterManual();
+                }}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-900">
+              Minute
+              <input
+                type="number"
+                min={0}
+                max={59}
+                value={minute}
+                onChange={(e) => {
+                  setMinute(clamp(Number(e.target.value || 0), 0, 59));
+                  enterManual();
+                }}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+
+            <div className="flex flex-col gap-2">
+              <div className="text-sm font-semibold text-slate-900">Quick</div>
+              <div className="flex flex-wrap gap-3">
+                <Btn
+                  kind="ghost"
+                  onClick={() => {
+                    const d = new Date();
+                    setDateStr(toISODateInputValue(d));
+                    setHour(12);
+                    setMinute(0);
+                    enterManual();
+                  }}
+                >
+                  Set to noon
+                </Btn>
+
+                <Btn
+                  kind="solid"
+                  onClick={() => {
+                    // unlock audio context without playing a tone
+                    if (sound) beep(0, 1);
+                    setLive(true);
+                  }}
+                >
+                  Now
+                </Btn>
               </div>
-              <div className="mt-1 text-lg font-extrabold text-amber-950">
-                {illuminationPct}%
-              </div>
-              <div className="mt-1 text-xs text-slate-600">
-                Estimated lit fraction.
+
+              <div className="text-xs text-slate-600">
+                Editing date/time switches to <strong>Manual</strong>. Use{" "}
+                <strong>Now</strong> for Live.
               </div>
             </div>
+          </div>
+        )}
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Moon age
-              </div>
-              <div className="mt-1 text-lg font-extrabold text-amber-950">
-                {ageStr}
-              </div>
-              <div className="mt-1 text-xs text-slate-600">
-                Days since new moon.
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+        {/* DETAILS (secondary) */}
+        {!isFs && (
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                 Checked at
               </div>
-              <div className="mt-1 text-sm font-semibold text-amber-950">
+              <div className="mt-1 text-sm font-semibold text-slate-900">
                 {formatLocalDateTime(at)}
               </div>
-              <div className="mt-1 text-xs text-slate-600">
-                Local device time.
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-5">
-            <PhaseBar phaseFraction={info.phaseFraction} />
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Previous major phase
-              </div>
-              <div className="mt-2 text-sm text-amber-900">
-                <strong>{info.prevMajor.name}:</strong>{" "}
-                {formatLocalDateTime(info.prevMajor.at)}
+              <div className="mt-4">
+                <PhaseBar phaseFraction={info.phaseFraction} />
               </div>
             </div>
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Next major phase
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                    Previous major
+                  </div>
+                  <div className="mt-2 text-sm text-slate-700">
+                    <strong className="text-slate-900">
+                      {info.prevMajor.name}:
+                    </strong>{" "}
+                    {formatLocalDateTime(info.prevMajor.at)}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                    Next major
+                  </div>
+                  <div className="mt-2 text-sm text-slate-700">
+                    <strong className="text-slate-900">
+                      {info.nextMajor.name}:
+                    </strong>{" "}
+                    {formatLocalDateTime(info.nextMajor.at)}
+                  </div>
+                </div>
               </div>
-              <div className="mt-2 text-sm text-amber-900">
-                <strong>{info.nextMajor.name}:</strong>{" "}
-                {formatLocalDateTime(info.nextMajor.at)}
+
+              <div className="mt-3 text-xs text-slate-600">
+                This is a fast lunar-cycle estimate designed for a clock
+                experience.
               </div>
             </div>
           </div>
+        )}
 
-          <div className="mt-4 text-xs text-slate-600">
-            This is a fast lunar-cycle estimate designed for a clock experience.
-            It is great for planning and everyday use, but not a replacement for
-            a full ephemeris.
-          </div>
-        </div>
-
-        {/* Live countdown display */}
-        <div
-          ref={displayWrapRef}
-          data-fs-container
-          className={`overflow-hidden rounded-2xl border-2 ${
-            urgent
-              ? "border-rose-300 bg-rose-50 text-rose-950"
-              : "border-amber-300 bg-amber-50 text-amber-950"
-          }`}
-          style={{ minHeight: 300 }}
-          aria-live="polite"
-        >
-          {/* Fullscreen CSS: show ONLY fullscreen shell in fullscreen */}
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `
-                [data-fs-container] [data-shell="fullscreen"]{display:none;}
-                [data-fs-container] [data-shell="normal"]{display:flex;}
-
-                [data-fs-container]:fullscreen{
-                  width:100vw;
-                  height:100vh;
-                  border:0;
-                  border-radius:0;
-                  background:#0b0b0c;
-                  color:#ffffff;
-                }
-
-                [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-                [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                  display:flex;
-                  width:100%;
-                  height:100%;
-                  align-items:center;
-                  justify-content:center;
-                  padding:4vh 4vw;
-                }
-
-                [data-fs-container]:fullscreen .fs-inner{
-                  width:min(1400px, 100%);
-                  display:flex;
-                  flex-direction:column;
-                  align-items:center;
-                  justify-content:center;
-                  gap:18px;
-                }
-
-                [data-fs-container]:fullscreen .fs-label{
-                  font: 800 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                  letter-spacing:.12em;
-                  text-transform:uppercase;
-                  opacity:.9;
-                  text-align:center;
-                }
-
-                [data-fs-container]:fullscreen .fs-time{
-                  font: 900 clamp(72px, 12vw, 180px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                  letter-spacing:.08em;
-                  text-align:center;
-                }
-
-                [data-fs-container]:fullscreen .fs-sub{
-                  font: 800 clamp(14px, 2.2vw, 22px)/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                  opacity:.9;
-                  text-align:center;
-                }
-
-                [data-fs-container]:fullscreen .fs-help{
-                  font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                  opacity:.85;
-                  text-align:center;
-                }
-              `,
-            }}
-          />
-
-          {/* Normal shell */}
-          <div
-            data-shell="normal"
-            className="h-full w-full flex-col items-center justify-center p-6"
-            style={{ minHeight: 300 }}
-          >
-            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-              Next major phase countdown
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              F fullscreen · Esc exit · {live ? "Live updating" : "Manual time"}
             </div>
-
-            <div className="mt-2 text-sm font-semibold text-amber-950 text-center">
-              Next: <strong>{info.nextMajor.name}</strong>{" "}
-              <span className="text-amber-300">•</span>{" "}
-              {formatLocalTime(info.nextMajor.at)}
-            </div>
-
-            <div className="mt-5 font-mono text-6xl font-extrabold tracking-widest sm:text-6xl">
-              {live ? countdown : "Enable Live"}
-            </div>
-
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white px-3 py-2 text-xs font-semibold text-amber-950 text-center">
-              Shortcuts: F fullscreen
-            </div>
-
-            <div className="mt-3 text-xs text-slate-600 text-center">
-              Tip: click this card once so the keyboard shortcut works.
+            <div className="text-xs font-semibold text-slate-700">
+              {urgent ? "Event soon" : "OK"}
             </div>
           </div>
-
-          {/* Fullscreen shell */}
-          <div data-shell="fullscreen">
-            <div className="fs-inner">
-              <div className="fs-label">Moon Phase Clock</div>
-              <div className="fs-time">{live ? countdown : "Enable Live"}</div>
-              <div className="fs-sub">
-                Next {info.nextMajor.name} at{" "}
-                {formatLocalTime(info.nextMajor.at)}
-              </div>
-              <div className="fs-help">F fullscreen</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcut: F fullscreen
-        </div>
-        <div className="text-xs text-slate-600">
-          Live mode updates automatically. Manual mode is for checking a
-          specific moment.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -722,7 +889,7 @@ function MoonPhaseClockCard() {
 export default function MoonPhaseClockPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/moon-phase-clock";
+  const url = "https://www.ilovetimers.com/moon-phase-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -732,7 +899,7 @@ export default function MoonPhaseClockPage({
         name: "Moon Phase Clock",
         url,
         description:
-          "Free Moon Phase Clock showing the current moon phase, illumination estimate, moon age, and a live countdown to the next major phase.",
+          "Live moon phase clock showing current phase, illumination estimate, moon age, and a countdown to the next major phase.",
       },
       {
         "@type": "BreadcrumbList",
@@ -741,7 +908,7 @@ export default function MoonPhaseClockPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -763,273 +930,28 @@ export default function MoonPhaseClockPage({
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Moon Phase Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Moon Phase Clock
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A live <strong>moon phase clock</strong> showing the{" "}
-            <strong>current moon phase</strong>, illumination estimate, moon
-            age, and the next major phase.
-          </p>
-        </div>
-      </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <MoonPhaseClockCard />
-
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Check moon phase fast
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              If you just want the <strong>moon phase today</strong>, leave Live
-              on. You get the phase name, illumination estimate, and moon age.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Next full moon and new moon
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              The countdown shows time until the next major phase. Useful for
-              planning night photography, skywatching, and dark-sky trips.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Fullscreen display
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use fullscreen for a clean screen display. Click the card and
-              press <strong>F</strong>.
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <MoonPhaseClockCard />
         </div>
+
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Moon Phase Clock</span>
+        </p>
+
+        <span className="sr-only">Build: {nowISO}</span>
       </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Moon phases explained (and why they matter)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>Moon Phase Clock</strong> helps you check the{" "}
-              <strong>current moon phase</strong> quickly. Moon phases happen
-              because we see different portions of the moon’s sunlit half as it
-              orbits Earth. Over about <strong>29.53 days</strong>, the moon
-              cycles through new moon, crescents, quarters, gibbous phases, and
-              full moon.
-            </p>
-
-            <p>
-              For dark skies, the days around a <strong>new moon</strong> are
-              usually best. For bright nights and moonlit landscapes, the days
-              around a <strong>full moon</strong> are popular. The clock also
-              shows an illumination estimate so you can quickly judge how bright
-              the night sky might be.
-            </p>
-
-            <p>
-              Want another tool? Use{" "}
-              <Link
-                to="/online-timer"
-                className="font-semibold hover:underline"
-              >
-                Online Timer
-              </Link>{" "}
-              for countdown timing or{" "}
-              <Link to="/stopwatch" className="font-semibold hover:underline">
-                Stopwatch
-              </Link>{" "}
-              for elapsed time.
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                New moon
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Darkest nights. Best for stars and Milky Way.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Full moon
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Brightest nights. Great for moonlit scenes, worse for stars.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Quarter moons
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Balanced light. Often a good compromise for shooting.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Moon Phase Clock FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is the current moon phase today?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              The tool updates live and shows the phase name, illumination
-              estimate, and moon age for your current time.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              When is the next full moon or next new moon?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              The page shows the next major phase (new moon, first quarter, full
-              moon, last quarter) with an estimated date and time.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is the moon phase the same everywhere?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              The phase is essentially the same worldwide at the same moment,
-              but local date and time differ by time zone. Orientation can look
-              flipped between hemispheres.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I check a specific date and time?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Turn Live off, select a date and time, and the page updates
-              the moon phase estimate for that moment.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is the fullscreen shortcut?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Press <strong>F</strong> to toggle fullscreen while the card is
-              focused.
-            </div>
-          </details>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 pb-10">
-        <div className="text-xs text-slate-600">Build: {nowISO}</div>
-      </section>
-      <MoonPhaseFaqSection />
     </main>
-  );
-}
-
-/* =========================================================
-   FAQ (VISIBLE) + JSON-LD
-========================================================= */
-
-const MOON_PHASE_FAQ = [
-  {
-    q: "What is the current moon phase today?",
-    a: "The Moon Phase Clock updates live and shows the current phase name, illumination estimate, and moon age for your current time.",
-  },
-  {
-    q: "When is the next full moon or next new moon?",
-    a: "The page shows the next major phase (new moon, first quarter, full moon, last quarter) with an estimated local date and time, plus a live countdown.",
-  },
-  {
-    q: "How long is a lunar cycle?",
-    a: "A full lunar cycle from new moon to new moon is about 29.53 days on average (the synodic month).",
-  },
-  {
-    q: "Is the moon phase the same everywhere?",
-    a: "The phase is essentially the same worldwide at the same moment. Your local date and time can differ by time zone, and the moon’s orientation can look flipped between hemispheres.",
-  },
-  {
-    q: "Can I check a specific date and time?",
-    a: "Yes. Turn Live off, choose a date and time, and the tool estimates the moon phase for that moment.",
-  },
-  {
-    q: "What is the fullscreen shortcut?",
-    a: "Press F to toggle fullscreen while the countdown card is focused.",
-  },
-] as const;
-
-function MoonPhaseFaqSection() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: MOON_PHASE_FAQ.map((it) => ({
-      "@type": "Question",
-      name: it.q,
-      acceptedAnswer: { "@type": "Answer", text: it.a },
-    })),
-  };
-
-  return (
-    <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
-      <h2 className="text-2xl font-bold text-amber-950">
-        Moon Phase Clock FAQ
-      </h2>
-
-      <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-        {MOON_PHASE_FAQ.map((it, i) => (
-          <details key={i}>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              {it.q}
-            </summary>
-            <div className="px-5 pb-4 text-amber-800 leading-relaxed">
-              {it.a}
-            </div>
-          </details>
-        ))}
-      </div>
-    </section>
   );
 }

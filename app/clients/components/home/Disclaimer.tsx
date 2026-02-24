@@ -21,7 +21,7 @@ export default function Disclaimer() {
             </span>
           </summary>
 
-          <ul className="mt-3 hidden grid gap-3 sm:grid-cols-2 group-open:grid">
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2 group-open:grid">
             <li className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
               <strong className="text-slate-900">
                 Sound depends on your device.

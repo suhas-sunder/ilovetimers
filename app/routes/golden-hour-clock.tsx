@@ -1,8 +1,21 @@
 // app/routes/golden-hour-clock.tsx
 import type { Route } from "./+types/golden-hour-clock";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/golden-hour-clock/HowItWorks";
+import Disclaimer from "~/clients/components/golden-hour-clock/Disclaimer";
+import FAQ from "~/clients/components/golden-hour-clock/FAQ";
+import KeyboardShortcuts from "~/clients/components/golden-hour-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/golden-hour-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -46,7 +59,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -66,6 +79,15 @@ function clamp(n: number, min: number, max: number) {
 
 const pad2 = (n: number) => n.toString().padStart(2, "0");
 
+function msToClock(ms: number) {
+  const t = Math.max(0, Math.floor(ms));
+  const s = Math.floor(t / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  return h > 0 ? `${h}:${pad2(m)}:${pad2(sec)}` : `${m}:${pad2(sec)}`;
+}
+
 function isTypingTarget(target: EventTarget | null) {
   const el = target as HTMLElement | null;
   if (!el) return false;
@@ -80,7 +102,6 @@ function isTypingTarget(target: EventTarget | null) {
 
 function formatLocalTime(d: Date | null) {
   if (!d || Number.isNaN(d.getTime())) return "–";
-  // Use user locale, no seconds for readability
   return new Intl.DateTimeFormat(undefined, {
     hour: "numeric",
     minute: "2-digit",
@@ -101,15 +122,6 @@ function toISODateInputValue(d: Date) {
   const m = pad2(d.getMonth() + 1);
   const day = pad2(d.getDate());
   return `${y}-${m}-${day}`;
-}
-
-function msToClock(ms: number) {
-  const t = Math.max(0, Math.floor(ms));
-  const s = Math.floor(t / 1000);
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
-  return h > 0 ? `${h}:${pad2(m)}:${pad2(sec)}` : `${m}:${pad2(sec)}`;
 }
 
 // WebAudio beep (same style as other pages)
@@ -158,6 +170,134 @@ async function toggleFullscreen(el: HTMLElement) {
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
+function safeParseNum(s: string) {
+  const trimmed = (s ?? "").trim();
+  if (!trimmed) return null;
+  const n = Number(trimmed);
+  if (!Number.isFinite(n)) return null;
+  return n;
+}
+
+function normalizeNumStr(s: string) {
+  const n = safeParseNum(s);
+  if (n == null) return s;
+  return String(n);
 }
 
 /* =========================================================
@@ -216,7 +356,6 @@ function altitude(H: number, phi: number, dec: number) {
 }
 function astroRefraction(h: number) {
   if (h < 0) h = 0;
-  // Meeus 16.4, result in radians
   return 0.0002967 / Math.tan(h + 0.00312536 / (h + 0.08901179));
 }
 function hourAngle(h: number, phi: number, d: number) {
@@ -252,7 +391,6 @@ type SolarTimes = {
   goldenMorningEnd: Date | null;
   goldenEveningStart: Date | null;
   goldenEveningEnd: Date | null;
-  // For display help
   note?: string;
 };
 
@@ -264,7 +402,6 @@ function getSolarTimes(
   lon: number,
   method: GoldenMethod,
 ): SolarTimes {
-  // Use date at local noon to avoid edge cases around midnight
   const dNoon = new Date(dateLocal);
   dNoon.setHours(12, 0, 0, 0);
 
@@ -280,7 +417,6 @@ function getSolarTimes(
 
   const Jnoon = solarTransitJ(ds, M, L);
 
-  // Sunrise/sunset: use -0.833 deg (atmospheric refraction + solar radius)
   const h0 = rad * -0.833;
   const Jrise = getSetJ(h0, lw, phi, dec, n, M, L);
   const Jset = Jnoon * 2 - Jrise;
@@ -289,7 +425,6 @@ function getSolarTimes(
   const sunrise = fromJulian(Jrise);
   const sunset = fromJulian(Jset);
 
-  // Polar day/night: hourAngle becomes NaN
   if (
     Number.isNaN(sunrise.getTime()) ||
     Number.isNaN(sunset.getTime()) ||
@@ -304,7 +439,7 @@ function getSolarTimes(
       goldenMorningEnd: null,
       goldenEveningStart: null,
       goldenEveningEnd: null,
-      note: "No sunrise or sunset for this date and location (polar day or polar night). Try a different date or location.",
+      note: "No sunrise or sunset for this date and location. Try a different date or location.",
     };
   }
 
@@ -320,11 +455,8 @@ function getSolarTimes(
     goldenEveningEnd = new Date(sunset);
     goldenEveningStart = new Date(sunset.getTime() - 60 * 60 * 1000);
   } else {
-    // "Solar" golden hour: from sunrise to when sun reaches +6 degrees (morning),
-    // and from when sun is at +6 degrees down to sunset (evening).
     const h6 = rad * 6;
 
-    // We need rise/set for altitude +6deg. These calculations assume a "set" exists.
     const Jrise6 = getSetJ(h6, lw, phi, dec, n, M, L);
     const Jset6 = Jnoon * 2 - Jrise6;
 
@@ -343,7 +475,6 @@ function getSolarTimes(
       goldenEveningStart = tSet6;
       goldenEveningEnd = new Date(sunset);
 
-      // If +6deg times are weird for high latitudes, fall back safely
       if (
         goldenMorningEnd.getTime() <= goldenMorningStart.getTime() ||
         goldenEveningEnd.getTime() <= goldenEveningStart.getTime()
@@ -358,11 +489,10 @@ function getSolarTimes(
           goldenMorningEnd,
           goldenEveningStart,
           goldenEveningEnd: sunset,
-          note: "Using a safe fallback because the solar-angle golden hour is unusual at this latitude and date.",
+          note: "Using a safe fallback because solar-angle golden hour is unusual for this latitude and date.",
         };
       }
     } else {
-      // fallback if hourAngle fails
       goldenMorningStart = new Date(sunrise);
       goldenMorningEnd = new Date(sunrise.getTime() + 60 * 60 * 1000);
       goldenEveningEnd = new Date(sunset);
@@ -392,23 +522,34 @@ function getSolarTimes(
 }
 
 /* =========================================================
-   UI PRIMITIVES (same style as other pages)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -433,13 +574,59 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    GOLDEN HOUR CLOCK CARD
@@ -447,14 +634,14 @@ const Btn = ({
 function GoldenHourClockCard() {
   const beep = useBeep();
 
-  const [lat, setLat] = useState<number>(40.7128);
-  const [lon, setLon] = useState<number>(-74.006);
+  // Keep inputs fully usable while typing (no forced clamp while entering "-")
+  const [latStr, setLatStr] = useState("40.7128");
+  const [lonStr, setLonStr] = useState("-74.006");
 
   const [method, setMethod] = useState<GoldenMethod>("classic_60min");
 
   const [dateStr, setDateStr] = useState(() => toISODateInputValue(new Date()));
   const dateLocal = useMemo(() => {
-    // Date input returns YYYY-MM-DD. Interpret as local date.
     const [y, m, d] = dateStr.split("-").map((x) => Number(x));
     const dt = new Date();
     dt.setFullYear(y || dt.getFullYear(), (m || 1) - 1, d || dt.getDate());
@@ -467,19 +654,34 @@ function GoldenHourClockCard() {
 
   const [now, setNow] = useState(() => new Date());
 
-  const displayWrapRef = useRef<HTMLDivElement>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const t = window.setInterval(() => setNow(new Date()), 250);
     return () => window.clearInterval(t);
   }, []);
 
+  const latNum = useMemo(() => {
+    const n = safeParseNum(latStr);
+    if (n == null) return 40.7128;
+    return clamp(n, -90, 90);
+  }, [latStr]);
+
+  const lonNum = useMemo(() => {
+    const n = safeParseNum(lonStr);
+    if (n == null) return -74.006;
+    return clamp(n, -180, 180);
+  }, [lonStr]);
+
   const times = useMemo(() => {
-    const latClamped = clamp(lat, -90, 90);
-    const lonClamped = clamp(lon, -180, 180);
-    return getSolarTimes(dateLocal, latClamped, lonClamped, method);
-  }, [dateLocal, lat, lon, method]);
+    return getSolarTimes(dateLocal, latNum, lonNum, method);
+  }, [dateLocal, latNum, lonNum, method]);
 
   const inGolden = useMemo(() => {
     const t = now.getTime();
@@ -495,26 +697,42 @@ function GoldenHourClockCard() {
 
   const nextEvent = useMemo(() => {
     const t = now.getTime();
-    const events: Array<{ label: string; at: Date | null }> = [
-      { label: "Morning golden hour starts", at: times.goldenMorningStart },
-      { label: "Morning golden hour ends", at: times.goldenMorningEnd },
-      { label: "Evening golden hour starts", at: times.goldenEveningStart },
-      { label: "Evening golden hour ends", at: times.goldenEveningEnd },
-      { label: "Sunrise", at: times.sunrise },
-      { label: "Sunset", at: times.sunset },
+    const events: Array<{ label: string; at: Date | null; prio: number }> = [
+      {
+        label: "Morning golden hour starts",
+        at: times.goldenMorningStart,
+        prio: 1,
+      },
+      {
+        label: "Morning golden hour ends",
+        at: times.goldenMorningEnd,
+        prio: 1,
+      },
+      {
+        label: "Evening golden hour starts",
+        at: times.goldenEveningStart,
+        prio: 1,
+      },
+      {
+        label: "Evening golden hour ends",
+        at: times.goldenEveningEnd,
+        prio: 1,
+      },
+      { label: "Sunrise", at: times.sunrise, prio: 2 },
+      { label: "Sunset", at: times.sunset, prio: 2 },
     ].filter((e) => e.at && !Number.isNaN(e.at.getTime()));
 
     const future = events
       .map((e) => ({ ...e, ms: (e.at as Date).getTime() - t }))
       .filter((e) => e.ms >= 0)
-      .sort((a, b) => a.ms - b.ms)[0];
+      .sort((a, b) => a.ms - b.ms || a.prio - b.prio)[0];
 
     return future
       ? { label: future.label, at: future.at as Date, ms: future.ms }
       : null;
   }, [now, times]);
 
-  // Final beeps in last 5 seconds of countdown to a key event (start or end of golden hour)
+  // Final beeps in last 5 seconds before any golden boundary (start/end)
   useEffect(() => {
     if (!sound || !finalBeeps) return;
 
@@ -530,7 +748,10 @@ function GoldenHourClockCard() {
       .filter((ms) => ms >= 0)
       .sort((a, b) => a - b)[0];
 
-    if (upcoming == null) return;
+    if (upcoming == null) {
+      lastBeepSecondRef.current = null;
+      return;
+    }
 
     if (upcoming > 0 && upcoming <= 5_000) {
       const secLeft = Math.ceil(upcoming / 1000);
@@ -538,374 +759,323 @@ function GoldenHourClockCard() {
         lastBeepSecondRef.current = secLeft;
         beep(880, 110);
       }
+      if (secLeft === 1) {
+        // short confirm beep right before boundary
+        window.setTimeout(() => beep(660, 160), 140);
+      }
     } else {
-      lastBeepSecondRef.current = null;
-    }
-
-    if (upcoming === 0) {
-      beep(660, 220);
       lastBeepSecondRef.current = null;
     }
   }, [now, times, sound, finalBeeps, beep]);
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isTypingTarget(e.target)) return;
-
-    if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "g") {
-      // GPS on keyboard
-      getGPS();
-    }
-  };
-
   const getGPS = useCallback(() => {
-    // prime audio on gesture
     if (sound) beep(0, 1);
 
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setLat(Number(pos.coords.latitude.toFixed(6)));
-        setLon(Number(pos.coords.longitude.toFixed(6)));
+        const la = Number(pos.coords.latitude.toFixed(6));
+        const lo = Number(pos.coords.longitude.toFixed(6));
+        setLatStr(String(la));
+        setLonStr(String(lo));
       },
       () => {
-        // ignore errors, user may block permission
+        // ignore
       },
       { enableHighAccuracy: false, timeout: 10_000, maximumAge: 60_000 },
     );
   }, [beep, sound]);
 
-  const headline = inGolden
-    ? "Golden hour is happening now"
-    : "Next golden-hour change";
-  const countdown = nextEvent ? msToClock(nextEvent.ms) : "–";
+  const headline = inGolden ? "Golden hour is happening now" : "Next change";
+  const rawCountdownMs = nextEvent?.ms ?? null;
+  const shownCountdown =
+    rawCountdownMs == null
+      ? "–"
+      : msToClock(Math.ceil(rawCountdownMs / 1000) * 1000);
 
-  // Primary display time: show countdown to next event
-  const urgent = nextEvent ? nextEvent.ms <= 10_000 : false;
+  const urgent = rawCountdownMs != null ? rawCountdownMs <= 10_000 : false;
+
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [
+      shownCountdown,
+      isFs,
+      urgent,
+      headline,
+      nextEvent?.label ?? "",
+      nextEvent?.at?.getTime() ?? 0,
+    ],
+    minPx: 52,
+    maxPx: isFs ? 560 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
 
   const methodLabel =
     method === "classic_60min"
       ? "Classic (first and last 60 minutes)"
       : "Solar-angle (sun between horizon and 6°)";
 
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
+
+    if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "g") {
+      getGPS();
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Golden Hour Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Find today’s <strong>golden hour times</strong> for any location.
-            Choose a date, set latitude and longitude (or use GPS), and get{" "}
-            <strong>sunrise</strong>, <strong>sunset</strong>, and golden hour{" "}
-            <strong>start</strong> and <strong>end</strong>.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalBeeps}
-              onChange={(e) => setFinalBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-4">
-        <label className="block text-sm font-semibold text-amber-950">
-          Date
-          <input
-            type="date"
-            value={dateStr}
-            onChange={(e) => setDateStr(e.target.value)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-slate-600">
-            {formatLocalDate(dateLocal)}
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Golden Hour Clock"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-800">
+              <input
+                type="checkbox"
+                checked={sound}
+                onChange={(e) => setSound(e.target.checked)}
+              />
+              Sound
+            </label>
+            <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-800">
+              <input
+                type="checkbox"
+                checked={finalBeeps}
+                onChange={(e) => setFinalBeeps(e.target.checked)}
+                disabled={!sound}
+              />
+              Final beeps
+            </label>
           </div>
-        </label>
+        }
+      />
 
-        <label className="block text-sm font-semibold text-amber-950">
-          Latitude
-          <input
-            type="number"
-            inputMode="decimal"
-            step="0.000001"
-            min={-90}
-            max={90}
-            value={lat}
-            onChange={(e) =>
-              setLat(clamp(Number(e.target.value || 0), -90, 90))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-slate-600">Range: -90 to 90</div>
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Longitude
-          <input
-            type="number"
-            inputMode="decimal"
-            step="0.000001"
-            min={-180}
-            max={180}
-            value={lon}
-            onChange={(e) =>
-              setLon(clamp(Number(e.target.value || 0), -180, 180))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-slate-600">Range: -180 to 180</div>
-        </label>
-
-        <div className="flex flex-col gap-3">
-          <label className="block text-sm font-semibold text-amber-950">
-            Definition
-            <select
-              value={method}
-              onChange={(e) => setMethod(e.target.value as GoldenMethod)}
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            >
-              <option value="classic_60min">Classic: 60 minutes</option>
-              <option value="solar_0_to_6deg">Solar-angle: 0° to 6°</option>
-            </select>
-            <div className="mt-1 text-xs text-slate-600">{methodLabel}</div>
-          </label>
-
-          <div className="flex gap-3">
-            <Btn kind="solid" onClick={getGPS}>
-              Use GPS
-            </Btn>
-            <Btn
-              kind="ghost"
-              onClick={() => {
-                const d = new Date();
-                setDateStr(toISODateInputValue(d));
-              }}
-            >
-              Today
-            </Btn>
-          </div>
-
-          <div className="text-xs text-slate-600">
-            Shortcuts: <strong>F</strong> fullscreen · <strong>G</strong> GPS
-          </div>
-        </div>
-      </div>
-
-      {/* Note */}
-      {times.note ? (
-        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-            Note
-          </div>
-          <div className="mt-1 text-sm font-semibold text-amber-950">
-            {times.note}
-          </div>
-        </div>
-      ) : null}
-
-      {/* Results */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.3fr_.7fr]">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-            Golden hour times (local)
-          </div>
-
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Morning golden hour
-              </div>
-              <div className="mt-2 text-sm text-amber-900">
-                <strong>Start:</strong>{" "}
-                {formatLocalTime(times.goldenMorningStart)}
-              </div>
-              <div className="mt-1 text-sm text-amber-900">
-                <strong>End:</strong> {formatLocalTime(times.goldenMorningEnd)}
-              </div>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Golden Hour Clock (Sunrise, Sunset, Golden Hour)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Pick a date and location to get golden hour times plus a live
+                countdown to the next change.
+              </p>
             </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Evening golden hour
-              </div>
-              <div className="mt-2 text-sm text-amber-900">
-                <strong>Start:</strong>{" "}
-                {formatLocalTime(times.goldenEveningStart)}
-              </div>
-              <div className="mt-1 text-sm text-amber-900">
-                <strong>End:</strong> {formatLocalTime(times.goldenEveningEnd)}
-              </div>
+              <label className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800">
+                <input
+                  type="checkbox"
+                  checked={finalBeeps}
+                  onChange={(e) => setFinalBeeps(e.target.checked)}
+                  disabled={!sound}
+                />
+                Final beeps
+              </label>
+
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
             </div>
+          </div>
+        )}
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Sunrise and sunset
+        {/* Controls (normal only) */}
+        {!isFs && (
+          <div className="mt-4 grid gap-4 lg:grid-cols-4">
+            <label className="block text-sm font-semibold text-slate-800">
+              Date
+              <input
+                type="date"
+                value={dateStr}
+                onChange={(e) => setDateStr(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+              <div className="mt-1 text-xs text-slate-600">
+                {formatLocalDate(dateLocal)}
               </div>
-              <div className="mt-2 text-sm text-amber-900">
-                <strong>Sunrise:</strong> {formatLocalTime(times.sunrise)}
-              </div>
-              <div className="mt-1 text-sm text-amber-900">
-                <strong>Sunset:</strong> {formatLocalTime(times.sunset)}
-              </div>
-            </div>
+            </label>
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Solar noon
+            <label className="block text-sm font-semibold text-slate-800">
+              Latitude
+              <input
+                type="text"
+                inputMode="decimal"
+                value={latStr}
+                onChange={(e) => setLatStr(e.target.value)}
+                onBlur={() => {
+                  const n = safeParseNum(latStr);
+                  if (n == null) return;
+                  setLatStr(String(clamp(n, -90, 90)));
+                }}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+              <div className="mt-1 text-xs text-slate-600">
+                Range: -90 to 90
               </div>
-              <div className="mt-2 text-sm text-amber-900">
-                <strong>Solar noon:</strong> {formatLocalTime(times.solarNoon)}
+            </label>
+
+            <label className="block text-sm font-semibold text-slate-800">
+              Longitude
+              <input
+                type="text"
+                inputMode="decimal"
+                value={lonStr}
+                onChange={(e) => setLonStr(e.target.value)}
+                onBlur={() => {
+                  const n = safeParseNum(lonStr);
+                  if (n == null) return;
+                  setLonStr(String(clamp(n, -180, 180)));
+                }}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+              <div className="mt-1 text-xs text-slate-600">
+                Range: -180 to 180
               </div>
-              <div className="mt-2 text-xs text-slate-600">
-                Solar noon is when the sun is highest in the sky.
+            </label>
+
+            <div className="flex flex-col gap-3">
+              <label className="block text-sm font-semibold text-slate-800">
+                Definition
+                <select
+                  value={method}
+                  onChange={(e) => setMethod(e.target.value as GoldenMethod)}
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                >
+                  <option value="classic_60min">Classic: 60 minutes</option>
+                  <option value="solar_0_to_6deg">Solar-angle: 0° to 6°</option>
+                </select>
+                <div className="mt-1 text-xs text-slate-600">{methodLabel}</div>
+              </label>
+
+              <div className="flex gap-3">
+                <Btn kind="solid" onClick={getGPS}>
+                  Use GPS
+                </Btn>
+                <Btn
+                  kind="ghost"
+                  onClick={() => {
+                    const d = new Date();
+                    setDateStr(toISODateInputValue(d));
+                  }}
+                >
+                  Today
+                </Btn>
+              </div>
+
+              <div className="text-xs text-slate-600">
+                Shortcuts: <strong>F</strong> fullscreen · <strong>G</strong>{" "}
+                GPS
               </div>
             </div>
           </div>
+        )}
 
-          <div className="mt-4 text-xs text-slate-600">
-            Tip: if you are traveling, set the location first, then pick the
-            date. Times shown are based on your device’s local time zone.
-          </div>
-        </div>
-
-        {/* Live clock + countdown */}
-        <div
-          ref={displayWrapRef}
-          data-fs-container
-          className={`overflow-hidden rounded-2xl border-2 ${
-            urgent
-              ? "border-rose-300 bg-rose-50 text-rose-950"
-              : "border-amber-300 bg-amber-50 text-amber-950"
-          }`}
-          style={{ minHeight: 280 }}
-          aria-live="polite"
-        >
-          {/* Fullscreen CSS */}
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `
-                [data-fs-container] [data-shell="fullscreen"]{display:none;}
-                [data-fs-container] [data-shell="normal"]{display:flex;}
-
-                [data-fs-container]:fullscreen{
-                  width:100vw;
-                  height:100vh;
-                  border:0;
-                  border-radius:0;
-                  background:#0b0b0c;
-                  color:#ffffff;
-                }
-
-                [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-                [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                  display:flex;
-                  width:100%;
-                  height:100%;
-                  align-items:center;
-                  justify-content:center;
-                  padding:4vh 4vw;
-                }
-
-                [data-fs-container]:fullscreen .fs-inner{
-                  width:min(1400px, 100%);
-                  display:flex;
-                  flex-direction:column;
-                  align-items:center;
-                  justify-content:center;
-                  gap:18px;
-                }
-
-                [data-fs-container]:fullscreen .fs-label{
-                  font: 800 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                  letter-spacing:.12em;
-                  text-transform:uppercase;
-                  opacity:.9;
-                  text-align:center;
-                }
-
-                [data-fs-container]:fullscreen .fs-time{
-                  font: 900 clamp(72px, 12vw, 180px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                  letter-spacing:.08em;
-                  text-align:center;
-                }
-
-                [data-fs-container]:fullscreen .fs-sub{
-                  font: 800 clamp(14px, 2.2vw, 22px)/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                  opacity:.9;
-                  text-align:center;
-                }
-
-                [data-fs-container]:fullscreen .fs-help{
-                  font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                  opacity:.85;
-                  text-align:center;
-                }
-              `,
-            }}
-          />
-
-          {/* Normal shell */}
+        {/* Note */}
+        {times.note ? (
           <div
-            data-shell="normal"
-            className="h-full w-full flex-col items-center justify-center p-6"
-            style={{ minHeight: 280 }}
+            className={[
+              "mt-4 rounded-2xl border p-4",
+              isFs ? "mx-2 sm:mx-4" : "",
+            ].join(" ")}
           >
-            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-              Live golden hour clock
+            <div className="text-xs font-bold uppercase tracking-wide text-slate-700">
+              Note
             </div>
-
-            <div className="mt-2 text-sm font-semibold text-amber-950">
-              {headline}
+            <div className="mt-1 text-sm font-semibold text-slate-900">
+              {times.note}
             </div>
+          </div>
+        ) : null}
 
-            <div className="mt-5 font-mono text-6xl font-extrabold tracking-widest sm:text-6xl">
-              {countdown}
-            </div>
+        {/* Primary display */}
+        <div
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            urgent ? "border-rose-200" : "border-slate-200",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 320,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs && cardRef.current) toggleFullscreen(cardRef.current);
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Click to exit fullscreen" : undefined}
+        >
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {headline}
+          </div>
 
-            <div className="mt-3 text-sm text-amber-900">
-              {nextEvent ? (
-                <>
-                  <strong>{nextEvent.label}:</strong>{" "}
-                  {formatLocalTime(nextEvent.at)}
-                </>
-              ) : (
-                <>No upcoming events for this date and location.</>
-              )}
-            </div>
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownCountdown}
+          </span>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white px-3 py-2 text-xs font-semibold text-amber-950">
-              Now:{" "}
+          <div className="mt-3 text-sm text-slate-700">
+            {nextEvent ? (
+              <>
+                <span className="font-semibold text-slate-900">
+                  {nextEvent.label}:
+                </span>{" "}
+                {formatLocalTime(nextEvent.at)}
+              </>
+            ) : (
+              <>No upcoming events for this date and location.</>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-800">
+              Now{" "}
               <span className="font-mono">
                 {new Intl.DateTimeFormat(undefined, {
                   hour: "numeric",
@@ -913,62 +1083,76 @@ function GoldenHourClockCard() {
                   second: "2-digit",
                 }).format(now)}
               </span>
-              <span className="mx-2 text-amber-300">•</span>
-              Shortcut: <strong>F</strong> fullscreen
+            </div>
+
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-800">
+              Sunrise{" "}
+              <span className="font-mono">
+                {formatLocalTime(times.sunrise)}
+              </span>
+            </div>
+
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-800">
+              Sunset{" "}
+              <span className="font-mono">{formatLocalTime(times.sunset)}</span>
+            </div>
+
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-800">
+              {inGolden ? "In golden hour" : "Not in golden hour"}
             </div>
           </div>
 
-          {/* Fullscreen shell */}
-          <div data-shell="fullscreen">
-            <div className="fs-inner">
-              <div className="fs-label">Golden Hour Clock</div>
-              <div className="fs-time">{countdown}</div>
-              <div className="fs-sub">
-                {nextEvent
-                  ? `${nextEvent.label} at ${formatLocalTime(nextEvent.at)}`
-                  : "No upcoming events"}
+          {/* Compact golden windows overlay */}
+          <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex min-w-0 flex-col gap-1">
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                  Golden hour (local)
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-800">
+                    <span className="rounded-lg border border-slate-200 bg-white/85 px-2 py-1 backdrop-blur">
+                      Morning {formatLocalTime(times.goldenMorningStart)} to{" "}
+                      {formatLocalTime(times.goldenMorningEnd)}
+                    </span>
+                    <span className="rounded-lg border border-slate-200 bg-white/85 px-2 py-1 backdrop-blur">
+                      Evening {formatLocalTime(times.goldenEveningStart)} to{" "}
+                      {formatLocalTime(times.goldenEveningEnd)}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="fs-help">F fullscreen · G GPS</div>
+
+              <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                F = Fullscreen · G = GPS
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Mini explanation */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-            What is golden hour?
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-amber-800">
-            Golden hour is the warm, soft light shortly after sunrise and
-            shortly before sunset. Shadows are longer and highlights are
-            gentler, which is why it is popular for portraits, landscapes, and
-            video.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-            Which definition should I use?
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-amber-800">
-            <strong>Classic</strong> is simple: the first and last 60 minutes.
-            <strong> Solar-angle</strong> uses the sun’s altitude (0° to 6°) so
-            it can be shorter or longer depending on season and latitude.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-            Best results fast
-          </h3>
-          <ul className="mt-2 space-y-1 text-sm text-amber-800">
-            <li>Use a longer lens for portraits to keep backgrounds soft.</li>
-            <li>Slightly underexpose to protect highlights.</li>
-            <li>Arrive 10 to 15 minutes early to set up.</li>
-          </ul>
-        </div>
+        {/* Fullscreen bottom bar */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              F fullscreen · G GPS · Times shown in your device time zone
+            </div>
+            <div className="flex items-center gap-2">
+              <Btn kind="solid" onClick={getGPS} className="py-1 text-sm">
+                Use GPS
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => {
+                  const d = new Date();
+                  setDateStr(toISODateInputValue(d));
+                }}
+                className="py-1 text-sm"
+              >
+                Today
+              </Btn>
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -980,7 +1164,7 @@ function GoldenHourClockCard() {
 export default function GoldenHourClockPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/golden-hour-clock";
+  const url = "https://www.ilovetimers.com/golden-hour-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -990,7 +1174,7 @@ export default function GoldenHourClockPage({
         name: "Golden Hour Clock",
         url,
         description:
-          "A free Golden Hour Clock that shows golden hour times, sunrise, and sunset for your chosen date and location, with a live countdown and fullscreen view.",
+          "Golden hour times, sunrise, and sunset for a chosen date and location, with a live countdown and fullscreen view.",
       },
       {
         "@type": "BreadcrumbList",
@@ -999,58 +1183,13 @@ export default function GoldenHourClockPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
             position: 2,
             name: "Golden Hour Clock",
             item: url,
-          },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What time is golden hour today?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Golden hour depends on your location and date. Use the Golden Hour Clock to set your latitude and longitude (or use GPS), then it shows the morning and evening golden hour times along with sunrise and sunset.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Is golden hour always exactly one hour?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Not always. A common rule is the first and last 60 minutes of sunlight, but the sun’s angle changes with season and latitude. The solar-angle option estimates golden hour from the horizon up to 6 degrees of sun altitude.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Do these golden hour times use my time zone?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Times are shown in your device’s local time zone. If you are planning for another time zone, switch your device time zone or interpret the results carefully.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Why do I see no sunrise or sunset?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Near the poles, some dates have polar day or polar night, meaning the sun may not rise or set. Try a different date or a different location.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Press F to toggle fullscreen and G to use GPS (when the card is focused).",
-            },
           },
         ],
       },
@@ -1066,281 +1205,32 @@ export default function GoldenHourClockPage({
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Golden Hour Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Golden Hour Clock
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A live <strong>golden hour clock</strong> that shows golden hour
-            times for your location, plus sunrise and sunset, with a countdown
-            to the next change.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <GoldenHourClockCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Golden hour times for any location
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Enter coordinates directly or tap <strong>Use GPS</strong>.
-              Perfect for photographers planning shoots, travel, or outdoor
-              sessions.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Classic vs solar-angle definition
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Classic uses a simple rule of thumb (60 minutes). Solar-angle uses
-              sun altitude to better match “low sun” light when seasons change.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Fullscreen countdown
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use fullscreen for a clean on-set display. Press{" "}
-              <strong>F</strong> while the card is focused.
-            </p>
-          </div>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Golden Hour Clock</span>
+        </p>
       </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Golden hour clock: sunrise, sunset, and golden hour times
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This page is a <strong>golden hour clock</strong> that calculates{" "}
-              <strong>golden hour times</strong> for your chosen date and
-              location. Golden hour is the short window after sunrise and before
-              sunset when sunlight is warmer and softer. It is commonly used for
-              portraits, landscapes, and cinematic video.
-            </p>
-
-            <p>
-              The exact timing changes daily and varies by latitude. In summer,
-              golden hour can feel longer in some places. In winter, it can be
-              shorter. Near the poles, there are dates with no sunrise or sunset
-              at all.
-            </p>
-
-            <p>
-              If you want a general-purpose tool, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For cooking, try{" "}
-              <Link to="/egg-timer" className="font-semibold hover:underline">
-                Egg Timer
-              </Link>
-              .
-            </p>
-
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                  Portrait tip
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                  Put the sun slightly behind your subject for rim light, then
-                  expose for the face.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                  Landscape tip
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                  Use side light to reveal texture in rocks, trees, and terrain.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                  Planning tip
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                  Check golden hour times the day before, then set a reminder 30
-                  minutes earlier to travel and set up.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Golden Hour Clock FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What time is golden hour today?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Golden hour depends on your <strong>location</strong> and{" "}
-              <strong>date</strong>. Set your latitude and longitude (or tap{" "}
-              <strong>Use GPS</strong>) and the clock shows morning and evening
-              golden hour times plus sunrise and sunset.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is golden hour always exactly one hour?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Not always. The classic rule is the first and last 60 minutes of
-              sunlight. A more “solar” definition estimates golden hour when the
-              sun is low, from the horizon up to about <strong>6°</strong>.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why do golden hour times change so much across seasons?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              The sun’s path changes through the year. At higher latitudes the
-              sun can rise and set at a shallow angle, which can stretch or
-              shrink the low-sun period depending on the season.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why do I see no sunrise or sunset?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Near the poles, some dates have <strong>polar day</strong> or{" "}
-              <strong>polar night</strong>, meaning the sun may not rise or set.
-              Try a different date or move the location south or north.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>F</strong> toggles fullscreen. <strong>G</strong> requests
-              GPS (when the card is focused).
-            </div>
-          </details>
-        </div>
-      </section>
-
-      {/* Tiny footer hint (optional) */}
-      <section className="mx-auto max-w-7xl px-4 pb-10">
-        <div className="text-xs text-slate-600">Build: {nowISO}</div>
-      </section>
-      <GoldenHourFaqSection />
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
-  );
-}
-
-/* =========================================================
-   FAQ (VISIBLE) + JSON-LD
-========================================================= */
-
-const GOLDEN_HOUR_FAQ = [
-  {
-    q: "What time is golden hour today?",
-    a: "Golden hour depends on your location and date. Set your latitude and longitude (or tap Use GPS) and the clock shows morning and evening golden hour times plus sunrise and sunset.",
-  },
-  {
-    q: "Is golden hour always exactly one hour?",
-    a: "Not always. The classic rule is the first and last 60 minutes of sunlight. The solar-angle option estimates golden hour when the sun is low, from the horizon up to about 6° of sun altitude, so it can be shorter or longer.",
-  },
-  {
-    q: "Do these golden hour times use my time zone?",
-    a: "Yes. Results are displayed in your device’s local time zone. If you’re planning for another time zone, switch your device time zone or interpret the output for that destination time zone.",
-  },
-  {
-    q: "Why do golden hour times change so much across seasons?",
-    a: "The sun’s path changes through the year. At higher latitudes the sun can rise and set at a shallow angle, which can stretch or shrink the low-sun period depending on season and location.",
-  },
-  {
-    q: "Why do I see no sunrise or sunset?",
-    a: "Near the poles, some dates have polar day or polar night, meaning the sun may not rise or set. Try a different date or choose a location farther from the poles.",
-  },
-  {
-    q: "What are the keyboard shortcuts?",
-    a: "Press F to toggle fullscreen and G to request GPS (when the card is focused).",
-  },
-] as const;
-
-function GoldenHourFaqSection() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: GOLDEN_HOUR_FAQ.map((it) => ({
-      "@type": "Question",
-      name: it.q,
-      acceptedAnswer: { "@type": "Answer", text: it.a },
-    })),
-  };
-
-  return (
-    <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
-      <h2 className="text-2xl font-bold text-amber-950">
-        Golden Hour Clock FAQ
-      </h2>
-
-      <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-        {GOLDEN_HOUR_FAQ.map((it, i) => (
-          <details key={i}>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              {it.q}
-            </summary>
-            <div className="px-5 pb-4 text-amber-800 leading-relaxed">
-              {it.a}
-            </div>
-          </details>
-        ))}
-      </div>
-    </section>
   );
 }

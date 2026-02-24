@@ -1,7 +1,14 @@
 // app/routes/world-clock.tsx
 import type { Route } from "./+types/world-clock";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +40,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -67,28 +74,53 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
-function formatInZone(
-  date: Date,
-  timeZone: string,
-  opts: { use24h: boolean; showSeconds: boolean },
-) {
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+function safeZoneLabel(zone: string) {
+  const last = zone.split("/").pop() ?? zone;
+  return last.replace(/_/g, " ");
+}
+
+// Cache Intl formatters so times render snappy (especially with many cities).
+type FmtKey = string;
+const fmtCache = new Map<FmtKey, Intl.DateTimeFormat>();
+function getTimeFormatter(params: {
+  timeZone?: string;
+  use24h: boolean;
+  showSeconds: boolean;
+}) {
+  const { timeZone, use24h, showSeconds } = params;
+  const key = `${timeZone ?? "local"}|${use24h ? "24" : "12"}|${
+    showSeconds ? "sec" : "nosec"
+  }`;
+
+  const cached = fmtCache.get(key);
+  if (cached) return cached;
+
   const fmt = new Intl.DateTimeFormat(undefined, {
     timeZone,
     hour: "2-digit",
     minute: "2-digit",
-    second: opts.showSeconds ? "2-digit" : undefined,
-    hour12: !opts.use24h,
+    second: showSeconds ? "2-digit" : undefined,
+    hour12: !use24h,
   });
 
-  // Most locales return something like "08:03:02 PM" or "20:03:02".
-  // We keep it as-is for user locale friendliness.
-  return fmt.format(date);
-}
-
-function safeZoneLabel(zone: string) {
-  // "America/New_York" -> "New York"
-  const last = zone.split("/").pop() ?? zone;
-  return last.replace(/_/g, " ");
+  fmtCache.set(key, fmt);
+  return fmt;
 }
 
 /* =========================================================
@@ -132,16 +164,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -166,15 +209,15 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
-function Chip({
+const Chip = ({
   children,
   onClick,
   active,
@@ -184,56 +227,111 @@ function Chip({
   onClick?: () => void;
   active?: boolean;
   title?: string;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    title={title}
+    className={[
+      "cursor-pointer rounded-full border px-3 py-1 text-sm font-semibold",
+      active
+        ? "border-amber-200 bg-amber-50 text-slate-900 hover:bg-amber-100"
+        : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50",
+    ].join(" ")}
+  >
+    {children}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
 }) {
+  if (!show) return null;
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      title={title}
-      className={
-        active
-          ? "rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-sm font-extrabold text-amber-950 hover:bg-amber-200"
-          : "rounded-full border border-amber-200 bg-white px-3 py-1 text-sm font-semibold text-amber-900 hover:bg-amber-50"
-      }
-    >
-      {children}
-    </button>
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
   );
 }
 
 /* =========================================================
    WORLD CLOCK CARD
 ========================================================= */
-function WorldClockCard() {
-  const [now, setNow] = useState(() => new Date());
+function WorldClockCard({ initialNowISO }: { initialNowISO: string }) {
   const [use24h, setUse24h] = useState(true);
   const [showSeconds, setShowSeconds] = useState(true);
   const [query, setQuery] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const [selectedIds, setSelectedIds] = useState<string[]>(() => {
-    // Keep it simple: no localStorage so SSR stays clean and predictable.
-    return DEFAULT_SELECTED_IDS;
-  });
+  const [selectedIds, setSelectedIds] =
+    useState<string[]>(DEFAULT_SELECTED_IDS);
 
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+  // Initialize from loader time to avoid hydration mismatch.
+  const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
 
-  // Tick on the second boundary for stable updates.
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  // Tick aligned to the next boundary. If seconds are hidden, tick on minute boundary.
   useEffect(() => {
     let t: number | null = null;
 
     const sync = () => {
       const n = new Date();
       setNow(n);
-      const msToNext = 1000 - n.getMilliseconds();
-      t = window.setTimeout(sync, msToNext);
+
+      const ms = n.getMilliseconds();
+      const msToNextSecond = 1000 - ms;
+
+      if (showSeconds) {
+        t = window.setTimeout(sync, msToNextSecond);
+      } else {
+        const sec = n.getSeconds();
+        const msToNextMinute = (60 - sec) * 1000 - ms;
+        t = window.setTimeout(sync, Math.max(50, msToNextMinute));
+      }
     };
 
     sync();
     return () => {
       if (t) window.clearTimeout(t);
     };
-  }, []);
+  }, [showSeconds]);
 
   const selectedCities = useMemo(() => {
     const set = new Set(selectedIds);
@@ -243,6 +341,7 @@ function WorldClockCard() {
   const filteredPopular = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return POPULAR;
+
     return POPULAR.filter((c) => {
       const hay = `${c.name} ${c.timeZone} ${c.note ?? ""}`.toLowerCase();
       return (
@@ -252,16 +351,27 @@ function WorldClockCard() {
   }, [query]);
 
   const rows = useMemo(() => {
-    const opts = { use24h, showSeconds };
-    return selectedCities.map((c) => ({
-      ...c,
-      timeText: formatInZone(now, c.timeZone, opts),
-    }));
+    const localFmt = getTimeFormatter({ use24h, showSeconds });
+    const localText = localFmt.format(now);
+
+    const items = selectedCities.map((c) => {
+      const fmt = getTimeFormatter({
+        timeZone: c.timeZone,
+        use24h,
+        showSeconds,
+      });
+      return {
+        ...c,
+        timeText: fmt.format(now),
+      };
+    });
+
+    return { localText, items };
   }, [selectedCities, now, use24h, showSeconds]);
 
   async function copy() {
     try {
-      const payload = rows
+      const payload = rows.items
         .map((r) => `${r.name}: ${r.timeText} (${r.timeZone})`)
         .join("\n");
       await navigator.clipboard.writeText(payload);
@@ -283,13 +393,13 @@ function WorldClockCard() {
   const clearAll = () => setSelectedIds([]);
   const resetDefault = () => setSelectedIds(DEFAULT_SELECTED_IDS);
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
 
-    if (k === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+    if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     } else if (k === "t") {
       setUse24h((v) => !v);
     } else if (k === "s") {
@@ -300,202 +410,159 @@ function WorldClockCard() {
       resetDefault();
     } else if (k === "x") {
       clearAll();
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
+  const statusLabel =
+    rows.items.length > 0
+      ? `${rows.items.length} selected`
+      : "No cities selected";
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">World Clock</h2>
-          <p className="mt-1 text-base text-slate-700">
-            Live time in multiple cities. Add, remove, copy, and go fullscreen.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="World Clock"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <label className="hidden sm:inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+              <input
+                className="cursor-pointer"
+                type="checkbox"
+                checked={use24h}
+                onChange={(e) => setUse24h(e.target.checked)}
+              />
+              24-hour
+            </label>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={use24h}
-              onChange={(e) => setUse24h(e.target.checked)}
-            />
-            24-hour
-          </label>
+            <label className="hidden sm:inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+              <input
+                className="cursor-pointer"
+                type="checkbox"
+                checked={showSeconds}
+                onChange={(e) => setShowSeconds(e.target.checked)}
+              />
+              Seconds
+            </label>
 
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={showSeconds}
-              onChange={(e) => setShowSeconds(e.target.checked)}
-            />
-            Seconds
-          </label>
+            <Btn kind="ghost" onClick={copy} className="py-1 text-sm">
+              {copied ? "Copied" : "Copy"}
+            </Btn>
+          </div>
+        }
+      />
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-
-          <Btn kind="ghost" onClick={copy} className="py-2">
-            {copied ? "Copied" : "Copy"}
-          </Btn>
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 340 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:block;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1600px, 100%);
-                display:flex;
-                flex-direction:column;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 900 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.14em;
-                text-transform:uppercase;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-grid{
-                display:grid;
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                gap:14px;
-              }
-
-              [data-fs-container]:fullscreen .fs-card{
-                border-radius:18px;
-                border:1px solid rgba(255,255,255,.15);
-                background:rgba(255,255,255,.06);
-                padding:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-city{
-                font: 900 20px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.02em;
-              }
-
-              [data-fs-container]:fullscreen .fs-zone{
-                font: 700 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.75;
-                margin-top:6px;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(36px, 5vw, 64px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.06em;
-                margin-top:14px;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 13px/1.25 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-                margin-top:8px;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
-        <div
-          data-shell="normal"
-          className="w-full p-6"
-          style={{ minHeight: 340 }}
-        >
-          {/* Selector */}
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {/* Header (normal only) */}
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                Cities and time zones
-              </div>
-              <p className="mt-1 text-sm text-slate-700">
-                Click a city to toggle it. Shortcuts: F fullscreen · T 24-hour ·
-                S seconds · C copy · R reset · X clear
+              <h1 className="text-xl font-extrabold text-sky-700">
+                World Clock
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Live time in multiple cities. Add, remove, copy, and go
+                fullscreen.
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <Btn kind="ghost" onClick={resetDefault} className="py-2">
-                Reset
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  className="cursor-pointer"
+                  type="checkbox"
+                  checked={use24h}
+                  onChange={(e) => setUse24h(e.target.checked)}
+                />
+                24-hour
+              </label>
+
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  className="cursor-pointer"
+                  type="checkbox"
+                  checked={showSeconds}
+                  onChange={(e) => setShowSeconds(e.target.checked)}
+                />
+                Seconds
+              </label>
+
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
               </Btn>
-              <Btn kind="ghost" onClick={clearAll} className="py-2">
-                Clear
+
+              <Btn kind="ghost" onClick={copy} className="py-2">
+                {copied ? "Copied" : "Copy"}
               </Btn>
             </div>
           </div>
+        )}
 
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="w-full sm:max-w-md">
-              <label className="block text-sm font-bold text-amber-950">
+        {/* Display */}
+        <div
+          className={[
+            "relative mt-4 rounded-2xl border border-slate-200 bg-slate-50 text-slate-950",
+            isFs ? "mx-2 sm:mx-4 flex-1 overflow-hidden" : "p-4 sm:p-6",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 360,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+          }}
+          aria-live="polite"
+        >
+          {/* Top row: search + local time */}
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="w-full lg:max-w-xl">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+                Cities and time zones
+              </div>
+              <p className="mt-1 text-sm text-slate-600">
+                Shortcuts: F fullscreen · T 24-hour · S seconds · C copy · R
+                reset · X clear
+              </p>
+
+              <label className="mt-4 block text-sm font-semibold text-slate-900">
                 Search
               </label>
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Type: London, Tokyo, America, Europe..."
-                className="mt-2 w-full rounded-xl border border-amber-200 bg-white px-4 py-3 text-sm font-semibold text-amber-950 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               />
             </div>
 
-            <div className="rounded-xl border border-amber-200 bg-white p-3">
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
               <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                 Your local time
               </div>
-              <div className="mt-2 font-mono text-2xl font-extrabold tracking-widest text-amber-950">
-                {new Intl.DateTimeFormat(undefined, {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: showSeconds ? "2-digit" : undefined,
-                  hour12: !use24h,
-                }).format(now)}
+              <div className="mt-2 font-mono text-3xl font-extrabold tracking-widest text-slate-900">
+                {rows.localText}
+              </div>
+              <div className="mt-1 text-xs font-semibold text-slate-600">
+                {statusLabel}
               </div>
             </div>
           </div>
 
-          {/* Popular list */}
+          {/* Popular chips */}
           <div className="mt-5">
-            <div className="text-sm font-extrabold text-amber-950">Popular</div>
+            <div className="text-sm font-extrabold text-slate-900">Popular</div>
             <div className="mt-2 flex flex-wrap gap-2">
               {filteredPopular.map((c) => (
                 <Chip
@@ -510,27 +577,49 @@ function WorldClockCard() {
             </div>
           </div>
 
-          {/* Clock grid */}
-          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {rows.length === 0 ? (
-              <div className="rounded-2xl border border-amber-200 bg-white p-5 text-amber-900">
-                <div className="text-lg font-extrabold">No cities selected</div>
-                <p className="mt-2 text-sm text-amber-800">
+          {/* Action row */}
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Btn kind="ghost" onClick={resetDefault} className="py-2">
+              Reset
+            </Btn>
+            <Btn kind="ghost" onClick={clearAll} className="py-2">
+              Clear
+            </Btn>
+          </div>
+
+          {/* Grid */}
+          <div
+            className={[
+              "mt-6 grid gap-4",
+              isFs
+                ? "md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+                : "md:grid-cols-2 xl:grid-cols-3",
+            ].join(" ")}
+          >
+            {rows.items.length === 0 ? (
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="text-lg font-extrabold text-slate-900">
+                  No cities selected
+                </div>
+                <p className="mt-2 text-sm text-slate-600">
                   Pick a few cities above to start the world clock.
                 </p>
               </div>
             ) : (
-              rows.map((r) => (
+              rows.items.map((r) => (
                 <div
                   key={r.id}
-                  className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm"
+                  className={[
+                    "rounded-2xl border border-slate-200 bg-white p-5 shadow-sm",
+                    isFs ? "backdrop-blur" : "",
+                  ].join(" ")}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <div className="text-lg font-extrabold text-amber-950">
+                      <div className="text-lg font-extrabold text-slate-900">
                         {r.name}
                       </div>
-                      <div className="mt-1 text-xs font-bold text-slate-600">
+                      <div className="mt-1 text-xs font-semibold text-slate-600">
                         {r.timeZone}
                         {r.note ? ` · ${r.note}` : ""}
                       </div>
@@ -544,7 +633,12 @@ function WorldClockCard() {
                     </Btn>
                   </div>
 
-                  <div className="mt-4 font-mono text-4xl font-extrabold tracking-widest text-amber-950">
+                  <div
+                    className={[
+                      "mt-4 font-mono font-extrabold tracking-widest text-slate-900",
+                      isFs ? "text-5xl sm:text-6xl" : "text-4xl",
+                    ].join(" ")}
+                  >
                     {r.timeText}
                   </div>
 
@@ -557,75 +651,16 @@ function WorldClockCard() {
           </div>
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">World Clock</div>
-
-            <div className="fs-grid">
-              {(rows.length
-                ? rows
-                : selectedCities.map((c) => ({
-                    ...c,
-                    timeText: formatInZone(now, c.timeZone, {
-                      use24h,
-                      showSeconds,
-                    }),
-                  }))
-              ).map((r) => (
-                <div key={`fs-${r.id}`} className="fs-card">
-                  <div className="fs-city">{r.name}</div>
-                  <div className="fs-zone">
-                    {r.timeZone}
-                    {r.note ? ` · ${r.note}` : ""}
-                  </div>
-                  <div className="fs-time">{r.timeText}</div>
-                </div>
-              ))}
-
-              {rows.length === 0 && (
-                <div className="fs-card">
-                  <div className="fs-city">No cities selected</div>
-                  <div className="fs-zone">Exit fullscreen and pick cities</div>
-                  <div className="fs-time">--:--</div>
-                </div>
-              )}
-            </div>
-
-            <div className="fs-help">
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
               F fullscreen · T 24-hour · S seconds · C copy · R reset · X clear
             </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* Learning hints */}
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold text-amber-950">
-            What is a world clock?
-          </h3>
-          <p className="mt-2 leading-relaxed text-amber-800">
-            A world clock shows the current time in multiple time zones at once,
-            so you can coordinate calls, travel, and remote teams.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold text-amber-950">Fullscreen</h3>
-          <p className="mt-2 leading-relaxed text-amber-800">
-            Use fullscreen for a big, readable grid. Great on a second monitor
-            or a wall display.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold text-amber-950">Copy list</h3>
-          <p className="mt-2 leading-relaxed text-amber-800">
-            Copy exports a clean list of selected cities with their current
-            times, perfect for sharing in chat or notes.
-          </p>
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -634,8 +669,10 @@ function WorldClockCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function WorldClockPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/world-clock";
+export default function WorldClockPage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/world-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -654,166 +691,34 @@ export default function WorldClockPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "World Clock", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "Does the world clock update live?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. It updates every second (or every minute if you hide seconds) based on your device time.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use 12-hour or 24-hour time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Use the 24-hour toggle to switch formats anytime.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use fullscreen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Fullscreen shows a big readable grid designed for monitors, TVs, and projectors.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I copy the list of times?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Click Copy to copy a line-per-city list including city name, current time, and time zone identifier.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">World Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            World Clock (Live Time Zones)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A live <strong>world clock</strong> showing the current time in
-            cities around the world. Search, add cities, toggle 12/24-hour time,
-            hide seconds, and go fullscreen.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <WorldClockCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free world clock: current time in multiple cities
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>world clock</strong> shows live time across popular{" "}
-              <strong>time zones</strong>. It is built for quick scheduling,
-              remote work, travel planning, and classroom demos.
-            </p>
-            <p>
-              Use the <strong>search</strong> to find cities fast. Toggle{" "}
-              <strong>seconds</strong> to reduce visual noise, switch{" "}
-              <strong>12-hour or 24-hour</strong> time, and use{" "}
-              <strong>fullscreen</strong> for a clean wall display.
-            </p>
-            <p>
-              Want tools beyond clocks? Try{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>{" "}
-              or{" "}
-              <Link to="/stopwatch" className="font-semibold hover:underline">
-                Stopwatch
-              </Link>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <WorldClockCard initialNowISO={nowISO} />
         </div>
-      </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">World Clock FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is a world clock?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              A world clock shows the current time in multiple time zones at
-              once so you can compare times across cities.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this world clock accurate?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              It uses your device time plus official time zone rules. If your
-              device clock is correct, the city times will be correct.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I show fewer updates?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Turn off seconds to make it feel calmer and easier to scan.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>F</strong> fullscreen · <strong>T</strong> 24-hour ·{" "}
-              <strong>S</strong> seconds · <strong>C</strong> copy ·{" "}
-              <strong>R</strong> reset · <strong>X</strong> clear (when
-              focused).
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">World Clock</span>
+        </p>
       </section>
     </main>
   );

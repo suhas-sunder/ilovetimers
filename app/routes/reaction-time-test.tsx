@@ -1,7 +1,13 @@
 // app/routes/reaction-time-test.tsx
 import type { Route } from "./+types/reaction-time-test";
-import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,15 +39,8 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
-}
-
-/* =========================================================
-   LOADER
-========================================================= */
-export function loader() {
-  return json({ nowISO: new Date().toISOString() });
 }
 
 /* =========================================================
@@ -59,31 +58,30 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-function isInteractiveTarget(target: EventTarget | null) {
+/**
+ * True only when the tap is on a real control that should NOT trigger the stage.
+ * Important: do NOT consider the stage itself "interactive" (it has role/button).
+ */
+function isInteractiveTarget(
+  target: EventTarget | null,
+  stageEl: HTMLElement | null,
+) {
   const el = target as HTMLElement | null;
   if (!el) return false;
 
-  // If user clicked inside any interactive element, do not treat it as a stage tap.
+  // Only treat real, nested controls as interactive.
   const interactive = el.closest(
-    'button, a, input, textarea, select, summary, details, [role="button"], [role="link"], [contenteditable="true"]',
+    'button, a, input, textarea, select, summary, details, [role="link"], [contenteditable="true"]',
   );
-  return Boolean(interactive);
-}
+  if (!interactive) return false;
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
+  // If the closest interactive element is the stage itself (shouldn't happen with selector),
+  // or the stage isn't provided, treat as interactive only when it's NOT the stage.
+  if (!stageEl) return true;
 
-function safeTimeZone() {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
-  } catch {
-    return "Local";
-  }
+  // If the interactive element is inside the stage, we still want to treat it as interactive
+  // so buttons like Reset take priority. If it isn't inside the stage, it doesn't matter.
+  return stageEl.contains(interactive);
 }
 
 function clamp(n: number, lo: number, hi: number) {
@@ -102,10 +100,9 @@ function median(nums: number[]) {
   return a.length % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
 }
 
-function fmtMs(ms: number) {
-  if (!Number.isFinite(ms)) return "--";
-  const rounded = Math.round(ms);
-  return `${rounded} ms`;
+function fmtMs(ms: number | null) {
+  if (ms == null || !Number.isFinite(ms)) return "--";
+  return `${Math.round(ms)} ms`;
 }
 
 function bucketLabel(ms: number) {
@@ -118,24 +115,153 @@ function bucketLabel(ms: number) {
   return "Slow";
 }
 
+async function toggleFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) {
+    await el.requestFullscreen().catch(() => {});
+  } else {
+    await document.exitFullscreen().catch(() => {});
+  }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line string into its container by adjusting font size.
+ * - ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
-   UI PRIMITIVES (match your style)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
-  onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -160,8 +286,8 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -178,18 +304,62 @@ function StatPill({
   hint?: string;
 }) {
   return (
-    <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2">
-      <div className="text-[11px] font-extrabold uppercase tracking-widest text-amber-800">
+    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+      <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
         {label}
       </div>
-      <div className="mt-1 text-base font-extrabold text-amber-950">
+      <div className="mt-1 text-base font-extrabold text-slate-900">
         {value}
       </div>
       {hint ? (
-        <div className="mt-1 text-xs font-semibold text-amber-900/70">
-          {hint}
-        </div>
+        <div className="mt-1 text-xs font-semibold text-slate-600">{hint}</div>
       ) : null}
+    </div>
+  );
+}
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
     </div>
   );
 }
@@ -197,41 +367,60 @@ function StatPill({
 /* =========================================================
    REACTION TIME TEST
 ========================================================= */
-type Phase = "idle" | "armed" | "waiting" | "go" | "result" | "falseStart";
+type Phase = "idle" | "waiting" | "go" | "falseStart" | "done";
 
 function ReactionTimeTestCard() {
   // Settings
-  const [trialsTarget, setTrialsTarget] = useState(5);
+  const [trialsTarget, setTrialsTarget] = useState(10);
   const [minDelayMs, setMinDelayMs] = useState(1200);
   const [maxDelayMs, setMaxDelayMs] = useState(3200);
+  const [zen, setZen] = useState(true);
 
   // Game state
   const [phase, setPhase] = useState<Phase>("idle");
-  const [message, setMessage] = useState(
-    "Press Start. When it turns green, click or press Space as fast as you can.",
-  );
-
   const [times, setTimes] = useState<number[]>([]);
-  const [lastMs, setLastMs] = useState<number | null>(null);
   const [falseStarts, setFalseStarts] = useState(0);
+  const [lastMs, setLastMs] = useState<number | null>(null);
 
-  // UI extras
+  // UI state
   const [copied, setCopied] = useState(false);
-  const [zen, setZen] = useState(true);
   const [uiHidden, setUiHidden] = useState(false);
 
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const idleRef = useRef<number | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
 
-  // Timing refs for accuracy
+  const stageRef = useRef<HTMLDivElement>(null);
+  const bigBoxRef = useRef<HTMLDivElement>(null);
+  const bigTextRef = useRef<HTMLSpanElement>(null);
+
+  // Timing refs
   const waitTimerRef = useRef<number | null>(null);
   const goAtRef = useRef<number | null>(null);
-  const armedAtRef = useRef<number | null>(null);
 
-  const tz = useMemo(() => safeTimeZone(), []);
+  const timesRef = useRef<number[]>([]);
+  useEffect(() => {
+    timesRef.current = times;
+  }, [times]);
+
+  const phaseRef = useRef<Phase>("idle");
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
+
+  const trialsTargetRef = useRef<number>(trialsTarget);
+  useEffect(() => {
+    trialsTargetRef.current = trialsTarget;
+  }, [trialsTarget]);
+
+  const idleHideRef = useRef<number | null>(null);
 
   const trialsDone = times.length;
   const done = trialsDone >= trialsTarget;
+
+  useEffect(() => {
+    if (!done) return;
+    setPhase("done");
+  }, [done]);
 
   const best = useMemo(() => {
     if (!times.length) return null;
@@ -253,39 +442,8 @@ function ReactionTimeTestCard() {
     const a = mean(times);
     const v =
       times.reduce((acc, x) => acc + (x - a) * (x - a), 0) / (times.length - 1);
-    const sd = Math.sqrt(v);
-    return sd;
+    return Math.sqrt(v);
   }, [times]);
-
-  const isFs = () => Boolean(document.fullscreenElement);
-
-  const bumpIdle = useCallback(() => {
-    if (!zen) return;
-    if (!isFs()) return; // only in fullscreen
-    if (!(phase === "waiting" || phase === "go")) return; // only when focus matters
-
-    if (idleRef.current) window.clearTimeout(idleRef.current);
-    setUiHidden(false);
-    idleRef.current = window.setTimeout(() => setUiHidden(true), 2200);
-  }, [zen, phase]);
-
-  useEffect(() => {
-    setUiHidden(false);
-
-    const onMove = () => bumpIdle();
-    const onKey = () => bumpIdle();
-
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("touchstart", onMove, { passive: true });
-    window.addEventListener("keydown", onKey);
-
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("touchstart", onMove);
-      window.removeEventListener("keydown", onKey);
-      if (idleRef.current) window.clearTimeout(idleRef.current);
-    };
-  }, [bumpIdle]);
 
   const clearWaitTimer = useCallback(() => {
     if (waitTimerRef.current) window.clearTimeout(waitTimerRef.current);
@@ -295,27 +453,44 @@ function ReactionTimeTestCard() {
   const resetRun = useCallback(() => {
     clearWaitTimer();
     goAtRef.current = null;
-    armedAtRef.current = null;
-
     setPhase("idle");
-    setMessage(
-      "Press Start. When it turns green, click or press Space as fast as you can.",
-    );
     setTimes([]);
-    setLastMs(null);
     setFalseStarts(0);
+    setLastMs(null);
+    setUiHidden(false);
   }, [clearWaitTimer]);
 
-  const armNext = useCallback(() => {
-    clearWaitTimer();
-    goAtRef.current = null;
+  const scheduleIdleHide = useCallback(() => {
+    if (!zen) return;
+    if (!isFs) return;
+    const p = phaseRef.current;
+    if (!(p === "waiting" || p === "go")) return;
 
-    setPhase("armed");
-    setMessage("Ready. Click Start Trial, then wait for green.");
-  }, [clearWaitTimer]);
+    if (idleHideRef.current) window.clearTimeout(idleHideRef.current);
+    setUiHidden(false);
+    idleHideRef.current = window.setTimeout(() => setUiHidden(true), 2200);
+  }, [zen, isFs]);
+
+  useEffect(() => {
+    setUiHidden(false);
+
+    const onMove = () => scheduleIdleHide();
+    const onKey = () => scheduleIdleHide();
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("touchstart", onMove, { passive: true });
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("touchstart", onMove);
+      window.removeEventListener("keydown", onKey);
+      if (idleHideRef.current) window.clearTimeout(idleHideRef.current);
+    };
+  }, [scheduleIdleHide]);
 
   const startTrial = useCallback(() => {
-    if (done) return;
+    if (timesRef.current.length >= trialsTargetRef.current) return;
 
     clearWaitTimer();
     goAtRef.current = null;
@@ -325,74 +500,77 @@ function ReactionTimeTestCard() {
     const delay = Math.floor(lo + Math.random() * (hi - lo));
 
     setPhase("waiting");
-    setMessage("Wait for green...");
-
-    armedAtRef.current = performance.now();
 
     waitTimerRef.current = window.setTimeout(() => {
       goAtRef.current = performance.now();
       setPhase("go");
-      setMessage("GO! Tap or press Space now!");
       try {
         if ("vibrate" in navigator) (navigator as any).vibrate?.(20);
       } catch {
         // ignore
       }
     }, delay);
-  }, [clearWaitTimer, done, minDelayMs, maxDelayMs]);
+  }, [clearWaitTimer, minDelayMs, maxDelayMs]);
 
   const registerResponse = useCallback(() => {
-    if (phase === "waiting") {
+    const p = phaseRef.current;
+
+    if (p === "waiting") {
       clearWaitTimer();
       goAtRef.current = null;
-
       setFalseStarts((n) => n + 1);
       setPhase("falseStart");
-      setMessage("Too soon. False start. Click to try again.");
       return;
     }
 
-    if (phase === "go") {
+    if (p === "go") {
       const goAt = goAtRef.current;
       if (!goAt) return;
-
       const now = performance.now();
-      const ms = now - goAt;
-      const safe = clamp(ms, 0, 60000);
+      const ms = clamp(now - goAt, 0, 60000);
 
-      setLastMs(safe);
-      setTimes((arr) => [...arr, safe]);
-      setPhase("result");
-      setMessage(`${fmtMs(safe)}. ${bucketLabel(safe)}.`);
+      setLastMs(ms);
+
+      setTimes((arr) => {
+        const next = [...arr, ms];
+        return next.length > trialsTargetRef.current
+          ? next.slice(0, trialsTargetRef.current)
+          : next;
+      });
+
+      goAtRef.current = null;
+
+      if (timesRef.current.length + 1 >= trialsTargetRef.current) {
+        setPhase("done");
+      } else {
+        setPhase("idle");
+      }
       return;
     }
 
-    if (phase === "falseStart" || phase === "result") {
-      if (times.length >= trialsTarget) return;
+    if (p === "falseStart") {
       startTrial();
       return;
     }
 
-    if (phase === "idle" || phase === "armed") {
-      startTrial();
-      return;
-    }
-  }, [phase, clearWaitTimer, startTrial, times.length, trialsTarget]);
+    if (p === "done") return;
+
+    startTrial();
+  }, [clearWaitTimer, startTrial]);
 
   useEffect(() => {
     setTimes((t) => (t.length > trialsTarget ? t.slice(0, trialsTarget) : t));
+    if (timesRef.current.length > 0) {
+      resetRun();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trialsTarget]);
 
   useEffect(() => {
-    if (!done) return;
-    const b = best ?? 0;
-    const a = avg ?? 0;
-    setMessage(
-      `Done. Best ${fmtMs(b)}. Average ${fmtMs(a)}. Click Reset to run again.`,
-    );
-    setPhase("result");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [done]);
+    return () => {
+      clearWaitTimer();
+    };
+  }, [clearWaitTimer]);
 
   const copyText = useMemo(() => {
     const lines: string[] = [];
@@ -405,8 +583,7 @@ function ReactionTimeTestCard() {
     if (consistency != null)
       lines.push(`Consistency (SD): ${fmtMs(consistency)}`);
     if (falseStarts) lines.push(`False starts: ${falseStarts}`);
-    lines.push(`Time zone: ${tz}`);
-    lines.push("https://ilovetimers.com/reaction-time-test");
+    lines.push("https://www.ilovetimers.com/reaction-time-test");
     return lines.join("\n");
   }, [
     times.length,
@@ -417,7 +594,6 @@ function ReactionTimeTestCard() {
     med,
     consistency,
     falseStarts,
-    tz,
   ]);
 
   const copy = useCallback(async () => {
@@ -429,6 +605,45 @@ function ReactionTimeTestCard() {
       // ignore
     }
   }, [copyText]);
+
+  // Global key handling so Space reacts instantly.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isTypingTarget(e.target)) return;
+
+      const k = e.key.toLowerCase();
+
+      if (k === "f") {
+        if (cardRef.current) toggleFullscreen(cardRef.current);
+        return;
+      }
+      if (k === "c") {
+        void copy();
+        return;
+      }
+      if (k === "r") {
+        resetRun();
+        return;
+      }
+      if (k === "z") {
+        setZen((v) => !v);
+        setUiHidden(false);
+        return;
+      }
+      if (k === "escape" && isFs) {
+        document.exitFullscreen().catch(() => {});
+        return;
+      }
+
+      if (e.key === " " || k === "enter" || k === "spacebar") {
+        e.preventDefault();
+        registerResponse();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown, { passive: false });
+    return () => window.removeEventListener("keydown", onKeyDown as any);
+  }, [copy, isFs, registerResponse, resetRun]);
 
   const setPresets = useCallback(
     (preset: "quick" | "standard" | "focus") => {
@@ -450,305 +665,202 @@ function ReactionTimeTestCard() {
     [resetRun],
   );
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isTypingTarget(e.target)) return;
-
-    const k = e.key.toLowerCase();
-    if (k === "f" && wrapRef.current) {
-      toggleFullscreen(wrapRef.current);
-      return;
-    }
-    if (k === "c") {
-      void copy();
-      return;
-    }
-    if (k === "r") {
-      resetRun();
-      return;
-    }
-    if (k === "z") {
-      setZen((v) => !v);
-      setUiHidden(false);
-      return;
-    }
-    if (k === "enter" || k === " " || k === "spacebar") {
-      e.preventDefault();
-      registerResponse();
-      return;
-    }
-  };
-
   const softHidden = zen && uiHidden;
 
-  const panelTheme =
-    phase === "go"
-      ? {
-          bg: "bg-emerald-500/20",
-          border: "border-emerald-300",
-        }
-      : phase === "waiting"
-        ? {
-            bg: "bg-rose-500/15",
-            border: "border-rose-300",
-          }
-        : phase === "falseStart"
-          ? {
-              bg: "bg-amber-500/20",
-              border: "border-amber-300",
-            }
-          : {
-              bg: "bg-amber-50",
-              border: "border-amber-300",
-            };
-
-  const mainCTA =
+  const statusLabel =
     phase === "waiting"
-      ? "Wait..."
+      ? "Wait"
       : phase === "go"
-        ? "TAP!"
-        : done
-          ? "Done"
-          : trialsDone === 0
-            ? "Start"
-            : phase === "falseStart"
-              ? "Try again"
+        ? "Tap"
+        : phase === "falseStart"
+          ? "Too soon"
+          : phase === "done"
+            ? "Done"
+            : trialsDone === 0
+              ? "Ready"
               : "Next";
 
+  const stageTheme =
+    phase === "go"
+      ? { bg: "bg-emerald-500/15", border: "border-emerald-300" }
+      : phase === "waiting"
+        ? { bg: "bg-rose-500/10", border: "border-rose-300" }
+        : phase === "falseStart"
+          ? { bg: "bg-amber-500/15", border: "border-amber-300" }
+          : { bg: "bg-slate-50", border: "border-slate-200" };
+
+  const instruction =
+    phase === "waiting"
+      ? "Wait for green…"
+      : phase === "go"
+        ? "GREEN! TAP or PRESS SPACEBAR now."
+        : phase === "falseStart"
+          ? "Too soon. That counts as a false start. Tap to try again."
+          : phase === "done"
+            ? "Run finished. Reset to go again."
+            : "Tap to start. When it turns GREEN, PRESS SPACEBAR or TAP (react fast).";
+
+  const bigValue =
+    phase === "go"
+      ? "GO"
+      : phase === "falseStart"
+        ? "EARLY"
+        : phase === "done"
+          ? best == null
+            ? "DONE"
+            : fmtMs(best).replace(" ms", "")
+          : lastMs == null
+            ? "--"
+            : fmtMs(lastMs).replace(" ms", "");
+
+  const bigSuffix =
+    phase === "done"
+      ? best == null
+        ? ""
+        : "BEST (ms)"
+      : lastMs == null
+        ? ""
+        : "ms";
+
+  const fitFontPx = useFitText({
+    containerRef: bigBoxRef,
+    textRef: bigTextRef,
+    deps: [
+      bigValue,
+      bigSuffix,
+      isFs,
+      phase,
+      trialsDone,
+      trialsTarget,
+      softHidden,
+    ],
+    minPx: 56,
+    maxPx: isFs ? 520 : 320,
+    paddingAllowancePx: isFs ? 72 : 84,
+  });
+
+  const handleStagePress = useCallback(
+    (target: EventTarget | null) => {
+      const stageEl = stageRef.current;
+      if (isInteractiveTarget(target, stageEl)) return;
+      if (phaseRef.current === "done") return;
+      registerResponse();
+    },
+    [registerResponse],
+  );
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Reaction Time Test
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            A fast <strong>reaction time test</strong> and{" "}
-            <strong>human reaction timer</strong>. Wait for green, then click or
-            press Space as fast as you can.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={zen}
-              onChange={(e) => {
-                setZen(e.target.checked);
-                setUiHidden(false);
-              }}
-            />
-            Zen
-          </label>
-
-          <Btn kind="ghost" onClick={copy} className="py-2">
-            {copied ? "Copied" : "Copy"}
-          </Btn>
-
-          <Btn
-            kind="ghost"
-            onClick={() => wrapRef.current && toggleFullscreen(wrapRef.current)}
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-
-          <Btn kind="ghost" onClick={resetRun} className="py-2">
-            Reset
-          </Btn>
-        </div>
-      </div>
-
-      {/* Presets + settings */}
-      <div
-        className={`mt-5 grid gap-4 lg:grid-cols-3 fadeSoft ${
-          softHidden ? "opacity-0" : "opacity-100"
-        }`}
-      >
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
-            Presets
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Btn kind="ghost" onClick={() => setPresets("quick")}>
-              Quick (5)
+    <Card cardRef={cardRef} tabIndex={0} isFullscreen={isFs}>
+      <FullscreenTopBar
+        show={isFs}
+        title="Reaction Time Test"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn kind="ghost" onClick={copy} className="py-1 text-sm">
+              {copied ? "Copied" : "Copy"}
             </Btn>
-            <Btn kind="ghost" onClick={() => setPresets("standard")}>
-              Standard (10)
-            </Btn>
-            <Btn kind="ghost" onClick={() => setPresets("focus")}>
-              Focus (15)
+            <Btn kind="ghost" onClick={resetRun} className="py-1 text-sm">
+              Reset
             </Btn>
           </div>
-          <div className="mt-3 text-xs font-semibold text-amber-900/70">
-            Presets reset your current run.
-          </div>
-        </div>
+        }
+      />
 
-        <div className="rounded-2xl border border-amber-200 bg-white p-4">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
-            Trials
-          </div>
-          <div className="mt-3 flex items-center gap-3">
-            <input
-              type="range"
-              min={3}
-              max={25}
-              value={trialsTarget}
-              onChange={(e) => {
-                setTrialsTarget(parseInt(e.target.value, 10));
-                resetRun();
-              }}
-              className="w-full"
-            />
-            <div className="min-w-[48px] text-right text-sm font-extrabold text-amber-950">
-              {trialsTarget}
-            </div>
-          </div>
-          <div className="mt-2 text-xs font-semibold text-amber-900/70">
-            More trials gives a better average.
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-amber-200 bg-white p-4">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
-            Random delay
-          </div>
-          <div className="mt-3 grid gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-20 text-xs font-bold text-amber-900/80">
-                Min
-              </div>
-              <input
-                type="range"
-                min={300}
-                max={5000}
-                step={50}
-                value={minDelayMs}
-                onChange={(e) => {
-                  const v = parseInt(e.target.value, 10);
-                  setMinDelayMs(v);
-                  setMaxDelayMs((m) => Math.max(m, v + 100));
-                  resetRun();
-                }}
-                className="w-full"
-              />
-              <div className="min-w-[72px] text-right text-xs font-extrabold text-amber-950">
-                {minDelayMs} ms
-              </div>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Reaction Time Test
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Tap to start. When it turns GREEN, PRESS SPACEBAR or TAP (react
+                fast).
+              </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="w-20 text-xs font-bold text-amber-900/80">
-                Max
-              </div>
-              <input
-                type="range"
-                min={minDelayMs + 100}
-                max={20000}
-                step={50}
-                value={maxDelayMs}
-                onChange={(e) => {
-                  setMaxDelayMs(parseInt(e.target.value, 10));
-                  resetRun();
-                }}
-                className="w-full"
-              />
-              <div className="min-w-[72px] text-right text-xs font-extrabold text-amber-950">
-                {maxDelayMs} ms
-              </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  className="cursor-pointer"
+                  type="checkbox"
+                  checked={zen}
+                  onChange={(e) => {
+                    setZen(e.target.checked);
+                    setUiHidden(false);
+                  }}
+                />
+                Zen
+              </label>
+
+              <Btn kind="ghost" onClick={copy} className="py-2">
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+
+              <Btn kind="ghost" onClick={resetRun} className="py-2">
+                Reset
+              </Btn>
             </div>
           </div>
-          <div className="mt-2 text-xs font-semibold text-amber-900/70">
-            Random timing stops you from guessing.
-          </div>
-        </div>
-      </div>
+        )}
 
-      {/* Main test area */}
-      <div
-        ref={wrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${panelTheme.border} ${panelTheme.bg}`}
-        style={{ minHeight: 420 }}
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] .fadeSoft{
-                transition: opacity 220ms ease;
-              }
-
-              /* Keep the SAME interactive UI in fullscreen */
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container] .stage{
-                width:100%;
-                height:100%;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                padding: 24px;
-              }
-
-              [data-fs-container]:fullscreen .stage{
-                padding: 6vh 4vw;
-              }
-
-              [data-fs-container] .panel{
-                width:100%;
-                max-width:980px;
-              }
-
-              [data-fs-container]:fullscreen .panel{
-                max-width: 1100px;
-              }
-
-              /* Allow scrolling if content is tall in fullscreen */
-              [data-fs-container]:fullscreen{
-                overflow:auto;
-              }
-
-              /* Make stage feel tappable */
-              [data-fs-container] .tapHint{
-                user-select:none;
-                -webkit-user-select:none;
-              }
-            `,
-          }}
-        />
-
+        {/* Stage */}
         <div
-          className="stage"
-          onMouseDown={() => bumpIdle()}
-          onTouchStart={() => bumpIdle()}
+          ref={stageRef}
+          className={[
+            "relative mt-4 overflow-hidden rounded-2xl border-2",
+            stageTheme.border,
+            stageTheme.bg,
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 460,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            touchAction: "manipulation",
+            userSelect: "none",
+          }}
+          onMouseMove={() => scheduleIdleHide()}
+          onTouchStart={() => scheduleIdleHide()}
+          onPointerDownCapture={(e) => {
+            // Capture ensures we still get the event even if something inside stops propagation.
+            handleStagePress(e.target);
+          }}
           onClick={(e) => {
-            if (isInteractiveTarget(e.target)) return;
-            if (done) return;
-            registerResponse();
+            // Fallback for browsers that are weird about pointer events.
+            handleStagePress(e.target);
           }}
           role="button"
-          tabIndex={-1}
-          aria-label="Reaction time stage. Click or press Space to respond."
+          aria-label="Reaction time stage. Tap/click or press Spacebar to respond."
         >
-          <div className="panel">
-            <div className="rounded-2xl border border-amber-200 bg-white p-6 shadow-sm">
-              <div className="mt-5 grid gap-4 lg:grid-cols-3">
-                <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
+          <div className="flex h-full w-full flex-col items-center justify-center p-3 sm:p-6">
+            <div className="w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                   Trials {trialsDone}/{trialsTarget} · False starts{" "}
                   {falseStarts}
                 </div>
+
+                {!isFs && (
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700">
+                    Shortcuts: Spacebar/Enter tap · F fullscreen · R reset · Z
+                    zen · C copy
+                  </div>
+                )}
               </div>
 
-              <div className="mt-6 grid gap-4 md:grid-cols-4">
+              <div className="mt-4 grid gap-3 md:grid-cols-4">
                 <StatPill
                   label="Last"
                   value={lastMs == null ? "--" : fmtMs(lastMs)}
@@ -773,136 +885,98 @@ function ReactionTimeTestCard() {
                 />
               </div>
 
-              <div className="mt-5">
-                <div
-                  className="rounded-2xl border-2 p-6 text-center"
-                  style={{
-                    borderColor:
-                      phase === "go"
-                        ? "rgba(16,185,129,.55)"
-                        : phase === "waiting"
-                          ? "rgba(244,63,94,.45)"
-                          : "rgba(251,191,36,.45)",
-                    background:
-                      phase === "go"
-                        ? "rgba(16,185,129,.10)"
-                        : phase === "waiting"
-                          ? "rgba(244,63,94,.08)"
-                          : "rgba(251,191,36,.10)",
-                  }}
-                >
-                  <div className="text-sm font-extrabold uppercase tracking-widest text-amber-800">
-                    {phase === "go"
-                      ? "Now"
-                      : phase === "waiting"
-                        ? "Hold"
-                        : phase === "falseStart"
-                          ? "Oops"
-                          : done
-                            ? "Summary"
-                            : "Instructions"}
+              <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-5">
+                <div className="flex flex-col items-center justify-center gap-2">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                    {statusLabel}
                   </div>
 
-                  <div className="mt-3 text-lg font-bold text-slate-800 tapHint">
-                    {message}
+                  <div
+                    ref={bigBoxRef}
+                    className="w-full rounded-2xl border border-slate-200 bg-white p-3 sm:p-6"
+                    style={{ overflow: "hidden" }}
+                    aria-live="polite"
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                      <span
+                        ref={bigTextRef}
+                        className="inline-block text-center font-mono font-extrabold tracking-widest text-slate-900"
+                        style={{
+                          fontSize: `${fitFontPx}px`,
+                          lineHeight: "1",
+                          transform: "translateZ(0)",
+                        }}
+                      >
+                        {bigValue}
+                      </span>
+
+                      {bigSuffix ? (
+                        <div className="mt-2 text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                          {bigSuffix}
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
 
-                  <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                  <div
+                    className={[
+                      "mt-1 text-center text-sm font-semibold text-slate-700",
+                      softHidden ? "opacity-0" : "opacity-100",
+                    ].join(" ")}
+                    style={{ transition: "opacity 220ms ease" }}
+                  >
+                    {instruction}
+                  </div>
+
+                  <div
+                    className={[
+                      "mt-2 flex flex-wrap items-center justify-center gap-3",
+                      softHidden ? "opacity-0" : "opacity-100",
+                    ].join(" ")}
+                    style={{ transition: "opacity 220ms ease" }}
+                  >
                     <Btn
+                      kind="solid"
                       onClick={() => {
-                        if (done) return;
+                        if (phaseRef.current === "done") return;
                         registerResponse();
                       }}
-                      disabled={done && phase !== "idle"}
                       className="px-6 py-3 text-lg"
+                      disabled={phase === "done"}
                     >
-                      {mainCTA}
-                    </Btn>
-
-                    <Btn
-                      kind="ghost"
-                      onClick={() => {
-                        if (phase === "idle") armNext();
-                        else if (!done) startTrial();
-                      }}
-                      disabled={done}
-                      className="px-4 py-3"
-                    >
-                      Start trial
+                      {phase === "waiting"
+                        ? "Wait"
+                        : phase === "go"
+                          ? "TAP"
+                          : phase === "falseStart"
+                            ? "Try again"
+                            : phase === "done"
+                              ? "Done"
+                              : trialsDone === 0
+                                ? "Start"
+                                : "Next"}
                     </Btn>
 
                     <Btn kind="ghost" onClick={resetRun} className="px-4 py-3">
                       Reset
                     </Btn>
                   </div>
-
-                  <div
-                    className={`mt-4 text-xs font-semibold text-slate-600 fadeSoft ${
-                      softHidden ? "opacity-0" : "opacity-100"
-                    }`}
-                  >
-                    Tip: click once so Space works instantly. In fullscreen, you
-                    can also click the background to respond.
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className={`mt-5 grid gap-3 md:grid-cols-2 fadeSoft ${
-                  softHidden ? "opacity-0" : "opacity-100"
-                }`}
-              >
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900">
-                  <div className="text-xs font-extrabold uppercase tracking-wide text-amber-800">
-                    How to get a fair score
-                  </div>
-                  <ul className="mt-2 space-y-1">
-                    <li>Use fullscreen to reduce distractions.</li>
-                    <li>Do 10+ trials, then look at average or median.</li>
-                    <li>
-                      Avoid trackpads if possible. A mouse or touch is more
-                      consistent.
-                    </li>
-                    <li>If you click early, it counts as a false start.</li>
-                  </ul>
-                </div>
-
-                <div className="rounded-2xl border border-amber-200 bg-white p-4 text-xs text-slate-700">
-                  <div className="text-xs font-extrabold uppercase tracking-wide text-amber-800">
-                    Shortcuts
-                  </div>
-                  <ul className="mt-2 space-y-1">
-                    <li>
-                      <strong>Space</strong> or <strong>Enter</strong> = Tap /
-                      Stop
-                    </li>
-                    <li>
-                      <strong>F</strong> = Fullscreen
-                    </li>
-                    <li>
-                      <strong>R</strong> = Reset
-                    </li>
-                    <li>
-                      <strong>Z</strong> = Zen
-                    </li>
-                    <li>
-                      <strong>C</strong> = Copy results
-                    </li>
-                  </ul>
                 </div>
               </div>
 
               {times.length ? (
                 <div
-                  className={`mt-5 rounded-2xl border border-amber-200 bg-white p-4 fadeSoft ${
-                    softHidden ? "opacity-0" : "opacity-100"
-                  }`}
+                  className={[
+                    "mt-4 rounded-2xl border border-slate-200 bg-white p-4",
+                    softHidden ? "opacity-0" : "opacity-100",
+                  ].join(" ")}
+                  style={{ transition: "opacity 220ms ease" }}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="text-xs font-extrabold uppercase tracking-wide text-amber-800">
+                    <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                       Trial results
                     </div>
-                    <div className="text-xs font-semibold text-amber-900/70">
+                    <div className="text-xs font-semibold text-slate-600">
                       Consistency (SD):{" "}
                       {consistency == null ? "--" : fmtMs(consistency)}
                     </div>
@@ -912,7 +986,7 @@ function ReactionTimeTestCard() {
                     {times.map((t, i) => (
                       <span
                         key={i}
-                        className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-extrabold text-amber-950"
+                        className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-extrabold text-slate-900"
                       >
                         {i + 1}: {fmtMs(t)}
                       </span>
@@ -922,18 +996,136 @@ function ReactionTimeTestCard() {
               ) : null}
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Footer shortcuts row */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space tap · F fullscreen · R reset · Z zen · C copy
+          <FullscreenBottomBar show={isFs}>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-xs text-slate-600 sm:text-sm">
+                Tap anywhere on the stage or press Spacebar/Enter · F fullscreen
+                · R reset · Z zen · C copy
+              </div>
+              <div className="text-xs font-semibold text-slate-700">
+                {statusLabel}
+              </div>
+            </div>
+          </FullscreenBottomBar>
         </div>
-        <div className="text-xs text-slate-600">
-          Accuracy note: measured with high-resolution timer. Your device input
-          latency still matters.
-        </div>
+
+        {!isFs && (
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                Presets
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Btn kind="ghost" onClick={() => setPresets("quick")}>
+                  Quick (5)
+                </Btn>
+                <Btn kind="ghost" onClick={() => setPresets("standard")}>
+                  Standard (10)
+                </Btn>
+                <Btn kind="ghost" onClick={() => setPresets("focus")}>
+                  Focus (15)
+                </Btn>
+              </div>
+              <div className="mt-3 text-xs font-semibold text-slate-600">
+                Presets reset your current run.
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                Trials
+              </div>
+              <div className="mt-3 flex items-center gap-3">
+                <input
+                  type="range"
+                  min={3}
+                  max={25}
+                  value={trialsTarget}
+                  onChange={(e) => {
+                    setTrialsTarget(parseInt(e.target.value, 10));
+                    resetRun();
+                  }}
+                  className="w-full cursor-pointer"
+                />
+                <div className="min-w-[48px] text-right text-sm font-extrabold text-slate-900">
+                  {trialsTarget}
+                </div>
+              </div>
+              <div className="mt-2 text-xs font-semibold text-slate-600">
+                More trials gives a better average.
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                Random delay
+              </div>
+
+              <div className="mt-3 grid gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-20 text-xs font-bold text-slate-600">
+                    Min
+                  </div>
+                  <input
+                    type="range"
+                    min={300}
+                    max={5000}
+                    step={50}
+                    value={minDelayMs}
+                    onChange={(e) => {
+                      const v = parseInt(e.target.value, 10);
+                      setMinDelayMs(v);
+                      setMaxDelayMs((m) => Math.max(m, v + 100));
+                      resetRun();
+                    }}
+                    className="w-full cursor-pointer"
+                  />
+                  <div className="min-w-[72px] text-right text-xs font-extrabold text-slate-900">
+                    {minDelayMs} ms
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-20 text-xs font-bold text-slate-600">
+                    Max
+                  </div>
+                  <input
+                    type="range"
+                    min={minDelayMs + 100}
+                    max={20000}
+                    step={50}
+                    value={maxDelayMs}
+                    onChange={(e) => {
+                      setMaxDelayMs(parseInt(e.target.value, 10));
+                      resetRun();
+                    }}
+                    className="w-full cursor-pointer"
+                  />
+                  <div className="min-w-[72px] text-right text-xs font-extrabold text-slate-900">
+                    {maxDelayMs} ms
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-2 text-xs font-semibold text-slate-600">
+                Random timing stops you from guessing.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Tip: Spacebar works instantly. (No need to click a button.)
+            </div>
+            <div className="text-xs text-slate-600">
+              Accuracy note: measured with a high-resolution timer. Your device
+              input latency still matters.
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );
@@ -943,7 +1135,7 @@ function ReactionTimeTestCard() {
    PAGE
 ========================================================= */
 export default function ReactionTimeTestPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/reaction-time-test";
+  const url = "https://www.ilovetimers.com/reaction-time-test";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -953,7 +1145,7 @@ export default function ReactionTimeTestPage({}: Route.ComponentProps) {
         name: "Reaction Time Test",
         url,
         description:
-          "Reaction time test and human reaction timer. Click or press Space when the screen turns green. Track best, average, median, and false starts. Fullscreen supported.",
+          "Reaction time test. Tap to start, wait for green, then react as fast as possible. Track best, average, median, and false starts. Fullscreen supported.",
       },
       {
         "@type": "BreadcrumbList",
@@ -962,7 +1154,7 @@ export default function ReactionTimeTestPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -972,213 +1164,29 @@ export default function ReactionTimeTestPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "How does the reaction time test work?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Press Start, wait for the screen to turn green, then click or press Space as fast as you can. The timer starts at the color change and stops when you respond.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What is a human reaction timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A human reaction timer measures how quickly you respond to a visual cue. This page uses a random delay so you cannot predict when the cue appears.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I get a more reliable score?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Do at least 10 trials and look at average or median. Use fullscreen, and avoid guessing by waiting for green. Different devices can add input delay.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space or Enter to respond, F for fullscreen, R to reset, Z to toggle Zen, and C to copy results.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Reaction Time Test</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Reaction Time Test
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            Test your reflexes with a free <strong>reaction time test</strong>{" "}
-            and <strong>human reaction timer</strong>. Wait for green, then tap
-            fast.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <ReactionTimeTestCard />
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              What you are measuring
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              This page measures the time between a visual cue (green) and your
-              response (click, tap, or Space). Your device and input method can
-              affect results, so compare runs on the same setup.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Get a stable score
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Use 10 to 15 trials, then look at the average and median. Random
-              delay prevents you from predicting the cue, and false starts keep
-              it honest.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">Use fullscreen</h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Fullscreen reduces distractions and makes this work well on a
-              second monitor. Turn on Zen to hide extra UI after a moment.
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <ReactionTimeTestCard />
         </div>
-      </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Reaction time test and human reaction timer
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This free <strong>reaction time test</strong> is a simple way to
-              measure how quickly you respond to a visual cue. It acts like a{" "}
-              <strong>human reaction timer</strong> by starting the timer at the
-              exact moment the cue appears, then stopping when you tap or press
-              Space.
-            </p>
-
-            <p>
-              For fair results, the cue appears after a random delay. That keeps
-              you from timing your click. Run multiple trials and focus on the
-              average or median instead of just one lucky attempt.
-            </p>
-
-            <p>
-              Want to share your score? Use <strong>Copy</strong> to copy your
-              last, best, and average reaction time.
-            </p>
-
-            <p>
-              More tools:{" "}
-              <Link
-                to="/digital-clock"
-                className="font-semibold hover:underline"
-              >
-                Digital Clock
-              </Link>{" "}
-              ·{" "}
-              <Link
-                to="/retro-flip-clock"
-                className="font-semibold hover:underline"
-              >
-                Retro Flip Clock
-              </Link>{" "}
-              ·{" "}
-              <Link
-                to="/minimalist-clock"
-                className="font-semibold hover:underline"
-              >
-                Minimalist Clock
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Reaction Time Test FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I take the reaction time test?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Click <strong>Start</strong>, wait for the screen to turn green,
-              then click or press <strong>Space</strong> as fast as you can.
-              Repeat for multiple trials, then check your average.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is a false start?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              A false start is clicking before the green cue appears. It counts
-              because guessing is not reaction time.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Why does my score change between devices?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Different screens, browsers, and input devices add different
-              amounts of delay. For consistent comparison, test on the same
-              setup.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I use this in fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Click <strong>Fullscreen</strong> or press <strong>F</strong>
-              . In fullscreen you can also click the background stage to respond
-              (buttons still work normally).
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Reaction Time Test</span>
+        </p>
       </section>
     </main>
   );

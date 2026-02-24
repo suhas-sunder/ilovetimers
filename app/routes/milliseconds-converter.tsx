@@ -1,7 +1,7 @@
 // app/routes/milliseconds-converter.tsx
 import type { Route } from "./+types/milliseconds-converter";
 import { json } from "@remix-run/node";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +33,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -45,10 +45,107 @@ export function loader() {
 }
 
 /* =========================================================
-   UTILS
+   EXACT DECIMAL UTILS (no float rounding)
 ========================================================= */
-function clamp(n: number, min: number, max: number) {
-  return Math.min(Math.max(n, min), max);
+function cleanNumericInput(raw: string) {
+  return (raw || "").trim().replace(/,/g, "");
+}
+
+function isValidDecimalString(s: string) {
+  // Allows: -12, 12., .5, -0.01667, +10.2
+  return /^[-+]?(\d+(\.\d*)?|\.\d+)$/.test(s);
+}
+
+function normalizeDecimalString(raw: string) {
+  const t = cleanNumericInput(raw);
+  if (!t) return null;
+  if (!isValidDecimalString(t)) return null;
+
+  let sign = "";
+  let s = t;
+
+  if (s[0] === "+" || s[0] === "-") {
+    sign = s[0] === "-" ? "-" : "";
+    s = s.slice(1);
+  }
+
+  // Split into int and frac parts
+  const parts = s.split(".");
+  let intPart = parts[0] ?? "";
+  let fracPart = parts[1] ?? "";
+
+  if (intPart === "") intPart = "0";
+
+  // Remove leading zeros in intPart (keep at least one digit)
+  intPart = intPart.replace(/^0+(?=\d)/, "");
+
+  // Remove trailing zeros in fracPart
+  fracPart = fracPart.replace(/0+$/, "");
+
+  // If everything is zero, drop sign
+  const isZero =
+    intPart.replace(/0/g, "") === "" && fracPart.replace(/0/g, "") === "";
+  if (isZero) return "0";
+
+  return fracPart ? `${sign}${intPart}.${fracPart}` : `${sign}${intPart}`;
+}
+
+// Shift decimal by `places` (positive shifts decimal right, negative left).
+// Example: shiftDecimal("1.5", 3) => "1500"
+//          shiftDecimal("16.67", -3) => "0.01667"
+function shiftDecimal(raw: string, places: number) {
+  const norm = normalizeDecimalString(raw);
+  if (norm == null) return null;
+
+  let sign = "";
+  let s = norm;
+  if (s[0] === "-") {
+    sign = "-";
+    s = s.slice(1);
+  }
+
+  const [intPartRaw, fracPartRaw = ""] = s.split(".");
+  const digits = (intPartRaw + fracPartRaw).replace(/^0+(?=\d)/, "");
+
+  const fracLen = fracPartRaw.length;
+  const currentPointFromRight = fracLen; // digits after decimal currently
+  const newPointFromRight = currentPointFromRight - places;
+
+  let outInt = "";
+  let outFrac = "";
+
+  if (newPointFromRight <= 0) {
+    // Decimal moves right past the end: append zeros
+    outInt = digits + "0".repeat(-newPointFromRight);
+    outFrac = "";
+  } else if (newPointFromRight >= digits.length) {
+    // Decimal moves left beyond the start: pad with leading zeros
+    const zerosNeeded = newPointFromRight - digits.length;
+    outInt = "0";
+    outFrac = "0".repeat(zerosNeeded) + digits;
+  } else {
+    // Decimal is inside digits
+    const cut = digits.length - newPointFromRight;
+    outInt = digits.slice(0, cut);
+    outFrac = digits.slice(cut);
+  }
+
+  // Clean up
+  outInt = outInt.replace(/^0+(?=\d)/, "");
+  outFrac = outFrac.replace(/0+$/, "");
+
+  const isZero =
+    outInt.replace(/0/g, "") === "" && outFrac.replace(/0/g, "") === "";
+  if (isZero) return "0";
+
+  const out = outFrac ? `${outInt}.${outFrac}` : outInt;
+  return sign ? `${sign}${out}` : out;
+}
+
+function prettyNumber(raw: string | null) {
+  if (raw == null) return "";
+  const norm = normalizeDecimalString(raw);
+  return norm ?? "";
 }
 
 async function copyToClipboard(text: string) {
@@ -56,27 +153,27 @@ async function copyToClipboard(text: string) {
     await navigator.clipboard.writeText(text);
     return true;
   } catch {
-    return false;
+    // Fallback for older browsers / blocked clipboard API
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "true");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      ta.style.top = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch {
+      return false;
+    }
   }
 }
 
-function formatNumber(n: number | null) {
-  // No locale surprises, but still readable
-  if (n === null || !Number.isFinite(n)) return "";
-  // Trim trailing zeros for most cases
-  const s = n.toFixed(12);
-  return s.replace(/\.?0+$/, "");
-}
-
-function parseNumeric(s: string) {
-  const t = (s || "").trim().replace(/,/g, "");
-  if (!t) return null;
-  const n = Number(t);
-  return Number.isFinite(n) ? n : null;
-}
-
 /* =========================================================
-   UI PRIMITIVES
+   UI PRIMITIVES (match newer styling)
 ========================================================= */
 const Card = ({
   children,
@@ -86,7 +183,10 @@ const Card = ({
   className?: string;
 }) => (
   <div
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm ${className}`}
+    className={[
+      "relative h-full rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -111,8 +211,8 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -131,18 +231,19 @@ const TabBtn = ({
   <button
     type="button"
     onClick={onClick}
-    className={`cursor-pointer rounded-full px-4 py-2 text-sm font-extrabold transition ${
+    className={[
+      "cursor-pointer rounded-full px-4 py-2 text-sm font-extrabold transition",
       active
-        ? "bg-amber-700 text-white hover:bg-amber-800"
-        : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-    }`}
+        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+    ].join(" ")}
   >
     {children}
   </button>
 );
 
 const MiniPill = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-950">
+  <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700">
     {children}
   </span>
 );
@@ -157,15 +258,28 @@ function MillisecondsConverterCard() {
   const [sInput, setSInput] = useState("1");
 
   const [lastCopied, setLastCopied] = useState<string | null>(null);
+  const clearCopiedTimerRef = useRef<number | null>(null);
 
-  const ms = useMemo(() => parseNumeric(msInput), [msInput]);
-  const seconds = useMemo(() => parseNumeric(sInput), [sInput]);
+  useEffect(() => {
+    return () => {
+      if (clearCopiedTimerRef.current) {
+        window.clearTimeout(clearCopiedTimerRef.current);
+      }
+    };
+  }, []);
 
-  const msToSeconds = useMemo(() => (ms == null ? null : ms / 1000), [ms]);
-  const secondsToMs = useMemo(
-    () => (seconds == null ? null : seconds * 1000),
-    [seconds],
-  );
+  const msNorm = useMemo(() => normalizeDecimalString(msInput), [msInput]);
+  const sNorm = useMemo(() => normalizeDecimalString(sInput), [sInput]);
+
+  const msToSeconds = useMemo(() => {
+    if (msNorm == null) return null;
+    return shiftDecimal(msNorm, -3);
+  }, [msNorm]);
+
+  const secondsToMs = useMemo(() => {
+    if (sNorm == null) return null;
+    return shiftDecimal(sNorm, 3);
+  }, [sNorm]);
 
   const reset = useCallback(() => {
     setTab("ms2s");
@@ -176,33 +290,34 @@ function MillisecondsConverterCard() {
   const copy = useCallback(async (text: string) => {
     const ok = await copyToClipboard(text);
     setLastCopied(ok ? "Copied" : "Copy failed");
-    window.setTimeout(() => setLastCopied(null), 900);
+
+    if (clearCopiedTimerRef.current) {
+      window.clearTimeout(clearCopiedTimerRef.current);
+    }
+    clearCopiedTimerRef.current = window.setTimeout(
+      () => setLastCopied(null),
+      900,
+    );
   }, []);
 
   const examples = useMemo(
     () => [
-      { ms: 1, s: 0.001 },
-      { ms: 10, s: 0.01 },
-      { ms: 16.67, s: 0.01667 }, // ~60fps frame
-      { ms: 100, s: 0.1 },
-      { ms: 250, s: 0.25 },
-      { ms: 500, s: 0.5 },
-      { ms: 1000, s: 1 },
-      { ms: 1500, s: 1.5 },
-      { ms: 2000, s: 2 },
-      { ms: 60000, s: 60 },
+      { ms: "1", s: "0.001" },
+      { ms: "10", s: "0.01" },
+      { ms: "16.67", s: "0.01667" }, // ~60fps frame
+      { ms: "100", s: "0.1" },
+      { ms: "250", s: "0.25" },
+      { ms: "500", s: "0.5" },
+      { ms: "1000", s: "1" },
+      { ms: "1500", s: "1.5" },
+      { ms: "2000", s: "2" },
+      { ms: "60000", s: "60" },
     ],
     [],
   );
 
   const primaryValue =
-    tab === "ms2s"
-      ? msToSeconds == null
-        ? ""
-        : formatNumber(msToSeconds)
-      : secondsToMs == null
-        ? ""
-        : formatNumber(secondsToMs);
+    tab === "ms2s" ? prettyNumber(msToSeconds) : prettyNumber(secondsToMs);
 
   const primaryLabel = tab === "ms2s" ? "Seconds" : "Milliseconds";
 
@@ -210,25 +325,25 @@ function MillisecondsConverterCard() {
     tab === "ms2s"
       ? msToSeconds == null
         ? ""
-        : `${formatNumber(ms)} ms = ${formatNumber(msToSeconds)} seconds`
+        : `${prettyNumber(msNorm)} ms = ${prettyNumber(msToSeconds)} seconds`
       : secondsToMs == null
         ? ""
-        : `${formatNumber(seconds)} seconds = ${formatNumber(secondsToMs)} ms`;
+        : `${prettyNumber(sNorm)} seconds = ${prettyNumber(secondsToMs)} ms`;
 
   return (
-    <Card className="p-6">
+    <Card>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
+          <h1 className="text-xl font-extrabold text-sky-700">
             Milliseconds Converter
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
+          </h1>
+          <p className="mt-1 text-sm text-slate-600">
             Instant conversions for <strong>ms to seconds</strong> and{" "}
             <strong>seconds to ms</strong>.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="ml-auto flex flex-wrap items-center gap-3">
           <Btn kind="ghost" onClick={reset} className="py-2">
             Reset
           </Btn>
@@ -257,7 +372,7 @@ function MillisecondsConverterCard() {
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         {tab === "ms2s" ? (
           <label className="block">
-            <div className="text-sm font-extrabold text-amber-950">
+            <div className="text-sm font-extrabold text-slate-900">
               Milliseconds (ms)
             </div>
             <input
@@ -265,15 +380,12 @@ function MillisecondsConverterCard() {
               onChange={(e) => setMsInput(e.target.value)}
               inputMode="decimal"
               placeholder="1000"
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
             />
-            <div className="mt-1 text-xs text-amber-900">
-              Tip: you can paste numbers with commas (like 60,000).
-            </div>
           </label>
         ) : (
           <label className="block">
-            <div className="text-sm font-extrabold text-amber-950">
+            <div className="text-sm font-extrabold text-slate-900">
               Seconds (s)
             </div>
             <input
@@ -281,31 +393,30 @@ function MillisecondsConverterCard() {
               onChange={(e) => setSInput(e.target.value)}
               inputMode="decimal"
               placeholder="1"
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-lg font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
             />
-            <div className="mt-1 text-xs text-amber-900">
-              Supports decimals (like 0.01667).
-            </div>
           </label>
         )}
 
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
             {primaryLabel}
           </div>
-          <div className="mt-2 text-4xl font-extrabold text-amber-950">
+
+          <div className="mt-2 font-mono text-4xl font-extrabold text-slate-900 sm:text-5xl">
             {primaryValue || "—"}
           </div>
-          <div className="mt-2 text-sm font-semibold text-amber-900">
+
+          <div className="mt-2 text-sm font-semibold text-slate-700">
             {tab === "ms2s" ? (
-              <>{ms == null ? "Enter a valid milliseconds value." : null}</>
+              <>{msNorm == null ? "Enter a valid milliseconds value." : null}</>
             ) : (
-              <>{seconds == null ? "Enter a valid seconds value." : null}</>
+              <>{sNorm == null ? "Enter a valid seconds value." : null}</>
             )}
           </div>
 
           {copyText ? (
-            <div className="mt-3 rounded-xl border border-amber-200 bg-white p-3 text-sm text-amber-900">
+            <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
               {copyText}
             </div>
           ) : null}
@@ -313,19 +424,17 @@ function MillisecondsConverterCard() {
       </div>
 
       {/* Quick examples */}
-      <div className="mt-6 rounded-2xl border border-amber-200 bg-white p-4">
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="text-sm font-extrabold text-amber-950">
+            <div className="text-sm font-extrabold text-slate-900">
               Quick examples
             </div>
-            <div className="text-xs text-amber-900">
+            <div className="text-xs text-slate-600">
               Click to populate the converter.
             </div>
           </div>
-          <div className="text-xs text-slate-600">
-            Common: 1000 ms = 1 second
-          </div>
+          <div className="text-xs text-slate-600">Common: 1000 ms = 1 second</div>
         </div>
 
         <div className="mt-3 flex flex-wrap gap-2">
@@ -334,12 +443,12 @@ function MillisecondsConverterCard() {
               key={`${ex.ms}-${ex.s}`}
               type="button"
               onClick={() => {
-                setMsInput(String(ex.ms));
-                setSInput(String(ex.s));
+                setMsInput(ex.ms);
+                setSInput(ex.s);
               }}
-              className="cursor-pointer rounded-full bg-amber-500/30 px-3 py-1 text-sm font-semibold text-amber-950 hover:bg-amber-400"
+              className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
             >
-              {formatNumber(ex.ms)} ms ↔ {formatNumber(ex.s)} s
+              {prettyNumber(ex.ms)} ms ↔ {prettyNumber(ex.s)} s
             </button>
           ))}
         </div>
@@ -352,7 +461,7 @@ function MillisecondsConverterCard() {
    PAGE
 ========================================================= */
 export default function MillisecondsConverterPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/milliseconds-converter";
+  const url = "https://www.ilovetimers.com/milliseconds-converter";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -362,7 +471,7 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
         name: "Milliseconds Converter",
         url,
         description:
-          "Convert ms to seconds and seconds to ms instantly with copy buttons and examples.",
+          "Convert milliseconds to seconds and seconds to milliseconds instantly.",
       },
       {
         "@type": "BreadcrumbList",
@@ -371,7 +480,7 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -381,120 +490,29 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "How do you convert ms to seconds?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Divide milliseconds by 1000. Example: 1500 ms ÷ 1000 = 1.5 seconds.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do you convert seconds to ms?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Multiply seconds by 1000. Example: 2.5 seconds × 1000 = 2500 ms.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Milliseconds Converter</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Milliseconds Converter
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            Targets: <strong>ms to seconds</strong> and{" "}
-            <strong>seconds to ms</strong>.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <MillisecondsConverterCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Convert milliseconds to seconds (and back)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              To convert <strong>ms to seconds</strong>, divide by 1000. To
-              convert <strong>seconds to ms</strong>, multiply by 1000. This
-              page does both instantly and gives you a clean number you can
-              copy.
-            </p>
-
-            <p>
-              If you’re working with time durations like 1h 20m + 45m, use{" "}
-              <Link
-                to="/time-calculator"
-                className="font-semibold hover:underline"
-              >
-                Time Calculator
-              </Link>
-              . For payroll sessions with breaks and rates, use{" "}
-              <Link
-                to="/billable-hours-calculator"
-                className="font-semibold hover:underline"
-              >
-                Billable Hours Calculator
-              </Link>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <MillisecondsConverterCard />
         </div>
-      </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Milliseconds Converter FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is 1000 ms equal to 1 second?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. 1000 milliseconds equals exactly 1 second.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I convert decimals like 0.01667 seconds to ms?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Multiply by 1000. Example: 0.01667 s ≈ 16.67 ms.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Milliseconds Converter</span>
+        </p>
       </section>
     </main>
   );

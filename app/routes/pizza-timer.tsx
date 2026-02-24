@@ -1,7 +1,14 @@
 // app/routes/pizza-timer.tsx
 import type { Route } from "./+types/pizza-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +40,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -74,7 +81,7 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (same style as other pages)
+// WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -122,24 +129,149 @@ async function toggleFullscreen(el: HTMLElement) {
   }
 }
 
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
-   UI PRIMITIVES (same style as Home/Pomodoro)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -164,13 +296,59 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    PIZZA TIMER CARD
@@ -183,7 +361,6 @@ type PizzaPreset = {
   method: HeatMethod;
   minutes: number;
   seconds: number;
-  note: string;
 };
 
 const PRESETS: PizzaPreset[] = [
@@ -193,7 +370,6 @@ const PRESETS: PizzaPreset[] = [
     method: "oven",
     minutes: 14,
     seconds: 0,
-    note: "Common frozen pizza bake time range is roughly 12 to 18 minutes depending on brand and oven.",
   },
   {
     key: "frozen_oven_16",
@@ -201,7 +377,6 @@ const PRESETS: PizzaPreset[] = [
     method: "oven",
     minutes: 16,
     seconds: 0,
-    note: "Use this if you like crispier crust or your oven runs cool.",
   },
   {
     key: "frozen_air_10",
@@ -209,7 +384,6 @@ const PRESETS: PizzaPreset[] = [
     method: "air_fryer",
     minutes: 10,
     seconds: 0,
-    note: "Air fryers are faster. Check early and adjust to avoid burning cheese edges.",
   },
   {
     key: "reheat_slice_6",
@@ -217,7 +391,6 @@ const PRESETS: PizzaPreset[] = [
     method: "oven",
     minutes: 6,
     seconds: 0,
-    note: "Good for reheating a slice in an oven or toaster oven. Check at 5 minutes.",
   },
   {
     key: "skillet_slice_5",
@@ -225,7 +398,6 @@ const PRESETS: PizzaPreset[] = [
     method: "skillet",
     minutes: 5,
     seconds: 0,
-    note: "Skillet reheating can be fast. Cover with a lid to melt cheese.",
   },
 ];
 
@@ -233,29 +405,51 @@ function PizzaTimerCard() {
   const beep = useBeep();
 
   const [method, setMethod] = useState<HeatMethod>("oven");
-
   const [minutes, setMinutes] = useState(14);
   const [seconds, setSeconds] = useState(0);
 
-  const [remaining, setRemaining] = useState((minutes * 60 + seconds) * 1000);
+  const initialMs = useMemo(
+    () => (Math.max(0, minutes) * 60 + clamp(seconds, 0, 59)) * 1000,
+    [minutes, seconds],
+  );
+
+  const [remaining, setRemaining] = useState(initialMs);
+  const remainingRef = useRef<number>(initialMs);
+  useEffect(() => {
+    remainingRef.current = remaining;
+  }, [remaining]);
+
   const [running, setRunning] = useState(false);
+  const runningRef = useRef<boolean>(false);
+  useEffect(() => {
+    runningRef.current = running;
+  }, [running]);
 
   const [sound, setSound] = useState(true);
   const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
-
   const [checkAtMin, setCheckAtMin] = useState<number>(2);
 
-  // Reminder mode (default = repeating)
   const [reminderMode, setReminderMode] = useState<
     "none" | "triple" | "repeat"
   >("repeat");
-  const [reminderFired, setReminderFired] = useState(false);
+
+  const reminderFiredRef = useRef(false);
   const reminderRepeatUntilRef = useRef<number | null>(null);
+  const lastBeepSecondRef = useRef<number | null>(null);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
-  const lastBeepSecondRef = useRef<number | null>(null);
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  const stopRaf = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }, []);
 
   const stopReminder = useCallback(() => {
     reminderRepeatUntilRef.current = null;
@@ -271,7 +465,6 @@ function PizzaTimerCard() {
       return;
     }
 
-    // repeat mode: beep every 2s for ~10s
     const until = performance.now() + 10_000;
     reminderRepeatUntilRef.current = until;
 
@@ -289,75 +482,97 @@ function PizzaTimerCard() {
     loop();
   }, [sound, reminderMode, beep]);
 
+  const setTimeFromInputs = useCallback(
+    (nextMin: number, nextSec: number) => {
+      const m = clamp(nextMin, 0, 180);
+      const s = clamp(nextSec, 0, 59);
+      setMinutes(m);
+      setSeconds(s);
+
+      const ms = (m * 60 + s) * 1000;
+      setRemaining(ms);
+      remainingRef.current = ms;
+
+      setRunning(false);
+      runningRef.current = false;
+
+      endRef.current = null;
+      lastBeepSecondRef.current = null;
+
+      reminderFiredRef.current = false;
+      stopReminder();
+    },
+    [stopReminder],
+  );
+
   function applyPreset(p: PizzaPreset) {
     setMethod(p.method);
+
+    const ms = (p.minutes * 60 + p.seconds) * 1000;
     setMinutes(p.minutes);
     setSeconds(p.seconds);
+    setRemaining(ms);
+    remainingRef.current = ms;
 
     setRunning(false);
+    runningRef.current = false;
+
     endRef.current = null;
     lastBeepSecondRef.current = null;
-    setRemaining((p.minutes * 60 + p.seconds) * 1000);
 
-    // default "check early" cue
     if (p.method === "air_fryer") setCheckAtMin(2);
     else if (p.method === "skillet") setCheckAtMin(1);
     else setCheckAtMin(2);
 
-    setReminderFired(false);
+    reminderFiredRef.current = false;
     stopReminder();
   }
 
+  // If user changes method manually, treat as custom but do not stomp the time.
   useEffect(() => {
-    setRemaining((minutes * 60 + seconds) * 1000);
-    setRunning(false);
-    endRef.current = null;
-    lastBeepSecondRef.current = null;
+    if (method !== "custom") return;
+    // no-op
+  }, [method]);
 
-    setReminderFired(false);
-    stopReminder();
-  }, [minutes, seconds, stopReminder]);
-
-  // reset reminder when starting a run
-  useEffect(() => {
-    if (!running) return;
-    setReminderFired(false);
-    stopReminder();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [running]);
-
+  // Main RAF loop driven by running only (no "remaining" dependency).
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
+      stopRaf();
       endRef.current = null;
       lastBeepSecondRef.current = null;
       stopReminder();
       return;
     }
 
-    if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
-    }
+    // Starting a run: set end time from latest remainingRef.
+    endRef.current = performance.now() + Math.max(0, remainingRef.current);
+    reminderFiredRef.current = false;
+    stopReminder();
+    lastBeepSecondRef.current = null;
 
     const tick = () => {
       const now = performance.now();
-      const rem = Math.max(0, (endRef.current ?? now) - now);
+      const end = endRef.current ?? now;
+      const rem = Math.max(0, end - now);
+
+      // push to state (and ref via effect)
       setRemaining(rem);
 
-      // "check early" reminder when remaining hits X minutes
+      // check-early reminder
       const checkAtMs = clamp(checkAtMin, 0, 60) * 60 * 1000;
       if (
         sound &&
-        !reminderFired &&
+        !reminderFiredRef.current &&
+        reminderMode !== "none" &&
         checkAtMs > 0 &&
         rem <= checkAtMs &&
         rem > Math.max(0, checkAtMs - 400)
       ) {
-        setReminderFired(true);
+        reminderFiredRef.current = true;
         playReminder();
       }
 
+      // final countdown beeps (5..1)
       if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
         const secLeft = Math.ceil(rem / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
@@ -369,8 +584,10 @@ function PizzaTimerCard() {
       if (rem <= 0) {
         endRef.current = null;
         setRunning(false);
+        runningRef.current = false;
+
         lastBeepSecondRef.current = null;
-        setReminderFired(false);
+        reminderFiredRef.current = false;
         stopReminder();
         if (sound) beep(660, 220);
         return;
@@ -380,66 +597,79 @@ function PizzaTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
+    return () => stopRaf();
   }, [
     running,
-    remaining,
+    stopRaf,
+    stopReminder,
     sound,
     finalCountdownBeeps,
     beep,
     checkAtMin,
-    reminderFired,
+    reminderMode,
     playReminder,
-    stopReminder,
   ]);
 
+  // Keep remaining in sync when inputs change while not running.
+  useEffect(() => {
+    if (runningRef.current) return;
+    const ms = initialMs;
+    setRemaining(ms);
+    remainingRef.current = ms;
+
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+    reminderFiredRef.current = false;
+    stopReminder();
+  }, [initialMs, stopReminder]);
+
   function reset() {
+    const ms = initialMs;
+
     setRunning(false);
-    setRemaining((minutes * 60 + seconds) * 1000);
+    runningRef.current = false;
+
+    setRemaining(ms);
+    remainingRef.current = ms;
+
     endRef.current = null;
     lastBeepSecondRef.current = null;
 
-    setReminderFired(false);
+    reminderFiredRef.current = false;
     stopReminder();
   }
 
   function startPause() {
+    if (!running && initialMs <= 0) return;
+
     if (!running && sound) beep(0, 1); // prime audio
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
+    setRunning((r) => {
+      const next = !r;
+      runningRef.current = next;
+      return next;
+    });
   }
-
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (isTypingTarget(e.target)) return;
-
-    if (e.key === " ") {
-      e.preventDefault();
-      startPause();
-    } else if (e.key.toLowerCase() === "r") {
-      reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    }
-  };
 
   const urgent = running && remaining > 0 && remaining <= 10_000;
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
 
-  const selectedNote = useMemo(() => {
-    const p = PRESETS.find(
-      (x) =>
-        x.method === method && x.minutes === minutes && x.seconds === seconds,
-    );
-    if (p) return p.note;
-    if (method === "air_fryer")
-      return "Air fryers run hot and fast. Check early to avoid burning.";
-    if (method === "skillet")
-      return "Skillet reheating is quick. Use a lid to melt cheese.";
-    return "Use your box instructions as the source of truth. This timer helps you stay on track.";
-  }, [method, minutes, seconds]);
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [
+      shownTime,
+      isFs,
+      urgent,
+      running,
+      method,
+      checkAtMin,
+      sound,
+      reminderMode,
+    ],
+    minPx: 56,
+    maxPx: isFs ? 560 : 380,
+    paddingAllowancePx: isFs ? 64 : 72,
+  });
 
   const methodLabel = useMemo(() => {
     if (method === "air_fryer") return "Air fryer";
@@ -448,313 +678,134 @@ function PizzaTimerCard() {
     return "Custom";
   }, [method]);
 
+  const statusLabel = running
+    ? "Running"
+    : remaining > 0 && remaining < initialMs
+      ? "Paused"
+      : "Ready";
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
+
+    if (e.key === " ") {
+      e.preventDefault();
+      startPause();
+    } else if (k === "r") {
+      reset();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+
+  const disabledStart = initialMs <= 0;
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">Pizza Timer</h2>
-          <p className="mt-1 text-base text-slate-700">
-            A <strong>pizza timer</strong> and{" "}
-            <strong>frozen pizza timer</strong> with quick presets. Big digits,
-            optional sound, and fullscreen mode.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Presets */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {PRESETS.map((p) => (
-          <button
-            key={p.key}
-            type="button"
-            onClick={() => applyPreset(p)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              p.method === method &&
-              p.minutes === minutes &&
-              p.seconds === seconds
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {p.label}
-          </button>
-        ))}
-
-        <span className="mx-1 text-xs font-semibold text-amber-800">
-          Method: {methodLabel}
-        </span>
-      </div>
-
-      {/* Inputs */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-4">
-        <label className="block text-sm font-semibold text-amber-950">
-          Minutes
-          <input
-            type="number"
-            min={0}
-            max={180}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 0), 0, 180))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Seconds
-          <input
-            type="number"
-            min={0}
-            max={59}
-            value={seconds}
-            onChange={(e) =>
-              setSeconds(clamp(Number(e.target.value || 0), 0, 59))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <label className="block text-sm font-semibold text-amber-950">
-          Method
-          <select
-            value={method}
-            onChange={(e) => setMethod(e.target.value as HeatMethod)}
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          >
-            <option value="oven">Oven</option>
-            <option value="air_fryer">Air fryer</option>
-            <option value="skillet">Skillet</option>
-            <option value="custom">Custom</option>
-          </select>
-        </label>
-
-        <div className="flex items-end gap-3">
-          <Btn onClick={startPause} disabled={minutes * 60 + seconds <= 0}>
-            {running ? "Pause" : "Start"}
-          </Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-        </div>
-      </div>
-
-      {/* Check early */}
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <label className="block text-sm font-semibold text-amber-950">
-          Check with <span className="font-extrabold">{checkAtMin}</span> min
-          left
-          <input
-            type="number"
-            min={0}
-            max={30}
-            value={checkAtMin}
-            onChange={(e) =>
-              setCheckAtMin(clamp(Number(e.target.value || 0), 0, 30))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <div className="mt-1 text-xs text-amber-800">
-            Reminder will sound when this much time remains.
-          </div>
-        </label>
-
-        <div className="grid gap-2">
-          <label className="block text-sm font-semibold text-amber-950">
-            Reminder style
-            <select
-              value={reminderMode}
-              onChange={(e) =>
-                setReminderMode(e.target.value as "none" | "triple" | "repeat")
-              }
-              className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-              disabled={!sound}
-            >
-              <option value="repeat">Repeating (10s)</option>
-              <option value="triple">Triple beep</option>
-              <option value="none">None</option>
-            </select>
-            {!sound ? (
-              <div className="mt-1 text-xs text-amber-800">
-                Enable Sound to use reminders.
-              </div>
-            ) : null}
-          </label>
-
-          <div className="flex flex-wrap items-center gap-2">
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Pizza Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
             <Btn
-              kind="ghost"
-              onClick={() => playReminder()}
-              disabled={!sound || reminderMode === "none"}
-              className="h-fit"
+              kind="solid"
+              onClick={startPause}
+              className="py-1 text-sm"
+              disabled={disabledStart}
             >
-              Test reminder
+              {running ? "Pause" : "Start"}
             </Btn>
-
-            <Btn
-              kind="ghost"
-              onClick={() => stopReminder()}
-              disabled={!sound}
-              className="h-fit"
-            >
-              Stop sound
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
             </Btn>
           </div>
-        </div>
+        }
+      />
 
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-          <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-            Doneness checklist
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Pizza Timer (Presets + Fullscreen)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Big, readable countdown with presets, reminders, sound, and
+                fullscreen.
+              </p>
+            </div>
+
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
           </div>
-          <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>Cheese bubbling and starting to brown</li>
-            <li>Crust edges golden</li>
-            <li>Bottom crisp (lift with spatula)</li>
-          </ul>
-        </div>
-      </div>
+        )}
 
-      {/* Note */}
-      <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-          Tip
-        </div>
-        <div className="mt-1 text-sm font-semibold text-amber-950">
-          {selectedNote}
-        </div>
-        <div className="mt-2 text-sm text-amber-900">
-          Frozen pizza varies a lot by brand and thickness. Use the box time as
-          the baseline and this timer to keep you honest.
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 260 }}
-        aria-live="polite"
-      >
-        {/* Fullscreen CSS */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:16px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 20px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(92px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 800 18px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full p-6"
-          style={{ minHeight: 260 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            urgent ? "border-rose-200 bg-rose-50" : "border-slate-200",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-3">
-            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-              {methodLabel} · Pizza timer
-            </div>
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {methodLabel} · {statusLabel}
+          </div>
 
-            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
-              {shownTime}
-            </div>
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
 
-            <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-amber-800">
-              <span className="rounded-full bg-amber-500/30 px-3 py-1">
-                Check with {checkAtMin} min left
+          {!isFs && (
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-slate-700">
+              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
+                Check at {checkAtMin} min left
               </span>
-              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
                 Reminder{" "}
                 {sound
                   ? reminderMode === "repeat"
@@ -764,42 +815,192 @@ function PizzaTimerCard() {
                       : "off"
                   : "off"}
               </span>
-              <span className="rounded-full bg-amber-500/30 px-3 py-1">
+              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
                 Sound {sound ? "on" : "off"}
               </span>
             </div>
+          )}
+        </div>
 
-            <div className="text-xs font-semibold text-amber-800">
-              Shortcuts: Space start/pause · R reset · F fullscreen
+        {/* Controls (normal only) */}
+        {!isFs && (
+          <div className="mt-4 grid gap-3 lg:grid-cols-12">
+            <div className="lg:col-span-12">
+              <div className="flex flex-wrap items-center gap-2">
+                {PRESETS.map((p) => {
+                  const active =
+                    p.method === method &&
+                    p.minutes === minutes &&
+                    p.seconds === seconds;
+                  return (
+                    <button
+                      key={p.key}
+                      type="button"
+                      onClick={() => applyPreset(p)}
+                      className={[
+                        "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                        active
+                          ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                          : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                      ].join(" ")}
+                    >
+                      {p.label}
+                    </button>
+                  );
+                })}
+
+                <span className="ml-1 text-xs font-semibold text-slate-600">
+                  Method: <span className="text-slate-900">{methodLabel}</span>
+                </span>
+              </div>
+            </div>
+
+            <label className="lg:col-span-3 block text-sm font-semibold text-slate-900">
+              Minutes
+              <input
+                type="number"
+                min={0}
+                max={180}
+                value={minutes}
+                onChange={(e) => {
+                  setMethod("custom");
+                  setTimeFromInputs(Number(e.target.value || 0), seconds);
+                }}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+
+            <label className="lg:col-span-3 block text-sm font-semibold text-slate-900">
+              Seconds
+              <input
+                type="number"
+                min={0}
+                max={59}
+                value={seconds}
+                onChange={(e) => {
+                  setMethod("custom");
+                  setTimeFromInputs(minutes, Number(e.target.value || 0));
+                }}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              />
+            </label>
+
+            <label className="lg:col-span-3 block text-sm font-semibold text-slate-900">
+              Method
+              <select
+                value={method}
+                onChange={(e) => setMethod(e.target.value as HeatMethod)}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              >
+                <option value="oven">Oven</option>
+                <option value="air_fryer">Air fryer</option>
+                <option value="skillet">Skillet</option>
+                <option value="custom">Custom</option>
+              </select>
+            </label>
+
+            <div className="lg:col-span-3 flex items-end gap-3">
+              <Btn kind="solid" onClick={startPause} disabled={disabledStart}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+            </div>
+
+            <div className="lg:col-span-12 mt-1 flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
+
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={finalCountdownBeeps}
+                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                  disabled={!sound}
+                />
+                Final beeps
+              </label>
+
+              <div className="ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                Shortcuts: Space start/pause · R reset · F fullscreen
+              </div>
+            </div>
+
+            <div className="lg:col-span-12 grid gap-3 sm:grid-cols-12">
+              <label className="sm:col-span-4 block text-sm font-semibold text-slate-900">
+                Check with <span className="font-extrabold">{checkAtMin}</span>{" "}
+                min left
+                <input
+                  type="number"
+                  min={0}
+                  max={30}
+                  value={checkAtMin}
+                  onChange={(e) =>
+                    setCheckAtMin(clamp(Number(e.target.value || 0), 0, 30))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                />
+              </label>
+
+              <label className="sm:col-span-4 block text-sm font-semibold text-slate-900">
+                Reminder style
+                <select
+                  value={reminderMode}
+                  onChange={(e) =>
+                    setReminderMode(
+                      e.target.value as "none" | "triple" | "repeat",
+                    )
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  disabled={!sound}
+                >
+                  <option value="repeat">Repeating (10s)</option>
+                  <option value="triple">Triple beep</option>
+                  <option value="none">None</option>
+                </select>
+              </label>
+
+              <div className="sm:col-span-4 flex items-end gap-2">
+                <Btn
+                  kind="ghost"
+                  onClick={() => playReminder()}
+                  disabled={!sound || reminderMode === "none"}
+                  className="h-fit"
+                >
+                  Test reminder
+                </Btn>
+                <Btn
+                  kind="ghost"
+                  onClick={() => stopReminder()}
+                  disabled={!sound}
+                  className="h-fit"
+                >
+                  Stop sound
+                </Btn>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Pizza Timer</div>
-            <div className="fs-time">{shownTime}</div>
-            <div className="fs-sub">
-              {methodLabel}
-              {" · "}
-              Check at {checkAtMin} min left
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · R reset · F
+              fullscreen
             </div>
-            <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+            <div className="text-xs font-semibold text-slate-700">
+              {methodLabel} · {statusLabel}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/pause · R reset · F fullscreen
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -811,7 +1012,7 @@ function PizzaTimerCard() {
 export default function PizzaTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/pizza-timer";
+  const url = "https://www.ilovetimers.com/pizza-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -821,7 +1022,7 @@ export default function PizzaTimerPage({
         name: "Pizza Timer",
         url,
         description:
-          "A pizza timer and frozen pizza timer with presets for common bake times, a doneness checklist, fullscreen display, and optional sound.",
+          "Set a simple pizza timer with quick presets for frozen pizza. Big, easy-to-read countdown to help you pull your pizza out at the right time.",
       },
       {
         "@type": "BreadcrumbList",
@@ -830,7 +1031,7 @@ export default function PizzaTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -840,236 +1041,29 @@ export default function PizzaTimerPage({
           },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "How long does frozen pizza take?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Many frozen pizzas bake in roughly 12 to 18 minutes in a conventional oven, but it varies by brand, thickness, and oven temperature. Use the box instructions as the baseline and check early.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use this as a frozen pizza timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Pick a frozen pizza preset (or set your own time) and start the countdown. You can also set a reminder to check doneness a few minutes before the end.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Should I set a reminder to check pizza early?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Pizza can go from perfect to overdone quickly. A reminder 1 to 3 minutes before the end helps you check cheese bubbling, crust color, and crispness.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, and F toggles fullscreen while the timer card is focused.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Pizza Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Pizza Timer
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A <strong>pizza timer</strong> and{" "}
-            <strong>frozen pizza timer</strong> with quick presets and a
-            reminder to check doneness early.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <PizzaTimerCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Frozen pizza timer presets
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Pick a preset (like 14m or 16m) and adjust to match your box
-              instructions and oven.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Check a few minutes early
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Pizza can finish faster than the box depending on oven
-              calibration. A check reminder prevents burning.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>Space</strong> = Start / Pause
-              </li>
-              <li>
-                <strong>R</strong> = Reset
-              </li>
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free pizza timer and frozen pizza timer
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>pizza timer</strong> is a simple countdown designed
-              for cooking pizza in an oven or air fryer. It also works as a{" "}
-              <strong>frozen pizza timer</strong> by offering common bake-time
-              presets.
-            </p>
-
-            <p>
-              Frozen pizza brands vary a lot. Use your box instructions for
-              temperature and baseline time, then set a reminder to check
-              doneness a few minutes before the end.
-            </p>
-
-            <p>
-              For a general cooking countdown, use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . For boiled eggs, use{" "}
-              <Link to="/egg-timer" className="font-semibold hover:underline">
-                Egg Timer
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Pizza timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Big countdown that is easy to glance at while cooking.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Frozen pizza timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Presets for common ranges, plus easy custom time.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Check reminder
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Repeating reminder by default so you actually notice it.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Pizza Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How long does frozen pizza take?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Many frozen pizzas bake in about <strong>12 to 18 minutes</strong>{" "}
-              in a conventional oven, but it depends on the brand, thickness,
-              temperature, and your oven. Use the box instructions and check
-              early.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Should I set a timer to check pizza early?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Pizza can finish faster than expected. A reminder at{" "}
-              <strong>1 to 3 minutes</strong> remaining helps you avoid burning
-              the cheese or crust.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I use this for air fryer pizza?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Choose an air fryer preset or set your own time. Air fryers
-              vary, so start checking early.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Pizza Timer</span>
+        </p>
       </section>
     </main>
   );

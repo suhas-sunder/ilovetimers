@@ -1,7 +1,16 @@
 // app/routes/visual-timer.tsx
 import type { Route } from "./+types/visual-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +42,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -72,6 +81,30 @@ function isTypingTarget(target: EventTarget | null) {
     tag === "SELECT" ||
     el.isContentEditable
   );
+}
+
+async function toggleFullscreen(el: HTMLElement) {
+  if (!document.fullscreenElement) {
+    await el.requestFullscreen().catch(() => {});
+  } else {
+    await document.exitFullscreen().catch(() => {});
+  }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
 }
 
 // WebAudio beep (same style as other pages)
@@ -114,12 +147,99 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * Snappy: uses useLayoutEffect so initial paint is already large.
+ */
+function useFitTextLayout({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 520,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(maxPx);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* =========================================================
@@ -130,16 +250,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -164,18 +295,65 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
    VISUAL TIMER CARD
-   - Big digits + visual progress that shrinks
-   - Two modes: Bar (super clear) and Ring (nice visual)
+   - High readability
+   - Fast rendering: React state updates once per second
+   - Smooth visuals: DOM updates per frame without React re-render
 ========================================================= */
 type VisualMode = "bar" | "ring";
 
@@ -188,7 +366,9 @@ function VisualTimerCard() {
   );
 
   const [minutes, setMinutes] = useState(10);
-  const [remaining, setRemaining] = useState(minutes * 60 * 1000);
+
+  const totalMs = useMemo(() => minutes * 60 * 1000, [minutes]);
+
   const [running, setRunning] = useState(false);
 
   const [sound, setSound] = useState(true);
@@ -197,40 +377,101 @@ function VisualTimerCard() {
   const [mode, setMode] = useState<VisualMode>("bar");
   const [showTime, setShowTime] = useState(true);
 
+  // UI display state updates only when the visible second changes
+  const [remainingDisplayMs, setRemainingDisplayMs] = useState(totalMs);
+
   const rafRef = useRef<number | null>(null);
-  const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
+  const endPerfRef = useRef<number | null>(null);
+  const remainingMsRef = useRef<number>(totalMs);
+  const lastSecondShownRef = useRef<number | null>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
 
-  const totalMs = minutes * 60 * 1000;
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
 
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  // Visual DOM refs
+  const barFillRef = useRef<HTMLDivElement>(null);
+  const ringFgRef = useRef<SVGCircleElement>(null);
+
+  // Ring geometry (kept stable)
+  const ring = useMemo(() => {
+    const size = 240;
+    const stroke = 18;
+    const r = (size - stroke) / 2;
+    const circ = 2 * Math.PI * r;
+    return { size, stroke, r, circ };
+  }, []);
+
+  // Keep refs in sync
   useEffect(() => {
-    setRemaining(totalMs);
-    setRunning(false);
-    endRef.current = null;
+    remainingMsRef.current = totalMs;
+    setRemainingDisplayMs(totalMs);
+    endPerfRef.current = null;
+    lastSecondShownRef.current = null;
     lastBeepSecondRef.current = null;
-  }, [minutes, totalMs]);
+
+    // Also reset visuals immediately
+    if (barFillRef.current) barFillRef.current.style.transform = "scaleX(1)";
+    if (ringFgRef.current) {
+      ringFgRef.current.setAttribute("stroke-dasharray", `${ring.circ} 0`);
+    }
+  }, [totalMs, ring.circ]);
+
+  function stopRaf() {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+  }
+
+  const applyVisual = useCallback(
+    (fracLeft: number) => {
+      const f = clamp(fracLeft, 0, 1);
+
+      if (barFillRef.current) {
+        barFillRef.current.style.transform = `scaleX(${f})`;
+      }
+
+      if (ringFgRef.current) {
+        const dash = ring.circ * f;
+        ringFgRef.current.setAttribute(
+          "stroke-dasharray",
+          `${dash} ${ring.circ - dash}`,
+        );
+      }
+    },
+    [ring.circ],
+  );
 
   useEffect(() => {
     if (!running) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      endRef.current = null;
+      stopRaf();
+      endPerfRef.current = null;
       lastBeepSecondRef.current = null;
       return;
     }
 
-    if (!endRef.current) {
-      endRef.current = performance.now() + remaining;
+    if (!endPerfRef.current) {
+      endPerfRef.current = performance.now() + remainingMsRef.current;
     }
 
     const tick = () => {
       const now = performance.now();
-      const rem = Math.max(0, (endRef.current ?? now) - now);
-      setRemaining(rem);
+      const rem = Math.max(0, (endPerfRef.current ?? now) - now);
+      remainingMsRef.current = rem;
+
+      const fracLeft = totalMs > 0 ? rem / totalMs : 0;
+      applyVisual(fracLeft);
+
+      const secLeft = Math.ceil(rem / 1000);
+      if (lastSecondShownRef.current !== secLeft) {
+        lastSecondShownRef.current = secLeft;
+        const snapped = Math.ceil(rem / 1000) * 1000;
+        setRemainingDisplayMs(snapped);
+      }
 
       if (sound && finalCountdownBeeps && rem > 0 && rem <= 5_000) {
-        const secLeft = Math.ceil(rem / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
           lastBeepSecondRef.current = secLeft;
           beep(880, 110);
@@ -238,10 +479,13 @@ function VisualTimerCard() {
       }
 
       if (rem <= 0) {
-        endRef.current = null;
+        endPerfRef.current = null;
+        stopRaf();
         setRunning(false);
         lastBeepSecondRef.current = null;
         if (sound) beep(660, 240);
+        applyVisual(0);
+        setRemainingDisplayMs(0);
         return;
       }
 
@@ -249,434 +493,417 @@ function VisualTimerCard() {
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    };
-  }, [running, remaining, sound, finalCountdownBeeps, beep]);
+    return () => stopRaf();
+  }, [running, totalMs, sound, finalCountdownBeeps, beep, applyVisual]);
+
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
   function reset() {
     setRunning(false);
-    setRemaining(totalMs);
-    endRef.current = null;
+    stopRaf();
+    endPerfRef.current = null;
+    lastSecondShownRef.current = null;
     lastBeepSecondRef.current = null;
+    remainingMsRef.current = totalMs;
+    setRemainingDisplayMs(totalMs);
+    applyVisual(1);
   }
 
   function startPause() {
-    setRunning((r) => !r);
-    lastBeepSecondRef.current = null;
+    setRunning((r) => {
+      const next = !r;
+      lastBeepSecondRef.current = null;
+
+      if (!next) {
+        // Pausing
+        stopRaf();
+        endPerfRef.current = null;
+      }
+      return next;
+    });
   }
 
   function setPreset(m: number) {
     setMinutes(m);
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const urgent =
+    running && remainingMsRef.current > 0 && remainingMsRef.current <= 10_000;
+
+  const shownTime = msToClock(remainingDisplayMs);
+
+  const fitFontPx = useFitTextLayout({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, showTime, mode],
+    minPx: 52,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 64 : 76,
+  });
+
+  const statusLabel =
+    remainingMsRef.current <= 0 ? "Done" : running ? "Running" : "Ready";
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       startPause();
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
       reset();
-    } else if (e.key.toLowerCase() === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
-    } else if (e.key.toLowerCase() === "v") {
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "v") {
       setMode((m) => (m === "bar" ? "ring" : "bar"));
-    } else if (e.key.toLowerCase() === "t") {
+    } else if (k === "t") {
       setShowTime((v) => !v);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
-  const urgent = running && remaining > 0 && remaining <= 10_000;
-  const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
-
-  const fracLeft = totalMs > 0 ? clamp(remaining / totalMs, 0, 1) : 0;
-
-  // Ring math
-  const ringSize = 220;
-  const stroke = 18;
-  const r = (ringSize - stroke) / 2;
-  const circ = 2 * Math.PI * r;
-  const dash = circ * fracLeft;
-
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Visual Timer
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            A <strong>classroom visual timer</strong> for kids: time you can
-            see. The visual shrinks as time runs out, so it’s easier to
-            understand than numbers alone.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Presets + custom */}
-      <div className="mt-6 flex flex-wrap items-center gap-2">
-        {presetsMin.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => setPreset(m)}
-            className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-              m === minutes
-                ? "bg-amber-700 text-white hover:bg-amber-800"
-                : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-            }`}
-          >
-            {m}m
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_auto]">
-        <label className="block text-sm font-semibold text-amber-950">
-          Custom minutes
-          <input
-            type="number"
-            min={1}
-            max={180}
-            value={minutes}
-            onChange={(e) =>
-              setMinutes(clamp(Number(e.target.value || 1), 1, 180))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-
-        <div className="flex flex-wrap items-end gap-3">
-          <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-          <Btn kind="ghost" onClick={reset}>
-            Reset
-          </Btn>
-
-          <div className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <button
-              type="button"
-              onClick={() => setMode("bar")}
-              className={`rounded-md px-2 py-1 ${
-                mode === "bar" ? "bg-amber-700 text-white" : "hover:underline"
-              }`}
-              title="Bar mode"
-            >
-              Bar
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("ring")}
-              className={`rounded-md px-2 py-1 ${
-                mode === "ring" ? "bg-amber-700 text-white" : "hover:underline"
-              }`}
-              title="Ring mode"
-            >
-              Ring
-            </button>
-
-            <label className="ml-2 inline-flex items-center gap-2 text-sm font-semibold text-amber-950">
-              <input
-                type="checkbox"
-                checked={showTime}
-                onChange={(e) => setShowTime(e.target.checked)}
-              />
-              Show time
-            </label>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Visual Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {running ? "Pause" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
+              Reset
+            </Btn>
           </div>
-        </div>
-      </div>
+        }
+      />
 
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${
-          urgent
-            ? "border-rose-300 bg-rose-50 text-rose-950"
-            : "border-amber-300 bg-amber-50 text-amber-950"
-        }`}
-        style={{ minHeight: 340 }}
-        aria-live="polite"
-      >
-        {/* Fullscreen CSS: show ONLY the fullscreen shell in fullscreen */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Visual Timer (Bar or Ring)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                A clear countdown where the visual shrinks as time runs out.
+                Fullscreen for classrooms and smartboards.
+              </p>
+            </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1600px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:22px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 22px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(72px, 12vw, 190px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.06em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-visual{
-                width:min(1100px, 90vw);
-              }
-
-              [data-fs-container]:fullscreen .fs-barOuter{
-                height:56px;
-                border-radius:999px;
-                background:rgba(255,255,255,.14);
-                overflow:hidden;
-                border:1px solid rgba(255,255,255,.18);
-              }
-              [data-fs-container]:fullscreen .fs-barFill{
-                height:100%;
-                background:rgba(255,255,255,.92);
-                transform-origin:left center;
-              }
-
-              [data-fs-container]:fullscreen .fs-ringWrap{
-                width:min(520px, 70vw);
-                aspect-ratio:1/1;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-              }
-              [data-fs-container]:fullscreen .fs-ringTime{
-                position:absolute;
-                font: 900 clamp(54px, 7vw, 110px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.04em;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 340 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            urgent
+              ? "border-rose-200 bg-rose-50"
+              : "border-slate-200 bg-slate-50",
+            "p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 360,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full flex-col items-center justify-center gap-5">
-            {showTime ? (
-              <div className="flex w-full items-center justify-center font-mono font-extrabold tracking-widest">
-                <span className="text-6xl sm:text-7xl md:text-8xl">
-                  {shownTime}
-                </span>
-              </div>
-            ) : (
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                Visual only
-              </div>
-            )}
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
 
+          {showTime ? (
+            <span
+              ref={timeTextRef}
+              className={[
+                "mt-2 inline-block text-center font-mono font-extrabold",
+                isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+              ].join(" ")}
+              style={{
+                fontSize: `${fitFontPx}px`,
+                lineHeight: "1",
+                transform: "translateZ(0)",
+              }}
+            >
+              {shownTime}
+            </span>
+          ) : (
+            <div className="mt-3 text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              Visual only
+            </div>
+          )}
+
+          {/* Visual */}
+          <div className={showTime ? "mt-6 w-full" : "mt-4 w-full"}>
             {mode === "bar" ? (
-              <div className="w-full max-w-4xl">
-                <div className="h-10 w-full overflow-hidden rounded-full border-2 border-amber-300 bg-white">
+              <div className="mx-auto w-full max-w-5xl">
+                <div className="h-12 w-full overflow-hidden rounded-full border border-slate-200 bg-white">
                   <div
-                    className="h-full bg-amber-700"
-                    style={{ width: `${Math.round(fracLeft * 100)}%` }}
+                    ref={barFillRef}
+                    className={[
+                      "h-full origin-left",
+                      urgent ? "bg-rose-500" : "bg-amber-500",
+                    ].join(" ")}
+                    style={{ transform: "scaleX(1)" }}
                     aria-label="Visual time remaining bar"
                   />
                 </div>
-                <div className="mt-2 flex justify-between text-xs font-semibold text-slate-600">
-                  <span>Start</span>
-                  <span>Done</span>
-                </div>
+                {!isFs && (
+                  <div className="mt-2 flex justify-between text-xs font-semibold text-slate-600">
+                    <span>Start</span>
+                    <span>Done</span>
+                  </div>
+                )}
               </div>
             ) : (
-              <div className="relative flex items-center justify-center">
+              <div className="relative mx-auto flex items-center justify-center">
                 <svg
-                  width={ringSize}
-                  height={ringSize}
-                  viewBox={`0 0 ${ringSize} ${ringSize}`}
+                  width={isFs ? 320 : ring.size}
+                  height={isFs ? 320 : ring.size}
+                  viewBox={`0 0 ${ring.size} ${ring.size}`}
                   aria-label="Visual time remaining ring"
                 >
                   <circle
-                    cx={ringSize / 2}
-                    cy={ringSize / 2}
-                    r={r}
-                    stroke="#fbbf24"
-                    strokeWidth={stroke}
+                    cx={ring.size / 2}
+                    cy={ring.size / 2}
+                    r={ring.r}
+                    stroke={urgent ? "#fecaca" : "#e2e8f0"}
+                    strokeWidth={ring.stroke}
                     fill="none"
-                    opacity={0.25}
                   />
                   <circle
-                    cx={ringSize / 2}
-                    cy={ringSize / 2}
-                    r={r}
-                    stroke="#b45309"
-                    strokeWidth={stroke}
+                    ref={ringFgRef}
+                    cx={ring.size / 2}
+                    cy={ring.size / 2}
+                    r={ring.r}
+                    stroke={urgent ? "#ef4444" : "#f59e0b"}
+                    strokeWidth={ring.stroke}
                     fill="none"
                     strokeLinecap="round"
-                    strokeDasharray={`${dash} ${circ - dash}`}
-                    transform={`rotate(-90 ${ringSize / 2} ${ringSize / 2})`}
+                    strokeDasharray={`${ring.circ} 0`}
+                    transform={`rotate(-90 ${ring.size / 2} ${ring.size / 2})`}
                   />
                 </svg>
-                {showTime ? (
-                  <div className="absolute font-mono text-3xl font-extrabold tracking-widest text-amber-950">
-                    {shownTime}
-                  </div>
-                ) : null}
               </div>
             )}
+          </div>
+        </div>
 
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <div className="mt-4 flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              {presetsMin.map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setPreset(m)}
+                  disabled={running}
+                  className={[
+                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60",
+                    m === minutes
+                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                      : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                  ].join(" ")}
+                  title={running ? "Pause to change duration" : `${m} minutes`}
+                >
+                  {m}m
+                </button>
+              ))}
+            </div>
+
+            <div className="grid gap-3 lg:grid-cols-[1fr_auto]">
+              <label className="block text-sm font-semibold text-slate-900">
+                Custom minutes
+                <input
+                  type="number"
+                  min={1}
+                  max={180}
+                  value={minutes}
+                  disabled={running}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 1), 1, 180))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:bg-slate-50"
+                />
+              </label>
+
+              <div className="flex flex-wrap items-end gap-3">
+                <Btn onClick={startPause} kind="solid">
+                  {running ? "Pause" : "Start"}
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
+                  Reset
+                </Btn>
+
+                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => setMode("bar")}
+                    className={[
+                      "cursor-pointer rounded-md px-2 py-1",
+                      mode === "bar"
+                        ? "bg-amber-500 text-slate-900"
+                        : "hover:bg-slate-50",
+                    ].join(" ")}
+                    title="Bar mode"
+                  >
+                    Bar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode("ring")}
+                    className={[
+                      "cursor-pointer rounded-md px-2 py-1",
+                      mode === "ring"
+                        ? "bg-amber-500 text-slate-900"
+                        : "hover:bg-slate-50",
+                    ].join(" ")}
+                    title="Ring mode"
+                  >
+                    Ring
+                  </button>
+
+                  <label className="ml-1 inline-flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={showTime}
+                      onChange={(e) => setShowTime(e.target.checked)}
+                      className="cursor-pointer"
+                    />
+                    Show time
+                  </label>
+
+                  <span className="mx-1 h-4 w-px bg-slate-200" />
+
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={sound}
+                      onChange={(e) => setSound(e.target.checked)}
+                      className="cursor-pointer"
+                    />
+                    Sound
+                  </label>
+
+                  <label className="inline-flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={finalCountdownBeeps}
+                      onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                      disabled={!sound}
+                      className="cursor-pointer disabled:cursor-not-allowed"
+                    />
+                    Final beeps
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
               Shortcuts: Space start/pause · R reset · F fullscreen · V toggle
               visual · T toggle time
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Visual Timer</div>
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 sm:text-sm">
+              <span>Tap visual to start/pause</span>
+              <span className="hidden sm:inline">·</span>
+              <span>Space start/pause</span>
+              <span className="hidden sm:inline">·</span>
+              <span>R reset</span>
+              <span className="hidden sm:inline">·</span>
+              <span>V visual</span>
+              <span className="hidden sm:inline">·</span>
+              <span>T time</span>
+              <span className="hidden sm:inline">·</span>
+              <span>F fullscreen</span>
+            </div>
 
-            {mode === "bar" ? (
-              <div className="fs-visual w-full">
-                <div className="fs-barOuter">
-                  <div
-                    className="fs-barFill"
-                    style={{ transform: `scaleX(${fracLeft})` }}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="fs-ringWrap fs-visual relative">
-                <svg viewBox="0 0 100 100" className="w-full h-full">
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="38"
-                    stroke="rgba(255,255,255,.18)"
-                    strokeWidth="12"
-                    fill="none"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="38"
-                    stroke="rgba(255,255,255,.92)"
-                    strokeWidth="12"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeDasharray={`${2 * Math.PI * 38 * fracLeft} ${2 * Math.PI * 38 * (1 - fracLeft)}`}
-                    transform="rotate(-90 50 50)"
-                  />
-                </svg>
-                {showTime ? (
-                  <div className="fs-ringTime">{shownTime}</div>
-                ) : null}
-              </div>
-            )}
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
+                {statusLabel}
+              </span>
 
-            {showTime ? <div className="fs-time">{shownTime}</div> : null}
+              <label className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
+                <input
+                  type="checkbox"
+                  checked={showTime}
+                  onChange={(e) => setShowTime(e.target.checked)}
+                  className="cursor-pointer"
+                />
+                Time
+              </label>
 
-            <div className="fs-help">
-              Space start/pause · R reset · V visual · T time · F fullscreen
+              <button
+                type="button"
+                onClick={() => setMode((m) => (m === "bar" ? "ring" : "bar"))}
+                className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 hover:bg-slate-50"
+                title="Toggle visual (V)"
+              >
+                {mode === "bar" ? "Bar" : "Ring"}
+              </button>
+
+              <label className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                  className="cursor-pointer"
+                />
+                Sound
+              </label>
+
+              <label className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
+                <input
+                  type="checkbox"
+                  checked={finalCountdownBeeps}
+                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                  disabled={!sound}
+                  className="cursor-pointer disabled:cursor-not-allowed"
+                />
+                Beeps
+              </label>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Teacher/kids guidance */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold text-amber-950">
-            Why visual helps kids
-          </h3>
-          <p className="mt-2 leading-relaxed text-amber-800">
-            A visual timer shows “how much time is left” without needing to read
-            minutes and seconds. The bar or ring shrinks until time is done.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold text-amber-950">Classroom use</h3>
-          <p className="mt-2 leading-relaxed text-amber-800">
-            Great for centers, transitions, silent reading, clean-up time, and
-            “you have 5 minutes” moments. Fullscreen is designed for smartboards
-            and projectors.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-bold text-amber-950">Simple controls</h3>
-          <p className="mt-2 leading-relaxed text-amber-800">
-            Use presets for quick setup. If kids get distracted by numbers, turn
-            off “Show time” and use visual-only mode.
-          </p>
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -688,7 +915,7 @@ function VisualTimerCard() {
 export default function VisualTimerPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/visual-timer";
+  const url = "https://www.ilovetimers.com/visual-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -707,203 +934,34 @@ export default function VisualTimerPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Visual Timer", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a visual timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A visual timer shows time remaining as a shrinking shape, like a bar or ring. That makes it easier for kids to understand how much time is left without focusing on numbers.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Is this a classroom visual timer for smartboards?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Fullscreen is designed for smartboards and projectors with a simple high-contrast display.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I hide the numbers for a kids timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Turn off “Show time” to use visual-only mode so kids focus on the shrinking bar or ring instead of minutes and seconds.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are the keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Space starts/pauses, R resets, F toggles fullscreen, V switches between bar and ring visuals, and T toggles the time display while the card is focused.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Visual Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Visual Timer for Kids (Classroom Visual Timer)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A <strong>visual timer</strong> that shows time remaining as a
-            shrinking bar or ring. Built for classrooms, smartboards, and kids
-            who understand visuals faster than numbers.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <VisualTimerCard />
         </div>
-      </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free visual timer for kids and classrooms (smartboard-friendly)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>visual timer</strong> is designed for situations
-              where kids need to “see” time. Instead of relying only on numbers,
-              the visual shrinks as time runs out. That makes it a strong{" "}
-              <strong>timer for kids</strong> and a practical{" "}
-              <strong>classroom visual timer</strong>.
-            </p>
-
-            <p>
-              Choose a preset (like 5 or 10 minutes) and press Start. Use
-              Fullscreen for smartboards and projectors. If the numbers are
-              distracting, turn off “Show time” and run visual-only mode.
-            </p>
-
-            <p>
-              Want a classic numbers-only countdown? Use{" "}
-              <Link
-                to="/countdown-timer"
-                className="font-semibold hover:underline"
-              >
-                Countdown Timer
-              </Link>
-              . Need a speaker timer for talks? Use{" "}
-              <Link
-                to="/presentation-timer"
-                className="font-semibold hover:underline"
-              >
-                Presentation Timer
-              </Link>
-              .
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Visual timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Shows time remaining as a shrinking bar or ring.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Timer for kids
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Visual-only mode helps kids focus without watching every second.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-bold text-amber-950 uppercase tracking-wide">
-                Classroom visual timer
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                Fullscreen is built for smartboards and projectors.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Visual Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How is a visual timer different from a normal countdown?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              A visual timer shows time remaining as a shrinking shape (bar or
-              ring). Kids can understand “how much time is left” without reading
-              the clock.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I hide the numbers for a kids timer?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Turn off <strong>Show time</strong> to use visual-only mode.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Is this good for a smartboard or projector?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Use <strong>Fullscreen</strong> for big visuals and high
-              contrast on classroom displays.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause • <strong>R</strong> reset •{" "}
-              <strong>F</strong> fullscreen • <strong>V</strong> bar/ring •{" "}
-              <strong>T</strong> show/hide time (when focused).
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Visual Timer</span>
+        </p>
       </section>
     </main>
   );

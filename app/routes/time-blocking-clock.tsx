@@ -1,7 +1,14 @@
 // app/routes/time-blocking-clock.tsx
 import type { Route } from "./+types/time-blocking-clock";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -33,7 +40,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -71,6 +78,22 @@ async function toggleFullscreen(el: HTMLElement) {
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
 }
 
 function minutesSinceMidnight(d: Date) {
@@ -133,6 +156,119 @@ function sortBlocks(blocks: Block[]) {
   });
 }
 
+function formatClock(now: Date) {
+  return `${pad2(now.getHours())}:${pad2(now.getMinutes())}:${pad2(
+    now.getSeconds(),
+  )}`;
+}
+
+function formatDate(now: Date) {
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  }).format(now);
+}
+
+/**
+ * Fit a single-line clock string into its container by adjusting font size.
+ * - ResizeObserver + rAF
+ * - Binary search for max font-size that fits width + height
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
+}
+
 /* =========================================================
    UI PRIMITIVES
 ========================================================= */
@@ -141,16 +277,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -175,18 +322,187 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-semibold text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-semibold text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
 
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
+
 /* =========================================================
    CARD
 ========================================================= */
-const LS_KEY = "ilovetimers:time-blocking-clock:v1";
+const LS_KEY = "ilovetimers:time-blocking-clock:v2";
+
+function BlockRow({
+  block,
+  isActive,
+  onUpdate,
+  onRemove,
+}: {
+  block: Block;
+  isActive: boolean;
+  onUpdate: (id: string, patch: Partial<Block>) => void;
+  onRemove: (id: string) => void;
+}) {
+  const [startStr, setStartStr] = useState(() => minutesToHHMM(block.startMin));
+  const [endStr, setEndStr] = useState(() => minutesToHHMM(block.endMin));
+
+  useEffect(() => {
+    setStartStr(minutesToHHMM(block.startMin));
+  }, [block.startMin]);
+
+  useEffect(() => {
+    setEndStr(minutesToHHMM(block.endMin));
+  }, [block.endMin]);
+
+  const commitStart = () => {
+    const v = parseHHMM(startStr);
+    if (v == null) {
+      setStartStr(minutesToHHMM(block.startMin));
+      return;
+    }
+    onUpdate(block.id, { startMin: v });
+  };
+
+  const commitEnd = () => {
+    const v = parseHHMM(endStr);
+    if (v == null) {
+      setEndStr(minutesToHHMM(block.endMin));
+      return;
+    }
+    onUpdate(block.id, { endMin: v });
+  };
+
+  return (
+    <div
+      className={[
+        "rounded-2xl border p-4",
+        isActive ? "border-amber-300 bg-amber-50" : "border-slate-200 bg-white",
+      ].join(" ")}
+    >
+      <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-start">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div>
+            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              Title
+            </div>
+            <input
+              value={block.title}
+              onChange={(e) => onUpdate(block.id, { title: e.target.value })}
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+            />
+          </div>
+
+          <div>
+            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              Start
+            </div>
+            <input
+              value={startStr}
+              onChange={(e) => setStartStr(e.target.value)}
+              onBlur={commitStart}
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  (e.currentTarget as HTMLInputElement).blur();
+              }}
+              inputMode="numeric"
+              placeholder="09:00"
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+            />
+          </div>
+
+          <div>
+            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              End
+            </div>
+            <input
+              value={endStr}
+              onChange={(e) => setEndStr(e.target.value)}
+              onBlur={commitEnd}
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  (e.currentTarget as HTMLInputElement).blur();
+              }}
+              inputMode="numeric"
+              placeholder="10:30"
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+            />
+          </div>
+
+          <div className="sm:col-span-3">
+            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              Notes
+            </div>
+            <input
+              value={block.notes}
+              onChange={(e) => onUpdate(block.id, { notes: e.target.value })}
+              placeholder="Optional"
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2 lg:justify-end">
+          <Btn kind="ghost" onClick={() => onRemove(block.id)}>
+            Delete
+          </Btn>
+        </div>
+      </div>
+
+      <div className="mt-3 text-xs font-semibold text-slate-600">
+        {minutesToHHMM(block.startMin)}-{minutesToHHMM(block.endMin)}
+      </div>
+    </div>
+  );
+}
 
 function TimeBlockingClockCard() {
   const [now, setNow] = useState(() => new Date());
@@ -220,14 +536,38 @@ function TimeBlockingClockCard() {
     ),
   );
 
-  const fsRef = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const hydratedRef = useRef(false);
 
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
+
+  // Snappy clock updates: align to next tick, then update on a short interval.
   useEffect(() => {
     if (!live) return;
-    const t = window.setInterval(() => setNow(new Date()), 250);
-    return () => window.clearInterval(t);
+
+    let intervalId: number | null = null;
+    let timeoutId: number | null = null;
+
+    const start = () => {
+      setNow(new Date());
+
+      const msToNext = 1000 - (Date.now() % 1000);
+      timeoutId = window.setTimeout(() => {
+        setNow(new Date());
+        intervalId = window.setInterval(() => setNow(new Date()), 250);
+      }, msToNext);
+    };
+
+    start();
+
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+      if (intervalId) window.clearInterval(intervalId);
+    };
   }, [live]);
 
   useEffect(() => {
@@ -242,7 +582,12 @@ function TimeBlockingClockCard() {
     try {
       const raw = window.localStorage.getItem(LS_KEY);
       if (!raw) return;
-      const parsed = JSON.parse(raw) as { blocks?: Block[] } | null;
+      const parsed = JSON.parse(raw) as {
+        blocks?: Block[];
+        live?: boolean;
+      } | null;
+      if (typeof parsed?.live === "boolean") setLive(parsed.live);
+
       if (!parsed?.blocks || !Array.isArray(parsed.blocks)) return;
       const cleaned = parsed.blocks
         .filter(Boolean)
@@ -263,11 +608,11 @@ function TimeBlockingClockCard() {
   useEffect(() => {
     if (!hydratedRef.current) return;
     try {
-      window.localStorage.setItem(LS_KEY, JSON.stringify({ blocks }));
+      window.localStorage.setItem(LS_KEY, JSON.stringify({ blocks, live }));
     } catch {
       // ignore
     }
-  }, [blocks]);
+  }, [blocks, live]);
 
   const nowMin = useMemo(() => minutesSinceMidnight(now), [now]);
 
@@ -277,25 +622,12 @@ function TimeBlockingClockCard() {
     return hit?.id ?? null;
   }, [blocks, nowMin]);
 
-  const timeStr = useMemo(() => {
-    const h = now.getHours();
-    const m = now.getMinutes();
-    const s = now.getSeconds();
-    return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
-  }, [now]);
+  const timeStr = useMemo(() => formatClock(now), [now]);
+  const dateStr = useMemo(() => formatDate(now), [now]);
 
-  const dateStr = useMemo(() => {
-    return new Intl.DateTimeFormat(undefined, {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
-      day: "2-digit",
-    }).format(now);
-  }, [now]);
-
-  const activeTitle = useMemo(() => {
+  const activeBlock = useMemo(() => {
     if (!activeId) return null;
-    return blocks.find((b) => b.id === activeId)?.title ?? "Block";
+    return blocks.find((b) => b.id === activeId) ?? null;
   }, [blocks, activeId]);
 
   const buildCopyText = useMemo(() => {
@@ -313,11 +645,7 @@ function TimeBlockingClockCard() {
   }, [blocks, dateStr]);
 
   const addBlock = () => {
-    const start = clamp(
-      Math.floor(now.getHours() * 60 + now.getMinutes()),
-      0,
-      1439,
-    );
+    const start = clamp(now.getHours() * 60 + now.getMinutes(), 0, 1439);
     const b: Block = normalizeBlock({
       id: uid(),
       title: "New Block",
@@ -347,281 +675,238 @@ function TimeBlockingClockCard() {
     if (ok) setCopied("Copied");
   };
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const statusLabel = live ? "Live" : "Paused";
+
+  const displayFitPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [timeStr, isFs, live, blocks.length, activeId],
+    minPx: 56,
+    maxPx: isFs ? 520 : 360,
+    paddingAllowancePx: isFs ? 64 : 76,
+  });
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
-    if (e.key.toLowerCase() === "f" && fsRef.current) {
-      toggleFullscreen(fsRef.current);
-    } else if (e.key.toLowerCase() === "c") {
+    const k = e.key.toLowerCase();
+
+    if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
+    } else if (k === "c") {
       void onCopy();
+    } else if (k === "a") {
+      addBlock();
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Time-Blocking Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Live clock plus editable time blocks. Add, edit, copy, and
-            fullscreen.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Time Blocking Clock"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+              <input
+                type="checkbox"
+                checked={live}
+                onChange={(e) => setLive(e.target.checked)}
+              />
+              Live
+            </label>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={live}
-              onChange={(e) => setLive(e.target.checked)}
-            />
-            Live
-          </label>
+            <Btn kind="ghost" onClick={addBlock} className="py-1 text-sm">
+              Add
+            </Btn>
 
-          <Btn kind="ghost" onClick={addBlock}>
-            Add block
-          </Btn>
+            <Btn kind="ghost" onClick={onCopy} className="py-1 text-sm">
+              Copy
+            </Btn>
 
-          <Btn kind="ghost" onClick={onCopy}>
-            Copy
-          </Btn>
+            <Btn kind="ghost" onClick={clearBlocks} className="py-1 text-sm">
+              Clear
+            </Btn>
+          </div>
+        }
+      />
 
-          <Btn kind="ghost" onClick={clearBlocks}>
-            Clear
-          </Btn>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Time Blocking Clock
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Live clock plus editable time blocks. Add, edit, copy, and use a
+                big fullscreen view.
+              </p>
+            </div>
 
-          <Btn
-            kind="ghost"
-            onClick={() => fsRef.current && toggleFullscreen(fsRef.current)}
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={live}
+                  onChange={(e) => setLive(e.target.checked)}
+                />
+                Live
+              </label>
 
-      <div
-        ref={fsRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 260 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
+              <Btn kind="ghost" onClick={addBlock}>
+                Add block
+              </Btn>
 
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
+              <Btn kind="ghost" onClick={onCopy}>
+                Copy
+              </Btn>
 
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
+              <Btn kind="ghost" onClick={clearBlocks}>
+                Clear
+              </Btn>
 
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:16px;
-              }
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-              [data-fs-container]:fullscreen .fs-label{
-                font: 900 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.14em;
-                text-transform:uppercase;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 16vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.08em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 800 clamp(14px, 2.2vw, 24px)/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.88;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.78;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full flex-col items-center justify-center p-6"
-          style={{ minHeight: 260 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "border-slate-200 p-3 sm:p-6",
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 300,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
         >
-          <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-            Current time
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
           </div>
 
-          <div className="mt-3 font-mono text-6xl sm:text-7xl md:text-8xl font-extrabold tracking-widest">
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold tracking-widest",
+              isFs ? "sm:tracking-[0.18em]" : "",
+            ].join(" ")}
+            style={{
+              fontSize: `${displayFitPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
             {timeStr}
-          </div>
+          </span>
 
-          <div className="mt-2 text-sm font-semibold text-amber-900">
+          <div className="mt-3 text-sm font-semibold text-slate-600">
             {dateStr}
           </div>
 
-          {activeTitle ? (
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white/70 px-4 py-2 text-sm font-semibold text-amber-950">
+          {activeBlock ? (
+            <div className="mt-4 rounded-xl border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-900">
               Active block:{" "}
-              <span className="font-extrabold">{activeTitle}</span>
+              <span className="font-extrabold">{activeBlock.title}</span>
             </div>
           ) : (
-            <div className="mt-4 text-sm font-semibold text-slate-700">
+            <div className="mt-4 text-sm font-semibold text-slate-600">
               No active block.
             </div>
           )}
 
-          <div className="mt-5 rounded-xl border border-amber-200 bg-white/60 px-3 py-2 text-xs font-semibold text-amber-950 text-center">
-            Shortcuts: F fullscreen · C copy
-          </div>
-
           {copied && (
-            <div className="mt-2 text-xs font-bold text-amber-900">
+            <div className="mt-3 text-xs font-bold text-slate-700">
               {copied}
             </div>
           )}
-        </div>
 
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Time-Blocking Clock</div>
-            <div className="fs-time">{timeStr}</div>
-            <div className="fs-sub">
-              {activeTitle ? `Active: ${activeTitle}` : "No active block"}
-            </div>
-            <div className="fs-help">F fullscreen · C copy</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6 rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="text-lg font-bold text-amber-950">Today’s blocks</h3>
-          <div className="text-xs font-semibold text-slate-600">
-            Auto-sorted by start time
-          </div>
-        </div>
-
-        <div className="mt-4 space-y-3">
-          {blocks.length === 0 ? (
-            <div className="text-sm text-slate-600">
-              No blocks yet. Click <strong>Add block</strong>.
-            </div>
-          ) : (
-            sortBlocks(blocks).map((b) => {
-              const active = b.id === activeId;
-              return (
-                <div
-                  key={b.id}
-                  className={`rounded-2xl border p-4 ${
-                    active
-                      ? "border-amber-500 bg-amber-50"
-                      : "border-amber-200 bg-white"
-                  }`}
-                >
-                  <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-start">
-                    <div className="grid gap-3 sm:grid-cols-3">
-                      <div>
-                        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                          Title
-                        </div>
-                        <input
-                          value={b.title}
-                          onChange={(e) =>
-                            updateBlock(b.id, { title: e.target.value })
-                          }
-                          className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                        />
-                      </div>
-
-                      <div>
-                        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                          Start
-                        </div>
-                        <input
-                          value={minutesToHHMM(b.startMin)}
-                          onChange={(e) => {
-                            const v = parseHHMM(e.target.value);
-                            if (v == null) return;
-                            updateBlock(b.id, { startMin: v });
-                          }}
-                          className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                        />
-                      </div>
-
-                      <div>
-                        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                          End
-                        </div>
-                        <input
-                          value={minutesToHHMM(b.endMin)}
-                          onChange={(e) => {
-                            const v = parseHHMM(e.target.value);
-                            if (v == null) return;
-                            updateBlock(b.id, { endMin: v });
-                          }}
-                          className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                        />
-                      </div>
-
-                      <div className="sm:col-span-3">
-                        <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                          Notes
-                        </div>
-                        <input
-                          value={b.notes}
-                          onChange={(e) =>
-                            updateBlock(b.id, { notes: e.target.value })
-                          }
-                          placeholder="Optional"
-                          className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 lg:justify-end">
-                      <Btn kind="ghost" onClick={() => removeBlock(b.id)}>
-                        Delete
-                      </Btn>
-                    </div>
+          {/* Fullscreen hint chips */}
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Shortcuts
                   </div>
-
-                  <div className="mt-3 text-xs text-slate-600">
-                    {minutesToHHMM(b.startMin)}-{minutesToHHMM(b.endMin)}
+                  <div className="text-xs font-semibold text-slate-600">
+                    F fullscreen · C copy · A add block
                   </div>
                 </div>
-              );
-            })
+
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  {activeBlock ? "Active" : "No active"}
+                </div>
+              </div>
+            </div>
           )}
         </div>
+
+        {/* Blocks (normal only) */}
+        {!isFs && (
+          <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-sm font-extrabold text-slate-900">
+                Today’s blocks
+              </div>
+              <div className="text-xs font-semibold text-slate-600">
+                Auto-sorted by start time
+              </div>
+            </div>
+
+            {blocks.length === 0 ? (
+              <div className="mt-3 text-sm text-slate-700">
+                No blocks yet. Click <strong>Add block</strong>.
+              </div>
+            ) : (
+              <div className="mt-3 space-y-3">
+                {sortBlocks(blocks).map((b) => (
+                  <BlockRow
+                    key={b.id}
+                    block={b}
+                    isActive={b.id === activeId}
+                    onUpdate={updateBlock}
+                    onRemove={removeBlock}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Fullscreen bottom bar */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              F fullscreen · C copy · A add block
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {activeBlock ? `Active: ${activeBlock.title}` : "No active block"}
+            </div>
+          </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -631,16 +916,16 @@ function TimeBlockingClockCard() {
    PAGE
 ========================================================= */
 export default function TimeBlockingClockPage({
-  loaderData: { nowISO },
+  loaderData: { nowISO: _nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/time-blocking-clock";
+  const url = "https://www.ilovetimers.com/time-blocking-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebPage",
-        name: "Time-Blocking Clock",
+        name: "Time Blocking Clock",
         url,
         description:
           "Time-blocking clock with a live clock and editable daily blocks. Copy your plan and use fullscreen.",
@@ -652,48 +937,19 @@ export default function TimeBlockingClockPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
             position: 2,
-            name: "Time-Blocking Clock",
+            name: "Time Blocking Clock",
             item: url,
           },
         ],
       },
       {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is time blocking?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Time blocking is planning your day by assigning tasks to specific time ranges (blocks) so you focus on one thing at a time.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I copy my plan?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Click Copy or press C while the card is focused to copy your blocks as plain text.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does it save my blocks?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Your blocks are saved in your browser on this device.",
-            },
-          },
-        ],
-      },
-      {
         "@type": "SoftwareApplication",
-        name: "Time-Blocking Clock",
+        name: "Time Blocking Clock",
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web",
         url,
@@ -703,100 +959,25 @@ export default function TimeBlockingClockPage({
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Time-Blocking Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Time-Blocking Clock
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A live clock plus editable blocks for planning your day.
-          </p>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <TimeBlockingClockCard />
         </div>
-      </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <TimeBlockingClockCard />
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Time Blocking Clock</span>
+        </p>
       </section>
-
-      <section className="mx-auto max-w-7xl px-4 pb-10">
-        <div className="text-xs text-slate-600">Build: {nowISO}</div>
-      </section>
-      <TimeBlockingFaqSection />
     </main>
-  );
-}
-/* =========================================================
-   FAQ (VISIBLE) + JSON-LD
-========================================================= */
-
-const TIME_BLOCKING_FAQ = [
-  {
-    q: "What is time blocking?",
-    a: "Time blocking is planning your day by assigning tasks to specific time ranges (blocks) so you focus on one thing at a time.",
-  },
-  {
-    q: "Can I copy my plan?",
-    a: "Yes. Click Copy or press C while the main card is focused to copy your blocks as plain text.",
-  },
-  {
-    q: "Does it save my blocks?",
-    a: "Yes. Your blocks are saved in your browser on this device (local storage). Clearing site data or using another device won’t carry them over.",
-  },
-  {
-    q: "How does the active block highlight work?",
-    a: "The page checks the current time and highlights the block whose start and end time contains ‘now’. If no block matches, it shows ‘No active block.’",
-  },
-  {
-    q: "What are the keyboard shortcuts?",
-    a: "F toggles fullscreen and C copies your plan while the main card is focused.",
-  },
-] as const;
-
-function TimeBlockingFaqSection() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: TIME_BLOCKING_FAQ.map((it) => ({
-      "@type": "Question",
-      name: it.q,
-      acceptedAnswer: { "@type": "Answer", text: it.a },
-    })),
-  };
-
-  return (
-    <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
-      <h2 className="text-2xl font-bold text-amber-950">Time-Blocking FAQ</h2>
-
-      <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-        {TIME_BLOCKING_FAQ.map((it, i) => (
-          <details key={i}>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              {it.q}
-            </summary>
-            <div className="px-5 pb-4 text-amber-800 leading-relaxed">
-              {it.a}
-            </div>
-          </details>
-        ))}
-      </div>
-    </section>
   );
 }

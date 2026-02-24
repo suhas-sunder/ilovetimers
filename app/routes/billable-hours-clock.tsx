@@ -3,6 +3,11 @@ import type { Route } from "./+types/billable-hours-clock";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
+import Disclaimer from "~/clients/components/billable-hours-clock/Disclaimer";
+import FAQ from "~/clients/components/billable-hours-clock/FAQ";
+import HowItWorks from "~/clients/components/billable-hours-clock/HowItWorks";
+import KeyboardShortcuts from "~/clients/components/billable-hours-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/billable-hours-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -20,12 +25,13 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "keywords",
       content: [
+        "billable hours clock",
+        "billable timer",
         "billable hours calculator",
-        "calculate billable hours",
         "hourly rate calculator",
         "lawyer billable hours",
-        "freelance billing calculator",
-        "billing increment calculator",
+        "freelance billing timer",
+        "billing increment timer",
         "round billable time",
       ].join(", "),
     },
@@ -45,7 +51,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -101,9 +107,10 @@ function fmtMoney(amount: number, currency: string) {
       style: "currency",
       currency,
       maximumFractionDigits: 2,
+      minimumFractionDigits: 2,
     }).format(safe);
   } catch {
-    return safe.toFixed(2);
+    return `${currency} ${safe.toFixed(2)}`;
   }
 }
 
@@ -136,6 +143,57 @@ function safeParseJSON<T>(raw: string | null): T | null {
 }
 
 /* =========================================================
+   CURRENCIES
+========================================================= */
+const CURRENCIES: { code: string; name: string }[] = [
+  { code: "USD", name: "US Dollar" },
+  { code: "CAD", name: "Canadian Dollar" },
+  { code: "EUR", name: "Euro" },
+  { code: "GBP", name: "British Pound" },
+  { code: "AUD", name: "Australian Dollar" },
+  { code: "NZD", name: "New Zealand Dollar" },
+  { code: "JPY", name: "Japanese Yen" },
+  { code: "CNY", name: "Chinese Yuan" },
+  { code: "HKD", name: "Hong Kong Dollar" },
+  { code: "SGD", name: "Singapore Dollar" },
+  { code: "INR", name: "Indian Rupee" },
+  { code: "KRW", name: "South Korean Won" },
+  { code: "CHF", name: "Swiss Franc" },
+  { code: "SEK", name: "Swedish Krona" },
+  { code: "NOK", name: "Norwegian Krone" },
+  { code: "DKK", name: "Danish Krone" },
+  { code: "MXN", name: "Mexican Peso" },
+  { code: "BRL", name: "Brazilian Real" },
+  { code: "ZAR", name: "South African Rand" },
+  { code: "AED", name: "UAE Dirham" },
+  { code: "SAR", name: "Saudi Riyal" },
+  { code: "ILS", name: "Israeli New Shekel" },
+  { code: "TRY", name: "Turkish Lira" },
+  { code: "PLN", name: "Polish Zloty" },
+  { code: "CZK", name: "Czech Koruna" },
+  { code: "HUF", name: "Hungarian Forint" },
+  { code: "RON", name: "Romanian Leu" },
+  { code: "BGN", name: "Bulgarian Lev" },
+  { code: "THB", name: "Thai Baht" },
+  { code: "MYR", name: "Malaysian Ringgit" },
+  { code: "IDR", name: "Indonesian Rupiah" },
+  { code: "PHP", name: "Philippine Peso" },
+  { code: "VND", name: "Vietnamese Dong" },
+  { code: "PKR", name: "Pakistani Rupee" },
+  { code: "BDT", name: "Bangladeshi Taka" },
+  { code: "LKR", name: "Sri Lankan Rupee" },
+  { code: "NGN", name: "Nigerian Naira" },
+  { code: "KES", name: "Kenyan Shilling" },
+  { code: "EGP", name: "Egyptian Pound" },
+  { code: "MAD", name: "Moroccan Dirham" },
+  { code: "CLP", name: "Chilean Peso" },
+  { code: "COP", name: "Colombian Peso" },
+  { code: "PEN", name: "Peruvian Sol" },
+  { code: "ARS", name: "Argentine Peso" },
+  { code: "UYU", name: "Uruguayan Peso" },
+];
+
+/* =========================================================
    UI PRIMITIVES
 ========================================================= */
 const Card = ({
@@ -152,7 +210,11 @@ const Card = ({
   <div
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60",
+      "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -180,8 +242,8 @@ const Btn = ({
     title={title}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-semibold text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-semibold text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -192,18 +254,21 @@ const Chip = ({
   active,
   children,
   onClick,
+  disabled,
 }: {
   active?: boolean;
   children: React.ReactNode;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
 }) => (
   <button
     type="button"
     onClick={onClick}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
+    disabled={disabled}
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
       active
-        ? "bg-amber-700 text-white hover:bg-amber-800"
-        : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
+        ? "bg-sky-700 text-white hover:bg-sky-600"
+        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
     }`}
   >
     {children}
@@ -226,7 +291,7 @@ type BillableTimer = {
   status: "idle" | "running" | "paused";
   elapsedMs: number;
 
-  _runningSince?: number | null; // runtime-only
+  _runningSince?: number | null;
 };
 
 type PersistedStateV1 = {
@@ -249,9 +314,9 @@ const LS_KEY = "ilovetimers:billable-hours-clock:v1";
 
 function roundLabel(mode: RoundMode) {
   if (mode === "none") return "No rounding";
-  if (mode === "6") return "6-min (0.1 hr)";
-  if (mode === "10") return "10-min";
-  return "15-min (0.25 hr)";
+  if (mode === "6") return "6 min (0.1 hr)";
+  if (mode === "10") return "10 min";
+  return "15 min (0.25 hr)";
 }
 
 function roundIncMinutes(mode: RoundMode) {
@@ -278,7 +343,7 @@ function buildCopyText(t: BillableTimer) {
   lines.push(`Elapsed: ${msToHMS(t.elapsedMs)}`);
   lines.push(`Billable: ${msToHMS(roundedMs)} (${roundLabel(t.roundMode)})`);
   lines.push(`Hours: ${hours.toFixed(2)}`);
-  lines.push(`Rate: ${fmtMoney(t.hourlyRate, t.currency)} / hr`);
+  lines.push(`Rate: ${fmtMoney(t.hourlyRate, t.currency)} per hour`);
   lines.push(`Total: ${fmtMoney(total, t.currency)}`);
   return lines.join("\n");
 }
@@ -289,11 +354,11 @@ function buildCopyAllText(timers: BillableTimer[]) {
   lines.push("");
   for (const t of timers) {
     const { roundedMs, hours, total } = computeTimerDerived(t);
-    lines.push(`${t.name} — ${msToHMS(t.elapsedMs)} elapsed`);
+    lines.push(`${t.name} | elapsed ${msToHMS(t.elapsedMs)}`);
     lines.push(
-      `Billable: ${msToHMS(roundedMs)} (${roundLabel(t.roundMode)}) · ${hours.toFixed(
+      `Billable: ${msToHMS(roundedMs)} (${roundLabel(t.roundMode)}) | ${hours.toFixed(
         2,
-      )} hrs · ${fmtMoney(total, t.currency)}`,
+      )} hours | ${fmtMoney(total, t.currency)}`,
     );
     if (t.note.trim()) lines.push(`Note: ${t.note.trim()}`);
     lines.push("");
@@ -332,28 +397,43 @@ function fixTimerNameCollisions(timers: BillableTimer[]) {
 }
 
 /* =========================================================
-   BILLABLE HOURS CLOCK (MULTI)
+   BILLABLE HOURS CLOCK
 ========================================================= */
 function BillableHoursClockCard() {
-  const [timers, setTimers] = useState<BillableTimer[]>(() =>
-    fixTimerNameCollisions([newDefaultTimer("Timer 1")]),
+  const initialTimers = useMemo(
+    () => fixTimerNameCollisions([newDefaultTimer("Timer 1")]),
+    [],
   );
+
+  const [timers, setTimers] = useState<BillableTimer[]>(() => initialTimers);
   const [activeId, setActiveId] = useState<string | null>(
-    () => timers[0]?.id ?? null,
+    () => initialTimers[0]?.id ?? null,
   );
 
   const fsRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
   const hydratedRef = useRef(false);
 
-  const [copied, setCopied] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const [printMode, setPrintMode] = useState<"none" | "active" | "all">("none");
+  const printRequestedRef = useRef(false);
 
   const activeTimer = useMemo(
     () => timers.find((t) => t.id === activeId) ?? null,
     [timers, activeId],
   );
 
-  // Hydrate once
+  const activeDerived = useMemo(
+    () => (activeTimer ? computeTimerDerived(activeTimer) : null),
+    [activeTimer],
+  );
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    window.setTimeout(() => setToast(null), 1100);
+  };
+
   useEffect(() => {
     if (hydratedRef.current) return;
     hydratedRef.current = true;
@@ -366,8 +446,9 @@ function BillableHoursClockCard() {
       saved.v !== 1 ||
       !Array.isArray(saved.timers) ||
       saved.timers.length === 0
-    )
+    ) {
       return;
+    }
 
     const now = Date.now();
 
@@ -417,7 +498,6 @@ function BillableHoursClockCard() {
     setActiveId(active);
   }, []);
 
-  // Persist state
   useEffect(() => {
     if (!hydratedRef.current) return;
 
@@ -447,7 +527,6 @@ function BillableHoursClockCard() {
     }
   }, [timers, activeId]);
 
-  // RAF tick running timers
   useEffect(() => {
     const anyRunning = timers.some((t) => t.status === "running");
     if (!anyRunning) {
@@ -477,7 +556,6 @@ function BillableHoursClockCard() {
     };
   }, [timers]);
 
-  // Pause running timers when tab is hidden (prevents huge jumps on return)
   useEffect(() => {
     const onVis = () => {
       if (document.visibilityState !== "hidden") return;
@@ -493,14 +571,6 @@ function BillableHoursClockCard() {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
-  // Copy toast
-  useEffect(() => {
-    if (!copied) return;
-    const t = window.setTimeout(() => setCopied(null), 1200);
-    return () => window.clearTimeout(t);
-  }, [copied]);
-
-  // Derived totals
   const totalsAll = useMemo(() => {
     return timers.reduce(
       (acc, t) => {
@@ -520,9 +590,6 @@ function BillableHoursClockCard() {
     );
   }, [totalsAll.totalAmountByCurrency]);
 
-  /* -------------------------
-     Actions
-  ------------------------- */
   const addTimer = () => {
     setTimers((prev) => {
       const nextNum = prev.length + 1;
@@ -539,7 +606,6 @@ function BillableHoursClockCard() {
         _runningSince: null,
       };
       const next = fixTimerNameCollisions([...prev, t]);
-      // set new active id
       queueMicrotask(() => setActiveId(t.id));
       return next;
     });
@@ -571,10 +637,11 @@ function BillableHoursClockCard() {
         : fixTimerNameCollisions([newDefaultTimer("Timer 1")]);
       queueMicrotask(() => {
         setActiveId((cur) => {
-          if (cur !== id)
+          if (cur !== id) {
             return cur && safeNext.some((t) => t.id === cur)
               ? cur
               : (safeNext[0]?.id ?? null);
+          }
           return safeNext[0]?.id ?? null;
         });
       });
@@ -588,24 +655,19 @@ function BillableHoursClockCard() {
         if (t.id !== id) return t;
         const next = { ...t, ...patch };
 
-        if (patch.name !== undefined) {
-          next.name = String(patch.name);
-        }
-        if (patch.note !== undefined) {
-          next.note = String(patch.note);
-        }
-        if (patch.currency !== undefined) {
+        if (patch.name !== undefined) next.name = String(patch.name);
+        if (patch.note !== undefined) next.note = String(patch.note);
+        if (patch.currency !== undefined)
           next.currency = String(patch.currency);
-        }
-        if (patch.roundMode !== undefined) {
-          next.roundMode = patch.roundMode;
-        }
+        if (patch.roundMode !== undefined) next.roundMode = patch.roundMode;
+
         if (patch.hourlyRate !== undefined) {
           next.hourlyRate = clamp(Number(patch.hourlyRate || 0), 0, 1_000_000);
         }
         if (patch.elapsedMs !== undefined) {
           next.elapsedMs = Math.max(0, Number(patch.elapsedMs));
         }
+
         return next;
       }),
     );
@@ -623,8 +685,9 @@ function BillableHoursClockCard() {
     setTimers((prev) =>
       prev.map((t) => {
         if (t.id !== id) return t;
-        if (t.status === "running")
+        if (t.status === "running") {
           return { ...t, status: "paused", _runningSince: null };
+        }
         return { ...t, status: "running", _runningSince: Date.now() };
       }),
     );
@@ -655,58 +718,127 @@ function BillableHoursClockCard() {
     const t = timers.find((x) => x.id === id);
     if (!t) return;
     const ok = await copyToClipboard(buildCopyText(t));
-    if (ok) setCopied("Copied");
+    showToast(ok ? "Copied" : "Copy failed");
   };
 
   const onCopyAll = async () => {
     const ok = await copyToClipboard(buildCopyAllText(timers));
-    if (ok) setCopied("Copied all");
+    showToast(ok ? "Copied all" : "Copy failed");
   };
 
-  /* -------------------------
-     Keyboard shortcuts (Card)
-  ------------------------- */
+  const requestPrint = (mode: "active" | "all") => {
+    printRequestedRef.current = true;
+    setPrintMode(mode);
+  };
+
+  useEffect(() => {
+    if (!printRequestedRef.current) return;
+    if (printMode === "none") return;
+
+    const id = window.setTimeout(() => {
+      try {
+        window.print();
+      } finally {
+        // handled by afterprint
+      }
+    }, 0);
+
+    return () => window.clearTimeout(id);
+  }, [printMode]);
+
+  useEffect(() => {
+    const onAfterPrint = () => {
+      printRequestedRef.current = false;
+      setPrintMode("none");
+    };
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => window.removeEventListener("afterprint", onAfterPrint);
+  }, []);
+
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
+
+    const k = e.key.toLowerCase();
 
     if (e.key === " ") {
       e.preventDefault();
       if (activeTimer) onStartPause(activeTimer.id);
-    } else if (e.key.toLowerCase() === "r") {
+    } else if (k === "r") {
+      e.preventDefault();
       if (activeTimer) onReset(activeTimer.id);
-    } else if (e.key.toLowerCase() === "f") {
-      if (fsRef.current) toggleFullscreen(fsRef.current);
-    } else if (e.key.toLowerCase() === "c") {
+    } else if (k === "f") {
+      e.preventDefault();
+      if (fsRef.current) void toggleFullscreen(fsRef.current);
+    } else if (k === "c") {
+      e.preventDefault();
       if (activeTimer) void onCopy(activeTimer.id);
-    } else if (e.key.toLowerCase() === "a") {
+    } else if (k === "a") {
+      e.preventDefault();
       addTimer();
+    } else if (k === "p") {
+      e.preventDefault();
+      if (activeTimer) requestPrint("active");
     }
   };
 
-  const activeDerived = activeTimer ? computeTimerDerived(activeTimer) : null;
+  const activeCurrencyName = useMemo(() => {
+    if (!activeTimer) return "";
+    return (
+      CURRENCIES.find((c) => c.code === activeTimer.currency)?.name ??
+      activeTimer.currency
+    );
+  }, [activeTimer]);
+
+  const statusChip = useMemo(() => {
+    if (!activeTimer)
+      return { label: "No active timer", cls: "bg-slate-100 text-slate-800" };
+    if (activeTimer.status === "running")
+      return { label: "Running", cls: "bg-emerald-100 text-emerald-900" };
+    if (activeTimer.status === "paused")
+      return { label: "Paused", cls: "bg-slate-100 text-slate-800" };
+    return { label: "Ready", cls: "bg-sky-100 text-sky-900" };
+  }, [activeTimer]);
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <Card tabIndex={0} onKeyDown={onKeyDown}>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            @media print {
+              body { background:#fff !important; }
+              .no-print { display:none !important; }
+              .print-only { display:block !important; }
+              .print-only * { color:#0f172a !important; }
+              @page { margin: 14mm; }
+            }
+            .print-only { display:none; }
+          `,
+        }}
+      />
+
+      <div className="no-print flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            Live timer
+          </div>
+          <div className="mt-1 text-lg font-extrabold text-slate-950">
             Billable Hours Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Multiple billable timers with rounding, totals, copy summaries,
-            fullscreen, and saved sessions.
-          </p>
+          </div>
+          <div className="mt-2 text-sm font-semibold text-slate-700">
+            Multiple timers, rounding, totals, copy, fullscreen, and local save.
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          <span
+            className={`rounded-full px-3 py-1 text-sm font-semibold ${statusChip.cls}`}
+          >
+            {statusChip.label}
+          </span>
           <Btn onClick={() => addTimer()} title="Add timer (A)">
             Add timer
           </Btn>
-          <Btn
-            kind="ghost"
-            onClick={() => void onCopyAll()}
-            title="Copy all timers"
-          >
+          <Btn kind="ghost" onClick={() => void onCopyAll()} title="Copy all">
             Copy all
           </Btn>
           <Btn
@@ -718,20 +850,325 @@ function BillableHoursClockCard() {
           </Btn>
           <Btn
             kind="ghost"
-            onClick={() => fsRef.current && toggleFullscreen(fsRef.current)}
+            onClick={() =>
+              fsRef.current && void toggleFullscreen(fsRef.current)
+            }
             title="Fullscreen (F)"
           >
             Fullscreen
           </Btn>
+          <Btn
+            kind="ghost"
+            onClick={() => activeTimer && requestPrint("active")}
+            disabled={!activeTimer}
+            title="Print active (P)"
+          >
+            Print
+          </Btn>
+          <Btn
+            kind="ghost"
+            onClick={() => requestPrint("all")}
+            disabled={timers.length === 0}
+            title="Print all timers"
+          >
+            Print all
+          </Btn>
         </div>
       </div>
 
-      {/* Fullscreen container (shows active timer) */}
+      <div className="no-print mt-6 grid gap-4 lg:grid-cols-3">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:col-span-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                Active timer
+              </div>
+              <div className="mt-1 truncate text-xl font-extrabold text-slate-950">
+                {activeTimer ? activeTimer.name : "No timer"}
+              </div>
+              <div className="mt-2 text-sm font-semibold text-slate-700">
+                Shortcuts: Space start/pause · R reset · C copy · P print · A
+                add · F fullscreen
+              </div>
+            </div>
+
+            {activeTimer ? (
+              <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                <Btn
+                  onClick={() => onStartPause(activeTimer.id)}
+                  title="Space start/pause"
+                >
+                  {activeTimer.status === "running"
+                    ? "Pause"
+                    : activeTimer.status === "paused"
+                      ? "Resume"
+                      : "Start"}
+                </Btn>
+                <Btn
+                  kind="ghost"
+                  onClick={() => onReset(activeTimer.id)}
+                  title="Reset (R)"
+                >
+                  Reset
+                </Btn>
+                <Btn
+                  kind="ghost"
+                  onClick={() => void onCopy(activeTimer.id)}
+                  title="Copy (C)"
+                >
+                  Copy
+                </Btn>
+                <Btn
+                  kind="ghost"
+                  onClick={() => requestPrint("active")}
+                  title="Print active (P)"
+                >
+                  Print
+                </Btn>
+              </div>
+            ) : null}
+          </div>
+
+          {activeTimer && activeDerived ? (
+            <div className="mt-5 grid gap-4 lg:grid-cols-3">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Live time
+                </div>
+                <div className="mt-2 font-mono text-4xl font-extrabold tracking-wider text-slate-950">
+                  {msToHMS(activeTimer.elapsedMs)}
+                </div>
+                <div className="mt-3 text-xs font-semibold text-slate-600">
+                  Actual elapsed
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Billable time
+                </div>
+                <div className="mt-2 font-mono text-4xl font-extrabold tracking-wider text-slate-950">
+                  {msToHMS(activeDerived.roundedMs)}
+                </div>
+                <div className="mt-3 text-xs font-semibold text-slate-600">
+                  Rounding:{" "}
+                  <span className="text-sky-700">
+                    {roundLabel(activeTimer.roundMode)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
+                <div className="text-xs font-bold uppercase tracking-wide text-emerald-700">
+                  Total
+                </div>
+                <div className="mt-2 text-4xl font-extrabold text-emerald-900">
+                  {fmtMoney(activeDerived.total, activeTimer.currency)}
+                </div>
+                <div className="mt-3 text-xs font-semibold text-emerald-800">
+                  {activeDerived.hours.toFixed(2)} billable hours
+                </div>
+              </div>
+
+              <div className="lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="grid gap-4 lg:grid-cols-3">
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                      Hourly rate
+                    </div>
+                    <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                      <input
+                        type="number"
+                        value={activeTimer.hourlyRate}
+                        min={0}
+                        step={0.01}
+                        onChange={(e) =>
+                          updateTimer(activeTimer.id, {
+                            hourlyRate: clamp(
+                              Number(e.target.value || 0),
+                              0,
+                              1_000_000,
+                            ),
+                          })
+                        }
+                        className="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+                      />
+                      <select
+                        value={activeTimer.currency}
+                        onChange={(e) =>
+                          updateTimer(activeTimer.id, {
+                            currency: e.target.value,
+                          })
+                        }
+                        className="cursor-pointer w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+                        aria-label="Currency"
+                      >
+                        {CURRENCIES.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.code} - {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="mt-2 text-xs font-semibold text-slate-600">
+                      Currency: {activeCurrencyName}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                      Rounding
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <Chip
+                        active={activeTimer.roundMode === "none"}
+                        onClick={() =>
+                          updateTimer(activeTimer.id, { roundMode: "none" })
+                        }
+                      >
+                        None
+                      </Chip>
+                      <Chip
+                        active={activeTimer.roundMode === "6"}
+                        onClick={() =>
+                          updateTimer(activeTimer.id, { roundMode: "6" })
+                        }
+                      >
+                        6 min
+                      </Chip>
+                      <Chip
+                        active={activeTimer.roundMode === "10"}
+                        onClick={() =>
+                          updateTimer(activeTimer.id, { roundMode: "10" })
+                        }
+                      >
+                        10 min
+                      </Chip>
+                      <Chip
+                        active={activeTimer.roundMode === "15"}
+                        onClick={() =>
+                          updateTimer(activeTimer.id, { roundMode: "15" })
+                        }
+                      >
+                        15 min
+                      </Chip>
+                    </div>
+                    <div className="mt-2 text-xs font-semibold text-slate-600">
+                      Always rounds up to the next increment.
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                      Note
+                    </div>
+                    <input
+                      value={activeTimer.note}
+                      onChange={(e) =>
+                        updateTimer(activeTimer.id, { note: e.target.value })
+                      }
+                      placeholder="Optional: client, matter, task"
+                      className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+                    />
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <Chip
+                        onClick={() =>
+                          updateTimer(activeTimer.id, { note: "" })
+                        }
+                      >
+                        Clear
+                      </Chip>
+                      <Chip
+                        onClick={() =>
+                          updateTimer(activeTimer.id, {
+                            elapsedMs: Math.max(
+                              0,
+                              activeTimer.elapsedMs - 5 * 60_000,
+                            ),
+                          })
+                        }
+                        disabled={activeTimer.elapsedMs < 5 * 60_000}
+                      >
+                        -5m
+                      </Chip>
+                      <Chip
+                        onClick={() =>
+                          updateTimer(activeTimer.id, {
+                            elapsedMs: activeTimer.elapsedMs + 5 * 60_000,
+                          })
+                        }
+                      >
+                        +5m
+                      </Chip>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {toast ? (
+                <div className="lg:col-span-3 text-center">
+                  <span className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-900">
+                    {toast}
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">
+              No active timer. Add a timer to start.
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="text-sm font-extrabold text-slate-900">Totals</div>
+          <div className="mt-1 text-xs text-slate-600">
+            Based on rounded billable time for each timer
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              Total billable hours
+            </div>
+            <div className="mt-2 font-mono text-3xl font-extrabold text-slate-950">
+              {totalsAll.totalHours.toFixed(2)}
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              Totals by currency
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {amountsByCurrency.length === 0 ? (
+                <div className="text-sm font-semibold text-slate-700">
+                  No totals yet.
+                </div>
+              ) : (
+                amountsByCurrency.map(([cur, amt]) => (
+                  <div
+                    key={cur}
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900"
+                  >
+                    {cur}: {fmtMoney(amt, cur)}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs font-semibold text-slate-700">
+            Tip: Click the card once so shortcuts work. Timers are saved in your
+            browser.
+          </div>
+        </div>
+      </div>
+
       <div
         ref={fsRef}
         data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 280 }}
+        className="no-print mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 text-slate-900"
+        style={{ minHeight: 260 }}
         aria-live="polite"
       >
         <style
@@ -745,7 +1182,7 @@ function BillableHoursClockCard() {
                 height:100vh;
                 border:0;
                 border-radius:0;
-                background:#0b0b0c;
+                background:#0b1220;
                 color:#ffffff;
               }
 
@@ -772,7 +1209,7 @@ function BillableHoursClockCard() {
                 font: 900 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
                 letter-spacing:.14em;
                 text-transform:uppercase;
-                opacity:.9;
+                opacity:.92;
                 text-align:center;
               }
 
@@ -799,208 +1236,83 @@ function BillableHoursClockCard() {
           }}
         />
 
-        {/* Normal shell */}
         <div
           data-shell="normal"
-          className="h-full w-full flex-col gap-4 p-6"
-          style={{ minHeight: 280 }}
+          className="h-full w-full flex-col gap-3 p-4 sm:p-5"
+          style={{ minHeight: 260 }}
         >
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                Active timer (click a timer below to change)
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Fullscreen display
               </div>
-              <div className="mt-1 text-lg font-extrabold text-amber-950 truncate">
-                {activeTimer ? activeTimer.name : "No timer"}
+              <div className="mt-1 truncate text-base font-extrabold text-slate-950">
+                {activeTimer ? activeTimer.name : "No active timer"}
               </div>
             </div>
-
-            {activeTimer ? (
-              <div className="flex flex-wrap items-center gap-2">
-                <Btn
-                  onClick={() => onStartPause(activeTimer.id)}
-                  title="Space start/pause"
-                >
-                  {activeTimer.status === "running"
-                    ? "Pause"
-                    : activeTimer.status === "paused"
-                      ? "Resume"
-                      : "Start"}
-                </Btn>
-                <Btn
-                  kind="ghost"
-                  onClick={() => onReset(activeTimer.id)}
-                  title="Reset (R)"
-                >
-                  Reset
-                </Btn>
-                <Btn
-                  kind="ghost"
-                  onClick={() => void onCopy(activeTimer.id)}
-                  title="Copy (C)"
-                >
-                  Copy
-                </Btn>
-              </div>
-            ) : null}
+            <div className="flex flex-wrap items-center gap-2">
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  fsRef.current && void toggleFullscreen(fsRef.current)
+                }
+                title="Fullscreen (F)"
+              >
+                Enter fullscreen
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => activeTimer && requestPrint("active")}
+                disabled={!activeTimer}
+                title="Print active (P)"
+              >
+                Print active
+              </Btn>
+            </div>
           </div>
 
-          {activeTimer && activeDerived ? (
-            <div className="grid gap-4 lg:grid-cols-3">
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                  Live time
-                </div>
-                <div className="mt-2 font-mono text-4xl font-extrabold tracking-wider">
-                  {msToHMS(activeTimer.elapsedMs)}
-                </div>
-                <div className="mt-3 text-xs font-semibold text-slate-600">
-                  Actual elapsed (not rounded)
-                </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Live
               </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                  Billable time
-                </div>
-                <div className="mt-2 font-mono text-4xl font-extrabold tracking-wider">
-                  {msToHMS(activeDerived.roundedMs)}
-                </div>
-                <div className="mt-3 text-xs font-semibold text-slate-600">
-                  Rounded by:{" "}
-                  <span className="text-amber-900">
-                    {roundLabel(activeTimer.roundMode)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-                  Total
-                </div>
-                <div className="mt-2 text-4xl font-extrabold">
-                  {fmtMoney(activeDerived.total, activeTimer.currency)}
-                </div>
-                <div className="mt-3 text-xs font-semibold text-slate-600">
-                  {activeDerived.hours.toFixed(2)} billable hours
-                </div>
+              <div className="mt-2 font-mono text-2xl font-extrabold text-slate-950">
+                {activeTimer ? msToHMS(activeTimer.elapsedMs) : "0:00:00"}
               </div>
             </div>
-          ) : (
-            <div className="rounded-2xl border border-amber-200 bg-white p-4 text-sm text-slate-700">
-              No active timer. Add a timer to start.
-            </div>
-          )}
 
-          {activeTimer ? (
-            <div className="grid gap-4 lg:grid-cols-3">
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-sm font-bold text-amber-950">
-                  Hourly rate
-                </div>
-                <div className="mt-2 flex items-center gap-2">
-                  <input
-                    type="number"
-                    value={activeTimer.hourlyRate}
-                    min={0}
-                    step={1}
-                    onChange={(e) =>
-                      updateTimer(activeTimer.id, {
-                        hourlyRate: clamp(
-                          Number(e.target.value || 0),
-                          0,
-                          1_000_000,
-                        ),
-                      })
-                    }
-                    className="w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  />
-                  <select
-                    value={activeTimer.currency}
-                    onChange={(e) =>
-                      updateTimer(activeTimer.id, { currency: e.target.value })
-                    }
-                    className="rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  >
-                    <option value="USD">USD</option>
-                    <option value="CAD">CAD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                    <option value="AUD">AUD</option>
-                  </select>
-                </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Billable
               </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-sm font-bold text-amber-950">Rounding</div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Chip
-                    active={activeTimer.roundMode === "none"}
-                    onClick={() =>
-                      updateTimer(activeTimer.id, { roundMode: "none" })
-                    }
-                  >
-                    None
-                  </Chip>
-                  <Chip
-                    active={activeTimer.roundMode === "6"}
-                    onClick={() =>
-                      updateTimer(activeTimer.id, { roundMode: "6" })
-                    }
-                  >
-                    6-min
-                  </Chip>
-                  <Chip
-                    active={activeTimer.roundMode === "10"}
-                    onClick={() =>
-                      updateTimer(activeTimer.id, { roundMode: "10" })
-                    }
-                  >
-                    10-min
-                  </Chip>
-                  <Chip
-                    active={activeTimer.roundMode === "15"}
-                    onClick={() =>
-                      updateTimer(activeTimer.id, { roundMode: "15" })
-                    }
-                  >
-                    15-min
-                  </Chip>
-                </div>
-                <div className="mt-3 text-xs font-semibold text-slate-600">
-                  Rounds up to the next increment.
-                </div>
+              <div className="mt-2 font-mono text-2xl font-extrabold text-slate-950">
+                {activeTimer && activeDerived
+                  ? msToHMS(activeDerived.roundedMs)
+                  : "0:00:00"}
               </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-sm font-bold text-amber-950">
-                  Matter / note
-                </div>
-                <input
-                  value={activeTimer.note}
-                  onChange={(e) =>
-                    updateTimer(activeTimer.id, { note: e.target.value })
-                  }
-                  placeholder="Optional: client, matter, task"
-                  className="mt-2 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                />
+              <div className="mt-2 text-xs font-semibold text-slate-600">
+                {activeTimer ? roundLabel(activeTimer.roundMode) : ""}
               </div>
             </div>
-          ) : null}
 
-          <div className="rounded-xl border border-amber-200 bg-white/60 px-3 py-2 text-xs font-semibold text-amber-950 text-center">
-            Shortcuts: Space start/pause · R reset · C copy · A add timer · F
-            fullscreen
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
+              <div className="text-xs font-bold uppercase tracking-wide text-emerald-700">
+                Total
+              </div>
+              <div className="mt-2 text-2xl font-extrabold text-emerald-900">
+                {activeTimer && activeDerived
+                  ? fmtMoney(activeDerived.total, activeTimer.currency)
+                  : fmtMoney(0, "USD")}
+              </div>
+              <div className="mt-2 text-xs font-semibold text-emerald-800">
+                {activeTimer && activeDerived
+                  ? `${activeDerived.hours.toFixed(2)} hrs`
+                  : ""}
+              </div>
+            </div>
           </div>
-
-          {copied && (
-            <div className="text-center text-xs font-bold text-amber-900">
-              {copied}
-            </div>
-          )}
         </div>
 
-        {/* Fullscreen shell */}
         <div data-shell="fullscreen">
           <div className="fs-inner">
             <div className="fs-label">
@@ -1011,7 +1323,9 @@ function BillableHoursClockCard() {
             </div>
             <div className="fs-sub">
               {activeTimer && activeDerived
-                ? `${fmtMoney(activeDerived.total, activeTimer.currency)} · ${activeDerived.hours.toFixed(2)} hrs · ${roundLabel(activeTimer.roundMode)}`
+                ? `${fmtMoney(activeDerived.total, activeTimer.currency)} | ${activeDerived.hours.toFixed(
+                    2,
+                  )} hrs | ${roundLabel(activeTimer.roundMode)}`
                 : "Add a timer"}
             </div>
             <div className="fs-help">
@@ -1021,10 +1335,9 @@ function BillableHoursClockCard() {
         </div>
       </div>
 
-      {/* Timers list */}
-      <div className="mt-6 rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="text-lg font-bold text-amber-950">Your timers</h3>
+      <div className="no-print mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h3 className="text-lg font-extrabold text-slate-950">Your timers</h3>
           <div className="text-xs font-semibold text-slate-600">
             Saved to this browser (local storage)
           </div>
@@ -1038,36 +1351,40 @@ function BillableHoursClockCard() {
             return (
               <div
                 key={t.id}
-                className={`w-full rounded-2xl border p-4 transition ${
+                className={[
+                  "w-full rounded-2xl border p-4 transition",
                   isActive
-                    ? "border-amber-500 bg-amber-50"
-                    : "border-amber-200 bg-white hover:bg-amber-50/60"
-                }`}
+                    ? "border-sky-200 bg-sky-50"
+                    : "border-slate-200 bg-white hover:bg-slate-50",
+                ].join(" ")}
               >
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <button
                     type="button"
                     onClick={() => setActiveId(t.id)}
-                    className="text-left min-w-0"
+                    className="cursor-pointer text-left min-w-0"
                     title="Set active timer"
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <div className="text-sm font-bold text-amber-950">
+                      <div className="text-sm font-extrabold text-slate-950">
                         {idx + 1}. {t.name}
                       </div>
                       {t.status === "running" ? (
-                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-900">
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-extrabold text-emerald-900">
                           Running
                         </span>
                       ) : t.status === "paused" ? (
-                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-800">
+                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-extrabold text-slate-800">
                           Paused
                         </span>
                       ) : (
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-900">
+                        <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-extrabold text-sky-900">
                           Ready
                         </span>
                       )}
+                      <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-bold text-slate-700">
+                        {roundLabel(t.roundMode)}
+                      </span>
                     </div>
 
                     <div className="mt-1 text-xs text-slate-600 truncate">
@@ -1076,29 +1393,29 @@ function BillableHoursClockCard() {
                   </button>
 
                   <div className="grid w-full gap-2 lg:w-auto lg:grid-cols-3 lg:items-center">
-                    <div className="rounded-xl border border-amber-200 bg-white px-3 py-2">
-                      <div className="text-[11px] font-bold uppercase tracking-wide text-amber-800">
+                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                      <div className="text-[11px] font-bold uppercase tracking-wide text-slate-600">
                         Billable
                       </div>
-                      <div className="mt-1 font-mono text-lg font-extrabold text-amber-950">
+                      <div className="mt-1 font-mono text-lg font-extrabold text-slate-950">
                         {msToHMS(d.roundedMs)}
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-amber-200 bg-white px-3 py-2">
-                      <div className="text-[11px] font-bold uppercase tracking-wide text-amber-800">
+                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                      <div className="text-[11px] font-bold uppercase tracking-wide text-slate-600">
                         Hours
                       </div>
-                      <div className="mt-1 font-mono text-lg font-extrabold text-amber-950">
+                      <div className="mt-1 font-mono text-lg font-extrabold text-slate-950">
                         {d.hours.toFixed(2)}
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-amber-200 bg-white px-3 py-2">
-                      <div className="text-[11px] font-bold uppercase tracking-wide text-amber-800">
+                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2">
+                      <div className="text-[11px] font-bold uppercase tracking-wide text-emerald-700">
                         Total
                       </div>
-                      <div className="mt-1 text-lg font-extrabold text-amber-950">
+                      <div className="mt-1 text-lg font-extrabold text-emerald-900">
                         {fmtMoney(d.total, t.currency)}
                       </div>
                     </div>
@@ -1152,31 +1469,42 @@ function BillableHoursClockCard() {
                   >
                     Delete
                   </Btn>
+
+                  <Btn
+                    kind="ghost"
+                    onClick={() => {
+                      setActiveId(t.id);
+                      requestPrint("active");
+                    }}
+                    className="px-3 py-2"
+                  >
+                    Print
+                  </Btn>
                 </div>
 
                 {isActive ? (
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <div>
-                      <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                      <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                         Name
                       </div>
                       <input
                         value={t.name}
                         onChange={(e) => renameTimerSafe(t.id, e.target.value)}
-                        className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
                       />
                     </div>
 
                     <div>
-                      <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                      <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                         Rate
                       </div>
-                      <div className="mt-1 flex items-center gap-2">
+                      <div className="mt-1 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
                         <input
                           type="number"
                           value={t.hourlyRate}
                           min={0}
-                          step={1}
+                          step={0.01}
                           onChange={(e) =>
                             updateTimer(t.id, {
                               hourlyRate: clamp(
@@ -1186,26 +1514,27 @@ function BillableHoursClockCard() {
                               ),
                             })
                           }
-                          className="w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                          className="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
                         />
                         <select
                           value={t.currency}
                           onChange={(e) =>
                             updateTimer(t.id, { currency: e.target.value })
                           }
-                          className="rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                          className="cursor-pointer w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+                          aria-label="Currency"
                         >
-                          <option value="USD">USD</option>
-                          <option value="CAD">CAD</option>
-                          <option value="EUR">EUR</option>
-                          <option value="GBP">GBP</option>
-                          <option value="AUD">AUD</option>
+                          {CURRENCIES.map((c) => (
+                            <option key={c.code} value={c.code}>
+                              {c.code} - {c.name}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>
 
                     <div className="sm:col-span-2">
-                      <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                      <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                         Note
                       </div>
                       <input
@@ -1214,12 +1543,12 @@ function BillableHoursClockCard() {
                           updateTimer(t.id, { note: e.target.value })
                         }
                         placeholder="Optional: client, matter, task"
-                        className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+                      <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                         Rounding
                       </div>
                       <div className="mt-2 flex flex-wrap gap-2">
@@ -1235,19 +1564,19 @@ function BillableHoursClockCard() {
                           active={t.roundMode === "6"}
                           onClick={() => updateTimer(t.id, { roundMode: "6" })}
                         >
-                          6-min
+                          6 min
                         </Chip>
                         <Chip
                           active={t.roundMode === "10"}
                           onClick={() => updateTimer(t.id, { roundMode: "10" })}
                         >
-                          10-min
+                          10 min
                         </Chip>
                         <Chip
                           active={t.roundMode === "15"}
                           onClick={() => updateTimer(t.id, { roundMode: "15" })}
                         >
-                          15-min
+                          15 min
                         </Chip>
                       </div>
                       <div className="mt-2 text-xs font-semibold text-slate-600">
@@ -1260,96 +1589,151 @@ function BillableHoursClockCard() {
             );
           })}
         </div>
-
-        {/* Totals summary */}
-        <div className="mt-6 grid gap-4 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-              Total billable hours
-            </div>
-            <div className="mt-2 font-mono text-3xl font-extrabold text-amber-950">
-              {totalsAll.totalHours.toFixed(2)}
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 lg:col-span-2">
-            <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
-              Totals by currency
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {amountsByCurrency.length === 0 ? (
-                <div className="text-sm text-slate-700">No totals yet.</div>
-              ) : (
-                amountsByCurrency.map(([cur, amt]) => (
-                  <div
-                    key={cur}
-                    className="rounded-xl border border-amber-200 bg-white px-3 py-2 text-sm font-semibold text-amber-950"
-                  >
-                    {cur}: {fmtMoney(amt, cur)}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 text-xs text-slate-600">
-          Tip: Click the main card once so shortcuts work. This tool stores
-          timers in your browser so they persist after refresh.
-        </div>
       </div>
 
-      {/* FAQ */}
-      <section id="faq" className="mt-8">
-        <h3 className="text-2xl font-bold text-amber-950">
-          Billable Hours Clock FAQ
-        </h3>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How does rounding work?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Rounding always rounds <strong>up</strong> to the next increment
-              (for example, 6 minutes = 0.1 hour). Choose <strong>None</strong>{" "}
-              to bill the exact elapsed time.
+      <div className="print-only">
+        {printMode === "active" ? (
+          <div>
+            <div className="text-xl font-extrabold">Billable Hours Clock</div>
+            <div className="mt-1 text-sm font-semibold">
+              Active timer summary
             </div>
-          </details>
 
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does this save my timers?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Timers are saved in your browser using local storage on this
-              device.
+            <div className="mt-4 rounded-xl border border-slate-200 p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Timer
+              </div>
+              <div className="mt-1 text-2xl font-extrabold">
+                {activeTimer ? activeTimer.name : "No active timer"}
+              </div>
+              {activeTimer && activeDerived ? (
+                <div className="mt-2 text-sm font-semibold text-slate-700">
+                  {roundLabel(activeTimer.roundMode)} · Rate{" "}
+                  {fmtMoney(activeTimer.hourlyRate, activeTimer.currency)} / hr
+                  · Currency {activeTimer.currency}
+                </div>
+              ) : null}
             </div>
-          </details>
 
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What keyboard shortcuts are supported?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause (active timer) ·{" "}
-              <strong>R</strong> reset · <strong>C</strong> copy summary ·{" "}
-              <strong>A</strong> add timer · <strong>F</strong> fullscreen (when
-              focused).
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-slate-200 p-3">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Live time
+                </div>
+                <div className="mt-1 font-mono text-lg font-extrabold">
+                  {activeTimer ? msToHMS(activeTimer.elapsedMs) : "0:00:00"}
+                </div>
+              </div>
+              <div className="rounded-xl border border-slate-200 p-3">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Billable time
+                </div>
+                <div className="mt-1 font-mono text-lg font-extrabold">
+                  {activeTimer && activeDerived
+                    ? msToHMS(activeDerived.roundedMs)
+                    : "0:00:00"}
+                </div>
+              </div>
+              <div className="rounded-xl border border-slate-200 p-3">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Total
+                </div>
+                <div className="mt-1 text-lg font-extrabold">
+                  {activeTimer && activeDerived
+                    ? fmtMoney(activeDerived.total, activeTimer.currency)
+                    : fmtMoney(0, "USD")}
+                </div>
+              </div>
             </div>
-          </details>
 
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I track multiple clients or matters?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Create multiple timers, rename them, and add notes (client,
-              matter, task). Each timer has its own rate, currency, and
-              rounding.
+            {activeTimer && activeDerived ? (
+              <div className="mt-4 rounded-xl border border-slate-200 p-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Details
+                </div>
+                <div className="mt-2 grid gap-2 text-sm font-semibold text-slate-800 sm:grid-cols-2">
+                  <div>Status: {activeTimer.status}</div>
+                  <div>Rounding: {roundLabel(activeTimer.roundMode)}</div>
+                  <div>Billable hours: {activeDerived.hours.toFixed(2)}</div>
+                  <div>
+                    Rate:{" "}
+                    {fmtMoney(activeTimer.hourlyRate, activeTimer.currency)} /
+                    hr
+                  </div>
+                  <div>Currency: {activeCurrencyName}</div>
+                  <div>Note: {activeTimer.note.trim() || "-"}</div>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        ) : printMode === "all" ? (
+          <div>
+            <div className="text-xl font-extrabold">Billable Hours Clock</div>
+            <div className="mt-1 text-sm font-semibold">All timers summary</div>
+
+            <div className="mt-4 rounded-xl border border-slate-200 p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Total billable hours
+              </div>
+              <div className="mt-1 font-mono text-2xl font-extrabold">
+                {totalsAll.totalHours.toFixed(2)}
+              </div>
+              <div className="mt-2 text-sm font-semibold text-slate-700">
+                Totals by currency:
+              </div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {amountsByCurrency.length === 0 ? (
+                  <div className="text-sm font-semibold text-slate-700">
+                    No totals yet.
+                  </div>
+                ) : (
+                  amountsByCurrency.map(([cur, amt]) => (
+                    <div
+                      key={cur}
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900"
+                    >
+                      {cur}: {fmtMoney(amt, cur)}
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          </details>
-        </div>
-      </section>
+
+            <div className="mt-4 rounded-xl border border-slate-200 p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                Timers
+              </div>
+              <div className="mt-3 space-y-3">
+                {timers.map((t) => {
+                  const d = computeTimerDerived(t);
+                  return (
+                    <div
+                      key={t.id}
+                      className="rounded-xl border border-slate-200 p-3"
+                    >
+                      <div className="text-base font-extrabold">{t.name}</div>
+                      <div className="mt-1 text-sm font-semibold text-slate-700">
+                        Status {t.status} · {roundLabel(t.roundMode)} · Rate{" "}
+                        {fmtMoney(t.hourlyRate, t.currency)} / hr
+                      </div>
+                      <div className="mt-2 grid gap-2 text-sm font-semibold text-slate-800 sm:grid-cols-3">
+                        <div>Live: {msToHMS(t.elapsedMs)}</div>
+                        <div>Billable: {msToHMS(d.roundedMs)}</div>
+                        <div>Total: {fmtMoney(d.total, t.currency)}</div>
+                      </div>
+                      {t.note.trim() ? (
+                        <div className="mt-2 text-sm font-semibold text-slate-700">
+                          Note: {t.note.trim()}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
     </Card>
   );
 }
@@ -1357,10 +1741,8 @@ function BillableHoursClockCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function BillableHoursClockPage({
-  loaderData: { nowISO },
-}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/billable-hours-clock";
+export default function BillableHoursClockPage({}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/billable-hours-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -1379,7 +1761,7 @@ export default function BillableHoursClockPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           {
             "@type": "ListItem",
@@ -1401,149 +1783,41 @@ export default function BillableHoursClockPage({
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Billable Hours Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Billable Hours Clock
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Billable Hours Clock (Live Timer)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            Multiple <strong>billable timers</strong> with rounding, totals,
-            copy summaries, fullscreen, and saved sessions.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            Run live billable timers, round up to common increments, and track
+            totals across currencies. Includes copy, fullscreen, and print.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <BillableHoursClockCard />
-
-        {/* Disclaimer */}
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-amber-950">Disclaimer</h2>
-          <p className="mt-2 text-sm leading-relaxed text-amber-800">
-            This tool provides estimates only. Billing rules vary by client,
-            firm, jurisdiction, contract, and policy. Always verify time
-            entries, rounding requirements, and totals before invoicing. Nothing
-            on this page is legal, tax, or financial advice.
-          </p>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <BillableHoursClockCard />
         </div>
-      </section>
 
-      <BillableHoursFaq />
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Billable Hours Clock</span>
+        </p>
+      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
-  );
-}
-
-function BillableHoursFaq() {
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "How does rounding work?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Rounding always rounds up to the next increment (for example, 6 minutes = 0.1 hour). Choose None to bill the exact elapsed time.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Does this save my timers?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Yes. Timers are saved in your browser using local storage on this device.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "What keyboard shortcuts are supported?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Space starts or pauses the active timer, R resets it, C copies the summary, A adds a new timer, and F toggles fullscreen while focused.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Can I track multiple clients or matters?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Yes. Create multiple timers, rename them, and add notes for each client or matter. Every timer has its own rate, currency, and rounding.",
-        },
-      },
-    ],
-  };
-
-  return (
-    <section id="faq" className="mx-auto mt-8 max-w-7xl px-4 pb-12">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
-      <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-        <h2 className="text-2xl font-bold text-amber-950">
-          Billable Hours Clock FAQ
-        </h2>
-
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How does rounding work?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Rounding always rounds <strong>up</strong> to the next increment
-              (for example, 6 minutes = 0.1 hour). Choose <strong>None</strong>{" "}
-              to bill the exact elapsed time.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does this save my timers?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Timers are saved in your browser using local storage on this
-              device.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What keyboard shortcuts are supported?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> start/pause (active timer) ·{" "}
-              <strong>R</strong> reset · <strong>C</strong> copy summary ·{" "}
-              <strong>A</strong> add timer · <strong>F</strong> fullscreen (when
-              focused).
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I track multiple clients or matters?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Create multiple timers, rename them, and add notes (client,
-              matter, task). Each timer has its own rate, currency, and
-              rounding.
-            </div>
-          </details>
-        </div>
-      </div>
-    </section>
   );
 }

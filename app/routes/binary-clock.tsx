@@ -3,6 +3,11 @@ import type { Route } from "./+types/binary-clock";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
+import Disclaimer from "~/clients/components/binary-clock/Disclaimer";
+import FAQ from "~/clients/components/binary-clock/FAQ";
+import HowItWorks from "~/clients/components/binary-clock/HowItWorks";
+import KeyboardShortcuts from "~/clients/components/binary-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/binary-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -44,7 +49,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
@@ -137,28 +142,81 @@ function bitsOf(n: number, width: number) {
 }
 
 function bcdBitsOfDigit(digit: number) {
-  // 4-bit BCD
   return bitsOf(digit, 4);
 }
 
+function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Accurate clock updates aligned to the next second boundary.
+ * Always updates at 1s boundaries (even if seconds are hidden) so minutes change cleanly.
+ */
+function useNow() {
+  const [now, setNow] = useState<Date>(() => new Date());
+
+  useEffect(() => {
+    let t: number | null = null;
+
+    const schedule = () => {
+      setNow(new Date());
+      const msUntilNext = 1000 - (Date.now() % 1000);
+      t = window.setTimeout(schedule, msUntilNext);
+    };
+
+    const msUntilNext = 1000 - (Date.now() % 1000);
+    t = window.setTimeout(schedule, msUntilNext);
+
+    return () => {
+      if (t) window.clearTimeout(t);
+    };
+  }, []);
+
+  return now;
+}
+
 /* =========================================================
-   UI PRIMITIVES (same style as Home/Pomodoro)
+   UI PRIMITIVES
 ========================================================= */
 const Card = ({
   children,
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -183,13 +241,87 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+const Chip = ({
+  active,
+  children,
+  onClick,
+  disabled,
+}: {
+  active?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
+      active
+        ? "bg-slate-900 text-white hover:bg-slate-800"
+        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+function FullscreenTopBar({
+  show,
+  title,
+  left,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+          {left}
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    BINARY CLOCK CARD
@@ -197,20 +329,17 @@ const Btn = ({
 type BinaryMode = "bcd" | "pure";
 
 function BinaryClockCard() {
-  const [now, setNow] = useState<Date>(() => new Date());
+  const now = useNow();
+
   const [use24, setUse24] = useState(true);
   const [showSeconds, setShowSeconds] = useState(true);
   const [mode, setMode] = useState<BinaryMode>("bcd");
   const [copied, setCopied] = useState(false);
 
   const tz = useMemo(() => safeTimeZone(), []);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const ms = showSeconds ? 1000 : 15000;
-    const t = window.setInterval(() => setNow(new Date()), ms);
-    return () => window.clearInterval(t);
-  }, [showSeconds]);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
 
   const timeText = useMemo(
     () => formatTimeString(now, { use24, showSeconds }),
@@ -240,21 +369,18 @@ function BinaryClockCard() {
         : `H:${hb} M:${mb}${suffix}`;
     }
 
-    // BCD: per digit bits
     const hh = pad2(hDisp);
     const mm = pad2(m);
     const ss = pad2(s);
 
     const parts = showSeconds ? `${hh}:${mm}:${ss}` : `${hh}:${mm}`;
-    // Example "12:34:56 -> 0001 0010 : 0011 0100 : 0101 0110"
     const digitsOnly = parts.replace(/[^0-9]/g, "");
     const groups: string[] = [];
     for (const ch of digitsOnly)
       groups.push(bcdBitsOfDigit(Number(ch)).join(""));
-    if (!showSeconds) {
-      return `${parts}${suffix} -> ${groups.slice(0, 4).join(" ")}`;
-    }
-    return `${parts}${suffix} -> ${groups.join(" ")}`;
+    return showSeconds
+      ? `${parts}${suffix} -> ${groups.join(" ")}`
+      : `${parts}${suffix} -> ${groups.slice(0, 4).join(" ")}`;
   }, [now, use24, showSeconds, mode]);
 
   const copyText = useMemo(() => {
@@ -276,8 +402,9 @@ function BinaryClockCard() {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
-    if (k === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+
+    if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     } else if (k === "c") {
       copy();
     } else if (k === "s") {
@@ -288,224 +415,252 @@ function BinaryClockCard() {
       setUse24(true);
     } else if (e.key === "1") {
       setUse24(false);
+    } else if (e.key === "Escape" && document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
+  const displayTone = isFs
+    ? "border-slate-200 bg-slate-950 text-white"
+    : "border-slate-200 bg-slate-50 text-slate-950";
+
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Binary Clock
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Shows the current time in binary. Use BCD digit mode or pure binary
-            mode, with fullscreen and copy.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={showSeconds}
-              onChange={(e) => setShowSeconds(e.target.checked)}
-            />
-            Seconds
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={use24}
-              onChange={(e) => setUse24(e.target.checked)}
-            />
-            24-hour
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <select
-              value={mode}
-              onChange={(e) => setMode(e.target.value as BinaryMode)}
-              className="rounded-md border border-amber-300 bg-white px-2 py-1 text-amber-950"
-            >
-              <option value="bcd">BCD (digits)</option>
-              <option value="pure">Pure binary</option>
-            </select>
-            Mode
-          </label>
-
-          <Btn kind="ghost" onClick={copy} className="py-2">
-            {copied ? "Copied" : "Copy"}
-          </Btn>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className="mt-6 overflow-hidden rounded-2xl border-2 border-amber-300 bg-amber-50 text-amber-950"
-        style={{ minHeight: 420 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                height:100%;
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:18px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 20px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(48px, 7vw, 84px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-                white-space:nowrap;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 800 16px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.85;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
-        <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 420 }}
-        >
-          <div className="flex w-full flex-col items-center justify-center gap-4">
-            <div className="text-xs font-bold uppercase tracking-wide text-amber-800 text-center">
-              Local time · {tz} ·{" "}
-              {mode === "bcd" ? "BCD digits" : "Pure binary"}
-            </div>
-
-            <div className="font-mono text-4xl font-extrabold tracking-widest sm:text-5xl md:text-6xl text-center whitespace-nowrap">
-              {timeText}
-            </div>
-
-            <div className="w-full max-w-[780px]">
-              <BinaryGrid
-                now={now}
-                use24={use24}
-                showSeconds={showSeconds}
-                mode={mode}
-                dark={false}
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Binary Clock"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        left={
+          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={showSeconds}
+                onChange={(e) => setShowSeconds(e.target.checked)}
+                className="accent-amber-500"
               />
-            </div>
+              Seconds
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={use24}
+                onChange={(e) => setUse24(e.target.checked)}
+                className="accent-amber-500"
+              />
+              24-hour
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-2">
+              <span className="text-slate-600">Mode</span>
+              <select
+                value={mode}
+                onChange={(e) => setMode(e.target.value as BinaryMode)}
+                className="cursor-pointer rounded-md border border-slate-300 bg-white px-2 py-1 text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              >
+                <option value="bcd">BCD</option>
+                <option value="pure">Pure</option>
+              </select>
+            </label>
+          </div>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <Btn kind="ghost" onClick={copy} className="py-1 text-sm">
+              {copied ? "Copied" : "Copy"}
+            </Btn>
+            <Btn
+              kind="solid"
+              onClick={() =>
+                cardRef.current && toggleFullscreen(cardRef.current)
+              }
+              className="py-1 text-sm"
+            >
+              Fullscreen
+            </Btn>
+          </div>
+        }
+      />
 
-            <div className="text-sm font-semibold text-amber-900 text-center">
-              {dateText}
-            </div>
+      <div className={isFs ? "flex h-full w-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-wrap items-center ml-auto gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={showSeconds}
+                  onChange={(e) => setShowSeconds(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                Seconds
+              </label>
 
-            <div className="rounded-2xl border border-amber-200 bg-white p-4 text-xs text-amber-900 w-full max-w-[780px]">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-800">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <input
+                  type="checkbox"
+                  checked={use24}
+                  onChange={(e) => setUse24(e.target.checked)}
+                  className="accent-amber-500"
+                />
+                24-hour
+              </label>
+
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
+                <span className="text-slate-700">Mode</span>
+                <select
+                  value={mode}
+                  onChange={(e) => setMode(e.target.value as BinaryMode)}
+                  className="cursor-pointer rounded-md border border-slate-300 bg-white px-2 py-1 text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                >
+                  <option value="bcd">BCD (digits)</option>
+                  <option value="pure">Pure binary</option>
+                </select>
+              </label>
+
+              <Btn kind="ghost" onClick={copy} className="py-2">
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
+
+        <div
+          className={[
+            "mt-4 flex flex-col items-center justify-center rounded-2xl border p-3 sm:p-6",
+            displayTone,
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 420,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs && cardRef.current) toggleFullscreen(cardRef.current);
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to exit fullscreen" : undefined}
+        >
+          <div
+            className={
+              isFs
+                ? "text-xs font-extrabold uppercase tracking-widest text-white/80"
+                : "text-xs font-extrabold uppercase tracking-widest text-slate-700"
+            }
+          >
+            Local time · {tz} · {mode === "bcd" ? "BCD digits" : "Pure binary"}
+          </div>
+
+          <div
+            className={[
+              "mt-3 font-mono font-extrabold tracking-widest text-center whitespace-nowrap",
+              isFs
+                ? "text-[clamp(44px,7vw,96px)] text-white"
+                : "text-5xl sm:text-6xl text-slate-950",
+            ].join(" ")}
+          >
+            {timeText}
+          </div>
+
+          <div className={isFs ? "mt-6 w-full" : "mt-5 w-full max-w-3xl"}>
+            <BinaryGrid
+              now={now}
+              use24={use24}
+              showSeconds={showSeconds}
+              mode={mode}
+              dark={isFs}
+            />
+          </div>
+
+          <div
+            className={
+              isFs
+                ? "mt-5 text-sm font-semibold text-white/85 text-center"
+                : "mt-4 text-sm font-semibold text-slate-700 text-center"
+            }
+          >
+            {dateText}
+          </div>
+
+          {!isFs && (
+            <div className="mt-4 w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                 Copy preview
               </div>
-              <div className="mt-2 font-mono whitespace-pre-wrap">
+              <div className="mt-2 font-mono text-xs whitespace-pre-wrap text-slate-800">
                 {binaryText}
               </div>
             </div>
+          )}
 
-            <div className="text-xs font-semibold text-amber-800 text-center">
-              Shortcuts: F fullscreen · C copy · S seconds · B mode · 1 (12h) ·
-              2 (24h)
-            </div>
+          <div
+            className={
+              isFs
+                ? "mt-6 text-xs font-semibold text-white/80 text-center"
+                : "mt-4 text-xs font-semibold text-slate-600 text-center"
+            }
+          >
+            Shortcuts: F fullscreen · C copy · S seconds · B mode · 1 (12h) · 2
+            (24h) · Esc exit
           </div>
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">Binary Clock</div>
-            <div className="fs-time">{timeText}</div>
-            <div className="fs-sub">
-              {tz} · {mode === "bcd" ? "BCD digits" : "Pure binary"}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <Chip active={mode === "bcd"} onClick={() => setMode("bcd")}>
+                BCD
+              </Chip>
+              <Chip active={mode === "pure"} onClick={() => setMode("pure")}>
+                Pure
+              </Chip>
+              <Chip active={use24} onClick={() => setUse24(true)}>
+                24h
+              </Chip>
+              <Chip active={!use24} onClick={() => setUse24(false)}>
+                12h
+              </Chip>
+              <Chip active={showSeconds} onClick={() => setShowSeconds(true)}>
+                Seconds on
+              </Chip>
+              <Chip active={!showSeconds} onClick={() => setShowSeconds(false)}>
+                Seconds off
+              </Chip>
             </div>
 
-            <div className="w-full" style={{ maxWidth: 980 }}>
-              <BinaryGrid
-                now={now}
-                use24={use24}
-                showSeconds={showSeconds}
-                mode={mode}
-                dark
-              />
-            </div>
-
-            <div className="fs-help">
-              F fullscreen · C copy · S seconds · B mode · 1 (12h) · 2 (24h)
+            <div className="flex items-center gap-2">
+              <Btn kind="ghost" onClick={copy}>
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+              <Btn
+                kind="solid"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+              >
+                Exit
+              </Btn>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: F fullscreen · C copy · S seconds · B mode · 1 (12h) · 2
-          (24h)
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -537,12 +692,12 @@ function BinaryGrid({
   const palette = useMemo(() => {
     return {
       bg: dark ? "rgba(255,255,255,.06)" : "rgba(255,255,255,.75)",
-      border: dark ? "rgba(255,255,255,.14)" : "rgba(180,83,9,.30)",
-      on: dark ? "rgba(255,255,255,.92)" : "rgba(69,26,3,.92)",
-      off: dark ? "rgba(255,255,255,.16)" : "rgba(180,83,9,.20)",
-      text: dark ? "rgba(255,255,255,.86)" : "rgba(120,53,15,.88)",
-      label: dark ? "rgba(255,255,255,.78)" : "rgba(120,53,15,.75)",
-      sep: dark ? "rgba(255,255,255,.35)" : "rgba(120,53,15,.25)",
+      border: dark ? "rgba(255,255,255,.14)" : "rgba(15,23,42,.18)",
+      on: dark ? "rgba(255,255,255,.92)" : "rgba(2,6,23,.92)",
+      off: dark ? "rgba(255,255,255,.16)" : "rgba(15,23,42,.10)",
+      text: dark ? "rgba(255,255,255,.86)" : "rgba(30,41,59,.88)",
+      label: dark ? "rgba(255,255,255,.78)" : "rgba(51,65,85,.75)",
+      sep: dark ? "rgba(255,255,255,.35)" : "rgba(51,65,85,.25)",
     };
   }, [dark]);
 
@@ -562,7 +717,6 @@ function BinaryGrid({
           { key: "M", label: "Minutes", bits: minBits },
         ];
 
-    // Normalize height for alignment
     const maxH = Math.max(...cols.map((c) => c.bits.length));
 
     return (
@@ -596,7 +750,7 @@ function BinaryGrid({
                   style={{ gridTemplateRows: `repeat(${maxH}, 1fr)` }}
                 >
                   {padded.map((b, i) => (
-                    <Bit key={i} on={b === 1} palette={palette} />
+                    <Bit key={i} on={b === 1} palette={palette} dark={dark} />
                   ))}
                 </div>
                 <div
@@ -613,33 +767,32 @@ function BinaryGrid({
     );
   }
 
-  // BCD mode
+  // BCD mode (no hooks below this point)
   const hh = pad2(hDisp);
   const mm = pad2(m);
   const ss = pad2(s);
 
   const parts = showSeconds ? `${hh}:${mm}:${ss}` : `${hh}:${mm}`;
-  const digitChars = parts.split("");
+  const digits = parts
+    .split("")
+    .filter((ch) => ch !== ":")
+    .map((ch) => Number(ch));
 
-  // For layout: digits columns with a 4-row bit grid
-  // We render ":" as a separator column.
-  const digits = digitChars.filter((ch) => ch !== ":").map((ch) => Number(ch));
-
-  // Map digits into groups to label HH MM SS
   const groupLabels = showSeconds ? ["HH", "MM", "SS"] : ["HH", "MM"];
 
-  const digitGroups = useMemo(() => {
-    const out: Array<{ label: string; digits: number[] }> = [];
+  const digitGroups: Array<{ label: string; digits: number[] }> = (() => {
     if (showSeconds) {
-      out.push({ label: "Hours", digits: [digits[0], digits[1]] });
-      out.push({ label: "Minutes", digits: [digits[2], digits[3]] });
-      out.push({ label: "Seconds", digits: [digits[4], digits[5]] });
-      return out;
+      return [
+        { label: "Hours", digits: [digits[0], digits[1]] },
+        { label: "Minutes", digits: [digits[2], digits[3]] },
+        { label: "Seconds", digits: [digits[4], digits[5]] },
+      ];
     }
-    out.push({ label: "Hours", digits: [digits[0], digits[1]] });
-    out.push({ label: "Minutes", digits: [digits[2], digits[3]] });
-    return out;
-  }, [digits, showSeconds]);
+    return [
+      { label: "Hours", digits: [digits[0], digits[1]] },
+      { label: "Minutes", digits: [digits[2], digits[3]] },
+    ];
+  })();
 
   return (
     <div
@@ -658,7 +811,7 @@ function BinaryGrid({
               style={{
                 background: dark
                   ? "rgba(255,255,255,.08)"
-                  : "rgba(245,158,11,.20)",
+                  : "rgba(15,23,42,.08)",
                 color: palette.label,
               }}
             >
@@ -680,7 +833,7 @@ function BinaryGrid({
 
                 <div className="flex items-end gap-3">
                   {grp.digits.map((d, di) => {
-                    const bits = bcdBitsOfDigit(d); // msb..lsb
+                    const bits = bcdBitsOfDigit(d);
                     return (
                       <div
                         key={`${gi}-${di}`}
@@ -691,7 +844,12 @@ function BinaryGrid({
                           style={{ gridTemplateRows: "repeat(4, 1fr)" }}
                         >
                           {bits.map((b, bi) => (
-                            <Bit key={bi} on={b === 1} palette={palette} />
+                            <Bit
+                              key={bi}
+                              on={b === 1}
+                              palette={palette}
+                              dark={dark}
+                            />
                           ))}
                         </div>
                         <div
@@ -713,7 +871,6 @@ function BinaryGrid({
                 </div>
               </div>
 
-              {/* Separator between groups */}
               {gi < digitGroups.length - 1 ? (
                 <div className="flex items-center justify-center px-1">
                   <div className="flex flex-col items-center gap-2" aria-hidden>
@@ -736,7 +893,7 @@ function BinaryGrid({
           className="text-center text-xs font-semibold"
           style={{ color: palette.text }}
         >
-          BCD means each decimal digit is shown as 4 binary bits.
+          BCD shows each decimal digit as 4 binary bits.
         </div>
       </div>
     </div>
@@ -746,9 +903,11 @@ function BinaryGrid({
 function Bit({
   on,
   palette,
+  dark,
 }: {
   on: boolean;
   palette: { on: string; off: string; border: string };
+  dark: boolean;
 }) {
   return (
     <div
@@ -765,8 +924,13 @@ function Bit({
       <span
         className="font-mono text-xs font-black"
         style={{
-          // Key fix: force high contrast on the dark "on" dot
-          color: on ? "rgba(255,255,255,.95)" : "rgba(69,26,3,.55)",
+          color: on
+            ? dark
+              ? "rgba(0,0,0,.92)"
+              : "rgba(255,255,255,.92)"
+            : dark
+              ? "rgba(255,255,255,.55)"
+              : "rgba(2,6,23,.55)",
           userSelect: "none",
         }}
       >
@@ -782,7 +946,7 @@ function Bit({
 export default function BinaryClockPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/binary-clock";
+  const url = "https://www.ilovetimers.com/binary-clock";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -801,216 +965,51 @@ export default function BinaryClockPage({
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Binary Clock", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a binary clock?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A binary clock shows the current time using binary digits (0 and 1) instead of regular numbers. Many binary clocks use BCD, where each decimal digit is shown as a 4-bit binary value.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What is BCD mode?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "BCD stands for binary coded decimal. Each decimal digit (0 to 9) is represented by 4 binary bits. This makes the clock easier to read because each digit maps directly to the normal time digits.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I switch to pure binary time?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Switch the mode to Pure binary to show hours, minutes, and seconds as binary numbers rather than per-digit BCD.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "How do I use fullscreen?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Click Fullscreen or press F while the card is focused to show a clean dark fullscreen display.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Binary Clock</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Binary Clock
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
+          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
+            Binary Clock (Time in Binary)
           </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A <strong>binary clock</strong> that shows the current time in
-            binary. Includes BCD digits, pure binary, and fullscreen.
+          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
+            View your current local time in binary. Switch BCD vs pure binary,
+            toggle seconds and 12/24-hour time, copy, and go fullscreen.
           </p>
         </div>
       </section>
 
-      {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <BinaryClockCard />
         </div>
 
-        {/* Quick-use hints */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              BCD is easiest to learn
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              BCD mode shows each time digit as 4 bits, so it maps directly to
-              normal time like 12:34.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Pure binary is the classic flex
-            </h2>
-            <p className="mt-2 leading-relaxed text-amber-800">
-              Pure mode shows hours, minutes, and seconds as binary numbers.
-              Great for puzzles and practice.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-amber-950">
-              Keyboard shortcuts
-            </h2>
-            <ul className="mt-2 space-y-1 text-amber-800">
-              <li>
-                <strong>F</strong> = Fullscreen
-              </li>
-              <li>
-                <strong>C</strong> = Copy
-              </li>
-              <li>
-                <strong>S</strong> = Seconds toggle
-              </li>
-              <li>
-                <strong>B</strong> = Mode toggle
-              </li>
-              <li>
-                <strong>1</strong> = 12-hour
-              </li>
-              <li>
-                <strong>2</strong> = 24-hour
-              </li>
-            </ul>
-          </div>
-        </div>
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Binary Clock</span>
+        </p>
       </section>
 
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free binary clock (time in binary)
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              This <strong>binary clock</strong> shows your current local time
-              in binary. If you are learning, start with <strong>BCD</strong>{" "}
-              because each decimal digit is displayed as a 4-bit binary value.
-              If you prefer the classic style, switch to{" "}
-              <strong>Pure binary</strong>.
-            </p>
-
-            <p>
-              Want a normal time display? Try{" "}
-              <Link
-                to="/digital-clock"
-                className="font-semibold hover:underline"
-              >
-                Digital Clock
-              </Link>
-              . Prefer a clock face? Try{" "}
-              <Link
-                to="/analog-clock"
-                className="font-semibold hover:underline"
-              >
-                Analog Clock
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Binary Clock FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Does this show my local time?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. It uses your device’s local time and time zone settings.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What is the difference between BCD and pure binary?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              BCD shows each decimal digit as 4 bits, so it matches normal time
-              digits. Pure binary shows the whole hour, minute, and second as
-              binary numbers.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I hide seconds?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Toggle Seconds off, or press <strong>S</strong> while
-              focused.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              How do I use fullscreen?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Click <strong>Fullscreen</strong> or press <strong>F</strong>{" "}
-              while the card is focused.
-            </div>
-          </details>
-        </div>
-      </section>
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

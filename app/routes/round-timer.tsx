@@ -1,7 +1,15 @@
 // app/routes/round-timer.tsx
 import type { Route } from "./+types/round-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type KeyboardEvent,
+} from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -23,17 +31,19 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://www.ilovetimers.com/og-image.jpg" },
+    {
+      property: "og:image",
+      content: "https://www.ilovetimers.com/og-image.jpg",
+    },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
 
     { rel: "canonical", href: url },
-    { name: "theme-color", content: "#ffedd5" },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
-
 
 /* =========================================================
    LOADER
@@ -48,7 +58,9 @@ export function loader() {
 function clamp(n: number, min: number, max: number) {
   return Math.min(Math.max(n, min), max);
 }
+
 const pad2 = (n: number) => n.toString().padStart(2, "0");
+
 function msToClock(ms: number) {
   const t = Math.max(0, Math.floor(ms));
   const s = Math.floor(t / 1000);
@@ -57,6 +69,7 @@ function msToClock(ms: number) {
   const sec = s % 60;
   return h > 0 ? `${h}:${pad2(m)}:${pad2(sec)}` : `${m}:${pad2(sec)}`;
 }
+
 function isTypingTarget(target: EventTarget | null) {
   const el = target as HTMLElement | null;
   if (!el) return false;
@@ -68,12 +81,128 @@ function isTypingTarget(target: EventTarget | null) {
     el.isContentEditable
   );
 }
+
 async function toggleFullscreen(el: HTMLElement) {
   if (!document.fullscreenElement) {
     await el.requestFullscreen().catch(() => {});
   } else {
     await document.exitFullscreen().catch(() => {});
   }
+}
+
+function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
+  const [isFs, setIsFs] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => {
+      const el = targetRef.current;
+      setIsFs(!!el && document.fullscreenElement === el);
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    onChange();
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, [targetRef]);
+
+  return isFs;
+}
+
+/**
+ * Fit a single-line time string into its container by adjusting font size.
+ * - Uses ResizeObserver + rAF
+ * - Binary search for max font-size that fits both width and height
+ * - Only re-runs on deps changes (not every animation frame)
+ */
+function useFitText({
+  containerRef,
+  textRef,
+  deps,
+  minPx = 44,
+  maxPx = 420,
+  paddingAllowancePx = 0,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+  textRef: RefObject<HTMLElement | null>;
+  deps: any[];
+  minPx?: number;
+  maxPx?: number;
+  paddingAllowancePx?: number;
+}) {
+  const [fontPx, setFontPx] = useState<number>(minPx);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const textEl = textRef.current;
+    if (!container || !textEl) return;
+
+    let raf: number | null = null;
+
+    const compute = () => {
+      const c = containerRef.current;
+      const t = textRef.current;
+      if (!c || !t) return;
+
+      const rect = c.getBoundingClientRect();
+      const availW = Math.max(0, rect.width - paddingAllowancePx);
+      const availH = Math.max(0, rect.height - paddingAllowancePx);
+
+      if (availW <= 0 || availH <= 0) return;
+
+      const originalFontSize = (t as HTMLElement).style.fontSize;
+
+      const fits = (px: number) => {
+        (t as HTMLElement).style.fontSize = `${px}px`;
+        const tr = t.getBoundingClientRect();
+        return tr.width <= availW && tr.height <= availH;
+      };
+
+      let lo = minPx;
+      let hi = maxPx;
+      let best = minPx;
+
+      if (fits(maxPx)) {
+        best = maxPx;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          const mid = Math.floor((lo + hi) / 2);
+          if (fits(mid)) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+      }
+
+      (t as HTMLElement).style.fontSize = originalFontSize;
+      setFontPx(best);
+    };
+
+    const schedule = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        compute();
+      });
+    };
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(container);
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+
+    schedule();
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return fontPx;
 }
 
 /* WebAudio beep */
@@ -122,16 +251,27 @@ const Card = ({
   className = "",
   onKeyDown,
   tabIndex,
+  cardRef,
+  isFullscreen,
 }: {
   children: React.ReactNode;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
   tabIndex?: number;
+  cardRef?: React.Ref<HTMLDivElement>;
+  isFullscreen?: boolean;
 }) => (
   <div
+    ref={cardRef}
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
-    className={`rounded-2xl h-full border border-amber-400 bg-white p-5 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${className}`}
+    className={[
+      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
+      isFullscreen
+        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
+        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      className,
+    ].join(" ")}
   >
     {children}
   </div>
@@ -156,13 +296,59 @@ const Btn = ({
     disabled={disabled}
     className={
       kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-700 px-4 py-2 font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg bg-amber-500/30 px-4 py-2 font-medium text-amber-950 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
   </button>
 );
+
+function FullscreenTopBar({
+  show,
+  title,
+  right,
+  onExit,
+}: {
+  show: boolean;
+  title: string;
+  right?: React.ReactNode;
+  onExit: () => void;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
+            {title}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {right}
+          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
+            Exit (Esc)
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FullscreenBottomBar({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!show) return null;
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
+      <div className="mx-auto max-w-7xl">{children}</div>
+    </div>
+  );
+}
 
 /* =========================================================
    ROUND TIMER CARD
@@ -180,7 +366,6 @@ type Preset = {
 function RoundTimerCard() {
   const beep = useBeep();
 
-  // Common presets (boxing + MMA + training variants)
   const presets: Preset[] = useMemo(
     () => [
       {
@@ -245,16 +430,46 @@ function RoundTimerCard() {
   const [finalBeeps, setFinalBeeps] = useState(true);
 
   const [phase, setPhase] = useState<Phase>("idle");
+  const [paused, setPaused] = useState(false);
   const [roundIndex, setRoundIndex] = useState(0); // 1..rounds for work phases
   const [remainingMs, setRemainingMs] = useState(0);
 
   const rafRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
-  const displayWrapRef = useRef<HTMLDivElement>(null);
-
   const lastBeepSecondRef = useRef<number | null>(null);
 
+  const remainingRef = useRef<number>(0);
+  useEffect(() => {
+    remainingRef.current = remainingMs;
+  }, [remainingMs]);
+
+  const phaseRef = useRef<Phase>("idle");
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
+
+  const pausedRef = useRef<boolean>(false);
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
+
+  const roundsRef = useRef<number>(rounds);
+  const workRef = useRef<number>(workSec);
+  const restRef = useRef<number>(restSec);
+  useEffect(() => {
+    roundsRef.current = rounds;
+    workRef.current = workSec;
+    restRef.current = restSec;
+  }, [rounds, workSec, restSec]);
+
   const isRunning = phase !== "idle" && phase !== "done";
+  const isActive = isRunning && !paused;
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isFs = useIsFullscreen(cardRef);
+
+  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const timeTextRef = useRef<HTMLSpanElement>(null);
 
   function stopRaf() {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -264,6 +479,7 @@ function RoundTimerCard() {
   function hardReset() {
     stopRaf();
     setPhase("idle");
+    setPaused(false);
     setRoundIndex(0);
     setRemainingMs(0);
     endRef.current = null;
@@ -278,75 +494,103 @@ function RoundTimerCard() {
     setWarmupSec(p.warmupSec ?? 0);
   }
 
-  function start() {
+  function startNewRun() {
     stopRaf();
     lastBeepSecondRef.current = null;
 
     if (warmupSec > 0) {
       setPhase("warmup");
+      setPaused(false);
       setRoundIndex(0);
       setRemainingMs(warmupSec * 1000);
       endRef.current = performance.now() + warmupSec * 1000;
-    } else {
-      setPhase("work");
-      setRoundIndex(1);
-      setRemainingMs(workSec * 1000);
-      endRef.current = performance.now() + workSec * 1000;
-      if (sound) beep(520, 160, 0.12); // bell
+      return;
     }
+
+    setPhase("work");
+    setPaused(false);
+    setRoundIndex(1);
+    setRemainingMs(workSec * 1000);
+    endRef.current = performance.now() + workSec * 1000;
+    if (sound) beep(520, 160, 0.12);
   }
 
-  function reset() {
-    hardReset();
+  function pauseNow() {
+    if (!isRunning || pausedRef.current) return;
+    const now = performance.now();
+    const rem = Math.max(0, (endRef.current ?? now) - now);
+    setRemainingMs(rem);
+    endRef.current = null;
+    setPaused(true);
+    stopRaf();
+    lastBeepSecondRef.current = null;
+  }
+
+  function resumeNow() {
+    if (!isRunning || !pausedRef.current) return;
+    const rem = Math.max(0, remainingRef.current);
+    setPaused(false);
+    endRef.current = performance.now() + rem;
+    lastBeepSecondRef.current = null;
+  }
+
+  function startPause() {
+    if (phaseRef.current === "idle" || phaseRef.current === "done") {
+      startNewRun();
+      return;
+    }
+    if (pausedRef.current) resumeNow();
+    else pauseNow();
   }
 
   function skip() {
     // Move to the next logical phase, respecting bounds.
     if (!isRunning) return;
 
-    if (phase === "warmup") {
+    stopRaf();
+    lastBeepSecondRef.current = null;
+    setPaused(false);
+
+    if (phaseRef.current === "warmup") {
       setPhase("work");
       setRoundIndex(1);
-      setRemainingMs(workSec * 1000);
-      endRef.current = performance.now() + workSec * 1000;
-      lastBeepSecondRef.current = null;
+      setRemainingMs(workRef.current * 1000);
+      endRef.current = performance.now() + workRef.current * 1000;
       if (sound) beep(520, 160, 0.12);
       return;
     }
 
-    if (phase === "work") {
-      if (roundIndex >= rounds) {
+    if (phaseRef.current === "work") {
+      if (roundIndex >= roundsRef.current) {
         setPhase("done");
         setRemainingMs(0);
         endRef.current = null;
-        stopRaf();
         if (sound) {
           beep(660, 160, 0.12);
           window.setTimeout(() => beep(880, 160, 0.12), 220);
         }
         return;
       }
+
       setPhase("rest");
-      setRemainingMs(restSec * 1000);
-      endRef.current = performance.now() + restSec * 1000;
-      lastBeepSecondRef.current = null;
-      if (sound) beep(330, 180, 0.12); // rest cue
+      setRemainingMs(restRef.current * 1000);
+      endRef.current = performance.now() + restRef.current * 1000;
+      if (sound) beep(330, 180, 0.12);
       return;
     }
 
-    if (phase === "rest") {
+    if (phaseRef.current === "rest") {
       setPhase("work");
-      setRoundIndex((r) => Math.min(rounds, r + 1));
-      setRemainingMs(workSec * 1000);
-      endRef.current = performance.now() + workSec * 1000;
-      lastBeepSecondRef.current = null;
+      setRoundIndex((r) => Math.min(roundsRef.current, r + 1));
+      setRemainingMs(workRef.current * 1000);
+      endRef.current = performance.now() + workRef.current * 1000;
       if (sound) beep(520, 160, 0.12);
       return;
     }
   }
 
   useEffect(() => {
-    if (!isRunning) {
+    if (!isRunning || paused) {
       stopRaf();
       return;
     }
@@ -356,6 +600,7 @@ function RoundTimerCard() {
       const rem = Math.max(0, (endRef.current ?? now) - now);
       setRemainingMs(rem);
 
+      // Final beeps (last 5s)
       if (sound && finalBeeps && rem > 0 && rem <= 5_000) {
         const secLeft = Math.ceil(rem / 1000);
         if (lastBeepSecondRef.current !== secLeft) {
@@ -370,18 +615,18 @@ function RoundTimerCard() {
         lastBeepSecondRef.current = null;
 
         // Phase transitions
-        if (phase === "warmup") {
+        if (phaseRef.current === "warmup") {
           setPhase("work");
           setRoundIndex(1);
-          setRemainingMs(workSec * 1000);
-          endRef.current = performance.now() + workSec * 1000;
+          setRemainingMs(workRef.current * 1000);
+          endRef.current = performance.now() + workRef.current * 1000;
           if (sound) beep(520, 160, 0.12);
           rafRef.current = requestAnimationFrame(tick);
           return;
         }
 
-        if (phase === "work") {
-          if (roundIndex >= rounds) {
+        if (phaseRef.current === "work") {
+          if (roundIndex >= roundsRef.current) {
             setPhase("done");
             setRemainingMs(0);
             endRef.current = null;
@@ -394,18 +639,18 @@ function RoundTimerCard() {
           }
 
           setPhase("rest");
-          setRemainingMs(restSec * 1000);
-          endRef.current = performance.now() + restSec * 1000;
+          setRemainingMs(restRef.current * 1000);
+          endRef.current = performance.now() + restRef.current * 1000;
           if (sound) beep(330, 180, 0.12);
           rafRef.current = requestAnimationFrame(tick);
           return;
         }
 
-        if (phase === "rest") {
+        if (phaseRef.current === "rest") {
           setPhase("work");
-          setRoundIndex((r) => Math.min(rounds, r + 1));
-          setRemainingMs(workSec * 1000);
-          endRef.current = performance.now() + workSec * 1000;
+          setRoundIndex((r) => Math.min(roundsRef.current, r + 1));
+          setRemainingMs(workRef.current * 1000);
+          endRef.current = performance.now() + workRef.current * 1000;
           if (sound) beep(520, 160, 0.12);
           rafRef.current = requestAnimationFrame(tick);
           return;
@@ -417,368 +662,378 @@ function RoundTimerCard() {
 
     rafRef.current = requestAnimationFrame(tick);
     return () => stopRaf();
-  }, [
-    isRunning,
-    phase,
-    rounds,
-    roundIndex,
-    workSec,
-    restSec,
-    warmupSec,
-    sound,
-    finalBeeps,
-    beep,
-  ]);
+  }, [isRunning, paused, roundIndex, sound, finalBeeps, beep]);
+
+  useEffect(() => {
+    return () => stopRaf();
+  }, []);
 
   const shownTime =
     phase === "idle"
       ? msToClock(workSec * 1000)
       : msToClock(Math.ceil(remainingMs / 1000) * 1000);
 
-  const label =
+  const statusLabel =
     phase === "idle"
       ? "Ready"
-      : phase === "warmup"
-        ? "Warmup"
-        : phase === "work"
-          ? `Round ${roundIndex} of ${rounds}`
-          : phase === "rest"
-            ? "Rest"
-            : "Complete";
+      : phase === "done"
+        ? "Complete"
+        : paused
+          ? "Paused"
+          : phase === "warmup"
+            ? "Warmup"
+            : phase === "work"
+              ? `Round ${roundIndex} of ${rounds}`
+              : "Rest";
+
+  const phaseChip =
+    phase === "work"
+      ? "Work"
+      : phase === "rest"
+        ? "Rest"
+        : phase === "warmup"
+          ? "Warmup"
+          : phase === "done"
+            ? "Done"
+            : "Ready";
 
   const shellClass =
     phase === "work"
-      ? "border-amber-300 bg-amber-50 text-amber-950"
+      ? "border-amber-200 bg-amber-50 text-amber-950"
       : phase === "rest"
         ? "border-sky-200 bg-sky-50 text-sky-950"
         : phase === "warmup"
           ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-          : "border-amber-300 bg-amber-50 text-amber-950";
+          : "border-slate-200 bg-slate-50 text-slate-950";
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const fitFontPx = useFitText({
+    containerRef: displayBoxRef,
+    textRef: timeTextRef,
+    deps: [shownTime, isFs, phase, paused],
+    minPx: 52,
+    maxPx: isFs ? 560 : 360,
+    paddingAllowancePx: isFs ? 56 : 64,
+  });
+
+  const canEditSettings = !isRunning; // keep settings safe: no mid-run edits
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
+
     if (e.key === " ") {
       e.preventDefault();
-      if (phase === "idle" || phase === "done") start();
-      else skip();
+      startPause();
+    } else if (k === "n") {
+      skip();
     } else if (k === "r") {
-      reset();
-    } else if (k === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+      hardReset();
+    } else if (k === "f" && cardRef.current) {
+      toggleFullscreen(cardRef.current);
     } else if (k === "s") {
       setSound((x) => !x);
+    } else if (k === "escape" && isFs) {
+      document.exitFullscreen().catch(() => {});
     }
   };
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-amber-950">
-            Round Timer (Boxing / MMA)
-          </h2>
-          <p className="mt-1 text-base text-slate-700">
-            Pre-set rounds and rest. Great for boxing, MMA, pad work, bag
-            rounds, and conditioning.
-          </p>
-        </div>
+    <Card
+      cardRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Round Timer"
+        onExit={() => document.exitFullscreen().catch(() => {})}
+        right={
+          <div className="flex items-center gap-2">
+            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+              {phase === "idle" || phase === "done"
+                ? "Start"
+                : paused
+                  ? "Resume"
+                  : "Pause"}
+            </Btn>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-950">
-            <input
-              type="checkbox"
-              checked={finalBeeps}
-              onChange={(e) => setFinalBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      {/* Presets */}
-      <div className="mt-6">
-        <div className="text-sm font-extrabold text-amber-950">
-          Common presets
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {presets.map((p) => (
-            <button
-              key={p.label}
-              type="button"
-              onClick={() => applyPreset(p)}
-              disabled={isRunning}
-              className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:opacity-60 ${
-                p.rounds === rounds &&
-                p.workSec === workSec &&
-                p.restSec === restSec &&
-                (p.warmupSec ?? 0) === warmupSec
-                  ? "bg-amber-700 text-white hover:bg-amber-800"
-                  : "bg-amber-500/30 text-amber-950 hover:bg-amber-400"
-              }`}
+            <Btn
+              kind="ghost"
+              onClick={skip}
+              className="py-1 text-sm"
+              disabled={!isRunning}
             >
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </div>
+              Next
+            </Btn>
 
-      {/* Settings */}
-      <div className="mt-4 grid gap-4 lg:grid-cols-4">
-        <label className="block text-sm font-semibold text-amber-950">
-          Rounds
-          <input
-            type="number"
-            min={1}
-            max={60}
-            value={rounds}
-            disabled={isRunning}
-            onChange={(e) =>
-              setRounds(clamp(Number(e.target.value || 1), 1, 60))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
+            <Btn kind="ghost" onClick={hardReset} className="py-1 text-sm">
+              Reset
+            </Btn>
+          </div>
+        }
+      />
 
-        <label className="block text-sm font-semibold text-amber-950">
-          Round length (sec)
-          <input
-            type="number"
-            min={10}
-            max={3600}
-            value={workSec}
-            disabled={isRunning}
-            onChange={(e) =>
-              setWorkSec(clamp(Number(e.target.value || 10), 10, 3600))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
+      <div className={isFs ? "flex h-full flex-col" : ""}>
+        {!isFs && (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="text-xl font-extrabold text-sky-700">
+                Round Timer (Boxing & MMA)
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Set rounds, work, rest, optional warmup, sound cues, and use a
+                big fullscreen display.
+              </p>
+            </div>
 
-        <label className="block text-sm font-semibold text-amber-950">
-          Rest (sec)
-          <input
-            type="number"
-            min={0}
-            max={3600}
-            value={restSec}
-            disabled={isRunning}
-            onChange={(e) =>
-              setRestSec(clamp(Number(e.target.value || 0), 0, 3600))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
+            <div className="ml-auto flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={sound}
+                  onChange={(e) => setSound(e.target.checked)}
+                />
+                Sound
+              </label>
 
-        <label className="block text-sm font-semibold text-amber-950">
-          Warmup (sec)
-          <input
-            type="number"
-            min={0}
-            max={600}
-            value={warmupSec}
-            disabled={isRunning}
-            onChange={(e) =>
-              setWarmupSec(clamp(Number(e.target.value || 0), 0, 600))
-            }
-            className="mt-1 w-full rounded-lg border-2 border-amber-300 bg-white px-3 py-2 text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </label>
-      </div>
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <input
+                  type="checkbox"
+                  checked={finalBeeps}
+                  onChange={(e) => setFinalBeeps(e.target.checked)}
+                  disabled={!sound}
+                />
+                Final beeps
+              </label>
 
-      {/* Controls */}
-      <div className="mt-5 flex flex-wrap gap-3">
-        <Btn onClick={start} disabled={isRunning}>
-          Start
-        </Btn>
-        <Btn kind="ghost" onClick={skip} disabled={!isRunning}>
-          Skip
-        </Btn>
-        <Btn kind="ghost" onClick={reset}>
-          Reset
-        </Btn>
-      </div>
+              <Btn
+                kind="ghost"
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </div>
+          </div>
+        )}
 
-      {/* Display */}
-      <div
-        ref={displayWrapRef}
-        data-fs-container
-        className={`mt-6 overflow-hidden rounded-2xl border-2 ${shellClass}`}
-        style={{ minHeight: 280 }}
-        aria-live="polite"
-      >
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              [data-fs-container] [data-shell="fullscreen"]{display:none;}
-              [data-fs-container] [data-shell="normal"]{display:flex;}
-
-              [data-fs-container]:fullscreen{
-                width:100vw;
-                height:100vh;
-                border:0;
-                border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
-              }
-
-              [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
-              [data-fs-container]:fullscreen [data-shell="fullscreen"]{
-                display:flex;
-                width:100%;
-                height:100%;
-                align-items:center;
-                justify-content:center;
-                padding:4vh 4vw;
-              }
-
-              [data-fs-container]:fullscreen .fs-inner{
-                width:min(1400px, 100%);
-                display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                gap:16px;
-              }
-
-              [data-fs-container]:fullscreen .fs-label{
-                font: 800 18px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                letter-spacing:.12em;
-                text-transform:uppercase;
-                opacity:.85;
-              }
-
-              [data-fs-container]:fullscreen .fs-time{
-                font: 900 clamp(96px, 18vw, 240px)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                letter-spacing:.10em;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-sub{
-                font: 800 clamp(16px, 3vw, 26px)/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.9;
-                text-align:center;
-              }
-
-              [data-fs-container]:fullscreen .fs-help{
-                font: 700 14px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-                opacity:.75;
-                text-align:center;
-              }
-            `,
-          }}
-        />
-
-        {/* Normal shell */}
+        {/* Display */}
         <div
-          data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
-          style={{ minHeight: 280 }}
+          ref={displayBoxRef}
+          className={[
+            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border p-3 sm:p-6",
+            shellClass,
+            isFs ? "mx-2 sm:mx-4 flex-1" : "",
+          ].join(" ")}
+          style={{
+            minHeight: isFs ? 0 : 280,
+            marginTop: isFs ? "3.6rem" : undefined,
+            marginBottom: isFs ? "3.6rem" : undefined,
+            userSelect: "none",
+            overflow: "hidden",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFs) startPause();
+          }}
+          role={isFs ? "button" : undefined}
+          title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="mx-auto flex w-full max-w-3xl flex-col items-center justify-center gap-2">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              {label}
+          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
+
+          <span
+            ref={timeTextRef}
+            className={[
+              "mt-2 inline-block text-center font-mono font-extrabold",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+            ].join(" ")}
+            style={{
+              fontSize: `${fitFontPx}px`,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {shownTime}
+          </span>
+
+          {/* Small status strip */}
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+              {phaseChip}
             </div>
 
-            <div className="font-mono text-6xl font-extrabold tracking-widest sm:text-7xl md:text-8xl">
-              {phase === "idle" ? msToClock(workSec * 1000) : shownTime}
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+              {Math.min(rounds, Math.max(phase === "idle" ? 0 : 1, roundIndex))}{" "}
+              / {rounds} rounds
             </div>
 
-            <div className="mt-3 grid w-full gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                  Rounds
-                </div>
-                <div className="mt-1 text-2xl font-extrabold text-amber-950">
-                  {phase === "idle"
-                    ? rounds
-                    : Math.min(rounds, Math.max(1, roundIndex))}{" "}
-                  / {rounds}
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                  Round / Rest
-                </div>
-                <div className="mt-1 text-sm font-semibold text-slate-700">
-                  {Math.round(workSec / 60)}m round · {Math.round(restSec / 60)}
-                  m rest
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-amber-200 bg-white p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                  Controls
-                </div>
-                <div className="mt-1 text-sm font-semibold text-slate-700">
-                  Start → run · Skip → next phase · Reset → stop
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-2 text-xs text-slate-600">
-              Runs while the page is open. Background tabs may update less
-              often.
+            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+              {Math.round(workSec / 60)}m work · {Math.round(restSec / 60)}m
+              rest
             </div>
           </div>
+
+          {/* Fullscreen helper overlay */}
+          {isFs && (
+            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                    Round Timer
+                  </div>
+                  <div className="text-xs font-semibold text-slate-600">
+                    Tap time to start/pause · N = Next
+                  </div>
+                </div>
+
+                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  Space = Start/Pause
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Fullscreen shell */}
-        <div data-shell="fullscreen">
-          <div className="fs-inner">
-            <div className="fs-label">{label}</div>
-            <div className="fs-time">
-              {phase === "idle" ? msToClock(workSec * 1000) : shownTime}
+        {/* Presets + settings + controls (normal only) */}
+        {!isFs && (
+          <>
+            <div className="mt-5">
+              <div className="mt-3 flex flex-wrap gap-2">
+                {presets.map((p) => {
+                  const active =
+                    p.rounds === rounds &&
+                    p.workSec === workSec &&
+                    p.restSec === restSec &&
+                    (p.warmupSec ?? 0) === warmupSec;
+
+                  return (
+                    <button
+                      key={p.label}
+                      type="button"
+                      onClick={() => applyPreset(p)}
+                      disabled={!canEditSettings}
+                      className={[
+                        "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                        "disabled:cursor-not-allowed disabled:opacity-60",
+                        active
+                          ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
+                          : "bg-slate-100 text-slate-900 hover:bg-slate-200",
+                      ].join(" ")}
+                    >
+                      {p.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            <div className="fs-sub">
-              {phase === "work"
-                ? `Round ${roundIndex} / ${rounds}`
-                : phase === "rest"
-                  ? `Rest · Next: Round ${Math.min(rounds, roundIndex + 1)}`
-                  : phase === "warmup"
-                    ? `Warmup · Starts Round 1`
-                    : phase === "done"
-                      ? `Done`
-                      : `Rounds ${rounds}`}
+
+            <div className="mt-4 grid gap-4 lg:grid-cols-4">
+              <label className="block text-sm font-semibold text-slate-900">
+                Rounds
+                <input
+                  type="number"
+                  min={1}
+                  max={60}
+                  value={rounds}
+                  disabled={!canEditSettings}
+                  onChange={(e) =>
+                    setRounds(clamp(Number(e.target.value || 1), 1, 60))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-900">
+                Round length (sec)
+                <input
+                  type="number"
+                  min={10}
+                  max={3600}
+                  value={workSec}
+                  disabled={!canEditSettings}
+                  onChange={(e) =>
+                    setWorkSec(clamp(Number(e.target.value || 10), 10, 3600))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-900">
+                Rest (sec)
+                <input
+                  type="number"
+                  min={0}
+                  max={3600}
+                  value={restSec}
+                  disabled={!canEditSettings}
+                  onChange={(e) =>
+                    setRestSec(clamp(Number(e.target.value || 0), 0, 3600))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                />
+              </label>
+
+              <label className="block text-sm font-semibold text-slate-900">
+                Warmup (sec)
+                <input
+                  type="number"
+                  min={0}
+                  max={600}
+                  value={warmupSec}
+                  disabled={!canEditSettings}
+                  onChange={(e) =>
+                    setWarmupSec(clamp(Number(e.target.value || 0), 0, 600))
+                  }
+                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
+                />
+              </label>
             </div>
-            <div className="fs-help">
-              Space start/skip · R reset · F fullscreen · S sound
+
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="flex flex-wrap items-center gap-3">
+                <Btn kind="solid" onClick={startPause}>
+                  {phase === "idle" || phase === "done"
+                    ? "Start"
+                    : paused
+                      ? "Resume"
+                      : "Pause"}
+                </Btn>
+
+                <Btn kind="ghost" onClick={skip} disabled={!isRunning}>
+                  Next
+                </Btn>
+
+                <Btn kind="ghost" onClick={hardReset}>
+                  Reset
+                </Btn>
+              </div>
+
+              <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                Shortcuts: Space start/pause · N next · R reset · F fullscreen ·
+                S sound
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Fullscreen bottom controls */}
+        <FullscreenBottomBar show={isFs}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause · Space start/pause · N next · R reset · F
+              fullscreen · S sound
+            </div>
+            <div className="text-xs font-semibold text-slate-700">
+              {statusLabel}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Shortcuts */}
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950">
-          Shortcuts: Space start/skip · R reset · F fullscreen · S sound
-        </div>
-        <div className="text-xs text-slate-600">
-          Tip: click the card once so keyboard shortcuts work immediately.
-        </div>
+        </FullscreenBottomBar>
       </div>
     </Card>
   );
@@ -787,8 +1042,10 @@ function RoundTimerCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function RoundTimerPage({}: Route.ComponentProps) {
-  const url = "https://ilovetimers.com/round-timer";
+export default function RoundTimerPage({
+  loaderData: { nowISO: _nowISO },
+}: Route.ComponentProps) {
+  const url = "https://www.ilovetimers.com/round-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -807,161 +1064,34 @@ export default function RoundTimerPage({}: Route.ComponentProps) {
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: "https://ilovetimers.com/",
+            item: "https://www.ilovetimers.com/",
           },
           { "@type": "ListItem", position: 2, name: "Round Timer", item: url },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "What is a boxing round timer?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "A boxing round timer alternates between a work round and a rest period for a set number of rounds. It’s used for bag work, pad work, sparring rounds, and conditioning.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "What are common boxing and MMA round settings?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Common boxing training rounds are 3 minutes with 1 minute rest. MMA rounds are often 5 minutes with 1 minute rest in competition, and similar for training.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Does this timer have sound cues?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. It plays a cue at the start of work rounds and a different cue at the start of rest. You can turn sound off if needed.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Can I use it in fullscreen for a gym?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Fullscreen is high contrast with large digits for gym visibility.",
-            },
-          },
         ],
       },
     ],
   };
 
   return (
-    <main className="bg-amber-50 text-amber-950">
+    <main className="bg-slate-50 text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <p className="text-sm font-medium text-amber-800">
-            <Link to="/" className="hover:underline">
-              Home
-            </Link>{" "}
-            / <span className="text-amber-950">Round Timer</span>
-          </p>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Round Timer (Boxing / MMA)
-          </h1>
-          <p className="mt-2 max-w-3xl text-lg text-amber-800">
-            A clean <strong>boxing timer</strong> and <strong>MMA timer</strong>{" "}
-            with rounds + rest, common presets, sound cues, and fullscreen mode.
-          </p>
-        </div>
-      </section>
-
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        <RoundTimerCard />
-      </section>
-
-      {/* SEO Section */}
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="rounded-2xl border border-amber-400 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-amber-950">
-            Free boxing and MMA round timer with rest periods
-          </h2>
-
-          <div className="mt-3 space-y-3 leading-relaxed text-amber-800">
-            <p>
-              A <strong>round timer</strong> alternates between a work interval
-              (the round) and a rest interval. This format is used for boxing,
-              MMA, kickboxing, pad rounds, heavy bag rounds, and conditioning.
-            </p>
-
-            <p>
-              Use a common preset like 3×3 with 1 minute rest, or customize the
-              number of rounds, round length, rest time, and an optional warmup.
-              If you want minute-start cues without separate rest periods, try{" "}
-              <Link to="/emom-timer" className="font-semibold hover:underline">
-                EMOM Timer
-              </Link>
-              . For fixed work/rest blocks, use{" "}
-              <Link to="/hiit-timer" className="font-semibold hover:underline">
-                HIIT Timer
-              </Link>
-              .
-            </p>
-          </div>
+      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+        <div>
+          <RoundTimerCard />
         </div>
-      </section>
 
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-7xl px-4 pb-14">
-        <h2 className="text-2xl font-bold">Round Timer FAQ</h2>
-        <div className="mt-4 divide-y divide-amber-400 rounded-2xl border border-amber-400 bg-white shadow-sm">
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What’s a common boxing round timer setting?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              A very common boxing training setting is{" "}
-              <strong>3 minutes on</strong> and <strong>1 minute rest</strong>,
-              repeated for multiple rounds.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What’s a common MMA round setting?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              MMA rounds are often <strong>5 minutes</strong> with{" "}
-              <strong>1 minute rest</strong> in competition, and similar timing
-              is used for training.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              Can I customize round and rest length?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              Yes. Set your number of rounds, round length, rest length, and
-              optional warmup.
-            </div>
-          </details>
-
-          <details>
-            <summary className="cursor-pointer px-5 py-4 font-medium">
-              What are the keyboard shortcuts?
-            </summary>
-            <div className="px-5 pb-4 text-amber-800">
-              <strong>Space</strong> starts (or skips to the next phase),{" "}
-              <strong>R</strong> resets, <strong>F</strong> toggles fullscreen,
-              and <strong>S</strong> toggles sound.
-            </div>
-          </details>
-        </div>
+        {/* Breadcrumb (bottom on purpose) */}
+        <p className="text-sm text-slate-600">
+          <Link to="/" className="font-medium text-slate-700 hover:underline">
+            Home
+          </Link>{" "}
+          / <span className="text-slate-900">Round Timer</span>
+        </p>
       </section>
     </main>
   );

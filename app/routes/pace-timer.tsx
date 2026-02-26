@@ -11,6 +11,11 @@ import {
   type RefObject,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/pace-timer/HowItWorks";
+import Disclaimer from "~/clients/components/pace-timer/Disclaimer";
+import FAQ from "~/clients/components/pace-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/pace-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/pace-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -1032,6 +1037,12 @@ export default function PaceTimerPage({
           / <span className="text-slate-900">Pace Timer</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

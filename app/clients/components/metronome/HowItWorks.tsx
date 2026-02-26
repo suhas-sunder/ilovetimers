@@ -1,0 +1,708 @@
+import React from "react";
+import { Link } from "react-router";
+
+/* ---------- Small helper: JSON-LD script ---------- */
+export function JsonLd({ data }: { data: any }) {
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+/* =========================================================
+   1) HOW IT WORKS (trust + SEO + user intent)
+   Notes:
+   - Metronome intent: accurate BPM + tap tempo + time signature + subdivisions
+   - Tool-focused (practice workflow), not music theory lessons
+   - Scenario-based with concrete numbers users will see on this page
+   - Technical details live in an expandable section
+   - Aim: ~800–1200 words of unique, intent-matching content
+========================================================= */
+export default function HowItWorks({
+  canonicalUrl = "https://www.ilovetimers.com/metronome",
+  baseUrl = "https://www.ilovetimers.com",
+}: {
+  canonicalUrl?: string;
+  baseUrl?: string;
+}) {
+  const abs = (href: string) =>
+    href.startsWith("http") ? href : `${baseUrl}${href}`;
+
+  const howToLd = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "How to use the Online Metronome (tap tempo, accurate BPM, subdivisions, fullscreen)",
+    description:
+      "Practice with a clean, accurate online metronome. Set BPM, tap tempo, choose time signature and subdivisions, enable an accented downbeat, adjust volume and click sound, use fullscreen, and copy your setup.",
+    url: canonicalUrl,
+    step: [
+      {
+        "@type": "HowToStep",
+        name: "Set BPM (or use Tap Tempo)",
+        text: "Choose a BPM with the slider, number input, or arrow keys. Or tap a steady beat using Tap Tempo (T) to set BPM automatically.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Choose time signature and subdivision",
+        text: "Pick beats per bar and a subdivision (quarter, eighth, triplet, sixteenth). The metronome ticks per subdivision and shows the current beat and sub count.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Start and stop quickly",
+        text: "Press Start, or use Space/Enter to toggle start/stop. In fullscreen, click or tap the display to start/stop.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Optional: accent beat 1",
+        text: "Enable Accent beat 1 for a stronger downbeat tick and pulse at the start of each bar.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Adjust sound and volume",
+        text: "Switch between Click, Wood, and Beep, and set volume to match your room or headphones.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Go fullscreen and copy settings",
+        text: "Press F for fullscreen (Esc exits). Press C to copy your current setup (BPM, signature, subdivision, sound, volume, and link).",
+      },
+    ],
+  };
+
+  const Kbd = ({ children }: { children: React.ReactNode }) => (
+    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+      {children}
+    </kbd>
+  );
+
+  const PillLink = ({
+    to,
+    children,
+  }: {
+    to: string;
+    children: React.ReactNode;
+  }) => (
+    <Link
+      to={to}
+      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+    >
+      {children} →
+    </Link>
+  );
+
+  const ExampleBlock = ({
+    title,
+    subtitle,
+    lines,
+  }: {
+    title: string;
+    subtitle?: string;
+    lines: string[];
+  }) => (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="text-base font-semibold text-slate-900">{title}</div>
+      {subtitle ? (
+        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+      ) : null}
+      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div className="whitespace-pre-wrap font-mono text-xs text-slate-800">
+          {lines.join("\n")}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 pb-10">
+      <JsonLd data={howToLd} />
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        {/* Header */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+
+            <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
+              <span className="font-semibold text-slate-900">
+                Online Metronome
+              </span>{" "}
+              is built for one thing: helping you{" "}
+              <span className="font-semibold text-slate-900">
+                practice at a steady tempo
+              </span>{" "}
+              without fighting the UI. Set a BPM, press{" "}
+              <span className="font-semibold text-slate-900">Start</span>, and
+              you get a clean audio tick plus a visual pulse that stays easy to
+              follow. You can quickly switch time signatures, choose
+              subdivisions (quarter, eighth, triplet, sixteenth), accent the
+              downbeat, and adjust click sound and volume for your room or
+              headphones.
+            </p>
+
+            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+              This page is tool-first. It is not a music theory article and it
+              does not try to teach you how to count or what a time signature
+              “means.” Instead, it focuses on what you came here to do: match
+              tempo quickly (Tap Tempo), keep time with a consistent pulse, and
+              run common practice setups with minimal friction. Fullscreen
+              exists because many people practice several feet from their laptop
+              or phone, and a big BPM display with a clear pulse is easier to
+              glance at.
+            </p>
+
+            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+              The center display always shows the{" "}
+              <span className="font-semibold text-slate-900">current BPM</span>,
+              plus a ring pulse with a live readout like{" "}
+              <span className="font-semibold text-slate-900">
+                Beat 2 / 4 · Sub 1 / 2 · Tick
+              </span>
+              . That beat/sub counter matters in real use. If you pick 4/4 with
+              eighth notes, the metronome ticks twice per beat and you will see
+              the subdivision count flip between 1 and 2 as you play.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2 sm:justify-end">
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+              BPM
+            </span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+              Tap tempo
+            </span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+              Time signature
+            </span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+              Subdivision
+            </span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+              Accent
+            </span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+              Click sounds
+            </span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+              Fullscreen
+            </span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+              Shortcuts
+            </span>
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+              Copy
+            </span>
+          </div>
+        </div>
+
+        {/* Quick flow */}
+        <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <div className="text-sm font-semibold text-slate-900">
+              Quick use (what most people do)
+            </div>
+
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+              <li>
+                <span className="font-semibold text-slate-900">1)</span> Set
+                your BPM with the slider or number input, or tap{" "}
+                <span className="font-semibold text-slate-900">Tap</span> (or{" "}
+                <Kbd>T</Kbd>) a few times to match a song.
+              </li>
+              <li>
+                <span className="font-semibold text-slate-900">2)</span> Choose{" "}
+                <span className="font-semibold text-slate-900">
+                  time signature
+                </span>{" "}
+                and{" "}
+                <span className="font-semibold text-slate-900">
+                  subdivision
+                </span>{" "}
+                for the feel you want (quarter, eighth, triplet, sixteenth).
+              </li>
+              <li>
+                <span className="font-semibold text-slate-900">3)</span> Press{" "}
+                <span className="font-semibold text-slate-900">Start</span> (or{" "}
+                <Kbd>Space</Kbd>/<Kbd>Enter</Kbd>) to begin. You will see the
+                status switch to{" "}
+                <span className="font-semibold text-slate-900">Running</span>.
+              </li>
+              <li>
+                <span className="font-semibold text-slate-900">4)</span> If you
+                want measure clarity, enable{" "}
+                <span className="font-semibold text-slate-900">
+                  Accent beat 1
+                </span>{" "}
+                so the downbeat is stronger.
+              </li>
+              <li>
+                <span className="font-semibold text-slate-900">5)</span> Press{" "}
+                <Kbd>F</Kbd> for fullscreen. In fullscreen, you can{" "}
+                <span className="font-semibold text-slate-900">
+                  click/tap the display
+                </span>{" "}
+                to start or stop without aiming for buttons.
+              </li>
+              <li>
+                <span className="font-semibold text-slate-900">6)</span> Press{" "}
+                <Kbd>C</Kbd> to copy your setup (BPM, signature, subdivision,
+                sound, volume, and link) for a teacher, bandmate, or future you.
+              </li>
+            </ol>
+
+            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+              <div className="text-sm font-semibold text-slate-900">
+                What “subdivision” means on this page
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                Subdivision is simply how many ticks happen inside each beat. If
+                you set
+                <span className="font-semibold text-slate-900"> 120 BPM</span>,
+                that’s 120 beats per minute. With{" "}
+                <span className="font-semibold text-slate-900">Eighth (2)</span>
+                , the metronome ticks twice per beat, so you effectively hear{" "}
+                <span className="font-semibold text-slate-900">
+                  240 ticks per minute
+                </span>
+                . With{" "}
+                <span className="font-semibold text-slate-900">
+                  Sixteenth (4)
+                </span>
+                , you hear{" "}
+                <span className="font-semibold text-slate-900">
+                  480 ticks per minute
+                </span>
+                . The beat/sub counter updates so you can follow where you are.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+            <div className="text-sm font-semibold text-slate-900">
+              Practical checklist
+            </div>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+              <li>
+                If you can’t hear the tick, increase device volume and unmute
+                the tab. Some browsers require a click before audio starts.
+              </li>
+              <li>
+                If shortcuts do nothing, click the metronome card once so it has
+                focus.
+              </li>
+              <li>
+                If a click sound feels harsh, switch to{" "}
+                <span className="font-semibold text-slate-900">Wood</span> or
+                lower volume.
+              </li>
+              <li>
+                If you only need BPM detection from tapping, use{" "}
+                <Link
+                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  to="/bpm-tapper"
+                >
+                  BPM Tapper
+                </Link>
+                .
+              </li>
+              <li>
+                If you want timed practice blocks, pair this with{" "}
+                <Link
+                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  to="/countdown-timer"
+                >
+                  Countdown Timer
+                </Link>
+                .
+              </li>
+            </ul>
+
+            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
+              <span className="font-semibold text-slate-900">Shortcuts:</span>{" "}
+              <Kbd>Space</Kbd>/<Kbd>Enter</Kbd> start/stop, <Kbd>T</Kbd> tap,{" "}
+              <Kbd>↑</Kbd>/<Kbd>↓</Kbd> BPM, <Kbd>F</Kbd> fullscreen,{" "}
+              <Kbd>C</Kbd> copy, <Kbd>Esc</Kbd> exit.
+            </div>
+          </div>
+        </div>
+
+        {/* Main explanation */}
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold text-sky-700">
+            What this metronome is optimized for
+          </h3>
+
+          <p className="mt-2 leading-relaxed text-slate-700">
+            In practice, a metronome succeeds or fails on two things: how
+            quickly you can set it up, and whether it stays consistent once you
+            hit Start. This page is optimized for fast setup and low friction
+            while you are holding an instrument. That is why you can set BPM in
+            multiple ways (slider, number input, arrow keys), why Tap Tempo is
+            one keystroke away, and why fullscreen lets you start or stop by
+            clicking the display. You should not need a menu hunt to do basic
+            tempo work.
+          </p>
+
+          <p className="mt-3 leading-relaxed text-slate-700">
+            The second design goal is clarity. The visual pulse is not
+            decorative. It is tied to the same tick schedule that drives the
+            audio, and it includes a simple readout of the current beat and
+            subdivision. If you are practicing a part that “lands on the and of
+            2,” the eighth-note subdivision makes that placement obvious because
+            you will hear two ticks per beat and you will see the subdivision
+            counter flip between 1 and 2. If you are drilling triplets, you will
+            see{" "}
+            <span className="font-semibold text-slate-900">
+              Sub 1 / 3 → Sub 2 / 3 → Sub 3 / 3
+            </span>{" "}
+            repeating.
+          </p>
+
+          <p className="mt-3 leading-relaxed text-slate-700">
+            Accent beat 1 is included because many people practice in measures,
+            not in an endless stream of ticks. With accent enabled, the first
+            beat of the bar is emphasized, making it easier to keep track of
+            where you are without counting out loud. This is helpful for longer
+            phrases, repeats, and ensemble rehearsal where bar alignment
+            matters.
+          </p>
+
+          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+            Scenarios with concrete numbers (what you will see on this page)
+          </h3>
+
+          <p className="mt-2 leading-relaxed text-slate-700">
+            The examples below are written to match what this metronome actually
+            shows: BPM in big numbers, a running status, a pulse ring, and a
+            beat/sub counter. The numbers and counters are the same ones you
+            will see while you use the tool.
+          </p>
+
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            <ExampleBlock
+              title="Scenario 1: Match a track with Tap Tempo, then lock it in"
+              subtitle="Tap first, practice second."
+              lines={[
+                "Goal: match a song tempo quickly.",
+                "",
+                "What you do:",
+                "- Tap the beat 6–8 times (T).",
+                "- The BPM display updates (example: 128).",
+                "- Press Start.",
+                "",
+                "What you see while running:",
+                "- Big BPM: 128",
+                "- Status: Running",
+                "- Beat counter: Beat 1 / 4, Beat 2 / 4, ...",
+                "- Sub counter depends on your subdivision selection.",
+                "",
+                "If you tap again later:",
+                "- Tap a new tempo (example: 132) and BPM updates immediately.",
+              ]}
+            />
+
+            <ExampleBlock
+              title="Scenario 2: Eighth-note consistency at 96 BPM"
+              subtitle="Two ticks per beat, easy ‘and’ placement."
+              lines={[
+                "Setup:",
+                "- BPM = 96",
+                "- Time signature = 4/4",
+                "- Subdivision = Eighth (2)",
+                "- Accent beat 1 = On",
+                "",
+                "What you will hear and see:",
+                "- Two ticks per beat (96 beats/min → 192 ticks/min).",
+                "- Beat 1 is accented each bar.",
+                "- Display cycles like:",
+                "  Beat 1 / 4 · Sub 1 / 2 · Accent",
+                "  Beat 1 / 4 · Sub 2 / 2 · Tick",
+                "  Beat 2 / 4 · Sub 1 / 2 · Tick",
+                "  Beat 2 / 4 · Sub 2 / 2 · Tick",
+              ]}
+            />
+
+            <ExampleBlock
+              title="Scenario 3: Triplet drill at 72 BPM"
+              subtitle="Three ticks per beat for triplet feel."
+              lines={[
+                "Setup:",
+                "- BPM = 72",
+                "- Time signature = 3/4",
+                "- Subdivision = Triplet (3)",
+                "",
+                "What you will see:",
+                "- Beat cycles 1 → 2 → 3",
+                "- Sub cycles 1 → 2 → 3 each beat",
+                "- Example run:",
+                "  Beat 1 / 3 · Sub 1 / 3 · Tick",
+                "  Beat 1 / 3 · Sub 2 / 3 · Tick",
+                "  Beat 1 / 3 · Sub 3 / 3 · Tick",
+                "  Beat 2 / 3 · Sub 1 / 3 · Tick",
+              ]}
+            />
+
+            <ExampleBlock
+              title="Scenario 4: Slow build tempo ladder (keyboard-only control)"
+              subtitle="Increase BPM without touching the mouse."
+              lines={[
+                "Goal: increase tempo in small steps.",
+                "",
+                "Setup:",
+                "- Start BPM = 60",
+                "- Subdivision = Quarter (1)",
+                "",
+                "Workflow:",
+                "- Press Space to Start.",
+                "- After 30–60 seconds, press ↑ five times:",
+                "  BPM 60 → 61 → 62 → 63 → 64 → 65",
+                "- Or use Shift + ↑ for bigger steps:",
+                "  BPM 65 → 70 → 75",
+                "",
+                "What you see:",
+                "- Big BPM updates instantly as you press keys.",
+                "- The tick speed changes without restarting.",
+              ]}
+            />
+
+            <ExampleBlock
+              title="Scenario 5: Fullscreen practice across the room"
+              subtitle="Big display with click-to-start/stop."
+              lines={[
+                "Setup:",
+                "- Press F to enter fullscreen.",
+                "",
+                "In fullscreen:",
+                "- Tap/click the big display to Start.",
+                "- Tap/click again to Stop.",
+                "- Use +5 / -5 buttons in the top bar for quick changes.",
+                "- Exit with Esc.",
+                "",
+                "What you see:",
+                "- Large BPM digits (example: 110).",
+                "- Pulse ring flashing each tick.",
+                "- A small hint row with settings (signature, subdivision, sound, volume).",
+              ]}
+            />
+
+            <ExampleBlock
+              title="Scenario 6: Share a rehearsal setup with Copy"
+              subtitle="One consistent setup for everyone."
+              lines={[
+                "Goal: send a bandmate the exact metronome setup.",
+                "",
+                "Setup:",
+                "- BPM = 124",
+                "- Time signature = 4/4",
+                "- Subdivision = Sixteenth (4)",
+                "- Accent beat 1 = Off",
+                "- Sound = Beep",
+                "- Volume = 60%",
+                "",
+                "What you do:",
+                "- Press C (or click Copy).",
+                "",
+                "What gets copied (example):",
+                "Online Metronome",
+                "BPM: 124",
+                "Time signature: 4/4",
+                "Subdivision: Sixteenth",
+                "Accent downbeat: Off",
+                "Sound: beep",
+                "Volume: 60%",
+                "Time zone: <your device time zone>",
+                "https://www.ilovetimers.com/metronome",
+              ]}
+            />
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <div className="text-sm font-semibold text-slate-900">
+              Pick the right page when your goal is slightly different
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              This route is for a tempo reference: steady ticks, bar counting,
+              and quick BPM control. If you only want to discover BPM by
+              tapping, use the BPM tapper. If you want timed practice blocks
+              (for example 10 minutes of scales, 5 minutes of arpeggios), use a
+              countdown timer alongside the metronome. If you need a generic
+              large display for timekeeping rather than tempo, use the
+              fullscreen timer.
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              Tap-only:{" "}
+              <Link
+                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                to="/bpm-tapper"
+              >
+                BPM Tapper
+              </Link>
+              . Practice blocks:{" "}
+              <Link
+                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                to="/countdown-timer"
+              >
+                Countdown Timer
+              </Link>
+              . Big display:{" "}
+              <Link
+                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                to="/fullscreen-timer"
+              >
+                Fullscreen Timer
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+
+        {/* Related tools */}
+        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="text-sm font-semibold text-slate-900">
+                Related tools (same site, different job)
+              </div>
+              <p className="mt-1 text-sm text-slate-700">
+                Pick the closest match to what you are trying to do.
+              </p>
+            </div>
+            <div className="text-xs text-slate-600">
+              Shortcuts: <Kbd>Space</Kbd> <Kbd>T</Kbd> <Kbd>F</Kbd> <Kbd>C</Kbd>{" "}
+              <Kbd>Esc</Kbd>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <PillLink to="/bpm-tapper">BPM Tapper</PillLink>
+            <PillLink to="/countdown-timer">Countdown Timer</PillLink>
+            <PillLink to="/stopwatch">Stopwatch</PillLink>
+            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/hiit-timer">HIIT Timer</PillLink>
+          </div>
+        </div>
+
+        {/* Technical details expandable */}
+        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+            <div className="min-w-0">
+              <div className="text-sm font-semibold text-slate-900">
+                Technical details (audio scheduling, timing, focus, fullscreen)
+              </div>
+              <div className="mt-1 text-xs font-medium text-slate-600">
+                Optional notes if you rely on exact behavior
+              </div>
+            </div>
+            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+              ▼
+            </span>
+          </summary>
+
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+              <div className="font-semibold text-slate-900">
+                Scheduling model (why it stays steady)
+              </div>
+              <p className="mt-1 leading-relaxed">
+                The metronome schedules upcoming ticks slightly ahead of time
+                using WebAudio timing. The UI updates the visual pulse as ticks
+                are scheduled so the audio and visuals stay aligned.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+              <div className="font-semibold text-slate-900">
+                BPM, beats, and subdivision math
+              </div>
+              <p className="mt-1 leading-relaxed">
+                Seconds per beat is{" "}
+                <span className="font-semibold text-slate-900">60 / BPM</span>.
+                Seconds per subdivision tick is that value divided by the
+                subdivision count (1, 2, 3, or 4). Beat and subdivision counters
+                are derived from the tick index.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+              <div className="font-semibold text-slate-900">
+                Audio permissions
+              </div>
+              <p className="mt-1 leading-relaxed">
+                Some browsers suspend audio until a user gesture. If you do not
+                hear ticks, click Start once (or tap the display in fullscreen)
+                and try again.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+              <div className="font-semibold text-slate-900">
+                Keyboard focus rules
+              </div>
+              <p className="mt-1 leading-relaxed">
+                Shortcuts are handled on the metronome card. If they do not
+                work, click the card once to focus it. While typing in an input
+                or changing a select, shortcuts are ignored.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 md:col-span-2">
+              <div className="font-semibold text-slate-900">
+                Fullscreen targeting
+              </div>
+              <p className="mt-1 leading-relaxed">
+                Fullscreen is applied to the metronome card so the BPM display
+                and controls stay together. In fullscreen, tapping or clicking
+                the display toggles start/stop, and Esc exits.
+              </p>
+            </div>
+          </div>
+        </details>
+
+        {/* Bottom note */}
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+            <strong className="text-slate-900">Only need BPM detection?</strong>{" "}
+            Use{" "}
+            <Link
+              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              to="/bpm-tapper"
+            >
+              BPM Tapper
+            </Link>{" "}
+            to tap and read BPM without the metronome tick.
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+            <strong className="text-slate-900">
+              Want timed practice blocks?
+            </strong>{" "}
+            Pair this with{" "}
+            <Link
+              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              to="/countdown-timer"
+            >
+              Countdown Timer
+            </Link>{" "}
+            for structured intervals.
+          </div>
+        </div>
+
+        {/* Small SEO anchor text without being bloggy */}
+        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+          <strong className="text-slate-900">In one sentence:</strong> this
+          online metronome gives you accurate BPM with tap tempo, time
+          signatures, subdivisions, an optional downbeat accent, selectable
+          click sounds and volume, fullscreen mode, keyboard shortcuts, and
+          one-click copy so you can practice with a steady pulse without extra
+          setup.
+        </div>
+
+        {/* Hidden absolute URL usage so abs() is not dead-code when tree-shaken */}
+        <span className="sr-only" aria-hidden="true">
+          {abs("/metronome")}
+        </span>
+      </div>
+    </section>
+  );
+}

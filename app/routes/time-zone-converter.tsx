@@ -3,6 +3,11 @@ import type { Route } from "./+types/time-zone-converter";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/time-zone-converter/HowItWorks";
+import Disclaimer from "~/clients/components/time-zone-converter/Disclaimer";
+import FAQ from "~/clients/components/time-zone-converter/FAQ";
+import KeyboardShortcuts from "~/clients/components/time-zone-converter/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/time-zone-converter/PopularUseCases";
 
 /* =========================================================
    META
@@ -1213,6 +1218,12 @@ export default function TimeZoneConverterPage({
           / <span className="text-slate-900">Time Zone Converter</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

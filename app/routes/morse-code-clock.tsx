@@ -10,6 +10,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/morse-code-clock/HowItWorks";
+import Disclaimer from "~/clients/components/morse-code-clock/Disclaimer";
+import FAQ from "~/clients/components/morse-code-clock/FAQ";
+import KeyboardShortcuts from "~/clients/components/morse-code-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/morse-code-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -531,7 +536,7 @@ function MorseCodeClockCard() {
                 Morse Code Clock (Live Time Display)
               </h1>
               <p className="mt-1 text-sm text-slate-600">
-                Live local time shown as Morse code digits. 
+                Live local time shown as Morse code digits.
               </p>
             </div>
 
@@ -809,6 +814,12 @@ export default function MorseCodeClockPage({
           / <span className="text-slate-900">Morse Code Clock</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

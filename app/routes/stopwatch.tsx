@@ -10,6 +10,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/stopwatch/HowItWorks";
+import Disclaimer from "~/clients/components/stopwatch/Disclaimer";
+import FAQ from "~/clients/components/stopwatch/FAQ";
+import KeyboardShortcuts from "~/clients/components/stopwatch/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/stopwatch/PopularUseCases";
 
 /* =========================================================
    META
@@ -518,8 +523,8 @@ function StopwatchCard() {
                 Stopwatch (Milliseconds + Laps)
               </h1>
               <p className="mt-1 text-sm text-slate-600">
-                Start/pause, record laps (splits), reset, copy CSV, and use a big
-                fullscreen display.
+                Start/pause, record laps (splits), reset, copy CSV, and use a
+                big fullscreen display.
               </p>
             </div>
             <div className="ml-auto flex flex-wrap items-center gap-3">
@@ -788,6 +793,12 @@ export default function StopwatchPage({
           / <span className="text-slate-900">Stopwatch</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

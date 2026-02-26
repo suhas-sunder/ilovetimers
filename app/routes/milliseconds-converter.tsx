@@ -3,6 +3,11 @@ import type { Route } from "./+types/milliseconds-converter";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/milliseconds-converter/HowItWorks";
+import Disclaimer from "~/clients/components/milliseconds-converter/Disclaimer";
+import FAQ from "~/clients/components/milliseconds-converter/FAQ";
+import KeyboardShortcuts from "~/clients/components/milliseconds-converter/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/milliseconds-converter/PopularUseCases";
 
 /* =========================================================
    META
@@ -434,7 +439,9 @@ function MillisecondsConverterCard() {
               Click to populate the converter.
             </div>
           </div>
-          <div className="text-xs text-slate-600">Common: 1000 ms = 1 second</div>
+          <div className="text-xs text-slate-600">
+            Common: 1000 ms = 1 second
+          </div>
         </div>
 
         <div className="mt-3 flex flex-wrap gap-2">
@@ -514,6 +521,12 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
           / <span className="text-slate-900">Milliseconds Converter</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

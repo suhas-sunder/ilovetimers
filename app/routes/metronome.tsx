@@ -10,6 +10,11 @@ import {
   type RefObject,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/metronome/HowItWorks";
+import Disclaimer from "~/clients/components/metronome/Disclaimer";
+import FAQ from "~/clients/components/metronome/FAQ";
+import KeyboardShortcuts from "~/clients/components/metronome/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/metronome/PopularUseCases";
 
 /* =========================================================
    META
@@ -1141,6 +1146,12 @@ export default function MetronomePage({
           {nowISO}
         </span>
       </section>
+
+          <HowItWorks />
+            <KeyboardShortcuts />
+            <PopularUseCases />
+            <FAQ />
+            <Disclaimer />
     </main>
   );
 }

@@ -11,6 +11,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/meeting-timer/HowItWorks";
+import Disclaimer from "~/clients/components/meeting-timer/Disclaimer";
+import FAQ from "~/clients/components/meeting-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/meeting-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/meeting-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -791,6 +796,12 @@ export default function MeetingTimerPage({
           / <span className="text-slate-900">Meeting Timer</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

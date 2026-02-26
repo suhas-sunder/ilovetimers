@@ -11,6 +11,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/minimalist-clock/HowItWorks";
+import Disclaimer from "~/clients/components/minimalist-clock/Disclaimer";
+import FAQ from "~/clients/components/minimalist-clock/FAQ";
+import KeyboardShortcuts from "~/clients/components/minimalist-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/minimalist-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -760,6 +765,12 @@ export default function MinimalistClockPage({
           / <span className="text-slate-900">Minimalist Clock</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

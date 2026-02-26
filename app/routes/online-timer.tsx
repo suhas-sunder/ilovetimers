@@ -11,6 +11,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/online-timer/HowItWorks";
+import Disclaimer from "~/clients/components/online-timer/Disclaimer";
+import FAQ from "~/clients/components/online-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/online-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/online-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -541,7 +546,8 @@ function OnlineTimerCard() {
     return () => stopRaf();
   }, [stopRaf]);
 
-  const urgent = status === "running" && remainingMs > 0 && remainingMs <= 10_000;
+  const urgent =
+    status === "running" && remainingMs > 0 && remainingMs <= 10_000;
 
   const statusLabel =
     status === "running"
@@ -641,7 +647,9 @@ function OnlineTimerCard() {
 
               <Btn
                 kind="ghost"
-                onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
                 className="py-2"
               >
                 Fullscreen
@@ -726,7 +734,9 @@ function OnlineTimerCard() {
                 {presets.map((m) => (
                   <Chip
                     key={m}
-                    active={durationMs === m * 60 * 1000 && status !== "running"}
+                    active={
+                      durationMs === m * 60 * 1000 && status !== "running"
+                    }
                     onClick={() => onPreset(m)}
                   >
                     {m}m
@@ -792,7 +802,8 @@ function OnlineTimerCard() {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · R reset · F fullscreen
+              Tap time to start/pause · Space start/pause · R reset · F
+              fullscreen
             </div>
             <div className="flex items-center gap-2">
               <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-50">
@@ -883,6 +894,12 @@ export default function OnlineTimerPage({
           / <span className="text-slate-900">Online Timer</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

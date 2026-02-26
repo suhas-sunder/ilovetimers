@@ -11,6 +11,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/military-time-converter/HowItWorks";
+import Disclaimer from "~/clients/components/military-time-converter/Disclaimer";
+import FAQ from "~/clients/components/military-time-converter/FAQ";
+import KeyboardShortcuts from "~/clients/components/military-time-converter/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/military-time-converter/PopularUseCases";
 
 /* =========================================================
    META
@@ -1164,6 +1169,12 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
           / <span className="text-slate-900">Military Time Converter</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

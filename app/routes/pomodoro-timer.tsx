@@ -11,6 +11,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/alarm-timer/HowItWorks";
+import Disclaimer from "~/clients/components/pomodoro-timer/Disclaimer";
+import FAQ from "~/clients/components/pomodoro-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/pomodoro-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/pomodoro-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -1003,6 +1008,12 @@ export default function PomodoroTimerPage({}: Route.ComponentProps) {
           / <span className="text-slate-900">Pomodoro Timer</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

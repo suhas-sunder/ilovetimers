@@ -3,6 +3,11 @@ import type { Route } from "./+types/work-hours-calculator";
 import { json } from "@remix-run/node";
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/work-hours-calculator/HowItWorks";
+import Disclaimer from "~/clients/components/work-hours-calculator/Disclaimer";
+import FAQ from "~/clients/components/work-hours-calculator/FAQ";
+import KeyboardShortcuts from "~/clients/components/work-hours-calculator/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/work-hours-calculator/PopularUseCases";
 
 /* =========================================================
    META
@@ -668,6 +673,12 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
           / <span className="text-slate-900">Work Hours Calculator</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

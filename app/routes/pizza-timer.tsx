@@ -10,6 +10,11 @@ import {
   type RefObject,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/pizza-timer/HowItWorks";
+import Disclaimer from "~/clients/components/pizza-timer/Disclaimer";
+import FAQ from "~/clients/components/pizza-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/pizza-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/pizza-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -1065,6 +1070,12 @@ export default function PizzaTimerPage({
           / <span className="text-slate-900">Pizza Timer</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

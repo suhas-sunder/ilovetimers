@@ -10,6 +10,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/world-clock/HowItWorks";
+import Disclaimer from "~/clients/components/world-clock/Disclaimer";
+import FAQ from "~/clients/components/world-clock/FAQ";
+import KeyboardShortcuts from "~/clients/components/world-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/world-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -720,6 +725,12 @@ export default function WorldClockPage({
           / <span className="text-slate-900">World Clock</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

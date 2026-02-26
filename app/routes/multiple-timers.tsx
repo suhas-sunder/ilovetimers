@@ -10,6 +10,11 @@ import {
   type RefObject,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/multiple-timers/HowItWorks";
+import Disclaimer from "~/clients/components/multiple-timers/Disclaimer";
+import FAQ from "~/clients/components/multiple-timers/FAQ";
+import KeyboardShortcuts from "~/clients/components/multiple-timers/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/multiple-timers/PopularUseCases";
 
 /* =========================================================
    META
@@ -1088,6 +1093,12 @@ export default function MultipleTimersPage({
           / <span className="text-slate-900">Multiple Timers</span>
         </p>
       </section>
+
+          <HowItWorks />
+            <KeyboardShortcuts />
+            <PopularUseCases />
+            <FAQ />
+            <Disclaimer />
     </main>
   );
 }

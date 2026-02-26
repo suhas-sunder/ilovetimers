@@ -11,6 +11,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/meditation-timer/HowItWorks";
+import Disclaimer from "~/clients/components/meditation-timer/Disclaimer";
+import FAQ from "~/clients/components/meditation-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/meditation-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/meditation-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -676,13 +681,16 @@ function MeditationTimerCard() {
                 Meditation Timer (Breathing + Yoga)
               </h1>
               <p className="mt-1 text-sm text-slate-600">
-                Quiet countdown with presets, optional sound, loop, and a big fullscreen display.
+                Quiet countdown with presets, optional sound, loop, and a big
+                fullscreen display.
               </p>
             </div>
             <div className="ml-auto flex flex-wrap items-center gap-3">
               <Btn
                 kind="ghost"
-                onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
+                onClick={() =>
+                  cardRef.current && toggleFullscreen(cardRef.current)
+                }
                 className="py-2"
               >
                 Fullscreen
@@ -730,7 +738,8 @@ function MeditationTimerCard() {
               />
 
               <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-                Shortcuts: Space start/pause · R reset · F fullscreen · S sound · L loop
+                Shortcuts: Space start/pause · R reset · F fullscreen · S sound
+                · L loop
               </div>
             </div>
 
@@ -873,7 +882,8 @@ function MeditationTimerCard() {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · R reset · F fullscreen · S sound · L loop
+              Tap time to start/pause · Space start/pause · R reset · F
+              fullscreen · S sound · L loop
             </div>
             <div className="text-xs font-semibold text-slate-700">
               {statusLabel}
@@ -944,6 +954,12 @@ export default function MeditationTimerPage({
           / <span className="text-slate-900">Meditation Timer</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

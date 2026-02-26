@@ -10,6 +10,11 @@ import {
   type KeyboardEvent,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/meeting-count-up-timer/HowItWorks";
+import Disclaimer from "~/clients/components/meeting-count-up-timer/Disclaimer";
+import FAQ from "~/clients/components/meeting-count-up-timer/FAQ";
+import KeyboardShortcuts from "~/clients/components/meeting-count-up-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/meeting-count-up-timer/PopularUseCases";
 
 /* =========================================================
    META
@@ -816,6 +821,12 @@ export default function MeetingCountupTimerPage({
           / <span className="text-slate-900">Meeting Count Up Timer</span>
         </p>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

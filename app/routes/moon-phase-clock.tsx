@@ -10,6 +10,11 @@ import {
   type RefObject,
 } from "react";
 import { Link } from "react-router";
+import HowItWorks from "~/clients/components/moon-phase-clock/HowItWorks";
+import Disclaimer from "~/clients/components/moon-phase-clock/Disclaimer";
+import FAQ from "~/clients/components/moon-phase-clock/FAQ";
+import KeyboardShortcuts from "~/clients/components/moon-phase-clock/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/moon-phase-clock/PopularUseCases";
 
 /* =========================================================
    META
@@ -952,6 +957,12 @@ export default function MoonPhaseClockPage({
 
         <span className="sr-only">Build: {nowISO}</span>
       </section>
+
+      <HowItWorks />
+      <KeyboardShortcuts />
+      <PopularUseCases />
+      <FAQ />
+      <Disclaimer />
     </main>
   );
 }

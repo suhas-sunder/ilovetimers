@@ -320,18 +320,21 @@ const Chip = ({
   active,
   children,
   onClick,
+  disabled,
 }: {
   active?: boolean;
   children: React.ReactNode;
   onClick?: () => void;
+  disabled?: boolean;
 }) => (
   <button
     type="button"
     onClick={onClick}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition ${
+    disabled={disabled}
+    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${
       active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
+        ? "bg-slate-900 text-white enabled:hover:bg-slate-800"
+        : "bg-slate-100 text-slate-800 enabled:hover:bg-slate-200"
     }`}
   >
     {children}
@@ -546,6 +549,7 @@ function AlarmTimerCard() {
 
   const urgent = running && remaining > 0 && remaining <= 10_000;
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
+  const canEditDuration = !running && !alarming;
 
   const displayTone = alarming
     ? "border-rose-200 bg-rose-50 text-rose-950"
@@ -662,6 +666,7 @@ function AlarmTimerCard() {
                   key={m}
                   active={m === minutes}
                   onClick={() => setPreset(m)}
+                  disabled={!canEditDuration}
                 >
                   {m}m
                 </Chip>
@@ -676,6 +681,7 @@ function AlarmTimerCard() {
                   min={1}
                   max={180}
                   value={minutes}
+                  disabled={!canEditDuration}
                   onChange={(e) =>
                     setMinutes(clamp(Number(e.target.value || 1), 1, 180))
                   }
@@ -747,6 +753,7 @@ function AlarmTimerCard() {
                   key={m}
                   active={m === minutes}
                   onClick={() => setPreset(m)}
+                  disabled={!canEditDuration}
                 >
                   {m}m
                 </Chip>
@@ -763,6 +770,7 @@ function AlarmTimerCard() {
                   min={1}
                   max={180}
                   value={minutes}
+                  disabled={!canEditDuration}
                   onChange={(e) =>
                     setMinutes(clamp(Number(e.target.value || 1), 1, 180))
                   }

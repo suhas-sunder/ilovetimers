@@ -507,7 +507,16 @@ function SleepTimerCard() {
     setMinutes(m);
   }
 
-  const statusLabel = remaining <= 0 ? "Done" : running ? "Running" : "Ready";
+  const durationMs = minutes * 60 * 1000;
+  const statusLabel =
+    remaining <= 0
+      ? "Done"
+      : running
+        ? "Running"
+        : remaining < durationMs
+          ? "Paused"
+          : "Ready";
+  const canEditDuration = !running;
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
@@ -716,11 +725,12 @@ function SleepTimerCard() {
                     key={m}
                     type="button"
                     onClick={() => setPreset(m)}
+                    disabled={!canEditDuration}
                     className={[
-                      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                       m === minutes
-                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                        ? "bg-amber-500 text-slate-900 enabled:hover:bg-amber-400"
+                        : "border border-slate-200 bg-white text-slate-900 enabled:hover:bg-slate-50",
                     ].join(" ")}
                   >
                     {m}m
@@ -737,6 +747,7 @@ function SleepTimerCard() {
                     min={1}
                     max={360}
                     value={minutes}
+                    disabled={!canEditDuration}
                     onChange={(e) =>
                       setMinutes(clamp(Number(e.target.value || 1), 1, 360))
                     }

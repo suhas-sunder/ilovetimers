@@ -527,6 +527,7 @@ function RestTimerCard() {
       : "Ready";
 
   const urgent = running && shownRemaining > 0 && shownRemaining <= 10_000;
+  const canEditDuration = !running;
 
   const fitFontPx = useFitText({
     containerRef: displayBoxRef,
@@ -667,11 +668,12 @@ function RestTimerCard() {
                   key={sec}
                   type="button"
                   onClick={() => setPreset(sec)}
+                  disabled={!canEditDuration}
                   className={[
-                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                     sec === seconds
-                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                      : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                      ? "bg-amber-500 text-slate-900 enabled:hover:bg-amber-400"
+                      : "border border-slate-200 bg-white text-slate-900 enabled:hover:bg-slate-50",
                   ].join(" ")}
                 >
                   {sec < 60 ? `${sec}s` : `${Math.round(sec / 60)}m`}
@@ -687,6 +689,7 @@ function RestTimerCard() {
                   min={5}
                   max={3600}
                   value={seconds}
+                  disabled={!canEditDuration}
                   onChange={(e) =>
                     setSeconds(clamp(Number(e.target.value || 5), 5, 3600))
                   }

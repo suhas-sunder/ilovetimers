@@ -506,7 +506,15 @@ function PresentationTimerCard() {
 
   const urgent = running && remaining > 0 && remaining <= 10_000;
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
-  const statusLabel = running ? "Running" : remaining > 0 ? "Paused" : "Done";
+  const durationMs = minutes * 60 * 1000;
+  const statusLabel = running
+    ? "Running"
+    : remaining <= 0
+      ? "Done"
+      : remaining < durationMs
+        ? "Paused"
+        : "Ready";
+  const canEditDuration = !running;
 
   const fitFontPx = useFitText({
     containerRef: displayBoxRef,
@@ -623,11 +631,12 @@ function PresentationTimerCard() {
                   key={m}
                   type="button"
                   onClick={() => setPreset(m)}
+                  disabled={!canEditDuration}
                   className={[
-                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                     m === minutes
-                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                      : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                      ? "bg-amber-500 text-slate-900 enabled:hover:bg-amber-400"
+                      : "border border-slate-200 bg-white text-slate-900 enabled:hover:bg-slate-50",
                   ].join(" ")}
                 >
                   {m}m
@@ -643,6 +652,7 @@ function PresentationTimerCard() {
                   min={1}
                   max={180}
                   value={minutes}
+                  disabled={!canEditDuration}
                   onChange={(e) =>
                     setMinutes(clamp(Number(e.target.value || 1), 1, 180))
                   }

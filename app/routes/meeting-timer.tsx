@@ -493,6 +493,7 @@ function MeetingTimerCard() {
     : remaining > 0 && remaining < initialMs
       ? "Paused"
       : "Ready";
+  const canEditDuration = !running;
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
@@ -628,11 +629,12 @@ function MeetingTimerCard() {
                   key={m}
                   type="button"
                   onClick={() => setPreset(m)}
+                  disabled={!canEditDuration}
                   className={[
-                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                     m === minutes
-                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                      : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                      ? "bg-amber-500 text-slate-900 enabled:hover:bg-amber-400"
+                      : "border border-slate-200 bg-white text-slate-900 enabled:hover:bg-slate-50",
                   ].join(" ")}
                 >
                   {m}m
@@ -649,6 +651,7 @@ function MeetingTimerCard() {
                   min={1}
                   max={180}
                   value={minutes}
+                  disabled={!canEditDuration}
                   onChange={(e) =>
                     setMinutes(clamp(Number(e.target.value || 1), 1, 180))
                   }

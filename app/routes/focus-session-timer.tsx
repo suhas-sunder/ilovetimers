@@ -522,7 +522,15 @@ function FocusSessionCard() {
     paddingAllowancePx: isFs ? 72 : 84,
   });
 
-  const statusLabel = running ? "Running" : completed ? "Complete" : "Ready";
+  const durationMs = minutes * 60 * 1000;
+  const statusLabel = running
+    ? "Running"
+    : completed || remainingMs <= 0
+      ? "Complete"
+      : remainingMs < durationMs
+        ? "Paused"
+        : "Ready";
+  const canEditDuration = !running;
 
   return (
     <Card
@@ -620,11 +628,12 @@ function FocusSessionCard() {
                 key={m}
                 type="button"
                 onClick={() => setPreset(m)}
+                disabled={!canEditDuration}
                 className={[
-                  "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
+                  "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
                   m === minutes
-                    ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                    : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
+                    ? "bg-amber-500 text-slate-900 enabled:hover:bg-amber-400"
+                    : "border border-slate-200 bg-white text-slate-900 enabled:hover:bg-slate-50",
                 ].join(" ")}
               >
                 {m}m
@@ -643,6 +652,7 @@ function FocusSessionCard() {
                 min={1}
                 max={240}
                 value={minutes}
+                disabled={!canEditDuration}
                 onChange={(e) =>
                   setMinutes(clamp(Number(e.target.value || 1), 1, 240))
                 }

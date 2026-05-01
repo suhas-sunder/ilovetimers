@@ -2,6 +2,7 @@ import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
   index("routes/home.tsx"),
+  route("about", "routes/about.tsx"),
   route("countdown-timer", "routes/countdown-timer.tsx"),
   route("stopwatch", "routes/stopwatch.tsx"),
   route("pomodoro-timer", "routes/pomodoro-timer.tsx"),
@@ -81,4 +82,5 @@ export default [
   route("privacy", "routes/privacy.tsx"),
   route("terms", "routes/terms.tsx"),
   route("cookies", "routes/cookies.tsx"),
+  route("sitemap", "routes/sitemap.tsx"),
 ] satisfies RouteConfig;

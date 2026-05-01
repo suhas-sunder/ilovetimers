@@ -8,19 +8,25 @@ type TimerMenuSection = {
   variant?: "flat";
 };
 
-function buildFooterJsonLd(baseUrl = "https://ilovetimers.com") {
+const SITE_URL = "https://www.ilovetimers.com";
+
+function buildFooterJsonLd(baseUrl = SITE_URL) {
   return {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Organization",
-        name: "iLoveTimers",
+        name: "I Love Timers",
+        alternateName: "iLoveTimers",
         url: `${baseUrl}/`,
       },
       {
         "@type": "WebSite",
-        name: "iLoveTimers",
+        name: "I Love Timers",
+        alternateName: "iLoveTimers",
         url: `${baseUrl}/`,
+        description:
+          "Free online timers, stopwatches, clocks, countdowns, interval timers, and time tools.",
       },
     ],
   };
@@ -79,16 +85,16 @@ function FooterSectionMobile({
 }
 
 const linkFooter =
-  "cursor-pointer text-sm text-slate-300 hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
+  "cursor-pointer text-sm text-slate-300 transition hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
 
 const linkMobileRow =
-  "cursor-pointer rounded-lg border border-slate-700/60 bg-slate-700/40 px-3 py-2 text-sm font-medium text-slate-100 hover:bg-slate-700 hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
+  "cursor-pointer rounded-lg border border-slate-700/60 bg-slate-700/40 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
 
 const pill =
-  "cursor-pointer rounded-full border border-slate-700/60 bg-slate-700/40 px-3 py-1.5 text-sm font-medium text-slate-100 hover:bg-slate-700 hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
+  "cursor-pointer rounded-full border border-slate-700/60 bg-slate-700/40 px-3 py-1.5 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
 
 export default function Footer() {
-  const year = 2026;
+  const year = new Date().getFullYear();
 
   const sections: TimerMenuSection[] = [
     {
@@ -192,13 +198,12 @@ export default function Footer() {
       ],
     },
     {
-      title: "Finance, timekeeping & calculators",
+      title: "Finance, work & calculators",
       links: [
         { to: "/billable-hours-clock", label: "Billable Hours Clock" },
         { to: "/debt-repayment-timer", label: "Debt Repayment Timer" },
         { to: "/debt-clock", label: "Debt Clock" },
         { to: "/military-time-converter", label: "Military Time Converter" },
-        { to: "/time-zone-converter", label: "Time Zone Converter" },
         { to: "/work-hours-calculator", label: "Work Hours Calculator" },
         { to: "/time-calculator", label: "Time Calculator" },
         {
@@ -221,30 +226,30 @@ export default function Footer() {
     },
   ];
 
-  const jsonLd = buildFooterJsonLd("https://ilovetimers.com");
+  const jsonLd = buildFooterJsonLd(SITE_URL);
 
   const desktopSections = sections.filter((s) => s.variant !== "flat");
   const flatSections = sections.filter((s) => s.variant === "flat");
 
   return (
-    <footer className="bg-slate-800">
+    <footer className="bg-slate-800" data-nosnippet>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       <div className="mx-auto max-w-7xl px-4 py-10">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Link
                 to="/"
-                className="cursor-pointer text-base font-semibold text-white hover:text-sky-400"
+                className="cursor-pointer text-base font-semibold text-white transition hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
               >
                 i<span className="text-amber-500">💛</span>Timers
               </Link>
               <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-400">
-                Free utilities
+                Free time tools
               </span>
             </div>
 
@@ -252,17 +257,36 @@ export default function Footer() {
               id="all-timers"
               className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300"
             >
-              Simple, fast timers and clocks. Designed for fullscreen visibility
-              and clean keyboard control.
+              Free online timers, stopwatches, clocks, countdowns, interval
+              timers, and time tools. Built for quick setup, fullscreen
+              visibility, and clean keyboard control.
             </p>
           </div>
+
+          <nav
+            aria-label="Popular footer links"
+            className="flex flex-wrap gap-2 sm:justify-end"
+          >
+            <Link to="/about" className={pill}>
+              About
+            </Link>
+            <Link to="/online-timer" className={pill}>
+              Online Timer
+            </Link>
+            <Link to="/stopwatch" className={pill}>
+              Stopwatch
+            </Link>
+            <Link to="/pomodoro-timer" className={pill}>
+              Pomodoro
+            </Link>
+          </nav>
         </div>
 
         <div className="mt-8 border-t border-slate-700/60" />
 
         <div className="mt-8 hidden lg:block">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-sky-400">
-            Timer Tools directory
+            Timer tools directory
           </h2>
 
           <div className="mt-5 grid gap-8 lg:grid-cols-4">
@@ -331,7 +355,16 @@ export default function Footer() {
             <span className="font-semibold text-white">i💛Timers</span>
           </div>
 
-          <nav className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium">
+          <nav
+            aria-label="Legal and site links"
+            className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium"
+          >
+            <Link to="/about" className={linkFooter}>
+              About
+            </Link>
+            <Link to="/sitemap" className={linkFooter}>
+              Sitemap
+            </Link>
             <Link to="/privacy" className={linkFooter}>
               Privacy
             </Link>

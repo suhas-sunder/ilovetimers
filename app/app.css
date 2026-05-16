@@ -1,6 +1,96 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-ilt-page: var(--ilt-bg-page);
+  --color-ilt-utility: var(--ilt-bg-utility);
+  --color-ilt-content: var(--ilt-bg-content);
+  --color-ilt-text: var(--ilt-text-primary);
+  --color-ilt-text-secondary: var(--ilt-text-secondary);
+  --color-ilt-text-muted: var(--ilt-text-muted);
+  --color-ilt-accent: var(--ilt-accent);
+  --color-ilt-accent-hover: var(--ilt-accent-hover);
+  --shadow-ilt-interactive: var(--ilt-shadow-interactive);
+  --radius-ilt-control: var(--ilt-radius-control);
+}
+
+@layer base {
+  :root {
+    --ilt-bg-page: #ffffff;
+    --ilt-bg-utility: #ffffff;
+    --ilt-bg-content: #f8fafc;
+    --ilt-text-primary: #020617;
+    --ilt-text-secondary: #334155;
+    --ilt-text-muted: #64748b;
+    --ilt-accent: #f59e0b;
+    --ilt-accent-hover: #d97706;
+    --ilt-focus-ring: rgba(245, 158, 11, 0.42);
+    --ilt-shadow-interactive: 0 1px 4px rgba(15, 23, 42, 0.12);
+    --ilt-shadow-interactive-hover: 0 2px 8px rgba(15, 23, 42, 0.14);
+    --ilt-radius-control: 0.625rem;
+    --ilt-page-x: clamp(1rem, 3vw, 3rem);
+    --ilt-display-min: clamp(4.5rem, 16vw, 18rem);
+    --ilt-display-large: clamp(5.5rem, 22vw, 24rem);
+  }
+
+  body {
+    background: var(--ilt-bg-page);
+    color: var(--ilt-text-primary);
+  }
+
+  button,
+  [role="button"],
+  summary,
+  input[type="checkbox"],
+  input[type="radio"],
+  select {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"],
+  input:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+}
+
 @layer components {
+  .ilt-side-padding {
+    padding-inline: var(--ilt-page-x);
+  }
+
+  .ilt-focus-ring {
+    outline: none;
+  }
+
+  .ilt-focus-ring:focus-visible {
+    box-shadow: 0 0 0 3px var(--ilt-focus-ring);
+  }
+
+  .ilt-control-shadow {
+    box-shadow: var(--ilt-shadow-interactive);
+  }
+
+  .ilt-control-shadow:hover {
+    box-shadow: var(--ilt-shadow-interactive-hover);
+  }
+
+  .ilt-display-type {
+    font-size: var(--ilt-display-min);
+    line-height: 0.9;
+    letter-spacing: 0;
+  }
+
+  .ilt-display-type-large {
+    font-size: var(--ilt-display-large);
+    line-height: 0.9;
+    letter-spacing: 0;
+  }
+
+  .ilt-seo-prose {
+    max-width: 72ch;
+  }
+
   .timer-page-shell {
     display: flex;
     min-height: 100%;
@@ -217,18 +307,4 @@
       transform: scale(0.9);
     }
   }
-}
-/* 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-} */
-
-html,
-body {
-  /* @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  } */
 }

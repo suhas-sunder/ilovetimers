@@ -13,7 +13,6 @@ import "./app.css";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import RelatedSites from "./clients/components/navigation/RelatedSites";
-import TimerMenuLinks from "./clients/components/navigation/TimerMenuLinks";
 import { PHProvider } from "./provider";
 import Footer from "./clients/components/navigation/Footer";
 
@@ -574,7 +573,12 @@ function TimerDirectoryMenu({
       : "grid gap-5 lg:grid-cols-2 xl:grid-cols-3";
 
   return (
-    <div className={["bg-white text-slate-950", className].join(" ")}>
+    <div
+      className={[
+        "bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)]",
+        className,
+      ].join(" ")}
+    >
       <div className="flex flex-col gap-1">
         <label
           htmlFor={searchId}
@@ -588,7 +592,7 @@ function TimerDirectoryMenu({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search clocks, workouts, cooking, focus..."
-          className="w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-950 outline-none transition placeholder:text-slate-500 focus:bg-slate-100 focus:ring-2 focus:ring-slate-950/15"
+          className="ilt-focus-ring w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-semibold text-[var(--ilt-text-primary)] transition placeholder:text-[var(--ilt-text-muted)] focus:bg-slate-100"
         />
       </div>
 
@@ -615,7 +619,7 @@ function TimerDirectoryMenu({
                         key={item.href}
                         href={item.href}
                         onClick={onNavigate}
-                        className="group rounded-2xl px-3 py-3 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950/20"
+                        className="ilt-focus-ring group rounded-2xl px-3 py-3 transition-colors hover:bg-slate-100"
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="text-sm font-bold text-slate-950">
@@ -700,226 +704,232 @@ function SiteHeader() {
   }
 
   const desktopLink =
-    "rounded-full px-3 py-2 text-slate-950 transition-colors hover:bg-slate-100 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950/20";
+    "ilt-focus-ring cursor-pointer rounded-full px-3 py-2 text-[var(--ilt-text-primary)] transition-colors hover:bg-slate-100 hover:text-black";
 
   const mobileLink =
-    "rounded-2xl px-4 py-3 text-base font-semibold text-slate-950 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950/20";
+    "ilt-focus-ring cursor-pointer rounded-2xl px-4 py-3 text-base font-semibold text-[var(--ilt-text-primary)] transition-colors hover:bg-slate-100";
 
   return (
     <>
-    <header className="sticky top-0 z-50 bg-white text-slate-950">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        <a
-          href="/"
-          className="group flex items-center gap-2 text-sm font-semibold text-slate-950 transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950/20"
-          aria-label="iLoveTimers home"
-        >
-          <img
-            src={logoPng}
-            alt="iLoveTimers"
-            className="h-9 w-9 rounded-md"
-            loading="eager"
-          />
-          <span className="tracking-tight">
-            iLoveTimers
-            <span className="ml-0.5 text-slate-950">
-              .com
+      <header className="sticky top-0 z-50 bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)]">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+          <a
+            href="/"
+            className="ilt-focus-ring group flex cursor-pointer items-center gap-2 text-sm font-semibold text-[var(--ilt-text-primary)] transition-opacity hover:opacity-75"
+            aria-label="iLoveTimers home"
+          >
+            <img
+              src={logoPng}
+              alt="iLoveTimers"
+              className="h-9 w-9 rounded-md"
+              loading="eager"
+            />
+            <span className="tracking-tight">
+              iLoveTimers
+              <span className="ml-0.5 text-[var(--ilt-text-primary)]">
+                .com
+              </span>
             </span>
-          </span>
-        </a>
-
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 text-sm font-semibold sm:flex">
-          <a href="/countdown-timer" className={desktopLink}>
-            Countdown
-          </a>
-          <a href="/stopwatch" className={desktopLink}>
-            Stopwatch
-          </a>
-          <a href="/pomodoro-timer" className={desktopLink}>
-            Pomodoro
-          </a>
-          <a href="/hiit-timer" className={desktopLink}>
-            HIIT
           </a>
 
-          {/* High-intent / commonly searched */}
-          <a href="/sleep-timer" className={desktopLink}>
-            Sleep
-          </a>
-          <a href="/egg-timer" className={desktopLink}>
-            Egg
-          </a>
-          <a href="/pizza-timer" className={desktopLink}>
-            Pizza
-          </a>
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-1 text-sm font-semibold sm:flex">
+            <a href="/countdown-timer" className={desktopLink}>
+              Countdown
+            </a>
+            <a href="/stopwatch" className={desktopLink}>
+              Stopwatch
+            </a>
+            <a href="/pomodoro-timer" className={desktopLink}>
+              Pomodoro
+            </a>
+            <a href="/hiit-timer" className={desktopLink}>
+              HIIT
+            </a>
 
-          <div className="relative">
+            {/* High-intent / commonly searched */}
+            <a href="/sleep-timer" className={desktopLink}>
+              Sleep
+            </a>
+            <a href="/egg-timer" className={desktopLink}>
+              Egg
+            </a>
+            <a href="/pizza-timer" className={desktopLink}>
+              Pizza
+            </a>
+
+            <div className="relative">
+              <button
+                ref={directoryBtnRef}
+                type="button"
+                onClick={() => {
+                  setDirectoryOpen((value) => !value);
+                  setOpen(false);
+                }}
+                aria-expanded={directoryOpen}
+                aria-controls="timer-directory-menu"
+                aria-haspopup="dialog"
+                className={`${desktopLink} flex items-center gap-1`}
+              >
+                More
+                <span
+                  aria-hidden="true"
+                  className={`text-xs transition-transform ${
+                    directoryOpen ? "rotate-180" : ""
+                  }`}
+                >
+                  v
+                </span>
+              </button>
+
+              {directoryOpen ? (
+                <div
+                  id="timer-directory-menu"
+                  ref={directoryRef}
+                  className="fixed left-1/2 top-[64px] z-50 max-h-[calc(100svh-5rem)] w-[min(calc(100vw-2rem),92rem)] -translate-x-1/2 overflow-hidden rounded-[1.25rem] bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.08)]"
+                >
+                  <TimerDirectoryMenu
+                    query={directoryQuery}
+                    setQuery={setDirectoryQuery}
+                    onNavigate={close}
+                    searchId="desktop-timer-directory-search"
+                    variant="desktop"
+                  />
+                </div>
+              ) : null}
+            </div>
+          </nav>
+
+          {/* Mobile burger */}
+          <div className="sm:hidden">
             <button
-              ref={directoryBtnRef}
+              ref={btnRef}
               type="button"
               onClick={() => {
-                setDirectoryOpen((value) => !value);
-                setOpen(false);
+                setOpen((v) => !v);
+                setDirectoryOpen(false);
               }}
-              aria-expanded={directoryOpen}
-              aria-controls="timer-directory-menu"
-              aria-haspopup="dialog"
-              className={`${desktopLink} flex items-center gap-1`}
+              aria-expanded={open}
+              aria-controls="mobile-nav"
+              aria-label="Open menu"
+              className="ilt-focus-ring cursor-pointer rounded-full bg-white px-3 py-2 text-[var(--ilt-text-primary)] transition-colors hover:bg-slate-100"
             >
-              More
-              <span
-                aria-hidden="true"
-                className={`text-xs transition-transform ${
-                  directoryOpen ? "rotate-180" : ""
-                }`}
-              >
-                v
-              </span>
-            </button>
-
-            {directoryOpen ? (
-              <div
-                id="timer-directory-menu"
-                ref={directoryRef}
-                className="fixed left-1/2 top-[64px] z-50 max-h-[calc(100svh-5rem)] w-[min(calc(100vw-2rem),92rem)] -translate-x-1/2 overflow-hidden rounded-[1.75rem] bg-white p-5 shadow-2xl shadow-slate-950/10"
-              >
-                <TimerDirectoryMenu
-                  query={directoryQuery}
-                  setQuery={setDirectoryQuery}
-                  onNavigate={close}
-                  searchId="desktop-timer-directory-search"
-                  variant="desktop"
+              <span className="relative block h-4 w-5" aria-hidden="true">
+                <span
+                  className={`absolute left-0 top-0 h-0.5 w-5 bg-slate-950 transition ${
+                    open ? "translate-y-2 rotate-45" : ""
+                  }`}
                 />
-              </div>
-            ) : null}
-          </div>
-        </nav>
-
-        {/* Mobile burger */}
-        <div className="sm:hidden">
-          <button
-            ref={btnRef}
-            type="button"
-            onClick={() => {
-              setOpen((v) => !v);
-              setDirectoryOpen(false);
-            }}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            aria-label="Open menu"
-            className="rounded-full bg-white px-3 py-2 text-slate-950 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-950/20"
-          >
-            <span className="relative block h-4 w-5" aria-hidden="true">
-              <span
-                className={`absolute left-0 top-0 h-0.5 w-5 bg-slate-950 transition ${
-                  open ? "translate-y-2 rotate-45" : ""
-                }`}
-              />
-              <span
-                className={`absolute left-0 top-2 h-0.5 w-5 bg-slate-950 transition ${
-                  open ? "opacity-0" : "opacity-100"
-                }`}
-              />
-              <span
-                className={`absolute left-0 top-4 h-0.5 w-5 bg-slate-950 transition ${
-                  open ? "-translate-y-2 -rotate-45" : ""
-                }`}
-              />
-            </span>
-          </button>
-        </div>
-      </div>
-
-    </header>
-    {open ? (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-white text-slate-950 sm:hidden">
-        <div
-          id="mobile-nav"
-          ref={panelRef}
-          className="mx-auto flex min-h-svh max-w-4xl flex-col px-4 py-3"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="flex items-center justify-between gap-3">
-            <a
-              href="/"
-              onClick={close}
-              className="flex items-center gap-2 text-sm font-semibold text-slate-950 transition-opacity hover:opacity-75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950/20"
-              aria-label="iLoveTimers home"
-            >
-              <img
-                src={logoPng}
-                alt="iLoveTimers"
-                className="h-9 w-9 rounded-md"
-                loading="eager"
-              />
-              <span className="tracking-tight">
-                iLoveTimers
-                <span className="ml-0.5 text-slate-950">.com</span>
+                <span
+                  className={`absolute left-0 top-2 h-0.5 w-5 bg-slate-950 transition ${
+                    open ? "opacity-0" : "opacity-100"
+                  }`}
+                />
+                <span
+                  className={`absolute left-0 top-4 h-0.5 w-5 bg-slate-950 transition ${
+                    open ? "-translate-y-2 -rotate-45" : ""
+                  }`}
+                />
               </span>
-            </a>
-            <button
-              type="button"
-              onClick={close}
-              className="rounded-full px-4 py-2 text-sm font-semibold text-slate-950 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-950/20"
-              aria-label="Close menu"
-            >
-              Close
             </button>
           </div>
-
-          <div className="mt-6">
-            <TimerDirectoryMenu
-              query={directoryQuery}
-              setQuery={setDirectoryQuery}
-              onNavigate={close}
-              searchId="mobile-timer-directory-search"
-              variant="mobile"
-            />
-          </div>
-
-          {directoryQuery.trim() ? null : (
-          <div className="mt-6">
-            <div className="px-1 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-              Primary timers
-            </div>
-            <div className="mt-2 grid gap-1">
-              <a
-                href="/countdown-timer"
-                onClick={close}
-                className={mobileLink}
-              >
-                Countdown Timer
-              </a>
-              <a href="/stopwatch" onClick={close} className={mobileLink}>
-                Stopwatch
-              </a>
-              <a
-                href="/pomodoro-timer"
-                onClick={close}
-                className={mobileLink}
-              >
-                Pomodoro Timer
-              </a>
-              <a href="/hiit-timer" onClick={close} className={mobileLink}>
-                HIIT Timer
-              </a>
-              <a href="/sleep-timer" onClick={close} className={mobileLink}>
-                Sleep Timer
-              </a>
-              <a href="/egg-timer" onClick={close} className={mobileLink}>
-                Egg Timer
-              </a>
-              <a href="/pizza-timer" onClick={close} className={mobileLink}>
-                Pizza Timer
-              </a>
-            </div>
-          </div>
-          )}
         </div>
-      </div>
-    ) : null}
+      </header>
+
+      {open ? (
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)] sm:hidden">
+          <div
+            id="mobile-nav"
+            ref={panelRef}
+            className="mx-auto flex min-h-svh max-w-4xl flex-col px-4 py-3"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <a
+                href="/"
+                onClick={close}
+                className="ilt-focus-ring flex cursor-pointer items-center gap-2 text-sm font-semibold text-[var(--ilt-text-primary)] transition-opacity hover:opacity-75"
+                aria-label="iLoveTimers home"
+              >
+                <img
+                  src={logoPng}
+                  alt="iLoveTimers"
+                  className="h-9 w-9 rounded-md"
+                  loading="eager"
+                />
+                <span className="tracking-tight">
+                  iLoveTimers
+                  <span className="ml-0.5 text-[var(--ilt-text-primary)]">
+                    .com
+                  </span>
+                </span>
+              </a>
+              <button
+                type="button"
+                onClick={close}
+                className="ilt-focus-ring cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] transition-colors hover:bg-slate-100"
+                aria-label="Close menu"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mt-6">
+              <TimerDirectoryMenu
+                query={directoryQuery}
+                setQuery={setDirectoryQuery}
+                onNavigate={close}
+                searchId="mobile-timer-directory-search"
+                variant="mobile"
+              />
+            </div>
+
+            {directoryQuery.trim() ? null : (
+              <div className="mt-6">
+                <div className="px-1 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                  Primary timers
+                </div>
+                <div className="mt-2 grid gap-1">
+                  <a
+                    href="/countdown-timer"
+                    onClick={close}
+                    className={mobileLink}
+                  >
+                    Countdown Timer
+                  </a>
+                  <a href="/stopwatch" onClick={close} className={mobileLink}>
+                    Stopwatch
+                  </a>
+                  <a
+                    href="/pomodoro-timer"
+                    onClick={close}
+                    className={mobileLink}
+                  >
+                    Pomodoro Timer
+                  </a>
+                  <a href="/hiit-timer" onClick={close} className={mobileLink}>
+                    HIIT Timer
+                  </a>
+                  <a
+                    href="/sleep-timer"
+                    onClick={close}
+                    className={mobileLink}
+                  >
+                    Sleep Timer
+                  </a>
+                  <a href="/egg-timer" onClick={close} className={mobileLink}>
+                    Egg Timer
+                  </a>
+                  <a href="/pizza-timer" onClick={close} className={mobileLink}>
+                    Pizza Timer
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }
@@ -933,12 +943,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-white text-slate-900">
+      <body className="bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)] antialiased">
         <PHProvider>
           <SiteHeader />
           {children}
 
-          <TimerMenuLinks />
           <RelatedSites />
           <ScrollRestoration />
           <Scripts />

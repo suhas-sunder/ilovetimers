@@ -220,7 +220,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -494,7 +494,7 @@ function CountdownTimer() {
         {/* Display */}
         <div
           className={[
-            "mt-3 flex items-center justify-center rounded-2xl border font-mono font-extrabold tracking-widest",
+            "timer-display-surface mt-3 flex items-center justify-center font-mono font-extrabold tracking-widest",
             urgent
               ? "border-rose-200 bg-amber-50 text-rose-950"
               : "border-slate-200 bg-slate-50 text-slate-950",
@@ -749,7 +749,7 @@ function StopwatchCard() {
         )}
 
         <div
-          className={`mt-3 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${
+          className={`timer-display-surface mt-3 flex items-center justify-center p-6 font-mono font-extrabold tracking-widest ${
             running
               ? "border-emerald-200 bg-emerald-50 text-emerald-950"
               : "border-slate-200 bg-slate-50 text-slate-950"
@@ -1109,7 +1109,7 @@ function PomodoroCard() {
         )}
 
         <div
-          className={`mt-4 flex items-center justify-center rounded-2xl border p-6 font-mono font-extrabold tracking-widest ${displayTone}`}
+          className={`timer-display-surface mt-4 flex items-center justify-center p-6 font-mono font-extrabold tracking-widest ${displayTone}`}
           style={{
             minHeight: isFs ? 0 : 110,
             fontSize: isFs ? "7rem" : "3.25rem",
@@ -1448,7 +1448,7 @@ function HIITCard() {
         )}
 
         <div
-          className={`mt-4 rounded-2xl border p-6 ${displayTone}`}
+          className={`timer-display-surface mt-4 p-6 ${displayTone}`}
           style={{
             minHeight: isFs ? 0 : 120,
             marginTop: isFs ? "4.25rem" : undefined,

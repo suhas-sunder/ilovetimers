@@ -1,7 +1,7 @@
 // app/routes/bpm-tapper.tsx
 import type { Route } from "./+types/bpm-tapper";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 
 /* =========================================================
@@ -125,9 +125,21 @@ function useFitText({
   maxPx?: number;
   paddingAllowancePx?: number;
 }) {
-  const [fontPx, setFontPx] = useState<number>(minPx);
+  const initialFontPx = (() => {
+    const sample = deps.find(
+      (dep) => typeof dep === "string" || typeof dep === "number",
+    );
+    const charCount = Math.max(
+      1,
+      String(sample ?? "00:00").replace(/\s/g, "").length,
+    );
+    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
+    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
+  })();
 
-  useEffect(() => {
+  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
+
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const textEl = textRef.current;
     if (!container || !textEl) return;
@@ -172,7 +184,7 @@ function useFitText({
       }
 
       (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(best);
+      setFontPx(`${best}px`);
     };
 
     const schedule = () => {
@@ -189,7 +201,7 @@ function useFitText({
     window.addEventListener("resize", schedule);
     window.addEventListener("orientationchange", schedule);
 
-    schedule();
+    compute();
 
     return () => {
       if (raf) cancelAnimationFrame(raf);
@@ -229,7 +241,7 @@ const Card = ({
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
       isFullscreen
         ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -257,7 +269,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -441,7 +453,7 @@ function BpmTapperCard() {
     textRef: bpmTextRef,
     deps: [bpmStr, isFs, active, tick, locked],
     minPx: 84,
-    maxPx: isFs ? 520 : 360,
+    maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 140 : 96,
   });
 
@@ -741,7 +753,7 @@ function BpmTapperCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : ""}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
         {/* Controls (normal only) */}
         {!isFs && (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -785,7 +797,7 @@ function BpmTapperCard() {
         <div
           ref={displayBoxRef}
           className={[
-            "mt-4 flex flex-col items-center justify-center rounded-2xl border font-mono font-extrabold",
+            "timer-display-surface mt-4 flex flex-col items-center justify-center font-mono font-extrabold",
             displayTone,
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
@@ -797,7 +809,7 @@ function BpmTapperCard() {
             userSelect: "none",
             WebkitUserSelect: "none",
             touchAction: "manipulation",
-            overflow: "hidden",
+            overflow: isFs ? "hidden" : "visible",
           }}
           aria-live="polite"
           onPointerDownCapture={onStagePointerDownCapture}
@@ -816,7 +828,7 @@ function BpmTapperCard() {
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
             style={{
-              fontSize: `${fitFontPx}px`,
+              fontSize: fitFontPx,
               lineHeight: "1",
               transform: "translateZ(0)",
             }}
@@ -829,7 +841,7 @@ function BpmTapperCard() {
           </div>
 
           <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
               <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                 Session
               </div>
@@ -871,7 +883,7 @@ function BpmTapperCard() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
               <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                 Timing
               </div>
@@ -905,7 +917,7 @@ function BpmTapperCard() {
           </div>
 
           {!isFs && history.length > 0 && (
-            <div className="mt-4 w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="mt-4 w-full max-w-3xl rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
               <div className="flex items-center justify-between gap-3">
                 <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                   Recent results
@@ -984,7 +996,7 @@ function BpmTapperCard() {
         {/* Settings (normal only) */}
         {!isFs && (
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
               <div className="text-sm font-extrabold text-slate-900">
                 Auto-reset after pause
               </div>
@@ -1013,7 +1025,7 @@ function BpmTapperCard() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
               <div className="text-sm font-extrabold text-slate-900">
                 Hold last result
               </div>
@@ -1120,14 +1132,14 @@ export default function BpmTapperPage({
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Minimal header */}
-      <section className="border-b border-slate-200 bg-white">
+      <section className="timer-page-intro border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
           <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
             Tap BPM (Instant Tempo Tapper)
@@ -1140,7 +1152,7 @@ export default function BpmTapperPage({
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <BpmTapperCard />
         </div>

@@ -214,7 +214,7 @@ const Card = ({
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
       isFullscreen
         ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -242,7 +242,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -420,9 +420,7 @@ function BinaryClockCard() {
     }
   };
 
-  const displayTone = isFs
-    ? "border-slate-200 bg-slate-950 text-white"
-    : "border-slate-200 bg-slate-50 text-slate-950";
+  const displayTone = "border-slate-200 bg-slate-50 text-slate-950";
 
   return (
     <Card
@@ -486,10 +484,10 @@ function BinaryClockCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full w-full flex-col" : ""}>
+      <div className={isFs ? "flex h-full w-full flex-col" : "timer-first-stack flex h-full w-full flex-col"}>
         {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex flex-wrap items-center ml-auto gap-3">
+          <div className="timer-controls-row">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
                 <input
                   type="checkbox"
@@ -541,7 +539,7 @@ function BinaryClockCard() {
 
         <div
           className={[
-            "mt-4 flex flex-col items-center justify-center rounded-2xl border p-3 sm:p-6",
+            "timer-display-surface mt-4 flex flex-col items-center justify-center p-3 sm:p-6",
             displayTone,
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -550,7 +548,7 @@ function BinaryClockCard() {
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
             userSelect: "none",
-            overflow: "hidden",
+            overflow: isFs ? "hidden" : "visible",
           }}
           aria-live="polite"
           onClick={() => {
@@ -561,9 +559,7 @@ function BinaryClockCard() {
         >
           <div
             className={
-              isFs
-                ? "text-xs font-extrabold uppercase tracking-widest text-white/80"
-                : "text-xs font-extrabold uppercase tracking-widest text-slate-700"
+              "text-xs font-extrabold uppercase tracking-widest text-slate-700"
             }
           >
             Local time · {tz} · {mode === "bcd" ? "BCD digits" : "Pure binary"}
@@ -573,7 +569,7 @@ function BinaryClockCard() {
             className={[
               "mt-3 font-mono font-extrabold tracking-widest text-center whitespace-nowrap",
               isFs
-                ? "text-[clamp(44px,7vw,96px)] text-white"
+                ? "text-[clamp(44px,7vw,96px)] text-slate-950"
                 : "text-5xl sm:text-6xl text-slate-950",
             ].join(" ")}
           >
@@ -586,14 +582,14 @@ function BinaryClockCard() {
               use24={use24}
               showSeconds={showSeconds}
               mode={mode}
-              dark={isFs}
+              dark={false}
             />
           </div>
 
           <div
             className={
               isFs
-                ? "mt-5 text-sm font-semibold text-white/85 text-center"
+                ? "mt-5 text-sm font-semibold text-slate-700 text-center"
                 : "mt-4 text-sm font-semibold text-slate-700 text-center"
             }
           >
@@ -601,7 +597,7 @@ function BinaryClockCard() {
           </div>
 
           {!isFs && (
-            <div className="mt-4 w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="mt-4 w-full max-w-3xl rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
               <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                 Copy preview
               </div>
@@ -614,7 +610,7 @@ function BinaryClockCard() {
           <div
             className={
               isFs
-                ? "mt-6 text-xs font-semibold text-white/80 text-center"
+                ? "mt-6 text-xs font-semibold text-slate-600 text-center"
                 : "mt-4 text-xs font-semibold text-slate-600 text-center"
             }
           >
@@ -974,13 +970,13 @@ export default function BinaryClockPage({
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="border-b border-slate-200 bg-white">
+      <section className="timer-page-intro border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
           <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
             Binary Clock (Time in Binary)
@@ -992,7 +988,7 @@ export default function BinaryClockPage({
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <BinaryClockCard />
         </div>

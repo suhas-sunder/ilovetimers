@@ -124,7 +124,7 @@ const Card = ({
     onKeyDown={onKeyDown}
     className={[
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -152,7 +152,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -251,7 +251,7 @@ function AnalogClockCard() {
       <div
         ref={displayWrapRef}
         data-fs-container
-        className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 text-slate-950"
+        className="timer-display-surface mt-4 overflow-hidden text-slate-950"
         style={{ minHeight: 420 }}
         aria-live="off"
       >
@@ -266,8 +266,8 @@ function AnalogClockCard() {
                 height:100vh;
                 border:0;
                 border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
+                background:#ffffff;
+                color:#0f172a;
               }
 
               [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
@@ -310,14 +310,10 @@ function AnalogClockCard() {
         {/* Normal shell */}
         <div
           data-shell="normal"
-          className="h-full w-full items-center justify-center p-6"
+          className="h-full w-full items-start justify-center p-6"
           style={{ minHeight: 420 }}
         >
           <div className="flex w-full flex-col items-center justify-center gap-4">
-            <div className="text-center text-xs font-bold uppercase tracking-wide text-slate-600">
-              Local analog clock · {tz}
-            </div>
-
             <div className="w-full max-w-[560px]">
               <ClockFaceSvg
                 hourDeg={hourDeg}
@@ -328,8 +324,12 @@ function AnalogClockCard() {
               />
             </div>
 
+            <div className="text-center text-xs font-bold uppercase tracking-wide text-slate-600">
+              Local analog clock - {tz}
+            </div>
+
             <div className="text-center text-xs font-semibold text-slate-600">
-              Shortcuts: F fullscreen · S seconds hand · M smooth
+              Shortcuts: F fullscreen - S seconds hand - M smooth
             </div>
           </div>
         </div>
@@ -345,7 +345,7 @@ function AnalogClockCard() {
                 minDeg={minDeg}
                 secDeg={secDeg}
                 showSecondsHand={showSecondsHand}
-                dark
+                dark={false}
               />
             </div>
 
@@ -627,14 +627,14 @@ export default function AnalogClockPage({
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Minimal header */}
-      <section className="border-b border-slate-200 bg-white">
+      <section className="timer-page-intro border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
           <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
             Analog Clock (Fullscreen + Seconds Hand)
@@ -647,7 +647,7 @@ export default function AnalogClockPage({
       </section>
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <AnalogClockCard />
         </div>

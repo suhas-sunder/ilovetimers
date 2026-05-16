@@ -3,6 +3,7 @@ import type { Route } from "./+types/count-up-timer";
 import { json } from "@remix-run/node";
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type RefObject,
@@ -138,9 +139,21 @@ function useFitText({
   maxPx?: number;
   paddingAllowancePx?: number;
 }) {
-  const [fontPx, setFontPx] = useState<number>(minPx);
+  const initialFontPx = (() => {
+    const sample = deps.find(
+      (dep) => typeof dep === "string" || typeof dep === "number",
+    );
+    const charCount = Math.max(
+      1,
+      String(sample ?? "00:00").replace(/\s/g, "").length,
+    );
+    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
+    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
+  })();
 
-  useEffect(() => {
+  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
+
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const textEl = textRef.current;
     if (!container || !textEl) return;
@@ -185,7 +198,7 @@ function useFitText({
       }
 
       (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(best);
+      setFontPx(`${best}px`);
     };
 
     const schedule = () => {
@@ -202,7 +215,7 @@ function useFitText({
     window.addEventListener("resize", schedule);
     window.addEventListener("orientationchange", schedule);
 
-    schedule();
+    compute();
 
     return () => {
       if (raf) cancelAnimationFrame(raf);
@@ -242,7 +255,7 @@ const Card = ({
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
       isFullscreen
         ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -270,7 +283,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -418,7 +431,7 @@ function CountUpTimerCard() {
     textRef: timeTextRef,
     deps: [shownTime, isFs, running, laps.length],
     minPx: 52,
-    maxPx: isFs ? 520 : 360,
+    maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 56 : 64,
   });
 
@@ -478,7 +491,7 @@ function CountUpTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : ""}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
         {!isFs && (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
@@ -508,16 +521,16 @@ function CountUpTimerCard() {
         <div
           ref={displayBoxRef}
           className={[
-            "relative mt-4 flex flex-col items-center justify-center rounded-2xl border bg-slate-50 text-slate-950",
+            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
-            minHeight: isFs ? 0 : 280,
+            minHeight: isFs ? 0 : "clamp(320px, 38vw, 440px)",
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
             userSelect: "none",
-            overflow: "hidden",
+            overflow: isFs ? "hidden" : "visible",
           }}
           aria-live="polite"
           onClick={() => {
@@ -537,7 +550,7 @@ function CountUpTimerCard() {
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
             style={{
-              fontSize: `${fitFontPx}px`,
+              fontSize: fitFontPx,
               lineHeight: "1",
               transform: "translateZ(0)",
             }}
@@ -611,14 +624,14 @@ function CountUpTimerCard() {
               </Btn>
             </div>
 
-            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+            <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
               Shortcuts: Space start/pause · L lap · R reset · F fullscreen
             </div>
           </div>
         )}
         {/* Laps (normal only) */}
         {!isFs && (
-          <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="mt-5 rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm font-extrabold text-slate-900">Laps</div>
               <div className="text-xs font-semibold text-slate-600">
@@ -713,14 +726,14 @@ export default function CountUpTimerPage({
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <CountUpTimerCard />
         </div>

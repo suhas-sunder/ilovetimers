@@ -276,7 +276,7 @@ const Card = ({
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
       isFullscreen
         ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -307,7 +307,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -885,7 +885,7 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : ""}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
         {!isFs && (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
@@ -966,7 +966,7 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
         )}
 
         {!isFs && (
-          <div className="mt-4 flex flex-wrap items-center gap-2">
+          <div className="timer-controls-row mt-4">
             {quickPairs.map((p) => (
               <Chip
                 key={p.label}
@@ -983,7 +983,7 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
         )}
 
         {/* Inputs */}
-        <div className={isFs ? "mx-2 mt-3 sm:mx-4" : "mt-4"}>
+          <div className={isFs ? "mx-2 mt-3 sm:mx-4" : "timer-settings-panel mt-4"}>
           <div className="grid gap-3 lg:grid-cols-4">
             <label className="block text-sm font-semibold text-slate-900">
               Date
@@ -1049,19 +1049,19 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
         {/* Display */}
         <div
           className={[
-            "relative mt-4 rounded-2xl border bg-slate-50 text-slate-950",
+            "timer-display-surface relative mt-4 flex flex-col items-center justify-start rounded-2xl border bg-slate-50 text-slate-950",
             invalidInput ? "border-rose-200 bg-rose-50" : "border-slate-200",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
-            minHeight: isFs ? 0 : 280,
+            minHeight: isFs ? 0 : "clamp(320px, 38vw, 440px)",
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
-            overflow: "hidden",
+            overflow: isFs ? "hidden" : "visible",
           }}
           aria-live="polite"
         >
-          <div className="p-3 sm:p-6">
+          <div className="flex w-full flex-col items-center p-3 text-center sm:p-6">
             <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
               {statusLabel}
             </div>
@@ -1071,8 +1071,8 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                 Enter a valid date and time.
               </div>
             ) : (
-              <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="mt-4 grid w-full max-w-7xl gap-4 lg:grid-cols-2">
+                <div className="flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-4">
                   <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                     From
                   </div>
@@ -1082,7 +1082,9 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                   <div
                     className={[
                       "mt-3 font-mono font-extrabold tracking-wider text-slate-900",
-                      isFs ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl",
+                      isFs
+                        ? "text-4xl sm:text-6xl"
+                        : "text-[clamp(34px,4vw,64px)]",
                     ].join(" ")}
                   >
                     {preview.fromText}
@@ -1092,7 +1094,7 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-4">
                   <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                     To
                   </div>
@@ -1102,7 +1104,9 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                   <div
                     className={[
                       "mt-3 font-mono font-extrabold tracking-wider text-slate-900",
-                      isFs ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl",
+                      isFs
+                        ? "text-4xl sm:text-6xl"
+                        : "text-[clamp(34px,4vw,64px)]",
                     ].join(" ")}
                   >
                     {preview.toText}
@@ -1112,7 +1116,7 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                   </div>
                 </div>
 
-                <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="rounded-2xl border border-slate-200 bg-white p-4 lg:col-span-2">
                   <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                     ISO
                   </div>
@@ -1198,14 +1202,14 @@ export default function TimeZoneConverterPage({
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <TimeZoneConverterCard nowISO={nowISO} />
         </div>

@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -206,9 +207,21 @@ function useFitText({
   maxPx?: number;
   paddingAllowancePx?: number;
 }) {
-  const [fontPx, setFontPx] = useState<number>(minPx);
+  const initialFontPx = (() => {
+    const sample = deps.find(
+      (dep) => typeof dep === "string" || typeof dep === "number",
+    );
+    const charCount = Math.max(
+      1,
+      String(sample ?? "00:00").replace(/\s/g, "").length,
+    );
+    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
+    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
+  })();
 
-  useEffect(() => {
+  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
+
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const textEl = textRef.current;
     if (!container || !textEl) return;
@@ -252,7 +265,7 @@ function useFitText({
       }
 
       (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(best);
+      setFontPx(`${best}px`);
     };
 
     const schedule = () => {
@@ -269,7 +282,7 @@ function useFitText({
     window.addEventListener("resize", schedule);
     window.addEventListener("orientationchange", schedule);
 
-    schedule();
+    compute();
 
     return () => {
       if (raf) cancelAnimationFrame(raf);
@@ -301,7 +314,7 @@ const Card = ({
     tabIndex={tabIndex ?? 0}
     onKeyDown={onKeyDown}
     className={[
-      "relative h-full rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-6 shadow-sm",
+      "timer-tool-card relative h-full rounded-2xl bg-white p-4 sm:p-6",
       "focus:outline-none focus:ring-2 focus:ring-amber-300/60",
       className,
     ].join(" ")}
@@ -330,7 +343,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -618,7 +631,7 @@ function PaceTimerCard() {
     textRef: timeTextRef,
     deps: [shownTime, urgent, running, mode, runUnit, inputMode],
     minPx: 64,
-    maxPx: 360,
+    maxPx: 520,
     paddingAllowancePx: 72,
   });
 
@@ -632,6 +645,7 @@ function PaceTimerCard() {
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
+      <div className="timer-first-stack flex h-full flex-col">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
@@ -662,7 +676,7 @@ function PaceTimerCard() {
         ref={displayWrapRef}
         data-fs-container
         className={[
-          "mt-4 overflow-hidden rounded-2xl border bg-slate-50 text-slate-950",
+          "timer-display-surface mt-4 overflow-hidden text-slate-950",
           urgent ? "border-rose-200" : "border-slate-200",
         ].join(" ")}
         style={{ minHeight: 320 }}
@@ -680,8 +694,8 @@ function PaceTimerCard() {
                 height:100vh;
                 border:0;
                 border-radius:0;
-                background:#0b0b0c;
-                color:#ffffff;
+                background:#ffffff;
+                color:#0f172a;
               }
 
               [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
@@ -735,21 +749,17 @@ function PaceTimerCard() {
         <div
           data-shell="normal"
           ref={displayBoxRef}
-          className="relative w-full flex-col items-center justify-center p-4 sm:p-6"
+          className="relative w-full flex-col items-center justify-start p-4 sm:p-6"
           style={{
             minHeight: 320,
             userSelect: "none",
           }}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {statusLabel}
-          </div>
-
           <span
             ref={timeTextRef}
-            className="mt-2 inline-block text-center font-mono font-extrabold tracking-widest"
+            className="inline-block text-center font-mono font-extrabold tracking-widest"
             style={{
-              fontSize: `${fitFontPx}px`,
+              fontSize: fitFontPx,
               lineHeight: "1",
               transform: "translateZ(0)",
             }}
@@ -757,15 +767,19 @@ function PaceTimerCard() {
             {shownTime}
           </span>
 
+          <div className="mt-3 text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
+
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+            <div className="timer-control-shadow rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">
               Target {computedPaceText}
               {paceLabel}
             </div>
-            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+            <div className="timer-control-shadow rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">
               Finish {totalText}
             </div>
-            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+            <div className="timer-control-shadow rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">
               {mode === "rowing"
                 ? `${Math.round(distanceMeters)}m`
                 : `${distance}${runUnit}`}{" "}
@@ -773,7 +787,7 @@ function PaceTimerCard() {
             </div>
           </div>
 
-          <div className="mt-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+          <div className="mt-3 timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
             At this pace, you should be at{" "}
             <span className="font-extrabold text-slate-900">
               {mode === "rowing"
@@ -959,7 +973,7 @@ function PaceTimerCard() {
 
           {/* Row 4: actions */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
               Shortcuts: Space start/pause · R reset · F fullscreen
             </div>
 
@@ -973,6 +987,7 @@ function PaceTimerCard() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </Card>
   );
@@ -1017,14 +1032,14 @@ export default function PaceTimerPage({
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <PaceTimerCard />
         </div>

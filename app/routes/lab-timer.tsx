@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -140,9 +141,21 @@ function useFitText({
   maxPx?: number;
   paddingAllowancePx?: number;
 }) {
-  const [fontPx, setFontPx] = useState<number>(minPx);
+  const initialFontPx = (() => {
+    const sample = deps.find(
+      (dep) => typeof dep === "string" || typeof dep === "number",
+    );
+    const charCount = Math.max(
+      1,
+      String(sample ?? "00:00").replace(/\s/g, "").length,
+    );
+    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
+    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
+  })();
 
-  useEffect(() => {
+  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
+
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const textEl = textRef.current;
     if (!container || !textEl) return;
@@ -187,7 +200,7 @@ function useFitText({
       }
 
       (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(best);
+      setFontPx(`${best}px`);
     };
 
     const schedule = () => {
@@ -204,7 +217,7 @@ function useFitText({
     window.addEventListener("resize", schedule);
     window.addEventListener("orientationchange", schedule);
 
-    schedule();
+    compute();
 
     return () => {
       if (raf) cancelAnimationFrame(raf);
@@ -280,7 +293,7 @@ const Card = ({
     onKeyDown={onKeyDown}
     className={[
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -308,7 +321,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -328,10 +341,10 @@ function FullscreenTopBar({
 }) {
   if (!show) return null;
   return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-800/60 bg-slate-950/85 px-2 py-2 text-white backdrop-blur sm:px-3">
+    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 text-slate-900 backdrop-blur sm:px-3">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-700 bg-slate-900/60 px-3 py-1 text-xs font-semibold text-white">
+          <div className="timer-control-shadow rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900">
             {title}
           </div>
         </div>
@@ -340,7 +353,7 @@ function FullscreenTopBar({
           <button
             type="button"
             onClick={onExit}
-            className="cursor-pointer rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-1 text-sm font-semibold text-white hover:bg-slate-800"
+            className="cursor-pointer timer-control-shadow rounded-lg bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
           >
             Exit (Esc)
           </button>
@@ -359,7 +372,7 @@ function FullscreenBottomBar({
 }) {
   if (!show) return null;
   return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-800/60 bg-slate-950/85 px-2 py-2 text-white backdrop-blur sm:px-3">
+    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 text-slate-900 backdrop-blur sm:px-3">
       <div className="mx-auto max-w-7xl">{children}</div>
     </div>
   );
@@ -680,6 +693,7 @@ function LabTimerCard() {
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
+      <div className="timer-first-stack flex h-full flex-col">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h1 className="text-xl font-extrabold text-sky-700">Lab Timer</h1>
@@ -723,17 +737,17 @@ function LabTimerCard() {
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+          <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
             Shortcuts: Space stopwatch · L lap · C countdown · R reset · T
             repeat · F fullscreen
           </div>
         </div>
       </div>
 
-      <div className="mt-5 grid gap-6 lg:grid-cols-2">
+      <div className="timer-primary-surface mt-5 grid gap-6 lg:grid-cols-2">
         {/* STOPWATCH */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex items-baseline justify-between gap-3">
+        <div className="flex flex-col rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70 sm:p-5">
+          <div className="order-3 mt-4 flex items-baseline justify-between gap-3">
             <h2 className="text-lg font-extrabold text-sky-700">
               Stopwatch + Laps
             </h2>
@@ -742,7 +756,7 @@ function LabTimerCard() {
 
           <div
             ref={swInnerBoxRef}
-            className="relative mt-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-6"
+            className="timer-display-surface order-1 relative mt-3 overflow-hidden p-3 sm:p-6"
             style={{ minHeight: 180, userSelect: "none" }}
             aria-live="polite"
           >
@@ -755,7 +769,7 @@ function LabTimerCard() {
                 ref={swTimeTextRef}
                 className="inline-block text-center font-mono font-extrabold tracking-widest text-slate-950"
                 style={{
-                  fontSize: `${swFontPx}px`,
+                  fontSize: swFontPx,
                   lineHeight: "1",
                   transform: "translateZ(0)",
                 }}
@@ -765,7 +779,7 @@ function LabTimerCard() {
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="order-2 mt-4 flex flex-wrap items-center justify-center gap-3">
             <Btn onClick={swStartPause}>{swRunning ? "Pause" : "Start"}</Btn>
             <Btn kind="ghost" onClick={swLap} disabled={!swRunning}>
               Lap
@@ -789,7 +803,7 @@ function LabTimerCard() {
             </label>
           </div>
 
-          <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <div className="order-4 mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
               Laps (newest first)
             </div>
@@ -833,8 +847,8 @@ function LabTimerCard() {
         </div>
 
         {/* COUNTDOWN */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex items-baseline justify-between gap-3">
+        <div className="flex flex-col rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70 sm:p-5">
+          <div className="order-3 mt-4 flex items-baseline justify-between gap-3">
             <h2 className="text-lg font-extrabold text-sky-700">
               Repeatable Countdown
             </h2>
@@ -843,7 +857,7 @@ function LabTimerCard() {
             </div>
           </div>
 
-          <div className="mt-4">
+          <div className="order-2 mt-4">
             <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
               Common step times
             </div>
@@ -868,7 +882,7 @@ function LabTimerCard() {
             </div>
           </div>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+          <div className="order-2 mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
             <label className="block text-sm font-semibold text-slate-900">
               Custom step (seconds)
               <input
@@ -893,7 +907,7 @@ function LabTimerCard() {
             </div>
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="order-2 mt-3 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
               <input
                 type="checkbox"
@@ -910,13 +924,13 @@ function LabTimerCard() {
           </div>
 
           {/* Fullscreen overlay bars */}
-          <div className="relative mt-5">
+          <div className="order-1 relative mt-0">
             <div
               ref={cdBoxRef}
               className={[
-                "relative overflow-hidden rounded-2xl border text-slate-950",
+                "timer-display-surface relative overflow-hidden text-slate-950",
                 isCdFs
-                  ? "h-screen w-screen rounded-none border-0 bg-slate-950 text-white"
+                  ? "h-screen w-screen rounded-none border-0 bg-white text-slate-950"
                   : cdUrgent
                     ? "border-rose-200 bg-rose-50"
                     : "border-slate-200 bg-slate-50",
@@ -948,14 +962,14 @@ function LabTimerCard() {
                     <button
                       type="button"
                       onClick={cdReset}
-                      className="cursor-pointer rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-1 text-sm font-semibold text-white hover:bg-slate-800"
+                      className="cursor-pointer timer-control-shadow rounded-lg bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
                     >
                       Reset
                     </button>
                     <button
                       type="button"
                       onClick={() => setRepeat((v) => !v)}
-                      className="cursor-pointer rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-1 text-sm font-semibold text-white hover:bg-slate-800"
+                      className="cursor-pointer timer-control-shadow rounded-lg bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
                     >
                       Repeat {repeat ? "On" : "Off"}
                     </button>
@@ -966,30 +980,21 @@ function LabTimerCard() {
               <div
                 ref={cdInnerBoxRef}
                 className={[
-                  "flex h-full w-full flex-col items-center justify-center",
+                  "flex h-full w-full flex-col items-center justify-start",
                   isCdFs ? "px-4 pb-16 pt-16 sm:px-8" : "p-6",
                 ].join(" ")}
                 style={{ minHeight: isCdFs ? "100vh" : 220 }}
               >
-                <div
-                  className={[
-                    "text-xs font-extrabold uppercase tracking-widest",
-                    isCdFs ? "text-white/85" : "text-slate-700",
-                  ].join(" ")}
-                >
-                  Step Countdown {repeat ? "· Repeat on" : ""} · {cdStatus}
-                </div>
-
                 <span
                   ref={cdTimeTextRef}
                   className={[
-                    "mt-2 inline-block text-center font-mono font-extrabold",
+                    "inline-block text-center font-mono font-extrabold",
                     isCdFs
                       ? "tracking-wide sm:tracking-widest"
                       : "tracking-widest",
                   ].join(" ")}
                   style={{
-                    fontSize: `${cdFontPx}px`,
+                    fontSize: cdFontPx,
                     lineHeight: "1",
                     transform: "translateZ(0)",
                     whiteSpace: "nowrap",
@@ -998,20 +1003,29 @@ function LabTimerCard() {
                   {cdText}
                 </span>
 
+                <div
+                  className={[
+                    "mt-3 text-xs font-extrabold uppercase tracking-widest",
+                    "text-slate-700",
+                  ].join(" ")}
+                >
+                  Step Countdown {repeat ? "- Repeat on" : ""} - {cdStatus}
+                </div>
+
                 {!isCdFs && (
                   <div className="mt-2 text-xs font-semibold text-slate-600">
-                    C start/pause · R reset · T toggle repeat · F fullscreen
+                    C start/pause - R reset - T toggle repeat - F fullscreen
                   </div>
                 )}
               </div>
 
               <FullscreenBottomBar show={isCdFs}>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="text-xs text-white/80 sm:text-sm">
+                  <div className="text-xs text-slate-600 sm:text-sm">
                     Tap time to start/pause · C start/pause · R reset · T repeat
                     · F fullscreen
                   </div>
-                  <div className="text-xs font-semibold text-white/85">
+                  <div className="text-xs font-semibold text-slate-700">
                     {cdStatus}
                   </div>
                 </div>
@@ -1019,6 +1033,7 @@ function LabTimerCard() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </Card>
   );
@@ -1058,13 +1073,13 @@ export default function LabTimerPage({
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
+      <section className="timer-page-primary mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
         <div>
           <LabTimerCard />
         </div>

@@ -1,4 +1,223 @@
 @import "tailwindcss";
+
+@layer components {
+  .timer-page-shell {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    background: #ffffff !important;
+  }
+
+  .timer-page-shell > section:not(.timer-page-primary):not(.timer-page-intro) {
+    order: 3;
+  }
+
+  .timer-page-primary {
+    order: 1;
+    width: 100%;
+    max-width: min(100%, 112rem) !important;
+    padding-top: clamp(0.25rem, 1svh, 0.75rem) !important;
+    padding-bottom: clamp(1.25rem, 3svh, 2.5rem) !important;
+  }
+
+  .timer-page-intro {
+    order: 2;
+    border-width: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .timer-tool-card {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .timer-display-surface {
+    background: #ffffff !important;
+    border-width: 0 !important;
+    border-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .timer-first-stack {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.75rem, 1.4vw, 1.25rem);
+  }
+
+  .timer-first-stack > .timer-display-surface,
+  .timer-first-stack > .timer-primary-surface {
+    order: 1;
+    margin-top: 0 !important;
+    min-height: clamp(260px, 30svh, 460px) !important;
+    padding: clamp(0.75rem, 2vw, 1.5rem) !important;
+    padding-top: clamp(0.75rem, 2svh, 1.75rem) !important;
+    padding-bottom: clamp(0.75rem, 2svh, 1.75rem) !important;
+    justify-content: flex-start !important;
+    overflow: visible !important;
+  }
+
+  .timer-first-stack > .timer-display-surface > .text-xs,
+  .timer-first-stack > .timer-display-surface > .text-sm,
+  .timer-first-stack > .timer-display-surface > .text-base,
+  .timer-first-stack > .timer-display-surface > .flex:has(button),
+  .timer-first-stack > .timer-display-surface > .flex:has(input) {
+    order: 10;
+  }
+
+  .timer-first-stack > .timer-display-surface > .text-xs:first-child,
+  .timer-first-stack > .timer-display-surface > .text-sm:first-child,
+  .timer-first-stack > .timer-display-surface > .text-base:first-child,
+  .timer-first-stack > .timer-display-surface > .flex:first-child:has(button),
+  .timer-first-stack > .timer-display-surface > .flex:first-child:has(input) {
+    margin-top: clamp(0.75rem, 2svh, 1.25rem) !important;
+  }
+
+  .timer-first-stack > :not(.timer-display-surface):not(.timer-primary-surface) {
+    order: 2;
+    width: min(100%, 1100px);
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 0 !important;
+  }
+
+  .timer-first-stack > :not(.timer-display-surface):not(.timer-primary-surface):not(:first-child) {
+    justify-content: center !important;
+  }
+
+  .timer-first-stack > :not(.timer-display-surface):not(.timer-primary-surface):not(:first-child) > .ml-auto {
+    margin-left: 0 !important;
+  }
+
+  .timer-first-stack > :first-child:not(.timer-display-surface):not(.timer-primary-surface) {
+    order: 3;
+    margin-top: clamp(1rem, 3svh, 2rem) !important;
+  }
+
+  .timer-display-surface .rounded-2xl.border,
+  .timer-display-surface .rounded-2xl.shadow-sm,
+  .timer-display-surface .rounded-2xl.shadow-md {
+    border-width: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .timer-first-stack > :not(.timer-display-surface) .rounded-2xl.bg-white,
+  .timer-first-stack > :not(.timer-display-surface) .rounded-2xl.bg-slate-50,
+  .timer-first-stack > :not(.timer-display-surface) .rounded-2xl.border,
+  .timer-first-stack > :not(.timer-display-surface) .rounded-xl.bg-slate-50 {
+    background: transparent !important;
+    border-width: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .timer-first-stack > .rounded-2xl.bg-white:not(.timer-display-surface),
+  .timer-first-stack > .rounded-2xl.bg-slate-50:not(.timer-display-surface),
+  .timer-first-stack > .rounded-2xl.border:not(.timer-display-surface),
+  .timer-first-stack > .rounded-2xl.border-2:not(.timer-display-surface),
+  .timer-first-stack > .rounded-xl.bg-slate-50:not(.timer-display-surface) {
+    background: transparent !important;
+    border-width: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .timer-tool-card .rounded-2xl.bg-white:not(.timer-display-surface),
+  .timer-tool-card .rounded-2xl.bg-slate-50:not(.timer-display-surface),
+  .timer-tool-card .rounded-2xl.border:not(.timer-display-surface),
+  .timer-tool-card .rounded-2xl.border-2:not(.timer-display-surface),
+  .timer-tool-card .rounded-xl.bg-slate-50:not(.timer-display-surface) {
+    background: transparent !important;
+    border-width: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .timer-first-stack button,
+  .timer-first-stack label:has(input[type="checkbox"]) {
+    border-width: 0 !important;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+  }
+
+  .timer-control-shadow {
+    border: 0 !important;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+  }
+
+  .timer-control-shadow:hover {
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.14);
+  }
+
+  .timer-controls-row {
+    display: flex;
+    width: min(100%, 1100px);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .timer-first-stack > .timer-controls-row,
+  .timer-first-stack > .timer-settings-panel {
+    order: 2 !important;
+  }
+
+  .timer-settings-panel {
+    width: min(100%, 1100px);
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .timer-repeated-card {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1) !important;
+  }
+
+  .retro-flip-row {
+    transform-origin: top center;
+  }
+
+  @media (min-width: 1800px) {
+    .timer-page-primary {
+      max-width: min(100%, 124rem) !important;
+    }
+
+    .timer-first-stack > .timer-display-surface,
+    .timer-first-stack > .timer-primary-surface {
+      min-height: clamp(340px, 36svh, 560px) !important;
+      padding-top: clamp(1rem, 2.5svh, 2rem) !important;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .timer-first-stack > .timer-display-surface,
+    .timer-first-stack > .timer-primary-surface {
+      min-height: clamp(220px, 26svh, 360px) !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .timer-page-primary {
+      padding-top: 0.75rem !important;
+    }
+
+    .timer-first-stack > .timer-display-surface,
+    .timer-first-stack > .timer-primary-surface {
+      min-height: auto !important;
+      justify-content: flex-start !important;
+      padding-top: clamp(0.75rem, 3svh, 1.5rem) !important;
+    }
+
+    .retro-flip-row {
+      transform: scale(0.9);
+    }
+  }
+}
 /* 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,

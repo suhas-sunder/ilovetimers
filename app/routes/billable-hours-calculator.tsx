@@ -260,7 +260,7 @@ const Card = ({
     onKeyDown={onKeyDown}
     className={[
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60",
-      "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -291,7 +291,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -333,7 +333,7 @@ function Stat({
   sub?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
       <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
         {label}
       </div>
@@ -540,7 +540,7 @@ function BillableHoursCalculatorCard() {
       </div>
 
       <div className="no-print mt-6 grid gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:col-span-2">
+        <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70 lg:col-span-2">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-sm font-extrabold text-slate-900">
@@ -724,7 +724,7 @@ function BillableHoursCalculatorCard() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-sm font-extrabold text-slate-900">
@@ -921,13 +921,13 @@ export default function BillableHoursCalculatorPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="border-b border-slate-200 bg-white no-print">
+      <section className="timer-page-intro border-b border-slate-200 bg-white no-print">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
           <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
             Billable Hours Calculator
@@ -939,7 +939,7 @@ export default function BillableHoursCalculatorPage({}: Route.ComponentProps) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6 print-wrap">
+      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6 print-wrap">
         <div>
           <BillableHoursCalculatorCard />
         </div>

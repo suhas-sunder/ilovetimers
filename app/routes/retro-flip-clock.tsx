@@ -169,7 +169,7 @@ const Card = ({
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
       isFullscreen
         ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -197,7 +197,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -327,17 +327,17 @@ function FlipDigit({
   const dims =
     size === "xl"
       ? {
-          w: 160,
-          h: 210,
-          font: "clamp(92px, 9.5vw, 150px)",
-          radius: 22,
+          w: "clamp(54px, 10vw, 240px)",
+          h: "clamp(72px, 13vw, 310px)",
+          font: "clamp(44px, 10vw, 220px)",
+          radius: "clamp(10px, 1.4vw, 30px)",
           seam: 2,
         }
       : {
-          w: 112,
-          h: 146,
-          font: "clamp(56px, 6.2vw, 96px)",
-          radius: 18,
+          w: "clamp(30px, 9vw, 205px)",
+          h: "clamp(44px, 11.5vw, 270px)",
+          font: "clamp(26px, 8.5vw, 190px)",
+          radius: "clamp(6px, 1.2vw, 24px)",
           seam: 2,
         };
 
@@ -384,7 +384,14 @@ function FlipDigit({
         display: "flex",
         alignItems: "baseline",
         justifyContent: "center",
-        paddingTop: size === "xl" ? (dark ? 50 : 56) : dark ? 38 : 40,
+        paddingTop:
+          size === "xl"
+            ? dark
+              ? "clamp(48px, 3.7vw, 70px)"
+              : "clamp(18px, 4.1vw, 82px)"
+            : dark
+              ? "clamp(9px, 2.8vw, 56px)"
+              : "clamp(10px, 3.2vw, 64px)",
       }}
     >
       <span style={{ display: "inline-block" }}>{children}</span>
@@ -693,7 +700,7 @@ function RetroFlipClockCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : ""}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
         {!isFs && (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
@@ -742,7 +749,7 @@ function RetroFlipClockCard() {
           ref={displayWrapRef}
           data-fs-container
           className={[
-            "relative mt-4 overflow-hidden rounded-2xl border bg-slate-50 text-slate-900",
+            "timer-display-surface relative mt-4 overflow-hidden text-slate-900",
             "border-slate-200",
             isFs ? "mx-0 flex-1 rounded-none border-0" : "",
           ].join(" ")}
@@ -776,8 +783,8 @@ function RetroFlipClockCard() {
                 [data-fs-container]:fullscreen{
                   width:100vw;
                   height:100vh;
-                  background:#0b0b0c;
-                  color:#ffffff;
+                  background:#ffffff;
+                  color:#0f172a;
                 }
 
                 [data-fs-container]:fullscreen [data-shell="normal"]{display:none;}
@@ -813,7 +820,7 @@ function RetroFlipClockCard() {
                   text-transform:uppercase;
                   opacity:.86;
                   text-align:center;
-                  color: rgba(255,255,255,.90);
+                  color: rgba(51,65,85,.90);
                 }
 
                 [data-fs-container]:fullscreen .fs-time{
@@ -822,14 +829,14 @@ function RetroFlipClockCard() {
                   opacity:.92;
                   text-align:center;
                   white-space:nowrap;
-                  color: rgba(255,255,255,.92);
+                  color: rgba(51,65,85,.92);
                 }
 
                 [data-fs-container]:fullscreen .fs-sub{
                   font: 700 13px/1.25 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
                   opacity:.78;
                   text-align:center;
-                  color: rgba(255,255,255,.82);
+                  color: rgba(51,65,85,.82);
                 }
               `,
             }}
@@ -837,18 +844,12 @@ function RetroFlipClockCard() {
 
           <div
             data-shell="normal"
-            className="h-full w-full items-center justify-center p-3 sm:p-6"
-            style={{ minHeight: 460 }}
+            className="h-full w-full items-start justify-center p-3 sm:p-6"
+            style={{ minHeight: "clamp(300px, 52svh, 620px)" }}
           >
-            <div className="w-full max-w-[1100px]">
+            <div className="w-full max-w-[1500px]">
               <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
-                <div className="text-center fadeSoft opacity-100">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
-                    {metaLine}
-                  </div>
-                </div>
-
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-5">
+                <div className="retro-flip-row flex flex-nowrap items-center justify-center gap-[clamp(0.15rem,1.5vw,1.5rem)]">
                   <FlipDigit value={digits[0]} dark={false} size="md" id="h1" />
                   <FlipDigit value={digits[1]} dark={false} size="md" id="h2" />
                   <FlipColon dark={false} size="md" />
@@ -894,6 +895,9 @@ function RetroFlipClockCard() {
                       {dateText}
                     </div>
                   ) : null}
+                  <div className="mt-3 text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                    {metaLine}
+                  </div>
                 </div>
 
                 {!zen ? (
@@ -911,21 +915,21 @@ function RetroFlipClockCard() {
               <div className="fs-top fadeSoft opacity-100">Retro Flip Clock</div>
 
               <div className="fs-row">
-                <FlipDigit value={digits[0]} dark size="xl" id="fh1" />
-                <FlipDigit value={digits[1]} dark size="xl" id="fh2" />
-                <FlipColon dark size="xl" />
-                <FlipDigit value={digits[2]} dark size="xl" id="fm1" />
-                <FlipDigit value={digits[3]} dark size="xl" id="fm2" />
+                <FlipDigit value={digits[0]} dark={false} size="xl" id="fh1" />
+                <FlipDigit value={digits[1]} dark={false} size="xl" id="fh2" />
+                <FlipColon dark={false} size="xl" />
+                <FlipDigit value={digits[2]} dark={false} size="xl" id="fm1" />
+                <FlipDigit value={digits[3]} dark={false} size="xl" id="fm2" />
                 {showSeconds ? (
                   <>
-                    <FlipColon dark size="xl" />
-                    <FlipDigit value={digits[4]} dark size="xl" id="fs1" />
-                    <FlipDigit value={digits[5]} dark size="xl" id="fs2" />
+                    <FlipColon dark={false} size="xl" />
+                    <FlipDigit value={digits[4]} dark={false} size="xl" id="fs1" />
+                    <FlipDigit value={digits[5]} dark={false} size="xl" id="fs2" />
                   </>
                 ) : null}
                 {!use24 ? (
                   <div
-                    className="ml-3 text-white/90"
+                    className="ml-3 text-amber-950"
                     style={{
                       fontWeight: 900,
                       letterSpacing: ".18em",
@@ -968,7 +972,7 @@ function RetroFlipClockCard() {
         </div>
 
         {!isFs && (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+          <div className="mt-4 timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
             Shortcuts: F fullscreen · S seconds · T 12/24 · D date · Z zen · C
             copy
           </div>
@@ -1017,13 +1021,13 @@ export default function RetroFlipClockPage({
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <RetroFlipClockCard />
         </div>

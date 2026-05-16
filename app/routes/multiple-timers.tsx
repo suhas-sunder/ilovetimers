@@ -218,7 +218,7 @@ const Card = ({
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
       isFullscreen
         ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -248,7 +248,7 @@ const Btn = ({
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
         : kind === "danger"
           ? `cursor-pointer rounded-lg bg-rose-700 px-4 py-2 font-semibold text-white hover:bg-rose-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-          : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+          : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -760,9 +760,9 @@ function MultipleTimersCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : ""}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
         {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-4 text-center sm:items-center">
             <div className="min-w-0">
               <h1 className="text-xl font-extrabold text-sky-700">
                 Multiple Timers (Run Two or More at Once)
@@ -772,42 +772,11 @@ function MultipleTimersCard() {
                 optional sound.
               </p>
             </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={sound}
-                  onChange={(e) => setSound(e.target.checked)}
-                />
-                Sound
-              </label>
-
-              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={finalCountdownBeeps}
-                  onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-                  disabled={!sound}
-                />
-                Final beeps
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
           </div>
         )}
 
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="timer-controls-row mt-4">
             <div className="flex flex-wrap items-center gap-3">
               <Btn onClick={anyRunning ? pauseAll : startAll}>
                 {anyRunning ? "Pause all" : "Start all"}
@@ -827,9 +796,37 @@ function MultipleTimersCard() {
               </Btn>
             </div>
 
-            <div className="sm:ml-auto rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space start/pause all · R reset · A add · X stop alarms ·
-              F fullscreen
+            <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+              <input
+                type="checkbox"
+                checked={sound}
+                onChange={(e) => setSound(e.target.checked)}
+              />
+              Sound
+            </label>
+
+            <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+              <input
+                type="checkbox"
+                checked={finalCountdownBeeps}
+                onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
+                disabled={!sound}
+              />
+              Final beeps
+            </label>
+
+            <Btn
+              kind="ghost"
+              onClick={() =>
+                cardRef.current && toggleFullscreen(cardRef.current)
+              }
+              className="py-2"
+            >
+              Fullscreen
+            </Btn>
+
+            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              Shortcuts: Space start/pause all - R reset - A add - X stop alarms - F fullscreen
             </div>
           </div>
         )}
@@ -837,7 +834,7 @@ function MultipleTimersCard() {
         {/* Grid */}
         <div
           className={[
-            "relative mt-4 rounded-2xl border border-slate-200 bg-slate-50",
+            "timer-display-surface relative mt-4",
             "p-3 sm:p-4",
             isFs ? "mx-2 sm:mx-4 flex-1 overflow-auto" : "",
           ].join(" ")}
@@ -847,7 +844,7 @@ function MultipleTimersCard() {
             overflowAnchor: "none",
           }}
         >
-          <div className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mx-auto grid w-full max-w-6xl gap-4 md:grid-cols-2">
             {timers.map((t, idx) => {
               const urgent =
                 t.running && t.remainingMs > 0 && t.remainingMs <= 10_000;
@@ -867,12 +864,20 @@ function MultipleTimersCard() {
                 <div
                   key={t.id}
                   className={[
-                    "rounded-2xl border shadow-sm",
+                    "timer-repeated-card",
                     tileTone,
                     isFs ? "p-4 sm:p-5" : "p-4",
                   ].join(" ")}
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center justify-center">
+                    <div
+                      className={`font-mono font-extrabold tracking-widest text-slate-900 ${timeSize}`}
+                    >
+                      {shown}
+                    </div>
+                  </div>
+
+                  <div className="mt-2 flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <input
                         value={t.label}
@@ -898,14 +903,6 @@ function MultipleTimersCard() {
                     >
                       remove
                     </button>
-                  </div>
-
-                  <div className="mt-3 flex items-center justify-center">
-                    <div
-                      className={`font-mono font-extrabold tracking-widest text-slate-900 ${timeSize}`}
-                    >
-                      {shown}
-                    </div>
                   </div>
 
                   {/* Presets */}
@@ -1073,14 +1070,14 @@ export default function MultipleTimersPage({
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* Main Tool */}
-      <section className="mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
+      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
         <div>
           <MultipleTimersCard />
         </div>

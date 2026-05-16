@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -172,9 +173,21 @@ function useFitText({
   maxPx?: number;
   paddingAllowancePx?: number;
 }) {
-  const [fontPx, setFontPx] = useState<number>(minPx);
+  const initialFontPx = (() => {
+    const sample = deps.find(
+      (dep) => typeof dep === "string" || typeof dep === "number",
+    );
+    const charCount = Math.max(
+      1,
+      String(sample ?? "00:00").replace(/\s/g, "").length,
+    );
+    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
+    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
+  })();
 
-  useEffect(() => {
+  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
+
+  useLayoutEffect(() => {
     const container = containerRef.current;
     const textEl = textRef.current;
     if (!container || !textEl) return;
@@ -219,7 +232,7 @@ function useFitText({
       }
 
       (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(best);
+      setFontPx(`${best}px`);
     };
 
     const schedule = () => {
@@ -236,7 +249,7 @@ function useFitText({
     window.addEventListener("resize", schedule);
     window.addEventListener("orientationchange", schedule);
 
-    schedule();
+    compute();
 
     return () => {
       if (raf) cancelAnimationFrame(raf);
@@ -269,7 +282,7 @@ const Card = ({
     onKeyDown={onKeyDown}
     className={[
       "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      "h-full rounded-2xl border border-slate-200/80 p-4 sm:p-6 shadow-sm",
+      "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
       className,
     ].join(" ")}
   >
@@ -297,7 +310,7 @@ const Btn = ({
     className={
       kind === "solid"
         ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
+        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
     }
   >
     {children}
@@ -357,7 +370,7 @@ function BigResultDisplay({
     textRef,
     deps: [bigText, status, label],
     minPx: 52,
-    maxPx: 360,
+    maxPx: 520,
     paddingAllowancePx: 72,
   });
 
@@ -365,9 +378,9 @@ function BigResultDisplay({
     <div
       ref={boxRef}
       className={[
-        "relative mt-4 flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-6 text-slate-950",
+        "timer-display-surface relative mt-4 flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-6 text-slate-950",
       ].join(" ")}
-      style={{ minHeight: 280, userSelect: "none" }}
+      style={{ minHeight: "clamp(320px, 42svh, 560px)", userSelect: "none" }}
       aria-live="polite"
     >
       <div className="absolute left-3 top-3 flex items-center gap-2 sm:left-5 sm:top-5">
@@ -391,7 +404,7 @@ function BigResultDisplay({
         ref={textRef}
         className="mt-6 inline-block text-center font-mono font-extrabold tracking-widest"
         style={{
-          fontSize: `${fitPx}px`,
+          fontSize: fitPx,
           lineHeight: "1",
           transform: "translateZ(0)",
         }}
@@ -453,32 +466,21 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
 
   return (
     <Card>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-sky-700">
-            {mode === "add" ? "Add time" : "Subtract time"}
-          </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Use days, hours, minutes, and seconds. Subtract can go negative.
-          </p>
-        </div>
-
-        <div className="ml-auto flex flex-wrap items-center gap-3">
-          <Btn kind="ghost" onClick={reset} className="py-2">
-            Reset
-          </Btn>
-          <Btn kind="ghost" onClick={() => copy(resultText)} className="py-2">
-            Copy result
-          </Btn>
-        </div>
-      </div>
-
       <BigResultDisplay
         label="Result"
         bigText={big}
         subText={words}
         status={mode === "add" ? "Add" : "Subtract"}
       />
+
+      <div className="timer-controls-row mt-4">
+        <Btn kind="ghost" onClick={reset} className="py-2">
+          Reset
+        </Btn>
+        <Btn kind="ghost" onClick={() => copy(resultText)} className="py-2">
+          Copy result
+        </Btn>
+      </div>
 
       {lastCopied ? (
         <div className="mt-3 text-xs font-semibold text-slate-600">
@@ -544,6 +546,15 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="mt-6 max-w-3xl">
+        <h2 className="text-xl font-extrabold text-sky-700">
+          {mode === "add" ? "Add time" : "Subtract time"}
+        </h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Use days, hours, minutes, and seconds. Subtract can go negative.
+        </p>
       </div>
     </Card>
   );
@@ -759,18 +770,17 @@ function TimeCalculatorCard() {
 
   return (
     <div onKeyDown={onKeyDown} tabIndex={0} className="focus:outline-none">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-xl font-extrabold text-sky-700">
-            Time Calculator
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Add durations, subtract durations, or find the duration between two
-            times.
-          </p>
-        </div>
+      <div className="mt-4">
+        {tab === "add" ? (
+          <AddSubtractCard mode="add" />
+        ) : tab === "subtract" ? (
+          <AddSubtractCard mode="subtract" />
+        ) : (
+          <DurationCard />
+        )}
+      </div>
 
-        <div className="ml-auto flex flex-wrap items-center gap-2">
+      <div className="timer-controls-row mt-4">
           <TabBtn active={tab === "add"} onClick={() => setTab("add")}>
             Add
           </TabBtn>
@@ -789,17 +799,16 @@ function TimeCalculatorCard() {
           <div className="ml-1 text-xs font-semibold text-slate-600">
             Keyboard: 1 Add · 2 Subtract · 3 Duration
           </div>
-        </div>
       </div>
 
-      <div className="mt-4">
-        {tab === "add" ? (
-          <AddSubtractCard mode="add" />
-        ) : tab === "subtract" ? (
-          <AddSubtractCard mode="subtract" />
-        ) : (
-          <DurationCard />
-        )}
+      <div className="mt-6 max-w-3xl">
+        <h1 className="text-xl font-extrabold text-sky-700">
+          Time Calculator
+        </h1>
+        <p className="mt-1 text-sm text-slate-600">
+          Add durations, subtract durations, or find the duration between two
+          times.
+        </p>
       </div>
     </div>
   );
@@ -842,13 +851,13 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <main className="timer-page-shell bg-white text-slate-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
+      <section className="timer-page-primary mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
         <div>
           <TimeCalculatorCard />
         </div>

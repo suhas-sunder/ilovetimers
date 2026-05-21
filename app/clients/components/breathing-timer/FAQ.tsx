@@ -51,6 +51,11 @@ export default function FAQ({
         "When Sound is on, the timer plays gentle tones at phase changes to help you follow along without staring at the screen. When Sound is off, the timer is silent.",
     },
     {
+      question: "Is this medical or therapy guidance?",
+      answer:
+        "No. This page is only a timing aid for inhale, hold, exhale, and rest phases. Choose timings that feel appropriate for you and follow any guidance you already have from a qualified source.",
+    },
+    {
       question: "Why don’t I hear sound even when it’s enabled?",
       answer:
         "Some browsers block audio until you interact with the page. Click Start or press Space once, then toggle Sound on. Also check your device volume and mute settings.",

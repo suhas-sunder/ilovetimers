@@ -96,7 +96,7 @@ export function AccuracyAndPrivacySection() {
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               These timers run inside your browser. If you close the tab/app or
               the browser session ends, they cannot ring like a phone alarm or
-              send push notifications. If you need a guaranteed alarm, use your
+              send push notifications. If you need a device-level alarm, use your
               device alarm app.
             </p>
           </div>
@@ -158,7 +158,7 @@ export function AccuracyAndPrivacySection() {
               </div>
               <p className="mt-1 leading-relaxed">
                 Browsers reduce timer and animation frequency in background
-                tabs. A timer can still remain accurate by comparing now to a
+                tabs. This timer compares now to a
                 stored end time, but the UI will not repaint every frame while
                 throttled, so it may jump when the tab becomes active again.
               </p>

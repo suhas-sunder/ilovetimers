@@ -125,9 +125,14 @@ export default function FAQ({
         "Click the card once to focus it, then try again. Shortcuts are ignored while you’re typing in an input field.",
     },
     {
+      question: "What can change pizza timing?",
+      answer:
+        "Oven temperature, preheating, crust thickness, topping load, rack position, pizza stone or pan material, and whether the pizza is frozen, homemade, or reheated can all change the right check time.",
+    },
+    {
       question: "Does the timer keep running if I switch tabs?",
       answer:
-        "Yes in most cases. The timer uses a real end time so it stays accurate across normal tab switches. Power-saving modes can affect animation smoothness, but remaining time is still calculated from the end time.",
+        "The timer tracks a target end time while the page is open. Power-saving modes can affect animation smoothness or background updates, but remaining time is recalculated from the end time when the page is active again.",
     },
     {
       question: "Does this tool send any data anywhere?",

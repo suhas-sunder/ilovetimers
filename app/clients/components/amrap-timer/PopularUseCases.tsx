@@ -188,7 +188,7 @@ export default function PopularUseCases({
           <span className="font-semibold text-[var(--ilt-text-primary)]">
             Note:
           </span>{" "}
-          Browser timers can't guarantee alerts if you close the tab or your
+          Browser timers cannot alert if you close the tab or your
           device puts the browser to sleep. For workouts, keep this page visible
           or use fullscreen.
         </div>

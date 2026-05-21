@@ -201,7 +201,7 @@ export default function HowItWorks({
               </li>
               <li>
                 <span className="font-semibold text-[var(--ilt-text-primary)]">Is not:</span> a
-                guaranteed system alarm if you close the tab or lock your phone.
+                device-level alarm if you close the tab or lock your phone.
               </li>
             </ul>
 
@@ -452,7 +452,7 @@ export default function HowItWorks({
             <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               If smooth updates matter (coaching a class, pacing effort, or
               timing a swap), keep the tab visible and use fullscreen. If you
-              need an “it will ring even when the phone is locked” guarantee, a
+              need an “it will ring even when the phone is locked” alarm, a
               website timer is the wrong tool.
             </p>
           </div>
@@ -535,9 +535,9 @@ export default function HowItWorks({
                 </div>
                 <p className="mt-1 leading-relaxed">
                   Browsers reduce timer and animation frequency in background
-                  tabs. A timer can stay accurate by comparing “now” to a stored
-                  end time, but the UI will not repaint every second while
-                  throttled. When you return, the display updates to the correct
+                  tabs. This timer compares “now” to a stored end time, but the
+                  UI will not repaint every second while throttled. When you
+                  return, the display updates to the current
                   remaining time, which can look like a jump.
                 </p>
               </div>

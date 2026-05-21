@@ -43,7 +43,7 @@ import PopularUseCases from "~/clients/components/pizza-timer/PopularUseCases";
 export function meta({}: Route.MetaArgs) {
   const title = "Pizza Timer (Frozen Pizza Presets, Fullscreen)";
   const description =
-    "Set a simple pizza timer with quick presets for frozen pizza. Big, easy-to-read countdown to help you pull your pizza out at the right time.";
+    "Set a simple pizza timer with quick presets for frozen pizza, reheating, and custom oven checks with a big, easy-to-read countdown.";
 
   const url = "https://www.ilovetimers.com/pizza-timer";
 
@@ -776,7 +776,7 @@ export default function PizzaTimerPage({
         name: "Pizza Timer",
         url,
         description:
-          "Set a simple pizza timer with quick presets for frozen pizza. Big, easy-to-read countdown to help you pull your pizza out at the right time.",
+          "Set a simple pizza timer with quick presets for frozen pizza, reheating, and custom oven checks with a big, easy-to-read countdown.",
       },
       {
         "@type": "BreadcrumbList",

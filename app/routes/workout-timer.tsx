@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -697,56 +698,105 @@ export default function WorkoutTimerPage({
         description="Configure work, rest, and rounds, then run a large workout countdown with sound cues and fullscreen controls."
       />
 
-      <SeoBand title="Workout timer basics">
-        <p>
-          Use this workout timer for repeated training blocks where each round has
-          a work interval and an optional rest interval. Keep the main display on
-          the current phase and time left, then adjust work length, rest length,
-          and rounds when the timer is stopped.
-        </p>
-        <p>
-          Fullscreen mode is useful in a gym, garage, or class setting where the
-          active phase needs to be readable from a distance. Keyboard shortcuts
-          keep start, pause, next, reset, and fullscreen available without moving
-          through the settings.
-        </p>
-        <h3>Practical workout setups</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Use equal work and rest for simple circuits where each exercise has
-            the same timing.
-          </li>
-          <li>
-            Use shorter rest intervals when the workout is meant to feel more
-            continuous, and longer rest intervals when the next round needs more
-            setup time.
-          </li>
-          <li>
-            Set rounds before starting so the display can stay focused on the
-            current phase instead of the settings.
-          </li>
-        </ul>
-        <h3>Notes and limitations</h3>
-        <p>
-          This timer helps run interval structure and audio cues. It does not
-          choose exercises, set intensity, or provide medical or injury guidance.
-        </p>
-        <h3>Related tools</h3>
-        <p>
-          For faster work/rest training, use the{" "}
-          <a className="ilt-content-link" href="/hiit-timer">
-            HIIT timer
-          </a>
-          . For classic 20/10 intervals, try the{" "}
-          <a className="ilt-content-link" href="/tabata-timer">
-            Tabata timer
-          </a>
-          . For boxing-style rounds, use the{" "}
-          <a className="ilt-content-link" href="/round-timer">
-            round timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this workout timer works">
+          <p>
+            Use this workout timer for repeated blocks where each round has a
+            work interval and an optional rest interval. The active phase, round
+            number, and time remaining stay in the main display, while presets,
+            custom work/rest lengths, rounds, sound cues, and fullscreen controls
+            stay below the countdown.
+          </p>
+          <p>
+            Settings are meant to be chosen before you start. Once the timer is
+            running, start/pause, next, reset, and fullscreen actions remain
+            available so the session can keep moving without turning the page
+            into a settings screen.
+          </p>
+        </ContentSection>
+        <ContentSection title="Common workout timer setups">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Use equal work and rest for bodyweight circuits or practice rounds
+              where every station uses the same timing.
+            </li>
+            <li>
+              Use longer rest periods when equipment changes, partner rotations,
+              or setup time need more room.
+            </li>
+            <li>
+              Use fullscreen for a garage gym, class, or second monitor when the
+              active phase needs to be readable from a distance.
+            </li>
+            <li>
+              Use optional audio cues when looking away from the screen is part
+              of the routine, and keep sound off in quiet shared spaces.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Choosing the right interval tool">
+          <p>
+            This page is the general work/rest round timer. For faster
+            conditioning intervals, use the{" "}
+            <a className="ilt-content-link" href="/hiit-timer">
+              HIIT timer
+            </a>
+            . For classic 20/10 work and rest rounds, use the{" "}
+            <a className="ilt-content-link" href="/tabata-timer">
+              Tabata timer
+            </a>
+            . For boxing-style or martial-arts-style rounds, use the{" "}
+            <a className="ilt-content-link" href="/round-timer">
+              round timer
+            </a>
+            . For a plain rest countdown between sets, use the{" "}
+            <a className="ilt-content-link" href="/rest-timer">
+              rest timer
+            </a>
+            . For distance or split-based timing, use the{" "}
+            <a className="ilt-content-link" href="/pace-timer">
+              pace timer
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Limits to keep in mind">
+          <p>
+            This timer helps structure intervals and cues based on the settings
+            you choose. It does not choose exercises, set intensity, or replace
+            your own plan. Choose durations that fit your own routine or
+            guidance.
+          </p>
+          <p>
+            Browser timers can be affected by sleeping devices, background tab
+            throttling, audio permissions, and device volume, especially when
+            you rely on cues away from the screen.
+          </p>
+        </ContentSection>
+        <ContentSection title="Workout timer FAQ">
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              Can I use this for circuits?
+            </strong>{" "}
+            Yes. Set a work length, rest length, and number of rounds, then use
+            each round for one station or exercise in your circuit.
+          </p>
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              What happens when rest is set to zero?
+            </strong>{" "}
+            The timer can move from one work round to the next without a rest
+            phase, which is useful for back-to-back practice blocks.
+          </p>
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              Should I use Workout Timer or HIIT Timer?
+            </strong>{" "}
+            Use this page for a broad work/rest round setup. Use the HIIT timer
+            when you want a more specific interval page with HIIT-oriented
+            presets and phase controls.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

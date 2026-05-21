@@ -132,8 +132,10 @@ export default function HowItWorks({
             <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This page is a timer tool. It does not try to teach cooking
               techniques or give food safety advice. It helps you run a clean,
-              reliable countdown so you can focus on the stove, the oven, or the
-              prep board. If you want a more specialized page, use the closest
+              visible countdown so you can focus on the stove, the oven, or the
+              prep board. Cooking results still depend on appliance behavior,
+              food size, starting temperature, cookware, and preference. If you
+              want a more specialized page, use the closest
               fit:{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"

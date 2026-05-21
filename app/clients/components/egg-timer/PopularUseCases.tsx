@@ -46,7 +46,7 @@ export default function PopularUseCases({
       description:
         "Turn Sound off and keep the large countdown visible. Fullscreen helps when you want a visual timer without an audible finish signal.",
       forWho: "Shared spaces, late-night cooking, or quiet kitchens.",
-      notFor: "A guaranteed device-level alarm after the browser is closed.",
+      notFor: "A device-level alarm after the browser is closed.",
       links: [
         { label: "Silent Timer", href: "/silent-timer" },
         { label: "Fullscreen Timer", href: "/fullscreen-timer" },

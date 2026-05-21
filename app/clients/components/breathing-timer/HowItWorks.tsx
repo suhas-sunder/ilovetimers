@@ -453,6 +453,9 @@ export default function HowItWorks({
             </PillLink>
             <PillLink href={abs("/silent-timer")}>Silent Timer</PillLink>
             <PillLink href={abs("/stretch-timer")}>Stretch Timer</PillLink>
+            <PillLink href={abs("/focus-session-timer")}>
+              Focus Session Timer
+            </PillLink>
             <PillLink href={abs("/rest-timer")}>Rest Timer</PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
             <PillLink href={abs("/fullscreen-timer")}>

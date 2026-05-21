@@ -67,7 +67,7 @@ export default function FAQ({
     },
     {
       question:
-        "Will the timer keep perfect time if I switch tabs or lock my device?",
+        "What happens if I switch tabs or lock my device?",
       answer:
         "It runs in your browser while the page is open. Background tabs and locked devices may throttle updates, so the display can look less smooth and may drift slightly depending on your browser and power-saving settings.",
     },

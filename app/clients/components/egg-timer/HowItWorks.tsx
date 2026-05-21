@@ -122,7 +122,7 @@ export default function HowItWorks({
 
             <p className="mt-2 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               <span className="font-semibold text-[var(--ilt-text-primary)]">Egg Timer</span> is
-              built for one job: a clear countdown you can trust at a glance
+              built for one job: a clear countdown you can read at a glance
               while you cook. Pick a preset like{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">Soft</span> or{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">Jammy</span>, or
@@ -143,10 +143,10 @@ export default function HowItWorks({
 
             <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               One key behavior to know: this timer runs in your browser while
-              the page is open. Most of the time it’s very accurate, but some
-              devices can slow down updates in background tabs or when the
-              screen is locked to save power. If you need a timer that must fire
-              even with the browser closed, use your device’s clock app.
+              the page is open. Some devices can slow down updates in background
+              tabs or when the screen is locked to save power. If you need a
+              timer that must fire even with the browser closed, use your
+              device’s clock app.
             </p>
           </div>
 

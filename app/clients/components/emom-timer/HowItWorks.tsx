@@ -149,10 +149,9 @@ export default function HowItWorks({
 
             <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               Important behavior to understand: this timer runs in your browser
-              while the page is open. It is typically very accurate, but some
-              devices reduce update frequency in background tabs or when the
-              screen is locked to save power. If you need guaranteed alerts when
-              the browser is closed, use a device alarm.
+              while the page is open. Some devices reduce update frequency in
+              background tabs or when the screen is locked to save power. If you
+              need alerts after the browser is closed, use a device alarm.
             </p>
           </div>
 

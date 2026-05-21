@@ -149,6 +149,17 @@ export default function Disclaimer() {
                 </div>
 
                 <div className="ilt-surface-muted p-3">
+                  Want a single focused work block?{" "}
+                  <a
+                    href="/focus-session-timer"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Focus Session Timer
+                  </a>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
                   Want a general purpose countdown?{" "}
                   <a
                     href="/countdown-timer"

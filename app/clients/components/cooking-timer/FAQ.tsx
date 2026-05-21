@@ -41,6 +41,11 @@ export default function FAQ({
         "Common presets cover frequent kitchen tasks from 30 seconds up to 60 minutes. They are a fast way to time things like simmering, steeping, rest time, oven checks, or short prep steps.",
     },
     {
+      question: "What can affect cooking timer results?",
+      answer:
+        "The countdown only tracks time. Appliance temperature, food size, starting temperature, cookware, batch size, and personal preference can all change when something is ready, so adjust presets and custom times for your situation.",
+    },
+    {
       question: "Can I set a custom time?",
       answer:
         "Yes. Use the Minutes and Seconds inputs to set an exact duration. Minutes are clamped from 0 to 999 and seconds from 0 to 59. Inputs are disabled while running to prevent accidental edits.",

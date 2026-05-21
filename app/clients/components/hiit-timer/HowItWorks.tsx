@@ -132,7 +132,7 @@ export default function HowItWorks({
 
             <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               This page is not trying to teach workouts. It is designed to help
-              you run the timing accurately and quickly. That means predictable
+              you run the timing structure clearly and quickly. That means predictable
               phases, clear round tracking, fast skipping when plans change, and
               optional sound cues so you do not have to stare at the screen.
             </p>
@@ -451,7 +451,7 @@ export default function HowItWorks({
             </div>
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               People often do not need a complicated workout builder. They need
-              something reliable that runs the same pattern every time and can
+              a simple timer that runs the same pattern every time and can
               handle interruptions. This timer is built around that reality:
               quick presets, visible round tracking, and controls that still
               make sense when you are out of breath.
@@ -526,7 +526,7 @@ export default function HowItWorks({
                 Technical details (timing, sound, focus, fullscreen)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
-                Optional notes if you rely on exact behavior
+                Optional notes if timing behavior matters
               </div>
             </div>
             <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
@@ -537,7 +537,7 @@ export default function HowItWorks({
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
               <div className="font-semibold text-[var(--ilt-text-primary)]">
-                Countdown accuracy
+                Countdown timing
               </div>
               <p className="mt-1 leading-relaxed">
                 The timer targets phase endings using a monotonic clock

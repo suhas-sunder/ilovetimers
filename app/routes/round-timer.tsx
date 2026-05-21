@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -836,56 +837,94 @@ export default function RoundTimerPage({
         description="Run boxing or MMA-style work and rest rounds with warmup, sound cues, presets, and fullscreen display."
       />
 
-      <SeoBand title="Round timer basics">
-        <p>
-          This round timer is built for training formats that alternate a timed
-          round with a timed rest. Boxing, MMA, sparring drills, bag work, and
-          conditioning circuits can each use presets or custom round, rest, and
-          warmup values.
-        </p>
-        <p>
-          The current round or rest phase stays dominant, while total round
-          status and sound controls remain secondary. Keep settings fixed during
-          active sessions so the phase flow and audio cues stay predictable.
-        </p>
-        <h3>Common round setups</h3>
-        <p>
-          Use longer rounds for boxing-style bag work, shorter rounds for fast
-          conditioning drills, and custom rest periods when equipment changes or
-          partner rotations need more time. Warmup time can give the room a clear
-          countdown before the first active round starts.
-        </p>
-        <h3>Warnings and sound cues</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Warning cues can mark the final seconds of a round or rest period
-            without changing the timer length.
-          </li>
-          <li>
-            Sound controls are useful in noisy training spaces, but can stay off
-            when a visual display is enough.
-          </li>
-          <li>
-            Presets are training conveniences, not official sport rule
-            definitions.
-          </li>
-        </ul>
-        <h3>Related interval tools</h3>
-        <p>
-          For general circuits, use the{" "}
-          <a className="ilt-content-link" href="/workout-timer">
-            workout timer
-          </a>
-          . For work/rest conditioning, try the{" "}
-          <a className="ilt-content-link" href="/hiit-timer">
-            HIIT timer
-          </a>
-          . For classic 20/10 intervals, use the{" "}
-          <a className="ilt-content-link" href="/tabata-timer">
-            Tabata timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this round timer works">
+          <p>
+            This round timer is built for formats that alternate a timed round
+            with a timed rest. Boxing-style, martial-arts-style, debate,
+            rehearsal, bag work, sparring drills, and general interval sessions
+            can use presets or custom round, rest, and warmup values.
+          </p>
+          <p>
+            The current round or rest phase stays dominant, while total round
+            status, warning cues, sound controls, and fullscreen mode remain
+            secondary. Keep settings fixed during active sessions so the phase
+            flow and cue timing stay easy to follow.
+          </p>
+        </ContentSection>
+        <ContentSection title="Common round setups">
+          <p>
+            Use longer rounds for boxing-style bag work or practice rounds,
+            shorter rounds for quick conditioning drills, and custom rest periods
+            when equipment changes, notes, partner rotations, or room resets need
+            more time. Warmup time can give everyone a clear countdown before the
+            first active round starts.
+          </p>
+        </ContentSection>
+        <ContentSection title="Warnings, sound cues, and limits">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Warning cues can mark the final seconds of a round or rest period
+              without changing the timer length.
+            </li>
+            <li>
+              Sound controls are useful in noisy spaces, but can stay off when a
+              visual display is enough.
+            </li>
+            <li>
+              Presets are timing conveniences, not sport rule definitions or
+              compliance guidance.
+            </li>
+            <li>
+              Choose round and rest lengths that match your own plan or the
+              format you are following.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Related interval tools">
+          <p>
+            For general circuits, use the{" "}
+            <a className="ilt-content-link" href="/workout-timer">
+              workout timer
+            </a>
+            . For work/rest conditioning, use the{" "}
+            <a className="ilt-content-link" href="/hiit-timer">
+              HIIT timer
+            </a>
+            . For classic 20/10 intervals, use the{" "}
+            <a className="ilt-content-link" href="/tabata-timer">
+              Tabata timer
+            </a>
+            . For a standalone break between sets or rounds, use the{" "}
+            <a className="ilt-content-link" href="/rest-timer">
+              rest timer
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Round timer FAQ">
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              Is this a sport-rule timer?
+            </strong>{" "}
+            No. It is a practical round/rest countdown. Follow the rules for the
+            class, gym, event, or format you are using.
+          </p>
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              Can I use it outside workouts?
+            </strong>{" "}
+            Yes. Debate rounds, rehearsal turns, practice rounds, and group
+            rotations can use the same round/rest structure.
+          </p>
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              What are warning cues for?
+            </strong>{" "}
+            Warning cues mark the end of a round or rest period approaching
+            without changing the duration you selected.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

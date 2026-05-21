@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -671,51 +672,95 @@ export default function TeaTimerPage({
         description="Choose a tea preset or custom steep time, then keep the countdown clean, large, and easy to see."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Tea Timer includes steeping presets for green, black, oolong, white,
-          herbal, chai, rooibos, pu-erh, and matcha workflows while keeping
-          custom minutes and seconds available below the display. Pick a tea
-          type, start the countdown, and keep the timer visible while the cup or
-          pot steeps.
-        </p>
-        <h3>When to use custom timing</h3>
-        <p>
-          Presets are starting points. Use custom time when your tea label, leaf
-          amount, water temperature, mug size, or personal taste calls for a
-          shorter or longer steep. A timer can help avoid accidental
-          over-steeping, but it does not guarantee a perfect brew.
-        </p>
-        <h3>Practical examples</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Use shorter times for delicate teas when bitterness is a concern.
-          </li>
-          <li>
-            Use longer times for herbal infusions when the package recommends a
-            fuller steep.
-          </li>
-          <li>
-            Use the custom field when making a second infusion or following a
-            specific tea vendor's instructions.
-          </li>
-        </ul>
-        <h3>Related kitchen timers</h3>
-        <p>
-          For general cooking steps, use the{" "}
-          <a className="ilt-content-link" href="/cooking-timer">
-            cooking timer
-          </a>
-          . For egg doneness timing, try the{" "}
-          <a className="ilt-content-link" href="/egg-timer">
-            egg timer
-          </a>
-          . For a plain custom countdown, use the{" "}
-          <a className="ilt-content-link" href="/countdown-timer">
-            countdown timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this tea timer works">
+          <p>
+            Tea Timer keeps steep timing simple: choose a tea preset or enter
+            custom minutes and seconds, then start the countdown while the cup or
+            pot steeps. The display stays large and visible, with optional sound
+            and fullscreen controls available below the timer.
+          </p>
+          <p>
+            Presets cover common green, black, oolong, white, herbal, chai,
+            rooibos, pu-erh, and matcha starting points. Use them as convenient
+            defaults, then adjust the time when the tea label, water
+            temperature, leaf amount, vessel size, or personal taste points to a
+            shorter or longer steep.
+          </p>
+        </ContentSection>
+        <ContentSection title="Tea examples and custom steep times">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Use a shorter green tea or white tea steep when bitterness is a
+              concern.
+            </li>
+            <li>
+              Use a black tea, chai, oolong, or herbal preset when you want a
+              quick starting point for a common cup.
+            </li>
+            <li>
+              Use custom timing for matcha prep, a second infusion, loose-leaf
+              instructions, or a tea vendor's specific recommendation.
+            </li>
+            <li>
+              Keep the timer visible on a second screen or in fullscreen when
+              you are preparing food at the same time.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Taste and timing limits">
+          <p>
+            A timer helps prevent accidental over-steeping, but it cannot choose
+            the right flavor for every tea. Tea amount, water temperature,
+            mug or pot size, steeping method, and preference all matter, so treat
+            presets as starting points rather than promises.
+          </p>
+          <p>
+            Like other browser timers, this page depends on the device staying
+            awake and the tab remaining available. If sound is enabled, browser
+            audio permissions and device volume still apply.
+          </p>
+        </ContentSection>
+        <ContentSection title="Related kitchen timers">
+          <p>
+            For general cooking steps, use the{" "}
+            <a className="ilt-content-link" href="/cooking-timer">
+              cooking timer
+            </a>
+            . For boiled eggs, use the{" "}
+            <a className="ilt-content-link" href="/egg-timer">
+              egg timer
+            </a>
+            . For plain custom minutes and seconds, use the{" "}
+            <a className="ilt-content-link" href="/countdown-timer">
+              countdown timer
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Tea timer FAQ">
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              Can I use this for loose-leaf tea?
+            </strong>{" "}
+            Yes. Pick the closest tea type or set a custom steep time based on
+            the tea label, vendor note, or your usual preference.
+          </p>
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              Does it choose water temperature?
+            </strong>{" "}
+            No. The timer only tracks steep duration. Water temperature, leaf
+            amount, and steeping method are separate choices.
+          </p>
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              Can I time a second infusion?
+            </strong>{" "}
+            Yes. Use the custom minutes and seconds fields when a later infusion
+            needs a different time than the first steep.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

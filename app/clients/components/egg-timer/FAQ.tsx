@@ -36,6 +36,11 @@ export default function FAQ({
         "Tap a preset to instantly set minutes and seconds for that doneness. Selecting a preset resets the timer to that preset time (it does not continue from your current remaining time).",
     },
     {
+      question: "Do egg size or starting temperature change the result?",
+      answer:
+        "Yes. Egg size, fridge-cold versus room-temperature eggs, altitude, pan size, water temperature, and personal preference can all affect doneness. Treat presets as starting points and adjust custom timing for your kitchen.",
+    },
+    {
       question: "Can I set a custom time?",
       answer:
         "Yes. Set Minutes and Seconds directly. Any change to Minutes/Seconds resets the timer to the new time, so you start clean and avoid mixed timing.",
@@ -67,7 +72,7 @@ export default function FAQ({
     },
     {
       question:
-        "Will the timer keep perfect time if I switch tabs or lock my device?",
+        "What happens if I switch tabs or lock my device?",
       answer:
         "It runs in your browser while the page is open. Background tabs and locked devices may throttle timing, so the countdown can drift slightly depending on your browser and power-saving settings.",
     },
@@ -79,7 +84,7 @@ export default function FAQ({
     {
       question: "Which related timers should I use instead?",
       answer:
-        "Use Cooking Timer for general kitchen timing, Tea Timer for tea steeping, Countdown Timer for a simple one-off countdown, Silent Timer for no-audio timing, or Fullscreen Timer when you want the biggest possible display.",
+        "Use Cooking Timer for general kitchen timing, Tea Timer for tea steeping, Countdown Timer for a simple one-off countdown, Multiple Timers for eggs plus another dish, Silent Timer for no-audio timing, or Fullscreen Timer when you want the biggest possible display.",
     },
   ];
 

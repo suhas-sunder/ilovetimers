@@ -103,7 +103,7 @@ export default function PopularUseCases({
       title: "Quick ‘change of plans’ control during a session",
       description:
         "Pause instantly, skip a phase with Next, or reset to the start. This is built for real-world sessions where you might need to adjust without touching settings mid-run.",
-      forWho: "Anyone who wants simple, reliable controls while training.",
+      forWho: "Anyone who wants simple controls while timing a session.",
       notFor: "You want a silent timer only. Use Silent Timer.",
       links: [
         { label: "Silent Timer", href: "/silent-timer" },

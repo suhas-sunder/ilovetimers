@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -758,56 +759,101 @@ export default function TabataTimerPage({
         description="Run classic Tabata work and rest intervals with round status, final beeps, and fullscreen controls."
       />
 
-      <SeoBand title="Tabata timer basics">
-        <p>
-          This Tabata timer keeps the classic 20 seconds work, 10 seconds rest,
-          8 round structure available while still allowing custom work, rest, and
-          round settings. The active work or rest phase stays first so the next
-          action is clear during fast sessions.
-        </p>
-        <p>
-          Use the Classic control to return to the standard protocol, or adjust
-          the intervals before starting. Sound cues and final beeps remain
-          optional so the timer can work in quiet spaces or louder training rooms.
-        </p>
-        <h3>How it differs from generic HIIT</h3>
-        <p>
-          Tabata is usually understood as a fixed 20/10 rhythm repeated for 8
-          rounds. This page keeps that structure easy to restore while still
-          letting you adjust the timing for practice, warmups, or modified
-          sessions.
-        </p>
-        <h3>Tips for using the timer</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Set the interval lengths before starting so the active display can
-            stay focused on the current work or rest phase.
-          </li>
-          <li>
-            Use optional beeps only when they fit the space and will not disturb
-            others.
-          </li>
-          <li>
-            Keep the screen in fullscreen mode when the timer needs to be read
-            across a room.
-          </li>
-        </ul>
-        <h3>Related interval tools</h3>
-        <p>
-          For broader work/rest programming, use the{" "}
-          <a className="ilt-content-link" href="/hiit-timer">
-            HIIT timer
-          </a>
-          . For circuit rounds, try the{" "}
-          <a className="ilt-content-link" href="/workout-timer">
-            workout timer
-          </a>
-          . For every-minute starts, use the{" "}
-          <a className="ilt-content-link" href="/emom-timer">
-            EMOM timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this Tabata timer works">
+          <p>
+            This Tabata timer keeps the common 20 seconds work, 10 seconds rest,
+            8 round structure ready while still allowing custom work, rest, and
+            round settings. The current work or rest phase stays first, with
+            round status, optional sound cues, final beeps, and fullscreen
+            controls below the display.
+          </p>
+          <p>
+            Use the Classic control to return to the 20/10 format, or adjust the
+            intervals before starting for a modified practice session. The timer
+            runs the structure you choose; it does not choose exercises or make
+            performance claims.
+          </p>
+        </ContentSection>
+        <ContentSection title="Tabata, HIIT, and round timing">
+          <p>
+            Tabata-style timing is a specific short work/rest rhythm, while HIIT
+            can describe many different interval lengths and round counts. If you
+            want a broader setup with prep, cooldown, or different work/rest
+            choices, the{" "}
+            <a className="ilt-content-link" href="/hiit-timer">
+              HIIT timer
+            </a>{" "}
+            may fit better. If you need longer rounds with rest between them,
+            use the{" "}
+            <a className="ilt-content-link" href="/round-timer">
+              round timer
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Tips for using the timer">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Set interval lengths and round count before starting so the active
+              display can stay focused on the current phase.
+            </li>
+            <li>
+              Use optional beeps only when they fit the room and will not
+              disturb others.
+            </li>
+            <li>
+              Keep the screen in fullscreen mode when the timer needs to be read
+              across a room or from a mat, bike, or station.
+            </li>
+            <li>
+              Choose durations that match your own plan or guidance, especially
+              if you are modifying the default 20/10 pattern.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Related interval tools">
+          <p>
+            For flexible work/rest intervals, use the{" "}
+            <a className="ilt-content-link" href="/workout-timer">
+              workout timer
+            </a>
+            . For every-minute starts, use the{" "}
+            <a className="ilt-content-link" href="/emom-timer">
+              EMOM timer
+            </a>
+            . For simple round and rest structure, use the{" "}
+            <a className="ilt-content-link" href="/round-timer">
+              round timer
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Tabata timer FAQ">
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              Is this only for 20/10 timing?
+            </strong>{" "}
+            No. The classic control restores 20 seconds work, 10 seconds rest,
+            and 8 rounds, but you can set different work, rest, and round values
+            before starting.
+          </p>
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              What should I use for longer rounds?
+            </strong>{" "}
+            Use the round timer when the work periods are longer or when a
+            boxing-style or practice-round format fits better than short 20/10
+            intervals.
+          </p>
+          <p>
+            <strong className="text-[var(--ilt-text-primary)]">
+              Can it run silently?
+            </strong>{" "}
+            Yes. Keep sound off when visual phase changes are enough or when
+            beeps would not fit the space.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

@@ -101,7 +101,7 @@ export default function HowItWorks({
               Running mode supports km or miles. Rowing mode uses meters and a
               standard split per 500m. Fullscreen mode is available when you
               want large digits and minimal distractions, such as a treadmill, a
-              rowing machine display shelf, or a shared screen during training.
+              rowing machine display shelf, or a shared screen during practice.
             </p>
           </div>
 
@@ -464,7 +464,7 @@ export default function HowItWorks({
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
               <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-                Technical notes (timing accuracy, audio, fullscreen)
+                Technical notes (timing behavior, audio, fullscreen)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional troubleshooting and behavior details
@@ -481,11 +481,10 @@ export default function HowItWorks({
                 Countdown timing behavior
               </div>
               <p className="mt-1 leading-relaxed">
-                The timer runs from a real end time while active. This usually
-                keeps it accurate across normal tab switches and brief pauses in
-                rendering. If your device enters an aggressive power-saving
-                mode, the animation may look less smooth, but remaining time is
-                still computed from the end time.
+                The timer runs from a target end time while active. Normal tab
+                switches and brief pauses in rendering may make the animation
+                look less smooth, but remaining time is still computed from the
+                end time when the page is active again.
               </p>
             </div>
 
@@ -520,7 +519,7 @@ export default function HowItWorks({
               <p className="mt-1 leading-relaxed">
                 The “should be at” value is calculated from elapsed time and
                 your target pace. It is intended as an on-screen pacing
-                reference, not a replacement for GPS, erg metrics, or official
+                reference, not a replacement for GPS, erg metrics, or event
                 split data. If you pause, the estimate pauses with you because
                 elapsed time pauses.
               </p>

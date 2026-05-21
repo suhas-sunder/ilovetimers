@@ -29,7 +29,7 @@ export default function Disclaimer() {
             </strong>{" "}
             Switch between running and rowing, keep your split consistent with
             interval beeps, and use fullscreen when you need a big,
-            distance-safe display.
+            distance-based display.
           </div>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2 group-open:grid">
@@ -132,7 +132,7 @@ export default function Disclaimer() {
                 </li>
                 <li className="ilt-surface-muted p-3">
                   <strong className="text-[var(--ilt-text-primary)]">
-                    Big display training
+                    Big display timing
                   </strong>
                   : go fullscreen for a clean clock you can glance at quickly.
                 </li>

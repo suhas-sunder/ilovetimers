@@ -466,10 +466,12 @@ export default function HowItWorks({
             <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
             <PillLink to="/alarm-timer">Alarm Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>
+            <PillLink to="/meeting-timer">Meeting Timer</PillLink>
             <PillLink to="/meeting-count-up-timer">
               Meeting Count Up Timer
             </PillLink>
             <PillLink to="/time-zone-converter">Time Zone Converter</PillLink>
+            <PillLink to="/utc-clock">UTC Clock</PillLink>
           </div>
         </div>
 
@@ -573,7 +575,15 @@ export default function HowItWorks({
             >
               Time Zone Converter
             </Link>{" "}
-            first, then set the local target time here.
+            first, compare against{" "}
+            <Link
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
+              to="/utc-clock"
+            >
+              UTC Clock
+            </Link>{" "}
+            when you need a shared reference, then set the local target time
+            here.
           </div>
         </div>
       </div>

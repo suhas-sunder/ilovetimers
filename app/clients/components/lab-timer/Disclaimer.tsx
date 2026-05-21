@@ -26,8 +26,8 @@ export default function Disclaimer() {
           {/* What this page is for (tight, user-first) */}
           <div className="mt-3 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
             <strong className="text-[var(--ilt-text-primary)]">
-              Use this page to time experiments in two ways: a precise stopwatch
-              with lap splits, and a repeatable step countdown for protocols.
+              Use this page to time experiments in two ways: a stopwatch with
+              lap splits, and a repeatable step countdown for protocols.
             </strong>{" "}
             Keep it visible on a bench display, run the step timer fullscreen,
             and control it quickly with keyboard shortcuts.

@@ -139,6 +139,9 @@ export default function HowItWorks({
               You can also rename the Topic label (for example: Agenda, Demo,
               Q&amp;A, or Wrap-up) and optionally cap the number of agenda items
               so the split button disables when you reach your plan.
+              It fits standups, interviews, office hours, group discussions,
+              workshops, and any open-ended meeting where elapsed time matters
+              more than a countdown.
             </p>
 
             <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
@@ -358,7 +361,7 @@ export default function HowItWorks({
 
             <ExampleBlock
               title="Scenario 2: Client call with a break (pause/resume)"
-              subtitle="Keep elapsed meeting time accurate without mental math."
+              subtitle="Keep elapsed meeting time clear without mental math."
               lines={[
                 "Setup:",
                 "- Rename Button label to 'Section'",
@@ -483,6 +486,13 @@ export default function HowItWorks({
               >
                 Time Calculator
               </Link>
+              . Planning blocks before the meeting:{" "}
+              <Link
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
+                to="/time-blocking-clock"
+              >
+                Time Blocking Clock
+              </Link>
               .
             </p>
           </div>
@@ -510,6 +520,7 @@ export default function HowItWorks({
             <PillLink to="/count-up-timer">Count Up Timer</PillLink>
             <PillLink to="/presentation-timer">Presentation Timer</PillLink>
             <PillLink to="/stopwatch">Stopwatch</PillLink>
+            <PillLink to="/time-blocking-clock">Time Blocking Clock</PillLink>
             <PillLink to="/time-calculator">Time Calculator</PillLink>
             <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
           </div>

@@ -295,6 +295,13 @@ export default function HowItWorks({
             to the value you expect, like 7 minutes or 42 seconds.
           </p>
 
+          <p className="mt-3 text-[var(--ilt-text-secondary)] leading-relaxed">
+            That makes the page useful for coding demos, classroom explanations,
+            novelty timing displays, and binary-learning practice. It is still a
+            real stopwatch/countdown underneath; the difference is that the main
+            representation is binary rather than a normal decimal clock.
+          </p>
+
           <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Real scenarios with numbers you will actually see
           </h3>
@@ -423,8 +430,7 @@ export default function HowItWorks({
             <div className="mt-4 ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
               <span className="font-semibold text-[var(--ilt-text-primary)]">Sound note:</span>{" "}
               Some browsers block audio until you interact with the page. If you
-              need a guaranteed silent finish, turn Sound off before starting
-              the countdown.
+              want a quiet countdown, turn Sound off before starting.
             </div>
           </div>
         </div>
@@ -457,6 +463,9 @@ export default function HowItWorks({
             <PillLink href={abs("/silent-timer")}>Silent Timer</PillLink>
             <PillLink href={abs("/multiple-timers")}>Multiple Timers</PillLink>
             <PillLink href={abs("/binary-clock")}>Binary Clock</PillLink>
+            <PillLink href={abs("/milliseconds-converter")}>
+              Milliseconds Converter
+            </PillLink>
           </div>
         </div>
 

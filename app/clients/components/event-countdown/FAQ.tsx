@@ -95,6 +95,13 @@ export default function FAQ({
           >
             Fullscreen Timer
           </Link>
+          . Running a timed meeting after the event starts?{" "}
+          <Link
+            to="/meeting-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Meeting Timer
+          </Link>
           . If you need multiple timers at once, use{" "}
           <Link
             to="/multiple-timers"
@@ -109,6 +116,13 @@ export default function FAQ({
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Time Zone Converter
+          </Link>
+          . Need a shared time reference while coordinating?{" "}
+          <Link
+            to="/utc-clock"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            UTC Clock
           </Link>
           .
         </>

@@ -62,6 +62,19 @@ export default function PopularUseCases({
       ],
     },
     {
+      title: "Personal milestones, trips, and classroom events",
+      description:
+        "Create a saved countdown for a birthday, trip departure, class activity, presentation start, or livestream so the target time is visible without rebuilding it each visit.",
+      forWho:
+        "People who want a named countdown to a real date/time, not just a number of minutes.",
+      notFor:
+        "You need a timer that runs a classroom activity after the event starts. Use Classroom Timer or Presentation Timer.",
+      links: [
+        { label: "Classroom Timer", href: "/classroom-timer" },
+        { label: "Presentation Timer", href: "/presentation-timer" },
+      ],
+    },
+    {
       title: "Multiple upcoming events (saved list)",
       description:
         "Save several event countdowns (for example: check-in, start time, deadline) and switch between them instantly. Duplicate events to reuse a setup.",

@@ -101,6 +101,7 @@ export default function PopularUseCases({
         "If you need structured intervals. Use an interval timer like HIIT or Tabata.",
       links: [
         { label: "Tap BPM", href: "/bpm-tapper" },
+        { label: "Pace Timer", href: "/pace-timer" },
         { label: "HIIT Timer", href: "/hiit-timer" },
         { label: "Tabata Timer", href: "/tabata-timer" },
       ],

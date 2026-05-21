@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   Field,
   FullscreenBottomBar,
@@ -827,59 +828,98 @@ export default function SpeedcubingTimerPage({
         title="Speedcubing Timer"
         description="Practice solves with instant or hold-to-start timing, autosave, solve history, averages, keyboard shortcuts, and fullscreen."
       />
-      <SeoBand title="How this timer works">
-        <p>
-          Choose instant start or hold-to-start, run a solve, then save or remove
-          results from the solve history. Average and best-time details stay
-          below the active stopwatch so the solve display remains the first
-          thing you read.
-        </p>
-        <h3>Practice workflow</h3>
-        <p>
-          Use the timer for repeated solve attempts, then review the saved times
-          to spot whether your recent solves are trending faster, slower, or more
-          variable. If inspection mode is enabled, it gives a practice rhythm
-          before the solve starts without turning the page into a full competition
-          system.
-        </p>
-        <h3>Useful settings and history</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Instant start is quick for casual practice, while hold-to-start more
-            closely matches the feel of waiting before a solve.
-          </li>
-          <li>
-            Penalties and solve removal help keep the local history useful when
-            a solve is mistimed or should not be counted.
-          </li>
-          <li>
-            Average and best-time rows are practice summaries based on the saved
-            solves in this browser.
-          </li>
-        </ul>
-        <h3>Practice notes</h3>
-        <p>
-          This timer is intended for browser-based practice. Device input
-          latency, keyboard behavior, and browser focus can affect measured
-          times, so use it as a consistent local practice tool rather than an
-          official competition timer.
-        </p>
-        <h3>Related tools</h3>
-        <p>
-          For a general elapsed timer, use the{" "}
-          <a className="ilt-content-link" href="/stopwatch">
-            stopwatch
-          </a>
-          . For timing an activity upward from zero, try the{" "}
-          <a className="ilt-content-link" href="/count-up-timer">
-            count-up timer
-          </a>
-          . For start-response practice, use the{" "}
-          <a className="ilt-content-link" href="/reaction-time-test">
-            reaction time test
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this speedcubing timer works">
+          <p>
+            This page is for repeated solve practice. Choose instant start or
+            hold-to-start, run a solve, stop the timer, then keep or remove the
+            result from your local solve history. The active stopwatch remains
+            the first thing you read, with history and averages below the tool.
+          </p>
+          <p>
+            If inspection is enabled, it gives you a short pre-solve rhythm
+            before timing begins. Penalty controls and solve removal help keep
+            your practice history useful when a solve is mistimed, started by
+            mistake, or should not be included in your local summary.
+          </p>
+        </ContentSection>
+        <ContentSection title="Practice examples and settings">
+          <p>
+            Use instant start for quick casual solves, hold-to-start when you
+            want a more deliberate start, and inspection when you want a
+            consistent setup before the solve. For a warmup session, keep every
+            solve. For focused practice, remove obvious misfires so your recent
+            averages reflect the attempts you meant to track.
+          </p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Practice session: solve several times, review best and average
+              rows, then reset history when you want a fresh block.
+            </li>
+            <li>
+              Warmups: keep the display simple and use history only as a rough
+              personal trend.
+            </li>
+            <li>
+              Mistimed attempts: apply penalties or remove solves based on how
+              you want your local practice log to read.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Averages, history, and limitations">
+          <p>
+            Averages and best-time rows are practice summaries from the solves
+            stored in this browser. They are helpful for comparing your own
+            recent attempts, but they are not a certified competition record.
+            Device input latency, keyboard behavior, touch timing, browser
+            focus, and display refresh rate can affect measured times.
+          </p>
+          <p>
+            If you are practicing for an event, use this page as a local
+            training aid and follow the timing rules required by that event or
+            organization.
+          </p>
+        </ContentSection>
+        <ContentSection title="Related solving and speed tools">
+          <p>
+            For a general elapsed timer, use the{" "}
+            <a className="ilt-content-link" href="/stopwatch">
+              stopwatch
+            </a>
+            . For timing an activity upward from zero, try the{" "}
+            <a className="ilt-content-link" href="/count-up-timer">
+              count-up timer
+            </a>
+            . For start-response practice, use the{" "}
+            <a className="ilt-content-link" href="/reaction-time-test">
+              reaction time test
+            </a>
+            . For split-based game runs, use the{" "}
+            <a className="ilt-content-link" href="/speedrun-timer">
+              speedrun timer
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Speedcubing timer FAQ">
+          <h3>Is this WCA-compliant?</h3>
+          <p>
+            Treat it as a browser-based practice timer. Use the equipment and
+            rules required by your event if you need official competition
+            timing.
+          </p>
+          <h3>What should I do with accidental solves?</h3>
+          <p>
+            Remove the solve or apply the available penalty controls so your
+            local history matches how you want to review the session.
+          </p>
+          <h3>Why do times vary by device?</h3>
+          <p>
+            Browser focus, keyboard/touch latency, refresh rate, and device load
+            can all affect input timing. For comparable practice, keep your setup
+            consistent.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

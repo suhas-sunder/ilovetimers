@@ -24,7 +24,7 @@ export default function FAQ({
     {
       question: "What does this online metronome do?",
       answer:
-        "It plays a steady, accurate tick at your selected BPM and shows a clear visual pulse. You can change BPM, pick a time signature, choose subdivisions, enable an accented downbeat, switch click sounds, adjust volume, and use fullscreen for a big practice view.",
+        "It plays a steady tick at your selected BPM and shows a clear visual pulse. You can change BPM, pick a time signature, choose subdivisions, enable an accented downbeat, switch click sounds, adjust volume, and use fullscreen for a big practice view.",
     },
     {
       question: "How do I start and stop the metronome quickly?",

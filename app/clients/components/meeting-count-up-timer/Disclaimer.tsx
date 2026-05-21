@@ -162,7 +162,7 @@ export default function Disclaimer() {
                 <li className="ilt-surface-muted p-3">
                   <strong className="text-[var(--ilt-text-primary)]">Break handling</strong>:
                   Pause when you take a break, then Start again when you resume.
-                  The elapsed time stays accurate without needing mental math.
+                  The elapsed-time display resumes without needing manual math.
                 </li>
               </ul>
             </div>
@@ -212,6 +212,17 @@ export default function Disclaimer() {
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Stopwatch
+                  </Link>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
+                  Planning the meeting blocks before you start?{" "}
+                  <Link
+                    to="/time-blocking-clock"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Time Blocking Clock
                   </Link>
                   .
                 </div>

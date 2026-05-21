@@ -173,6 +173,17 @@ export default function Disclaimer() {
                 </div>
 
                 <div className="ilt-surface-muted p-3">
+                  Running a casual game challenge?{" "}
+                  <a
+                    href="/video-game-challenge-timer"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Video Game Challenge Timer
+                  </a>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
                   Want to track open-ended time instead?{" "}
                   <a
                     href="/count-up-timer"
@@ -213,7 +224,7 @@ export default function Disclaimer() {
 
                 <div className="ilt-surface-muted p-4">
                   <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
-                    Timer accuracy
+                    Timer timing
                   </div>
                   <p className="mt-2">
                     The timer targets an end timestamp and updates remaining

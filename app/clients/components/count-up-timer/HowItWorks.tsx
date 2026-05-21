@@ -156,6 +156,13 @@ export default function HowItWorks({
               for meeting-focused elapsed timing,{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
+                href={abs("/time-calculator")}
+              >
+                Time Calculator
+              </a>{" "}
+              when you need to add or compare elapsed durations,{" "}
+              <a
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/pomodoro-timer")}
               >
                 Pomodoro Timer
@@ -505,6 +512,7 @@ export default function HowItWorks({
             <PillLink href={abs("/meeting-count-up-timer")}>
               Meeting Count Up Timer
             </PillLink>
+            <PillLink href={abs("/time-calculator")}>Time Calculator</PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
             <PillLink href={abs("/fullscreen-timer")}>
               Fullscreen Timer

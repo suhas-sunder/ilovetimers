@@ -31,6 +31,7 @@ export default function PopularUseCases({
         "If you want fixed, repeatable intervals (example: exactly 30s on, 30s off). Use HIIT Timer, Tabata Timer, or Round Timer instead.",
       links: [
         { label: "Chaos Timer", href: "/chaos-timer" },
+        { label: "Workout Timer", href: "/workout-timer" },
         { label: "HIIT Timer", href: "/hiit-timer" },
         { label: "Tabata Timer", href: "/tabata-timer" },
       ],
@@ -102,6 +103,7 @@ export default function PopularUseCases({
         "If you want everything in one structured routine with rounds and rest built in. Use Round Timer instead.",
       links: [
         { label: "Chaos Timer", href: "/chaos-timer" },
+        { label: "Video Game Challenge Timer", href: "/video-game-challenge-timer" },
         { label: "Rest Timer", href: "/rest-timer" },
         { label: "Break Timer", href: "/break-timer" },
       ],

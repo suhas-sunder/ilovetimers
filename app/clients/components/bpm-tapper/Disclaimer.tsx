@@ -134,7 +134,18 @@ export default function Disclaimer() {
                 </div>
 
                 <div className="ilt-surface-muted p-3">
-                  Measuring speed instead of tempo?{" "}
+                  Measuring movement pace instead of tempo?{" "}
+                  <a
+                    href="/pace-timer"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Pace Timer
+                  </a>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
+                  Comparing input response instead of tempo?{" "}
                   <a
                     href="/reaction-time-test"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"

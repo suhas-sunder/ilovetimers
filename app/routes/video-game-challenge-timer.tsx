@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   Field,
   FullscreenBottomBar,
@@ -37,7 +38,7 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
 export function meta({}: Route.MetaArgs) {
   const title = "Game Challenge Timer (Sudden Death, Fullscreen)";
   const description =
-    "Run fast game challenges with a sudden death or one-minute timer. Big fullscreen countdown built for party games, streams, and competitive play.";
+    "Run casual game challenges with sudden death, one-minute, and multi-round timers. Big fullscreen countdown for party games, streams, and practice rounds.";
 
   const url = "https://www.ilovetimers.com/video-game-challenge-timer";
 
@@ -760,57 +761,98 @@ export default function VideoGameChallengeTimerPage({
         title="Video Game Challenge Timer"
         description="Run sudden death, one-minute, and multi-round challenge timers with presets, audio cues, shortcuts, and fullscreen."
       />
-      <SeoBand title="How this timer works">
-        <p>
-          Choose a challenge mode, set the round length when needed, then use
-          the large countdown as the active game clock. The page keeps round,
-          rest, sound, keyboard, and fullscreen controls in the utility area so
-          the running timer remains the main focus.
-        </p>
-        <h3>When to use it</h3>
-        <p>
-          Use this page for party games, stream challenges, sudden death rounds,
-          timed attempts, or practice blocks where a clear end signal matters.
-          Use a regular countdown timer when you only need one fixed duration.
-        </p>
-        <h3>Challenge formats</h3>
-        <p>
-          Use short rounds for speed challenges, attempt limits for repeated
-          practice, and break limits when players need a clear reset window
-          between turns. The timer supports casual game-session structure rather
-          than betting, gambling, or high-risk challenge rules.
-        </p>
-        <h3>Helpful settings</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Presets help switch quickly between sudden-death, one-minute, and
-            multi-round formats.
-          </li>
-          <li>
-            Sound cues can mark transitions when players are watching the game
-            screen instead of the timer.
-          </li>
-          <li>
-            Fullscreen mode makes the challenge clock easier to read on stream,
-            across a room, or beside a shared display.
-          </li>
-        </ul>
-        <h3>Related challenge tools</h3>
-        <p>
-          For split-based game runs, use the{" "}
-          <a className="ilt-content-link" href="/speedrun-timer">
-            speedrun timer
-          </a>
-          . For a plain fixed duration, use the{" "}
-          <a className="ilt-content-link" href="/countdown-timer">
-            countdown timer
-          </a>
-          . For unpredictable timing, try the{" "}
-          <a className="ilt-content-link" href="/chaos-timer">
-            chaos timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this game challenge timer works">
+          <p>
+            Choose a challenge mode, set the round length when needed, then use
+            the large countdown as the active game clock. Presets cover quick
+            sudden-death rounds, one-minute attempts, and multi-round challenge
+            formats. Controls stay in the utility area so the timer remains the
+            main focus.
+          </p>
+          <p>
+            This page is for casual game-session structure: clear starts,
+            visible time remaining, optional sound cues, and fullscreen when the
+            timer needs to sit beside a stream, shared screen, or party setup.
+            It is not meant for betting, gambling, unsafe challenges, or formal
+            tournament rule enforcement.
+          </p>
+        </ContentSection>
+        <ContentSection title="Challenge formats and examples">
+          <p>
+            Use sudden death when the round ends at zero, one-minute mode when
+            you want quick repeated attempts, and custom rounds when your group
+            needs a specific length or reset window. Short rounds work well for
+            speed attempts, while longer rounds fit practice blocks or party
+            games where everyone needs enough time to take a turn.
+          </p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Casual speed attempt: one player has one minute to clear a level,
+              finish a route, or beat a score.
+            </li>
+            <li>
+              Multi-round challenge: run a fixed round length, pause between
+              turns, then reset for the next player or attempt.
+            </li>
+            <li>
+              Stream or shared-room timer: go fullscreen so the countdown stays
+              visible without covering the game interface.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Settings, sound cues, and limits">
+          <p>
+            Sound cues can mark the end of a round when players are watching the
+            game screen instead of the timer. Fullscreen makes the countdown
+            easier to read across a room or beside a shared display. Custom
+            round settings are useful when a preset is close but not quite the
+            challenge you want.
+          </p>
+          <p>
+            Browser audio may require a click before it plays, and tab focus or
+            device sleep can affect visible updates. Keep the timer visible for
+            group sessions, and keep challenge rules casual, clear, and safe.
+          </p>
+        </ContentSection>
+        <ContentSection title="Related game and timing tools">
+          <p>
+            For split-based game runs, use the{" "}
+            <a className="ilt-content-link" href="/speedrun-timer">
+              speedrun timer
+            </a>
+            . For a plain fixed duration, use the{" "}
+            <a className="ilt-content-link" href="/countdown-timer">
+              countdown timer
+            </a>
+            . For unpredictable timing, try the{" "}
+            <a className="ilt-content-link" href="/chaos-timer">
+              chaos timer
+            </a>
+            . For open-ended attempts, use the{" "}
+            <a className="ilt-content-link" href="/stopwatch">
+              stopwatch
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Video game challenge timer FAQ">
+          <h3>Is this for official competitions?</h3>
+          <p>
+            No. Use it for casual challenges, streams, party games, and practice
+            rounds. Follow the required rules and equipment for any formal event.
+          </p>
+          <h3>When should I use the speedrun timer instead?</h3>
+          <p>
+            Use the speedrun timer when you need splits and a run history. Use
+            this page when you need a countdown clock for a challenge round.
+          </p>
+          <h3>Can I use it without sound?</h3>
+          <p>
+            Yes. Keep sound off and use the visual countdown or fullscreen view
+            when audio would be distracting.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

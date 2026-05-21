@@ -38,9 +38,9 @@ import PopularUseCases from "~/clients/components/metronome/PopularUseCases";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Online Metronome (Tap Tempo + Accurate BPM)";
+  const title = "Online Metronome (Tap Tempo + BPM)";
   const description =
-    "Practice with a clean, accurate online metronome. Set BPM, tap your tempo, and keep time with a clear visual and audio pulse for musicians.";
+    "Practice with a clean online metronome. Set BPM, tap your tempo, and keep time with a clear visual and audio pulse.";
 
   const url = "https://www.ilovetimers.com/metronome";
 
@@ -878,7 +878,7 @@ export default function MetronomePage({
         name: "Online Metronome",
         url,
         description:
-          "Online metronome and tempo timer with accurate audio scheduling, BPM control, tap tempo, time signatures, accents, subdivisions, and fullscreen.",
+          "Online metronome and tempo timer with BPM control, tap tempo, time signatures, accents, subdivisions, audio scheduling, and fullscreen.",
       },
       {
         "@type": "BreadcrumbList",

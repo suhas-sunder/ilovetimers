@@ -477,6 +477,13 @@ export default function HowItWorks({
             <PillLink href={abs("/hiit-timer")}>HIIT Timer</PillLink>
             <PillLink href={abs("/tabata-timer")}>Tabata Timer</PillLink>
             <PillLink href={abs("/round-timer")}>Round Timer</PillLink>
+            <PillLink href={abs("/workout-timer")}>Workout Timer</PillLink>
+            <PillLink href={abs("/video-game-challenge-timer")}>
+              Video Game Challenge Timer
+            </PillLink>
+            <PillLink href={abs("/reaction-time-test")}>
+              Reaction Time Test
+            </PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
             <PillLink href={abs("/fullscreen-timer")}>
               Fullscreen Timer

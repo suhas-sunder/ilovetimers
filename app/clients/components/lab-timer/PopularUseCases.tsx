@@ -132,8 +132,8 @@ export default function PopularUseCases({
             Common scenarios
           </h2>
           <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
-            Use this page for lab-style timing: a precise stopwatch with lap
-            splits for reaction timing and trials, plus a repeatable step
+            Use this page for lab-style timing: a stopwatch with lap splits for
+            observations and trials, plus a repeatable step
             countdown you can run fullscreen. Enable sound cues if you want
             hands-busy alerts.
           </p>

@@ -24,7 +24,7 @@ export default function FAQ({
     {
       question: "What does this Lab Timer do?",
       answer:
-        "It gives you two lab-focused timing tools on one page: (1) a precise stopwatch with laps for reaction timing and repeated trials, and (2) a repeatable step countdown for timed protocol steps. You can go fullscreen for a large display, enable optional sound cues, and use keyboard shortcuts for quick control.",
+        "It gives you two lab-focused timing tools on one page: (1) a stopwatch with laps for observations and repeated trials, and (2) a repeatable step countdown for timed protocol steps. You can go fullscreen for a large display, enable optional sound cues, and use keyboard shortcuts for quick control.",
     },
     {
       question: "How do stopwatch laps work here?",
@@ -65,6 +65,11 @@ export default function FAQ({
       question: "Why might I not hear sound cues?",
       answer:
         "Some browsers block audio until you interact with the page. If cues are silent, click/tap a Start button once, then try again. Also verify your device isn’t muted and volume is up.",
+    },
+    {
+      question: "Is this lab-grade or instrument-grade timing?",
+      answer:
+        "No. It is a browser timer for classroom labs, practice experiments, observations, and repeated steps. Browser timing, device sleep, tab throttling, audio permissions, and device performance can affect timing or perceived precision.",
     },
     {
       question: "Which related timer should I use instead?",

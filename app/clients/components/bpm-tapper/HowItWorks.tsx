@@ -123,7 +123,7 @@ export default function HowItWorks({
 
             <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This page is not a tutorial about music theory. The goal is
-              practical: get a reliable BPM from taps, avoid accidental pauses
+              practical: estimate BPM from taps, avoid accidental pauses
               messing up the number, and keep the result visible long enough to
               use it. If you want audible clicks at a fixed tempo, use{" "}
               <a
@@ -446,6 +446,7 @@ export default function HowItWorks({
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink href={abs("/metronome")}>Metronome</PillLink>
             <PillLink href={abs("/stopwatch")}>Stopwatch</PillLink>
+            <PillLink href={abs("/pace-timer")}>Pace Timer</PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
             <PillLink href={abs("/fullscreen-timer")}>
               Fullscreen Timer

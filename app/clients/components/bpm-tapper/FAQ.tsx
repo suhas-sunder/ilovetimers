@@ -26,7 +26,7 @@ export default function FAQ({
         "It estimates tempo (beats per minute) from your taps. Tap/click anywhere to register beats and the tool calculates BPM from your recent, valid intervals. You can also copy the result, lock it, and use fullscreen.",
     },
     {
-      question: "How many taps do I need for an accurate BPM?",
+      question: "How many taps do I need for a steadier BPM?",
       answer:
         "You’ll usually see a usable BPM after a few taps, but it becomes more stable after about 6–10 consistent taps. If the number feels jumpy, keep tapping until it settles before locking or copying.",
     },

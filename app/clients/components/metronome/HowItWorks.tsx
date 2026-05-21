@@ -14,7 +14,7 @@ export function JsonLd({ data }: { data: any }) {
 /* =========================================================
    1) HOW IT WORKS (trust + SEO + user intent)
    Notes:
-   - Metronome intent: accurate BPM + tap tempo + time signature + subdivisions
+   - Metronome intent: BPM + tap tempo + time signature + subdivisions
    - Tool-focused (practice workflow), not music theory lessons
    - Scenario-based with concrete numbers users will see on this page
    - Technical details live in an expandable section
@@ -33,9 +33,9 @@ export default function HowItWorks({
   const howToLd = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: "How to use the Online Metronome (tap tempo, accurate BPM, subdivisions, fullscreen)",
+    name: "How to use the Online Metronome (tap tempo, BPM, subdivisions, fullscreen)",
     description:
-      "Practice with a clean, accurate online metronome. Set BPM, tap tempo, choose time signature and subdivisions, enable an accented downbeat, adjust volume and click sound, use fullscreen, and copy your setup.",
+      "Practice with a clean online metronome. Set BPM, tap tempo, choose time signature and subdivisions, enable an accented downbeat, adjust volume and click sound, use fullscreen, and copy your setup.",
     url: canonicalUrl,
     step: [
       {
@@ -576,6 +576,7 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/bpm-tapper">BPM Tapper</PillLink>
+            <PillLink to="/pace-timer">Pace Timer</PillLink>
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
             <PillLink to="/stopwatch">Stopwatch</PillLink>
             <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
@@ -691,7 +692,7 @@ export default function HowItWorks({
         {/* Small SEO anchor text without being bloggy */}
         <div className="mt-6 ilt-surface-muted px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
           <strong className="text-[var(--ilt-text-primary)]">In one sentence:</strong> this
-          online metronome gives you accurate BPM with tap tempo, time
+          online metronome gives you BPM control with tap tempo, time
           signatures, subdivisions, an optional downbeat accent, selectable
           click sounds and volume, fullscreen mode, keyboard shortcuts, and
           one-click copy so you can practice with a steady pulse without extra

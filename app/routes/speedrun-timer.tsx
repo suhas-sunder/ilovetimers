@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   Field,
   FullscreenBottomBar,
@@ -573,57 +574,100 @@ export default function SpeedrunTimerPage({
         title="Speedrun Timer"
         description="Track runs with start, pause, splits, undo, end, reset, CSV copy, keyboard shortcuts, and fullscreen."
       />
-      <SeoBand title="How this timer works">
-        <p>
-          Start a run, record splits as segments finish, and use undo when the
-          latest split was accidental. The split table stays below the main
-          display so current run time remains dominant while totals and deltas
-          stay available.
-        </p>
-        <h3>Practice workflow</h3>
-        <p>
-          Add the split names you want to track, start the run, then split as
-          each segment ends. Reset for a new attempt, undo a mistaken split, and
-          copy exported timing notes when you want to compare attempts outside
-          the browser.
-        </p>
-        <h3>Using splits well</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Keep split names short so the active segment is easy to scan during
-            a run.
-          </li>
-          <li>
-            Use the same split list across attempts when you want comparisons to
-            be meaningful.
-          </li>
-          <li>
-            Treat copied CSV data as practice notes, not official race or event
-            verification.
-          </li>
-        </ul>
-        <h3>Notes and limitations</h3>
-        <p>
-          This is a browser-based practice timer. It is useful for local splits,
-          personal timing, and copied CSV notes, but it is not an official
-          verification system for leaderboard submissions.
-        </p>
-        <h3>Related timing tools</h3>
-        <p>
-          For simple elapsed timing, use the{" "}
-          <a className="ilt-content-link" href="/stopwatch">
-            stopwatch
-          </a>
-          . For timing up from zero without split rows, try the{" "}
-          <a className="ilt-content-link" href="/count-up-timer">
-            count-up timer
-          </a>
-          . For solve-practice timing, use the{" "}
-          <a className="ilt-content-link" href="/speedcubing-timer">
-            speedcubing timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this speedrun timer works">
+          <p>
+            This page is built for split-based practice runs. Start the run,
+            record a split when each segment ends, undo the most recent split if
+            it was accidental, and end or reset the run when you are finished.
+            The active run clock stays visually dominant while split rows stay
+            below it for quick scanning.
+          </p>
+          <p>
+            Splits are useful when the run has named checkpoints: intro, level
+            1, boss, final room, credits, or any route marker you want to review.
+            The timer shows the total time at each split and the delta from the
+            previous split, so you can see both the run clock and the segment
+            length without doing manual subtraction.
+          </p>
+        </ContentSection>
+        <ContentSection title="Practice examples and split setup">
+          <p>
+            For a short route practice session, name only the segments you care
+            about and keep them short enough to read during play. For a full run,
+            use the same split list across attempts so your comparison notes are
+            consistent. For segment grinding, start with just a few checkpoints
+            and reset often.
+          </p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Practice run: start, split at each level clear, end the run, then
+              copy the notes for a quick personal log.
+            </li>
+            <li>
+              Route practice: use fewer split names so the active segment is
+              easy to identify while you are playing.
+            </li>
+            <li>
+              Mistake handling: use Undo for the latest accidental split instead
+              of resetting the whole run.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Copy, export, and interpretation notes">
+          <p>
+            Copy or export is best treated as a lightweight practice record. It
+            can help you compare attempts outside the browser, save notes after a
+            session, or paste split times into a personal log. It is not an
+            official race, tournament, or leaderboard verification system.
+          </p>
+          <p>
+            Browser timing can be affected by tab focus, device sleep, keyboard
+            input latency, and background load. Keep the timer visible during a
+            serious practice run, and use the same browser/device setup when you
+            want attempts to be comparable.
+          </p>
+        </ContentSection>
+        <ContentSection title="Related speed and elapsed-time tools">
+          <p>
+            For a simpler elapsed timer, use the{" "}
+            <a className="ilt-content-link" href="/stopwatch">
+              stopwatch
+            </a>
+            . For a plain count-up display without split rows, try the{" "}
+            <a className="ilt-content-link" href="/count-up-timer">
+              count-up timer
+            </a>
+            . For solve practice, use the{" "}
+            <a className="ilt-content-link" href="/speedcubing-timer">
+              speedcubing timer
+            </a>
+            . For start-response practice, try the{" "}
+            <a className="ilt-content-link" href="/reaction-time-test">
+              reaction time test
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Speedrun timer FAQ">
+          <h3>Can I use this for official submissions?</h3>
+          <p>
+            Use it for practice and personal notes. Follow the rules of the
+            leaderboard, event, or community you are submitting to if official
+            verification is required.
+          </p>
+          <h3>What is a split?</h3>
+          <p>
+            A split is a checkpoint recorded during the run. It captures the run
+            total at that moment and the time since the previous split.
+          </p>
+          <h3>When should I use Undo?</h3>
+          <p>
+            Use Undo when the latest split was accidental or happened at the
+            wrong checkpoint. It only fixes the most recent split, so use it
+            right away.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

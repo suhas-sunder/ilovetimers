@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 export default function Disclaimer() {
   const preview =
-    "Accurate click • Tap tempo • Time signature + subdivision • Downbeat accent • Fullscreen • Keyboard shortcuts • Copy settings";
+    "BPM control • Tap tempo • Time signature + subdivision • Downbeat accent • Fullscreen • Keyboard shortcuts • Copy settings";
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-6">
@@ -38,7 +38,7 @@ export default function Disclaimer() {
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2 group-open:grid">
             <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
-              <strong className="text-[var(--ilt-text-primary)]">Accurate BPM control.</strong>{" "}
+              <strong className="text-[var(--ilt-text-primary)]">BPM control.</strong>{" "}
               Use the slider, number input, or arrow keys to set tempo from{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">20 to 400</span>{" "}
               BPM. Shift + arrows adjusts by{" "}
@@ -204,6 +204,17 @@ export default function Disclaimer() {
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Fullscreen Timer
+                  </Link>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
+                  Matching movement pace instead of musical tempo?{" "}
+                  <Link
+                    to="/pace-timer"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Pace Timer
                   </Link>
                   .
                 </div>

@@ -9,6 +9,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   FullscreenBottomBar,
   FullscreenTopBar,
@@ -30,9 +31,9 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Reaction Time Test (Fast Human Reflex Test, Instant Results)";
+  const title = "Reaction Time Test (Casual Click Speed Test)";
   const description =
-    "Test your reaction time in seconds. Tap or press when the screen changes and see your best and average reaction speed instantly.";
+    "Try a casual reaction time test in your browser. Wait for the signal, tap or press, then review valid results, false starts, best time, and averages.";
 
   const url = "https://www.ilovetimers.com/reaction-time-test";
 
@@ -913,7 +914,7 @@ export default function ReactionTimeTestPage({}: Route.ComponentProps) {
         name: "Reaction Time Test",
         url,
         description:
-          "Reaction time test. Tap to start, wait for the signal, then react as fast as possible. Track best, average, median, and false starts. Fullscreen supported.",
+          "Casual reaction time test. Tap to start, wait for the signal, then respond and review valid results, false starts, best, average, and median. Fullscreen supported.",
       },
       {
         "@type": "BreadcrumbList",
@@ -947,59 +948,101 @@ export default function ReactionTimeTestPage({}: Route.ComponentProps) {
         title="Reaction Time Test"
         description="Tap to start, wait for the signal, then react as fast as possible. Track best, average, median, false starts, and fullscreen runs."
       />
-      <SeoBand title="How this test works">
-        <p>
-          Start a trial, wait for the signal, then tap or press the key as soon
-          as the state changes. False starts are counted separately, and summary
-          stats stay below the active test area so the next trial remains easy
-          to run.
-        </p>
-        <h3>How to read the result</h3>
-        <p>
-          A valid result measures the time between the signal change and your
-          tap or key press. Early clicks are counted separately because they
-          happen before the signal and should not be mixed into reaction history.
-          Best, average, and median values are practice summaries from the
-          current browser session.
-        </p>
-        <h3>Tips for consistent runs</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Use the same device, input method, and browser setup when comparing
-            multiple attempts.
-          </li>
-          <li>
-            Close distracting tabs or background tasks if you want a more stable
-            practice environment.
-          </li>
-          <li>
-            Reset history when you want a fresh set of attempts for one session.
-          </li>
-        </ul>
-        <h3>Notes and limitations</h3>
-        <p>
-          Reaction results are estimates from your browser and device. Screen
-          refresh rate, keyboard or touch latency, and background activity can
-          affect the number, so compare runs on the same setup when possible.
-          This is not a medical, neurological, driving, sports, or clinical
-          assessment.
-        </p>
-        <h3>Related timing tools</h3>
-        <p>
-          For tapping a rhythm into BPM, use the{" "}
-          <a className="ilt-content-link" href="/bpm-tapper">
-            BPM tapper
-          </a>
-          . For solve timing practice, try the{" "}
-          <a className="ilt-content-link" href="/speedcubing-timer">
-            speedcubing timer
-          </a>
-          . For general elapsed timing, use the{" "}
-          <a className="ilt-content-link" href="/stopwatch">
-            stopwatch
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this reaction time test works">
+          <p>
+            Start a trial, wait while the test is in its waiting state, then tap
+            or press when the signal changes. A valid result measures the time
+            between the signal and your input. Early clicks are handled
+            separately so they do not get mixed into valid reaction history.
+          </p>
+          <p>
+            The active test area stays first so the next trial is easy to run.
+            Summary stats such as best, average, median, valid trials, and false
+            starts sit below the interaction area for review after you have run a
+            few attempts.
+          </p>
+        </ContentSection>
+        <ContentSection title="How to read your results">
+          <p>
+            One result is only one tap on one device. A small set of attempts is
+            usually more useful than a single number because input timing can
+            vary. Best shows your fastest valid attempt, average shows the mean
+            of valid trials, and median helps reduce the influence of one very
+            slow or very fast attempt.
+          </p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Early click: you responded before the signal, so it is counted as
+              a false start instead of a valid result.
+            </li>
+            <li>
+              Valid click: you responded after the signal, so the result is
+              added to the current session history.
+            </li>
+            <li>
+              Reset: clears the current session so you can start a fresh set of
+              attempts.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Examples and consistency tips">
+          <p>
+            Use this page for casual reaction practice, game warmups, checking
+            whether one input method feels different from another, or comparing
+            the same device before and after changing display settings. Keep the
+            browser visible, use the same input method, and avoid comparing
+            results across completely different devices as if they were the same
+            setup.
+          </p>
+          <p>
+            Display latency, mouse latency, touch latency, keyboard latency,
+            browser scheduling, refresh rate, and background activity can affect
+            the number. This is a browser timing tool, not a medical,
+            neurological, driving, sports, or clinical assessment.
+          </p>
+        </ContentSection>
+        <ContentSection title="Related rhythm and speed tools">
+          <p>
+            For tapping a rhythm into BPM, use the{" "}
+            <a className="ilt-content-link" href="/bpm-tapper">
+              BPM tapper
+            </a>
+            . For solve timing practice, try the{" "}
+            <a className="ilt-content-link" href="/speedcubing-timer">
+              speedcubing timer
+            </a>
+            . For general elapsed timing, use the{" "}
+            <a className="ilt-content-link" href="/stopwatch">
+              stopwatch
+            </a>
+            . For steady audio/visual tempo cues, use the{" "}
+            <a className="ilt-content-link" href="/metronome">
+              metronome
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Reaction time test FAQ">
+          <h3>Why did my early click count separately?</h3>
+          <p>
+            The test only records a valid result after the signal appears. A
+            response before the signal is a false start, so it is kept out of
+            the valid history.
+          </p>
+          <h3>Can I compare phone and laptop results?</h3>
+          <p>
+            You can compare them casually, but touch screens, keyboards, mice,
+            displays, and browsers all add different latency. Same-device
+            comparisons are usually more meaningful.
+          </p>
+          <h3>Is this a clinical reflex test?</h3>
+          <p>
+            No. It is a browser-based timing interaction for casual practice and
+            device comparison. It should not be used for medical, driving,
+            sports, or safety-critical decisions.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

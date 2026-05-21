@@ -27,7 +27,7 @@ export default function PopularUseCases({
       description:
         "Press Start as the standup begins and keep the elapsed time visible. Use Topic when you switch between updates, blockers, and wrap-up so you can see how long each segment took.",
       forWho:
-        "Teams that want a lightweight way to keep standups from running long without managing a strict countdown.",
+        "Teams that want a lightweight way to monitor standup pacing without managing a strict countdown.",
       notFor:
         "You need time remaining with a hard end time. Use Meeting Timer for a countdown-based meeting.",
       links: [
@@ -92,7 +92,7 @@ export default function PopularUseCases({
       description:
         "Pause when the meeting breaks, then Start again when you resume. Topic splits still work after resuming, and the elapsed time stays consistent without manual adjustment.",
       forWho:
-        "Longer meetings that include breaks and need accurate elapsed time for the actual meeting time.",
+        "Longer meetings that include breaks and need a clear elapsed-time view for the actual meeting time.",
       notFor:
         "You want a strict countdown that continues through breaks. Use Online Timer for a simple countdown you can leave running.",
       links: [

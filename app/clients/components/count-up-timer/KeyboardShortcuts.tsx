@@ -82,7 +82,7 @@ export function AccuracyAndPrivacySection() {
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Elapsed time is computed from a high-resolution performance clock
               and updates the UI using requestAnimationFrame. This keeps the
-              display smooth while measuring time accurately.
+              display smooth while avoiding frame-count drift.
             </p>
           </div>
 

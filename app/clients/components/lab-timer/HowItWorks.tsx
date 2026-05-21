@@ -35,7 +35,7 @@ export default function HowItWorks({
     "@type": "HowTo",
     name: "How to use the Lab Timer (stopwatch laps, repeatable step countdown, fullscreen, sound cues, shortcuts)",
     description:
-      "Use a lab-focused timer with two tools: a precise stopwatch with laps for reaction timing and repeated trials, and a repeatable step countdown for protocol steps. Optional sound cues, final beeps, fullscreen step view, and keyboard shortcuts.",
+      "Use a lab-focused timer with two browser tools: a stopwatch with laps for observations and repeated trials, and a repeatable step countdown for protocol steps. Optional sound cues, final beeps, fullscreen step view, and keyboard shortcuts.",
     url: canonicalUrl,
     step: [
       {
@@ -124,7 +124,7 @@ export default function HowItWorks({
               a practical timing page for experiments and repeatable procedures.
               It combines two tools that cover most bench timing needs: a{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">
-                precise stopwatch with lap splits
+                stopwatch with lap splits
               </span>{" "}
               (for reaction timing, event markers, and repeated trials) and a{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">
@@ -522,6 +522,7 @@ export default function HowItWorks({
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
             <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>
+            <PillLink to="/time-calculator">Time Calculator</PillLink>
             <PillLink to="/reaction-time-test">Reaction Time Test</PillLink>
             <PillLink to="/milliseconds-converter">
               Milliseconds Converter
@@ -561,7 +562,7 @@ export default function HowItWorks({
 
             <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
               <div className="font-semibold text-[var(--ilt-text-primary)]">
-                Countdown accuracy
+                Countdown timing
               </div>
               <p className="mt-1 leading-relaxed">
                 The countdown targets its end time using a monotonic clock

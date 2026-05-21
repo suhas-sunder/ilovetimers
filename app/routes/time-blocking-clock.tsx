@@ -3,14 +3,28 @@ import type { Route } from "./+types/time-blocking-clock";
 import { json } from "@remix-run/node";
 import {
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
-  type KeyboardEvent,
+  type KeyboardEvent
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  Toggle,
+  ToolFrame as Card,
+  ToolHero,
+  UtilityResultRow,
+  ShortcutHint,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -71,30 +85,6 @@ function isTypingTarget(target: EventTarget | null) {
     tag === "SELECT" ||
     el.isContentEditable
   );
-}
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
 }
 
 function minutesSinceMidnight(d: Date) {
@@ -172,227 +162,36 @@ function formatDate(now: Date) {
   }).format(now);
 }
 
-/**
- * Fit a single-line clock string into its container by adjusting font size.
- * - ResizeObserver + rAF
- * - Binary search for max font-size that fits width + height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
 /* =========================================================
    CARD
 ========================================================= */
 const LS_KEY = "ilovetimers:time-blocking-clock:v2";
+
+const DEFAULT_BLOCKS: Block[] = sortBlocks(
+  [
+    {
+      id: "deep-work",
+      title: "Deep Work",
+      startMin: 9 * 60,
+      endMin: 11 * 60,
+      notes: "",
+    },
+    {
+      id: "admin",
+      title: "Admin",
+      startMin: 11 * 60,
+      endMin: 11 * 60 + 45,
+      notes: "",
+    },
+    {
+      id: "break",
+      title: "Break",
+      startMin: 12 * 60,
+      endMin: 12 * 60 + 30,
+      notes: "",
+    },
+  ].map(normalizeBlock),
+);
 
 function BlockRow({
   block,
@@ -436,69 +235,48 @@ function BlockRow({
 
   return (
     <div
-      className={[
-        "rounded-2xl border p-4",
-        isActive ? "border-amber-300 bg-amber-50" : "border-slate-200 bg-white",
-      ].join(" ")}
+      className={isActive ? "timer-list-row ilt-surface-accent p-4" : "timer-list-row ilt-surface-muted p-4"}
     >
       <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-start">
         <div className="grid gap-3 sm:grid-cols-3">
-          <div>
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
-              Title
-            </div>
-            <input
-              value={block.title}
-              onChange={(e) => onUpdate(block.id, { title: e.target.value })}
-              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-            />
-          </div>
+          <Field
+            label="Title"
+            value={block.title}
+            onChange={(e) => onUpdate(block.id, { title: e.target.value })}
+          />
 
-          <div>
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
-              Start
-            </div>
-            <input
-              value={startStr}
-              onChange={(e) => setStartStr(e.target.value)}
-              onBlur={commitStart}
-              onKeyDown={(e) => {
-                if (e.key === "Enter")
-                  (e.currentTarget as HTMLInputElement).blur();
-              }}
-              inputMode="numeric"
-              placeholder="09:00"
-              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-            />
-          </div>
+          <Field
+            label="Start"
+            value={startStr}
+            onChange={(e) => setStartStr(e.target.value)}
+            onBlur={commitStart}
+            onKeyDown={(e) => {
+              if (e.key === "Enter")
+                (e.currentTarget as HTMLInputElement).blur();
+            }}
+            inputMode="numeric"
+            placeholder="09:00"
+          />
 
-          <div>
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
-              End
-            </div>
-            <input
-              value={endStr}
-              onChange={(e) => setEndStr(e.target.value)}
-              onBlur={commitEnd}
-              onKeyDown={(e) => {
-                if (e.key === "Enter")
-                  (e.currentTarget as HTMLInputElement).blur();
-              }}
-              inputMode="numeric"
-              placeholder="10:30"
-              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-            />
-          </div>
+          <Field
+            label="End"
+            value={endStr}
+            onChange={(e) => setEndStr(e.target.value)}
+            onBlur={commitEnd}
+            onKeyDown={(e) => {
+              if (e.key === "Enter")
+                (e.currentTarget as HTMLInputElement).blur();
+            }}
+            inputMode="numeric"
+            placeholder="10:30"
+          />
 
           <div className="sm:col-span-3">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
-              Notes
-            </div>
-            <input
+            <Field
+              label="Notes"
               value={block.notes}
               onChange={(e) => onUpdate(block.id, { notes: e.target.value })}
               placeholder="Optional"
-              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
             />
           </div>
         </div>
@@ -510,50 +288,25 @@ function BlockRow({
         </div>
       </div>
 
-      <div className="mt-3 text-xs font-semibold text-slate-600">
+      <div className="ilt-helper-text mt-3 font-semibold">
         {minutesToHHMM(block.startMin)}-{minutesToHHMM(block.endMin)}
       </div>
     </div>
   );
 }
 
-function TimeBlockingClockCard() {
-  const [now, setNow] = useState(() => new Date());
+function TimeBlockingClockCard({ initialNowISO }: { initialNowISO: string }) {
+  const [now, setNow] = useState(() => new Date(initialNowISO));
   const [live, setLive] = useState(true);
 
-  const [blocks, setBlocks] = useState<Block[]>(() =>
-    sortBlocks(
-      [
-        {
-          id: uid(),
-          title: "Deep Work",
-          startMin: 9 * 60,
-          endMin: 11 * 60,
-          notes: "",
-        },
-        {
-          id: uid(),
-          title: "Admin",
-          startMin: 11 * 60,
-          endMin: 11 * 60 + 45,
-          notes: "",
-        },
-        {
-          id: uid(),
-          title: "Break",
-          startMin: 12 * 60,
-          endMin: 12 * 60 + 30,
-          notes: "",
-        },
-      ].map(normalizeBlock),
-    ),
-  );
+  const [blocks, setBlocks] = useState<Block[]>(() => DEFAULT_BLOCKS);
 
   const [copied, setCopied] = useState<string | null>(null);
   const hydratedRef = useRef(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -705,13 +458,13 @@ function TimeBlockingClockCard() {
     const k = e.key.toLowerCase();
 
     if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "c") {
       void onCopy();
     } else if (k === "a") {
       addBlock();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -725,17 +478,15 @@ function TimeBlockingClockCard() {
       <FullscreenTopBar
         show={isFs}
         title="Time Blocking Clock"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
-            <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-              <input
-                type="checkbox"
-                checked={live}
-                onChange={(e) => setLive(e.target.checked)}
-              />
-              Live
-            </label>
+            <Toggle
+              label="Live"
+              checked={live}
+              onCheckedChange={setLive}
+              className="py-1 text-xs"
+            />
 
             <Btn kind="ghost" onClick={addBlock} className="py-1 text-sm">
               Add
@@ -752,28 +503,15 @@ function TimeBlockingClockCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-list-stack flex h-full flex-col"}>
         {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Time Blocking Clock
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Live clock plus editable time blocks. Add, edit, copy, and use a
-                big fullscreen view.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={live}
-                  onChange={(e) => setLive(e.target.checked)}
-                />
-                Live
-              </label>
+          <SettingGroup
+            title="Schedule controls"
+            description="Keep the clock live, edit the block list, or copy the day plan."
+            className="order-2 mt-5"
+          >
+            <SecondaryActionRow className="timer-list-actions">
+              <Toggle label="Live" checked={live} onCheckedChange={setLive} />
 
               <Btn kind="ghost" onClick={addBlock}>
                 Add block
@@ -790,21 +528,26 @@ function TimeBlockingClockCard() {
               <Btn
                 kind="ghost"
                 onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
+                  void fullscreen.toggle()
                 }
               >
                 Fullscreen
               </Btn>
-            </div>
-          </div>
+            </SecondaryActionRow>
+
+            <ShortcutHint className="timer-list-shortcut">
+              F fullscreen / C copy / A add block
+            </ShortcutHint>
+          </SettingGroup>
         )}
 
         {/* Display */}
         <div
+          data-display-stage
           ref={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
-            "border-slate-200 p-3 sm:p-6",
+            "order-1 timer-display-surface relative mt-4 flex flex-col items-center justify-center text-[var(--ilt-text-primary)]",
+            "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
@@ -816,14 +559,15 @@ function TimeBlockingClockCard() {
           }}
           aria-live="polite"
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="timer-list-label ilt-content-label">
             {statusLabel}
           </div>
 
           <span
+            data-primary-display-value
             ref={timeTextRef}
             className={[
-              "mt-2 inline-block text-center font-mono font-extrabold tracking-widest",
+              "timer-list-value mt-2 inline-block text-center font-mono font-extrabold tracking-widest",
               isFs ? "sm:tracking-[0.18em]" : "",
             ].join(" ")}
             style={{
@@ -835,23 +579,23 @@ function TimeBlockingClockCard() {
             {timeStr}
           </span>
 
-          <div className="mt-3 text-sm font-semibold text-slate-600">
+          <div className="timer-list-context mt-3 text-sm font-semibold text-[var(--ilt-text-secondary)]">
             {dateStr}
           </div>
 
           {activeBlock ? (
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-900">
+            <div className="ilt-inline-pill mt-4 max-w-full px-4 py-2 text-sm font-semibold">
               Active block:{" "}
               <span className="font-extrabold">{activeBlock.title}</span>
             </div>
           ) : (
-            <div className="mt-4 text-sm font-semibold text-slate-600">
+            <div className="mt-4 text-sm font-semibold text-[var(--ilt-text-secondary)]">
               No active block.
             </div>
           )}
 
           {copied && (
-            <div className="mt-3 text-xs font-bold text-slate-700">
+            <div className="mt-3 text-xs font-bold text-[var(--ilt-text-secondary)]">
               {copied}
             </div>
           )}
@@ -861,15 +605,15 @@ function TimeBlockingClockCard() {
             <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                  <div className="ilt-content-label">
                     Shortcuts
                   </div>
-                  <div className="text-xs font-semibold text-slate-600">
-                    F fullscreen · C copy · A add block
+                  <div className="text-xs font-semibold text-[var(--ilt-text-secondary)]">
+                    F fullscreen | C copy | A add block
                   </div>
                 </div>
 
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                <div className="ilt-inline-pill hidden px-3 py-1 text-xs font-semibold sm:block">
                   {activeBlock ? "Active" : "No active"}
                 </div>
               </div>
@@ -879,18 +623,18 @@ function TimeBlockingClockCard() {
 
         {/* Blocks (normal only) */}
         {!isFs && (
-          <div className="mt-5 rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm font-extrabold text-slate-900">
-                Today’s blocks
+          <div className="timer-list-panel ilt-surface-muted order-2 mt-5 p-4">
+            <UtilityResultRow>
+              <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
+                Today's blocks
               </div>
-              <div className="text-xs font-semibold text-slate-600">
+              <div className="ilt-helper-text font-semibold">
                 Auto-sorted by start time
               </div>
-            </div>
+            </UtilityResultRow>
 
             {blocks.length === 0 ? (
-              <div className="mt-3 text-sm text-slate-700">
+              <div className="mt-3 text-sm text-[var(--ilt-text-secondary)]">
                 No blocks yet. Click <strong>Add block</strong>.
               </div>
             ) : (
@@ -912,10 +656,10 @@ function TimeBlockingClockCard() {
         {/* Fullscreen bottom bar */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-slate-600 sm:text-sm">
-              F fullscreen · C copy · A add block
+            <div className="text-xs text-[var(--ilt-text-secondary)] sm:text-sm">
+              F fullscreen | C copy | A add block
             </div>
-            <div className="text-xs font-semibold text-slate-700">
+            <div className="text-xs font-semibold text-[var(--ilt-text-secondary)]">
               {activeBlock ? `Active: ${activeBlock.title}` : "No active block"}
             </div>
           </div>
@@ -929,7 +673,7 @@ function TimeBlockingClockCard() {
    PAGE
 ========================================================= */
 export default function TimeBlockingClockPage({
-  loaderData: { nowISO: _nowISO },
+  loaderData: { nowISO },
 }: Route.ComponentProps) {
   const url = "https://www.ilovetimers.com/time-blocking-clock";
 
@@ -972,25 +716,64 @@ export default function TimeBlockingClockPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <TimeBlockingClockCard />
-        </div>
+      <ToolHero
+        display={<TimeBlockingClockCard initialNowISO={nowISO} />}
+        title="Time Blocking Clock (Daily Schedule)"
+        description="See the current time, active block, progress through the day, and edit or copy a simple daily time-block schedule."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Time Blocking Clock</span>
+      <SeoBand title="How this clock works">
+        <p>
+          Use this time-blocking clock to keep a simple daily schedule visible
+          while you work. Add and edit blocks, track the current block against
+          the live clock, copy the plan, and use fullscreen when the schedule
+          needs to stay visible.
         </p>
-      </section>
-    </main>
+        <h3>How it differs from Pomodoro</h3>
+        <p>
+          Pomodoro timers repeat a work/break rhythm. This clock follows a
+          schedule you define, so the important question is which block is active
+          now, when it started, and when the next boundary arrives. It can help
+          organize a day, but it does not guarantee productivity outcomes.
+        </p>
+        <h3>Schedule editing tips</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Keep block names short so the current block remains readable in the
+            main display.
+          </li>
+          <li>
+            Use realistic start and end times so block boundaries match how the
+            day is actually planned.
+          </li>
+          <li>
+            Copy the schedule when you want a plain-text version for notes,
+            messages, or a daily plan.
+          </li>
+        </ul>
+        <h3>Related planning tools</h3>
+        <p>
+          For structured work and break phases, use the{" "}
+          <a className="ilt-content-link" href="/productivity-timer">
+            productivity timer
+          </a>
+          . For a classic focus cycle, try the{" "}
+          <a className="ilt-content-link" href="/pomodoro-timer">
+            Pomodoro timer
+          </a>
+          . For a single deep-work block, use the{" "}
+          <a className="ilt-content-link" href="/focus-session-timer">
+            focus session timer
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

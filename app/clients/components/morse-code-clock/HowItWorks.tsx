@@ -69,7 +69,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -83,7 +83,7 @@ export default function HowItWorks({
   }) => (
     <Link
       to={to}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </Link>
@@ -98,13 +98,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="space-y-4">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="whitespace-pre-wrap font-mono text-xs text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="whitespace-pre-wrap font-mono text-xs text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -115,15 +115,15 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-2 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               The{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Morse Code Clock
               </span>{" "}
               shows your current local time and renders each digit as Morse code
@@ -134,46 +134,46 @@ export default function HowItWorks({
               the output in one click.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               The page is intentionally “clock first.” The top line is always a
               normal time you recognize (for example,{" "}
-              <span className="font-semibold text-slate-900">09:17:42</span>),
+              <span className="font-semibold text-[var(--ilt-text-primary)]">09:17:42</span>),
               so you have a reliable reference. The Morse section underneath is
               the same time, encoded digit-by-digit. That means you can practice
               reading Morse without losing track of the real time.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               Two viewing styles solve two different problems.{" "}
-              <span className="font-semibold text-slate-900">Block view</span>{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Block view</span>{" "}
               uses simple shapes so you can read from a distance and quickly
               spot patterns.{" "}
-              <span className="font-semibold text-slate-900">Text view</span>{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Text view</span>{" "}
               shows the exact Morse strings, which is ideal if you want to copy,
               compare, or verify what you are seeing.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Live time
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Blocks + text
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               12/24-hour
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Seconds
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Copy output
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Shortcuts
             </span>
           </div>
@@ -181,48 +181,48 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Quick use (what most people do)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Decide
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Decide
                 whether you want a practice display (seconds on) or a clean wall
                 clock (seconds off).
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Choose{" "}
-                <span className="font-semibold text-slate-900">Blocks</span> for
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Choose{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Blocks</span> for
                 readability or{" "}
-                <span className="font-semibold text-slate-900">Text</span> to
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Text</span> to
                 see the exact dot and dash strings.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Toggle{" "}
-                <span className="font-semibold text-slate-900">24-hour</span> if
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Toggle{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">24-hour</span> if
                 you want consistent hour digits (especially helpful for
                 practice).
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Use{" "}
-                <span className="font-semibold text-slate-900">Fullscreen</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Use{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Fullscreen</span>{" "}
                 for a room display, classroom demo, or second monitor.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> Hit{" "}
-                <span className="font-semibold text-slate-900">Copy</span> when
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> Hit{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Copy</span> when
                 you want to paste the time and Morse output into notes or a
                 message.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What the page is encoding for you
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 The tool takes the digits from the displayed time and converts
                 each one using standard Morse number patterns. When seconds are
                 visible, you get six digits encoded (HHMMSS). When seconds are
@@ -232,26 +232,26 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Practical checklist
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 For learning: use{" "}
-                <span className="font-semibold text-slate-900">seconds on</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">seconds on</span>{" "}
                 so the Morse changes often.
               </li>
               <li>
                 For a clean display: use{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   seconds off
                 </span>{" "}
                 and go fullscreen.
               </li>
               <li>
                 For consistency: enable{" "}
-                <span className="font-semibold text-slate-900">24-hour</span> so
+                <span className="font-semibold text-[var(--ilt-text-primary)]">24-hour</span> so
                 hours always have two digits.
               </li>
               <li>
@@ -260,7 +260,7 @@ export default function HowItWorks({
               <li>
                 If you are coordinating across places: use{" "}
                 <Link
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   to="/time-zone-converter"
                 >
                   Time Zone Converter
@@ -269,24 +269,24 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Quick keys:</span>{" "}
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Quick keys:</span>{" "}
               <Kbd>F</Kbd> fullscreen, <Kbd>T</Kbd> 24-hour, <Kbd>S</Kbd>{" "}
               seconds, <Kbd>V</Kbd> view, <Kbd>C</Kbd> copy, <Kbd>Esc</Kbd>{" "}
               exit.
             </div>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Compare:</span>{" "}
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Compare:</span>{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/binary-clock"
               >
                 Binary Clock
               </Link>{" "}
               and{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/hexadecimal-clock"
               >
                 Hexadecimal Clock
@@ -298,24 +298,24 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What you are seeing in the Morse output
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             Morse digits have a reliable structure, which is why this tool works
             well as a quick practice clock. The patterns for 1 through 5 start
             with dots then add dashes, and 6 through 0 start with dashes then
             add dots. In practice, you do not need to memorize everything at
             once. Many people start by recognizing the extremes quickly:{" "}
-            <span className="font-semibold text-slate-900">0</span> is five
-            dashes (<span className="font-semibold text-slate-900">-----</span>)
-            and <span className="font-semibold text-slate-900">5</span> is five
-            dots (<span className="font-semibold text-slate-900">.....</span>).
+            <span className="font-semibold text-[var(--ilt-text-primary)]">0</span> is five
+            dashes (<span className="font-semibold text-[var(--ilt-text-primary)]">-----</span>)
+            and <span className="font-semibold text-[var(--ilt-text-primary)]">5</span> is five
+            dots (<span className="font-semibold text-[var(--ilt-text-primary)]">.....</span>).
             From there, you spot the “shift point” around 5 and 6.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
             This page keeps the normal time visible because it makes learning
             faster. You can glance at the real time, then verify the Morse
             groups below. If you are practicing, it is common to cover the top
@@ -323,11 +323,11 @@ export default function HowItWorks({
             digits, then remove your hand to check your answer.
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Scenarios with concrete examples (real outputs you will see)
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             These scenarios are written like real “screen moments” with actual
             digits, realistic times, and the exact style of output this page
             produces. Your values will vary based on the current time, but the
@@ -476,24 +476,24 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Choosing the right settings for your goal
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               If your goal is learning, leave{" "}
-              <span className="font-semibold text-slate-900">seconds on</span>{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">seconds on</span>{" "}
               so you get frequent changes and more repetition. If your goal is a
               display, turn{" "}
-              <span className="font-semibold text-slate-900">seconds off</span>{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">seconds off</span>{" "}
               for a calmer screen. For consistency,{" "}
-              <span className="font-semibold text-slate-900">24-hour</span> is
+              <span className="font-semibold text-[var(--ilt-text-primary)]">24-hour</span> is
               typically easier because you always see two hour digits, which
               avoids the “single digit hour” mental adjustment.
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               If you want to cross-check what you are seeing, switch to{" "}
-              <span className="font-semibold text-slate-900">Text view</span>{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Text view</span>{" "}
               and verify one group at a time. A common pattern is to master the
               minutes first, then hours, then seconds.
             </p>
@@ -501,17 +501,17 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same site, different job)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 Use the closest match to what you are trying to do.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcut set: <Kbd>F</Kbd> <Kbd>T</Kbd> <Kbd>S</Kbd> <Kbd>V</Kbd>{" "}
               <Kbd>C</Kbd> <Kbd>Esc</Kbd>
             </div>
@@ -531,25 +531,25 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (updates, digit mapping, fullscreen,
                 clipboard)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional notes if you rely on exact behavior and expectations
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Update cadence and stability
               </div>
               <p className="mt-1 leading-relaxed">
@@ -563,8 +563,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Standard Morse digit mapping
               </div>
               <p className="mt-1 leading-relaxed">
@@ -577,8 +577,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen and focus
               </div>
               <p className="mt-1 leading-relaxed">
@@ -589,8 +589,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Copy behavior and privacy
               </div>
               <p className="mt-1 leading-relaxed">
@@ -608,13 +608,13 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Want the most accurate time reference?
             </strong>{" "}
             Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/atomic-clock"
             >
               Atomic Clock
@@ -622,13 +622,13 @@ export default function HowItWorks({
             alongside this page.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Prefer a standard big display?
             </strong>{" "}
             Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/digital-clock"
             >
               Digital Clock
@@ -638,8 +638,8 @@ export default function HowItWorks({
         </div>
 
         {/* Small SEO anchor text without being bloggy */}
-        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-          <strong className="text-slate-900">In one sentence:</strong> this
+        <div className="mt-6 ilt-surface-muted px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+          <strong className="text-[var(--ilt-text-primary)]">In one sentence:</strong> this
           Morse code clock shows your local time as Morse digits in block or
           text view, with 12/24-hour and seconds toggles, fullscreen mode, copy
           output, and keyboard shortcuts for quick control.

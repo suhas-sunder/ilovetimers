@@ -2,7 +2,25 @@
 import type { Route } from "./+types/current-local-time";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+  Field,
+  Select,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/current-local-time/HowItWorks";
 import Disclaimer from "~/clients/components/current-local-time/Disclaimer";
 import FAQ from "~/clients/components/current-local-time/FAQ";
@@ -82,14 +100,6 @@ function isTypingTarget(target: EventTarget | null) {
     tag === "SELECT" ||
     el.isContentEditable
   );
-}
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
 }
 
 function safeTimeZone() {
@@ -192,264 +202,6 @@ function formatTimeInZone(
   }
 }
 
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: React.RefObject<HTMLElement | null>;
-  textRef: React.RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition ${
-      active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  left,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-          {left}
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
 const ZoneTile = ({
   label,
   time,
@@ -465,16 +217,14 @@ const ZoneTile = ({
     type="button"
     onClick={onClick}
     className={[
-      "cursor-pointer rounded-xl border px-4 py-3 text-left transition",
-      active
-        ? "border-slate-300 bg-slate-200/70"
-        : "border-slate-200 bg-white hover:bg-slate-50",
+      "ilt-focus-ring cursor-pointer rounded-[var(--ilt-radius-control)] px-4 py-3 text-left transition",
+      active ? "ilt-surface-accent" : "ilt-surface-muted hover:bg-[var(--ilt-bg-hover)]",
     ].join(" ")}
   >
-    <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+    <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
       {label}
     </div>
-    <div className="mt-1 font-mono text-2xl font-extrabold text-slate-950">
+    <div className="mt-1 font-mono text-2xl font-extrabold text-[var(--ilt-text-primary)]">
       {time}
     </div>
   </button>
@@ -483,10 +233,10 @@ const ZoneTile = ({
 /* =========================================================
    CURRENT LOCAL TIME CARD
 ========================================================= */
-function CurrentLocalTimeCard() {
+function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
   const tz = useMemo(() => safeTimeZone(), []);
 
-  const [now, setNow] = useState<Date>(() => new Date());
+  const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [use24, setUse24] = useState(false);
   const [showSeconds, setShowSeconds] = useState(true);
 
@@ -494,7 +244,8 @@ function CurrentLocalTimeCard() {
   const copyTimerRef = useRef<number | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -597,6 +348,7 @@ function CurrentLocalTimeCard() {
     minPx: 54,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 64 : 72,
+    initialScale: isFs ? 1 : 0.95,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -608,8 +360,8 @@ function CurrentLocalTimeCard() {
       e.preventDefault();
     }
 
-    if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "c") {
       copy();
     } else if (k === "s") {
@@ -636,7 +388,7 @@ function CurrentLocalTimeCard() {
       <FullscreenTopBar
         show={isFs}
         title="Current Local Time"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         left={
           <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
             <label className="inline-flex cursor-pointer items-center gap-1">
@@ -668,48 +420,7 @@ function CurrentLocalTimeCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {/* Header (normal only) */}
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex flex-wrap items-center gap-3 ml-auto">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={showSeconds}
-                  onChange={(e) => setShowSeconds(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Seconds
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={use24}
-                  onChange={(e) => setUse24(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                24-hour
-              </label>
-
-              <Btn kind="ghost" onClick={copy} className="py-2">
-                {copied ? "Copied" : "Copy"}
-              </Btn>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-clock-stack flex h-full flex-col"}>
         {/* Display */}
         <div
           ref={displayBoxRef}
@@ -731,14 +442,15 @@ function CurrentLocalTimeCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to copy" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="timer-clock-label text-xs font-extrabold uppercase tracking-widest text-slate-700">
             {topLabel}
           </div>
 
           <span
             ref={timeTextRef}
+            data-primary-display-value
             className={[
-              "mt-2 inline-block text-center font-mono font-extrabold",
+              "timer-clock-value mt-2 inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
             style={{
@@ -750,35 +462,50 @@ function CurrentLocalTimeCard() {
             {activeTimeText}
           </span>
 
-          <div className="mt-3 text-center text-sm font-semibold text-slate-700">
+          <div className="timer-clock-context mt-3 text-center text-sm font-semibold text-slate-700">
             <div className="text-2xl font-semibold text-slate-700 sm:text-3xl">
               {dateText}, week {weekNo}
             </div>
           </div>
 
-          {!isFs && (
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-slate-600">
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
-                {use24 ? "24-hour" : "12-hour"}
-              </span>
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
-                Seconds {showSeconds ? "on" : "off"}
-              </span>
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
-                Press C to copy
-              </span>
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
-                F fullscreen
-              </span>
-            </div>
-          )}
-
-          {!isFs && (
-            <div className="mt-3 text-xs text-slate-600">
-              Tip: click the card once so keyboard shortcuts work immediately.
-            </div>
-          )}
         </div>
+
+        {!isFs && (
+          <>
+            <SettingGroup title="Clock settings">
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+                <Toggle
+                  label="Seconds"
+                  checked={showSeconds}
+                  onCheckedChange={setShowSeconds}
+                />
+                <Toggle
+                  label="24-hour"
+                  checked={use24}
+                  onCheckedChange={setUse24}
+                />
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow className="timer-clock-actions">
+              <Btn kind="ghost" onClick={copy} className="py-2">
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint className="timer-clock-shortcut">
+              Shortcuts: F fullscreen, C copy, S seconds, 1 12-hour, 2 24-hour
+            </ShortcutHint>
+          </>
+        )}
 
         {/* Quick compare (normal only) */}
         {!isFs && (
@@ -842,9 +569,7 @@ function CurrentLocalTimeCard() {
               </Btn>
               <Btn
                 kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
+                onClick={() => void fullscreen.toggle()}
               >
                 Exit fullscreen
               </Btn>
@@ -895,44 +620,27 @@ export default function CurrentLocalTimePage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Current Local Time
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Big readable clock with seconds, 12/24-hour toggle, copy, and
-            fullscreen.
-          </p>
-        </div>
-      </section>
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <CurrentLocalTimeCard />
-        </div>
+      <ToolHero
+        display={<CurrentLocalTimeCard initialNowISO={nowISO} />}
+        title="Current Local Time"
+        description="A large local time display with date, timezone, seconds, copy, fullscreen, and compact comparison controls."
+      />
 
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Current Local Time</span>
-        </p>
-      </section>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
 
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+    </PageShell>
   );
 }

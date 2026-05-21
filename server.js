@@ -1,6 +1,7 @@
 import compression from "compression";
 import express from "express";
 import morgan from "morgan";
+import { Readable } from "node:stream";
 
 // Short-circuit the type-checking of the built output.
 const BUILD_PATH = "./build/server/server.js";
@@ -12,6 +13,65 @@ const app = express();
 
 app.use(compression());
 app.disable("x-powered-by");
+
+/**
+ * @param {import("express").Request} req
+ */
+function toFetchRequest(req) {
+  const protocol = req.protocol ?? "http";
+  const host = req.get("host") ?? "localhost";
+  const url = new URL(req.originalUrl || req.url, `${protocol}://${host}`);
+  const headers = new Headers();
+
+  for (const [key, value] of Object.entries(req.headers)) {
+    if (Array.isArray(value)) {
+      for (const item of value) headers.append(key, item);
+    } else if (value != null) {
+      headers.set(key, String(value));
+    }
+  }
+
+  /** @type {RequestInit & { body?: any; duplex?: "half" }} */
+  const init = {
+    method: req.method,
+    headers,
+  };
+
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    init.body = req;
+    init.duplex = "half";
+  }
+
+  return new Request(url.href, init);
+}
+
+/**
+ * @param {(request: Request, context: Record<string, unknown>) => Promise<Response>} fetchHandler
+ * @returns {import("express").RequestHandler}
+ */
+function createExpressMiddleware(fetchHandler) {
+  return async (req, res, next) => {
+    try {
+      const response = await fetchHandler(toFetchRequest(req), {});
+
+      res.status(response.status);
+      response.headers.forEach((value, key) => {
+        res.setHeader(key, value);
+      });
+
+      if (!response.body) {
+        res.end();
+        return;
+      }
+
+      Readable.fromWeb(
+        /** @type {import("node:stream/web").ReadableStream} */ (response.body),
+      ).pipe(res);
+    } catch (error) {
+      next(error);
+    }
+  };
+}
 
 if (DEVELOPMENT) {
   console.log("Starting development server");
@@ -40,7 +100,15 @@ if (DEVELOPMENT) {
   );
   app.use(morgan("tiny"));
   app.use(express.static("build/client", { maxAge: "1h" }));
-  app.use(await import(BUILD_PATH).then((mod) => mod.app));
+  app.use(
+    await import(BUILD_PATH).then((mod) => {
+      const handler = mod.app ?? mod.default;
+      if (typeof handler !== "function") {
+        throw new TypeError("React Router build did not export a request handler");
+      }
+      return createExpressMiddleware(handler);
+    }),
+  );
 }
 
 app.listen(PORT, () => {

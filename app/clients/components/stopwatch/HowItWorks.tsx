@@ -66,10 +66,10 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             This page is an online stopwatch built for fast timing, clean lap
             splits, and a readable fullscreen display. It is ideal when you want
             to measure elapsed time (counting up), mark milestones as laps, and
@@ -81,10 +81,10 @@ export default function HowItWorks({
 
         {/* Core explanation (SEO + intent, no fluff) */}
         <div className="mt-4 grid gap-4">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-700">
+          <div className="ilt-surface-muted p-4 text-[var(--ilt-text-secondary)]">
             <p className="leading-relaxed">
               The stopwatch shows{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 elapsed time down to milliseconds
               </span>
               . When you press Start (or Space), time begins counting up. When
@@ -93,61 +93,61 @@ export default function HowItWorks({
             </p>
             <p className="mt-3 leading-relaxed">
               The key feature is{" "}
-              <span className="font-semibold text-slate-900">laps</span>. A lap
+              <span className="font-semibold text-[var(--ilt-text-primary)]">laps</span>. A lap
               records two numbers at once:
-              <span className="font-semibold text-slate-900"> Total </span>
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> Total </span>
               (time since you started) and{" "}
-              <span className="font-semibold text-slate-900"> Split </span>
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> Split </span>
               (time since your previous lap). That makes it easy to track
               repeating efforts like rounds, attempts, sets, segments, or event
               timestamps during an experiment.
             </p>
             <p className="mt-3 leading-relaxed">
               When you are done, you can copy your lap list as{" "}
-              <span className="font-semibold text-slate-900">CSV</span> to paste
+              <span className="font-semibold text-[var(--ilt-text-primary)]">CSV</span> to paste
               into a spreadsheet. That gives you a clean record like “Lap 1
               split 0:32.418, Lap 2 split 0:31.902” without retyping anything.
             </p>
           </div>
 
           <div className="grid gap-3 md:grid-cols-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 1) Start / pause
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Press{" "}
-                <span className="font-semibold text-slate-900">Space</span> to
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Space</span> to
                 start or pause instantly, or use the Start button.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 2) Record laps
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                Press <span className="font-semibold text-slate-900">L</span> to
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+                Press <span className="font-semibold text-[var(--ilt-text-primary)]">L</span> to
                 record a lap. Each lap captures split and total time.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 3) Copy results
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                Press <span className="font-semibold text-slate-900">C</span> to
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+                Press <span className="font-semibold text-[var(--ilt-text-primary)]">C</span> to
                 copy laps as CSV, ready for Sheets or Excel.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 4) Fullscreen
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                Press <span className="font-semibold text-slate-900">F</span>{" "}
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+                Press <span className="font-semibold text-[var(--ilt-text-primary)]">F</span>{" "}
                 for a big display. Press Esc to exit.
               </p>
             </div>
@@ -156,10 +156,10 @@ export default function HowItWorks({
 
         {/* Examples with real numbers users see */}
         <div className="mt-6">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Examples with real scenarios and numbers
           </h3>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             These examples show exactly how laps, splits, copy, and fullscreen
             fit real tasks. The times below are realistic numbers you might see
             while using the stopwatch.
@@ -167,33 +167,33 @@ export default function HowItWorks({
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {/* Scenario A */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario A: Interval training with consistent splits
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are doing 6 rounds of a drill and want to keep each round
                 close to 35 seconds. Start the stopwatch once, then press Lap at
                 the end of each round.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What you do
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Press Space to start. At the end of each round, press L. If
                     you need a break, press Space to pause, then Space again to
                     resume.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Example laps (numbers)
                   </div>
-                  <div className="mt-2 rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-xs text-slate-900">
+                  <div className="mt-2 ilt-surface-card px-3 py-2 font-mono text-xs text-[var(--ilt-text-primary)]">
                     Lap 1: Split 0:35.214 | Total 0:35.214
                     <br />
                     Lap 2: Split 0:34.882 | Total 1:10.096
@@ -204,11 +204,11 @@ export default function HowItWorks({
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Why this helps
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Split times show consistency round to round, while Total
                     shows how long the full session has taken. When you copy
                     CSV, you can chart your split trend in a spreadsheet.
@@ -218,22 +218,22 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario B */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario B: Speed attempts and quick logging
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are doing 10 short attempts and want each attempt time saved
                 without switching apps. Press Lap at the end of each attempt,
                 then copy the CSV to paste into a notes file.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Example attempt times
                   </div>
-                  <div className="mt-2 rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-xs text-slate-900">
+                  <div className="mt-2 ilt-surface-card px-3 py-2 font-mono text-xs text-[var(--ilt-text-primary)]">
                     Lap 1: Split 0:12.483 | Total 0:12.483
                     <br />
                     Lap 2: Split 0:11.972 | Total 0:24.455
@@ -244,25 +244,25 @@ export default function HowItWorks({
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What to copy
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Press C to copy CSV, then paste into Sheets. You will get
                     three columns that you can sort, average, or graph.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Better fit tool
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     If you want a solve-first layout, use{" "}
                     <Link
                       to="/speedcubing-timer"
-                      className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                      className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                     >
                       Speedcubing Timer
                     </Link>
@@ -273,55 +273,55 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario C */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario C: Fullscreen timing for a group
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are running a classroom activity and want a large stopwatch
                 visible from the back of the room. Use fullscreen to make the
                 time readable at a distance.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Setup
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Press F to enter fullscreen. Click the time to start or
                     pause. Use the top bar buttons if you want quick Lap or
                     Reset access.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Example use (numbers)
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     If the activity is “2 minutes per station”, you can run the
                     stopwatch and call out checkpoints: “at 0:30.000 switch
                     roles”, “at 1:30.000 wrap up”, “at 2:00.000 rotate”.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Better fit tool
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     If you need a fixed countdown instead of count-up, use{" "}
                     <Link
                       to="/countdown-timer"
-                      className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                      className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                     >
                       Countdown Timer
                     </Link>{" "}
                     or{" "}
                     <Link
                       to="/presentation-timer"
-                      className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                      className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                     >
                       Presentation Timer
                     </Link>
@@ -332,22 +332,22 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario D */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario D: Lab notes, mark events as laps
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are timing an experiment and want timestamps for events
                 without stopping the clock. Start once, then press Lap when each
                 event happens.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Example event log (numbers)
                   </div>
-                  <div className="mt-2 rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-xs text-slate-900">
+                  <div className="mt-2 ilt-surface-card px-3 py-2 font-mono text-xs text-[var(--ilt-text-primary)]">
                     Lap 1: Split 0:18.640 | Total 0:18.640 (solution added)
                     <br />
                     Lap 2: Split 0:45.210 | Total 1:03.850 (color shift)
@@ -356,16 +356,16 @@ export default function HowItWorks({
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Next step
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Copy CSV, paste into your lab notes, and add a short label
                     beside each lap row. If you need multi-stage timing, use{" "}
                     <Link
                       to="/lab-timer"
-                      className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                      className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                     >
                       Lab Timer
                     </Link>
@@ -378,14 +378,14 @@ export default function HowItWorks({
         </div>
 
         {/* Practical guidance */}
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="text-lg font-semibold text-sky-700">
+        <div className="mt-6 ilt-surface-card p-4">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Small habits that improve results
           </h3>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Define what “Lap” means before you start
               </div>
               <p className="mt-2 leading-relaxed">
@@ -395,8 +395,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Use split for pacing, total for session length
               </div>
               <p className="mt-2 leading-relaxed">
@@ -406,8 +406,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Copy CSV immediately after finishing
               </div>
               <p className="mt-2 leading-relaxed">
@@ -417,8 +417,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen is for readability, not just looks
               </div>
               <p className="mt-2 leading-relaxed">
@@ -431,37 +431,37 @@ export default function HowItWorks({
         </div>
 
         {/* Technical content stays expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-white p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-card p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical notes (timing, laps, copy, fullscreen)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional details and troubleshooting for power users
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Time format</div>
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Time format</div>
               <p className="mt-1 leading-relaxed">
                 Short sessions display as{" "}
-                <span className="font-semibold text-slate-900">m:ss.mmm</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">m:ss.mmm</span>.
                 Longer sessions display as{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   h:mm:ss.mmm
                 </span>
                 . This keeps the readout compact but still precise.
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Lap ordering</div>
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Lap ordering</div>
               <p className="mt-1 leading-relaxed">
                 Laps are displayed with the most recent first for quick
                 scanning. Copy exports in chronological order (oldest to newest)
@@ -469,8 +469,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Copy permissions
               </div>
               <p className="mt-1 leading-relaxed">
@@ -480,8 +480,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -495,35 +495,35 @@ export default function HowItWorks({
         </details>
 
         {/* Footer helper links */}
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">
+        <div className="mt-6 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">
             Need a different tool?
           </span>{" "}
           For a fixed duration countdown, use{" "}
           <Link
             to="/countdown-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Countdown Timer
           </Link>
           . For interval structure, use{" "}
           <Link
             to="/hiit-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             HIIT Timer
           </Link>{" "}
           or{" "}
           <Link
             to="/tabata-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Tabata Timer
           </Link>
           . For multi-station timing, use{" "}
           <Link
             to="/multiple-timers"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Multiple Timers
           </Link>

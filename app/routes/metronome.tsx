@@ -4,13 +4,30 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  SecondaryActionRow,
+  SeoBand,
+  Select,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/metronome/HowItWorks";
 import Disclaimer from "~/clients/components/metronome/Disclaimer";
 import FAQ from "~/clients/components/metronome/FAQ";
@@ -71,31 +88,6 @@ function isTypingTarget(target: EventTarget | null) {
     el.isContentEditable
   );
 }
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
 }
@@ -106,226 +98,6 @@ function safeTimeZone() {
   } catch {
     return "Local";
   }
-}
-
-/**
- * Fit a single-line text into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES (match your updated style)
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-  title,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-  title?: string;
-}) => (
-  <button
-    type="button"
-    title={title}
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
 }
 
 /* =========================================================
@@ -449,7 +221,8 @@ function MetronomeCard() {
   const tz = useMemo(() => safeTimeZone(), []);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   // Display fitting
   const displayBoxRef = useRef<HTMLDivElement>(null);
@@ -707,12 +480,12 @@ function MetronomeCard() {
     }
 
     if (k === "f" && cardRef.current) {
-      void toggleFullscreen(cardRef.current);
+      void void fullscreen.toggle();
       return;
     }
 
     if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -768,55 +541,18 @@ function MetronomeCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Online Metronome (Tap Tempo + Accurate BPM)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Set BPM, tap tempo, choose time signature and subdivisions, and
-                practice with a clear visual and audio pulse.
-              </p>
-            </div>
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <Btn kind="ghost" onClick={copy} className="py-2" title="Copy (C)">
-                {copied ? "Copied" : "Copy"}
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={() => void tapTempo()}
-                className="py-2"
-                title="Tap tempo (T)"
-              >
-                Tap tempo
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
-                className="py-2"
-                title="Fullscreen (F)"
-              >
-                Fullscreen
-              </Btn>
-              <Btn
-                kind={isRunning ? "ghost" : "solid"}
-                onClick={() => (isRunning ? stop() : void start())}
-                className="py-2"
-                title="Start/Stop (Space)"
-              >
-                {isRunning ? "Stop" : "Start"}
-              </Btn>
-            </div>
-          </div>
-        )}
+      <div className={isFs ? "flex h-full flex-col" : "timer-interaction-stack flex h-full flex-col"}>
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+          <SettingGroup
+            title="Metronome settings"
+            description="Tempo, rhythm, and sound options stay secondary to the beat display."
+            className="order-3"
+          >
+            <SettingRow className="lg:grid-cols-3">
             {/* Tempo */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+            <div className="space-y-3">
               <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
                 Tempo
               </div>
@@ -852,7 +588,8 @@ function MetronomeCard() {
               </div>
 
               <div className="mt-3 flex items-center justify-between gap-3">
-                <input
+                <Field
+                  label="BPM"
                   type="number"
                   value={bpmInt}
                   min={20}
@@ -860,7 +597,6 @@ function MetronomeCard() {
                   onChange={(e) =>
                     setBpm(clamp(parseInt(e.target.value || "120", 10), 20, 400))
                   }
-                  className="w-28 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-extrabold text-slate-900"
                   aria-label="BPM number"
                 />
 
@@ -871,73 +607,61 @@ function MetronomeCard() {
             </div>
 
             {/* Rhythm */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+            <div className="space-y-3">
               <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
                 Rhythm
               </div>
 
               <div className="mt-3 grid gap-3">
-                <label className="text-xs font-bold text-slate-700">
-                  Time signature
-                </label>
-                <select
+                <Select
+                  label="Time signature"
                   value={beatsPerBar}
                   onChange={(e) => setBeatsPerBar(parseInt(e.target.value, 10))}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-900"
                 >
                   {TS_OPTIONS.map((o) => (
                     <option key={o.beats} value={o.beats}>
                       {o.label}
                     </option>
                   ))}
-                </select>
+                </Select>
 
-                <label className="text-xs font-bold text-slate-700">
-                  Subdivision
-                </label>
-                <select
+                <Select
+                  label="Subdivision"
                   value={subdivision}
                   onChange={(e) =>
                     setSubdivision(parseInt(e.target.value, 10) as Subdivision)
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-900"
                 >
                   <option value={1}>Quarter (1)</option>
                   <option value={2}>Eighth (2)</option>
                   <option value={3}>Triplet (3)</option>
                   <option value={4}>Sixteenth (4)</option>
-                </select>
+                </Select>
 
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                  <input
-                    type="checkbox"
-                    checked={accentDownbeat}
-                    onChange={(e) => setAccentDownbeat(e.target.checked)}
-                  />
-                  Accent beat 1
-                </label>
+                <Toggle
+                  label="Accent beat 1"
+                  checked={accentDownbeat}
+                  onCheckedChange={setAccentDownbeat}
+                />
               </div>
             </div>
 
             {/* Sound */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+            <div className="space-y-3">
               <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
                 Sound
               </div>
 
               <div className="mt-3 grid gap-3">
-                <label className="text-xs font-bold text-slate-700">
-                  Click type
-                </label>
-                <select
+                <Select
+                  label="Click type"
                   value={mode}
                   onChange={(e) => setMode(e.target.value as ClickMode)}
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-900"
                 >
                   <option value="click">Click (bright)</option>
                   <option value="wood">Wood (warm)</option>
                   <option value="beep">Beep (tone)</option>
-                </select>
+                </Select>
 
                 <label className="text-xs font-bold text-slate-700">Volume</label>
                 <div className="flex items-center gap-3">
@@ -957,20 +681,22 @@ function MetronomeCard() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs font-semibold text-slate-700">
+                <div className="ilt-helper-text text-xs">
                   If the sounds feel similar on tiny speakers, try headphones and
                   switch between Beep and Click.
                 </div>
               </div>
             </div>
-          </div>
+            </SettingRow>
+          </SettingGroup>
         )}
 
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "timer-display-surface relative order-first mt-0 flex flex-col items-center justify-center text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -989,17 +715,14 @@ function MetronomeCard() {
             }
           }}
           role={isFs ? "button" : undefined}
+          aria-label={isFs ? "Metronome display. Tap or click to start or stop." : undefined}
           title={isFs ? "Tap/click to start or stop" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {statusLabel}
-          </div>
-
-          <div className="mt-2 flex items-baseline gap-3">
+          <div className="flex flex-col items-center">
             <span
               ref={bpmTextRef}
               className={[
-                "inline-block text-center font-mono font-extrabold",
+                "timer-interaction-stage-value inline-block text-center font-mono font-extrabold",
                 isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
               ].join(" ")}
               style={{
@@ -1010,9 +733,13 @@ function MetronomeCard() {
             >
               {bpmBigText}
             </span>
-            <span className="text-sm font-extrabold uppercase tracking-widest text-slate-600">
+            <span className="timer-interaction-context text-sm font-extrabold uppercase tracking-widest text-slate-600">
               BPM
             </span>
+          </div>
+
+          <div className="timer-interaction-status text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
           </div>
 
           <div className="mt-4 flex flex-col items-center gap-2">
@@ -1070,14 +797,42 @@ function MetronomeCard() {
               `,
             }}
           />
-        </div>
+        </DisplayStage>
+
+        {!isFs && (
+          <ControlGroup className="timer-interaction-actions order-2">
+            <Btn
+              kind={isRunning ? "ghost" : "solid"}
+              onClick={() => (isRunning ? stop() : void start())}
+              title="Start/Stop (Space)"
+            >
+              {isRunning ? "Stop" : "Start"}
+            </Btn>
+            <Btn kind="ghost" onClick={() => void tapTempo()} title="Tap tempo (T)">
+              Tap tempo
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={() => setBpm((v) => clamp(v - 5, 20, 400))}
+              title="BPM -5"
+            >
+              -5
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={() => setBpm((v) => clamp(v + 5, 20, 400))}
+              title="BPM +5"
+            >
+              +5
+            </Btn>
+          </ControlGroup>
+        )}
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap display to start/stop · Space start/stop · T tap · Arrow keys
-              BPM · F fullscreen · C copy
+              Tap display to start/stop / Space start/stop / T tap / Arrow keys BPM / F fullscreen / C copy
             </div>
             <div className="text-xs font-semibold text-slate-700">
               Time zone: {tz}
@@ -1087,13 +842,20 @@ function MetronomeCard() {
 
         {/* Footer row (normal only) */}
         {!isFs && (
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space/Enter start/stop · Arrow keys BPM · T tap · F
-              fullscreen · C copy
-            </div>
-            <div className="text-xs text-slate-600">Time zone: {tz}</div>
-          </div>
+          <>
+            <SecondaryActionRow className="timer-interaction-actions order-4">
+              <Btn kind="ghost" onClick={copy} title="Copy (C)">
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()} title="Fullscreen (F)">
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+            <ShortcutHint className="timer-interaction-shortcut order-5">
+              Shortcuts: Space/Enter start/stop / Arrow keys BPM / T tap / F fullscreen / C copy
+            </ShortcutHint>
+            <div className="ilt-helper-text order-5 text-center">Time zone: {tz}</div>
+          </>
         )}
       </div>
     </Card>
@@ -1134,37 +896,25 @@ export default function MetronomePage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <MetronomeCard />
-        </div>
+      <ToolHero
+        display={<MetronomeCard />}
+        title="Online Metronome"
+        description="Set BPM, tap tempo, choose rhythm options, and keep the beat display dominant while controls stay secondary."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Metronome</span>
-        </p>
-
-        {/* Loader data is available if you need it later; keeping to avoid unused loader changes */}
-        <span className="sr-only" aria-hidden>
-          {nowISO}
-        </span>
-      </section>
-
-          <HowItWorks />
-            <KeyboardShortcuts />
-            <PopularUseCases />
-            <FAQ />
-            <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

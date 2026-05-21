@@ -67,10 +67,10 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Online Timer is a fast, no-setup countdown timer designed for one
             job: set a time, start the countdown, and keep it readable. Use it
             in a browser on any device, then switch to fullscreen when you need
@@ -80,7 +80,7 @@ export default function HowItWorks({
 
         {/* Core explanation (SEO + intent, no fluff) */}
         <div className="mt-4 grid gap-4">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-700">
+          <div className="ilt-surface-muted p-4 text-[var(--ilt-text-secondary)]">
             <p className="leading-relaxed">
               The timer supports quick presets and precise custom entry, so you
               can go from idea to running countdown in a few seconds. You can
@@ -103,45 +103,45 @@ export default function HowItWorks({
           </div>
 
           <div className="grid gap-3 md:grid-cols-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 1) Set the duration
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Choose a preset or type{" "}
-                <span className="font-semibold text-slate-900">ss</span>,{" "}
-                <span className="font-semibold text-slate-900">mm:ss</span>, or{" "}
-                <span className="font-semibold text-slate-900">h:mm:ss</span>,
+                <span className="font-semibold text-[var(--ilt-text-primary)]">ss</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">mm:ss</span>, or{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">h:mm:ss</span>,
                 then press{" "}
-                <span className="font-semibold text-slate-900">Set</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Set</span>.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 2) Start and control
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Press Start (or Space) to run. Press again to pause. Use Reset
                 (or R) to return to the set duration.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 3) Sound and Loop
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Sound plays a short beep at 0. Loop restarts the same duration
                 each time the timer finishes.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 4) Fullscreen
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Press Fullscreen (or F). In fullscreen, tap or click the timer
                 area to start or pause quickly.
               </p>
@@ -151,76 +151,76 @@ export default function HowItWorks({
 
         {/* Examples with real numbers users see */}
         <div className="mt-6">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Examples you can copy
           </h3>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             These examples use the same formats you see on screen. If a duration
             is under an hour, the display reads{" "}
-            <span className="font-semibold text-slate-900">m:ss</span>. For an
+            <span className="font-semibold text-[var(--ilt-text-primary)]">m:ss</span>. For an
             hour or more, it reads{" "}
-            <span className="font-semibold text-slate-900">h:mm:ss</span>.
+            <span className="font-semibold text-[var(--ilt-text-primary)]">h:mm:ss</span>.
           </p>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {/* Presentation */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario A: Presentation segment timing (12 minutes)
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You have a 12-minute demo and want a clear room-visible
                 countdown. The key is reducing friction: set, fullscreen, start.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Setup
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Tap the{" "}
-                    <span className="font-semibold text-slate-900">12m</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">12m</span>{" "}
                     preset (or type{" "}
-                    <span className="font-semibold text-slate-900">12:00</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">12:00</span>{" "}
                     and press Set).
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Run
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Press{" "}
-                    <span className="font-semibold text-slate-900">F</span> for
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">F</span> for
                     fullscreen, then press{" "}
-                    <span className="font-semibold text-slate-900">Space</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">Space</span>{" "}
                     to start. If you need to pause mid-demo, tap the timer area
                     once.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Finish
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     At{" "}
-                    <span className="font-semibold text-slate-900">0:00</span>,
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">0:00</span>,
                     the timer shows{" "}
-                    <span className="font-semibold text-slate-900">Done</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">Done</span>.
                     With Sound on, you hear a short beep. Press Restart if you
                     want the same 12-minute segment again.
                   </div>
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 Want a talk-specific layout?{" "}
                 <Link
                   to="/presentation-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Presentation Timer
                 </Link>{" "}
@@ -229,60 +229,60 @@ export default function HowItWorks({
             </div>
 
             {/* Classroom */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario B: Classroom transition (3 minutes 30 seconds)
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You want a short transition timer that is precise enough to keep
                 the pace, but simple enough to restart repeatedly.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Set
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Type{" "}
-                    <span className="font-semibold text-slate-900">3:30</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">3:30</span>{" "}
                     and press{" "}
-                    <span className="font-semibold text-slate-900">Set</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">Set</span>.
                     The display will show{" "}
-                    <span className="font-semibold text-slate-900">3:30</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">3:30</span>.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Run
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Press Start and keep it visible. If students ask for a brief
                     pause, press Space to pause, then Space again to resume.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Repeat
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Press Reset (or{" "}
-                    <span className="font-semibold text-slate-900">R</span>) to
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">R</span>) to
                     return to{" "}
-                    <span className="font-semibold text-slate-900">3:30</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">3:30</span>{" "}
                     for the next transition. This is faster than re-typing the
                     time each round.
                   </div>
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 Running a classroom daily?{" "}
                 <Link
                   to="/classroom-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Classroom Timer
                 </Link>{" "}
@@ -291,68 +291,68 @@ export default function HowItWorks({
             </div>
 
             {/* Repeating intervals */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario C: Repeating intervals with Loop (45 seconds)
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are running a repeating station: 45 seconds on, rotate, then
                 45 seconds again. You do not want to reset and restart manually
                 each time.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Set
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Type{" "}
-                    <span className="font-semibold text-slate-900">45</span> and
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">45</span> and
                     press Set. The timer loads{" "}
-                    <span className="font-semibold text-slate-900">0:45</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">0:45</span>.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Options
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Turn{" "}
-                    <span className="font-semibold text-slate-900">Loop</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">Loop</span>{" "}
                     on. Keep{" "}
-                    <span className="font-semibold text-slate-900">Sound</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">Sound</span>{" "}
                     on if you want a clear end cue each interval.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What you will see
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     The display runs down to{" "}
-                    <span className="font-semibold text-slate-900">0:00</span>,
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">0:00</span>,
                     beeps (if Sound is on), then instantly restarts at{" "}
-                    <span className="font-semibold text-slate-900">0:45</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">0:45</span>.
                     That cycle repeats until you pause or reset.
                   </div>
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 Need structured work/rest rounds?{" "}
                 <Link
                   to="/hiit-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   HIIT Timer
                 </Link>{" "}
                 or{" "}
                 <Link
                   to="/tabata-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Tabata Timer
                 </Link>{" "}
@@ -361,69 +361,69 @@ export default function HowItWorks({
             </div>
 
             {/* Long duration */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario D: Long countdown (1 hour 15 minutes)
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You need a long countdown where hours matter, like a study block
                 or a timed practice session.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Set
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Type{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       1:15:00
                     </span>{" "}
                     and press Set. The timer displays{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       1:15:00
                     </span>
                     .
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Control
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Use Pause when you step away. Use Reset to return to{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       1:15:00
                     </span>{" "}
                     without re-entering the time.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Alternative
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     If you are running repeated focus cycles, a dedicated tool
                     may be easier.
                   </div>
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 Prefer guided work blocks?{" "}
                 <Link
                   to="/pomodoro-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Pomodoro Timer
                 </Link>{" "}
                 or{" "}
                 <Link
                   to="/focus-session-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Focus Session Timer
                 </Link>{" "}
@@ -434,14 +434,14 @@ export default function HowItWorks({
         </div>
 
         {/* Practical clarifications */}
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="text-lg font-semibold text-sky-700">
+        <div className="mt-6 ilt-surface-card p-4">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Details that prevent mistakes
           </h3>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Editing while running pauses cleanly
               </div>
               <p className="mt-2 leading-relaxed">
@@ -454,8 +454,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen is designed for quick control
               </div>
               <p className="mt-2 leading-relaxed">
@@ -472,24 +472,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical content stays expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-white p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-card p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical notes (timing accuracy, audio, fullscreen)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional details for troubleshooting and demos
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Display rounding for readability
               </div>
               <p className="mt-1 leading-relaxed">
@@ -499,8 +499,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Audio may require interaction
               </div>
               <p className="mt-1 leading-relaxed">
@@ -510,8 +510,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen behavior varies by browser
               </div>
               <p className="mt-1 leading-relaxed">
@@ -526,28 +526,28 @@ export default function HowItWorks({
         </details>
 
         {/* Footer helper links, on-intent */}
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">
+        <div className="mt-6 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">
             Need a different tool?
           </span>{" "}
           For multiple countdowns use{" "}
           <Link
             to="/multiple-timers"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Multiple Timers
           </Link>
           . For a dedicated big display use{" "}
           <Link
             to="/fullscreen-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Fullscreen Timer
           </Link>
           . For quiet spaces use{" "}
           <Link
             to="/silent-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Silent Timer
           </Link>

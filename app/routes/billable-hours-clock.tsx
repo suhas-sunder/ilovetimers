@@ -2,7 +2,20 @@
 import type { Route } from "./+types/billable-hours-clock";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  Field,
+  PageShell,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  Select,
+  SeoBand,
+  StatusChip,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import Disclaimer from "~/clients/components/billable-hours-clock/Disclaimer";
 import FAQ from "~/clients/components/billable-hours-clock/FAQ";
 import HowItWorks from "~/clients/components/billable-hours-clock/HowItWorks";
@@ -77,14 +90,6 @@ function isTypingTarget(target: EventTarget | null) {
     tag === "SELECT" ||
     el.isContentEditable
   );
-}
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
 }
 
 function clamp(n: number, min: number, max: number) {
@@ -192,88 +197,6 @@ const CURRENCIES: { code: string; name: string }[] = [
   { code: "ARS", name: "Argentine Peso" },
   { code: "UYU", name: "Uruguayan Peso" },
 ];
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-}) => (
-  <div
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60",
-      "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-  title,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  className?: string;
-  disabled?: boolean;
-  title?: string;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    title={title}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-      active
-        ? "bg-sky-700 text-white hover:bg-sky-600"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-  >
-    {children}
-  </button>
-);
 
 /* =========================================================
    TYPES + HELPERS
@@ -411,6 +334,7 @@ function BillableHoursClockCard() {
   );
 
   const fsRef = useRef<HTMLDivElement>(null);
+  const fullscreen = useFullscreen(fsRef);
   const rafRef = useRef<number | null>(null);
   const hydratedRef = useRef(false);
 
@@ -768,7 +692,7 @@ function BillableHoursClockCard() {
       if (activeTimer) onReset(activeTimer.id);
     } else if (k === "f") {
       e.preventDefault();
-      if (fsRef.current) void toggleFullscreen(fsRef.current);
+      void fullscreen.toggle();
     } else if (k === "c") {
       e.preventDefault();
       if (activeTimer) void onCopy(activeTimer.id);
@@ -791,16 +715,28 @@ function BillableHoursClockCard() {
 
   const statusChip = useMemo(() => {
     if (!activeTimer)
-      return { label: "No active timer", cls: "bg-slate-100 text-slate-800" };
+      return {
+        label: "No active timer",
+        cls: "bg-[var(--ilt-status-bg)] text-[var(--ilt-text-secondary)]",
+      };
     if (activeTimer.status === "running")
-      return { label: "Running", cls: "bg-emerald-100 text-emerald-900" };
+      return {
+        label: "Running",
+        cls: "bg-[var(--ilt-selected-bg)] text-[var(--ilt-selected-text)]",
+      };
     if (activeTimer.status === "paused")
-      return { label: "Paused", cls: "bg-slate-100 text-slate-800" };
-    return { label: "Ready", cls: "bg-sky-100 text-sky-900" };
+      return {
+        label: "Paused",
+        cls: "bg-[var(--ilt-status-bg)] text-[var(--ilt-text-secondary)]",
+      };
+    return {
+      label: "Ready",
+      cls: "bg-[var(--ilt-status-bg)] text-[var(--ilt-text-secondary)]",
+    };
   }, [activeTimer]);
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown}>
+    <Card tabIndex={0} onKeyDown={onKeyDown} className="timer-list-dashboard flex flex-col">
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -816,25 +752,25 @@ function BillableHoursClockCard() {
         }}
       />
 
-      <div className="no-print flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="no-print order-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+          <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
             Live timer
           </div>
-          <div className="mt-1 text-lg font-extrabold text-slate-950">
+          <div className="mt-1 text-lg font-extrabold text-[var(--ilt-text-primary)]">
             Billable Hours Clock
           </div>
-          <div className="mt-2 text-sm font-semibold text-slate-700">
+          <div className="mt-2 text-sm font-semibold text-[var(--ilt-text-secondary)]">
             Multiple timers, rounding, totals, copy, fullscreen, and local save.
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-          <span
+        <SecondaryActionRow className="sm:justify-end">
+          <StatusChip
             className={`rounded-full px-3 py-1 text-sm font-semibold ${statusChip.cls}`}
           >
             {statusChip.label}
-          </span>
+          </StatusChip>
           <Btn onClick={() => addTimer()} title="Add timer (A)">
             Add timer
           </Btn>
@@ -850,9 +786,7 @@ function BillableHoursClockCard() {
           </Btn>
           <Btn
             kind="ghost"
-            onClick={() =>
-              fsRef.current && void toggleFullscreen(fsRef.current)
-            }
+            onClick={() => void fullscreen.toggle()}
             title="Fullscreen (F)"
           >
             Fullscreen
@@ -873,27 +807,27 @@ function BillableHoursClockCard() {
           >
             Print all
           </Btn>
-        </div>
+        </SecondaryActionRow>
       </div>
 
-      <div className="no-print mt-6 grid gap-4 lg:grid-cols-3">
-        <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70 lg:col-span-2">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="timer-list-grid timer-primary-surface no-print order-1 mt-2 grid gap-4 lg:grid-cols-3">
+        <div className="timer-list-panel flex min-w-0 flex-col ilt-surface-card p-4 lg:col-span-2">
+          <div className="order-2 mt-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                 Active timer
               </div>
-              <div className="mt-1 truncate text-xl font-extrabold text-slate-950">
+              <div className="mt-1 truncate text-xl font-extrabold text-[var(--ilt-text-primary)]">
                 {activeTimer ? activeTimer.name : "No timer"}
               </div>
-              <div className="mt-2 text-sm font-semibold text-slate-700">
+              <div className="mt-2 text-sm font-semibold text-[var(--ilt-text-secondary)]">
                 Shortcuts: Space start/pause · R reset · C copy · P print · A
                 add · F fullscreen
               </div>
             </div>
 
             {activeTimer ? (
-              <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+              <ControlGroup className="sm:justify-end">
                 <Btn
                   onClick={() => onStartPause(activeTimer.id)}
                   title="Space start/pause"
@@ -925,59 +859,60 @@ function BillableHoursClockCard() {
                 >
                   Print
                 </Btn>
-              </div>
+              </ControlGroup>
             ) : null}
           </div>
 
           {activeTimer && activeDerived ? (
-            <div className="mt-5 grid gap-4 lg:grid-cols-3">
-              <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+            <div className="order-1 grid gap-4 lg:grid-cols-3">
+              <div className="timer-list-panel order-1 ilt-surface-card p-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                   Live time
                 </div>
-                <div className="mt-2 font-mono text-4xl font-extrabold tracking-wider text-slate-950">
+                <div data-primary-display-value className="timer-list-value mt-2 font-mono text-4xl font-extrabold tracking-wider text-[var(--ilt-text-primary)]">
                   {msToHMS(activeTimer.elapsedMs)}
                 </div>
-                <div className="mt-3 text-xs font-semibold text-slate-600">
+                <div className="mt-3 text-xs font-semibold text-[var(--ilt-text-muted)]">
                   Actual elapsed
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              <div className="timer-list-panel order-1 ilt-surface-card p-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                   Billable time
                 </div>
-                <div className="mt-2 font-mono text-4xl font-extrabold tracking-wider text-slate-950">
+                <div className="mt-2 font-mono text-4xl font-extrabold tracking-wider text-[var(--ilt-text-primary)]">
                   {msToHMS(activeDerived.roundedMs)}
                 </div>
-                <div className="mt-3 text-xs font-semibold text-slate-600">
+                <div className="mt-3 text-xs font-semibold text-[var(--ilt-text-muted)]">
                   Rounding:{" "}
-                  <span className="text-sky-700">
+                  <span className="text-[var(--ilt-text-secondary)]">
                     {roundLabel(activeTimer.roundMode)}
                   </span>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
-                <div className="text-xs font-bold uppercase tracking-wide text-emerald-700">
+              <div className="timer-list-panel order-1 ilt-surface-muted p-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                   Total
                 </div>
-                <div className="mt-2 text-4xl font-extrabold text-emerald-900">
+                <div className="mt-2 text-4xl font-extrabold text-[var(--ilt-text-primary)]">
                   {fmtMoney(activeDerived.total, activeTimer.currency)}
                 </div>
-                <div className="mt-3 text-xs font-semibold text-emerald-800">
+                <div className="mt-3 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                   {activeDerived.hours.toFixed(2)} billable hours
                 </div>
               </div>
 
-              <div className="lg:col-span-3 rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+              <div className="timer-list-panel order-3 lg:col-span-3 ilt-surface-card p-4">
                 <div className="grid gap-4 lg:grid-cols-3">
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                    <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                       Hourly rate
                     </div>
                     <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-                      <input
+                      <Field
+                        label="Rate"
                         type="number"
                         value={activeTimer.hourlyRate}
                         min={0}
@@ -991,16 +926,15 @@ function BillableHoursClockCard() {
                             ),
                           })
                         }
-                        className="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
                       />
-                      <select
+                      <Select
+                        label="Currency"
                         value={activeTimer.currency}
                         onChange={(e) =>
                           updateTimer(activeTimer.id, {
                             currency: e.target.value,
                           })
                         }
-                        className="cursor-pointer w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
                         aria-label="Currency"
                       >
                         {CURRENCIES.map((c) => (
@@ -1008,15 +942,15 @@ function BillableHoursClockCard() {
                             {c.code} - {c.name}
                           </option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
-                    <div className="mt-2 text-xs font-semibold text-slate-600">
+                    <div className="mt-2 text-xs font-semibold text-[var(--ilt-text-muted)]">
                       Currency: {activeCurrencyName}
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                    <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                       Rounding
                     </div>
                     <div className="mt-2 flex flex-wrap gap-2">
@@ -1053,13 +987,13 @@ function BillableHoursClockCard() {
                         15 min
                       </Chip>
                     </div>
-                    <div className="mt-2 text-xs font-semibold text-slate-600">
+                    <div className="mt-2 text-xs font-semibold text-[var(--ilt-text-muted)]">
                       Always rounds up to the next increment.
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                    <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                       Note
                     </div>
                     <input
@@ -1068,7 +1002,7 @@ function BillableHoursClockCard() {
                         updateTimer(activeTimer.id, { note: e.target.value })
                       }
                       placeholder="Optional: client, matter, task"
-                      className="mt-2 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+                      className="mt-2 w-full ilt-input-control px-3 py-2"
                     />
                     <div className="mt-2 flex flex-wrap gap-2">
                       <Chip
@@ -1107,48 +1041,48 @@ function BillableHoursClockCard() {
 
               {toast ? (
                 <div className="lg:col-span-3 text-center">
-                  <span className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-900">
+                  <span className="ilt-surface-muted px-2 py-1 text-xs font-semibold text-[var(--ilt-text-primary)]">
                     {toast}
                   </span>
                 </div>
               ) : null}
             </div>
           ) : (
-            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">
+            <div className="timer-list-empty order-1 ilt-surface-muted p-4 text-sm font-semibold text-[var(--ilt-text-secondary)]">
               No active timer. Add a timer to start.
             </div>
           )}
         </div>
 
-        <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-          <div className="text-sm font-extrabold text-slate-900">Totals</div>
-          <div className="mt-1 text-xs text-slate-600">
+        <div className="timer-list-panel ilt-surface-card p-4">
+          <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Totals</div>
+          <div className="mt-1 text-xs text-[var(--ilt-text-muted)]">
             Based on rounded billable time for each timer
           </div>
 
-          <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-            <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+          <div className="timer-list-panel mt-4 ilt-surface-card p-4">
+            <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
               Total billable hours
             </div>
-            <div className="mt-2 font-mono text-3xl font-extrabold text-slate-950">
+            <div className="mt-2 font-mono text-3xl font-extrabold text-[var(--ilt-text-primary)]">
               {totalsAll.totalHours.toFixed(2)}
             </div>
           </div>
 
-          <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-            <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+          <div className="timer-list-panel mt-4 ilt-surface-card p-4">
+            <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
               Totals by currency
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
               {amountsByCurrency.length === 0 ? (
-                <div className="text-sm font-semibold text-slate-700">
+                <div className="text-sm font-semibold text-[var(--ilt-text-secondary)]">
                   No totals yet.
                 </div>
               ) : (
                 amountsByCurrency.map(([cur, amt]) => (
                   <div
                     key={cur}
-                    className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900"
+                    className="ilt-surface-muted px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]"
                   >
                     {cur}: {fmtMoney(amt, cur)}
                   </div>
@@ -1157,7 +1091,7 @@ function BillableHoursClockCard() {
             </div>
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs font-semibold text-slate-700">
+          <div className="mt-4 ilt-surface-muted p-3 text-xs font-semibold text-[var(--ilt-text-secondary)]">
             Tip: Click the card once so shortcuts work. Timers are saved in your
             browser.
           </div>
@@ -1165,9 +1099,10 @@ function BillableHoursClockCard() {
       </div>
 
       <div
+        data-display-stage
         ref={fsRef}
         data-fs-container
-        className="timer-display-surface no-print mt-6 overflow-hidden text-slate-900"
+        className="timer-list-panel timer-display-surface no-print order-3 mt-6 overflow-hidden text-[var(--ilt-text-primary)]"
         style={{ minHeight: 260 }}
         aria-live="polite"
       >
@@ -1243,19 +1178,17 @@ function BillableHoursClockCard() {
         >
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                 Fullscreen display
               </div>
-              <div className="mt-1 truncate text-base font-extrabold text-slate-950">
+              <div className="mt-1 truncate text-base font-extrabold text-[var(--ilt-text-primary)]">
                 {activeTimer ? activeTimer.name : "No active timer"}
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <Btn
                 kind="ghost"
-                onClick={() =>
-                  fsRef.current && void toggleFullscreen(fsRef.current)
-                }
+                onClick={() => void fullscreen.toggle()}
                 title="Fullscreen (F)"
               >
                 Enter fullscreen
@@ -1272,39 +1205,39 @@ function BillableHoursClockCard() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                 Live
               </div>
-              <div className="mt-2 font-mono text-2xl font-extrabold text-slate-950">
+              <div className="mt-2 font-mono text-2xl font-extrabold text-[var(--ilt-text-primary)]">
                 {activeTimer ? msToHMS(activeTimer.elapsedMs) : "0:00:00"}
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                 Billable
               </div>
-              <div className="mt-2 font-mono text-2xl font-extrabold text-slate-950">
+              <div className="mt-2 font-mono text-2xl font-extrabold text-[var(--ilt-text-primary)]">
                 {activeTimer && activeDerived
                   ? msToHMS(activeDerived.roundedMs)
                   : "0:00:00"}
               </div>
-              <div className="mt-2 text-xs font-semibold text-slate-600">
+              <div className="mt-2 text-xs font-semibold text-[var(--ilt-text-muted)]">
                 {activeTimer ? roundLabel(activeTimer.roundMode) : ""}
               </div>
             </div>
 
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
-              <div className="text-xs font-bold uppercase tracking-wide text-emerald-700">
+            <div className="ilt-surface-muted p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                 Total
               </div>
-              <div className="mt-2 text-2xl font-extrabold text-emerald-900">
+              <div className="mt-2 text-2xl font-extrabold text-[var(--ilt-text-primary)]">
                 {activeTimer && activeDerived
                   ? fmtMoney(activeDerived.total, activeTimer.currency)
                   : fmtMoney(0, "USD")}
               </div>
-              <div className="mt-2 text-xs font-semibold text-emerald-800">
+              <div className="mt-2 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                 {activeTimer && activeDerived
                   ? `${activeDerived.hours.toFixed(2)} hrs`
                   : ""}
@@ -1314,6 +1247,13 @@ function BillableHoursClockCard() {
         </div>
 
         <div data-shell="fullscreen">
+          <button
+            type="button"
+            className="fs-exit"
+            onClick={() => void fullscreen.exit()}
+          >
+            Exit (Esc)
+          </button>
           <div className="fs-inner">
             <div className="fs-label">
               {activeTimer ? activeTimer.name : "Billable Timer"}
@@ -1335,10 +1275,10 @@ function BillableHoursClockCard() {
         </div>
       </div>
 
-      <div className="no-print mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+      <div className="timer-list-panel no-print order-4 mt-6 ilt-surface-card p-4 sm:p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="text-lg font-extrabold text-slate-950">Your timers</h3>
-          <div className="text-xs font-semibold text-slate-600">
+          <h3 className="text-lg font-extrabold text-[var(--ilt-text-primary)]">Your timers</h3>
+          <div className="text-xs font-semibold text-[var(--ilt-text-muted)]">
             Saved to this browser (local storage)
           </div>
         </div>
@@ -1352,10 +1292,10 @@ function BillableHoursClockCard() {
               <div
                 key={t.id}
                 className={[
-                  "w-full rounded-2xl border p-4 transition",
+                  "timer-list-row w-full p-4 transition",
                   isActive
-                    ? "border-sky-200 bg-sky-50"
-                    : "border-slate-200 bg-white hover:bg-slate-50",
+                    ? "ilt-surface-muted"
+                    : "ilt-surface-card hover:bg-[var(--ilt-bg-hover)]",
                 ].join(" ")}
               >
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -1366,56 +1306,56 @@ function BillableHoursClockCard() {
                     title="Set active timer"
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <div className="text-sm font-extrabold text-slate-950">
+                      <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
                         {idx + 1}. {t.name}
                       </div>
                       {t.status === "running" ? (
-                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-extrabold text-emerald-900">
+                        <span className="rounded-full bg-[var(--ilt-selected-bg)] px-2 py-0.5 text-xs font-extrabold text-[var(--ilt-selected-text)]">
                           Running
                         </span>
                       ) : t.status === "paused" ? (
-                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-extrabold text-slate-800">
+                        <span className="rounded-full bg-[var(--ilt-status-bg)] px-2 py-0.5 text-xs font-extrabold text-[var(--ilt-text-secondary)]">
                           Paused
                         </span>
                       ) : (
-                        <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-extrabold text-sky-900">
+                        <span className="rounded-full bg-[var(--ilt-status-bg)] px-2 py-0.5 text-xs font-extrabold text-[var(--ilt-text-secondary)]">
                           Ready
                         </span>
                       )}
-                      <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-bold text-slate-700">
+                      <span className="rounded-full bg-[var(--ilt-bg-panel)] px-2 py-0.5 text-xs font-bold text-[var(--ilt-text-secondary)] shadow-[inset_0_0_0_1px_var(--ilt-border-subtle)]">
                         {roundLabel(t.roundMode)}
                       </span>
                     </div>
 
-                    <div className="mt-1 text-xs text-slate-600 truncate">
+                    <div className="mt-1 text-xs text-[var(--ilt-text-muted)] truncate">
                       {t.note.trim() ? t.note.trim() : "No note"}
                     </div>
                   </button>
 
                   <div className="grid w-full gap-2 lg:w-auto lg:grid-cols-3 lg:items-center">
-                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                      <div className="text-[11px] font-bold uppercase tracking-wide text-slate-600">
+                    <div className="timer-list-panel ilt-surface-card px-3 py-2">
+                      <div className="text-[11px] font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                         Billable
                       </div>
-                      <div className="mt-1 font-mono text-lg font-extrabold text-slate-950">
+                      <div className="mt-1 font-mono text-lg font-extrabold text-[var(--ilt-text-primary)]">
                         {msToHMS(d.roundedMs)}
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                      <div className="text-[11px] font-bold uppercase tracking-wide text-slate-600">
+                    <div className="timer-list-panel ilt-surface-card px-3 py-2">
+                      <div className="text-[11px] font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                         Hours
                       </div>
-                      <div className="mt-1 font-mono text-lg font-extrabold text-slate-950">
+                      <div className="mt-1 font-mono text-lg font-extrabold text-[var(--ilt-text-primary)]">
                         {d.hours.toFixed(2)}
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2">
-                      <div className="text-[11px] font-bold uppercase tracking-wide text-emerald-700">
+                    <div className="timer-list-panel ilt-surface-muted px-3 py-2">
+                      <div className="text-[11px] font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                         Total
                       </div>
-                      <div className="mt-1 text-lg font-extrabold text-emerald-900">
+                      <div className="mt-1 text-lg font-extrabold text-[var(--ilt-text-primary)]">
                         {fmtMoney(d.total, t.currency)}
                       </div>
                     </div>
@@ -1485,18 +1425,18 @@ function BillableHoursClockCard() {
                 {isActive ? (
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <div>
-                      <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                      <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                         Name
                       </div>
                       <input
                         value={t.name}
                         onChange={(e) => renameTimerSafe(t.id, e.target.value)}
-                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+                        className="mt-1 w-full ilt-input-control px-3 py-2"
                       />
                     </div>
 
                     <div>
-                      <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                      <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                         Rate
                       </div>
                       <div className="mt-1 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
@@ -1514,14 +1454,14 @@ function BillableHoursClockCard() {
                               ),
                             })
                           }
-                          className="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+                          className="w-full min-w-0 ilt-input-control px-3 py-2"
                         />
                         <select
                           value={t.currency}
                           onChange={(e) =>
                             updateTimer(t.id, { currency: e.target.value })
                           }
-                          className="cursor-pointer w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3 py-2 font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+                          className="cursor-pointer w-full min-w-0 ilt-input-control px-3 py-2 font-semibold"
                           aria-label="Currency"
                         >
                           {CURRENCIES.map((c) => (
@@ -1534,7 +1474,7 @@ function BillableHoursClockCard() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                      <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                         Note
                       </div>
                       <input
@@ -1543,12 +1483,12 @@ function BillableHoursClockCard() {
                           updateTimer(t.id, { note: e.target.value })
                         }
                         placeholder="Optional: client, matter, task"
-                        className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+                        className="mt-1 w-full ilt-input-control px-3 py-2"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                      <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                         Rounding
                       </div>
                       <div className="mt-2 flex flex-wrap gap-2">
@@ -1579,7 +1519,7 @@ function BillableHoursClockCard() {
                           15 min
                         </Chip>
                       </div>
-                      <div className="mt-2 text-xs font-semibold text-slate-600">
+                      <div className="mt-2 text-xs font-semibold text-[var(--ilt-text-muted)]">
                         Rounded up: {roundLabel(t.roundMode)}.
                       </div>
                     </div>
@@ -1599,15 +1539,15 @@ function BillableHoursClockCard() {
               Active timer summary
             </div>
 
-            <div className="mt-4 rounded-xl border border-slate-200 p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                 Timer
               </div>
               <div className="mt-1 text-2xl font-extrabold">
                 {activeTimer ? activeTimer.name : "No active timer"}
               </div>
               {activeTimer && activeDerived ? (
-                <div className="mt-2 text-sm font-semibold text-slate-700">
+                <div className="mt-2 text-sm font-semibold text-[var(--ilt-text-secondary)]">
                   {roundLabel(activeTimer.roundMode)} · Rate{" "}
                   {fmtMoney(activeTimer.hourlyRate, activeTimer.currency)} / hr
                   · Currency {activeTimer.currency}
@@ -1616,16 +1556,16 @@ function BillableHoursClockCard() {
             </div>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-xl border border-slate-200 p-3">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              <div className="ilt-surface-card p-3">
+                <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                   Live time
                 </div>
                 <div className="mt-1 font-mono text-lg font-extrabold">
                   {activeTimer ? msToHMS(activeTimer.elapsedMs) : "0:00:00"}
                 </div>
               </div>
-              <div className="rounded-xl border border-slate-200 p-3">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              <div className="ilt-surface-card p-3">
+                <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                   Billable time
                 </div>
                 <div className="mt-1 font-mono text-lg font-extrabold">
@@ -1634,8 +1574,8 @@ function BillableHoursClockCard() {
                     : "0:00:00"}
                 </div>
               </div>
-              <div className="rounded-xl border border-slate-200 p-3">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              <div className="ilt-surface-card p-3">
+                <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                   Total
                 </div>
                 <div className="mt-1 text-lg font-extrabold">
@@ -1647,11 +1587,11 @@ function BillableHoursClockCard() {
             </div>
 
             {activeTimer && activeDerived ? (
-              <div className="mt-4 rounded-xl border border-slate-200 p-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+              <div className="mt-4 ilt-surface-card p-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                   Details
                 </div>
-                <div className="mt-2 grid gap-2 text-sm font-semibold text-slate-800 sm:grid-cols-2">
+                <div className="mt-2 grid gap-2 text-sm font-semibold text-[var(--ilt-text-secondary)] sm:grid-cols-2">
                   <div>Status: {activeTimer.status}</div>
                   <div>Rounding: {roundLabel(activeTimer.roundMode)}</div>
                   <div>Billable hours: {activeDerived.hours.toFixed(2)}</div>
@@ -1671,26 +1611,26 @@ function BillableHoursClockCard() {
             <div className="text-xl font-extrabold">Billable Hours Clock</div>
             <div className="mt-1 text-sm font-semibold">All timers summary</div>
 
-            <div className="mt-4 rounded-xl border border-slate-200 p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                 Total billable hours
               </div>
               <div className="mt-1 font-mono text-2xl font-extrabold">
                 {totalsAll.totalHours.toFixed(2)}
               </div>
-              <div className="mt-2 text-sm font-semibold text-slate-700">
+              <div className="mt-2 text-sm font-semibold text-[var(--ilt-text-secondary)]">
                 Totals by currency:
               </div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {amountsByCurrency.length === 0 ? (
-                  <div className="text-sm font-semibold text-slate-700">
+                  <div className="text-sm font-semibold text-[var(--ilt-text-secondary)]">
                     No totals yet.
                   </div>
                 ) : (
                   amountsByCurrency.map(([cur, amt]) => (
                     <div
                       key={cur}
-                      className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900"
+                      className="ilt-surface-muted px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]"
                     >
                       {cur}: {fmtMoney(amt, cur)}
                     </div>
@@ -1699,8 +1639,8 @@ function BillableHoursClockCard() {
               </div>
             </div>
 
-            <div className="mt-4 rounded-xl border border-slate-200 p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                 Timers
               </div>
               <div className="mt-3 space-y-3">
@@ -1709,20 +1649,20 @@ function BillableHoursClockCard() {
                   return (
                     <div
                       key={t.id}
-                      className="rounded-xl border border-slate-200 p-3"
+                      className="ilt-surface-card p-3"
                     >
                       <div className="text-base font-extrabold">{t.name}</div>
-                      <div className="mt-1 text-sm font-semibold text-slate-700">
+                      <div className="mt-1 text-sm font-semibold text-[var(--ilt-text-secondary)]">
                         Status {t.status} · {roundLabel(t.roundMode)} · Rate{" "}
                         {fmtMoney(t.hourlyRate, t.currency)} / hr
                       </div>
-                      <div className="mt-2 grid gap-2 text-sm font-semibold text-slate-800 sm:grid-cols-3">
+                      <div className="mt-2 grid gap-2 text-sm font-semibold text-[var(--ilt-text-secondary)] sm:grid-cols-3">
                         <div>Live: {msToHMS(t.elapsedMs)}</div>
                         <div>Billable: {msToHMS(d.roundedMs)}</div>
                         <div>Total: {fmtMoney(d.total, t.currency)}</div>
                       </div>
                       {t.note.trim() ? (
-                        <div className="mt-2 text-sm font-semibold text-slate-700">
+                        <div className="mt-2 text-sm font-semibold text-[var(--ilt-text-secondary)]">
                           Note: {t.note.trim()}
                         </div>
                       ) : null}
@@ -1783,41 +1723,25 @@ export default function BillableHoursClockPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Billable Hours Clock (Live Timer)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Run live billable timers, round up to common increments, and track
-            totals across currencies. Includes copy, fullscreen, and print.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<BillableHoursClockCard />}
+        title="Billable Hours Clock (Live Timer)"
+        description="Run live billable timers, round up to common increments, and track totals across currencies. Includes copy, fullscreen, and print."
+      />
 
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <BillableHoursClockCard />
-        </div>
-
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Billable Hours Clock</span>
-        </p>
-      </section>
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

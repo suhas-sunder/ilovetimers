@@ -1,8 +1,27 @@
 // app/routes/binary-stopwatch.tsx
 import type { Route } from "./+types/binary-stopwatch";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Button as Btn,
+  ControlGroup,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import Disclaimer from "~/clients/components/binary-stopwatch/Disclaimer";
 import FAQ from "~/clients/components/binary-stopwatch/FAQ";
 import HowItWorks from "~/clients/components/binary-stopwatch/HowItWorks";
@@ -80,13 +99,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
 
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
@@ -143,270 +155,6 @@ function useBeep() {
       // ignore
     }
   }, []);
-}
-
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line string into its container by adjusting font size.
- * Uses ResizeObserver + rAF + binary search.
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 520,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: React.RefObject<HTMLElement | null>;
-  textRef: React.RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES (match AMRAP styling)
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 bg-white p-0 text-slate-900 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 text-slate-900 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-      active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-    aria-pressed={!!active}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  left,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="timer-control-shadow rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-          {left}
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <button
-            type="button"
-            onClick={onExit}
-            className="cursor-pointer timer-control-shadow rounded-lg bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-          >
-            Exit (Esc)
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
 }
 
 /* =========================================================
@@ -523,7 +271,7 @@ function BinaryGridPure({
     };
   }, [dark]);
 
-  const cellPx = big ? 34 : 22;
+  const cellPx = big ? 34 : 18;
 
   return (
     <div
@@ -619,7 +367,7 @@ function BinaryGridPure({
 ========================================================= */
 type ToolMode = "stopwatch" | "timer";
 
-function BinaryStopwatchCard() {
+function BinaryStopwatchTool() {
   const beep = useBeep();
 
   const [toolMode, setToolMode] = useState<ToolMode>("stopwatch");
@@ -652,7 +400,8 @@ function BinaryStopwatchCard() {
   const rafRef = useRef<number | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   // IMPORTANT: fit the time only inside its own box (not the whole display),
   // otherwise the binary grid steals space and the time overflows/mis-centers.
@@ -795,7 +544,7 @@ function BinaryStopwatchCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "d") {
       setDimMode((x) => !x);
     } else if (k === "m") {
@@ -824,15 +573,16 @@ function BinaryStopwatchCard() {
     textRef: timeTextRef,
     deps: [decimalTime, isFs, practiceMode, revealed, toolMode, statusLabel],
     minPx: 52,
-    maxPx: isFs ? 560 : 520,
+    maxPx: isFs ? 560 : 320,
     paddingAllowancePx: isFs ? 36 : 32,
+    fitAxis: "box",
   });
 
   const shellTone = fsDark
     ? "border-slate-800 bg-slate-950 text-white"
     : "border-slate-200 bg-slate-50 text-slate-950";
 
-  const innerCardTone = fsDark
+  const innerPanelTone = fsDark
     ? "border-slate-800 bg-slate-900/40"
     : "border-slate-200 bg-white";
 
@@ -846,32 +596,22 @@ function BinaryStopwatchCard() {
       <FullscreenTopBar
         show={isFs}
         title="Binary Stopwatch"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         left={
           <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
             <div className="flex items-center gap-2">
-              <button
-                type="button"
+              <Chip
                 onClick={() => setToolMode("stopwatch")}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  toolMode === "stopwatch"
-                    ? "bg-amber-500 text-slate-950 hover:bg-amber-400"
-                    : "timer-control-shadow bg-white text-slate-900 hover:bg-slate-50"
-                }`}
+                active={toolMode === "stopwatch"}
               >
                 Stopwatch
-              </button>
-              <button
-                type="button"
+              </Chip>
+              <Chip
                 onClick={() => setToolMode("timer")}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  toolMode === "timer"
-                    ? "bg-amber-500 text-slate-950 hover:bg-amber-400"
-                    : "timer-control-shadow bg-white text-slate-900 hover:bg-slate-50"
-                }`}
+                active={toolMode === "timer"}
               >
                 Timer
-              </button>
+              </Chip>
             </div>
 
             <label className="inline-flex cursor-pointer items-center gap-1">
@@ -907,204 +647,25 @@ function BinaryStopwatchCard() {
         }
         right={
           <div className="flex items-center gap-2">
-            <button
-              type="button"
+            <Btn
+              kind={running ? "solid" : "ghost"}
               onClick={startPause}
-              className={`cursor-pointer rounded-lg px-3 py-1 text-sm font-semibold ${
-                running
-                  ? "bg-amber-500 text-slate-950 hover:bg-amber-400"
-                  : "timer-control-shadow bg-white text-slate-900 hover:bg-slate-50"
-              }`}
+              className="py-1 text-sm"
             >
               {running ? "Pause" : "Start"}
-            </button>
-            <button
-              type="button"
-              onClick={reset}
-              className="cursor-pointer timer-control-shadow rounded-lg bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-            >
+            </Btn>
+            <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
               Reset
-            </button>
+            </Btn>
           </div>
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {/* Normal header */}
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2 ml-auto">
-              <div className="flex items-center gap-2">
-                <Chip
-                  active={toolMode === "stopwatch"}
-                  onClick={() => setToolMode("stopwatch")}
-                >
-                  Stopwatch
-                </Chip>
-                <Chip
-                  active={toolMode === "timer"}
-                  onClick={() => setToolMode("timer")}
-                >
-                  Timer
-                </Chip>
-              </div>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={showWeights}
-                  onChange={(e) => setShowWeights(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Weights
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={practiceMode}
-                  onChange={(e) => setPracticeMode(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Practice
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={dimMode}
-                  onChange={(e) => setDimMode(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Dim mode
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={sound}
-                  onChange={(e) => setSound(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Sound
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={softAlarm}
-                  onChange={(e) => setSoftAlarm(e.target.checked)}
-                  disabled={!sound}
-                  className="accent-amber-500"
-                />
-                Soft alarm
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
-        {/* Normal timer controls */}
-        {!isFs && toolMode === "timer" && (
-          <div className="mt-5 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-slate-900">
-                Timer presets
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                {presetsSec.map((ps) => {
-                  const label =
-                    ps < 60
-                      ? `${ps}s`
-                      : ps < 3600
-                        ? `${Math.round(ps / 60)}m`
-                        : `${Math.round(ps / 3600)}h`;
-                  return (
-                    <Chip
-                      key={ps}
-                      active={ps === timerSec}
-                      onClick={() => setTimerPreset(ps)}
-                      disabled={running}
-                    >
-                      {label}
-                    </Chip>
-                  );
-                })}
-              </div>
-
-              <label className="mt-3 block text-sm font-semibold text-slate-900">
-                Custom seconds
-                <input
-                  type="number"
-                  min={5}
-                  max={6 * 3600}
-                  value={timerSec}
-                  disabled={running}
-                  onChange={(e) =>
-                    setTimerSec(clamp(Number(e.target.value || 5), 5, 6 * 3600))
-                  }
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
-                />
-              </label>
-            </div>
-
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-slate-900">
-                Controls
-              </div>
-              <div className="mt-3 flex flex-wrap gap-3">
-                <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-                <Btn kind="ghost" onClick={reset}>
-                  Reset
-                </Btn>
-                {practiceMode ? (
-                  <Btn
-                    kind="ghost"
-                    onClick={() => setRevealed(true)}
-                    disabled={revealed}
-                  >
-                    Reveal
-                  </Btn>
-                ) : null}
-              </div>
-
-              <div className="mt-3 text-xs text-slate-600">
-                Shortcuts: Space start/pause · R reset · F fullscreen · D dim ·
-                M mode · W weights · P practice · E reveal · S sound
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Normal stopwatch controls */}
-        {!isFs && toolMode === "stopwatch" && (
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-            <div className="text-sm text-slate-700">
-              Count up and read hours, minutes, and seconds in pure binary.
-            </div>
-            <div className="flex items-center gap-3">
-              <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-              <Btn kind="ghost" onClick={reset}>
-                Reset
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-history-stack flex h-full flex-col"}>
         {/* Display */}
         <div
           className={[
-            "mt-4 flex flex-col items-center justify-center rounded-2xl border",
+            "timer-primary-surface mt-4 flex flex-col items-center justify-center rounded-2xl border",
             !fsDark ? "timer-display-surface" : "",
             shellTone,
             "p-3 sm:p-6",
@@ -1140,7 +701,7 @@ function BinaryStopwatchCard() {
           >
             <div
               className={[
-                "text-xs font-extrabold uppercase tracking-widest text-center",
+                "timer-history-binary-status text-center text-xs font-extrabold uppercase tracking-widest",
                 fsDark ? "text-slate-200" : "text-slate-700",
               ].join(" ")}
             >
@@ -1151,17 +712,17 @@ function BinaryStopwatchCard() {
             {/* TIME BOX (this is what we fit against) */}
             <div
               ref={timeBoxRef}
-              className="w-full flex items-center justify-center"
+              className="timer-history-binary-value flex w-full items-center justify-center"
               style={{
                 // cap the time region so it never pushes the grid off-screen
-                height: isFs ? "min(44vh, 520px)" : "min(30vh, 320px)",
+                height: isFs ? "min(44vh, 520px)" : "min(24vh, 260px)",
               }}
             >
               {practiceMode && !revealed ? (
                 <div
                   className={[
-                    "w-full max-w-2xl rounded-2xl border p-4 text-center shadow-sm",
-                    innerCardTone,
+                    "w-full max-w-2xl rounded-2xl border p-4 text-center",
+                    innerPanelTone,
                   ].join(" ")}
                 >
                   <div
@@ -1237,34 +798,165 @@ function BinaryStopwatchCard() {
           </div>
         </div>
 
+        {!isFs && (
+          <div className="timer-control-stack mt-4">
+            <ControlGroup>
+              <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+              {practiceMode ? (
+                <Btn
+                  kind="ghost"
+                  onClick={() => setRevealed(true)}
+                  disabled={revealed}
+                >
+                  Reveal
+                </Btn>
+              ) : null}
+            </ControlGroup>
+
+            {toolMode === "timer" ? (
+              <PresetGroup title="Timer presets">
+                {presetsSec.map((ps) => {
+                  const label =
+                    ps < 60
+                      ? `${ps}s`
+                      : ps < 3600
+                        ? `${Math.round(ps / 60)}m`
+                        : `${Math.round(ps / 3600)}h`;
+                  return (
+                    <Chip
+                      key={ps}
+                      active={ps === timerSec}
+                      onClick={() => setTimerPreset(ps)}
+                      disabled={running}
+                    >
+                      {label}
+                    </Chip>
+                  );
+                })}
+              </PresetGroup>
+            ) : null}
+
+            <SettingGroup
+              title="Binary display settings"
+              description={
+                toolMode === "stopwatch"
+                  ? "Count up and read hours, minutes, and seconds in pure binary."
+                  : "Choose timer length, practice options, and the binary display format."
+              }
+            >
+              <SettingRow>
+                <div className="space-y-2">
+                  <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
+                    Mode
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Chip
+                      active={toolMode === "stopwatch"}
+                      onClick={() => setToolMode("stopwatch")}
+                    >
+                      Stopwatch
+                    </Chip>
+                    <Chip
+                      active={toolMode === "timer"}
+                      onClick={() => setToolMode("timer")}
+                    >
+                      Timer
+                    </Chip>
+                  </div>
+                </div>
+
+                {toolMode === "timer" ? (
+                  <Field
+                    label="Custom seconds"
+                    type="number"
+                    min={5}
+                    max={6 * 3600}
+                    value={timerSec}
+                    disabled={running}
+                    onChange={(e) =>
+                      setTimerSec(
+                        clamp(Number(e.target.value || 5), 5, 6 * 3600),
+                      )
+                    }
+                  />
+                ) : (
+                  <div className="ilt-helper-text flex items-end">
+                    Stopwatch mode counts upward from zero.
+                  </div>
+                )}
+
+                <div className="flex flex-wrap items-end gap-2">
+                  <Toggle
+                    label="Weights"
+                    checked={showWeights}
+                    onCheckedChange={setShowWeights}
+                  />
+                  <Toggle
+                    label="Practice"
+                    checked={practiceMode}
+                    onCheckedChange={setPracticeMode}
+                  />
+                  <Toggle
+                    label="Dim"
+                    checked={dimMode}
+                    onCheckedChange={setDimMode}
+                  />
+                  <Toggle
+                    label="Sound"
+                    checked={sound}
+                    onCheckedChange={setSound}
+                  />
+                  <Toggle
+                    label="Soft alarm"
+                    checked={softAlarm}
+                    onCheckedChange={setSoftAlarm}
+                    disabled={!sound}
+                  />
+                </div>
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow className="timer-history-actions">
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint className="timer-history-shortcut">
+              <span className="ilt-keycap">Space</span> start/pause ·{" "}
+              <span className="ilt-keycap">R</span> reset ·{" "}
+              <span className="ilt-keycap">F</span> fullscreen ·{" "}
+              <span className="ilt-keycap">D</span> dim ·{" "}
+              <span className="ilt-keycap">M</span> mode ·{" "}
+              <span className="ilt-keycap">W</span> weights ·{" "}
+              <span className="ilt-keycap">P</span> practice ·{" "}
+              <span className="ilt-keycap">E</span> reveal ·{" "}
+              <span className="ilt-keycap">S</span> sound
+            </ShortcutHint>
+          </div>
+        )}
+
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
+              <Chip
                 onClick={() => setToolMode("stopwatch")}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  toolMode === "stopwatch"
-                    ? "bg-amber-500 text-slate-950 hover:bg-amber-400"
-                    : "timer-control-shadow bg-white text-slate-900 hover:bg-slate-50"
-                }`}
+                active={toolMode === "stopwatch"}
               >
                 Stopwatch
-              </button>
-              <button
-                type="button"
+              </Chip>
+              <Chip
                 onClick={() => setToolMode("timer")}
-                className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                  toolMode === "timer"
-                    ? "bg-amber-500 text-slate-950 hover:bg-amber-400"
-                    : "timer-control-shadow bg-white text-slate-900 hover:bg-slate-50"
-                }`}
+                active={toolMode === "timer"}
               >
                 Timer
-              </button>
+              </Chip>
 
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm shadow-slate-200/80">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900">
                 <input
                   type="checkbox"
                   checked={showWeights}
@@ -1274,7 +966,7 @@ function BinaryStopwatchCard() {
                 Weights
               </label>
 
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm shadow-slate-200/80">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900">
                 <input
                   type="checkbox"
                   checked={practiceMode}
@@ -1284,7 +976,7 @@ function BinaryStopwatchCard() {
                 Practice
               </label>
 
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm shadow-slate-200/80">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900">
                 <input
                   type="checkbox"
                   checked={dimMode}
@@ -1304,18 +996,13 @@ function BinaryStopwatchCard() {
                           ? `${Math.round(ps / 60)}m`
                           : `${Math.round(ps / 3600)}h`;
                     return (
-                      <button
+                      <Chip
                         key={`fs-${ps}`}
-                        type="button"
                         onClick={() => setTimerPreset(ps)}
-                        className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition ${
-                          ps === timerSec
-                            ? "bg-amber-500 text-slate-950 hover:bg-amber-400"
-                            : "timer-control-shadow bg-white text-slate-900 hover:bg-slate-50"
-                        }`}
+                        active={ps === timerSec}
                       >
                         {label}
-                      </button>
+                      </Chip>
                     );
                   })}
                 </div>
@@ -1324,32 +1011,22 @@ function BinaryStopwatchCard() {
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
+                <Btn
+                  kind={running ? "solid" : "ghost"}
                   onClick={startPause}
-                  className={`cursor-pointer rounded-lg px-4 py-2 font-semibold ${
-                    running
-                      ? "bg-amber-500 text-slate-950 hover:bg-amber-400"
-                      : "timer-control-shadow bg-white text-slate-900 hover:bg-slate-50"
-                  }`}
                 >
                   {running ? "Pause" : "Start"}
-                </button>
-                <button
-                  type="button"
-                  onClick={reset}
-                  className="cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50"
-                >
+                </Btn>
+                <Btn kind="ghost" onClick={reset}>
                   Reset
-                </button>
+                </Btn>
                 {practiceMode && !revealed ? (
-                  <button
-                    type="button"
+                  <Btn
+                    kind="solid"
                     onClick={() => setRevealed(true)}
-                    className="cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-950 hover:bg-amber-400"
                   >
                     Reveal
-                  </button>
+                  </Btn>
                 ) : null}
               </div>
 
@@ -1404,42 +1081,25 @@ export default function BinaryStopwatchPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Binary Stopwatch (Binary Timer + Practice Mode)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Use it as a binary stopwatch (count up) or a binary timer (count
-            down). Toggle weights and practice mode, then go fullscreen for a
-            clean, readable display.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<BinaryStopwatchTool />}
+        title="Binary Stopwatch (Binary Timer + Practice Mode)"
+        description="Use it as a binary stopwatch or binary countdown timer. Toggle weights and practice mode, then go fullscreen for a clean, readable display."
+      />
 
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <BinaryStopwatchCard />
-        </div>
-
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Binary Stopwatch</span>
-        </p>
-      </section>
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

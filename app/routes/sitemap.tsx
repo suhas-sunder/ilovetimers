@@ -1,5 +1,6 @@
 // app/routes/sitemap.tsx
 import type { Route } from "./+types/sitemap";
+import { ContentPage } from "~/clients/components/ui/foundation";
 
 const SITE_URL = "https://www.ilovetimers.com";
 
@@ -24,7 +25,13 @@ const SECTIONS: SitemapSection[] = [
         title: "Home",
         href: "/",
         description:
-          "Free online timers, stopwatch, Pomodoro timer, and HIIT interval timer.",
+          "Browse simple online timers, clocks, calculators, converters, and time tools.",
+      },
+      {
+        title: "Free Online Timers",
+        href: "/free-online-timers",
+        description:
+          "Use the original four-tool timer page with countdown, stopwatch, Pomodoro, and HIIT timers.",
       },
       {
         title: "About",
@@ -506,8 +513,13 @@ const SECTIONS: SitemapSection[] = [
   },
   {
     title: "Legal and policy pages",
-    description: "Privacy, terms, and cookie information for the site.",
+    description: "Sitemap, privacy, terms, and cookie information for the site.",
     links: [
+      {
+        title: "HTML Sitemap",
+        href: "/sitemap",
+        description: "Browse every public page available on I Love Timers.",
+      },
       {
         title: "Privacy Policy",
         href: "/privacy",
@@ -583,110 +595,68 @@ export default function Sitemap() {
   };
 
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <ContentPage
+      title="HTML Sitemap"
+      description="Browse every public page on I Love Timers, including countdown timers, stopwatches, Pomodoro tools, workout timers, clocks, calculators, converters, and policy pages."
+      meta={`${allLinks.length} pages. Updated May 16, 2026`}
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-            <a
-              href="/"
-              className="cursor-pointer font-semibold text-slate-600 transition hover:text-sky-700"
-            >
-              Home
-            </a>
-            <span className="mx-2 text-slate-400">/</span>
-            <span className="font-semibold text-slate-900">Sitemap</span>
-          </nav>
+      <section>
+          <h2 className="text-xl font-bold text-[var(--ilt-text-primary)]">Jump to a section</h2>
 
-          <h1 className="text-3xl font-bold tracking-tight text-sky-700 sm:text-4xl">
-            HTML Sitemap
-          </h1>
-
-          <p className="mt-3 max-w-3xl text-base leading-relaxed text-slate-700">
-            Browse every public page on I Love Timers, including countdown
-            timers, stopwatches, Pomodoro tools, workout timers, clocks,
-            calculators, converters, and policy pages.
-          </p>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-700">
-              {allLinks.length} pages
-            </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-700">
-              Updated April 30, 2026
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-bold text-sky-700">Jump to a section</h2>
-
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
             {SECTIONS.map((section) => (
               <a
                 key={section.title}
                 href={`#${slugify(section.title)}`}
-                className="cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:border-sky-200 hover:bg-sky-50 hover:text-sky-800 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                className="ilt-focus-ring cursor-pointer text-sm font-semibold text-[var(--ilt-text-primary)] underline decoration-[var(--ilt-border-strong)] underline-offset-4 hover:decoration-[var(--ilt-accent)]"
               >
                 {section.title}
               </a>
             ))}
           </div>
-        </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-12">
-        <div className="space-y-8">
+      <div className="space-y-10">
           {SECTIONS.map((section) => (
             <section
               key={section.title}
               id={slugify(section.title)}
-              className="scroll-mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              className="scroll-mt-8"
             >
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-sky-700">
+                  <h2 className="text-2xl font-bold text-[var(--ilt-text-primary)]">
                     {section.title}
                   </h2>
-                  <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600">
+                  <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                     {section.description}
                   </p>
                 </div>
 
-                <span className="w-fit rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-slate-600">
+                <span className="w-fit text-xs font-bold uppercase tracking-[0.16em] text-[var(--ilt-text-muted)]">
                   {section.links.length} pages
                 </span>
               </div>
 
-              <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-5 grid gap-x-8 gap-y-5 md:grid-cols-2 lg:grid-cols-3">
                 {section.links.map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
-                    className="group block cursor-pointer rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm transition hover:border-sky-200 hover:bg-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                    className="ilt-focus-ring group block cursor-pointer"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3 className="text-base font-extrabold text-sky-700 transition group-hover:text-sky-800">
-                          {link.title}
-                        </h3>
-                        <p className="mt-1 text-sm leading-relaxed text-slate-600">
-                          {link.description}
-                        </p>
-                      </div>
-
-                      <span className="shrink-0 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 transition group-hover:border-sky-200 group-hover:bg-sky-50 group-hover:text-sky-800">
-                        →
-                      </span>
-                    </div>
-
-                    <div className="mt-4 border-t border-slate-200 pt-3 text-xs font-semibold text-slate-500">
+                    <h3 className="text-base font-bold text-[var(--ilt-text-primary)] underline decoration-[var(--ilt-border-strong)] underline-offset-4 group-hover:decoration-[var(--ilt-accent)]">
+                      {link.title}
+                    </h3>
+                    <p className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+                      {link.description}
+                    </p>
+                    <div className="mt-2 text-xs font-semibold text-[var(--ilt-text-muted)]">
                       {link.href}
                     </div>
                   </a>
@@ -694,9 +664,8 @@ export default function Sitemap() {
               </div>
             </section>
           ))}
-        </div>
-      </section>
-    </main>
+      </div>
+    </ContentPage>
   );
 }
 

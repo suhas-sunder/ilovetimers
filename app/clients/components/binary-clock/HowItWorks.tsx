@@ -65,7 +65,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -79,7 +79,7 @@ export default function HowItWorks({
   }) => (
     <a
       href={href}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </a>
@@ -94,13 +94,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="ilt-surface-card p-5">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="font-mono text-xs whitespace-pre-wrap text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="font-mono text-xs whitespace-pre-wrap text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -108,16 +108,16 @@ export default function HowItWorks({
   );
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-10">
+    <section className="space-y-4">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-2 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This Binary Clock shows the current time from your device and
               renders it in binary in a way you can actually use. It is not a
               “learn binary” article and it is not a novelty widget that hides
@@ -127,7 +127,7 @@ export default function HowItWorks({
               readable display at a distance.
             </p>
 
-            <p className="mt-3 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               The two viewing modes are for two different intents:
               <strong> BCD</strong> keeps the familiar clock digits and shows
               each decimal digit as four bits. <strong>Pure binary</strong>{" "}
@@ -136,31 +136,31 @@ export default function HowItWorks({
               representation.
             </p>
 
-            <p className="mt-3 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               If you want a standard display instead, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/digital-clock")}
               >
                 Digital Clock
               </a>{" "}
               or{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/analog-clock")}
               >
                 Analog Clock
               </a>
               . If you need time across locations, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/world-clock")}
               >
                 World Clock
               </a>{" "}
               or{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/time-zone-converter")}
               >
                 Time Zone Converter
@@ -170,19 +170,19 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               BCD + pure
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Seconds toggle
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               12/24-hour
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Copy snapshot
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
           </div>
@@ -190,47 +190,47 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               The fastest setup (no scrolling, no configuration rabbit holes)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Pick a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Pick a
                 mode: <strong>BCD</strong> (digits) or <strong>Pure</strong>{" "}
                 (binary numbers). Press <Kbd>B</Kbd> to toggle.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Decide
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Decide
                 whether you want seconds. Press <Kbd>S</Kbd> to toggle.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Choose{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Choose{" "}
                 <strong>24-hour</strong> or <strong>12-hour</strong>. Press{" "}
                 <Kbd>2</Kbd> for 24-hour, <Kbd>1</Kbd> for 12-hour.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Use{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Use{" "}
                 <Kbd>F</Kbd> for fullscreen when you want a wall display.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> Use{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> Use{" "}
                 <Kbd>C</Kbd> to copy a snapshot of the current moment.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What you are actually looking at
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 The large time line is your local time formatted in either 24h
                 or 12h style. The grid beneath it is the binary representation.
                 In BCD, you get one 4-bit column per digit. In pure mode, you
                 get one bit column per field (hours, minutes, seconds).
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 The page updates aligned to the next whole-second boundary. Even
                 if seconds are hidden, the page still ticks on second boundaries
                 so the minute change happens cleanly.
@@ -238,11 +238,11 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Quick mode choice (pick based on intent)
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 Choose <span className="font-semibold">BCD</span> when you want
                 the bits to stay aligned to clock digits.
@@ -261,8 +261,8 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Practical tip:
               </span>{" "}
               If you are going to share a screenshot or paste output into notes,
@@ -273,23 +273,23 @@ export default function HowItWorks({
 
         {/* Main explanation (tool-focused, SEO-friendly, unique) */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What each option changes (and what it does not)
           </h3>
 
           <div className="mt-2 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-5">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 BCD mode: digit-by-digit binary that stays readable
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 BCD is built for the moment you want “binary time” while still
                 thinking in normal clock digits. The time stays in the same
                 format you already recognize (HH:MM:SS or HH:MM). The difference
                 is that each digit becomes a 4-bit group, so the grid can be
                 read as a compact mapping of digits to bits.
               </p>
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 This makes BCD ideal for quick glances and for displays where
                 you want to see which digit changed. When minutes roll from 09
                 to 10, you can tell it was a digit change, not a full-field
@@ -297,18 +297,18 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-5">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Pure binary mode: binary numbers for hours, minutes, seconds
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Pure mode is for users who want the binary values of the fields
                 themselves. Minutes are shown as a 6-bit number because minutes
                 range from 0 to 59. Seconds are the same. Hours use 5 bits in
                 24-hour mode (0–23), and 4 bits in 12-hour mode (1–12). The grid
                 is a direct binary value display rather than a digit mapping.
               </p>
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 If you are validating an implementation, comparing to another
                 encoded clock, or just want the cleanest “binary number” view,
                 pure mode is the right choice.
@@ -316,10 +316,10 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Real scenarios with concrete examples
           </h3>
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             These examples mirror what people actually do on this page: toggle a
             mode, hide seconds for stability, switch to 12-hour time for display
             style, and copy a snapshot for notes. The numbers below are
@@ -393,36 +393,36 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen and shortcuts (what you will actually use)
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fullscreen is built for readability, not for hiding controls. You
               can still change mode, seconds, and 12/24-hour settings while in
               fullscreen. Keyboard shortcuts are designed to keep you moving
               without hunting for toggles.
             </p>
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>F</Kbd> fullscreen
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>C</Kbd> copy
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>S</Kbd> seconds
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>B</Kbd> mode
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>1</Kbd> 12-hour
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>2</Kbd> 24-hour
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Esc</Kbd> exit
               </span>
             </div>
@@ -430,18 +430,18 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same idea, different representation)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 If you like encoded time displays, these routes keep the intent
                 but change the format.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>F</Kbd> <Kbd>C</Kbd> <Kbd>S</Kbd> <Kbd>B</Kbd>{" "}
               <Kbd>1</Kbd> <Kbd>2</Kbd> <Kbd>Esc</Kbd>
             </div>
@@ -465,25 +465,25 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (bit widths, time source, copy format)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 What the grid represents, how fields are sized, and what Copy
                 includes
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">BCD mapping</div>
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">BCD mapping</div>
               <p className="mt-1 leading-relaxed">
                 In BCD mode, each decimal digit (0–9) is displayed as 4 bits.
                 The grid shows one 4-bit column per digit in the displayed time.
@@ -491,8 +491,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Pure binary field sizing
               </div>
               <p className="mt-1 leading-relaxed">
@@ -502,8 +502,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Time source</div>
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Time source</div>
               <p className="mt-1 leading-relaxed">
                 The clock uses your device’s local time. The timezone label is
                 read from the browser when available. This page does not convert
@@ -511,8 +511,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Copy output</div>
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Copy output</div>
               <p className="mt-1 leading-relaxed">
                 Copy includes the formatted time, a timezone label, a date line,
                 a mode-specific binary line, and an ISO timestamp. ISO is
@@ -521,15 +521,15 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen behavior
               </div>
               <p className="mt-1 leading-relaxed">
                 Fullscreen uses the browser Fullscreen API on the clock card. If
                 fullscreen is not available due to browser policies, the page
                 continues to work normally. Exiting is always available via{" "}
-                <span className="font-semibold text-slate-900">Esc</span> or the
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Esc</span> or the
                 Exit control.
               </p>
             </div>
@@ -538,20 +538,20 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Need time across locations?
             </strong>{" "}
             Use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/world-clock")}
             >
               World Clock
             </a>{" "}
             or{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/time-zone-converter")}
             >
               Time Zone Converter
@@ -559,20 +559,20 @@ export default function HowItWorks({
             .
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Want a normal clock view?
             </strong>{" "}
             Use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/digital-clock")}
             >
               Digital Clock
             </a>{" "}
             or{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/current-local-time")}
             >
               Current Local Time

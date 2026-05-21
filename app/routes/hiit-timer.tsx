@@ -4,14 +4,32 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/hiit-timer/HowItWorks";
 import Disclaimer from "~/clients/components/hiit-timer/Disclaimer";
 import FAQ from "~/clients/components/hiit-timer/FAQ";
@@ -99,140 +117,6 @@ function isTypingTarget(target: EventTarget | null) {
     el.isContentEditable
   );
 }
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * Uses ResizeObserver + rAF and binary search.
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
 // WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -274,158 +158,6 @@ function useBeep() {
 }
 
 /* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function LabeledNumber({
-  label,
-  value,
-  set,
-  min,
-  max,
-  suffix,
-  hint,
-  disabled,
-}: {
-  label: string;
-  value: number;
-  set: (n: number) => void;
-  min: number;
-  max: number;
-  suffix?: string;
-  hint?: string;
-  disabled?: boolean;
-}) {
-  return (
-    <label className="block text-sm font-semibold text-slate-900">
-      <div className="flex items-baseline gap-2">
-        <span className="min-w-0">
-          {label}{" "}
-          {suffix ? <span className="text-slate-600">{suffix}</span> : null}
-        </span>
-      </div>
-
-      <input
-        type="number"
-        min={min}
-        max={max}
-        value={value}
-        disabled={disabled}
-        onChange={(e) => set(clamp(Number(e.target.value || 0), min, max))}
-        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
-      />
-
-      {hint ? (
-        <div className="mt-1 text-xs font-medium text-slate-600">{hint}</div>
-      ) : null}
-    </label>
-  );
-}
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-/* =========================================================
    HIIT / INTERVAL TIMER
 ========================================================= */
 type Step = "warmup" | "work" | "rest" | "cooldown" | "done";
@@ -453,7 +185,8 @@ function HIITCard() {
   const lastBeepSecondRef = useRef<number | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -663,9 +396,9 @@ function HIITCard() {
     } else if (k === "n") {
       skipNext();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -721,7 +454,7 @@ function HIITCard() {
         : step === "warmup"
           ? "bg-amber-50 text-amber-900 border-amber-200"
           : step === "cooldown"
-            ? "bg-sky-50 text-sky-900 border-sky-200"
+            ? "bg-slate-50 text-slate-700 border-slate-200"
             : "bg-slate-50 text-slate-700 border-slate-200";
 
   function applyTabata() {
@@ -774,165 +507,17 @@ function HIITCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                HIIT Timer (Intervals: Warm-up, Work, Rest, Rounds, Cool-down)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Set intervals, run rounds, skip next, toggle sound cues, and go
-                fullscreen.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  className="cursor-pointer"
-                  type="checkbox"
-                  checked={sound}
-                  onChange={(e) => setSound(e.target.checked)}
-                />
-                Sound
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
-        {/* Settings (normal only) */}
-        {!isFs && (
-          <div className="mt-4 grid gap-4 lg:grid-cols-12">
-            {/* Settings */}
-            <div className="lg:col-span-9">
-              <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                  <LabeledNumber
-                    label="Warm-up"
-                    suffix="(sec)"
-                    value={warmSec}
-                    set={setWarmSec}
-                    min={0}
-                    max={600}
-                    hint="0 = skip"
-                  />
-                  <LabeledNumber
-                    label="Work"
-                    suffix="(sec)"
-                    value={workSec}
-                    set={setWorkSec}
-                    min={1}
-                    max={600}
-                  />
-                  <LabeledNumber
-                    label="Rest"
-                    suffix="(sec)"
-                    value={restSec}
-                    set={setRestSec}
-                    min={0}
-                    max={600}
-                    hint="0 = none"
-                  />
-                  <LabeledNumber
-                    label="Rounds"
-                    value={rounds}
-                    set={setRounds}
-                    min={1}
-                    max={50}
-                  />
-                  <LabeledNumber
-                    label="Cool-down"
-                    suffix="(sec)"
-                    value={coolSec}
-                    set={setCoolSec}
-                    min={0}
-                    max={600}
-                    hint="0 = skip"
-                  />
-
-                  {/* Final beeps spans full row */}
-                  <div className="col-span-2 sm:col-span-3 lg:col-span-5">
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                      <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-900">
-                        <input
-                          className="cursor-pointer"
-                          type="checkbox"
-                          checked={finalCountdownBeeps}
-                          onChange={(e) =>
-                            setFinalCountdownBeeps(e.target.checked)
-                          }
-                          disabled={!sound}
-                        />
-                        Final 3-2-1 beeps (work only)
-                      </label>
-                      <span className="text-sm text-slate-600">
-                        Only when Sound is on.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Presets */}
-            <div className="lg:col-span-3">
-              <div className="h-full rounded-2xl border border-slate-200 bg-white p-4">
-                <div className="text-sm font-extrabold text-sky-700 uppercase tracking-wide">
-                  Quick presets
-                </div>
-
-                <div className="mt-3 grid gap-2">
-                  <Btn
-                    kind="ghost"
-                    onClick={applyTabata}
-                    className="justify-center"
-                  >
-                    Tabata 20/10 × 8
-                  </Btn>
-                  <Btn
-                    kind="ghost"
-                    onClick={applyIntervals}
-                    className="justify-center"
-                  >
-                    Intervals 40/20 × 10
-                  </Btn>
-                  <Btn
-                    kind="ghost"
-                    onClick={applyBoxing}
-                    className="justify-center"
-                  >
-                    Boxing 3:00/1:00 × 6
-                  </Btn>
-                </div>
-
-                <p className="mt-3 text-sm text-slate-600">
-                  Presets load values. Press <strong>Start</strong> when ready.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-interval-stack flex h-full flex-col"}>
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "relative timer-display-surface mt-4 flex flex-col items-center justify-center p-3 text-slate-950 sm:p-6",
+            "relative timer-display-surface order-first mt-0 flex flex-col items-center justify-center p-3 text-slate-950 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
-            minHeight: isFs ? 0 : 260,
+            minHeight: isFs ? 0 : "clamp(320px, 38vw, 440px)",
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
             userSelect: "none",
@@ -945,7 +530,22 @@ function HIITCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex flex-col items-center gap-2">
+          <span
+            ref={timeTextRef}
+            className={[
+              "inline-block text-center font-mono font-extrabold tracking-widest",
+              urgent ? "text-rose-900" : "text-slate-950",
+            ].join(" ")}
+            style={{
+              fontSize: fitFontPx,
+              lineHeight: "1",
+              transform: "translateZ(0)",
+            }}
+          >
+            {timeText}
+          </span>
+
+          <div className="mt-4 flex flex-col items-center gap-2">
             <div className="flex items-center gap-2">
               <span
                 className={[
@@ -964,21 +564,6 @@ function HIITCard() {
               {statusLabel}
             </div>
           </div>
-
-          <span
-            ref={timeTextRef}
-            className={[
-              "mt-4 inline-block text-center font-mono font-extrabold tracking-widest",
-              urgent ? "text-rose-900" : "text-slate-950",
-            ].join(" ")}
-            style={{
-              fontSize: fitFontPx,
-              lineHeight: "1",
-              transform: "translateZ(0)",
-            }}
-          >
-            {timeText}
-          </span>
 
           {isFs && (
             <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
@@ -1003,12 +588,12 @@ function HIITCard() {
               </div>
             </div>
           )}
-        </div>
+        </DisplayStage>
 
-        {/* Controls (normal only) */}
+        {/* Controls, presets, and settings (normal only) */}
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap gap-3">
+          <>
+            <ControlGroup>
               <Btn onClick={startPause}>
                 {running ? "Pause" : step === "done" ? "Restart" : "Start"}
               </Btn>
@@ -1016,20 +601,103 @@ function HIITCard() {
                 Reset
               </Btn>
               <Btn kind="ghost" onClick={skipNext}>
-                Next →
+                Next
               </Btn>
-            </div>
+            </ControlGroup>
 
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space start/pause · R reset · N next · F fullscreen
-            </div>
-          </div>
+            <PresetGroup title="Quick presets">
+              <Chip onClick={applyTabata}>Tabata 20/10 x 8</Chip>
+              <Chip onClick={applyIntervals}>Intervals 40/20 x 10</Chip>
+              <Chip onClick={applyBoxing}>Boxing 3:00/1:00 x 6</Chip>
+            </PresetGroup>
+
+            <SettingGroup
+              title="Interval settings"
+              description="Presets load values. Press Start when ready."
+            >
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-5">
+                <Field
+                  label="Warm-up seconds"
+                  type="number"
+                  min={0}
+                  max={600}
+                  value={warmSec}
+                  onChange={(e) =>
+                    setWarmSec(clamp(Number(e.target.value || 0), 0, 600))
+                  }
+                  hint="0 = skip"
+                />
+                <Field
+                  label="Work seconds"
+                  type="number"
+                  min={1}
+                  max={600}
+                  value={workSec}
+                  onChange={(e) =>
+                    setWorkSec(clamp(Number(e.target.value || 1), 1, 600))
+                  }
+                />
+                <Field
+                  label="Rest seconds"
+                  type="number"
+                  min={0}
+                  max={600}
+                  value={restSec}
+                  onChange={(e) =>
+                    setRestSec(clamp(Number(e.target.value || 0), 0, 600))
+                  }
+                  hint="0 = none"
+                />
+                <Field
+                  label="Rounds"
+                  type="number"
+                  min={1}
+                  max={50}
+                  value={rounds}
+                  onChange={(e) =>
+                    setRounds(clamp(Number(e.target.value || 1), 1, 50))
+                  }
+                />
+                <Field
+                  label="Cool-down seconds"
+                  type="number"
+                  min={0}
+                  max={600}
+                  value={coolSec}
+                  onChange={(e) =>
+                    setCoolSec(clamp(Number(e.target.value || 0), 0, 600))
+                  }
+                  hint="0 = skip"
+                />
+              </SettingRow>
+              <SettingRow className="lg:grid-cols-[auto_auto]">
+                <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                <Toggle
+                  label="Final 3-2-1 beeps"
+                  description="Work only"
+                  checked={finalCountdownBeeps}
+                  onCheckedChange={setFinalCountdownBeeps}
+                  disabled={!sound}
+                />
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause / R reset / N next / F fullscreen
+            </ShortcutHint>
+          </>
         )}
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · N next · R reset · F
+              Tap time to start/pause / Space start/pause / N next / R reset / F
               fullscreen
             </div>
             <div className="text-xs font-semibold text-slate-700">
@@ -1081,32 +749,25 @@ export default function HIITTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <HIITCard />
-        </div>
+      <ToolHero
+        display={<HIITCard />}
+        title="HIIT Timer (Intervals)"
+        description="Run warm-up, work, rest, rounds, and cool-down intervals with a dominant phase countdown."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">HIIT Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

@@ -4,14 +4,28 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as ChipBtn,
+  SeoBand,
+  SecondaryActionRow,
+  SettingGroup,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/military-time-converter/HowItWorks";
 import Disclaimer from "~/clients/components/military-time-converter/Disclaimer";
 import FAQ from "~/clients/components/military-time-converter/FAQ";
@@ -88,7 +102,7 @@ function formatStandard(h24: number, m: number) {
 }
 
 function formatMilitary(h24: number, m: number) {
-  return `${pad2(h24)}${pad2(m)}`;
+  return `${pad2(h24)}:${pad2(m)}`;
 }
 
 type ParseResult = {
@@ -361,270 +375,6 @@ async function copyToClipboard(text: string) {
   }
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 28,
-  maxPx = 260,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const ChipBtn = ({
-  children,
-  onClick,
-  active,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  active?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={[
-      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-      active
-        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-    ].join(" ")}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
 /* =========================================================
    TOOL CARD
 ========================================================= */
@@ -642,7 +392,8 @@ function MilitaryTimeConverterCard() {
   const std = useMemo(() => parseStandard(standardInput), [standardInput]);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const displayTextRef = useRef<HTMLSpanElement>(null);
@@ -665,6 +416,7 @@ function MilitaryTimeConverterCard() {
     minPx: 44,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 72 : 80,
+    initialScale: 0.93,
   });
 
   const clearToastTimer = useCallback(() => {
@@ -755,15 +507,15 @@ function MilitaryTimeConverterCard() {
       return;
     }
 
-    if (k === "f" && cardRef.current) {
+    if (k === "f") {
       e.preventDefault();
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
       return;
     }
 
     if (k === "escape" && isFs) {
       e.preventDefault();
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -797,11 +549,12 @@ function MilitaryTimeConverterCard() {
       tabIndex={0}
       onKeyDown={onKeyDown}
       isFullscreen={isFs}
+      className={isFs ? "" : "p-4 sm:p-6"}
     >
       <FullscreenTopBar
         show={isFs}
         title="Military Time Converter"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn
@@ -822,36 +575,22 @@ function MilitaryTimeConverterCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-result-stack flex h-full flex-col"}>
         {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Military Time Converter (24-Hour ⇄ AM/PM)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Type either format. The other side updates when your input is
-                valid. Big result display, copy, quick examples, and fullscreen.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
+          <SecondaryActionRow className="timer-result-actions">
               <Btn
                 kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
+                onClick={() => void fullscreen.toggle()}
                 className="py-2"
               >
                 Fullscreen
               </Btn>
-            </div>
-          </div>
+          </SecondaryActionRow>
         )}
 
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="mt-4 flex flex-col gap-3">
+            <SecondaryActionRow className="timer-result-actions">
               <Btn kind="ghost" onClick={fillNow}>
                 Use current time
               </Btn>
@@ -865,20 +604,17 @@ function MilitaryTimeConverterCard() {
               >
                 Copy result
               </Btn>
-            </div>
+            </SecondaryActionRow>
 
-            <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+            <ShortcutHint>
               Shortcuts: N now · C copy AM/PM · M copy military · R clear · F
               fullscreen
-            </div>
+            </ShortcutHint>
           </div>
         )}
 
         {!isFs && (
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <div className="mr-1 text-sm font-semibold text-slate-900">
-              Examples:
-            </div>
+          <PresetGroup title="Examples">
             {quick.map((q) => (
               <ChipBtn
                 key={q}
@@ -888,14 +624,14 @@ function MilitaryTimeConverterCard() {
                 {q}
               </ChipBtn>
             ))}
-          </div>
+          </PresetGroup>
         )}
 
         {/* Big Display (fixed internal layout to avoid shifting) */}
         <div
           ref={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 text-slate-950",
+            "ilt-display-stage timer-display-surface relative mt-4 text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -914,28 +650,31 @@ function MilitaryTimeConverterCard() {
           title={isFs ? "Tap/click to copy the current result" : undefined}
         >
           <div className="flex h-full flex-col items-center justify-center">
-            <div className="h-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              {shownLabel}
-            </div>
-
             <span
               ref={displayTextRef}
+              data-primary-display-value
               className={[
-                "mt-3 inline-block text-center font-mono font-extrabold tabular-nums",
+                "timer-result-value",
+                "inline-block text-center font-mono font-extrabold tabular-nums",
                 isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
               ].join(" ")}
               style={{
                 fontSize: fitFontPx,
                 lineHeight: "1",
                 transform: "translateZ(0)",
-                minWidth: `${shownMinCh}ch`,
+                maxWidth: "100%",
+                minWidth: isFs ? `${shownMinCh}ch` : undefined,
               }}
             >
               {shownValue}
             </span>
 
+            <div className="timer-result-label h-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
+              {shownLabel}
+            </div>
+
             {/* Fixed-height status row */}
-            <div className="mt-4 h-4 text-xs font-semibold text-slate-700">
+            <div className="timer-result-context mt-2 h-4 text-xs font-semibold text-slate-700">
               {statusLabel}
             </div>
           </div>
@@ -948,10 +687,12 @@ function MilitaryTimeConverterCard() {
         </div>
 
         {/* Inputs */}
-        <div className={isFs ? "mx-2 sm:mx-4" : ""}>
-          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        {!isFs && (
+        <div>
+          <SettingGroup className="mt-5">
+          <div className="grid gap-4 lg:grid-cols-2">
             {/* Military -> Standard */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+            <div className="timer-result-panel rounded-lg bg-slate-50 p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-sm font-extrabold text-slate-900">
@@ -972,20 +713,17 @@ function MilitaryTimeConverterCard() {
                 </Btn>
               </div>
 
-              <label className="mt-3 block">
-                <span className="sr-only">Military time input</span>
-                <input
-                  inputMode="numeric"
-                  value={militaryInput}
-                  onChange={(e) => setFromMilitary(e.target.value)}
-                  onFocus={() => setActiveField("mil")}
-                  placeholder="1730"
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                />
-              </label>
+              <Field
+                label="Military time input"
+                inputMode="numeric"
+                value={militaryInput}
+                onChange={(e) => setFromMilitary(e.target.value)}
+                onFocus={() => setActiveField("mil")}
+                placeholder="1730"
+              />
 
               {/* Result box with reserved content height */}
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div className="timer-result-panel mt-3 rounded-lg bg-white p-3">
                 <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
                   Standard time (AM/PM)
                 </div>
@@ -1023,7 +761,7 @@ function MilitaryTimeConverterCard() {
             </div>
 
             {/* Standard -> Military */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+            <div className="timer-result-panel rounded-lg bg-slate-50 p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-sm font-extrabold text-slate-900">
@@ -1044,19 +782,16 @@ function MilitaryTimeConverterCard() {
                 </Btn>
               </div>
 
-              <label className="mt-3 block">
-                <span className="sr-only">Standard time input</span>
-                <input
-                  value={standardInput}
-                  onChange={(e) => setFromStandard(e.target.value)}
-                  onFocus={() => setActiveField("std")}
-                  placeholder="5:30 PM"
-                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                />
-              </label>
+              <Field
+                label="Standard time input"
+                value={standardInput}
+                onChange={(e) => setFromStandard(e.target.value)}
+                onFocus={() => setActiveField("std")}
+                placeholder="5:30 PM"
+              />
 
               {/* Result box with reserved content height */}
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div className="timer-result-panel mt-3 rounded-lg bg-white p-3">
                 <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
                   Military time (24-hour)
                 </div>
@@ -1090,24 +825,24 @@ function MilitaryTimeConverterCard() {
               </div>
             </div>
           </div>
+          </SettingGroup>
 
-          {!isFs && (
-            <div className="mt-4 flex items-center justify-between gap-3">
-              <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-                Tip: click the card once so shortcuts work.
-              </div>
-              <div className="text-xs text-slate-600">
-                {lastCopied ? (
-                  <span className="rounded-lg border border-slate-200 bg-white px-2 py-1 font-semibold text-slate-900">
-                    {lastCopied}
-                  </span>
-                ) : (
-                  <span className="opacity-0">Copied</span>
-                )}
-              </div>
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <ShortcutHint className="timer-result-shortcut w-auto max-w-none text-left sm:text-left">
+              Tip: click the display once so shortcuts work.
+            </ShortcutHint>
+            <div className="text-xs text-slate-600">
+              {lastCopied ? (
+                <span className="rounded-lg border border-slate-200 bg-white px-2 py-1 font-semibold text-slate-900">
+                  {lastCopied}
+                </span>
+              ) : (
+                <span className="opacity-0">Copied</span>
+              )}
             </div>
-          )}
+          </div>
         </div>
+        )}
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -1162,32 +897,25 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <MilitaryTimeConverterCard />
-        </div>
+      <ToolHero
+        display={<MilitaryTimeConverterCard />}
+        title="Military Time Converter"
+        description="Convert 24-hour military time to AM/PM and convert AM/PM back to military time with validation, examples, copy, and fullscreen."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Military Time Converter</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

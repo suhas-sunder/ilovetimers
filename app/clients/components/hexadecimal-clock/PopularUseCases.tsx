@@ -139,12 +139,12 @@ export default function PopularUseCases({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Use this page to view the current time rendered as hex values, copy
             a full timestamp block, toggle 12/24-hour display, and switch into
             hex color mode (#RRGGBB). Fullscreen is built for clean visibility.
@@ -155,28 +155,28 @@ export default function PopularUseCases({
           {scenarios.map((s) => (
             <div
               key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="ilt-surface-card p-4"
             >
-              <div className="text-base font-semibold text-slate-900">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.forWho}</div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.notFor}</div>
                 </div>
               </div>
 
@@ -185,7 +185,7 @@ export default function PopularUseCases({
                   <Link
                     key={`${s.title}-${l.href}`}
                     to={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
                     {l.label} →
                   </Link>
@@ -195,16 +195,16 @@ export default function PopularUseCases({
           ))}
         </div>
 
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Tip:</span> Press{" "}
-          <span className="font-semibold text-slate-900">F</span> for
-          fullscreen, <span className="font-semibold text-slate-900">C</span> to
-          copy, <span className="font-semibold text-slate-900">S</span> to
+        <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Tip:</span> Press{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]">F</span> for
+          fullscreen, <span className="font-semibold text-[var(--ilt-text-primary)]">C</span> to
+          copy, <span className="font-semibold text-[var(--ilt-text-primary)]">S</span> to
           toggle seconds,{" "}
-          <span className="font-semibold text-slate-900">M</span> for
+          <span className="font-semibold text-[var(--ilt-text-primary)]">M</span> for
           milliseconds (time mode only),{" "}
-          <span className="font-semibold text-slate-900">X</span> to switch
-          modes, and <span className="font-semibold text-slate-900">Esc</span>{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]">X</span> to switch
+          modes, and <span className="font-semibold text-[var(--ilt-text-primary)]">Esc</span>{" "}
           to exit fullscreen. If shortcuts do nothing, click the clock card once
           to focus it.
         </div>

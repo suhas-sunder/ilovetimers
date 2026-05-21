@@ -35,9 +35,9 @@ export default function FAQ({
       question: "How do I start and pause the timer?",
       answer: (
         <>
-          Click <strong className="text-slate-900">Start</strong> to begin and{" "}
-          <strong className="text-slate-900">Pause</strong> to stop. You can
-          also press <strong className="text-slate-900">Space</strong> after
+          Click <strong className="text-[var(--ilt-text-primary)]">Start</strong> to begin and{" "}
+          <strong className="text-[var(--ilt-text-primary)]">Pause</strong> to stop. You can
+          also press <strong className="text-[var(--ilt-text-primary)]">Space</strong> after
           clicking the timer card once.
         </>
       ),
@@ -66,10 +66,10 @@ export default function FAQ({
       question: "What is the Long break option?",
       answer: (
         <>
-          If enabled, a <strong className="text-slate-900">Long break</strong>{" "}
+          If enabled, a <strong className="text-[var(--ilt-text-primary)]">Long break</strong>{" "}
           starts after your final work session. If you turn long break off, the
           routine ends after the last work session and shows{" "}
-          <strong className="text-slate-900">Complete</strong>.
+          <strong className="text-[var(--ilt-text-primary)]">Complete</strong>.
         </>
       ),
     },
@@ -87,11 +87,11 @@ export default function FAQ({
       question: "How do I use fullscreen mode?",
       answer: (
         <>
-          Click <strong className="text-slate-900">Fullscreen</strong> (or press{" "}
-          <strong className="text-slate-900">F</strong> after clicking the timer
-          card once). Press <strong className="text-slate-900">Esc</strong> to
+          Click <strong className="text-[var(--ilt-text-primary)]">Fullscreen</strong> (or press{" "}
+          <strong className="text-[var(--ilt-text-primary)]">F</strong> after clicking the timer
+          card once). Press <strong className="text-[var(--ilt-text-primary)]">Esc</strong> to
           exit fullscreen. In fullscreen, you can{" "}
-          <strong className="text-slate-900">tap/click the time</strong> to
+          <strong className="text-[var(--ilt-text-primary)]">tap/click the time</strong> to
           start or pause.
         </>
       ),
@@ -101,12 +101,12 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            <strong className="text-slate-900">Space</strong>: start/pause ·{" "}
-            <strong className="text-slate-900">N</strong>: next ·{" "}
-            <strong className="text-slate-900">R</strong>: reset ·{" "}
-            <strong className="text-slate-900">F</strong>: fullscreen
+            <strong className="text-[var(--ilt-text-primary)]">Space</strong>: start/pause ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">N</strong>: next ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">R</strong>: reset ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">F</strong>: fullscreen
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-[var(--ilt-text-muted)]">
             Tip: click the timer card once so it captures keyboard input.
             Shortcuts are ignored while you are typing in an input.
           </div>
@@ -130,42 +130,42 @@ export default function FAQ({
           Want a study-focused layout?{" "}
           <Link
             to="/study-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Study Timer
           </Link>
           . Prefer a single uninterrupted focus block?{" "}
           <Link
             to="/focus-session-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Focus Session Timer
           </Link>
           . Need a simple countdown with no phases?{" "}
           <Link
             to="/countdown-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Countdown Timer
           </Link>
           . Want structured breaks without cycles?{" "}
           <Link
             to="/break-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Break Timer
           </Link>
           . Want a pure big-screen view?{" "}
           <Link
             to="/fullscreen-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Fullscreen Timer
           </Link>
           . Prefer no audio at all?{" "}
           <Link
             to="/silent-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Silent Timer
           </Link>
@@ -194,15 +194,15 @@ export default function FAQ({
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)] ilt-surface-card">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

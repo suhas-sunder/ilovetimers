@@ -143,15 +143,15 @@ export default function PopularUseCases({
   };
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-12">
+    <section className="space-y-4">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Quick guidance on which clock or time tool to use based on what
             you’re doing.
           </p>
@@ -161,28 +161,28 @@ export default function PopularUseCases({
           {list.map((s) => (
             <div
               key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="ilt-surface-card p-4"
             >
-              <div className="text-base font-semibold text-slate-900">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.forWho}</div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.notFor}</div>
                 </div>
               </div>
 
@@ -191,7 +191,7 @@ export default function PopularUseCases({
                   <a
                     key={l.href}
                     href={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 hover:border-slate-300"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
                     {l.label} →
                   </a>
@@ -201,8 +201,8 @@ export default function PopularUseCases({
           ))}
         </div>
 
-        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Note:</span> Smooth
+        <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Note:</span> Smooth
           seconds can use more CPU and may look less fluid during screen sharing
           or on low-power devices. If motion stutters, turn Smooth off or hide
           the seconds hand.

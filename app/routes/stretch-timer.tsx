@@ -2,15 +2,35 @@
 import type { Route } from "./+types/stretch-timer";
 import { json } from "@remix-run/node";
 import {
+  useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  Select,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+  UtilityResultRow,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -92,141 +112,9 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
 
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
 
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* WebAudio cue */
+/* WebAudio beep */
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -236,7 +124,7 @@ function useBeep() {
     };
   }, []);
 
-  return (freq = 740, duration = 120, gain = 0.07) => {
+  return useCallback((freq = 880, duration = 120, gain = 0.1) => {
     try {
       const Ctx = window.AudioContext || (window as any).webkitAudioContext;
       const ctx = (ctxRef.current ??= new Ctx());
@@ -263,138 +151,7 @@ function useBeep() {
     } catch {
       // ignore
     }
-  };
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const ToggleChip = ({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean;
-  onChange: (next: boolean) => void;
-  label: string;
-}) => (
-  <button
-    type="button"
-    onClick={() => onChange(!checked)}
-    className={[
-      "cursor-pointer select-none rounded-lg border px-3 py-2 text-sm font-semibold",
-      checked
-        ? "border-amber-200 bg-amber-50 text-slate-900 hover:bg-amber-100"
-        : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
-    ].join(" ")}
-    aria-pressed={checked}
-  >
-    {label}: {checked ? "On" : "Off"}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
+  }, []);
 }
 
 /* =========================================================
@@ -472,7 +229,8 @@ function StretchTimerCard() {
   const msLeftRef = useRef<number>(stretchSec * 1000);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -646,11 +404,11 @@ function StretchTimerCard() {
     } else if (k === "n") {
       nextPhase();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "s") {
       setSound((x) => !x);
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -690,12 +448,12 @@ function StretchTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Stretch Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
-            <ToggleChip
+            <Toggle
               checked={sound}
-              onChange={(v) => setSound(v)}
+              onCheckedChange={(v) => setSound(v)}
               label="Sound"
             />
             <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
@@ -716,43 +474,12 @@ function StretchTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Stretch Timer (Stretch + Rest Intervals)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Alternate stretch and rest intervals, track rounds, and use a
-                big fullscreen countdown.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <ToggleChip
-                checked={sound}
-                onChange={(v) => setSound(v)}
-                label="Sound"
-              />
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-interval-stack flex h-full flex-col"}>
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "timer-display-surface relative flex flex-col items-center justify-center text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -820,107 +547,93 @@ function StretchTimerCard() {
               </div>
             </div>
           )}
-        </div>
+        </DisplayStage>
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <div className="mt-5 grid gap-3 lg:grid-cols-3">
-            <label className="block text-sm font-semibold text-slate-900">
-              Preset
-              <select
-                value={presetId}
-                onChange={(e) => setPresetId(e.target.value)}
-                className="mt-1 w-full cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              >
-                {PRESETS.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.label}
-                  </option>
-                ))}
-              </select>
-              <div className="mt-1 text-xs text-slate-600">
-                {isCustom
-                  ? "Custom preset lets you edit all values."
-                  : "Changing presets updates the interval values."}
-              </div>
-            </label>
-
-            <label className="block text-sm font-semibold text-slate-900">
-              Stretch (seconds)
-              <input
-                type="number"
-                inputMode="numeric"
-                min={5}
-                max={600}
-                value={stretchSec}
-                onChange={(e) =>
-                  setStretchSec(clamp(Number(e.target.value || 5), 5, 600))
-                }
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              />
-            </label>
-
-            <label className="block text-sm font-semibold text-slate-900">
-              Rest (seconds)
-              <input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                max={600}
-                value={restSec}
-                onChange={(e) =>
-                  setRestSec(clamp(Number(e.target.value || 0), 0, 600))
-                }
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              />
-            </label>
-
-            <label className="block text-sm font-semibold text-slate-900 lg:col-span-2">
-              Rounds
-              <input
-                type="number"
-                inputMode="numeric"
-                min={1}
-                max={100}
-                value={rounds}
-                onChange={(e) =>
-                  setRounds(clamp(Number(e.target.value || 1), 1, 100))
-                }
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              />
-              <div className="mt-1 text-xs text-slate-600">
-                Total time (approx):{" "}
-                <strong>
-                  {Math.round(((stretchSec + restSec) * rounds) / 60)} minutes
-                </strong>
-              </div>
-            </label>
-
-            <div className="flex items-end gap-3 lg:col-span-1">
+          <>
+            <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : "Start"}
-              </Btn>
-              <Btn kind="ghost" onClick={reset}>
-                Reset
               </Btn>
               <Btn kind="ghost" onClick={nextPhase} disabled={!running}>
                 Next
               </Btn>
-            </div>
-          </div>
-        )}
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+            </ControlGroup>
 
-        {/* Shortcuts (normal only) */}
-        {!isFs && (
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space start/pause · N next · R reset · F fullscreen · S
-              sound
-            </div>
-            <div className="text-xs text-slate-600">
-              Tip: click the card once so keyboard shortcuts work immediately.
-            </div>
-          </div>
+            <SettingGroup title="Settings">
+              <SettingRow className="lg:grid-cols-3">
+                <Select
+                  label="Preset"
+                  value={presetId}
+                  onChange={(e) => setPresetId(e.target.value)}
+                  hint={isCustom ? "Custom preset lets you edit all values." : "Changing presets updates the interval values."}
+                >
+                  {PRESETS.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.label}
+                    </option>
+                  ))}
+                </Select>
+                <Field
+                  label="Stretch (seconds)"
+                  type="number"
+                  inputMode="numeric"
+                  min={5}
+                  max={600}
+                  value={stretchSec}
+                  onChange={(e) =>
+                    setStretchSec(clamp(Number(e.target.value || 5), 5, 600))
+                  }
+                />
+                <Field
+                  label="Rest (seconds)"
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  max={600}
+                  value={restSec}
+                  onChange={(e) =>
+                    setRestSec(clamp(Number(e.target.value || 0), 0, 600))
+                  }
+                />
+                <Field
+                  label="Rounds"
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  max={100}
+                  value={rounds}
+                  onChange={(e) =>
+                    setRounds(clamp(Number(e.target.value || 1), 1, 100))
+                  }
+                />
+                <div className="flex flex-wrap items-end gap-3 lg:col-span-2">
+                  <Toggle checked={sound} onCheckedChange={(v) => setSound(v)} label="Sound" />
+                </div>
+              </SettingRow>
+            </SettingGroup>
+
+            <UtilityResultRow>
+              <span className="ilt-content-label">Total time</span>
+              <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
+                About {Math.round(((stretchSec + restSec) * rounds) / 60)} minutes
+              </span>
+            </UtilityResultRow>
+
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause / N next / R reset / F fullscreen / S sound
+            </ShortcutHint>
+          </>
         )}
 
         {/* Fullscreen bottom controls */}
@@ -979,26 +692,62 @@ export default function StretchTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
-        <div>
-          <StretchTimerCard />
-        </div>
+      <ToolHero
+        display={<StretchTimerCard />}
+        title="Stretch Timer"
+        description="Alternate stretch and rest intervals with the active interval timer kept large and readable."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Stretch Timer</span>
+      <SeoBand title="How this timer works">
+        <p>
+          Stretch Timer alternates stretch intervals and rest intervals for a
+          simple routine. Choose a preset or set custom stretch, rest, and round
+          values, then keep the current interval display large while optional
+          cues, fullscreen, and keyboard shortcuts stay below the tool.
         </p>
-      </section>
-    </main>
+        <h3>When to use it</h3>
+        <p>
+          Use it for short mobility routines, desk breaks, cooldowns, yoga-style
+          holds, or repeated stretch/rest sequences. Choose durations that fit
+          your own routine and comfort level; this timer is not medical advice
+          and does not promise flexibility, pain relief, or injury prevention.
+        </p>
+        <h3>Useful settings</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Stretch length controls how long each active hold or movement lasts.
+          </li>
+          <li>
+            Rest length gives time to switch position before the next interval.
+          </li>
+          <li>
+            Rounds repeat the same sequence without rebuilding the timer between
+            stretches.
+          </li>
+        </ul>
+        <h3>Related tools</h3>
+        <p>
+          For short non-stretch pauses, use the{" "}
+          <a className="ilt-content-link" href="/break-timer">
+            break timer
+          </a>
+          . For workout recovery intervals, try the{" "}
+          <a className="ilt-content-link" href="/rest-timer">
+            rest timer
+          </a>
+          . For a quieter timed session, use the{" "}
+          <a className="ilt-content-link" href="/meditation-timer">
+            meditation timer
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

@@ -1,11 +1,93 @@
 import type { Route } from "./+types/about";
 import { useMemo } from "react";
+import {
+  ButtonLink,
+  ContentPage,
+  ContentPanel,
+  ContentSection,
+  StatusChip,
+} from "~/clients/components/ui/foundation";
 
 const SITE_URL = "https://www.ilovetimers.com";
 const PAGE_PATH = "/about";
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 const CREATOR_URL = "https://www.suhassunder.com";
 const CREATOR_LINKEDIN = "https://www.linkedin.com/in/s-sunder";
+
+const sectionLinks = [
+  ["#what-this-is", "What this is"],
+  ["#tool-categories", "Tool categories"],
+  ["#design-principles", "Design principles"],
+  ["#what-this-is-not", "What this is not"],
+  ["#author", "Author"],
+];
+
+const featureHighlights = [
+  {
+    title: "Free and immediate",
+    body: "No account is required for the core tools. Open a page, set the time, and start.",
+  },
+  {
+    title: "Built for real use cases",
+    body: "The site includes timers for meetings, classrooms, workouts, studying, cooking, presentations, clocks, and time calculations.",
+  },
+  {
+    title: "Browser-based tools",
+    body: "The tools are designed to run directly in your browser with clear controls, readable displays, and practical fullscreen modes where they make sense.",
+  },
+];
+
+const toolCategories = [
+  {
+    title: "Core timers",
+    href: "/online-timer",
+    body: "General-purpose online timers, countdown timers, fullscreen timers, silent timers, alarm timers, multiple timers, count-up timers, and visual timers.",
+  },
+  {
+    title: "Focus and productivity",
+    href: "/pomodoro-timer",
+    body: "Pomodoro timers, focus session timers, productivity timers, time-blocking tools, break timers, study timers, and work-hours calculators.",
+  },
+  {
+    title: "Meetings, classrooms, and presentations",
+    href: "/meeting-timer",
+    body: "Timers for meetings, presentations, classrooms, exams, billable hours, and structured sessions where visible time helps keep people on track.",
+  },
+  {
+    title: "Fitness and intervals",
+    href: "/hiit-timer",
+    body: "HIIT timers, Tabata timers, EMOM timers, AMRAP timers, round timers, rest timers, stretch timers, pace timers, and workout timers.",
+  },
+  {
+    title: "Everyday timers",
+    href: "/cooking-timer",
+    body: "Cooking, tea, egg, pizza, sleep, meditation, and water reminder timers for everyday routines.",
+  },
+  {
+    title: "Clocks and time tools",
+    href: "/world-clock",
+    body: "World clocks, UTC clocks, analog and digital clocks, time zone converters, military time converters, Unix time clocks, and other time formats.",
+  },
+];
+
+const designPrinciples = [
+  {
+    title: "Clear controls",
+    body: "Controls should be obvious, readable, and limited to what affects the timer. Extra settings are avoided unless they make the tool meaningfully better.",
+  },
+  {
+    title: "Readable timing",
+    body: "Large digits, simple layouts, and fullscreen options make timers easier to use across phones, laptops, TVs, classrooms, meeting rooms, and workouts.",
+  },
+  {
+    title: "Accurate tracking",
+    body: "Timer pages are designed to track elapsed time using browser timing APIs and absolute time where appropriate, reducing drift compared with naive ticking loops.",
+  },
+  {
+    title: "No unnecessary account flow",
+    body: "The core use case is immediate timing. The site should not make users create an account just to run a countdown, stopwatch, clock, or interval timer.",
+  },
+];
 
 /* =========================================================
    META
@@ -30,77 +112,6 @@ export function meta({}: Route.MetaArgs) {
     { rel: "canonical", href: PAGE_URL },
     { name: "theme-color", content: "#ffffff" },
   ];
-}
-
-/* =========================================================
-   LIGHTWEIGHT CONTENT PRIMITIVES
-========================================================= */
-function SectionCard({
-  id,
-  title,
-  children,
-}: {
-  id?: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm sm:p-6">
-        <h2 className="text-xl font-semibold tracking-tight text-sky-700 sm:text-2xl">
-          {title}
-        </h2>
-        <div className="mt-3 space-y-3 leading-relaxed text-slate-700">
-          {children}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FeatureCard({
-  title,
-  body,
-  href,
-}: {
-  title: string;
-  body: string;
-  href?: string;
-}) {
-  const content = (
-    <div className="h-full rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition hover:border-amber-300 hover:bg-amber-50/30">
-      <h3 className="text-base font-semibold text-sky-700">{title}</h3>
-      <p className="mt-2 leading-relaxed text-slate-700">{body}</p>
-    </div>
-  );
-
-  if (!href) return content;
-
-  return (
-    <a
-      href={href}
-      className="block cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-    >
-      {content}
-    </a>
-  );
-}
-
-function InlineLink({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <a
-      href={href}
-      className="cursor-pointer font-semibold text-sky-700 underline underline-offset-2 transition hover:text-sky-900 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-    >
-      {children}
-    </a>
-  );
 }
 
 export default function About() {
@@ -182,109 +193,61 @@ export default function About() {
     [],
   );
 
+  const breadcrumb = (
+    <>
+      <a href="/" className="font-medium text-slate-700 hover:underline">
+        Home
+      </a>{" "}
+      / <span className="text-slate-950">About</span>
+    </>
+  );
+
   return (
-    <main className="bg-slate-50 text-slate-900">
+    <ContentPage
+      title="About I Love Timers"
+      description="I Love Timers is a free collection of browser-based timers, stopwatches, clocks, countdowns, and time tools built for quick everyday use. The goal is simple: open the right timer, set it fast, and keep time without fighting the interface."
+      meta={breadcrumb}
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-            <div>
-              <div className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
-                About the site
-              </div>
+      <div className="flex flex-wrap gap-3" data-nosnippet>
+        <ButtonLink href="/online-timer" variant="primary">
+          Open online timer
+        </ButtonLink>
+        <ButtonLink href="/stopwatch">Open stopwatch</ButtonLink>
+      </div>
 
-              <h1 className="mt-3 text-3xl font-bold tracking-tight text-sky-700 sm:text-4xl">
-                About I Love Timers
-              </h1>
-
-              <p className="mt-3 max-w-3xl text-base leading-relaxed text-slate-700 sm:text-lg">
-                I Love Timers is a free collection of browser-based timers,
-                stopwatches, clocks, countdowns, and time tools built for quick
-                everyday use. The goal is simple: open the right timer, set it
-                fast, and keep time without fighting the interface.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-3 md:justify-end">
-              <a
-                href="/online-timer"
-                className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-              >
-                Open online timer
-              </a>
-              <a
-                href="/stopwatch"
-                className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-              >
-                Open stopwatch
-              </a>
-            </div>
-          </div>
-
-          <nav
-            aria-label="About page sections"
-            className="mt-6 flex flex-wrap gap-2"
-            data-nosnippet
+      <nav
+        aria-label="About page sections"
+        className="flex flex-wrap gap-2"
+        data-nosnippet
+      >
+        {sectionLinks.map(([href, label]) => (
+          <a
+            key={href}
+            href={href}
+            className="ilt-focus-ring cursor-pointer rounded-full bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-800 transition hover:bg-amber-50 hover:text-slate-950"
           >
-            {[
-              ["#what-this-is", "What this is"],
-              ["#tool-categories", "Tool categories"],
-              ["#design-principles", "Design principles"],
-              ["#what-this-is-not", "What this is not"],
-              ["#author", "Author"],
-            ].map(([href, label]) => (
-              <a
-                key={href}
-                href={href}
-                className="cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-              >
-                {label}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </section>
+            {label}
+          </a>
+        ))}
+      </nav>
 
-      <section className="mx-auto max-w-7xl px-4 py-8">
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-sky-700">
-              Free and immediate
+      <div className="grid gap-4 md:grid-cols-3">
+        {featureHighlights.map((item) => (
+          <ContentPanel key={item.title}>
+            <h2 className="text-base font-bold text-slate-950">
+              {item.title}
             </h2>
-            <p className="mt-2 leading-relaxed text-slate-700">
-              No account is required for the core tools. Open a page, set the
-              time, and start.
-            </p>
-          </div>
+            <p className="mt-2">{item.body}</p>
+          </ContentPanel>
+        ))}
+      </div>
 
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-sky-700">
-              Built for real use cases
-            </h2>
-            <p className="mt-2 leading-relaxed text-slate-700">
-              The site includes timers for meetings, classrooms, workouts,
-              studying, cooking, presentations, clocks, and time calculations.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-            <h2 className="text-base font-semibold text-sky-700">
-              Browser-based tools
-            </h2>
-            <p className="mt-2 leading-relaxed text-slate-700">
-              The tools are designed to run directly in your browser with clear
-              controls, readable displays, and practical fullscreen modes where
-              they make sense.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <SectionCard id="what-this-is" title="What I Love Timers is">
+      <ContentSection id="what-this-is" title="What I Love Timers is">
         <p>
           I Love Timers is a practical toolkit for timing things online. Some
           people need a simple countdown. Others need a stopwatch with laps, a
@@ -301,49 +264,28 @@ export default function About() {
           meetings, exams, workouts, cooking, meditation, speedcubing, alarms,
           multiple timers, time zones, and clocks.
         </p>
-      </SectionCard>
+      </ContentSection>
 
-      <SectionCard id="tool-categories" title="What the site includes">
+      <ContentSection id="tool-categories" title="What the site includes">
         <div className="grid gap-4 md:grid-cols-2">
-          <FeatureCard
-            title="Core timers"
-            href="/online-timer"
-            body="General-purpose online timers, countdown timers, fullscreen timers, silent timers, alarm timers, multiple timers, count-up timers, and visual timers."
-          />
-
-          <FeatureCard
-            title="Focus and productivity"
-            href="/pomodoro-timer"
-            body="Pomodoro timers, focus session timers, productivity timers, time-blocking tools, break timers, study timers, and work-hours calculators."
-          />
-
-          <FeatureCard
-            title="Meetings, classrooms, and presentations"
-            href="/meeting-timer"
-            body="Timers for meetings, presentations, classrooms, exams, billable hours, and structured sessions where visible time helps keep people on track."
-          />
-
-          <FeatureCard
-            title="Fitness and intervals"
-            href="/hiit-timer"
-            body="HIIT timers, Tabata timers, EMOM timers, AMRAP timers, round timers, rest timers, stretch timers, pace timers, and workout timers."
-          />
-
-          <FeatureCard
-            title="Everyday timers"
-            href="/cooking-timer"
-            body="Cooking, tea, egg, pizza, sleep, meditation, and water reminder timers for everyday routines."
-          />
-
-          <FeatureCard
-            title="Clocks and time tools"
-            href="/world-clock"
-            body="World clocks, UTC clocks, analog and digital clocks, time zone converters, military time converters, Unix time clocks, and other time formats."
-          />
+          {toolCategories.map((item) => (
+            <a
+              key={item.title}
+              href={item.href}
+              className="ilt-focus-ring block cursor-pointer rounded-[var(--ilt-radius-card)] bg-slate-50 p-4 transition hover:bg-amber-50"
+            >
+              <h3 className="text-base font-bold text-slate-950">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-slate-700">
+                {item.body}
+              </p>
+            </a>
+          ))}
         </div>
-      </SectionCard>
+      </ContentSection>
 
-      <SectionCard id="design-principles" title="How the tools are designed">
+      <ContentSection id="design-principles" title="How the tools are designed">
         <p>
           The site is built around narrow, task-specific pages. A meeting timer
           should not feel like a workout timer. A stopwatch should not need the
@@ -352,50 +294,15 @@ export default function About() {
           behavior. Each page should match the job users came to do.
         </p>
 
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="text-base font-semibold text-sky-700">
-              Clear controls
-            </h3>
-            <p className="mt-2 text-slate-700">
-              Controls should be obvious, readable, and limited to what affects
-              the timer. Extra settings are avoided unless they make the tool
-              meaningfully better.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="text-base font-semibold text-sky-700">
-              Readable timing
-            </h3>
-            <p className="mt-2 text-slate-700">
-              Large digits, simple layouts, and fullscreen options make timers
-              easier to use across phones, laptops, TVs, classrooms, meeting
-              rooms, and workouts.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="text-base font-semibold text-sky-700">
-              Accurate tracking
-            </h3>
-            <p className="mt-2 text-slate-700">
-              Timer pages are designed to track elapsed time using browser
-              timing APIs and absolute time where appropriate, reducing drift
-              compared with naive ticking loops.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="text-base font-semibold text-sky-700">
-              No unnecessary account flow
-            </h3>
-            <p className="mt-2 text-slate-700">
-              The core use case is immediate timing. The site should not make
-              users create an account just to run a countdown, stopwatch, clock,
-              or interval timer.
-            </p>
-          </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          {designPrinciples.map((item) => (
+            <ContentPanel key={item.title}>
+              <h3 className="text-base font-bold text-slate-950">
+                {item.title}
+              </h3>
+              <p className="mt-2">{item.body}</p>
+            </ContentPanel>
+          ))}
         </div>
 
         <p>
@@ -403,9 +310,9 @@ export default function About() {
           workflow: start, pause, reset, lap, skip, and fullscreen actions can
           be controlled without hunting through the interface.
         </p>
-      </SectionCard>
+      </ContentSection>
 
-      <SectionCard id="what-this-is-not" title="What this is not">
+      <ContentSection id="what-this-is-not" title="What this is not">
         <p>
           I Love Timers is not intended to replace specialized, safety-critical,
           professional, or regulated timing equipment. Browser timers are useful
@@ -414,7 +321,7 @@ export default function About() {
           permissions, battery settings, and operating system behavior.
         </p>
 
-        <ul className="mt-3 space-y-2 pl-5 text-slate-700">
+        <ul className="space-y-2 pl-5">
           <li className="list-disc">
             <strong>Not emergency equipment:</strong> do not rely on the site
             for medical, safety, rescue, or life-critical timing.
@@ -433,11 +340,11 @@ export default function About() {
             to billable hours, debt, or repayment are informational tools only.
           </li>
         </ul>
-      </SectionCard>
+      </ContentSection>
 
-      <SectionCard id="author" title="Built and maintained by">
+      <ContentSection id="author" title="Built and maintained by">
         <div className="grid gap-5 md:grid-cols-12">
-          <div className="md:col-span-7">
+          <div className="space-y-3 md:col-span-7">
             <p>
               I Love Timers is built and maintained by{" "}
               <strong>Suhas Sunder</strong>, a software developer based in the
@@ -462,93 +369,43 @@ export default function About() {
             </p>
           </div>
 
-          <div className="md:col-span-5">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <h3 className="text-base font-semibold text-sky-700">
-                Developer profile
-              </h3>
-              <p className="mt-2 text-slate-700">
-                Full-stack web development with React, TypeScript, Node.js,
-                Express, Remix, PostgreSQL, Prisma, Tailwind CSS, responsive UI,
-                and production web application work.
-              </p>
+          <ContentPanel className="md:col-span-5">
+            <StatusChip>Developer profile</StatusChip>
+            <p className="mt-3">
+              Full-stack web development with React, TypeScript, Node.js,
+              Express, Remix, PostgreSQL, Prisma, Tailwind CSS, responsive UI,
+              and production web application work.
+            </p>
 
-              <div className="mt-4 flex flex-wrap gap-3">
-                <a
-                  href={CREATOR_URL}
-                  className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-                >
-                  Portfolio
-                </a>
-                <a
-                  href={CREATOR_LINKEDIN}
-                  className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-                >
-                  LinkedIn
-                </a>
-              </div>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <ButtonLink href={CREATOR_URL} variant="primary">
+                Portfolio
+              </ButtonLink>
+              <ButtonLink href={CREATOR_LINKEDIN}>LinkedIn</ButtonLink>
             </div>
-          </div>
+          </ContentPanel>
         </div>
-      </SectionCard>
+      </ContentSection>
 
-      <section className="mx-auto max-w-7xl px-4 pb-10">
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
-          <h2 className="text-xl font-semibold tracking-tight text-sky-700">
-            Start with a timer
-          </h2>
-          <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
-            The fastest way to understand the site is to use one of the core
-            tools. Start a countdown, run the stopwatch, or open a focus timer
-            and adjust the session to match what you are doing.
-          </p>
-
-          <div className="mt-4 flex flex-wrap gap-3" data-nosnippet>
-            <a
-              href="/countdown-timer"
-              className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 transition hover:bg-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-            >
-              Countdown timer
-            </a>
-            <a
-              href="/stopwatch"
-              className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-            >
-              Stopwatch
-            </a>
-            <a
-              href="/pomodoro-timer"
-              className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-            >
-              Pomodoro timer
-            </a>
-            <a
-              href="/hiit-timer"
-              className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-            >
-              HIIT timer
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <nav
-        aria-label="Breadcrumb"
-        className="mx-auto max-w-7xl px-4 pb-10 text-sm text-slate-600"
+      <ContentSection
+        title="Start with a timer"
+        className="bg-amber-50 text-slate-950"
       >
-        <ol className="flex flex-wrap items-center gap-2">
-          <li>
-            <a
-              href="/"
-              className="cursor-pointer underline underline-offset-2 transition hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80"
-            >
-              Home
-            </a>
-          </li>
-          <li>/</li>
-          <li className="font-semibold text-slate-900">About</li>
-        </ol>
-      </nav>
-    </main>
+        <p className="max-w-3xl">
+          The fastest way to understand the site is to use one of the core
+          tools. Start a countdown, run the stopwatch, or open a focus timer and
+          adjust the session to match what you are doing.
+        </p>
+
+        <div className="flex flex-wrap gap-3" data-nosnippet>
+          <ButtonLink href="/countdown-timer" variant="primary">
+            Countdown timer
+          </ButtonLink>
+          <ButtonLink href="/stopwatch">Stopwatch</ButtonLink>
+          <ButtonLink href="/pomodoro-timer">Pomodoro timer</ButtonLink>
+          <ButtonLink href="/hiit-timer">HIIT timer</ButtonLink>
+        </div>
+      </ContentSection>
+    </ContentPage>
   );
 }

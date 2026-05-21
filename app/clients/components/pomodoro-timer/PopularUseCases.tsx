@@ -1,11 +1,6 @@
 import { Link } from "react-router";
 import { JsonLd } from "./HowItWorks";
 
-/* =========================================================
-   POPULAR USE CASES (PIZZA TIMER intent)
-   Schema: ItemList (scenarios -> this route)
-========================================================= */
-
 type ScenarioLink = { label: string; href: string };
 
 type Scenario = {
@@ -23,80 +18,51 @@ export default function PopularUseCases({
 }) {
   const scenarios: Scenario[] = [
     {
-      title: "Frozen pizza in the oven with a quick preset",
+      title: "Classic 25/5 focus cycles",
       description:
-        "Tap a frozen oven preset and start the countdown. Add a “check” reminder a couple minutes before the end so you can confirm browning and doneness without hovering.",
-      forWho: "Anyone cooking frozen pizza in a standard oven.",
+        "Run 25-minute work blocks with 5-minute short breaks and repeat for the number of cycles you choose.",
+      forWho: "Study, writing, coding, reading, and focused desk work.",
       notFor:
-        "You want a general-purpose kitchen timer for everything you cook. Use Cooking Timer instead.",
+        "A single one-off countdown with no phase switching. Use Countdown Timer for that.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
-        { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
-      ],
-    },
-    {
-      title: "Frozen pizza in an air fryer with an early check",
-      description:
-        "Use the air fryer preset and set a reminder to check before it finishes. Air fryers can brown fast, so an early check helps you decide whether to finish, flip, or pull it early.",
-      forWho: "Air fryer users who want a quick start and a check-in prompt.",
-      notFor: "You need a silent timer by default. Use Silent Timer instead.",
-      links: [
-        { label: "Silent Timer", href: "/silent-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Study Timer", href: "/study-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
       ],
     },
     {
-      title: "Reheating a slice without overcooking it",
+      title: "Manual phase control when interruptions happen",
       description:
-        "Tap a short preset (or set a custom time), then enable a check reminder so you can stop early if it’s already hot. Final beeps help you catch the finish without watching the screen.",
-      forWho: "Quick reheats where seconds matter.",
+        "Turn off auto-advance or use Next when you need to pause, skip, or manually move between work and break phases.",
+      forWho: "People working around calls, interruptions, or flexible breaks.",
       notFor:
-        "You want multiple different timers running at the same time. Use Multiple Timers instead.",
+        "Hands-free workout intervals. Use HIIT Timer or Workout Timer instead.",
       links: [
-        { label: "Multiple Timers", href: "/multiple-timers" },
-        { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "HIIT Timer", href: "/hiit-timer" },
+        { label: "Workout Timer", href: "/workout-timer" },
       ],
     },
     {
-      title: "Skillet reheating with a 1-minute check",
+      title: "Long break after the final work block",
       description:
-        "Use a short skillet preset and set the check reminder to 1 minute left so you can check crispness and decide whether to cover, lower heat, or finish.",
-      forWho: "Skillet/covered-pan reheats that need a fast check-in.",
+        "Enable the long break option when you want a larger rest period after the last work cycle.",
+      forWho: "Long study sessions and repeat focus sessions.",
       notFor:
-        "You want a more visual, “at-a-glance” style timer. Use Visual Timer instead.",
+        "Open-ended elapsed time. Use Count Up Timer or Stopwatch instead.",
       links: [
-        { label: "Visual Timer", href: "/visual-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
-        { label: "Countdown Timer", href: "/countdown-timer" },
+        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {
-      title: "Big-screen countdown while you prep or clean",
+      title: "Fullscreen focus display",
       description:
-        "Go fullscreen for large digits you can see across the kitchen. In fullscreen, tap/click the time to start or pause without hunting for buttons.",
-      forWho: "Cooking while moving around the kitchen.",
+        "Use fullscreen when you want the active phase and remaining time visible without extra page content.",
+      forWho: "Second monitors, shared study rooms, and distraction-light focus.",
       notFor:
-        "You only want a dedicated big-screen timer with minimal controls. Use Fullscreen Timer instead.",
+        "A no-sound timer by default. Use Silent Timer if quiet completion is the main requirement.",
       links: [
         { label: "Fullscreen Timer", href: "/fullscreen-timer" },
-        { label: "Online Timer", href: "/online-timer" },
         { label: "Silent Timer", href: "/silent-timer" },
-      ],
-    },
-    {
-      title: "Timing pizza plus sides at the same time",
-      description:
-        "Use Pizza Timer for the main countdown, then open Multiple Timers for sides (wings, fries, or garlic bread) so everything finishes close together.",
-      forWho: "Anyone juggling more than one dish at once.",
-      notFor:
-        "You only need one simple countdown. Use Countdown Timer instead.",
-      links: [
-        { label: "Multiple Timers", href: "/multiple-timers" },
-        { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
       ],
     },
   ];
@@ -104,21 +70,15 @@ export default function PopularUseCases({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  // Keep UI links relative (router-friendly), schema uses absolute URLs for this page
-  const schemaList = scenarios.map((s) => ({
-    title: s.title,
-    primaryUrl: abs("/pizza-timer"),
-  }));
-
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Common ways to use Pizza Timer",
-    itemListElement: schemaList.map((s, i) => ({
+    name: "Common ways to use Pomodoro Timer",
+    itemListElement: scenarios.map((s, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: s.title,
-      url: s.primaryUrl,
+      url: abs("/pomodoro-timer"),
     })),
   };
 
@@ -126,44 +86,43 @@ export default function PopularUseCases({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Quick presets for frozen pizza, a big countdown display, optional
-            check reminders, final beeps, fullscreen mode, and keyboard
-            shortcuts.
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
+            Pomodoro Timer is for structured work and break cycles with
+            optional sound, long break, auto-advance, and fullscreen.
           </p>
         </div>
 
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {scenarios.map((s) => (
-            <div
-              key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-            >
-              <div className="text-base font-semibold text-slate-900">
+            <div key={s.title} className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
+                    {s.forWho}
+                  </div>
                 </div>
-
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
+                    {s.notFor}
+                  </div>
                 </div>
               </div>
 
@@ -172,29 +131,14 @@ export default function PopularUseCases({
                   <Link
                     key={`${s.title}-${l.href}`}
                     to={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
-                    {l.label} →
+                    {l.label} -&gt;
                   </Link>
                 ))}
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Tip:</span> Set{" "}
-          <span className="font-semibold text-slate-900">
-            Check with X min left
-          </span>{" "}
-          to <span className="font-semibold text-slate-900">2</span> for oven or{" "}
-          <span className="font-semibold text-slate-900">1</span> for skillet as
-          a quick “check it” moment. Use{" "}
-          <span className="font-semibold text-slate-900">F</span> for
-          fullscreen,{" "}
-          <span className="font-semibold text-slate-900">Space</span> to
-          start/pause, and{" "}
-          <span className="font-semibold text-slate-900">R</span> to reset.
         </div>
       </div>
     </section>

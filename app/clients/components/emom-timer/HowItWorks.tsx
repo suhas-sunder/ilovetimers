@@ -68,7 +68,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -82,7 +82,7 @@ export default function HowItWorks({
   }) => (
     <a
       href={href}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </a>
@@ -97,13 +97,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="ilt-surface-card p-5">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="whitespace-pre-wrap font-mono text-xs text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="whitespace-pre-wrap font-mono text-xs text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -114,31 +114,31 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
-              <span className="font-semibold text-slate-900">EMOM Timer</span>{" "}
+            <p className="mt-2 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">EMOM Timer</span>{" "}
               is designed for one thing: keeping a clean “start every minute”
               rhythm without extra setup. You set{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 total rounds (minutes)
               </span>
               , optionally add a short{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 prep countdown
               </span>
               , then press{" "}
-              <span className="font-semibold text-slate-900">Start</span>. The
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Start</span>. The
               display shows a big countdown to the next minute mark. When a new
               minute starts, it moves to the next round automatically until all
               rounds complete.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               This page is not trying to teach training theory or prescribe
               workouts. It’s a practical timer UI built around real EMOM use:
               you are moving, breathing hard, and you want the time readable at
@@ -147,7 +147,7 @@ export default function HowItWorks({
               pause, or resume.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               Important behavior to understand: this timer runs in your browser
               while the page is open. It is typically very accurate, but some
               devices reduce update frequency in background tabs or when the
@@ -157,22 +157,22 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Rounds
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Prep
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Sound
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Final beeps
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Shortcuts
             </span>
           </div>
@@ -180,74 +180,74 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fast use (what most people do)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Set{" "}
-                <span className="font-semibold text-slate-900">Rounds</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Set{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Rounds</span>{" "}
                 (minutes). Example: 12 rounds means a 12 minute EMOM.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Choose{" "}
-                <span className="font-semibold text-slate-900">Prep</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Choose{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Prep</span>{" "}
                 (optional). Example: 10 seconds to get set.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Decide
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Decide
                 whether you want{" "}
-                <span className="font-semibold text-slate-900">Sound</span> and{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Sound</span> and{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   Final beeps
                 </span>
                 . Final beeps only matter if sound is on.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Press{" "}
-                <span className="font-semibold text-slate-900">Start</span> (or{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Start</span> (or{" "}
                 <Kbd>Space</Kbd>). Prep runs first if enabled, then Round 1
                 begins.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> If you
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> If you
                 want a bigger display, press <Kbd>F</Kbd> to go fullscreen. In
                 fullscreen, tap/click the time to start, pause, or resume.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">6)</span> When
+                <span className="font-semibold text-[var(--ilt-text-primary)]">6)</span> When
                 the final minute completes, the timer stops and plays a finish
                 signal (if enabled). Press <Kbd>R</Kbd> to reset and run the
                 same block again.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What the big time display actually means
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 During EMOM, the display shows the{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   remaining time in the current minute
                 </span>
                 . At the start of a minute you will see about{" "}
-                <span className="font-semibold text-slate-900">1:00</span>, then
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1:00</span>, then
                 it counts down to{" "}
-                <span className="font-semibold text-slate-900">0:00</span>, and
+                <span className="font-semibold text-[var(--ilt-text-primary)]">0:00</span>, and
                 immediately rolls into the next minute. You do not have to do
                 any math to find minute boundaries. The timer handles that.
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               A quick checklist for a smooth run
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 If sound matters, interact once (click/tap/press a key) so the
                 browser allows audio playback.
@@ -266,8 +266,8 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Shortcut set:
               </span>{" "}
               <Kbd>Space</Kbd> start/pause, <Kbd>R</Kbd> reset, <Kbd>F</Kbd>{" "}
@@ -279,18 +279,18 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What you can control on this EMOM Timer
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             The goal is simple control, not a menu of settings. You choose how
             long the EMOM runs (rounds), whether you want a short prep lead-in,
             and what cues you want at key moments.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
-            <span className="font-semibold text-slate-900">Rounds</span> are the
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Rounds</span> are the
             total number of minutes. If you set 10 rounds, you are committing to
             10 minute boundaries. The timer will take you through Minute 1, then
             Minute 2, and so on until Minute 10 completes. Many people use a
@@ -298,8 +298,8 @@ export default function HowItWorks({
             sessions without rethinking it.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
-            <span className="font-semibold text-slate-900">Prep</span> is a
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Prep</span> is a
             short countdown before the EMOM starts. It is meant for practical
             setup: you want time to pick up a kettlebell, step onto a bike,
             chalk up, or just breathe before the first minute begins. When prep
@@ -307,23 +307,23 @@ export default function HowItWorks({
             the start of Round 1.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
-            <span className="font-semibold text-slate-900">Sound</span> gives
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Sound</span> gives
             you an audible “minute boundary” cue and a finish signal. If you
             train with a shared screen, sound can keep the group synchronized.
             If you are in a quiet gym or using headphones, turning sound off
             keeps it purely visual.{" "}
-            <span className="font-semibold text-slate-900">Final beeps</span>{" "}
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Final beeps</span>{" "}
             are the optional “heads-up” beeps in the last 5 seconds of each
             minute. They are useful when you want a consistent reminder to wrap
             up reps and be ready to restart on the minute.
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Scenarios with examples (real numbers you’ll see)
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             These examples are about the timer’s behavior and what you will see
             on the display. They are written so you can predict the flow before
             you rely on it in a workout or class.
@@ -449,11 +449,11 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen and shortcuts (fast control, low friction)
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               If you want the quickest control mid-workout, rely on shortcuts.
               Press <Kbd>Space</Kbd> to start/pause, <Kbd>R</Kbd> to reset,{" "}
               <Kbd>F</Kbd> to toggle fullscreen, <Kbd>S</Kbd> to toggle sound,
@@ -464,22 +464,22 @@ export default function HowItWorks({
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Space</Kbd> start/pause
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>R</Kbd> reset
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>S</Kbd> sound
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>B</Kbd> final beeps
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>F</Kbd> fullscreen
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Esc</Kbd> exit
               </span>
             </div>
@@ -487,18 +487,18 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same ecosystem, different structure)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 If your workout format is not “start every minute,” use the
                 closest match below.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>Space</Kbd> <Kbd>R</Kbd> <Kbd>S</Kbd> <Kbd>B</Kbd>{" "}
               <Kbd>F</Kbd> <Kbd>Esc</Kbd>
             </div>
@@ -519,24 +519,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (timing, sound, fullscreen, browser limits)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Notes that matter if you rely on precise minute cues
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Timing model</div>
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Timing model</div>
               <p className="mt-1 leading-relaxed">
                 Timing is computed from high-resolution elapsed time so minute
                 boundaries remain consistent even if the UI skips a frame. The
@@ -544,8 +544,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Background throttling
               </div>
               <p className="mt-1 leading-relaxed">
@@ -556,8 +556,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Sound behavior</div>
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Sound behavior</div>
               <p className="mt-1 leading-relaxed">
                 Sound uses a short WebAudio beep. Many browsers block audio
                 until a user gesture occurs, so if you turn sound on and hear
@@ -565,8 +565,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen permissions
               </div>
               <p className="mt-1 leading-relaxed">
@@ -580,10 +580,10 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Need intervals?</strong> Use{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Need intervals?</strong> Use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/hiit-timer")}
             >
               HIIT Timer
@@ -591,11 +591,11 @@ export default function HowItWorks({
             for work/rest timing that is not locked to minute marks.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Need multiple clocks?</strong>{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Need multiple clocks?</strong>{" "}
             Use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/multiple-timers")}
             >
               Multiple Timers

@@ -4,14 +4,31 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
-  type KeyboardEvent,
+  type KeyboardEvent
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  Toggle,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -123,292 +140,6 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * Snappy version:
- * - First measurement runs in useLayoutEffect (before paint) to avoid “sliding in”
- * - Subsequent resizes run via rAF
- * - Only updates state if changed
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  // Start large so we shrink into place (less noticeable than growing).
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  const computeRef = useRef<(() => void) | null>(null);
-
-  useLayoutEffect(() => {
-    const c = containerRef.current;
-    const t = textRef.current;
-    if (!c || !t) return;
-
-    const compute = () => {
-      const c2 = containerRef.current;
-      const t2 = textRef.current;
-      if (!c2 || !t2) return;
-
-      const rect = c2.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const prev = (t2 as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t2 as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t2.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      // restore inline style then commit state
-      (t2 as HTMLElement).style.fontSize = prev;
-
-      setFontPx((cur) => (cur === best ? cur : best));
-    };
-
-    computeRef.current = compute;
-
-    // Run immediately before paint for snappy initial layout.
-    compute();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    let raf: number | null = null;
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        computeRef.current?.();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-  }, [containerRef]);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-function ToggleChip({
-  label,
-  checked,
-  onChange,
-  disabled,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (next: boolean) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={() => onChange(!checked)}
-      className={[
-        "cursor-pointer rounded-lg border px-3 py-2 text-sm font-semibold transition",
-        disabled ? "cursor-not-allowed opacity-60" : "hover:bg-slate-50",
-        checked
-          ? "border-amber-300 bg-amber-50 text-slate-900"
-          : "border-slate-200 bg-white text-slate-900",
-      ].join(" ")}
-      aria-pressed={checked}
-    >
-      {label}: {checked ? "On" : "Off"}
-    </button>
-  );
-}
-
 /* =========================================================
    PRESENTATION TIMER CARD
 ========================================================= */
@@ -432,7 +163,8 @@ function PresentationTimerCard() {
   const lastBeepSecondRef = useRef<number | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -548,9 +280,9 @@ function PresentationTimerCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -564,7 +296,7 @@ function PresentationTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Presentation Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
@@ -575,91 +307,58 @@ function PresentationTimerCard() {
             </Btn>
 
             <div className="hidden sm:flex items-center gap-2">
-              <ToggleChip
+              <Toggle
                 label="Sound"
                 checked={sound}
-                onChange={(v) => {
+                onCheckedChange={(v) => {
                   setSound(v);
                   if (!v) setFinalCountdownBeeps(false);
                 }}
               />
-              <ToggleChip
+              <Toggle
                 label="Final beeps"
                 checked={finalCountdownBeeps}
                 disabled={!sound}
-                onChange={(v) => setFinalCountdownBeeps(v)}
+                onCheckedChange={(v) => setFinalCountdownBeeps(v)}
               />
             </div>
           </div>
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Presentation Timer (Fullscreen Countdown)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Big, readable countdown for talks and meetings with presets,
-                optional sound, and a clean fullscreen display.
-              </p>
-            </div>
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <ToggleChip
-                label="Sound"
-                checked={sound}
-                onChange={(v) => {
-                  setSound(v);
-                  if (!v) setFinalCountdownBeeps(false);
-                }}
-              />
-              <ToggleChip
-                label="Final beeps"
-                checked={finalCountdownBeeps}
-                disabled={!sound}
-                onChange={(v) => setFinalCountdownBeeps(v)}
-              />
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
         {/* Controls (normal only) */}
         {!isFs && (
-          <div className="mt-4 space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="order-2 mt-4 space-y-5">
+            <ControlGroup>
+              <Btn kind="solid" onClick={startPause}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+            </ControlGroup>
+
+            <PresetGroup title="Presentation duration">
               {presetsMin.map((m) => (
-                <button
+                <Chip
                   key={m}
-                  type="button"
                   onClick={() => setPreset(m)}
                   disabled={!canEditDuration}
-                  className={[
-                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
-                    m === minutes
-                      ? "bg-amber-500 text-slate-900 enabled:hover:bg-amber-400"
-                      : "border border-slate-200 bg-white text-slate-900 enabled:hover:bg-slate-50",
-                  ].join(" ")}
+                  active={m === minutes}
                 >
                   {m}m
-                </button>
+                </Chip>
               ))}
-            </div>
+            </PresetGroup>
 
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-              <label className="block text-sm font-semibold text-slate-900">
-                Custom minutes
-                <input
+            <SettingGroup
+              title="Presentation settings"
+              description="Adjust the time limit and optional sound cues."
+            >
+              <SettingRow className="lg:grid-cols-3">
+                <Field
+                  label="Custom minutes"
                   type="number"
                   min={1}
                   max={180}
@@ -668,30 +367,48 @@ function PresentationTimerCard() {
                   onChange={(e) =>
                     setMinutes(clamp(Number(e.target.value || 1), 1, 180))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                 />
-              </label>
 
-              <div className="flex items-end gap-3">
-                <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-                <Btn kind="ghost" onClick={reset}>
-                  Reset
-                </Btn>
-              </div>
-            </div>
+                <Toggle
+                  label="Sound"
+                  checked={sound}
+                  onCheckedChange={(v) => {
+                    setSound(v);
+                    if (!v) setFinalCountdownBeeps(false);
+                  }}
+                />
 
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                <Toggle
+                  label="Final beeps"
+                  checked={finalCountdownBeeps}
+                  disabled={!sound}
+                  onCheckedChange={(v) => setFinalCountdownBeeps(v)}
+                />
+              </SettingRow>
+            </SettingGroup>
+
+            <div className="hidden">
               Shortcuts: Space start/pause · R reset · F fullscreen
             </div>
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause / R reset / F fullscreen
+            </ShortcutHint>
           </div>
         )}
 
         {/* Display */}
         <div
+          data-display-stage
           ref={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
-            urgent ? "border-rose-200" : "border-slate-200",
+            "order-1 timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            urgent ? "border-amber-300" : "border-slate-200",
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -712,7 +429,7 @@ function PresentationTimerCard() {
           <div
             className={[
               "text-xs font-extrabold uppercase tracking-widest",
-              urgent ? "text-rose-700" : "text-slate-700",
+              urgent ? "text-slate-950" : "text-slate-700",
             ].join(" ")}
           >
             {statusLabel}
@@ -723,7 +440,7 @@ function PresentationTimerCard() {
             className={[
               "mt-2 inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
-              urgent ? "text-rose-900" : "text-slate-900",
+              urgent ? "text-slate-950" : "text-slate-900",
             ].join(" ")}
             style={{
               fontSize: fitFontPx,
@@ -816,26 +533,65 @@ export default function PresentationTimerPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <PresentationTimerCard />
-        </div>
+      <ToolHero
+        display={<PresentationTimerCard />}
+        title="Presentation Timer (Fullscreen Countdown)"
+        description="Keep talks, pitches, and meeting segments on time with a large countdown, presets, optional sound, and fullscreen mode."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Presentation Timer</span>
+      <SeoBand title="How this timer works">
+        <p>
+          Presentation Timer keeps the talk clock visible first, then places
+          duration presets, custom minutes, sound, final beeps, and fullscreen
+          controls below it. It can show elapsed or remaining time based on the
+          current mode, so a speaker can rehearse against the same timing view
+          they plan to use live.
         </p>
-      </section>
-    </main>
+        <h3>When to use it</h3>
+        <p>
+          Use it for talks, pitches, classroom presentations, meeting timeboxes,
+          panels, or rehearsal runs. The large display is useful on a laptop
+          nearby or in fullscreen mode on a room display, but it does not make
+          claims about official event timing or compliance.
+        </p>
+        <h3>Settings that matter</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Duration presets are useful for common 5, 10, 15, 30, and 60 minute
+            talk formats.
+          </li>
+          <li>
+            Warning and final-beep options can help mark the end of a segment
+            without changing the countdown itself.
+          </li>
+          <li>
+            Fullscreen mode keeps the display readable for rehearsal rooms,
+            podium screens, and projector use.
+          </li>
+        </ul>
+        <h3>Related tools</h3>
+        <p>
+          For structured agenda timing, use the{" "}
+          <a className="ilt-content-link" href="/meeting-timer">
+            meeting timer
+          </a>
+          . For a date-based launch or event, use the{" "}
+          <a className="ilt-content-link" href="/event-countdown">
+            event countdown
+          </a>
+          . For the simplest projected countdown, try the{" "}
+          <a className="ilt-content-link" href="/fullscreen-timer">
+            fullscreen timer
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

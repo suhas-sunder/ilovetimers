@@ -4,14 +4,32 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  Select,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  Toggle,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -123,302 +141,6 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line string into its container by adjusting font size.
- * Fix: compute synchronously in useLayoutEffect so it is correct on first paint.
- * - ResizeObserver + immediate compute
- * - Binary search for max font-size that fits width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  const lastBestRef = useRef<number>(maxPx);
-
-  const computeBest = useCallback(() => {
-    const c = containerRef.current;
-    const t = textRef.current;
-    if (!c || !t) return;
-
-    const rect = c.getBoundingClientRect();
-    const availW = Math.max(0, rect.width - paddingAllowancePx);
-    const availH = Math.max(0, rect.height - paddingAllowancePx);
-    if (availW <= 0 || availH <= 0) return;
-
-    const el = t as HTMLElement;
-    const prevSize = el.style.fontSize;
-
-    const fits = (px: number) => {
-      el.style.fontSize = `${px}px`;
-      const tr = el.getBoundingClientRect();
-      return tr.width <= availW && tr.height <= availH;
-    };
-
-    let lo = minPx;
-    let hi = maxPx;
-    let best = minPx;
-
-    if (fits(maxPx)) {
-      best = maxPx;
-    } else {
-      for (let i = 0; i < 16; i++) {
-        const mid = Math.floor((lo + hi) / 2);
-        if (fits(mid)) {
-          best = mid;
-          lo = mid + 1;
-        } else {
-          hi = mid - 1;
-        }
-      }
-    }
-
-    // Restore, then commit.
-    el.style.fontSize = prevSize;
-
-    if (lastBestRef.current !== best) {
-      lastBestRef.current = best;
-      setFontPx(`${best}px`);
-    }
-  }, [containerRef, textRef, minPx, maxPx, paddingAllowancePx]);
-
-  // Critical: run before paint whenever deps change.
-  useLayoutEffect(() => {
-    computeBest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  // Resize-driven recompute (debounced by rAF).
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    let raf: number | null = null;
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        computeBest();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-  }, [containerRef, computeBest]);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-function Toggle({
-  label,
-  checked,
-  onChange,
-  disabled,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <label
-      className={[
-        "inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold",
-        disabled
-          ? "border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed"
-          : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-      ].join(" ")}
-    >
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        disabled={disabled}
-      />
-      {label}
-    </label>
-  );
-}
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block text-sm font-semibold text-slate-900">
-      {label}
-      <div className="mt-1">{children}</div>
-    </label>
-  );
-}
 
 /* =========================================================
    VIDEO GAME CHALLENGE TIMER CARD
@@ -483,7 +205,7 @@ const PRESETS: ChallengePreset[] = [
   },
 ];
 
-function VideoGameChallengeTimerCard() {
+function VideoGameChallengeTimerTool() {
   const beep = useBeep();
 
   const [mode, setMode] = useState<Mode>("one_minute");
@@ -519,7 +241,8 @@ function VideoGameChallengeTimerCard() {
   const remainingMsRef = useRef<number>((minutes * 60 + seconds) * 1000);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -752,9 +475,9 @@ function VideoGameChallengeTimerCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -768,7 +491,7 @@ function VideoGameChallengeTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Challenge Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
@@ -781,40 +504,7 @@ function VideoGameChallengeTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Video Game Challenge Timer
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Sudden death, one-minute challenges, or multi-round play with
-                rest. Fullscreen, sound, and keyboard shortcuts.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <Toggle label="Sound" checked={sound} onChange={setSound} />
-              <Toggle
-                label="Final beeps"
-                checked={finalCountdownBeeps}
-                onChange={setFinalCountdownBeeps}
-                disabled={!sound}
-              />
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
         {/* Display */}
         <div
           ref={displayBoxRef}
@@ -882,113 +572,125 @@ function VideoGameChallengeTimerCard() {
         </div>
 
         {!isFs && (
-          <div className="mt-5 flex flex-wrap items-center gap-2">
-            {PRESETS.map((p) => {
-              const active = selectedPresetKey === p.key;
-              return (
-                <button
-                  key={p.key}
-                  type="button"
-                  onClick={() => applyPreset(p)}
-                  className={[
-                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-                    active
-                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                      : "bg-slate-100 text-slate-900 hover:bg-slate-200",
-                  ].join(" ")}
-                >
-                  {p.label}
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {!isFs && (
-          <div className="mt-4 grid gap-3 sm:grid-cols-4">
-            <Field label="Minutes">
-              <input
-                type="number"
-                min={0}
-                max={180}
-                value={minutes}
-                onChange={(e) =>
-                  setMinutes(clamp(Number(e.target.value || 0), 0, 180))
-                }
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              />
-            </Field>
-
-            <Field label="Seconds">
-              <input
-                type="number"
-                min={0}
-                max={59}
-                value={seconds}
-                onChange={(e) =>
-                  setSeconds(clamp(Number(e.target.value || 0), 0, 59))
-                }
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              />
-            </Field>
-
-            <Field label="Mode">
-              <select
-                value={mode}
-                onChange={(e) => setMode(e.target.value as Mode)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              >
-                <option value="one_minute">One minute challenge</option>
-                <option value="sudden_death">Sudden death</option>
-                <option value="custom_rounds">Rounds (with rest)</option>
-              </select>
-            </Field>
-
-            <div className="flex items-end gap-3">
+          <div className="timer-control-stack mt-4">
+            <ControlGroup>
               <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
               <Btn kind="ghost" onClick={reset}>
                 Reset
               </Btn>
-            </div>
-          </div>
-        )}
+            </ControlGroup>
 
-        {!isFs && mode === "custom_rounds" && (
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <Field label="Rounds">
-              <input
-                type="number"
-                min={1}
-                max={200}
-                value={rounds}
-                onChange={(e) =>
-                  setRounds(clamp(Number(e.target.value || 5), 1, 200))
-                }
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              />
-            </Field>
+            <PresetGroup title="Challenge presets" description={presetNote}>
+              {PRESETS.map((p) => {
+                const active = selectedPresetKey === p.key;
+                return (
+                  <Chip
+                    key={p.key}
+                    onClick={() => applyPreset(p)}
+                    active={active}
+                  >
+                    {p.label}
+                  </Chip>
+                );
+              })}
+            </PresetGroup>
 
-            <Field label="Rest (seconds)">
-              <input
-                type="number"
-                min={0}
-                max={600}
-                value={restSec}
-                onChange={(e) =>
-                  setRestSec(clamp(Number(e.target.value || 10), 0, 600))
-                }
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              />
-            </Field>
+            <SettingGroup title="Challenge settings">
+              <SettingRow>
+                <Field
+                  label="Minutes"
+                  type="number"
+                  min={0}
+                  max={180}
+                  value={minutes}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 0), 0, 180))
+                  }
+                />
 
-            <div className="flex items-end">
-              <Toggle
-                label="Beep on round/rest"
-                checked={beepOnPhaseChange}
-                onChange={setBeepOnPhaseChange}
-                disabled={!sound}
-              />
-            </div>
+                <Field
+                  label="Seconds"
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={seconds}
+                  onChange={(e) =>
+                    setSeconds(clamp(Number(e.target.value || 0), 0, 59))
+                  }
+                />
+
+                <Select
+                  label="Mode"
+                  value={mode}
+                  onChange={(e) => setMode(e.target.value as Mode)}
+                >
+                  <option value="one_minute">One minute challenge</option>
+                  <option value="sudden_death">Sudden death</option>
+                  <option value="custom_rounds">Rounds (with rest)</option>
+                </Select>
+              </SettingRow>
+
+              {mode === "custom_rounds" ? (
+                <SettingRow>
+                  <Field
+                    label="Rounds"
+                    type="number"
+                    min={1}
+                    max={200}
+                    value={rounds}
+                    onChange={(e) =>
+                      setRounds(clamp(Number(e.target.value || 5), 1, 200))
+                    }
+                  />
+
+                  <Field
+                    label="Rest (seconds)"
+                    type="number"
+                    min={0}
+                    max={600}
+                    value={restSec}
+                    onChange={(e) =>
+                      setRestSec(clamp(Number(e.target.value || 10), 0, 600))
+                    }
+                  />
+
+                  <div className="flex items-end">
+                    <Toggle
+                      label="Beep on round/rest"
+                      checked={beepOnPhaseChange}
+                      onCheckedChange={setBeepOnPhaseChange}
+                      disabled={!sound}
+                    />
+                  </div>
+                </SettingRow>
+              ) : null}
+
+              <div className="flex flex-wrap gap-2">
+                <Toggle
+                  label="Sound"
+                  checked={sound}
+                  onCheckedChange={setSound}
+                />
+                <Toggle
+                  label="Final beeps"
+                  checked={finalCountdownBeeps}
+                  onCheckedChange={setFinalCountdownBeeps}
+                  disabled={!sound}
+                />
+              </div>
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              <span className="ilt-keycap">Space</span> start/pause ·{" "}
+              <span className="ilt-keycap">R</span> reset ·{" "}
+              <span className="ilt-keycap">F</span> fullscreen
+            </ShortcutHint>
           </div>
         )}
 
@@ -1047,24 +749,69 @@ export default function VideoGameChallengeTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <VideoGameChallengeTimerCard />
-        </div>
-
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Video Game Challenge Timer</span>
+      <ToolHero
+        display={<VideoGameChallengeTimerTool />}
+        title="Video Game Challenge Timer"
+        description="Run sudden death, one-minute, and multi-round challenge timers with presets, audio cues, shortcuts, and fullscreen."
+      />
+      <SeoBand title="How this timer works">
+        <p>
+          Choose a challenge mode, set the round length when needed, then use
+          the large countdown as the active game clock. The page keeps round,
+          rest, sound, keyboard, and fullscreen controls in the utility area so
+          the running timer remains the main focus.
         </p>
-      </section>
-    </main>
+        <h3>When to use it</h3>
+        <p>
+          Use this page for party games, stream challenges, sudden death rounds,
+          timed attempts, or practice blocks where a clear end signal matters.
+          Use a regular countdown timer when you only need one fixed duration.
+        </p>
+        <h3>Challenge formats</h3>
+        <p>
+          Use short rounds for speed challenges, attempt limits for repeated
+          practice, and break limits when players need a clear reset window
+          between turns. The timer supports casual game-session structure rather
+          than betting, gambling, or high-risk challenge rules.
+        </p>
+        <h3>Helpful settings</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Presets help switch quickly between sudden-death, one-minute, and
+            multi-round formats.
+          </li>
+          <li>
+            Sound cues can mark transitions when players are watching the game
+            screen instead of the timer.
+          </li>
+          <li>
+            Fullscreen mode makes the challenge clock easier to read on stream,
+            across a room, or beside a shared display.
+          </li>
+        </ul>
+        <h3>Related challenge tools</h3>
+        <p>
+          For split-based game runs, use the{" "}
+          <a className="ilt-content-link" href="/speedrun-timer">
+            speedrun timer
+          </a>
+          . For a plain fixed duration, use the{" "}
+          <a className="ilt-content-link" href="/countdown-timer">
+            countdown timer
+          </a>
+          . For unpredictable timing, try the{" "}
+          <a className="ilt-content-link" href="/chaos-timer">
+            chaos timer
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

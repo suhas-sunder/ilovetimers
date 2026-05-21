@@ -4,14 +4,33 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolHero,
+  ToolFrame as Card,
+  Toggle,
+  UtilityResultRow,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -121,271 +140,6 @@ function useBeep() {
       // ignore
     }
   }, []);
-}
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * SNAPPY VERSION:
- * - Start big immediately
- * - One-pass clamp-down instead of slow binary search loops
- * - Still responsive on resize
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const el = t as HTMLElement;
-      const original = el.style.fontSize;
-
-      // start big
-      let size = maxPx;
-      el.style.fontSize = `${size}px`;
-
-      // fast clamp down
-      while (
-        size > minPx &&
-        (el.getBoundingClientRect().width > availW ||
-          el.getBoundingClientRect().height > availH)
-      ) {
-        size -= Math.max(8, Math.floor(size * 0.1));
-        el.style.fontSize = `${size}px`;
-      }
-
-      el.style.fontSize = original;
-      setFontPx(Math.max(minPx, Math.min(maxPx, size)));
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(schedule);
-    ro.observe(container);
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function ToggleChip({
-  label,
-  checked,
-  onChange,
-  disabled,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (next: boolean) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <label
-      className={[
-        "cursor-pointer select-none inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold",
-        disabled
-          ? "border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed"
-          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
-      ].join(" ")}
-      title={disabled ? "Disabled" : undefined}
-    >
-      <input
-        type="checkbox"
-        checked={checked}
-        disabled={disabled}
-        onChange={(e) => onChange(e.target.checked)}
-        className={disabled ? "cursor-not-allowed" : "cursor-pointer"}
-      />
-      {label}
-    </label>
-  );
-}
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
 }
 
 /* =========================================================
@@ -506,9 +260,10 @@ function TeaTimerCard() {
   const lastShownRef = useRef<string>("");
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
-  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const displayBoxRef = useRef<HTMLElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
 
   function stopRaf() {
@@ -670,10 +425,10 @@ function TeaTimerCard() {
       startPause();
     } else if (k === "r") {
       reset();
-    } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    } else if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -687,14 +442,14 @@ function TeaTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Tea Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
-            <ToggleChip label="Sound" checked={sound} onChange={setSound} />
-            <ToggleChip
+            <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+            <Toggle
               label="Final beeps"
               checked={finalCountdownBeeps}
-              onChange={setFinalCountdownBeeps}
+              onCheckedChange={setFinalCountdownBeeps}
               disabled={!sound}
             />
             <Btn
@@ -717,44 +472,14 @@ function TeaTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">Tea Timer</h1>
-              <p className="mt-1 text-sm text-slate-600">
-                One-click steep presets with a big countdown, optional sound,
-                and fullscreen.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <ToggleChip label="Sound" checked={sound} onChange={setSound} />
-              <ToggleChip
-                label="Final beeps"
-                checked={finalCountdownBeeps}
-                onChange={setFinalCountdownBeeps}
-                disabled={!sound}
-              />
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
-        <div
-          ref={displayBoxRef}
+      <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "order-1 timer-display-surface relative flex flex-col items-center justify-center text-slate-950",
             urgent
-              ? "border-rose-200 bg-rose-50"
+              ? "bg-amber-50"
               : "border-slate-200 bg-slate-50",
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
@@ -791,31 +516,39 @@ function TeaTimerCard() {
           >
             {shownTime}
           </span>
-        </div>
+        </DisplayStage>
         {!isFs && (
           <>
-            <div className="mt-5 flex flex-wrap items-center gap-2">
+            <ControlGroup>
+              <Btn
+                kind="solid"
+                onClick={startPause}
+                disabled={disableStart}
+                className="min-w-[92px]"
+              >
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset} disabled={isMatcha}>
+                Reset
+              </Btn>
+            </ControlGroup>
+
+            <PresetGroup title="Tea presets">
               {TEA_PRESETS.map((p) => (
-                <button
+                <Chip
                   key={p.key}
-                  type="button"
+                  active={p.key === preset}
                   onClick={() => setPreset(p.key)}
-                  className={[
-                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-                    p.key === preset
-                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
-                  ].join(" ")}
                 >
                   {p.label}
-                </button>
+                </Chip>
               ))}
-            </div>
+            </PresetGroup>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
-              <label className="block text-sm font-semibold text-slate-700">
-                Minutes
-                <input
+            <SettingGroup title="Settings">
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <Field
+                  label="Minutes"
                   type="number"
                   min={0}
                   max={60}
@@ -823,14 +556,11 @@ function TeaTimerCard() {
                   onChange={(e) =>
                     setMinutes(clamp(Number(e.target.value || 0), 0, 60))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                   disabled={isMatcha}
                 />
-              </label>
 
-              <label className="block text-sm font-semibold text-slate-700">
-                Seconds
-                <input
+                <Field
+                  label="Seconds"
                   type="number"
                   min={0}
                   max={59}
@@ -838,44 +568,40 @@ function TeaTimerCard() {
                   onChange={(e) =>
                     setSeconds(clamp(Number(e.target.value || 0), 0, 59))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                   disabled={isMatcha}
                 />
-              </label>
 
-              <div className="flex items-end gap-3">
-                <Btn
-                  onClick={startPause}
-                  disabled={disableStart}
-                  className="min-w-[92px]"
-                >
-                  {running ? "Pause" : "Start"}
-                </Btn>
-                <Btn kind="ghost" onClick={reset} disabled={isMatcha}>
-                  Reset
-                </Btn>
-              </div>
-            </div>
+                <div className="flex flex-wrap items-end gap-3">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Final beeps"
+                    checked={finalCountdownBeeps}
+                    onCheckedChange={setFinalCountdownBeeps}
+                    disabled={!sound}
+                  />
+                </div>
+              </SettingRow>
+            </SettingGroup>
 
-            <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Preset note
-              </div>
-              <div className="mt-1 text-sm font-semibold text-slate-900">
+            <UtilityResultRow>
+              <span className="ilt-content-label">Preset note</span>
+              <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 {isMatcha
                   ? "Matcha is usually whisked, not steeped."
                   : presetNote}
-              </div>
-            </div>
-          </>
-        )}
+              </span>
+            </UtilityResultRow>
 
-        {!isFs && (
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
               Shortcuts: Space start/pause · R reset · F fullscreen
-            </div>
-          </div>
+            </ShortcutHint>
+          </>
         )}
 
         <FullscreenBottomBar show={isFs}>
@@ -933,24 +659,64 @@ export default function TeaTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-primary mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
-        <div>
-          <TeaTimerCard />
-        </div>
+      <ToolHero
+        display={<TeaTimerCard />}
+        title="Tea Timer"
+        description="Choose a tea preset or custom steep time, then keep the countdown clean, large, and easy to see."
+      />
 
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Tea Timer</span>
+      <SeoBand title="How this timer works">
+        <p>
+          Tea Timer includes steeping presets for green, black, oolong, white,
+          herbal, chai, rooibos, pu-erh, and matcha workflows while keeping
+          custom minutes and seconds available below the display. Pick a tea
+          type, start the countdown, and keep the timer visible while the cup or
+          pot steeps.
         </p>
-      </section>
-    </main>
+        <h3>When to use custom timing</h3>
+        <p>
+          Presets are starting points. Use custom time when your tea label, leaf
+          amount, water temperature, mug size, or personal taste calls for a
+          shorter or longer steep. A timer can help avoid accidental
+          over-steeping, but it does not guarantee a perfect brew.
+        </p>
+        <h3>Practical examples</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Use shorter times for delicate teas when bitterness is a concern.
+          </li>
+          <li>
+            Use longer times for herbal infusions when the package recommends a
+            fuller steep.
+          </li>
+          <li>
+            Use the custom field when making a second infusion or following a
+            specific tea vendor's instructions.
+          </li>
+        </ul>
+        <h3>Related kitchen timers</h3>
+        <p>
+          For general cooking steps, use the{" "}
+          <a className="ilt-content-link" href="/cooking-timer">
+            cooking timer
+          </a>
+          . For egg doneness timing, try the{" "}
+          <a className="ilt-content-link" href="/egg-timer">
+            egg timer
+          </a>
+          . For a plain custom countdown, use the{" "}
+          <a className="ilt-content-link" href="/countdown-timer">
+            countdown timer
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

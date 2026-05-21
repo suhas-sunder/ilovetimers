@@ -73,35 +73,35 @@ export default function FAQ({
           Want guided breathing intervals as a dedicated tool?{" "}
           <Link
             to="/breathing-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Breathing Timer
           </Link>
           . Prefer a timer that stays silent by design?{" "}
           <Link
             to="/silent-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Silent Timer
           </Link>
           . Want a no-frills large display?{" "}
           <Link
             to="/fullscreen-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Fullscreen Timer
           </Link>
           . Need multiple countdowns at once (for routines)?{" "}
           <Link
             to="/multiple-timers"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Multiple Timers
           </Link>
           . Want a focus-style session timer?{" "}
           <Link
             to="/focus-session-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Focus Session Timer
           </Link>
@@ -130,15 +130,15 @@ export default function FAQ({
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)] ilt-surface-card">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

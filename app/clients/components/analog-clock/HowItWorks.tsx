@@ -61,7 +61,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -75,22 +75,22 @@ export default function HowItWorks({
   }) => (
     <a
       href={href}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </a>
   );
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-10">
+    <section className="space-y-4">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
-            <p className="mt-2 max-w-3xl text-slate-700 leading-relaxed">
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
+            <p className="mt-2 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This page is a purpose-built <strong>online analog clock</strong>{" "}
               for situations where you want a clean clock face that stays
               readable at a glance. It is designed for wall-display use,
@@ -99,20 +99,20 @@ export default function HowItWorks({
               and you can switch <strong>Smooth</strong> on when you want the
               seconds hand to move like a traditional wall clock.
             </p>
-            <p className="mt-3 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               The goal is simple: you open the page, choose the look you want,
               and it keeps showing your device’s local time without asking you
               to configure anything. If you want big digits instead of a clock
               face, the{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/digital-clock")}
               >
                 Digital Clock
               </a>{" "}
               is the better match. If you need multiple cities at once, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/world-clock")}
               >
                 World Clock
@@ -120,7 +120,7 @@ export default function HowItWorks({
               . If you need a reference-aligned time source to compare against
               your device clock, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/atomic-clock")}
               >
                 Atomic Clock
@@ -130,16 +130,16 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Seconds hand toggle
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Smooth motion
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Keyboard
             </span>
           </div>
@@ -147,37 +147,37 @@ export default function HowItWorks({
 
         {/* What you do here */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               The clock flow in 15 seconds
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Choose
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Choose
                 a display style: keep or hide the <strong>seconds hand</strong>.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> If you
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> If you
                 want a fluid seconds hand, enable <strong>Smooth</strong>.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Press{" "}
                 <strong>Fullscreen</strong> (or <Kbd>F</Kbd>) for wall-display
                 use.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Use
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Use
                 shortcuts after focusing the card: <Kbd>S</Kbd> seconds hand,{" "}
                 <Kbd>M</Kbd> smooth, <Kbd>F</Kbd> fullscreen.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What “Smooth” is for (and when to turn it off)
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Smooth mode updates more frequently to make the seconds hand
                 glide instead of stepping once per second. That looks great on a
                 wall display, but it can also use more CPU. If you are casting,
@@ -188,34 +188,34 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               What this page is (and isn’t)
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">Is:</span> a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Is:</span> a
                 clean analog clock for local time with fullscreen support.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">Is:</span> a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Is:</span> a
                 quick way to show time across a room without clutter.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">Is not:</span> a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Is not:</span> a
                 countdown or alarm tool. Use a timer when you need an end time.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">Is not:</span> a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Is not:</span> a
                 guaranteed reference time source if your device clock is wrong.
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Rule:</span> if you
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Rule:</span> if you
               need alerts or timing while you are away from the screen, use a{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/alarm-timer")}
               >
                 Timer or Alarm
@@ -226,19 +226,19 @@ export default function HowItWorks({
         </div>
 
         {/* Quick matching links */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related time tools (only when they match the job)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 If you want a clock face on a wall display, stay here. If you
                 want time conversion, reference time, or a different display,
                 use one of these.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>F</Kbd> fullscreen • <Kbd>S</Kbd> seconds hand •{" "}
               <Kbd>M</Kbd> smooth
             </div>
@@ -260,10 +260,10 @@ export default function HowItWorks({
 
         {/* Scenarios */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Real scenarios (with numbers you will actually see)
           </h3>
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             An analog clock is useful when people need time context without
             fiddling with UI. The scenarios below are written for how this page
             actually works: fullscreen, seconds hand, smooth motion, and the
@@ -273,22 +273,22 @@ export default function HowItWorks({
 
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             {/* Scenario 1 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="ilt-surface-card p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                     Classroom wall clock on a projector (seconds hand off)
                   </div>
-                  <div className="mt-1 text-sm text-slate-600">
+                  <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                     Use case: reduce distraction, keep time visible
                   </div>
                 </div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                   Fullscreen
                 </span>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are projecting a laptop screen and you want students to see
                 the time without the ticking seconds drawing attention. Turn off{" "}
                 <strong>Seconds hand</strong>, leave <strong>Smooth</strong>{" "}
@@ -297,14 +297,14 @@ export default function HowItWorks({
                 as calm and steady.
               </p>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 A practical check: at <strong>9:05</strong> the minute hand is a
                 little past the 1, and at <strong>9:10</strong> it is on the 2.
                 Students can glance up and understand “we have about 10 minutes”
                 without you announcing it. If you want a more explicit readout,
                 switch to{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/digital-clock")}
                 >
                   Digital Clock
@@ -312,29 +312,29 @@ export default function HowItWorks({
                 for big digits.
               </p>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 Setup tip: click the clock once, then use <Kbd>F</Kbd> to toggle
                 fullscreen quickly during class.
               </div>
             </div>
 
             {/* Scenario 2 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="ilt-surface-card p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                     Meeting room pacing (seconds hand on, smooth off)
                   </div>
-                  <div className="mt-1 text-sm text-slate-600">
+                  <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                     Use case: keep discussion moving without a timer
                   </div>
                 </div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                   Seconds on
                 </span>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You have a 30-minute meeting and you want people to stay aware
                 of time without a countdown. Enable the seconds hand and leave
                 Smooth off. That gives a crisp “tick” feel. At a glance, you can
@@ -342,7 +342,7 @@ export default function HowItWorks({
                 shared reference point.
               </p>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Real behavior you will see: if someone starts talking at{" "}
                 <strong>10:17:20</strong> and you want to cap it at 2 minutes,
                 you can watch the seconds hand pass the 12 twice and stop them
@@ -350,7 +350,7 @@ export default function HowItWorks({
                 timer. If you do need a hard cutoff, that is when a real
                 countdown like{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/meeting-timer")}
                 >
                   Meeting Timer
@@ -358,29 +358,29 @@ export default function HowItWorks({
                 is the right tool.
               </p>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 Shortcut: <Kbd>S</Kbd> toggles the seconds hand instantly if it
                 feels too busy.
               </div>
             </div>
 
             {/* Scenario 3 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="ilt-surface-card p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                     Studio or lab work (smooth on for a wall-clock feel)
                   </div>
-                  <div className="mt-1 text-sm text-slate-600">
+                  <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                     Use case: visible seconds while you work hands-free
                   </div>
                 </div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                   Smooth
                 </span>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are doing short repeated tasks and you want a continuous
                 seconds sweep you can glance at from a distance. Turn on{" "}
                 <strong>Seconds hand</strong> and enable <strong>Smooth</strong>
@@ -390,14 +390,14 @@ export default function HowItWorks({
                 9 marker.
               </p>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Concrete example: you are timing a 90-second rest between sets.
                 You finish at <strong>14:12:10</strong>. When the seconds hand
                 reaches the 12 and the minute hand is halfway between 2 and 3,
                 you are around <strong>14:13:40</strong>. If you need exact
                 elapsed timing and splits, use a{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/stopwatch")}
                 >
                   Stopwatch
@@ -405,47 +405,47 @@ export default function HowItWorks({
                 . This clock is for “good enough at a glance” time context.
               </p>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 If Smooth stutters during screen sharing or casting, toggle it
                 off with <Kbd>M</Kbd>.
               </div>
             </div>
 
             {/* Scenario 4 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="ilt-surface-card p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                     Remote team coordination (local time, UTC, and conversion)
                   </div>
-                  <div className="mt-1 text-sm text-slate-600">
+                  <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                     Use case: stop time zone mistakes before they happen
                   </div>
                 </div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                   Time zones
                 </span>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are on a call and someone says “Let’s meet at 3.” That is
                 ambiguous across time zones. This page helps you confirm your
                 own local time and timezone label quickly, but for cross-zone
                 scheduling you should switch to the right tool.
               </p>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Example with real numbers: it is <strong>09:30</strong> local
                 for you, and a teammate uses UTC as their standard. Open{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/utc-clock")}
                 >
                   UTC Clock
                 </a>{" "}
                 to see the current UTC time, then use{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/time-zone-converter")}
                 >
                   Time Zone Converter
@@ -453,7 +453,7 @@ export default function HowItWorks({
                 to translate a proposed time. If you want multiple cities always
                 visible, use{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/world-clock")}
                 >
                   World Clock
@@ -471,12 +471,12 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-            <h3 className="text-lg font-semibold text-sky-700">
+          <div className="mt-6 ilt-surface-muted p-6">
+            <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
               Accuracy and “why does it look different on my device?”
             </h3>
 
-            <p className="mt-3 text-sm leading-relaxed text-slate-700">
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               This clock displays the time your device reports. If your system
               clock is off by <strong>2 minutes</strong>, the display will be
               off by <strong>2 minutes</strong>. If your timezone is set
@@ -484,14 +484,14 @@ export default function HowItWorks({
               the clock face. It is your device settings. A fast sanity check is
               to compare this page against{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/atomic-clock")}
               >
                 Atomic Clock
               </a>{" "}
               or{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/utc-clock")}
               >
                 UTC Clock
@@ -499,7 +499,7 @@ export default function HowItWorks({
               .
             </p>
 
-            <p className="mt-3 text-sm leading-relaxed text-slate-700">
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Smooth mode also changes what you perceive. With Smooth on, the
               seconds hand moves continuously and can reveal performance issues
               (casting lag, low-power throttling, heavy CPU load). With Smooth
@@ -511,17 +511,17 @@ export default function HowItWorks({
         </div>
 
         {/* Reliability + privacy */}
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <h3 className="text-lg font-semibold text-sky-700">
+        <div className="mt-8 ilt-surface-muted p-6">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Reliability and privacy (quick and practical)
           </h3>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Keep the display smooth
               </div>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[var(--ilt-text-secondary)]">
                 <li>Keep the tab visible when you care about smooth motion.</li>
                 <li>
                   Disable Smooth when screen sharing, casting, or recording.
@@ -530,15 +530,15 @@ export default function HowItWorks({
               </ul>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Use the right tool for the job
               </div>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[var(--ilt-text-secondary)]">
                 <li>
                   Need a countdown? Use{" "}
                   <a
-                    className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                     href={abs("/countdown-timer")}
                   >
                     Countdown Timer
@@ -548,7 +548,7 @@ export default function HowItWorks({
                 <li>
                   Need a wake-up style alarm? Use{" "}
                   <a
-                    className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                     href={abs("/alarm-timer")}
                   >
                     Alarm Timer
@@ -558,7 +558,7 @@ export default function HowItWorks({
                 <li>
                   Need elapsed time? Use{" "}
                   <a
-                    className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                     href={abs("/stopwatch")}
                   >
                     Stopwatch
@@ -568,22 +568,22 @@ export default function HowItWorks({
               </ul>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Keyboard basics
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Click the clock card once to focus it, then use <Kbd>F</Kbd> for
                 fullscreen, <Kbd>S</Kbd> to toggle the seconds hand, and{" "}
                 <Kbd>M</Kbd> to toggle Smooth.
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Privacy
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 The clock runs locally in your browser tab. No account is
                 required, and you do not need to enter personal information to
                 use the display.
@@ -592,25 +592,25 @@ export default function HowItWorks({
           </div>
 
           {/* Technical / implementation notes should be expandable */}
-          <details className="group mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+          <details className="group mt-4 ilt-surface-card p-4">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-900">
+                <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                   Technical notes (fullscreen rules, smooth mode, and
                   throttling)
                 </div>
-                <div className="mt-1 text-xs font-medium text-slate-600">
+                <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                   Read this if fullscreen fails or Smooth looks choppy
                 </div>
               </div>
-              <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+              <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
                 ▼
               </span>
             </summary>
 
             <div className="mt-3 grid gap-3 md:grid-cols-2">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                <div className="font-semibold text-slate-900">
+              <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="font-semibold text-[var(--ilt-text-primary)]">
                   Fullscreen gesture requirement
                 </div>
                 <p className="mt-1 leading-relaxed">
@@ -620,8 +620,8 @@ export default function HowItWorks({
                 </p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                <div className="font-semibold text-slate-900">
+              <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="font-semibold text-[var(--ilt-text-primary)]">
                   Smooth mode update frequency
                 </div>
                 <p className="mt-1 leading-relaxed">
@@ -638,11 +638,11 @@ export default function HowItWorks({
 
         {/* Bottom CTA */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">If you want big digits:</strong>{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">If you want big digits:</strong>{" "}
             use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/digital-clock")}
             >
               Digital Clock
@@ -650,20 +650,20 @@ export default function HowItWorks({
             for the clearest across-the-room read.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               If you want reference time:
             </strong>{" "}
             compare with{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/atomic-clock")}
             >
               Atomic Clock
             </a>{" "}
             or{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/utc-clock")}
             >
               UTC Clock

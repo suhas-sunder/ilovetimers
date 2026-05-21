@@ -3,14 +3,32 @@ import type { Route } from "./+types/emom-timer";
 import { json } from "@remix-run/node";
 import {
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/emom-timer/HowItWorks";
 import Disclaimer from "~/clients/components/emom-timer/Disclaimer";
 import FAQ from "~/clients/components/emom-timer/FAQ";
@@ -97,141 +115,6 @@ function isTypingTarget(target: EventTarget | null) {
     el.isContentEditable
   );
 }
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
 /* WebAudio beep */
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -273,116 +156,6 @@ function useBeep() {
 }
 
 /* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-  ariaPressed,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-  ariaPressed?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    aria-pressed={ariaPressed}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-/* =========================================================
    EMOM TIMER CARD
 ========================================================= */
 type Mode = "idle" | "prep" | "emom" | "done";
@@ -414,7 +187,8 @@ function EmomTimerCard() {
   const [uiTick, setUiTick] = useState(0);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -675,13 +449,13 @@ function EmomTimerCard() {
     } else if (k === "r") {
       hardReset();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "s") {
       toggleSound();
     } else if (k === "b") {
       if (sound) toggleFinalBeeps();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -703,7 +477,7 @@ function EmomTimerCard() {
         kind="ghost"
         onClick={toggleSound}
         className="py-1 text-sm"
-        ariaPressed={sound}
+        aria-pressed={sound}
       >
         Sound: {sound ? "On" : "Off"}
       </Btn>
@@ -713,7 +487,7 @@ function EmomTimerCard() {
         onClick={toggleFinalBeeps}
         className="py-1 text-sm"
         disabled={!sound}
-        ariaPressed={finalBeeps}
+        aria-pressed={finalBeeps}
       >
         Final: {finalBeeps ? "On" : "Off"}
       </Btn>
@@ -734,175 +508,13 @@ function EmomTimerCard() {
         right={fsRightControls}
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {/* Header (normal only) */}
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
-        {/* Settings (normal only) */}
-        {!isFs && (
-          <div className="mt-4 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-extrabold text-slate-900">
-                Total minutes (rounds)
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                {presetsRounds.map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => setRounds(m)}
-                    disabled={isLocked}
-                    className={[
-                      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:opacity-60",
-                      m === rounds
-                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                    ].join(" ")}
-                  >
-                    {m}m
-                  </button>
-                ))}
-              </div>
-
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm font-semibold text-slate-900">
-                  Rounds
-                  <input
-                    type="number"
-                    min={1}
-                    max={120}
-                    value={rounds}
-                    disabled={isLocked}
-                    onChange={(e) =>
-                      setRounds(clamp(Number(e.target.value || 1), 1, 120))
-                    }
-                    className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                  />
-                </label>
-
-                <div className="text-xs text-slate-600 sm:pt-6">
-                  One round starts every minute. Work, then rest until the next
-                  minute starts.
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-extrabold text-slate-900">
-                Prep countdown (optional)
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                {prepPresets.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => setPrepSeconds(s)}
-                    disabled={isLocked}
-                    className={[
-                      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:opacity-60",
-                      s === prepSeconds
-                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                    ].join(" ")}
-                  >
-                    {s === 0 ? "None" : `${s}s`}
-                  </button>
-                ))}
-              </div>
-
-              <label className="mt-3 block text-sm font-semibold text-slate-900">
-                Prep seconds
-                <input
-                  type="number"
-                  min={0}
-                  max={60}
-                  value={prepSeconds}
-                  disabled={isLocked}
-                  onChange={(e) =>
-                    setPrepSeconds(clamp(Number(e.target.value || 0), 0, 60))
-                  }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                />
-              </label>
-
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSound((x) => !x)}
-                  className={[
-                    "cursor-pointer rounded-lg border px-3 py-2 text-sm font-semibold transition",
-                    sound
-                      ? "border-amber-300 bg-amber-50 text-slate-900 hover:bg-amber-100"
-                      : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                  ].join(" ")}
-                  aria-pressed={sound}
-                >
-                  Sound {sound ? "On" : "Off"} (S)
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setFinalBeeps((x) => !x)}
-                  disabled={!sound}
-                  className={[
-                    "cursor-pointer rounded-lg border px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60",
-                    finalBeeps
-                      ? "border-amber-300 bg-amber-50 text-slate-900 hover:bg-amber-100"
-                      : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                  ].join(" ")}
-                  aria-pressed={finalBeeps}
-                >
-                  Final beeps {finalBeeps ? "On" : "Off"} (B)
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Controls bar (normal only) */}
-        {!isFs && (
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex flex-wrap items-center gap-3">
-              <Btn kind="solid" onClick={startPauseToggle}>
-                {mode === "idle" || mode === "done"
-                  ? "Start"
-                  : running
-                    ? "Pause"
-                    : "Resume"}
-              </Btn>
-              <Btn kind="ghost" onClick={hardReset}>
-                Reset
-              </Btn>
-            </div>
-
-            <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space start/pause · R reset · F fullscreen · S sound ·
-              B final beeps
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-interval-stack flex h-full flex-col"}>
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "timer-display-surface relative order-first mt-0 flex flex-col items-center justify-center text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -968,14 +580,109 @@ function EmomTimerCard() {
               </div>
             </div>
           )}
-        </div>
+        </DisplayStage>
+
+        {/* Controls, presets, and settings (normal only) */}
+        {!isFs && (
+          <>
+            <ControlGroup>
+              <Btn kind="solid" onClick={startPauseToggle}>
+                {mode === "idle" || mode === "done"
+                  ? "Start"
+                  : running
+                    ? "Pause"
+                    : "Resume"}
+              </Btn>
+              <Btn kind="ghost" onClick={hardReset}>
+                Reset
+              </Btn>
+            </ControlGroup>
+
+            <div className="mx-auto grid w-full max-w-5xl gap-4 lg:grid-cols-2">
+              <PresetGroup title="Total minutes">
+                {presetsRounds.map((m) => (
+                  <Chip
+                    key={m}
+                    onClick={() => setRounds(m)}
+                    disabled={isLocked}
+                    active={m === rounds}
+                  >
+                    {m}m
+                  </Chip>
+                ))}
+              </PresetGroup>
+
+              <PresetGroup title="Prep countdown">
+                {prepPresets.map((s) => (
+                  <Chip
+                    key={s}
+                    onClick={() => setPrepSeconds(s)}
+                    disabled={isLocked}
+                    active={s === prepSeconds}
+                  >
+                    {s === 0 ? "None" : `${s}s`}
+                  </Chip>
+                ))}
+              </PresetGroup>
+            </div>
+
+            <SettingGroup
+              title="EMOM settings"
+              description="One round starts every minute. Work, then rest until the next minute starts."
+            >
+              <SettingRow>
+                <Field
+                  label="Rounds"
+                  type="number"
+                  min={1}
+                  max={120}
+                  value={rounds}
+                  disabled={isLocked}
+                  onChange={(e) =>
+                    setRounds(clamp(Number(e.target.value || 1), 1, 120))
+                  }
+                />
+                <Field
+                  label="Prep seconds"
+                  type="number"
+                  min={0}
+                  max={60}
+                  value={prepSeconds}
+                  disabled={isLocked}
+                  onChange={(e) =>
+                    setPrepSeconds(clamp(Number(e.target.value || 0), 0, 60))
+                  }
+                />
+                <div className="flex flex-wrap items-end gap-3">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Final beeps"
+                    checked={finalBeeps}
+                    onCheckedChange={setFinalBeeps}
+                    disabled={!sound}
+                  />
+                </div>
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause / R reset / F fullscreen / S sound / B final beeps
+            </ShortcutHint>
+          </>
+        )}
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · R reset · F
-              fullscreen · S sound · B final beeps
+              Tap time to start/pause / Space start/pause / R reset / F
+              fullscreen / S sound / B final beeps
             </div>
             <div className="text-xs font-semibold text-slate-700">
               {running ? "Running" : mode === "idle" ? "Ready" : "Paused"}
@@ -1019,45 +726,25 @@ export default function EmomTimerPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            EMOM Timer (Every Minute On the Minute)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Set rounds and an optional prep countdown, then run a clear,
-            gym-readable minute timer with sound cues and fullscreen mode.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<EmomTimerCard />}
+        title="EMOM Timer (Every Minute On the Minute)"
+        description="Set total minutes, optional prep, and sound cues for every-minute-on-the-minute training."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <EmomTimerCard />
-        </div>
-
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">EMOM Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

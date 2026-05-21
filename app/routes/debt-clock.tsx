@@ -1,21 +1,42 @@
 // app/routes/debt-clock.tsx
 import type { Route } from "./+types/debt-clock";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import HowItWorks from "~/clients/components/debt-clock/HowItWorks";
 import Disclaimer from "~/clients/components/debt-clock/Disclaimer";
 import FAQ from "~/clients/components/debt-clock/FAQ";
 import KeyboardShortcuts from "~/clients/components/debt-clock/KeyboardShortcuts";
 import PopularUseCases from "~/clients/components/debt-clock/PopularUseCases";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
+
+
+import {
+  Button as Btn,
+  ControlGroup,
+  Field,
+  PresetChip as Chip,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  SecondaryActionRow,
+  SeoBand,
+  Select,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolHero,
+  ToolFrame as Card,
+} from "~/clients/components/ui/foundation";
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Debt Clock (Live National & World Debt Counter, Fullscreen)";
+  const title = "Debt Clock (Estimated National & World Debt Counter, Fullscreen)";
   const description =
-    "Free debt clock with a live counter for national or world debt. Choose a preset or enter a starting amount and yearly change rate to simulate a running total in fullscreen.";
+    "Free debt clock with an estimated counter for national, world, or custom debt. Choose a preset or enter a starting amount and yearly change rate to simulate a running total in fullscreen.";
 
   const url = "https://www.ilovetimers.com/debt-clock";
 
@@ -31,7 +52,7 @@ export function meta({}: Route.MetaArgs) {
         "us debt clock",
         "government debt clock",
         "debt counter",
-        "live debt clock",
+        "estimated debt clock",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -80,13 +101,7 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
+
 
 function formatMoney(
   n: number,
@@ -110,265 +125,7 @@ function formatMoney(
 
 const SECONDS_PER_YEAR = 365.25 * 24 * 3600;
 
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
 
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line string into its container by adjusting font size.
- * - ResizeObserver + rAF
- * - Binary search for max font-size that fits width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 520,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: React.RefObject<HTMLElement | null>;
-  textRef: React.RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-      active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  left,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-          {left}
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
 
 /* =========================================================
    DATA (DEMO PRESETS)
@@ -451,7 +208,8 @@ function DebtClockCard() {
   }, [yearlyChange]);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const amountTextRef = useRef<HTMLSpanElement>(null);
@@ -567,7 +325,7 @@ function DebtClockCard() {
     containerRef: displayBoxRef,
     textRef: amountTextRef,
     deps: [formattedNow, isFs, running],
-    minPx: 52,
+    minPx: isFs ? 52 : 22,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 72 : 72,
   });
@@ -583,11 +341,11 @@ function DebtClockCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "c") {
       copy();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -601,7 +359,7 @@ function DebtClockCard() {
       <FullscreenTopBar
         show={isFs}
         title="Debt Clock"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         left={
           <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
             <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
@@ -628,7 +386,7 @@ function DebtClockCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-result-stack flex h-full flex-col"}>
         {/* Display */}
         <div
           ref={displayBoxRef}
@@ -641,7 +399,7 @@ function DebtClockCard() {
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
             userSelect: "none",
-            overflow: isFs ? "hidden" : "visible",
+            overflow: "hidden",
           }}
           aria-live="polite"
           onClick={() => {
@@ -650,19 +408,22 @@ function DebtClockCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="timer-result-label text-xs font-extrabold uppercase tracking-widest text-slate-700">
             Current estimated debt
           </div>
 
           <span
             ref={amountTextRef}
+            data-primary-display-value
             className={[
+              "timer-result-value",
               "mt-2 inline-block text-center font-mono font-extrabold text-slate-950",
-              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-normal sm:tracking-widest",
             ].join(" ")}
             style={{
               fontSize: fitFontPx,
               lineHeight: "1",
+              maxWidth: "100%",
               transform: "translateZ(0)",
               whiteSpace: "nowrap",
             }}
@@ -670,8 +431,8 @@ function DebtClockCard() {
             {formattedNow}
           </span>
 
-          <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+          <div className="timer-result-detail-grid mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
+            <div className="timer-result-panel rounded-lg bg-white p-4">
               <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                 Rate
               </div>
@@ -691,7 +452,7 @@ function DebtClockCard() {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+            <div className="timer-result-panel rounded-lg bg-white p-4">
               <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                 Shortcuts
               </div>
@@ -701,134 +462,112 @@ function DebtClockCard() {
             </div>
           </div>
 
-          {!isFs && (
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-              <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-              <Btn kind="ghost" onClick={reset}>
-                Reset
-              </Btn>
-              <Btn kind="ghost" onClick={copy}>
-                Copy
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          )}
         </div>
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <div className="timer-settings-panel mt-5 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-slate-900">
-                Preset
-              </div>
+          <div className="timer-control-stack mt-4">
+            <ControlGroup>
+              <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+            </ControlGroup>
 
-              <div className="mt-3 flex flex-wrap gap-2">
-                {PRESETS.map((p) => (
-                  <Chip
-                    key={p.id}
-                    active={p.id === presetId}
-                    onClick={() => setPresetId(p.id)}
-                  >
-                    {p.label}
-                  </Chip>
-                ))}
-              </div>
+            <SecondaryActionRow className="timer-result-actions">
+              <Btn kind="ghost" onClick={copy}>
+                Copy
+              </Btn>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
 
-              <div className="mt-3 text-xs text-slate-600">
-                Demo presets are placeholders. Use Custom with your own numbers
-                if you want.
-              </div>
-            </div>
+            <PresetGroup
+              title="Estimate presets"
+              description="Demo presets are placeholders. Use Custom with your own numbers if you want."
+            >
+              {PRESETS.map((p) => (
+                <Chip
+                  key={p.id}
+                  active={p.id === presetId}
+                  onClick={() => setPresetId(p.id)}
+                >
+                  {p.label}
+                </Chip>
+              ))}
+            </PresetGroup>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-slate-900">
-                Inputs
-              </div>
+            <SettingGroup
+              title="Debt estimate inputs"
+              description="This counter is an estimate based on your starting value and average rate."
+            >
+              <SettingRow>
+                <Select
+                  label="Currency"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                >
+                  <option value="USD">USD ($)</option>
+                  <option value="CAD">CAD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="AUD">AUD ($)</option>
+                  <option value="JPY">JPY (¥)</option>
+                </Select>
 
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm font-semibold text-slate-900">
-                  Currency
-                  <select
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                  >
-                    <option value="USD">USD ($)</option>
-                    <option value="CAD">CAD ($)</option>
-                    <option value="EUR">EUR (€)</option>
-                    <option value="GBP">GBP (£)</option>
-                    <option value="AUD">AUD ($)</option>
-                    <option value="JPY">JPY (¥)</option>
-                  </select>
-                </label>
+                <Field
+                  label="Starting debt"
+                  type="number"
+                  min={0}
+                  step={1}
+                  value={Math.max(0, Math.round(baseDebt))}
+                  onChange={(e) => {
+                    const v = clamp(
+                      Number(e.target.value || 0),
+                      0,
+                      1_000_000_000_000_000,
+                    );
+                    setBaseDebt(v);
+                    if (presetId !== "custom") setPresetId("custom");
+                  }}
+                />
 
-                <label className="block text-sm font-semibold text-slate-900">
-                  Starting debt
-                  <input
-                    type="number"
-                    min={0}
-                    step={1}
-                    value={Math.max(0, Math.round(baseDebt))}
-                    onChange={(e) => {
-                      const v = clamp(
-                        Number(e.target.value || 0),
-                        0,
-                        1_000_000_000_000_000,
-                      );
-                      setBaseDebt(v);
-                      if (presetId !== "custom") setPresetId("custom");
-                    }}
-                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                  />
-                </label>
+                <Field
+                  label="Yearly change (can be negative)"
+                  type="number"
+                  step={1}
+                  value={Math.round(yearlyChange)}
+                  onChange={(e) => {
+                    const v = clamp(
+                      Number(e.target.value || 0),
+                      -1_000_000_000_000_000,
+                      1_000_000_000_000_000,
+                    );
+                    setYearlyChange(v);
+                    if (presetId !== "custom") setPresetId("custom");
+                  }}
+                />
+              </SettingRow>
 
-                <label className="block text-sm font-semibold text-slate-900 sm:col-span-2">
-                  Yearly change (can be negative)
-                  <input
-                    type="number"
-                    step={1}
-                    value={Math.round(yearlyChange)}
-                    onChange={(e) => {
-                      const v = clamp(
-                        Number(e.target.value || 0),
-                        -1_000_000_000_000_000,
-                        1_000_000_000_000_000,
-                      );
-                      setYearlyChange(v);
-                      if (presetId !== "custom") setPresetId("custom");
-                    }}
-                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                  />
-                </label>
+              <Field
+                label="As of label"
+                type="text"
+                value={asOfLabel}
+                onChange={(e) => {
+                  setAsOfLabel(e.target.value);
+                  if (presetId !== "custom") setPresetId("custom");
+                }}
+                placeholder="e.g. Source X, 2025-12-31"
+              />
+            </SettingGroup>
 
-                <label className="block text-sm font-semibold text-slate-900 sm:col-span-2">
-                  “As of” label
-                  <input
-                    type="text"
-                    value={asOfLabel}
-                    onChange={(e) => {
-                      setAsOfLabel(e.target.value);
-                      if (presetId !== "custom") setPresetId("custom");
-                    }}
-                    placeholder="e.g. Source X, 2025-12-31"
-                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                  />
-                </label>
-              </div>
-
-              <div className="mt-3 text-xs text-slate-600">
-                This is an estimated counter based on your starting value and
-                average rate.
-              </div>
-            </div>
+            <ShortcutHint>
+              <span className="ilt-keycap">Space</span> start/pause ·{" "}
+              <span className="ilt-keycap">R</span> reset ·{" "}
+              <span className="ilt-keycap">F</span> fullscreen ·{" "}
+              <span className="ilt-keycap">C</span> copy
+            </ShortcutHint>
           </div>
         )}
 
@@ -905,44 +644,27 @@ export default function DebtClockPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Debt Clock (Live Counter + Fullscreen)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Pick a preset or enter a starting debt and yearly change rate to
-            simulate a running total.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<DebtClockCard />}
+        title="Debt Clock (Estimated Counter)"
+        description="Run an estimated debt counter from a starting value and yearly change rate. Presets are placeholders; custom inputs control the calculation."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <DebtClockCard />
-        </div>
+      <SeoBand>
 
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Debt Clock</span>
-        </p>
-      </section>
+          <HowItWorks />
+          <KeyboardShortcuts />
+          <PopularUseCases />
+          <FAQ />
+          <Disclaimer />
 
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      </SeoBand>
+    </PageShell>
   );
 }

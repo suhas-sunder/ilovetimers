@@ -4,13 +4,25 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  Field,
+  PageShell,
+  PresetGroup,
+  PresetChip as TabBtn,
+  SecondaryActionRow,
+  SeoBand,
+  ShortcutHint,
+  StatusChip as MiniPill,
+  Toggle,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 
 /* =========================================================
    META
@@ -153,199 +165,6 @@ function formatClockFromSeconds(secSinceMidnight: number) {
   return `${pad2(hh)}:${pad2(mm)}:${pad2(ss)}`;
 }
 
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-}) => (
-  <div
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const TabBtn = ({
-  active,
-  children,
-  onClick,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick: () => void;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={[
-      "cursor-pointer rounded-full px-4 py-2 text-sm font-extrabold transition",
-      active
-        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-    ].join(" ")}
-  >
-    {children}
-  </button>
-);
-
-const MiniPill = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700">
-    {children}
-  </span>
-);
-
 /* =========================================================
    BIG RESULT DISPLAY (CLOCK-LIKE)
 ========================================================= */
@@ -376,33 +195,16 @@ function BigResultDisplay({
 
   return (
     <div
+      data-display-stage
       ref={boxRef}
-      className={[
-        "timer-display-surface relative mt-4 flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-6 text-slate-950",
-      ].join(" ")}
+      className="timer-display-surface relative flex flex-col items-center justify-start overflow-hidden ilt-surface-muted px-3 pb-3 pt-[clamp(0.25rem,0.8svh,0.625rem)] text-[var(--ilt-text-primary)] sm:px-6 sm:pb-6"
       style={{ minHeight: "clamp(320px, 42svh, 560px)", userSelect: "none" }}
       aria-live="polite"
     >
-      <div className="absolute left-3 top-3 flex items-center gap-2 sm:left-5 sm:top-5">
-        <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-          {label}
-        </div>
-        {status ? (
-          <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-slate-700">
-            {status}
-          </span>
-        ) : null}
-      </div>
-
-      {right ? (
-        <div className="absolute right-3 top-3 sm:right-5 sm:top-5">
-          {right}
-        </div>
-      ) : null}
-
       <span
         ref={textRef}
-        className="mt-6 inline-block text-center font-mono font-extrabold tracking-widest"
+        data-primary-display-value
+        className="timer-result-value inline-block text-center font-mono font-extrabold tracking-widest"
         style={{
           fontSize: fitPx,
           lineHeight: "1",
@@ -413,10 +215,22 @@ function BigResultDisplay({
       </span>
 
       {subText ? (
-        <div className="mt-3 text-center text-sm font-semibold text-slate-700">
+        <div className="timer-result-context mt-3 text-center text-sm font-semibold text-[var(--ilt-text-secondary)]">
           {subText}
         </div>
       ) : null}
+
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-center">
+        <div className="timer-result-label text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
+          {label}
+        </div>
+        {status ? (
+          <MiniPill className="normal-case tracking-normal">
+            {status}
+          </MiniPill>
+        ) : null}
+        {right}
+      </div>
     </div>
   );
 }
@@ -465,7 +279,7 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
   const resultText = `${big} (${words})`;
 
   return (
-    <Card>
+    <Card className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6 sm:pt-0">
       <BigResultDisplay
         label="Result"
         bigText={big}
@@ -473,86 +287,82 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
         status={mode === "add" ? "Add" : "Subtract"}
       />
 
-      <div className="timer-controls-row mt-4">
+      <SecondaryActionRow className="timer-result-actions mt-4">
         <Btn kind="ghost" onClick={reset} className="py-2">
           Reset
         </Btn>
         <Btn kind="ghost" onClick={() => copy(resultText)} className="py-2">
           Copy result
         </Btn>
-      </div>
+      </SecondaryActionRow>
 
       {lastCopied ? (
-        <div className="mt-3 text-xs font-semibold text-slate-600">
-          <span className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1">
+        <div className="mt-3 ilt-helper-text font-semibold">
+          <span className="ilt-inline-pill px-2 py-1">
             {lastCopied}
           </span>
         </div>
       ) : null}
 
       <div className="mt-5 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="text-sm font-extrabold text-slate-900">Time A</div>
+        <div className="timer-result-panel ilt-surface-muted p-4">
+          <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Time A</div>
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {(["d", "h", "m", "s"] as const).map((k) => (
-              <label key={`a-${k}`} className="block">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-                  {k === "d"
+              <Field
+                key={`a-${k}`}
+                label={
+                  k === "d"
                     ? "Days"
                     : k === "h"
                       ? "Hours"
                       : k === "m"
                         ? "Minutes"
-                        : "Seconds"}
-                </div>
-                <input
+                        : "Seconds"
+                }
                   type="number"
                   min={0}
                   max={k === "d" ? 9999 : k === "h" ? 23 : 59}
                   value={a[k]}
                   onChange={(e) => setField("a", k)(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                   inputMode="numeric"
                 />
-              </label>
             ))}
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
-          <div className="text-sm font-extrabold text-slate-900">Time B</div>
+        <div className="timer-result-panel ilt-surface-muted p-4">
+          <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Time B</div>
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {(["d", "h", "m", "s"] as const).map((k) => (
-              <label key={`b-${k}`} className="block">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-                  {k === "d"
+              <Field
+                key={`b-${k}`}
+                label={
+                  k === "d"
                     ? "Days"
                     : k === "h"
                       ? "Hours"
                       : k === "m"
                         ? "Minutes"
-                        : "Seconds"}
-                </div>
-                <input
+                        : "Seconds"
+                }
                   type="number"
                   min={0}
                   max={k === "d" ? 9999 : k === "h" ? 23 : 59}
                   value={b[k]}
                   onChange={(e) => setField("b", k)(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                   inputMode="numeric"
                 />
-              </label>
             ))}
           </div>
         </div>
       </div>
 
       <div className="mt-6 max-w-3xl">
-        <h2 className="text-xl font-extrabold text-sky-700">
+        <h2 className="text-xl font-extrabold text-[var(--ilt-text-primary)]">
           {mode === "add" ? "Add time" : "Subtract time"}
         </h2>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
           Use days, hours, minutes, and seconds. Subtract can go negative.
         </p>
       </div>
@@ -650,11 +460,15 @@ function DurationCard() {
     : "";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown}>
+    <Card
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6 sm:pt-0"
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h2 className="text-xl font-extrabold text-sky-700">Duration</h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <h2 className="text-xl font-extrabold text-[var(--ilt-text-primary)]">Duration</h2>
+          <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
             Duration between two times. If End is earlier than Start, it crosses
             midnight.
           </p>
@@ -668,26 +482,22 @@ function DurationCard() {
           ) : null}
         </div>
 
-        <div className="ml-auto flex flex-wrap items-center gap-3">
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-            <input
-              type="checkbox"
-              checked={includeSeconds}
-              onChange={(e) => {
-                const on = e.target.checked;
-                setIncludeSeconds(on);
+        <SecondaryActionRow className="timer-result-actions sm:justify-end">
+          <Toggle
+            label="Seconds"
+            checked={includeSeconds}
+            onCheckedChange={(on) => {
+              setIncludeSeconds(on);
 
-                if (!on) {
-                  setStart((v) => v.slice(0, 5));
-                  setEnd((v) => v.slice(0, 5));
-                } else {
-                  setStart((v) => (v.length === 5 ? `${v}:00` : v));
-                  setEnd((v) => (v.length === 5 ? `${v}:00` : v));
-                }
-              }}
-            />
-            Seconds
-          </label>
+              if (!on) {
+                setStart((v) => v.slice(0, 5));
+                setEnd((v) => v.slice(0, 5));
+              } else {
+                setStart((v) => (v.length === 5 ? `${v}:00` : v));
+                setEnd((v) => (v.length === 5 ? `${v}:00` : v));
+              }
+            }}
+          />
 
           <Btn kind="ghost" onClick={now} className="py-2">
             Use now
@@ -700,7 +510,7 @@ function DurationCard() {
           >
             Copy
           </Btn>
-        </div>
+        </SecondaryActionRow>
       </div>
 
       <BigResultDisplay
@@ -713,40 +523,33 @@ function DurationCard() {
       />
 
       {lastCopied ? (
-        <div className="mt-3 text-xs font-semibold text-slate-600">
-          <span className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1">
+        <div className="mt-3 ilt-helper-text font-semibold">
+          <span className="ilt-inline-pill px-2 py-1">
             {lastCopied}
           </span>
         </div>
       ) : null}
 
       <div className="mt-5 grid gap-4 lg:grid-cols-2">
-        <label className="block">
-          <div className="text-sm font-extrabold text-slate-900">
-            Start time
-          </div>
-          <input
+        <Field
+            label="Start time"
             value={start}
             onChange={(e) => setStart(e.target.value)}
             placeholder={includeSeconds ? "09:00:00" : "09:00"}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
             inputMode="numeric"
+            hint={`Format: ${includeSeconds ? "HH:MM:SS" : "HH:MM"} (24-hour)`}
           />
-          <div className="mt-1 text-xs text-slate-600">
-            Format: {includeSeconds ? "HH:MM:SS" : "HH:MM"} (24-hour)
-          </div>
-        </label>
 
         <label className="block">
-          <div className="text-sm font-extrabold text-slate-900">End time</div>
+          <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">End time</div>
           <input
             value={end}
             onChange={(e) => setEnd(e.target.value)}
             placeholder={includeSeconds ? "17:00:00" : "17:00"}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+            className="mt-1 w-full ilt-input-control px-3 py-2 text-lg font-bold"
             inputMode="numeric"
           />
-          <div className="mt-1 text-xs text-slate-600">
+          <div className="mt-1 ilt-helper-text">
             Shortcut: N now · C copy duration
           </div>
         </label>
@@ -780,7 +583,7 @@ function TimeCalculatorCard() {
         )}
       </div>
 
-      <div className="timer-controls-row mt-4">
+      <PresetGroup className="mt-4" title="Calculation mode">
           <TabBtn active={tab === "add"} onClick={() => setTab("add")}>
             Add
           </TabBtn>
@@ -796,16 +599,16 @@ function TimeCalculatorCard() {
           >
             Duration
           </TabBtn>
-          <div className="ml-1 text-xs font-semibold text-slate-600">
+          <ShortcutHint className="ml-1 text-left sm:text-left">
             Keyboard: 1 Add · 2 Subtract · 3 Duration
-          </div>
-      </div>
+          </ShortcutHint>
+      </PresetGroup>
 
       <div className="mt-6 max-w-3xl">
-        <h1 className="text-xl font-extrabold text-sky-700">
-          Time Calculator
-        </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <div className="text-xl font-extrabold text-[var(--ilt-text-primary)]">
+          Calculation modes
+        </div>
+        <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
           Add durations, subtract durations, or find the duration between two
           times.
         </p>
@@ -851,24 +654,67 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-primary mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
-        <div>
-          <TimeCalculatorCard />
-        </div>
+      <ToolHero
+        display={<TimeCalculatorCard />}
+        title="Time Calculator"
+        description="Add durations, subtract durations, or calculate the duration between two clock times with copy-ready results."
+      />
 
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Time Calculator</span>
+      <SeoBand title="How this calculator works">
+        <p>
+          Use this time calculator for quick duration math: add time, subtract
+          time, or compare two clock times. The result stays prominent while the
+          inputs remain compact underneath for fast correction.
         </p>
-      </section>
-    </main>
+        <p>
+          Duration mode supports overnight time ranges, so an end time earlier
+          than the start time is treated as crossing midnight. Invalid time
+          entries show validation text instead of a misleading zero result.
+        </p>
+        <h3>Practical examples</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Add several durations to total lesson time, cooking steps, practice
+            segments, or media lengths.
+          </li>
+          <li>
+            Subtract a break or delay from a planned block when you need the
+            remaining duration.
+          </li>
+          <li>
+            Compare two clock times when you need the elapsed time between a
+            start and end.
+          </li>
+        </ul>
+        <h3>Notes and limitations</h3>
+        <p>
+          This calculator is intended for ordinary time math and planning. For
+          payroll, legal, billing, or compliance records, verify the result
+          against the system or rules that apply to that work.
+        </p>
+        <h3>Related calculators</h3>
+        <p>
+          For unit conversions, use the{" "}
+          <a className="ilt-content-link" href="/milliseconds-converter">
+            milliseconds converter
+          </a>
+          . For shift-style totals, try the{" "}
+          <a className="ilt-content-link" href="/work-hours-calculator">
+            work hours calculator
+          </a>
+          . For time zone date boundaries, use the{" "}
+          <a className="ilt-content-link" href="/time-zone-converter">
+            time zone converter
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

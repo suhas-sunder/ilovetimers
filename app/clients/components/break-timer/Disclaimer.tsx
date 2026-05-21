@@ -4,153 +4,153 @@ export default function Disclaimer() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <details className="group" open>
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <h2 className="text-xl font-semibold text-sky-700">
+              <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
                 How this page helps
               </h2>
-              <p className="mt-1 text-sm font-medium text-slate-600">
+              <p className="mt-1 text-sm font-medium text-[var(--ilt-text-muted)]">
                 {preview}
               </p>
             </div>
 
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2 group-open:grid">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Start a break fast.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Start a break fast.</strong>{" "}
               Pick a preset (1–20 min) or type your own minutes. Press{" "}
-              <span className="font-semibold text-slate-900">Space</span> to
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Space</span> to
               start/pause.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Big, readable display.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Big, readable display.</strong>{" "}
               Use fullscreen for a clean, high-contrast countdown you can see
               from across the room.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Optional sound cues.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Optional sound cues.</strong>{" "}
               Enable Sound for an end chime. Turn on Final beeps for the last
               five seconds (helpful when you’re away from the screen).
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Loop breaks if needed.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Loop breaks if needed.</strong>{" "}
               Loop auto-restarts the same break length, useful for repeated
               “micro-break” cycles or quick stretch intervals.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Pause without losing time.
               </strong>{" "}
               Pause mid-break and resume later. Reset clears the current break
               and puts you back to your selected minutes.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Keyboard shortcuts.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Keyboard shortcuts.</strong>{" "}
               Space start/pause ·{" "}
-              <span className="font-semibold text-slate-900">R</span> reset ·{" "}
-              <span className="font-semibold text-slate-900">F</span> fullscreen
-              · <span className="font-semibold text-slate-900">S</span> sound ·{" "}
-              <span className="font-semibold text-slate-900">L</span> loop
+              <span className="font-semibold text-[var(--ilt-text-primary)]">R</span> reset ·{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">F</span> fullscreen
+              · <span className="font-semibold text-[var(--ilt-text-primary)]">S</span> sound ·{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">L</span> loop
             </div>
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                 Common break picks
               </div>
-              <ul className="mt-3 grid gap-2 text-sm text-slate-700">
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">1–3 minutes</strong> quick
+              <ul className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">1–3 minutes</strong> quick
                   reset, water, stand up, eyes off screen.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">5 minutes</strong> short
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">5 minutes</strong> short
                   break between work blocks.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">10–15 minutes</strong>{" "}
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">10–15 minutes</strong>{" "}
                   longer break after multiple blocks.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">20 minutes</strong>{" "}
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">20 minutes</strong>{" "}
                   reset/meal prep/walk break.
                 </li>
               </ul>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                 Related tools
               </div>
-              <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="ilt-surface-muted p-3">
                   Running work blocks + breaks?{" "}
                   <a
                     href="/pomodoro-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Pomodoro Timer
                   </a>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Studying with structured sessions?{" "}
                   <a
                     href="/study-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Study Timer
                   </a>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Need a quiet countdown (no sound)?{" "}
                   <a
                     href="/silent-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Silent Timer
                   </a>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Want a general purpose timer?{" "}
                   <a
                     href="/countdown-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Countdown Timer
                   </a>{" "}
                   or{" "}
                   <a
                     href="/online-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Online Timer
                   </a>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Need multiple breaks running at once?{" "}
                   <a
                     href="/multiple-timers"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Multiple Timers
                   </a>
@@ -160,31 +160,31 @@ export default function Disclaimer() {
             </div>
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+          <div className="mt-4 ilt-surface-card p-4">
             <details className="group">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] ilt-focus-ring">
                 <span>Technical details</span>
-                <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+                <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
                   ▼
                 </span>
               </summary>
 
-              <div className="mt-2 grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              <div className="mt-2 grid gap-3 text-sm text-[var(--ilt-text-secondary)] sm:grid-cols-2">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Countdown accuracy
                   </div>
                   <p className="mt-2">
                     The timer targets an end timestamp and updates the display
                     with{" "}
-                    <span className="font-semibold text-slate-900">rAF</span> so
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">rAF</span> so
                     it stays smooth while remaining time is computed from the
                     current high-resolution clock.
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Final beeps
                   </div>
                   <p className="mt-2">
@@ -194,20 +194,20 @@ export default function Disclaimer() {
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Fullscreen behavior
                   </div>
                   <p className="mt-2">
                     Fullscreen uses the browser Fullscreen API on the card
                     container.{" "}
-                    <span className="font-semibold text-slate-900">Esc</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">Esc</span>{" "}
                     exits.
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Keyboard focus
                   </div>
                   <p className="mt-2">
@@ -219,8 +219,8 @@ export default function Disclaimer() {
             </details>
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <strong className="text-slate-900">Tip.</strong> For a clean break
+          <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Tip.</strong> For a clean break
             routine, pick a preset and go fullscreen. If you want repeated
             micro-breaks, turn on Loop and keep Sound on so you don’t miss the
             end.

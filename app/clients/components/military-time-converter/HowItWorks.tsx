@@ -67,7 +67,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -81,7 +81,7 @@ export default function HowItWorks({
   }) => (
     <Link
       to={to}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </Link>
@@ -96,13 +96,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="ilt-surface-card p-5">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="whitespace-pre-wrap font-mono text-xs text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="whitespace-pre-wrap font-mono text-xs text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -113,50 +113,50 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-2 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               This{" "}
-              <span className="font-semibold text-slate-900">
-                Military Time Converter
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
+                converter
               </span>{" "}
               is built for fast, copy-ready conversion between{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 24-hour (military)
               </span>{" "}
               time and{" "}
-              <span className="font-semibold text-slate-900">AM/PM</span> time.
+              <span className="font-semibold text-[var(--ilt-text-primary)]">AM/PM</span> time.
               You can paste{" "}
-              <span className="font-semibold text-slate-900">1730</span>,{" "}
-              <span className="font-semibold text-slate-900">0730</span>,{" "}
-              <span className="font-semibold text-slate-900">0000</span>, or{" "}
-              <span className="font-semibold text-slate-900">17:30</span> on the
+              <span className="font-semibold text-[var(--ilt-text-primary)]">1730</span>,{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">0730</span>,{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">0000</span>, or{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">17:30</span> on the
               military side, or enter{" "}
-              <span className="font-semibold text-slate-900">5:30 PM</span>,{" "}
-              <span className="font-semibold text-slate-900">12 AM</span>, or{" "}
-              <span className="font-semibold text-slate-900">9 PM</span> on the
+              <span className="font-semibold text-[var(--ilt-text-primary)]">5:30 PM</span>,{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">12 AM</span>, or{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">9 PM</span> on the
               standard side. When your input is valid, the other side updates
               instantly so you can copy the exact time format you need.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               This page is not trying to be a long tutorial. It is designed for
               the moment you are converting times in real life: a schedule that
-              uses <span className="font-semibold text-slate-900">24-hour</span>{" "}
+              uses <span className="font-semibold text-[var(--ilt-text-primary)]">24-hour</span>{" "}
               format, a message that uses{" "}
-              <span className="font-semibold text-slate-900">AM/PM</span>, or a
+              <span className="font-semibold text-[var(--ilt-text-primary)]">AM/PM</span>, or a
               form where you must enter time consistently. That is why the
               interface includes a big result display, one-click copy, quick
               examples, and fullscreen mode for rapid repeated copying.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               The display always shows the{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 current conversion result
               </span>{" "}
               based on the input you are actively editing. If you are typing
@@ -168,22 +168,22 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               24-hour ⇄ AM/PM
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Flexible input
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Normalized output
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Copy
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Shortcuts
             </span>
           </div>
@@ -191,63 +191,63 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Quick use (what most people do)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Paste a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Paste a
                 time into either input.
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   {" "}
                   Military
                 </span>{" "}
                 examples: 1730, 0730, 17:30, 0000.{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   Standard
                 </span>{" "}
                 examples: 5:30 PM, 12 AM, 9 PM.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Watch
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Watch
                 the other side update when the input is valid. The big display
                 shows the current result and a status line confirms validity.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Click{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Click{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   Copy result
                 </span>{" "}
                 to copy the conversion. If you are in fullscreen, tap/click the
                 big result to copy.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Repeat
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Repeat
                 for the next time. If you are converting many entries, press{" "}
                 <Kbd>F</Kbd> to go fullscreen and copy from the big display.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> Need
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> Need
                 “right now” in both formats? Press <Kbd>N</Kbd> to fill the
                 current local time on both sides.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What “normalized” means on this page
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Normalized output is the tool’s way of giving you a consistent,
                 copy-friendly version of the time you entered. If you paste a
                 messy value like{" "}
-                <span className="font-semibold text-slate-900">7:3</span>, the
+                <span className="font-semibold text-[var(--ilt-text-primary)]">7:3</span>, the
                 tool treats it as 7 hours and 3 minutes and normalizes it to{" "}
-                <span className="font-semibold text-slate-900">07:03</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">07:03</span>{" "}
                 (military) or{" "}
-                <span className="font-semibold text-slate-900">7:03 AM</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">7:03 AM</span>{" "}
                 (standard), depending on which side you are converting. This is
                 useful when you want outputs that are consistent across a list,
                 without manually adding leading zeros.
@@ -255,21 +255,21 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Practical checklist
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 If AM/PM isn’t converting, it probably needs{" "}
-                <span className="font-semibold text-slate-900">AM</span> or{" "}
-                <span className="font-semibold text-slate-900">PM</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">AM</span> or{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">PM</span>.
                 Standard time won’t guess.
               </li>
               <li>
                 Military hours must be 0–23 and minutes must be 00–59. The tool
                 also accepts{" "}
-                <span className="font-semibold text-slate-900">2400</span> for
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2400</span> for
                 midnight and shows a note.
               </li>
               <li>
@@ -279,7 +279,7 @@ export default function HowItWorks({
               <li>
                 Converting between places? Use{" "}
                 <Link
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   to="/time-zone-converter"
                 >
                   Time Zone Converter
@@ -289,7 +289,7 @@ export default function HowItWorks({
               <li>
                 Doing duration math (add/subtract time)? Use{" "}
                 <Link
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   to="/time-calculator"
                 >
                   Time Calculator
@@ -298,8 +298,8 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Shortcuts:</span>{" "}
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Shortcuts:</span>{" "}
               <Kbd>N</Kbd> now, <Kbd>C</Kbd> copy AM/PM, <Kbd>M</Kbd> copy
               military, <Kbd>R</Kbd> clear, <Kbd>F</Kbd> fullscreen,{" "}
               <Kbd>Esc</Kbd> exit.
@@ -309,11 +309,11 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What this converter is optimized for
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             In real workflows, time conversion usually happens under mild time
             pressure: you are reading a roster, replying to a message, copying
             times into a form, or double-checking a schedule. The two most
@@ -324,22 +324,22 @@ export default function HowItWorks({
             you are actively working on.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
             It is also designed for speed. If you are converting a list of times
             (for example: 0630, 0815, 1045, 1730), you should not have to select
             text carefully each time. That is why copy buttons exist next to
             each input and why fullscreen lets you copy by tapping the large
             display. You can also use presets to confirm edge cases like{" "}
-            <span className="font-semibold text-slate-900">0000</span> and{" "}
-            <span className="font-semibold text-slate-900">2400</span> without
+            <span className="font-semibold text-[var(--ilt-text-primary)]">0000</span> and{" "}
+            <span className="font-semibold text-[var(--ilt-text-primary)]">2400</span> without
             typing.
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Scenarios with concrete examples (what you will see here)
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             The examples below match what this page does: validate your input,
             show the converted value, show a normalized form, and let you copy.
             Each scenario uses real times people commonly convert.
@@ -455,42 +455,42 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Pick the right page when your goal is slightly different
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               This route is for converting time formats (24-hour ⇄ AM/PM). If
               you need to convert between locations or time zones, use the time
               zone converter. If you need to add or subtract time durations, use
               the time calculator. If you want a “what time is it right now”
               display, use current local time or atomic clock.
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Time zones:{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/time-zone-converter"
               >
                 Time Zone Converter
               </Link>
               . Durations:{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/time-calculator"
               >
                 Time Calculator
               </Link>
               . Reference:{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/current-local-time"
               >
                 Current Local Time
               </Link>{" "}
               or{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/atomic-clock"
               >
                 Atomic Clock
@@ -501,17 +501,17 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same site, different job)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 Use the closest match to what you are trying to do.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>N</Kbd> <Kbd>C</Kbd> <Kbd>M</Kbd> <Kbd>F</Kbd>{" "}
               <Kbd>R</Kbd> <Kbd>Esc</Kbd>
             </div>
@@ -527,24 +527,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (accepted formats, validation, 2400 behavior)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional notes if you rely on exact parsing behavior
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Military parsing rules
               </div>
               <p className="mt-1 leading-relaxed">
@@ -559,8 +559,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Standard parsing rules
               </div>
               <p className="mt-1 leading-relaxed">
@@ -571,8 +571,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Why AM/PM is required
               </div>
               <p className="mt-1 leading-relaxed">
@@ -582,8 +582,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen + copy behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -597,13 +597,13 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Converting between places?
             </strong>{" "}
             Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/time-zone-converter"
             >
               Time Zone Converter
@@ -611,10 +611,10 @@ export default function HowItWorks({
             for location-aware conversions.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Doing time math?</strong> Use{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Doing time math?</strong> Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/time-calculator"
             >
               Time Calculator
@@ -624,8 +624,8 @@ export default function HowItWorks({
         </div>
 
         {/* Small SEO anchor text without being bloggy */}
-        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-          <strong className="text-slate-900">In one sentence:</strong> this
+        <div className="mt-6 ilt-surface-muted px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+          <strong className="text-[var(--ilt-text-primary)]">In one sentence:</strong> this
           military time converter instantly converts 24-hour time to AM/PM and
           AM/PM to 24-hour time, validates and normalizes inputs, and provides
           copy buttons, presets, fullscreen mode, and keyboard shortcuts so you

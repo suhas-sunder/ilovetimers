@@ -131,12 +131,12 @@ export default function PopularUseCases({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Use this page for fast, no-fuss breaks. Pick minutes, press Space to
             start/pause, and go fullscreen when you want a big, readable
             countdown. Turn on sound (and final beeps) if you don’t want to keep
@@ -148,28 +148,28 @@ export default function PopularUseCases({
           {list.map((s) => (
             <div
               key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="ilt-surface-card p-4"
             >
-              <div className="text-base font-semibold text-slate-900">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.forWho}</div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.notFor}</div>
                 </div>
               </div>
 
@@ -178,7 +178,7 @@ export default function PopularUseCases({
                   <a
                     key={l.href}
                     href={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 hover:border-slate-300"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
                     {l.label} →
                   </a>
@@ -188,13 +188,13 @@ export default function PopularUseCases({
           ))}
         </div>
 
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Tip:</span> For “walk
+        <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Tip:</span> For “walk
           away” breaks, turn on{" "}
-          <span className="font-semibold text-slate-900">Sound</span> and{" "}
-          <span className="font-semibold text-slate-900">Final beeps</span>. For
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Sound</span> and{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Final beeps</span>. For
           repeated micro-breaks, enable{" "}
-          <span className="font-semibold text-slate-900">Loop</span> and pick a
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Loop</span> and pick a
           short preset like 1–3 minutes.
         </div>
       </div>

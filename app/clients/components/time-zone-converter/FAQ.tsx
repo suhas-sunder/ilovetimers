@@ -31,17 +31,17 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            1) Set <strong className="text-slate-900">From time zone</strong>{" "}
-            and <strong className="text-slate-900">To time zone</strong>.
+            1) Set <strong className="text-[var(--ilt-text-primary)]">From time zone</strong>{" "}
+            and <strong className="text-[var(--ilt-text-primary)]">To time zone</strong>.
           </div>
           <div>
-            2) Pick the <strong className="text-slate-900">date</strong> and
-            enter the <strong className="text-slate-900">time</strong>.
+            2) Pick the <strong className="text-[var(--ilt-text-primary)]">date</strong> and
+            enter the <strong className="text-[var(--ilt-text-primary)]">time</strong>.
           </div>
           <div>
             3) Read the converted time and use{" "}
-            <strong className="text-slate-900">Copy</strong> or{" "}
-            <strong className="text-slate-900">Share</strong> if needed.
+            <strong className="text-[var(--ilt-text-primary)]">Copy</strong> or{" "}
+            <strong className="text-[var(--ilt-text-primary)]">Share</strong> if needed.
           </div>
         </div>
       ),
@@ -60,7 +60,7 @@ export default function FAQ({
       question: "What does the Seconds toggle do?",
       answer: (
         <>
-          When <strong className="text-slate-900">Seconds</strong> is on, the
+          When <strong className="text-[var(--ilt-text-primary)]">Seconds</strong> is on, the
           input and results include seconds. When it’s off, times are shown to
           the minute only.
         </>
@@ -80,7 +80,7 @@ export default function FAQ({
       question: "What does Swap do?",
       answer: (
         <>
-          <strong className="text-slate-900">Swap</strong> exchanges the From
+          <strong className="text-[var(--ilt-text-primary)]">Swap</strong> exchanges the From
           and To time zones, so you can convert back the other way instantly
           without reselecting.
         </>
@@ -106,13 +106,13 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            <strong className="text-slate-900">F</strong>: fullscreen ·{" "}
-            <strong className="text-slate-900">S</strong>: swap ·{" "}
-            <strong className="text-slate-900">N</strong>: now ·{" "}
-            <strong className="text-slate-900">C</strong>: copy ·{" "}
-            <strong className="text-slate-900">Esc</strong>: exit fullscreen
+            <strong className="text-[var(--ilt-text-primary)]">F</strong>: fullscreen ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">S</strong>: swap ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">N</strong>: now ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">C</strong>: copy ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">Esc</strong>: exit fullscreen
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-[var(--ilt-text-muted)]">
             Tip: click the converter card once so it captures keyboard input.
             Shortcuts are ignored while you are typing in inputs.
           </div>
@@ -131,28 +131,28 @@ export default function FAQ({
           Want live times across many cities?{" "}
           <Link
             to="/world-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             World Clock
           </Link>
           . Need a clean UTC reference?{" "}
           <Link
             to="/utc-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             UTC Clock
           </Link>
           . Want a large single clock display?{" "}
           <Link
             to="/digital-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Digital Clock
           </Link>
           . Need your device’s local time only?{" "}
           <Link
             to="/current-local-time"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Current Local Time
           </Link>
@@ -178,18 +178,18 @@ export default function FAQ({
   };
 
   return (
-    <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
+    <section id={id} className="space-y-4">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)] ilt-surface-card">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

@@ -66,14 +66,14 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            <strong className="text-slate-900">F</strong>: fullscreen ·{" "}
-            <strong className="text-slate-900">T</strong>: 24-hour ·{" "}
-            <strong className="text-slate-900">S</strong>: seconds ·{" "}
-            <strong className="text-slate-900">V</strong>: view ·{" "}
-            <strong className="text-slate-900">C</strong>: copy ·{" "}
-            <strong className="text-slate-900">Esc</strong>: exit fullscreen
+            <strong className="text-[var(--ilt-text-primary)]">F</strong>: fullscreen ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">T</strong>: 24-hour ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">S</strong>: seconds ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">V</strong>: view ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">C</strong>: copy ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">Esc</strong>: exit fullscreen
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-[var(--ilt-text-muted)]">
             Tip: click the clock once so it captures keyboard input.
           </div>
         </div>
@@ -96,28 +96,28 @@ export default function FAQ({
           Want a standard display?{" "}
           <Link
             to="/digital-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Digital Clock
           </Link>
           . Want another “coded” style?{" "}
           <Link
             to="/binary-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Binary Clock
           </Link>
           . Need time in other locations?{" "}
           <Link
             to="/world-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             World Clock
           </Link>
           . Converting across zones?{" "}
           <Link
             to="/time-zone-converter"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Time Zone Converter
           </Link>
@@ -151,15 +151,15 @@ export default function FAQ({
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)]">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

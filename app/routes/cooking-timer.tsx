@@ -1,8 +1,28 @@
 // app/routes/cooking-timer.tsx
 import type { Route } from "./+types/cooking-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolHero,
+  ToolFrame as Card,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/cooking-timer/HowItWorks";
 import Disclaimer from "~/clients/components/cooking-timer/Disclaimer";
 import FAQ from "~/clients/components/cooking-timer/FAQ";
@@ -92,14 +112,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
 /* WebAudio beep */
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -138,266 +150,6 @@ function useBeep() {
       // ignore
     }
   }, []);
-}
-
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: React.RefObject<HTMLElement | null>;
-  textRef: React.RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-      active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  left,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-          {left}
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
 }
 
 /* =========================================================
@@ -454,9 +206,10 @@ function CookingTimerCard() {
   const loopRef = useRef(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
-  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const displayBoxRef = useRef<HTMLElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -589,7 +342,7 @@ function CookingTimerCard() {
     : "Cooking timer running";
 
   const displayTone = urgent
-    ? "border-rose-200 bg-amber-50 text-rose-950"
+    ? "bg-amber-50 text-slate-950"
     : "border-slate-200 bg-slate-50 text-slate-950";
 
   const fitFontPx = useFitText({
@@ -611,8 +364,8 @@ function CookingTimerCard() {
       startPause();
     } else if (k === "r") {
       resetTimer();
-    } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    } else if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "s") {
       setSound((x) => !x);
     } else if (k === "l") {
@@ -633,37 +386,28 @@ function CookingTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Cooking Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         left={
-          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={sound}
-                onChange={(e) => setSound(e.target.checked)}
-                className="accent-amber-500"
-              />
-              Sound (S)
-            </label>
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={finalBeeps}
-                onChange={(e) => setFinalBeeps(e.target.checked)}
-                disabled={!sound}
-                className="accent-amber-500"
-              />
-              Final beeps
-            </label>
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={loop}
-                onChange={(e) => setLoop(e.target.checked)}
-                className="accent-amber-500"
-              />
-              Loop (L)
-            </label>
+          <div className="hidden items-center gap-2 sm:flex">
+            <Toggle
+              label="Sound (S)"
+              checked={sound}
+              onCheckedChange={setSound}
+              className="py-1 text-sm"
+            />
+            <Toggle
+              label="Final beeps"
+              checked={finalBeeps}
+              onCheckedChange={setFinalBeeps}
+              disabled={!sound}
+              className="py-1 text-sm"
+            />
+            <Toggle
+              label="Loop (L)"
+              checked={loop}
+              onCheckedChange={setLoop}
+              className="py-1 text-sm"
+            />
           </div>
         }
         right={
@@ -682,60 +426,13 @@ function CookingTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {/* Header (normal only) */}
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex flex-wrap items-center gap-3 ml-auto">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={sound}
-                  onChange={(e) => setSound(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Sound (S)
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={finalBeeps}
-                  onChange={(e) => setFinalBeeps(e.target.checked)}
-                  disabled={!sound}
-                  className="accent-amber-500"
-                />
-                Final beeps
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={loop}
-                  onChange={(e) => setLoop(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Loop (L)
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface mt-4 flex flex-col items-center justify-center font-mono font-extrabold",
+            "order-1 timer-display-surface flex flex-col items-center justify-center font-mono font-extrabold",
             displayTone,
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
@@ -758,16 +455,6 @@ function CookingTimerCard() {
             {statusLabel}
           </div>
 
-          {/* Controls (normal only) */}
-          {!isFs && (
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-              <Btn kind="ghost" onClick={resetTimer}>
-                Reset
-              </Btn>
-            </div>
-          )}
-
           <span
             ref={timeTextRef}
             className={[
@@ -783,8 +470,8 @@ function CookingTimerCard() {
             {running || hasStartedRef.current ? shownTime : readyTime}
           </span>
 
-          <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+          <div className="mt-4 w-full max-w-3xl">
+            <div className="text-center">
               <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                 Set time
               </div>
@@ -792,32 +479,23 @@ function CookingTimerCard() {
                 {mins}m {secs}s
               </div>
             </div>
-
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Shortcuts
-              </div>
-              <div className="mt-1 text-sm font-semibold text-slate-700">
-                Space start/pause · R reset · F fullscreen · S sound · L loop
-              </div>
-            </div>
           </div>
 
-          {!isFs && (
-            <div className="mt-3 text-xs text-slate-600">
-              Tip: click the card once so keyboard shortcuts work immediately.
-            </div>
-          )}
-        </div>
+        </DisplayStage>
+
+        {!isFs && (
+          <ControlGroup>
+            <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
+            <Btn kind="ghost" onClick={resetTimer}>
+              Reset
+            </Btn>
+          </ControlGroup>
+        )}
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <div className="mt-5 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-sky-700">
-                Egg presets
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mx-auto grid w-full max-w-5xl gap-4 lg:grid-cols-2">
+            <PresetGroup title="Egg presets" className="max-w-none">
                 {eggPresets.map((p) => (
                   <Chip
                     key={p.label}
@@ -828,14 +506,9 @@ function CookingTimerCard() {
                     {p.label}
                   </Chip>
                 ))}
-              </div>
-            </div>
+            </PresetGroup>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-sky-700">
-                Common presets
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
+            <PresetGroup title="Common presets" className="max-w-none">
                 {kitchenPresets.map((p) => (
                   <Chip
                     key={p.label}
@@ -846,18 +519,17 @@ function CookingTimerCard() {
                     {p.label}
                   </Chip>
                 ))}
-              </div>
-            </div>
+            </PresetGroup>
           </div>
         )}
 
         {/* Custom inputs (normal only) */}
         {!isFs && (
-          <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label className="block text-sm font-semibold text-slate-900">
-                Minutes
-                <input
+          <>
+            <SettingGroup title="Settings">
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <Field
+                  label="Minutes"
                   type="number"
                   min={0}
                   max={999}
@@ -867,13 +539,9 @@ function CookingTimerCard() {
                     const m = clamp(Number(e.target.value || 0), 0, 999);
                     setSeconds(m * 60 + secs);
                   }}
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
                 />
-              </label>
-
-              <label className="block text-sm font-semibold text-slate-900">
-                Seconds
-                <input
+                <Field
+                  label="Seconds"
                   type="number"
                   min={0}
                   max={59}
@@ -883,18 +551,30 @@ function CookingTimerCard() {
                     const s = clamp(Number(e.target.value || 0), 0, 59);
                     setSeconds(mins * 60 + s);
                   }}
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
                 />
-              </label>
-            </div>
+                <div className="flex flex-wrap items-end gap-3">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Final beeps"
+                    checked={finalBeeps}
+                    onCheckedChange={setFinalBeeps}
+                    disabled={!sound}
+                  />
+                  <Toggle label="Loop" checked={loop} onCheckedChange={setLoop} />
+                </div>
+              </SettingRow>
+            </SettingGroup>
 
-            <div className="flex items-end gap-3">
-              <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-              <Btn kind="ghost" onClick={resetTimer}>
-                Reset
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
               </Btn>
-            </div>
-          </div>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause · R reset · F fullscreen · S sound · L loop
+            </ShortcutHint>
+          </>
         )}
 
         {/* Fullscreen bottom controls */}
@@ -982,44 +662,25 @@ export default function CookingTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Cooking Timer (Kitchen Timer)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Tap a preset or set minutes and seconds. Use fullscreen for big,
-            readable digits and quick shortcuts.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<CookingTimerCard />}
+        title="Cooking Timer"
+        description="Pick a kitchen preset or set custom minutes for a large, readable cooking countdown."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <CookingTimerCard />
-        </div>
-
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Cooking Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

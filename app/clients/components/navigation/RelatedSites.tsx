@@ -59,7 +59,7 @@ export default function RelatedSites({
               href={site.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="ilt-focus-ring group block cursor-pointer rounded-[var(--ilt-radius-control)] bg-white p-4 transition hover:bg-slate-100"
+              className="ilt-focus-ring group block cursor-pointer rounded-[var(--ilt-radius-control)] bg-[var(--ilt-bg-panel)] p-4 transition hover:bg-[var(--ilt-bg-hover)]"
               aria-label={`${site.title} opens in a new tab`}
             >
               <div className="flex items-start justify-between gap-3">

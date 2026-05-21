@@ -1,8 +1,22 @@
 // app/routes/analog-clock.tsx
 import type { Route } from "./+types/analog-clock";
 import { json } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import {
+  Button,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import Disclaimer from "~/clients/components/analog-clock/Disclaimer";
 import FAQ from "~/clients/components/analog-clock/FAQ";
 import HowItWorks from "~/clients/components/analog-clock/HowItWorks";
@@ -75,14 +89,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
 function safeTimeZone() {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
@@ -106,69 +112,18 @@ function calcAngles(d: Date, smooth: boolean) {
 }
 
 /* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-}) => (
-  <div
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-/* =========================================================
    ANALOG CLOCK CARD
 ========================================================= */
-function AnalogClockCard() {
-  const [now, setNow] = useState<Date>(() => new Date());
+function AnalogClockCard({ initialNowISO }: { initialNowISO: string }) {
+  const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [showSecondsHand, setShowSecondsHand] = useState(true);
   const [smoothSeconds, setSmoothSeconds] = useState(true);
 
   const tz = useMemo(() => safeTimeZone(), []);
+  const cardRef = useRef<HTMLDivElement>(null);
   const displayWrapRef = useRef<HTMLDivElement>(null);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   useEffect(() => {
     // Smooth: RAF for silky second hand.
@@ -195,57 +150,55 @@ function AnalogClockCard() {
     [now, showSecondsHand, smoothSeconds],
   );
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
 
-    if (k === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+    if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "s") {
       setShowSecondsHand((v) => !v);
     } else if (k === "m") {
       setSmoothSeconds((v) => !v);
+    } else if (k === "escape" && isFs) {
+      void fullscreen.exit();
     }
   };
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-4 sm:p-6">
-      {/* Controls */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-            <input
-              type="checkbox"
-              checked={showSecondsHand}
-              onChange={(e) => setShowSecondsHand(e.target.checked)}
-              className="accent-amber-500"
-            />
-            Seconds hand
-          </label>
-
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-            <input
-              type="checkbox"
-              checked={smoothSeconds}
-              onChange={(e) => setSmoothSeconds(e.target.checked)}
+    <ToolFrame
+      frameRef={cardRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFs}
+    >
+      <FullscreenTopBar
+        show={isFs}
+        title="Analog Clock"
+        onExit={() => void fullscreen.exit()}
+        right={
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setShowSecondsHand((v) => !v)}
+            >
+              {showSecondsHand ? "Hide seconds" : "Show seconds"}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setSmoothSeconds((v) => !v)}
               disabled={!showSecondsHand}
-              className="accent-amber-500"
-            />
-            Smooth
-          </label>
+            >
+              {smoothSeconds ? "Smooth" : "Tick"}
+            </Button>
+          </div>
+        }
+      />
 
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+      <div className={isFs ? "flex h-full flex-col" : "timer-specialty-clock-stack flex h-full flex-col"}>
 
       {/* Display */}
       <div
@@ -328,14 +281,18 @@ function AnalogClockCard() {
               Local analog clock - {tz}
             </div>
 
-            <div className="text-center text-xs font-semibold text-slate-600">
-              Shortcuts: F fullscreen - S seconds hand - M smooth
-            </div>
           </div>
         </div>
 
         {/* Fullscreen shell */}
         <div data-shell="fullscreen">
+          <button
+            type="button"
+            className="fs-exit"
+            onClick={() => void fullscreen.exit()}
+          >
+            Exit (Esc)
+          </button>
           <div className="fs-inner">
             <div className="fs-label">Analog Clock</div>
 
@@ -356,16 +313,55 @@ function AnalogClockCard() {
         </div>
       </div>
 
+      {!isFs ? (
+        <>
+          <SettingGroup title="Clock settings">
+            <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+              <Toggle
+                label="Seconds hand"
+                checked={showSecondsHand}
+                onCheckedChange={setShowSecondsHand}
+              />
+              <Toggle
+                label="Smooth"
+                checked={smoothSeconds}
+                onCheckedChange={setSmoothSeconds}
+                disabled={!showSecondsHand}
+              />
+            </SettingRow>
+          </SettingGroup>
+
+          <SecondaryActionRow>
+            <Button variant="secondary" onClick={() => void fullscreen.toggle()}>
+              Fullscreen
+            </Button>
+          </SecondaryActionRow>
+
+          <ShortcutHint>
+            Shortcuts: F fullscreen, S seconds hand, M smooth
+          </ShortcutHint>
+        </>
+      ) : null}
+
       {/* Footer hint */}
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900">
+      <div className="hidden">
+        <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-900">
           Shortcuts: F fullscreen · S seconds hand · M smooth
         </div>
         <div className="text-xs text-slate-600">
           Tip: click the card once so keyboard shortcuts work immediately.
         </div>
       </div>
-    </Card>
+      <FullscreenBottomBar show={isFs}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-xs text-slate-600 sm:text-sm">
+            F fullscreen - S seconds hand - M smooth - Esc exit
+          </div>
+          <div className="text-xs font-semibold text-slate-700">{tz}</div>
+        </div>
+      </FullscreenBottomBar>
+      </div>
+    </ToolFrame>
   );
 }
 
@@ -388,6 +384,8 @@ function ClockFaceSvg({
   // 0..100 viewBox keeps math simple.
   const cx = 50;
   const cy = 50;
+  const stableCoord = (value: number) => Number(value.toFixed(4));
+  const stableDeg = (value: number) => value.toFixed(3);
 
   const faceFill = dark ? "#0b0b0c" : "#f8fafc"; // slate-50-ish
   const ringStroke = dark ? "rgba(255,255,255,.22)" : "rgba(15,23,42,.18)"; // slate-900 alpha
@@ -439,10 +437,10 @@ function ClockFaceSvg({
       const rOuter = 44.2;
       const rInner = isMajor ? 38.0 : 40.2;
 
-      const x1 = cx + Math.cos(a) * rInner;
-      const y1 = cy + Math.sin(a) * rInner;
-      const x2 = cx + Math.cos(a) * rOuter;
-      const y2 = cy + Math.sin(a) * rOuter;
+      const x1 = stableCoord(cx + Math.cos(a) * rInner);
+      const y1 = stableCoord(cy + Math.sin(a) * rInner);
+      const x2 = stableCoord(cx + Math.cos(a) * rOuter);
+      const y2 = stableCoord(cy + Math.sin(a) * rOuter);
 
       out.push({
         x1,
@@ -469,8 +467,8 @@ function ClockFaceSvg({
       const r = 31.0;
       return {
         t: it.t,
-        x: cx + Math.cos(a) * r,
-        y: cy + Math.sin(a) * r + 1.2,
+        x: stableCoord(cx + Math.cos(a) * r),
+        y: stableCoord(cy + Math.sin(a) * r + 1.2),
       };
     });
   }, []);
@@ -535,7 +533,7 @@ function ClockFaceSvg({
         ))}
 
         <g style={{ filter: handShadow }}>
-          <g transform={`rotate(${hourDeg} ${cx} ${cy})`}>
+          <g transform={`rotate(${stableDeg(hourDeg)} ${cx} ${cy})`}>
             <line
               x1={cx}
               y1={cy + hourTail}
@@ -547,7 +545,7 @@ function ClockFaceSvg({
             />
           </g>
 
-          <g transform={`rotate(${minDeg} ${cx} ${cy})`}>
+          <g transform={`rotate(${stableDeg(minDeg)} ${cx} ${cy})`}>
             <line
               x1={cx}
               y1={cy + minTail}
@@ -560,7 +558,7 @@ function ClockFaceSvg({
           </g>
 
           {showSecondsHand ? (
-            <g transform={`rotate(${secDeg} ${cx} ${cy})`}>
+            <g transform={`rotate(${stableDeg(secDeg)} ${cx} ${cy})`}>
               <line
                 x1={cx}
                 y1={cy + secTail}
@@ -627,44 +625,25 @@ export default function AnalogClockPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Analog Clock (Fullscreen + Seconds Hand)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Go fullscreen and toggle the seconds hand and smooth motion. Use
-            keyboard shortcuts after focusing the card.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<AnalogClockCard initialNowISO={nowISO} />}
+        title="Analog Clock (Fullscreen + Seconds Hand)"
+        description="A clean live analog clock face with optional seconds hand, smooth motion, and fullscreen viewing."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <AnalogClockCard />
-        </div>
-
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Analog Clock</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

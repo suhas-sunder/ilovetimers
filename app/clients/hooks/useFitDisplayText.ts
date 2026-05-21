@@ -11,26 +11,35 @@ type FitDisplayTextOptions = {
   minPx?: number;
   maxPx?: number;
   paddingAllowancePx?: number;
+  fitAxis?: "width" | "box";
+  initialScale?: number;
 };
 
 function initialDisplaySize({
   deps,
   minPx,
   maxPx,
+  paddingAllowancePx,
+  initialScale,
 }: {
   deps: unknown[];
   minPx: number;
   maxPx: number;
+  paddingAllowancePx: number;
+  initialScale: number;
 }) {
   const sample = deps.find(
     (dep) => typeof dep === "string" || typeof dep === "number",
   );
   const charCount = Math.max(
     1,
-    String(sample ?? "00:00").replace(/\s/g, "").length,
+    String(sample ?? "00:00").replace(/\s+/g, " ").trim().length,
   );
-  const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-  return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
+  const averageDigitEm = 0.65;
+  const widthScale = charCount * averageDigitEm;
+  const preferredVw = Math.min(52, Math.max(10, 100 / widthScale));
+  const preferredOffset = (paddingAllowancePx + 48) / widthScale;
+  return `clamp(${minPx}px, calc(${(preferredVw * initialScale).toFixed(2)}vw - ${(preferredOffset * initialScale).toFixed(1)}px), ${maxPx}px)`;
 }
 
 export function useFitDisplayText({
@@ -40,9 +49,17 @@ export function useFitDisplayText({
   minPx = 44,
   maxPx = 420,
   paddingAllowancePx = 0,
+  fitAxis = "width",
+  initialScale = 1,
 }: FitDisplayTextOptions) {
   const [fontSize, setFontSize] = useState<number | string>(() =>
-    initialDisplaySize({ deps, minPx, maxPx }),
+    initialDisplaySize({
+      deps,
+      minPx,
+      maxPx,
+      paddingAllowancePx,
+      initialScale,
+    }),
   );
 
   useLayoutEffect(() => {
@@ -69,7 +86,7 @@ export function useFitDisplayText({
         const textRect = currentText.getBoundingClientRect();
         return (
           textRect.width <= availableWidth &&
-          textRect.height <= availableHeight
+          (fitAxis === "width" || textRect.height <= availableHeight)
         );
       };
 

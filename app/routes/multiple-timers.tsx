@@ -7,9 +7,18 @@ import {
   useMemo,
   useRef,
   useState,
-  type RefObject,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetChip,
+  SeoBand,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/multiple-timers/HowItWorks";
 import Disclaimer from "~/clients/components/multiple-timers/Disclaimer";
 import FAQ from "~/clients/components/multiple-timers/FAQ";
@@ -84,30 +93,6 @@ function isTypingTarget(target: EventTarget | null) {
     tag === "SELECT" ||
     el.isContentEditable
   );
-}
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
 }
 
 // WebAudio beep
@@ -193,115 +178,6 @@ function saveStoredState(state: StoredState) {
 }
 
 /* =========================================================
-   UI PRIMITIVES (MATCH NEW STYLE)
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost" | "danger";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : kind === "danger"
-          ? `cursor-pointer rounded-lg bg-rose-700 px-4 py-2 font-semibold text-white hover:bg-rose-800 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-          : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-/* =========================================================
    MULTIPLE TIMERS CARD
 ========================================================= */
 type TimerItem = {
@@ -376,7 +252,8 @@ function MultipleTimersCard() {
   const alarmIntervalRef = useRef<number | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const stopRaf = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -715,10 +592,10 @@ function MultipleTimersCard() {
       stopAllAlarms();
     } else if (k === "a") {
       addTimer();
-    } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    } else if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -732,7 +609,7 @@ function MultipleTimersCard() {
       <FullscreenTopBar
         show={isFs}
         title="Multiple Timers"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn
@@ -760,23 +637,14 @@ function MultipleTimersCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-list-stack flex h-full flex-col"}>
         {!isFs && (
           <div className="flex flex-col gap-4 text-center sm:items-center">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Multiple Timers (Run Two or More at Once)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Run parallel countdowns with big digits, per-timer controls, and
-                optional sound.
-              </p>
-            </div>
           </div>
         )}
 
         {!isFs && (
-          <div className="timer-controls-row mt-4">
+          <div className="timer-controls-row timer-list-actions mt-4">
             <div className="flex flex-wrap items-center gap-3">
               <Btn onClick={anyRunning ? pauseAll : startAll}>
                 {anyRunning ? "Pause all" : "Start all"}
@@ -796,7 +664,7 @@ function MultipleTimersCard() {
               </Btn>
             </div>
 
-            <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+            <label className="inline-flex cursor-pointer select-none items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
               <input
                 type="checkbox"
                 checked={sound}
@@ -805,7 +673,7 @@ function MultipleTimersCard() {
               Sound
             </label>
 
-            <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+            <label className="inline-flex cursor-pointer select-none items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
               <input
                 type="checkbox"
                 checked={finalCountdownBeeps}
@@ -817,15 +685,13 @@ function MultipleTimersCard() {
 
             <Btn
               kind="ghost"
-              onClick={() =>
-                cardRef.current && toggleFullscreen(cardRef.current)
-              }
+              onClick={() => void fullscreen.toggle()}
               className="py-2"
             >
               Fullscreen
             </Btn>
 
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+            <div className="timer-list-shortcut ilt-inline-pill px-3 py-2 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Shortcuts: Space start/pause all - R reset - A add - X stop alarms - F fullscreen
             </div>
           </div>
@@ -844,16 +710,16 @@ function MultipleTimersCard() {
             overflowAnchor: "none",
           }}
         >
-          <div className="mx-auto grid w-full max-w-6xl gap-4 md:grid-cols-2">
+          <div className="timer-list-grid mx-auto grid w-full max-w-6xl gap-4 md:grid-cols-2">
             {timers.map((t, idx) => {
               const urgent =
                 t.running && t.remainingMs > 0 && t.remainingMs <= 10_000;
               const shown = msToClock(Math.ceil(t.remainingMs / 1000) * 1000);
 
               const tileTone = t.alarming
-                ? "border-rose-200 bg-rose-50"
+                ? "bg-slate-100"
                 : urgent
-                  ? "border-rose-200 bg-rose-50"
+                  ? "bg-slate-50"
                   : "border-slate-200 bg-white";
 
               const timeSize = isFs
@@ -864,14 +730,14 @@ function MultipleTimersCard() {
                 <div
                   key={t.id}
                   className={[
-                    "timer-repeated-card",
+                    "timer-repeated-card timer-list-row",
                     tileTone,
                     isFs ? "p-4 sm:p-5" : "p-4",
                   ].join(" ")}
                 >
                   <div className="flex items-center justify-center">
                     <div
-                      className={`font-mono font-extrabold tracking-widest text-slate-900 ${timeSize}`}
+                      className={`font-mono font-extrabold tracking-widest text-[var(--ilt-text-primary)] ${timeSize}`}
                     >
                       {shown}
                     </div>
@@ -882,10 +748,10 @@ function MultipleTimersCard() {
                       <input
                         value={t.label}
                         onChange={(e) => updateLabel(t.id, e.target.value)}
-                        className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-extrabold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                        className="w-full ilt-input-control px-2 py-1 text-sm font-extrabold"
                         aria-label={`Label for timer ${idx + 1}`}
                       />
-                      <div className="mt-1 text-xs font-semibold text-slate-600">
+                      <div className="mt-1 ilt-helper-text font-semibold">
                         {t.alarming
                           ? "Alarm ringing"
                           : t.running
@@ -894,15 +760,16 @@ function MultipleTimersCard() {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
+                    <Btn
+                      kind="ghost"
+                      size="sm"
                       onClick={() => removeTimer(t.id)}
-                      className="cursor-pointer text-xs font-semibold text-slate-600 hover:underline"
+                      className="min-h-8 px-2 text-xs"
                       title="Remove timer"
                       aria-label="Remove timer"
                     >
                       remove
-                    </button>
+                    </Btn>
                   </div>
 
                   {/* Presets */}
@@ -913,26 +780,21 @@ function MultipleTimersCard() {
                         !t.running &&
                         !t.alarming;
                       return (
-                        <button
+                        <PresetChip
                           key={m}
-                          type="button"
                           onClick={() => setPreset(t.id, m)}
-                          className={
-                            active
-                              ? "cursor-pointer rounded-full bg-amber-500 px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-amber-400"
-                              : "cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-50"
-                          }
+                          selected={active}
                           title="Sets duration and resets this timer"
                         >
                           {m}m
-                        </button>
+                        </PresetChip>
                       );
                     })}
                   </div>
 
                   {/* Custom */}
                   <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr]">
-                    <label className="block text-xs font-semibold text-slate-900">
+                    <label className="block text-xs font-semibold text-[var(--ilt-text-primary)]">
                       Minutes
                       <input
                         type="number"
@@ -948,11 +810,11 @@ function MultipleTimersCard() {
                           const secs = t.seconds % 60;
                           setSeconds(t.id, mins * 60 + secs);
                         }}
-                        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                        className="mt-1 w-full ilt-input-control px-2 py-2 text-sm"
                       />
                     </label>
 
-                    <label className="block text-xs font-semibold text-slate-900">
+                    <label className="block text-xs font-semibold text-[var(--ilt-text-primary)]">
                       Seconds
                       <input
                         type="number"
@@ -968,46 +830,39 @@ function MultipleTimersCard() {
                           const mins = Math.floor(t.seconds / 60);
                           setSeconds(t.id, mins * 60 + secs);
                         }}
-                        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                        className="mt-1 w-full ilt-input-control px-2 py-2 text-sm"
                       />
                     </label>
                   </div>
 
                   {/* Controls */}
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <button
-                      type="button"
+                    <Btn
+                      kind={t.alarming ? "danger" : "solid"}
                       onClick={() => startPause(t.id)}
-                      className={
-                        t.alarming
-                          ? "cursor-pointer rounded-lg bg-rose-700 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-800"
-                          : "cursor-pointer rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-400"
-                      }
                     >
                       {t.alarming
                         ? "Stop alarm"
                         : t.running
                           ? "Pause"
                           : "Start"}
-                    </button>
+                    </Btn>
 
-                    <button
-                      type="button"
+                    <Btn
+                      kind="ghost"
                       onClick={() => resetOne(t.id)}
-                      className="cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50"
                     >
                       Reset
-                    </button>
+                    </Btn>
 
-                    <button
-                      type="button"
+                    <Btn
+                      kind="ghost"
                       onClick={() => stopAlarmOne(t.id)}
                       disabled={!t.alarming}
-                      className="cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
                       title="Stops only the alarm state (does not reset time)"
                     >
                       Silence
-                    </button>
+                    </Btn>
                   </div>
                 </div>
               );
@@ -1017,11 +872,11 @@ function MultipleTimersCard() {
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-slate-600 sm:text-sm">
+            <div className="ilt-helper-text sm:text-sm">
               Space start/pause all · R reset · A add · X stop alarms · F
               fullscreen
             </div>
-            <div className="text-xs font-semibold text-slate-700">
+            <div className="ilt-helper-text font-semibold">
               {statusLabel}
             </div>
           </div>
@@ -1070,32 +925,25 @@ export default function MultipleTimersPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <MultipleTimersCard />
-        </div>
+      <ToolHero
+        display={<MultipleTimersCard />}
+        title="Multiple Timers (Run Two or More at Once)"
+        description="Run parallel countdowns with big digits, per-timer controls, and optional sound."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Multiple Timers</span>
-        </p>
-      </section>
-
-          <HowItWorks />
-            <KeyboardShortcuts />
-            <PopularUseCases />
-            <FAQ />
-            <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

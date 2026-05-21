@@ -4,48 +4,48 @@ export default function Disclaimer() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <details className="group" open>
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <h2 className="text-xl font-semibold text-sky-700">
+              <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
                 How this page helps
               </h2>
-              <p className="mt-1 text-sm font-medium text-slate-600">
+              <p className="mt-1 text-sm font-medium text-[var(--ilt-text-muted)]">
                 {preview}
               </p>
             </div>
 
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2 group-open:grid">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Instant BPM from your taps.
               </strong>{" "}
               Tap/click anywhere to register beats. After a few taps, you’ll get
               a stable BPM estimate (using your most consistent intervals).
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Auto-reset after pauses.
               </strong>{" "}
               If you stop tapping, the session ends after your chosen reset time
               so the next phrase starts clean (no stale taps).
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Hold the last result.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Hold the last result.</strong>{" "}
               After the session ends, the BPM stays on screen for a set time so
               you can read it, copy it, or lock it.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Lock a result (no reset).
               </strong>{" "}
               Lock freezes the display so it won’t clear or change. Useful when
@@ -53,44 +53,44 @@ export default function Disclaimer() {
               work.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Timing breakdown for practice.
               </strong>{" "}
               See milliseconds per beat plus quick reference for 8th and
               16th-note timing (half and quarter of ms/beat).
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Fullscreen for big, readable BPM.
               </strong>{" "}
               Go fullscreen for a clean stage, tap anywhere to register beats,
-              and <span className="font-semibold text-slate-900">Esc</span>{" "}
+              and <span className="font-semibold text-[var(--ilt-text-primary)]">Esc</span>{" "}
               exits.
             </div>
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                 Best-fit uses
               </div>
-              <ul className="mt-3 grid gap-2 text-sm text-slate-700">
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">
+              <ul className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">
                     Find a song’s tempo
                   </strong>{" "}
                   Tap along for 6–10 beats, then lock the result to compare
                   against a target BPM.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">Practice timing</strong>{" "}
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">Practice timing</strong>{" "}
                   Use ms/beat to sanity-check subdivisions (8ths/16ths) while
                   rehearsing.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">
                     Set a metronome tempo
                   </strong>{" "}
                   Tap the groove first, then switch to a metronome with the BPM
@@ -99,56 +99,56 @@ export default function Disclaimer() {
               </ul>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                 Related tools
               </div>
-              <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="ilt-surface-muted p-3">
                   Want the clicks instead of tapping?{" "}
                   <a
                     href="/metronome"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Metronome
                   </a>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Need a big stage display for timing?{" "}
                   <a
                     href="/fullscreen-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Fullscreen Timer
                   </a>{" "}
                   or{" "}
                   <a
                     href="/presentation-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Presentation Timer
                   </a>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Measuring speed instead of tempo?{" "}
                   <a
                     href="/reaction-time-test"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Reaction Time Test
                   </a>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Need elapsed time while rehearsing?{" "}
                   <a
                     href="/stopwatch"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Stopwatch
                   </a>
@@ -158,30 +158,30 @@ export default function Disclaimer() {
             </div>
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+          <div className="mt-4 ilt-surface-card p-4">
             <details className="group">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] ilt-focus-ring">
                 <span>Technical details</span>
-                <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+                <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
                   ▼
                 </span>
               </summary>
 
-              <div className="mt-2 grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              <div className="mt-2 grid gap-3 text-sm text-[var(--ilt-text-secondary)] sm:grid-cols-2">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     BPM calculation
                   </div>
                   <p className="mt-2">
                     BPM is estimated from the{" "}
-                    <span className="font-semibold text-slate-900">median</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">median</span>{" "}
                     of valid tap-to-tap intervals, then converted to beats per
                     minute. Median reduces the impact of one “bad” tap.
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Interval filtering
                   </div>
                   <p className="mt-2">
@@ -191,8 +191,8 @@ export default function Disclaimer() {
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Reset and hold behavior
                   </div>
                   <p className="mt-2">
@@ -202,34 +202,34 @@ export default function Disclaimer() {
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Fullscreen and shortcuts
                   </div>
                   <p className="mt-2">
                     Fullscreen uses the browser Fullscreen API on the card.
                     Click the card once for keyboard focus, then use{" "}
-                    <span className="font-semibold text-slate-900">F</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">F</span>{" "}
                     fullscreen,{" "}
-                    <span className="font-semibold text-slate-900">R</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">R</span>{" "}
                     reset,{" "}
-                    <span className="font-semibold text-slate-900">C</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">C</span>{" "}
                     copy,{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       Space/Enter
                     </span>{" "}
                     to tap (if enabled).
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4 sm:col-span-2">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Privacy notes
                   </div>
                   <p className="mt-2">
                     Your reset/hold preferences and recent results can be stored
                     in{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       localStorage
                     </span>{" "}
                     in your browser so they persist between visits. Nothing
@@ -240,8 +240,8 @@ export default function Disclaimer() {
             </details>
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <strong className="text-slate-900">Heads up.</strong> BPM gets more
+          <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Heads up.</strong> BPM gets more
             stable after several consistent taps. If the number feels jumpy,
             keep tapping a few beats longer or use Lock only once it settles.
           </div>

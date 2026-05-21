@@ -1,8 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
 
-// app/routes/privacy.tsx
-import { Link } from "react-router";
 import type { Route } from "./+types/privacy";
+import { Link } from "react-router";
+import { ContentPage } from "~/clients/components/ui/foundation";
 
 export const meta: Route.MetaFunction = () => {
   const canonical = "https://www.ilovetimers.com/privacy";
@@ -39,41 +39,13 @@ export const meta: Route.MetaFunction = () => {
 
 export default function PrivacyPolicy() {
   return (
-    <main className="bg-amber-50 text-amber-950">
-      {/* Hero */}
-      <section className="border-b border-amber-400 bg-amber-500/30">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <nav
-            aria-label="Breadcrumb"
-            className="text-sm font-medium text-amber-800"
-          >
-            <ol className="flex flex-wrap items-center gap-2">
-              <li>
-                <Link to="/" className="hover:underline">
-                  Home
-                </Link>
-              </li>
-              <li className="opacity-70">/</li>
-              <li aria-current="page" className="text-amber-950">
-                Privacy
-              </li>
-            </ol>
-          </nav>
-
-          <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-            Privacy Policy
-          </h1>
-          <p className="mt-2 text-sm font-semibold text-amber-800">
-            Last updated January 10, 2026
-          </p>
-        </div>
-      </section>
-
-      {/* Content */}
-      <section className="mx-auto max-w-7xl px-4 py-10">
-        <div className="rounded-2xl border border-amber-400 bg-white p-6 shadow-sm">
-          <div className="mx-auto max-w-[1200px]">
-            <p className="flex flex-col gap-4 py-2 text-amber-900">
+    <ContentPage
+      title="Privacy Policy"
+      description="Last updated January 10, 2026"
+      className="ilt-legal-doc"
+    >
+      <section className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 py-2">
               <span>
                 This privacy notice for iLoveTimers
                 (https://www.ilovetimers.com) ("we", "us", or "our"), describes
@@ -82,7 +54,7 @@ export default function PrivacyPolicy() {
                 ("Services"), such as when you:
               </span>
 
-              <ul className="list-inside list-disc flex flex-col gap-3 py-2 pl-5 text-amber-900">
+              <ul className="list-inside list-disc flex flex-col gap-3 py-2 pl-5">
                 <li>
                   Visit our website at https://www.ilovetimers.com, or any
                   website of ours that links to this privacy notice
@@ -99,9 +71,9 @@ export default function PrivacyPolicy() {
                 understand your privacy rights and choices. If you do not agree
                 with our policies and practices, please do not use our Services.
               </span>
-            </p>
+            </div>
 
-            <p className="flex flex-col gap-2 py-2 text-amber-900">
+            <p className="flex flex-col gap-2 py-2">
               <span>
                 Data controller: iLoveTimers is responsible for deciding how
                 your personal information is processed for the purposes
@@ -114,7 +86,7 @@ export default function PrivacyPolicy() {
 
             <div className="mt-6 flex flex-col gap-8">
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   SUMMARY OF KEY POINTS
                 </h2>
                 <p>
@@ -151,11 +123,11 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   1. WHAT INFORMATION DO WE COLLECT?
                 </h2>
 
-                <h3 className="text-xl font-bold text-amber-950">
+                <h3>
                   Personal information you disclose to us
                 </h3>
                 <p>
@@ -210,7 +182,7 @@ export default function PrivacyPolicy() {
                   privacy notice here:{" "}
                   <Link
                     to="https://stripe.com/en-ca/privacy"
-                    className="font-semibold hover:underline"
+
                   >
                     https://stripe.com/en-ca/privacy
                   </Link>
@@ -248,10 +220,10 @@ export default function PrivacyPolicy() {
                   to such personal information.
                 </p>
 
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   Information automatically collected
                 </h2>
-                <h3 className="text-xl font-bold text-amber-950">
+                <h3>
                   In Short: Some information, such as your Internet Protocol
                   (IP) address and/or browser and device characteristics, is
                   collected automatically when you visit our Services.
@@ -275,7 +247,7 @@ export default function PrivacyPolicy() {
                   Like many businesses, we also collect information through
                   cookies and similar technologies. You can find out more about
                   this in our Cookie Notice:{" "}
-                  <Link to="/cookies" className="font-semibold hover:underline">
+                  <Link to="/cookies">
                     https://www.ilovetimers.com/cookies
                   </Link>
                   .
@@ -341,7 +313,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   2. HOW DO WE PROCESS YOUR INFORMATION?
                 </h2>
                 <p>
@@ -408,7 +380,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR INFORMATION?
                 </h2>
 
@@ -422,7 +394,7 @@ export default function PrivacyPolicy() {
                   interests.
                 </p>
 
-                <h3 className="text-xl font-bold text-amber-950">
+                <h3>
                   If you are located in the EU or UK, this section applies to
                   you.
                 </h3>
@@ -469,7 +441,7 @@ export default function PrivacyPolicy() {
                   </li>
                 </ul>
 
-                <h3 className="text-xl font-bold text-amber-950">
+                <h3>
                   If you are located in Canada, this section applies to you.
                 </h3>
                 <p>
@@ -481,7 +453,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   4. WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?
                 </h2>
                 <p>
@@ -541,7 +513,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   5. WHAT IS OUR STANCE ON THIRD-PARTY WEBSITES?
                 </h2>
                 <p>
@@ -560,7 +532,7 @@ export default function PrivacyPolicy() {
                   with.
                 </p>
 
-                <h3 className="text-xl font-bold text-amber-950">
+                <h3>
                   Advertising (Google AdSense and other ad networks)
                 </h3>
                 <ul className="list-inside list-disc pl-5">
@@ -579,7 +551,7 @@ export default function PrivacyPolicy() {
                     Google Ads Settings and/or by visiting{" "}
                     <Link
                       to="https://optout.aboutads.info/?c=2&lang=EN"
-                      className="font-semibold hover:underline"
+
                     >
                       www.aboutads.info
                     </Link>
@@ -591,7 +563,7 @@ export default function PrivacyPolicy() {
                   </li>
                 </ul>
 
-                <h3 className="text-xl font-bold text-amber-950">
+                <h3>
                   Affiliate links
                 </h3>
                 <p>
@@ -601,7 +573,7 @@ export default function PrivacyPolicy() {
                   party’s privacy policy.
                 </p>
 
-                <h3 className="text-xl font-bold text-amber-950">
+                <h3>
                   Merch links
                 </h3>
                 <p>
@@ -612,7 +584,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   6. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?
                 </h2>
                 <p>
@@ -624,7 +596,7 @@ export default function PrivacyPolicy() {
                   beacons and pixels) to access or store information. Specific
                   information about how we use such technologies and how you can
                   refuse certain cookies is set out in our Cookie Notice:{" "}
-                  <Link to="/cookies" className="font-semibold hover:underline">
+                  <Link to="/cookies">
                     https://www.ilovetimers.com/cookies
                   </Link>
                   .
@@ -637,7 +609,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   7. HOW LONG DO WE KEEP YOUR INFORMATION?
                 </h2>
                 <p>
@@ -657,7 +629,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   8. DO WE COLLECT INFORMATION FROM MINORS?
                 </h2>
                 <p>
@@ -675,7 +647,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   9. WHAT ARE YOUR PRIVACY RIGHTS?
                 </h2>
                 <p>
@@ -693,7 +665,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   10. DO WE MAKE UPDATES TO THIS NOTICE?
                 </h2>
                 <p>
@@ -708,7 +680,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section className="flex flex-col gap-4">
-                <h2 className="text-2xl font-extrabold text-amber-950">
+                <h2>
                   11. CONTACT US
                 </h2>
                 <p>
@@ -720,9 +692,7 @@ export default function PrivacyPolicy() {
                 <p>Canada</p>
               </section>
             </div>
-          </div>
-        </div>
       </section>
-    </main>
+    </ContentPage>
   );
 }

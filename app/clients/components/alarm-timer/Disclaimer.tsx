@@ -4,26 +4,26 @@ export default function Disclaimer() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <details className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <h2 className="text-xl font-semibold text-sky-700">
+              <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
                 Limits & notes
               </h2>
-              <p className="mt-1 text-sm font-medium text-slate-600">
+              <p className="mt-1 text-sm font-medium text-[var(--ilt-text-muted)]">
                 {preview}
               </p>
             </div>
 
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <ul className="mt-3 grid gap-3 sm:grid-cols-2 group-open:grid">
-            <li className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <li className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Sound depends on a user gesture.
               </strong>{" "}
               Many browsers block audio until you click/tap the page. Also check
@@ -31,8 +31,8 @@ export default function Disclaimer() {
               to earbuds or another device).
             </li>
 
-            <li className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <li className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Background tabs are throttled.
               </strong>{" "}
               Browsers reduce timers/animation updates in background tabs or
@@ -40,8 +40,8 @@ export default function Disclaimer() {
               page is running, but the display may “jump” when you return.
             </li>
 
-            <li className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <li className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 No notifications or system alarms.
               </strong>{" "}
               This timer runs only while this page is open. It cannot send push
@@ -49,8 +49,8 @@ export default function Disclaimer() {
               lose the browser session.
             </li>
 
-            <li className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <li className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Fullscreen has browser limits.
               </strong>{" "}
               Fullscreen must be initiated by user interaction and may be
@@ -58,18 +58,18 @@ export default function Disclaimer() {
               Esc to exit fullscreen.
             </li>
 
-            <li className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <li className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 If the alarm won’t stop.
               </strong>{" "}
-              Press <span className="font-semibold text-slate-900">X</span> (or
+              Press <span className="font-semibold text-[var(--ilt-text-primary)]">X</span> (or
               tap{" "}
-              <span className="font-semibold text-slate-900">Stop alarm</span>)
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Stop alarm</span>)
               to silence it. Reset returns to the selected minutes.
             </li>
 
-            <li className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <li className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Keyboard focus matters.
               </strong>{" "}
               Click the timer card once so shortcuts work: Space start/pause • R

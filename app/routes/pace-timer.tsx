@@ -4,14 +4,30 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type KeyboardEvent,
-  type RefObject,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/pace-timer/HowItWorks";
 import Disclaimer from "~/clients/components/pace-timer/Disclaimer";
 import FAQ from "~/clients/components/pace-timer/FAQ";
@@ -87,7 +103,6 @@ function isTypingTarget(target: EventTarget | null) {
     el.isContentEditable
   );
 }
-
 function safeNum(v: string) {
   const n = Number(String(v).replace(/[^0-9.]/g, ""));
   return Number.isFinite(n) ? n : 0;
@@ -179,200 +194,6 @@ function useBeep() {
   return { prime, beep };
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-}) => (
-  <div
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "timer-tool-card relative h-full rounded-2xl bg-white p-4 sm:p-6",
-      "focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={[
-      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-      active
-        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-    ].join(" ")}
-  >
-    {children}
-  </button>
-);
-
 /* =========================================================
    PACE TIMER CARD
 ========================================================= */
@@ -412,6 +233,7 @@ function PaceTimerCard() {
   const lastBeepIndexRef = useRef<number>(-1);
 
   const displayWrapRef = useRef<HTMLDivElement>(null);
+  const fullscreen = useFullscreen(displayWrapRef);
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -591,7 +413,7 @@ function PaceTimerCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+      void fullscreen.toggle();
     }
   };
 
@@ -644,39 +466,15 @@ function PaceTimerCard() {
   }, [mode, distanceMeters, distance, runUnit, computedPaceText, paceLabel]);
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown}>
-      <div className="timer-first-stack flex h-full flex-col">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-xl font-extrabold text-sky-700">
-            Pace Timer (Running and Rowing)
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Set a target pace or finish time, then follow a big countdown.
-            Optional interval beeps included.
-          </p>
-        </div>
-
-        <div className="ml-auto flex flex-wrap items-center gap-3">
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              displayWrapRef.current && toggleFullscreen(displayWrapRef.current)
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
+    <Card tabIndex={0} onKeyDown={onKeyDown} className="px-[var(--ilt-page-x)] py-2 sm:py-4">
+      <div className="timer-interval-stack flex h-full flex-col">
 
       {/* DISPLAY (clock first) */}
       <div
         ref={displayWrapRef}
         data-fs-container
         className={[
-          "timer-display-surface mt-4 overflow-hidden text-slate-950",
+          "timer-display-surface order-first mt-0 overflow-hidden text-slate-950",
           urgent ? "border-rose-200" : "border-slate-200",
         ].join(" ")}
         style={{ minHeight: 320 }}
@@ -747,6 +545,7 @@ function PaceTimerCard() {
 
         {/* Normal shell */}
         <div
+          data-display-stage
           data-shell="normal"
           ref={displayBoxRef}
           className="relative w-full flex-col items-center justify-start p-4 sm:p-6"
@@ -772,14 +571,14 @@ function PaceTimerCard() {
           </div>
 
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-            <div className="timer-control-shadow rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+            <div className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Target {computedPaceText}
               {paceLabel}
             </div>
-            <div className="timer-control-shadow rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+            <div className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Finish {totalText}
             </div>
-            <div className="timer-control-shadow rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+            <div className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               {mode === "rowing"
                 ? `${Math.round(distanceMeters)}m`
                 : `${distance}${runUnit}`}{" "}
@@ -787,7 +586,7 @@ function PaceTimerCard() {
             </div>
           </div>
 
-          <div className="mt-3 timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+          <div className="mt-3 bg-[var(--ilt-bg-panel)] px-3 py-2 text-xs font-semibold text-[var(--ilt-text-secondary)]">
             At this pace, you should be at{" "}
             <span className="font-extrabold text-slate-900">
               {mode === "rowing"
@@ -800,19 +599,38 @@ function PaceTimerCard() {
 
         {/* Fullscreen shell (kept as before) */}
         <div data-shell="fullscreen">
+          <button
+            type="button"
+            className="fs-exit"
+            onClick={() => void fullscreen.exit()}
+          >
+            Exit (Esc)
+          </button>
           <div className="fs-inner">
             <div className="fs-label">Pace Timer</div>
             <div className="fs-time">{shownTime}</div>
             <div className="fs-sub">{fsSubtitle}</div>
             <div className="fs-help">
-              Space start/pause · R reset · F fullscreen
+              Space start/pause / R reset / F fullscreen
             </div>
           </div>
         </div>
       </div>
 
-      {/* SETTINGS (moved under the clock) */}
-      <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+      <ControlGroup>
+        <Btn onClick={startPause} disabled={totalTargetMs <= 0}>
+          {running ? "Pause" : "Start"}
+        </Btn>
+        <Btn kind="ghost" onClick={reset}>
+          Reset
+        </Btn>
+      </ControlGroup>
+
+      {/* Settings */}
+      <SettingGroup
+        title="Pace settings"
+        description="Choose the mode, distance, target, and audio interval."
+      >
         <div className="grid gap-4">
           {/* Row 1: mode/units + input mode + sound */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -861,104 +679,80 @@ function PaceTimerCard() {
               </Chip>
             </div>
 
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-              <input
-                type="checkbox"
-                checked={sound}
-                onChange={(e) => setSound(e.target.checked)}
-              />
-              Sound
-            </label>
+            <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
           </div>
 
           {/* Row 2: main inputs */}
           <div className="grid gap-3 sm:grid-cols-[1fr_1fr]">
-            <label className="block text-sm font-semibold text-slate-900">
-              Distance ({distanceLabel})
-              <input
-                type="number"
-                min={mode === "rowing" ? 50 : 0.1}
-                max={mode === "rowing" ? 100000 : 500}
-                step={mode === "rowing" ? 50 : 0.1}
-                value={distance}
-                onChange={(e) => {
-                  const fallback = mode === "rowing" ? 2000 : 5;
-                  const v = Number(e.target.value || fallback);
-                  setDistance(
-                    clamp(
-                      v,
-                      mode === "rowing" ? 50 : 0.1,
-                      mode === "rowing" ? 100000 : 500,
-                    ),
-                  );
-                }}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              />
-            </label>
+            <Field
+              label={`Distance (${distanceLabel})`}
+              type="number"
+              min={mode === "rowing" ? 50 : 0.1}
+              max={mode === "rowing" ? 100000 : 500}
+              step={mode === "rowing" ? 50 : 0.1}
+              value={distance}
+              onChange={(e) => {
+                const fallback = mode === "rowing" ? 2000 : 5;
+                const v = Number(e.target.value || fallback);
+                setDistance(
+                  clamp(
+                    v,
+                    mode === "rowing" ? 50 : 0.1,
+                    mode === "rowing" ? 100000 : 500,
+                  ),
+                );
+              }}
+            />
 
             {inputMode === "pace" ? (
-              <label className="block text-sm font-semibold text-slate-900">
-                Target pace ({paceLabel})
-                <input
-                  type="text"
-                  value={targetPace}
-                  onChange={(e) => setTargetPace(e.target.value)}
-                  placeholder={mode === "rowing" ? "2:10" : "5:00"}
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                />
-              </label>
+              <Field
+                label={`Target pace (${paceLabel})`}
+                type="text"
+                value={targetPace}
+                onChange={(e) => setTargetPace(e.target.value)}
+                placeholder={mode === "rowing" ? "2:10" : "5:00"}
+              />
             ) : (
-              <label className="block text-sm font-semibold text-slate-900">
-                Finish time (mm:ss or hh:mm:ss)
-                <input
-                  type="text"
-                  value={finishTime}
-                  onChange={(e) => setFinishTime(e.target.value)}
-                  placeholder={mode === "rowing" ? "8:40" : "25:00"}
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                />
-              </label>
+              <Field
+                label="Finish time (mm:ss or hh:mm:ss)"
+                type="text"
+                value={finishTime}
+                onChange={(e) => setFinishTime(e.target.value)}
+                placeholder={mode === "rowing" ? "8:40" : "25:00"}
+              />
             )}
           </div>
 
           {/* Row 3: beeps */}
           <div className="grid gap-3 sm:grid-cols-3">
-            <label className="inline-flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
-              Beep every
-              <input
-                type="number"
-                min={0.25}
-                max={1000}
-                step={0.25}
-                value={beepEvery}
-                onChange={(e) =>
-                  setBeepEvery(clamp(Number(e.target.value || 1), 0.25, 1000))
-                }
-                className="w-28 rounded-lg border border-slate-200 bg-white px-2 py-1 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                disabled={!sound}
-                aria-label="Beep interval"
-              />
-              <span className="text-xs font-bold text-slate-600">
-                {beepLabel}
-              </span>
-            </label>
+            <Field
+              label="Beep every"
+              type="number"
+              min={0.25}
+              max={1000}
+              step={0.25}
+              value={beepEvery}
+              onChange={(e) =>
+                setBeepEvery(clamp(Number(e.target.value || 1), 0.25, 1000))
+              }
+              disabled={!sound}
+              aria-label="Beep interval"
+              hint={beepLabel}
+            />
 
-            <label className="inline-flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
-              Volume
-              <input
-                type="number"
-                min={0}
-                max={1}
-                step={0.05}
-                value={volume}
-                onChange={(e) =>
-                  setVolume(clamp(Number(e.target.value || 0.1), 0, 1))
-                }
-                className="w-28 rounded-lg border border-slate-200 bg-white px-2 py-1 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                disabled={!sound}
-                aria-label="Volume"
-              />
-            </label>
+            <Field
+              label="Volume"
+              type="number"
+              min={0}
+              max={1}
+              step={0.05}
+              value={volume}
+              onChange={(e) =>
+                setVolume(clamp(Number(e.target.value || 0.1), 0, 1))
+              }
+              disabled={!sound}
+              aria-label="Volume"
+            />
 
             <div className="flex items-center gap-3">
               <Btn
@@ -971,23 +765,18 @@ function PaceTimerCard() {
             </div>
           </div>
 
-          {/* Row 4: actions */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space start/pause · R reset · F fullscreen
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Btn onClick={startPause} disabled={totalTargetMs <= 0}>
-                {running ? "Pause" : "Start"}
-              </Btn>
-              <Btn kind="ghost" onClick={reset}>
-                Reset
-              </Btn>
-            </div>
-          </div>
         </div>
-      </div>
+      </SettingGroup>
+
+      <SecondaryActionRow>
+        <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+          Fullscreen
+        </Btn>
+      </SecondaryActionRow>
+
+      <ShortcutHint>
+        Shortcuts: Space start/pause / R reset / F fullscreen
+      </ShortcutHint>
       </div>
     </Card>
   );
@@ -1032,32 +821,25 @@ export default function PaceTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <PaceTimerCard />
-        </div>
+      <ToolHero
+        display={<PaceTimerCard />}
+        title="Pace Timer (Running & Rowing)"
+        description="Set pace or finish time, then follow a large countdown with distance and interval beep context below it."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Pace Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

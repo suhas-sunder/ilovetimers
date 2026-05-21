@@ -11,7 +11,25 @@ import {
   type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+  Field,
+  Select,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/minimalist-clock/HowItWorks";
 import Disclaimer from "~/clients/components/minimalist-clock/Disclaimer";
 import FAQ from "~/clients/components/minimalist-clock/FAQ";
@@ -73,30 +91,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
 function safeTimeZone() {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
@@ -149,116 +143,6 @@ function formatTimeString(
     : `${pad2(h)}:${pad2(mm)} ${ampm}`;
 }
 
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
 async function copyToClipboard(text: string) {
   try {
     await navigator.clipboard.writeText(text);
@@ -284,113 +168,6 @@ async function copyToClipboard(text: string) {
 }
 
 /* =========================================================
-   UI PRIMITIVES (match your style)
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-/* =========================================================
    MINIMALIST CLOCK CARD (big readable time, fits container)
 ========================================================= */
 function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
@@ -404,7 +181,8 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
   const tz = useMemo(() => safeTimeZone(), []);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -500,8 +278,8 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
 
     const k = e.key.toLowerCase();
 
-    if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "s") {
       setShowSeconds((v) => !v);
     } else if (k === "t") {
@@ -514,7 +292,7 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
     } else if (k === "c") {
       void doCopy();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      fullscreen.exit();
     }
   };
 
@@ -567,7 +345,7 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
       {!isFs ? (
         <Btn
           kind="ghost"
-          onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
+          onClick={() => void fullscreen.toggle()}
           className="py-2"
         >
           Fullscreen
@@ -586,32 +364,16 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
       <FullscreenTopBar
         show={isFs}
         title="Minimalist Clock"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={controls}
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs ? (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Minimalist Clock
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Big readable time display with fullscreen and simple toggles.
-              </p>
-            </div>
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              {controls}
-            </div>
-          </div>
-        ) : null}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-clock-stack flex h-full flex-col"}>
         {/* Display */}
         <div
           ref={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "ilt-display-stage timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -633,7 +395,7 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
         >
           <div
             className={[
-              "text-xs font-extrabold uppercase tracking-widest",
+              "timer-clock-label text-xs font-extrabold uppercase tracking-widest",
               "text-slate-700",
               "transition-opacity duration-200",
               softHidden ? "opacity-0" : "opacity-100",
@@ -644,8 +406,9 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
 
           <span
             ref={timeTextRef}
+            data-primary-display-value
             className={[
-              "mt-2 inline-block text-center font-mono font-extrabold",
+              "timer-clock-value mt-2 inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
             style={{
@@ -663,7 +426,7 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
           {showDate ? (
             <div
             className={[
-              "mt-3 text-center text-sm font-semibold",
+              "timer-clock-context mt-3 text-center text-sm font-semibold",
                 "text-slate-700",
               "transition-opacity duration-200",
               softHidden ? "opacity-0" : "opacity-100",
@@ -675,7 +438,7 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
 
           <div
             className={[
-              "mt-4 text-center text-xs font-semibold",
+              "timer-clock-context mt-4 text-center text-xs font-semibold",
               "text-slate-600",
               "transition-opacity duration-200",
               softHidden ? "opacity-0" : "opacity-100",
@@ -688,10 +451,48 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
         </div>
 
         {!isFs ? (
-          <div className="mt-4 timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-            Shortcuts: F fullscreen · S seconds · T 12/24 · D date · Z zen · C
-            copy
-          </div>
+          <>
+            <SettingGroup
+              title="Clock settings"
+              description="Minimal display options stay secondary to the clock face."
+            >
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-4">
+                <Toggle
+                  checked={showSeconds}
+                  label="Seconds"
+                  onCheckedChange={setShowSeconds}
+                />
+                <Toggle
+                  checked={use24}
+                  label="24-hour"
+                  onCheckedChange={setUse24}
+                />
+                <Toggle
+                  checked={showDate}
+                  label="Date"
+                  onCheckedChange={setShowDate}
+                />
+                <Toggle checked={zen} label="Zen" onCheckedChange={setZen} />
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow className="timer-clock-actions">
+              <Btn kind="ghost" onClick={() => void doCopy()} className="py-2">
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint className="timer-clock-shortcut">
+              Shortcuts: F fullscreen, S seconds, T 12/24, D date, Z zen, C copy
+            </ShortcutHint>
+          </>
         ) : null}
 
         <FullscreenBottomBar show={isFs}>
@@ -754,32 +555,26 @@ export default function MinimalistClockPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
-        <div>
-          <MinimalistClockCard initialNowISO={nowISO} />
-        </div>
+      <ToolHero
+        display={<MinimalistClockCard initialNowISO={nowISO} />}
+        title="Minimalist Clock"
+        description="A clean, distraction-free local clock with large digits, optional date, Zen controls, copy, and fullscreen."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Minimalist Clock</span>
-        </p>
-      </section>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
 
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+    </PageShell>
   );
 }

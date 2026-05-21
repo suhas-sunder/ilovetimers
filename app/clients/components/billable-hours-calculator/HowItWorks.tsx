@@ -66,7 +66,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -80,7 +80,7 @@ export default function HowItWorks({
   }) => (
     <a
       href={href}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </a>
@@ -90,13 +90,13 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-2 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This page is built for one job: turn a time range into{" "}
               <strong>billable time</strong> and a <strong>total amount</strong>
               , with the billing rules people actually use. You enter a start
@@ -107,20 +107,20 @@ export default function HowItWorks({
               a formatted total you can copy or print.
             </p>
 
-            <p className="mt-3 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This calculator is optimized for a <strong>single session</strong>
               , such as one client call, one on-site visit, one shift, or one
               task block. If your workflow is live tracking while you work,
               start a timer first and then bring the numbers here:{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/stopwatch")}
               >
                 Stopwatch
               </a>{" "}
               or{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/count-up-timer")}
               >
                 Count Up Timer
@@ -130,16 +130,16 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Break deduction
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Rounding up
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Overnight
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Copy + print
             </span>
           </div>
@@ -147,59 +147,58 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               The “get a billable total fast” flow
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Set{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Set{" "}
                 <strong>Start</strong> and <strong>End</strong> times. Use{" "}
-                <span className="font-semibold text-slate-900">Now</span> for
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Now</span> for
                 quick entry, or press <Kbd>S</Kbd> (start now) and <Kbd>E</Kbd>{" "}
                 (end now).
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Enter{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Enter{" "}
                 <strong>Break minutes</strong> you do not bill.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Pick a{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Pick a{" "}
                 <strong>rounding increment</strong> if your billing policy uses
                 one. This tool rounds up. Choose <strong>None</strong> for exact
                 minutes.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Enter{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Enter{" "}
                 <strong>Hourly rate</strong> and choose a currency for display.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> Copy
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> Copy
                 the one-line summary with <Kbd>C</Kbd>, or print with{" "}
                 <Kbd>P</Kbd> for a clean PDF.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
-                What the calculator guarantees
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
+                What the calculator checks
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                You will never get a “mystery” total from incomplete inputs. If
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+                The calculator avoids a mystery total from incomplete inputs. If
                 a time is missing, if the end time does not create a valid
-                duration, or if break minutes exceed the shift, the calculator
-                tells you what to fix. It is designed to prevent accidental
-                under-billing or over-billing caused by a silent assumption.
+                duration, or if break minutes exceed the shift, it tells you
+                what to fix instead of filling in a silent assumption.
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Quick expectations (billing rules in plain language)
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 Breaks are deducted{" "}
                 <span className="font-semibold">before</span> rounding.
@@ -222,8 +221,8 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Tip:</span> If your
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Tip:</span> If your
               policy says “bill in 0.1 hour” or “bill in 6 minutes,” pick the
               increment that matches the written rule so your totals match what
               the client expects.
@@ -233,10 +232,10 @@ export default function HowItWorks({
 
         {/* Scenarios */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Real scenarios with numbers you can sanity-check
           </h3>
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             These examples use realistic times, common break patterns, and the
             rounding increments people actually bill with. The point is not
             theory. It is to show exactly what changes when you add a break,
@@ -245,21 +244,21 @@ export default function HowItWorks({
 
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             {/* Scenario 1 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-5">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Freelancer task block with 6-minute rounding
               </div>
-              <div className="mt-1 text-sm text-slate-600">
+              <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                 “Client call plus follow-up notes”
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Start <strong>09:12</strong>, End <strong>11:47</strong>, Break{" "}
                 <strong>15</strong> minutes, Rate <strong>$120.00/hr</strong>,
                 Rounding <strong>6 minutes (up)</strong>.
               </p>
 
-              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--ilt-text-secondary)]">
                 <li>
                   Shift duration: 09:12 → 11:47 = <strong>155 minutes</strong>.
                 </li>
@@ -277,7 +276,7 @@ export default function HowItWorks({
                 </li>
               </ul>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 This is the practical reason rounding exists: you are not
                 debating whether a short overage counts. The increment defines
                 the rule and the total becomes consistent. If you switch
@@ -287,21 +286,21 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario 2 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-5">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Lawyer consult billed in 0.1 hour (6 minutes)
               </div>
-              <div className="mt-1 text-sm text-slate-600">
+              <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                 “Short consult with no break”
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Start <strong>13:05</strong>, End <strong>14:02</strong>, Break{" "}
                 <strong>0</strong> minutes, Rate <strong>$350.00/hr</strong>,
                 Rounding <strong>6 minutes (up)</strong>.
               </p>
 
-              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--ilt-text-secondary)]">
                 <li>
                   Shift duration: 57 minutes. Break 0, so billable raw is{" "}
                   <strong>57 minutes</strong>.
@@ -316,7 +315,7 @@ export default function HowItWorks({
                 </li>
               </ul>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Notice what the “Before rounding” field is doing: it lets you
                 confirm the raw time (57 minutes) and then see the policy effect
                 (rounded to 60). If your policy is different (nearest increment
@@ -326,21 +325,21 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario 3 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-5">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Overnight support session with a short break
               </div>
-              <div className="mt-1 text-sm text-slate-600">
+              <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                 “Incident response that crosses midnight”
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Start <strong>22:30</strong>, End <strong>01:10</strong>, Break{" "}
                 <strong>20</strong> minutes, Rate <strong>$95.00/hr</strong>,
                 Rounding <strong>15 minutes (up)</strong>.
               </p>
 
-              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--ilt-text-secondary)]">
                 <li>
                   Overnight: 22:30 → 01:10 is <strong>160 minutes</strong> total
                   shift.
@@ -359,7 +358,7 @@ export default function HowItWorks({
                 </li>
               </ul>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 The overnight rule is intentionally simple: if end is earlier
                 than start, it assumes the end is on the next day. That matches
                 how most people write timesheets for late-night work.
@@ -367,20 +366,20 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario 4 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-5">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Same session, different increment, different total
               </div>
-              <div className="mt-1 text-sm text-slate-600">
+              <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                 “Why your client total changes when you pick 10 vs 15”
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Start <strong>10:00</strong>, End <strong>11:01</strong>, Break{" "}
                 <strong>0</strong> minutes, Rate <strong>$200.00/hr</strong>.
               </p>
 
-              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-[var(--ilt-text-secondary)]">
                 <li>
                   Raw billable time is <strong>61 minutes</strong> (1:01).
                 </li>
@@ -396,7 +395,7 @@ export default function HowItWorks({
                 </li>
               </ul>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 This is why the increment needs to match the policy. If you are
                 switching increments just to “make the number look better,” you
                 will produce inconsistent invoices. Pick the rule once and keep
@@ -407,18 +406,18 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (when your workflow is different)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 Use this page for single-session billable totals. Use these when
                 the job changes.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>S</Kbd> <Kbd>E</Kbd> <Kbd>C</Kbd> <Kbd>P</Kbd>{" "}
               <Kbd>R</Kbd>
             </div>
@@ -436,25 +435,25 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (calculation rules)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Order of operations, rounding behavior, overnight handling, and
                 currency formatting
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Order of operations
               </div>
               <p className="mt-1 leading-relaxed">
@@ -466,8 +465,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Rounding rule</div>
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Rounding rule</div>
               <p className="mt-1 leading-relaxed">
                 Rounding uses a ceiling rule:{" "}
                 <strong>ceil(billableRaw / increment) × increment</strong>. That
@@ -477,8 +476,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Decimal hours display
               </div>
               <p className="mt-1 leading-relaxed">
@@ -488,8 +487,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Currency formatting
               </div>
               <p className="mt-1 leading-relaxed">
@@ -504,10 +503,10 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Need live timing?</strong> Run{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Need live timing?</strong> Run{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/stopwatch")}
             >
               Stopwatch
@@ -515,11 +514,11 @@ export default function HowItWorks({
             while you work, then bill with a consistent increment here.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Need general time math?</strong>{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Need general time math?</strong>{" "}
             Use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/time-calculator")}
             >
               Time Calculator

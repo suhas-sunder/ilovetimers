@@ -66,7 +66,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -80,7 +80,7 @@ export default function HowItWorks({
   }) => (
     <a
       href={href}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </a>
@@ -95,13 +95,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="ilt-surface-card p-5">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="font-mono text-xs whitespace-pre-wrap text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="font-mono text-xs whitespace-pre-wrap text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -112,13 +112,13 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-2 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               Cooking Timer is a kitchen-first countdown built for one job: keep
               time visible and predictable while your hands are busy. You can
               start from an egg preset (Soft 6m, Jammy 7m, Medium 8m, Hard 10m,
@@ -129,42 +129,42 @@ export default function HowItWorks({
               across the room.
             </p>
 
-            <p className="mt-3 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This page is a timer tool. It does not try to teach cooking
               techniques or give food safety advice. It helps you run a clean,
               reliable countdown so you can focus on the stove, the oven, or the
               prep board. If you want a more specialized page, use the closest
               fit:{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/egg-timer")}
               >
                 Egg Timer
               </a>{" "}
               for egg-only timing,{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/tea-timer")}
               >
                 Tea Timer
               </a>{" "}
               for steeping,{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/pizza-timer")}
               >
                 Pizza Timer
               </a>{" "}
               for oven-focused pizza timing,{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/multiple-timers")}
               >
                 Multiple Timers
               </a>{" "}
               when you need several timers running at once, or{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/fullscreen-timer")}
               >
                 Fullscreen Timer
@@ -174,28 +174,28 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Egg presets
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Common presets
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Minutes + seconds
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Sound
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Final beeps
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Loop
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Shortcuts
             </span>
           </div>
@@ -203,55 +203,55 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fast start (what most people do in the kitchen)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Pick a{" "}
-                <span className="font-semibold text-slate-900">preset</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Pick a{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">preset</span>{" "}
                 (example: Hard 10m) or set{" "}
-                <span className="font-semibold text-slate-900">Minutes</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Minutes</span>{" "}
                 and{" "}
-                <span className="font-semibold text-slate-900">Seconds</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Seconds</span>.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Decide
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Decide
                 if you want audio. Turn{" "}
-                <span className="font-semibold text-slate-900">Sound</span> on
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Sound</span> on
                 for a finish cue. Enable{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   Final beeps
                 </span>{" "}
                 if you want a 5-second heads-up.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Press{" "}
                 <Kbd>Space</Kbd> or click{" "}
                 <span className="font-semibold">Start</span>.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Press{" "}
                 <Kbd>F</Kbd> for fullscreen if you want big digits. In
                 fullscreen, tap/click the time display to start/pause.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> If you
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> If you
                 want the same duration to repeat automatically, toggle{" "}
-                <span className="font-semibold text-slate-900">Loop</span> (or
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Loop</span> (or
                 press <Kbd>L</Kbd>).
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What “Final beeps” changes
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 If{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   Final beeps
                 </span>{" "}
                 is on, the timer plays short beeps at roughly 0:05, 0:04, 0:03,
@@ -263,11 +263,11 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               What kitchen durations feel like (real numbers)
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 <span className="font-semibold">30–90 seconds</span>: quick
                 reminders (flip, stir, check a pan, quick microwave rests). You
@@ -290,8 +290,8 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Practical tip:
               </span>{" "}
               If you plan to use sound, start the timer once first. Some
@@ -303,11 +303,11 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What you will see while the timer runs
           </h3>
 
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             The center of the page is the countdown. It shows either the
             remaining time (when running or paused) or the ready time (when
             stopped). Above it, a short status line tells you what state you’re
@@ -318,7 +318,7 @@ export default function HowItWorks({
             Sound is enabled, and the timer stops unless Loop is on.
           </p>
 
-          <p className="mt-3 text-slate-700 leading-relaxed">
+          <p className="mt-3 text-[var(--ilt-text-secondary)] leading-relaxed">
             While the timer is running, this page intentionally reduces the ways
             you can mess up your setup. The Minutes and Seconds inputs are
             disabled during a run so you don’t bump values by accident. Presets
@@ -328,7 +328,7 @@ export default function HowItWorks({
             running simultaneously (for example: rice resting for 10 minutes,
             veggies steaming for 6 minutes, and a 2-minute pan check), use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/multiple-timers")}
             >
               Multiple Timers
@@ -336,12 +336,12 @@ export default function HowItWorks({
             .
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Real cooking scenarios (with concrete settings and what you
             hear/see)
           </h3>
 
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             These examples are meant to be copyable setups. They show what you
             would click, what time you’ll see, and what cues you can expect at
             the end. The numbers here are the kinds of durations people actually
@@ -454,11 +454,11 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen and shortcuts (control it with minimal effort)
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fullscreen is designed for “glance time” while you move around. It
               makes the digits large and keeps controls reachable. If you’re
               using a laptop on the counter, keyboard shortcuts can be faster
@@ -466,28 +466,28 @@ export default function HowItWorks({
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Space</Kbd> start/pause
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>R</Kbd> reset
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>F</Kbd> fullscreen
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>S</Kbd> sound
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>L</Kbd> loop
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Esc</Kbd> exit
               </span>
             </div>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <span className="font-semibold text-slate-900">Focus tip:</span>{" "}
+            <div className="mt-4 ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Focus tip:</span>{" "}
               If shortcuts do not respond, click the timer card once so it has
               keyboard focus. Shortcuts will not fire while your cursor is in a
               text or number input.
@@ -496,19 +496,19 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same goal, different fit)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 Cooking Timer is a flexible kitchen countdown with presets,
                 fullscreen, sound, and loop. If you need a more specific fit,
                 these pages are better matches.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>Space</Kbd> <Kbd>R</Kbd> <Kbd>F</Kbd> <Kbd>S</Kbd>{" "}
               <Kbd>L</Kbd> <Kbd>Esc</Kbd>
             </div>
@@ -529,24 +529,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (timing, sound, fullscreen, focus)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Notes that matter when you rely on a browser timer while cooking
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 End-time based countdown
               </div>
               <p className="mt-1 leading-relaxed">
@@ -556,8 +556,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Sound restrictions in browsers
               </div>
               <p className="mt-1 leading-relaxed">
@@ -567,8 +567,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -578,8 +578,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Keyboard focus and inputs
               </div>
               <p className="mt-1 leading-relaxed">
@@ -589,8 +589,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Background throttling and sleep
               </div>
               <p className="mt-1 leading-relaxed">
@@ -606,11 +606,11 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Timing tea or coffee?</strong>{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Timing tea or coffee?</strong>{" "}
             For steep-focused presets, use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/tea-timer")}
             >
               Tea Timer
@@ -618,13 +618,13 @@ export default function HowItWorks({
             .
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Need parallel timers for multiple dishes?
             </strong>{" "}
             Use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/multiple-timers")}
             >
               Multiple Timers

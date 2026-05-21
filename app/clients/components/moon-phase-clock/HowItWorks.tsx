@@ -68,7 +68,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -82,7 +82,7 @@ export default function HowItWorks({
   }) => (
     <Link
       to={to}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </Link>
@@ -97,13 +97,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="space-y-4">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="whitespace-pre-wrap font-mono text-xs text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="whitespace-pre-wrap font-mono text-xs text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -114,83 +114,83 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-2 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               The{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Moon Phase Clock
               </span>{" "}
               is a fast, clean way to answer a few practical questions without
               digging through menus or calendars:{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 What phase is the moon right now
               </span>
               ,{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 how bright is it
               </span>
               ,{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 how many days into the lunar cycle are we
               </span>
               , and{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 when does the next major phase happen
               </span>{" "}
               in your local time.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               The main display is intentionally dominant. It shows a big
               countdown to the next major phase, plus a compact set of facts
               underneath: phase name, illumination percentage, and moon age in
               days. The top line tells you what is coming next, for example{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Next: Full Moon · 8:14 PM
               </span>
               . When the event is close, the card can highlight that urgency so
               you do not miss it while the page is open.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               Two modes keep the tool simple.{" "}
-              <span className="font-semibold text-slate-900">Live</span> mode
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Live</span> mode
               updates continuously and is meant for “what is happening now” and
               “how long until the next major phase.”{" "}
-              <span className="font-semibold text-slate-900">Manual</span> mode
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Manual</span> mode
               lets you pick a date and time to check the phase details for that
               moment. Editing Date, Hour, or Minute switches you to Manual
               automatically, and{" "}
-              <span className="font-semibold text-slate-900">Now</span> returns
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Now</span> returns
               you to Live.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Live phase
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Illumination
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Age (days)
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Next major phase
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Sound
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Manual lookup
             </span>
           </div>
@@ -198,45 +198,45 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Quick use (what most people do)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Leave{" "}
-                <span className="font-semibold text-slate-900">Live</span> on to
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Leave{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Live</span> on to
                 track the countdown and see today’s phase details update.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Read
-                the <span className="font-semibold text-slate-900">Next</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Read
+                the <span className="font-semibold text-[var(--ilt-text-primary)]">Next</span>{" "}
                 line for the upcoming major phase and the estimated local time.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Go{" "}
-                <span className="font-semibold text-slate-900">Fullscreen</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Go{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Fullscreen</span>{" "}
                 if you want a room-readable display.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> If you
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> If you
                 are checking another moment, edit Date, Hour, or Minute and the
                 page switches to{" "}
-                <span className="font-semibold text-slate-900">Manual</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Manual</span>.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> Use{" "}
-                <span className="font-semibold text-slate-900">Now</span> to
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> Use{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Now</span> to
                 return to Live instantly.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What the page is calculating for you
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 The tool tracks where you are in the lunar cycle and derives a
                 readable phase label from that position. From the same cycle
                 position it estimates illumination (shown as a percent) and moon
@@ -247,19 +247,19 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Practical checklist
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 If you only care about today, keep{" "}
-                <span className="font-semibold text-slate-900">Live</span> on.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Live</span> on.
               </li>
               <li>
                 If you are checking a past or future moment, edit date/time and
                 stay in{" "}
-                <span className="font-semibold text-slate-900">Manual</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Manual</span>.
               </li>
               <li>
                 If you need a display across the room, go fullscreen first.
@@ -271,7 +271,7 @@ export default function HowItWorks({
               <li>
                 If you are planning across places, convert time zones with{" "}
                 <Link
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   to="/time-zone-converter"
                 >
                   Time Zone Converter
@@ -280,23 +280,23 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Quick keys:</span>{" "}
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Quick keys:</span>{" "}
               <Kbd>F</Kbd> fullscreen, <Kbd>Esc</Kbd> exit.
             </div>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Related:</span>{" "}
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Related:</span>{" "}
               compare with{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/sunrise-sunset-clock"
               >
                 Sunrise Sunset Clock
               </Link>{" "}
               or{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/astronomical-clock"
               >
                 Astronomical Clock
@@ -308,55 +308,55 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What each value means on this page
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             The display is built around the four major phases because they are
             the most useful anchors for planning and quick checks. Those phases
-            are <span className="font-semibold text-slate-900">New Moon</span>,{" "}
-            <span className="font-semibold text-slate-900">First Quarter</span>,{" "}
-            <span className="font-semibold text-slate-900">Full Moon</span>, and{" "}
-            <span className="font-semibold text-slate-900">Last Quarter</span>.
+            are <span className="font-semibold text-[var(--ilt-text-primary)]">New Moon</span>,{" "}
+            <span className="font-semibold text-[var(--ilt-text-primary)]">First Quarter</span>,{" "}
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Full Moon</span>, and{" "}
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Last Quarter</span>.
             The tool also shows the in-between labels (waxing and waning
             crescents and gibbous phases) so you get a descriptive name for the
             current moment, not only the major checkpoints.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
-            <span className="font-semibold text-slate-900">Illumination</span>{" "}
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Illumination</span>{" "}
             is shown as a percentage so you can quickly interpret “how bright”
             without mental math. The number is most intuitive around common
             points in the cycle. Near New Moon you will often see single digits
-            like <span className="font-semibold text-slate-900">2%</span> to{" "}
-            <span className="font-semibold text-slate-900">8%</span>. Near First
+            like <span className="font-semibold text-[var(--ilt-text-primary)]">2%</span> to{" "}
+            <span className="font-semibold text-[var(--ilt-text-primary)]">8%</span>. Near First
             Quarter it trends around{" "}
-            <span className="font-semibold text-slate-900">50%</span>. Near Full
+            <span className="font-semibold text-[var(--ilt-text-primary)]">50%</span>. Near Full
             Moon it climbs toward{" "}
-            <span className="font-semibold text-slate-900">95%+</span>. The tool
+            <span className="font-semibold text-[var(--ilt-text-primary)]">95%+</span>. The tool
             is meant to be readable and consistent, so it favors a stable,
             smooth estimate rather than a noisy presentation.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
-            <span className="font-semibold text-slate-900">Moon age</span> is
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Moon age</span> is
             the estimated days since the last New Moon. You will see it in a
             format like{" "}
-            <span className="font-semibold text-slate-900">9.6 days</span>. Age
+            <span className="font-semibold text-[var(--ilt-text-primary)]">9.6 days</span>. Age
             is useful because it gives you a simple “where are we” number that
             works well in Manual mode. For example, a manual check might show{" "}
-            <span className="font-semibold text-slate-900">14.8 days</span>{" "}
+            <span className="font-semibold text-[var(--ilt-text-primary)]">14.8 days</span>{" "}
             around a Full Moon window, while a check shortly after New Moon
             might show{" "}
-            <span className="font-semibold text-slate-900">1.2 days</span>.
+            <span className="font-semibold text-[var(--ilt-text-primary)]">1.2 days</span>.
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Scenarios with concrete examples (what you will see here)
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             The examples below are designed to look like real “screen moments.”
             They include the kinds of numbers this page shows: phase label,
             illumination percent, age in days, and a countdown to the next major
@@ -479,32 +479,32 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Live versus Manual: what to choose
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
-              Choose <span className="font-semibold text-slate-900">Live</span>{" "}
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+              Choose <span className="font-semibold text-[var(--ilt-text-primary)]">Live</span>{" "}
               when the question is “what is happening now” or “how long until
               the next major phase.” Choose{" "}
-              <span className="font-semibold text-slate-900">Manual</span> when
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Manual</span> when
               you care about a specific moment, such as checking a date for
               planning or comparing two times in the same day. Manual mode is
               also useful when you want a steady display for notes without it
               shifting under you.
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               If your goal is timekeeping accuracy rather than lunar phase,
               compare with{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/atomic-clock"
               >
                 Atomic Clock
               </Link>{" "}
               or{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/utc-clock"
               >
                 UTC Clock
@@ -515,17 +515,17 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same site, different job)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 Use the closest match to what you are trying to do.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcut set: <Kbd>F</Kbd> <Kbd>Esc</Kbd>
             </div>
           </div>
@@ -541,24 +541,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (lunar model, timestamps, sound, and limits)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional notes if you rely on exact behavior and expectations
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Lightweight lunar-cycle estimate
               </div>
               <p className="mt-1 leading-relaxed">
@@ -575,8 +575,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Local time formatting
               </div>
               <p className="mt-1 leading-relaxed">
@@ -588,7 +588,7 @@ export default function HowItWorks({
               <p className="mt-2 leading-relaxed">
                 If you are coordinating across places, use{" "}
                 <Link
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   to="/time-zone-converter"
                 >
                   Time Zone Converter
@@ -597,8 +597,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Sound and browser restrictions
               </div>
               <p className="mt-1 leading-relaxed">
@@ -612,8 +612,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen and keyboard focus
               </div>
               <p className="mt-1 leading-relaxed">
@@ -630,13 +630,13 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Want daylight timing too?
             </strong>{" "}
             Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/sunrise-sunset-clock"
             >
               Sunrise Sunset Clock
@@ -644,13 +644,13 @@ export default function HowItWorks({
             alongside this page.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Need a countdown to your own event?
             </strong>{" "}
             Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/event-countdown"
             >
               Event Countdown
@@ -660,8 +660,8 @@ export default function HowItWorks({
         </div>
 
         {/* Small SEO anchor text without being bloggy */}
-        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-          <strong className="text-slate-900">In one sentence:</strong> this moon
+        <div className="mt-6 ilt-surface-muted px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+          <strong className="text-[var(--ilt-text-primary)]">In one sentence:</strong> this moon
           phase clock shows today’s moon phase, illumination estimate, and moon
           age, plus a live countdown and local time for the next major phase,
           with fullscreen display, sound options, and manual date and time

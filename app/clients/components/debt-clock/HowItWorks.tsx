@@ -13,7 +13,7 @@ export function JsonLd({ data }: { data: any }) {
 /* =========================================================
    1) HOW IT WORKS (trust + SEO + user intent)
    Notes:
-   - Debt Clock intent: live estimated counter from a starting value + yearly change.
+   - Debt Clock intent: estimated counter from a starting value + yearly change.
    - Tool-focused, not a blog post.
    - Scenario-based with concrete example numbers users will experience here.
    - Technical details live in an expandable section.
@@ -32,9 +32,9 @@ export default function HowItWorks({
   const howToLd = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: "How to use the Debt Clock (live debt counter)",
+    name: "How to use the Debt Clock (estimated debt counter)",
     description:
-      "Use Debt Clock to display an estimated debt total that updates in real time based on a starting amount and an average yearly change rate. Choose a preset or enter custom values, use fullscreen for a big display, pause/reset during demos, and copy a clean snapshot of the current estimate plus assumptions.",
+      "Use Debt Clock to display an estimated debt total that updates locally based on a starting amount and an average yearly change rate. Choose a preset or enter custom values, use fullscreen for a big display, pause/reset during demos, and copy a clean snapshot of the current estimate plus assumptions.",
     url: canonicalUrl,
     step: [
       {
@@ -45,17 +45,17 @@ export default function HowItWorks({
       {
         "@type": "HowToStep",
         name: "Enter your starting debt and yearly change",
-        text: "Starting debt is the baseline. Yearly change is the average net change per year (positive or negative). The tool converts the yearly change into a per-second rate for the live counter.",
+        text: "Starting debt is the baseline. Yearly change is the average net change per year (positive or negative). The tool converts the yearly change into a per-second rate for the running counter.",
       },
       {
         "@type": "HowToStep",
         name: "Use Start/Pause and Reset",
-        text: "Start/Pause controls the live updating. Reset snaps back to your starting debt and restarts the counter from there.",
+        text: "Start/Pause controls the local updating. Reset snaps back to your starting debt and restarts the counter from there.",
       },
       {
         "@type": "HowToStep",
         name: "Go fullscreen for a big-number display",
-        text: "Toggle fullscreen to fill the screen with the live total. Exit with Esc. In fullscreen you can tap/click the number area to start or pause quickly.",
+        text: "Toggle fullscreen to fill the screen with the estimated total. Exit with Esc. In fullscreen you can tap/click the number area to start or pause quickly.",
       },
       {
         "@type": "HowToStep",
@@ -66,7 +66,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -80,7 +80,7 @@ export default function HowItWorks({
   }) => (
     <a
       href={href}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </a>
@@ -95,13 +95,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="space-y-4">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="whitespace-pre-wrap font-mono text-xs text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="whitespace-pre-wrap font-mono text-xs text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -112,35 +112,35 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
-              <span className="font-semibold text-slate-900">Debt Clock</span>{" "}
-              is a live, on-screen debt counter. You give it a{" "}
-              <span className="font-semibold text-slate-900">
+            <p className="mt-2 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Debt Clock</span>{" "}
+              is an estimated on-screen debt counter. You give it a{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 starting debt
               </span>{" "}
               and an{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 average yearly change
               </span>
               , and it continuously updates the displayed total as time passes.
               This is designed for moments where you want a{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 big, readable number
               </span>{" "}
               on a screen and a{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 clean copyable snapshot
               </span>{" "}
               for notes or slides.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               The intent is simple: don’t make you fight formatting or UI.
               Presets give you quick starting points, Custom lets you enter your
               own numbers, fullscreen makes the number readable from a distance,
@@ -148,23 +148,23 @@ export default function HowItWorks({
               attached (starting value, rate, and your “as of” label).
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               The most important thing to understand is that this page is an{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 estimated counter
               </span>
               . It does not automatically fetch official debt totals. If you
               want a specific authority’s number, use that source to choose your
               starting debt and yearly change, then plug those values into{" "}
-              <span className="font-semibold text-slate-900">Custom</span> and
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Custom</span> and
               put the source/date in the “as of” label.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               If your goal is “a payoff vibe” or pacing rather than a public
               counter,{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/debt-repayment-timer")}
               >
                 Debt Repayment Timer
@@ -172,14 +172,14 @@ export default function HowItWorks({
               may be a better fit. If you just need a big screen-friendly
               display for a talk, you may also pair this with{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/presentation-timer")}
               >
                 Presentation Timer
               </a>{" "}
               or{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/meeting-timer")}
               >
                 Meeting Timer
@@ -189,19 +189,19 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Presets + Custom
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
-              Live counter
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
+              Estimated counter
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Pause + Reset
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Copy snapshot
             </span>
           </div>
@@ -209,59 +209,59 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fast use (what most people do)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Choose
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Choose
                 a preset or select <Kbd>Custom</Kbd> and enter your numbers
                 (starting debt, yearly change, and “as of” label).
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Press{" "}
                 <Kbd>Space</Kbd> to start/pause the counter. Use <Kbd>R</Kbd> to
                 reset back to the starting debt.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Press{" "}
                 <Kbd>F</Kbd> for fullscreen when you need a room-readable
                 display. Exit with <Kbd>Esc</Kbd>.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Press{" "}
                 <Kbd>C</Kbd> to copy a paste-ready snapshot (current estimate +
                 assumptions).
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
-                What the live number actually means
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
+                What the running number actually means
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 The main display is the current estimate at this moment:{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   starting debt + (elapsed time × rate)
                 </span>
                 . The “rate” comes from your yearly change converted into a
-                per-second amount. That makes the counter feel like a live feed,
-                but it’s still just math based on your inputs.
+                per-second amount. The number updates continuously, but it is
+                still just math based on your inputs.
               </p>
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 That is why Copy includes your assumptions. When you paste the
                 number, you also paste the context that makes it meaningful.
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Getting the inputs right (without overthinking it)
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 <span className="font-semibold">Starting debt</span>: the
                 baseline total you want to begin from (what Reset returns to).
@@ -278,16 +278,16 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Shortcut tip:
               </span>{" "}
-              If shortcuts do nothing, click the debt clock card once first so
+              If shortcuts do nothing, click the debt clock display once first so
               it has focus. Shortcuts do not fire while typing in inputs.
             </div>
 
-            <div className="mt-3 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">
+            <div className="mt-3 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Reality check:
               </span>{" "}
               A yearly change of <span className="font-semibold">$1T</span> is
@@ -300,21 +300,21 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What you’re controlling on this page
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             You are controlling three things: the{" "}
-            <span className="font-semibold text-slate-900">starting point</span>
+            <span className="font-semibold text-[var(--ilt-text-primary)]">starting point</span>
             , the{" "}
-            <span className="font-semibold text-slate-900">
+            <span className="font-semibold text-[var(--ilt-text-primary)]">
               speed and direction
             </span>{" "}
             of change, and how you want the result displayed and reused.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
             Starting debt is straightforward: it is the anchor value. Yearly
             change is where people make mistakes, because it is easy to mix
             “budget deficit,” “debt outstanding,” “net borrowing,” or
@@ -325,19 +325,19 @@ export default function HowItWorks({
             the assumptions you input.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
-            Fullscreen and shortcuts are here for “use it live” moments. Pause
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
+            Fullscreen and shortcuts are here for presentation moments. Pause
             lets you freeze the number when you want to talk about it. Reset
             gives you a consistent starting point so you can repeat a demo. Copy
             gives you a clean snapshot when you need to move the number into a
             doc, slide, or chat message.
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Scenarios with examples (real numbers you will see)
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             These examples are intentionally concrete. They show the exact kinds
             of inputs and outputs that make sense on this page, including
             per-second rates and what a copied snapshot looks like when pasted
@@ -451,7 +451,7 @@ export default function HowItWorks({
               subtitle="A simple rule of thumb"
               lines={[
                 "Use Debt Clock when:",
-                "- You want a live big-number estimate that changes over time.",
+                "- You want a running big-number estimate that changes over time.",
                 "- You want fullscreen + pause/reset for demos.",
                 "- You want a copyable snapshot that includes assumptions.",
                 "",
@@ -464,33 +464,33 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
-              Fullscreen and shortcuts (built for live control)
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
+              Fullscreen and shortcuts (built for quick control)
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fullscreen exists so the debt total stays readable at a distance.
               Shortcuts keep the flow fast: <Kbd>Space</Kbd> start/pause,{" "}
               <Kbd>R</Kbd> reset, <Kbd>F</Kbd> fullscreen, and <Kbd>C</Kbd>{" "}
-              copy. If shortcuts do nothing, click the debt clock card once so
+              copy. If shortcuts do nothing, click the debt clock display once so
               it has focus. Shortcuts do not fire while you are typing in
               inputs.
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Space</Kbd> start/pause
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>R</Kbd> reset
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>F</Kbd> fullscreen
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>C</Kbd> copy
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Esc</Kbd> exit
               </span>
             </div>
@@ -498,18 +498,18 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same ecosystem, different intent)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 If your task is “big number” plus timing or payoff pacing, these
                 are better matches.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>Space</Kbd> <Kbd>R</Kbd> <Kbd>F</Kbd> <Kbd>C</Kbd>{" "}
               <Kbd>Esc</Kbd>
             </div>
@@ -531,25 +531,25 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (calculation model, continuity, fullscreen,
                 copy)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Notes that matter if you rely on the number for a talk or notes
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Linear estimate (average rate)
               </div>
               <p className="mt-1 leading-relaxed">
@@ -559,8 +559,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Year length and per-second conversion
               </div>
               <p className="mt-1 leading-relaxed">
@@ -570,8 +570,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Continuity rules
               </div>
               <p className="mt-1 leading-relaxed">
@@ -582,13 +582,13 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen + clipboard permissions
               </div>
               <p className="mt-1 leading-relaxed">
                 Fullscreen uses the browser Fullscreen API and updates state on{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   fullscreenchange
                 </span>
                 . Clipboard access can be restricted by browser policy; it is
@@ -596,8 +596,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 What the copy snapshot includes
               </div>
               <p className="mt-1 leading-relaxed">
@@ -612,13 +612,13 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Want a payoff-style view?
             </strong>{" "}
             Try{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/debt-repayment-timer")}
             >
               Debt Repayment Timer
@@ -626,20 +626,20 @@ export default function HowItWorks({
             .
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Need timing alongside it?
             </strong>{" "}
             Pair with{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/presentation-timer")}
             >
               Presentation Timer
             </a>{" "}
             or{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/meeting-timer")}
             >
               Meeting Timer

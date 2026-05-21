@@ -68,7 +68,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -82,7 +82,7 @@ export default function HowItWorks({
   }) => (
     <Link
       to={to}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </Link>
@@ -97,13 +97,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="ilt-surface-card p-5">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="whitespace-pre-wrap font-mono text-xs text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="whitespace-pre-wrap font-mono text-xs text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -111,29 +111,29 @@ export default function HowItWorks({
   );
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-10">
+    <section className="space-y-4">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
-              <span className="font-semibold text-slate-900">
+            <p className="mt-2 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Unix Time Clock
               </span>{" "}
               is built for the moment you need a correct “now” timestamp fast.
               The big number is the current Unix epoch time in{" "}
-              <span className="font-semibold text-slate-900">seconds</span>. The
+              <span className="font-semibold text-[var(--ilt-text-primary)]">seconds</span>. The
               page also shows the same moment in{" "}
-              <span className="font-semibold text-slate-900">milliseconds</span>
+              <span className="font-semibold text-[var(--ilt-text-primary)]">milliseconds</span>
               , plus a local and UTC date-time so you can sanity-check what that
               timestamp actually represents.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               This page is not a tutorial about time systems. It is a practical
               utility: copy seconds or milliseconds, freeze the display so it
               does not change while you work, snap once when you need a fresh
@@ -141,7 +141,7 @@ export default function HowItWorks({
               readable on a shared screen.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               Key behavior to understand: the clock reads from your device time.
               If your device clock is off, the epoch value will be off too. For
               normal workflows like logs, debugging, and test payloads, this is
@@ -151,25 +151,25 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Seconds
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Milliseconds
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Copy
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Live/Frozen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Snap
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Shortcuts
             </span>
           </div>
@@ -177,56 +177,56 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Quick use (what most people do)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Read
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Read
                 the big number: that is Unix time in{" "}
-                <span className="font-semibold text-slate-900">seconds</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">seconds</span>.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> If you
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> If you
                 need a stable value, toggle{" "}
-                <span className="font-semibold text-slate-900">Live</span> off
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Live</span> off
                 (or press <Kbd>Space</Kbd>) to freeze it.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Click{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Click{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   Copy seconds
                 </span>{" "}
                 or{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   Copy milliseconds
                 </span>{" "}
                 (or press <Kbd>C</Kbd> / <Kbd>M</Kbd>).
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> If you
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> If you
                 are frozen and need a fresh “now” without going back to live,
-                use <span className="font-semibold text-slate-900">Snap</span>{" "}
+                use <span className="font-semibold text-[var(--ilt-text-primary)]">Snap</span>{" "}
                 (or <Kbd>N</Kbd>).
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> For a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> For a
                 big display, press <Kbd>F</Kbd> for fullscreen. Press{" "}
                 <Kbd>Esc</Kbd> to exit.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Seconds vs milliseconds, in plain terms
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Seconds is typically a{" "}
-                <span className="font-semibold text-slate-900">10-digit</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">10-digit</span>{" "}
                 number (for current years). Milliseconds is typically a{" "}
-                <span className="font-semibold text-slate-900">13-digit</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">13-digit</span>{" "}
                 number. Many errors come from pasting a 13-digit value into a
                 system expecting seconds, or vice versa. This page shows both so
                 you can copy the right one without guessing.
@@ -234,11 +234,11 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Checklist for a clean copy
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 If you are copying into a form, freeze first so the value does
                 not change between click and paste.
@@ -258,8 +258,8 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Shortcuts:</span>{" "}
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Shortcuts:</span>{" "}
               <Kbd>Space</Kbd> live/freeze, <Kbd>C</Kbd> copy seconds,{" "}
               <Kbd>M</Kbd> copy ms, <Kbd>N</Kbd> snap, <Kbd>F</Kbd> fullscreen,{" "}
               <Kbd>Esc</Kbd> exit.
@@ -269,11 +269,11 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What this page gives you, and why it is useful
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             Unix time is a standard way to represent a moment as a single number
             (seconds or milliseconds since the Unix epoch). It is widely used in
             APIs, logs, databases, analytics events, and debugging tools because
@@ -283,23 +283,23 @@ export default function HowItWorks({
             strings.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
-            <span className="font-semibold text-slate-900">Live</span> mode is
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Live</span> mode is
             for quickly glancing at the current value.{" "}
-            <span className="font-semibold text-slate-900">Frozen</span> mode is
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Frozen</span> mode is
             for correctness under pressure: you get one stable value that stays
             on screen while you paste it into a console, a ticket, a test case,
             or an alert payload.{" "}
-            <span className="font-semibold text-slate-900">Snap</span> is the
+            <span className="font-semibold text-[var(--ilt-text-primary)]">Snap</span> is the
             middle ground: you stay frozen (so the screen is stable) but you can
             refresh the value once when you need “now” again.
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Scenarios with examples (real numbers you will see here)
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             The examples below are written around the same patterns users run
             into: seconds vs milliseconds confusion, needing a stable timestamp,
             and verifying UTC versus local time quickly. The specific numbers
@@ -414,11 +414,11 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen and shortcuts (fast control, low friction)
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               If you use this page often, shortcuts are the fastest path. Press{" "}
               <Kbd>Space</Kbd> to toggle Live/Frozen, <Kbd>C</Kbd> to copy
               seconds, <Kbd>M</Kbd> to copy milliseconds, <Kbd>N</Kbd> to snap
@@ -428,22 +428,22 @@ export default function HowItWorks({
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Space</Kbd> live/freeze
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>C</Kbd> copy seconds
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>M</Kbd> copy ms
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>N</Kbd> snap
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>F</Kbd> fullscreen
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Esc</Kbd> exit
               </span>
             </div>
@@ -451,18 +451,18 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same ecosystem, different job)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 If you need a different time view or time math, use the closest
                 match below.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>Space</Kbd> <Kbd>C</Kbd> <Kbd>M</Kbd> <Kbd>N</Kbd>{" "}
               <Kbd>F</Kbd> <Kbd>Esc</Kbd>
             </div>
@@ -481,24 +481,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (units, clock source, clipboard, fullscreen)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Notes that matter when you rely on precise copy behavior
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Clock source and units
               </div>
               <p className="mt-1 leading-relaxed">
@@ -509,8 +509,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Why updates can look “jumpy”
               </div>
               <p className="mt-1 leading-relaxed">
@@ -521,8 +521,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Clipboard behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -533,8 +533,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen permissions
               </div>
               <p className="mt-1 leading-relaxed">
@@ -548,10 +548,10 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Need UTC only?</strong> Use{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Need UTC only?</strong> Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/utc-clock"
             >
               UTC Clock
@@ -559,10 +559,10 @@ export default function HowItWorks({
             for a dedicated UTC display.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Need conversions?</strong> Use{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Need conversions?</strong> Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/milliseconds-converter"
             >
               Milliseconds Converter

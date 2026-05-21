@@ -3,14 +3,29 @@ import type { Route } from "./+types/countdown-timer";
 import { json } from "@remix-run/node";
 import {
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
   useMemo,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  SeoBand,
+  SecondaryActionRow,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolHero,
+  ToolFrame,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/countdown-timer/HowItWorks";
 import Disclaimer from "~/clients/components/countdown-timer/Disclaimer";
 import FAQ from "~/clients/components/countdown-timer/FAQ";
@@ -100,247 +115,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
 /* =========================================================
    COUNTDOWN TIMER CARD
 ========================================================= */
@@ -371,9 +145,10 @@ function CountUpTimerCard() {
   }, [running]);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
-  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const displayBoxRef = useRef<HTMLElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
 
   const [minsInput, setMinsInput] = useState<string>("5");
@@ -503,13 +278,14 @@ function CountUpTimerCard() {
     return msToClockDown(displayMs);
   }, [remaining]);
 
-  const fitFontPx = useFitText({
+  const fitFontPx = useFitDisplayText({
     containerRef: displayBoxRef,
     textRef: timeTextRef,
     deps: [shownTime, isFs, running],
     minPx: 52,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 56 : 64,
+    initialScale: 0.92,
   });
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -526,144 +302,121 @@ function CountUpTimerCard() {
       addSeconds(60);
     } else if (k === "s") {
       addSeconds(-10);
-    } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    } else if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
   return (
-    <Card
-      cardRef={cardRef}
+    <ToolFrame
+      frameRef={cardRef}
       tabIndex={0}
       onKeyDown={onKeyDown}
       isFullscreen={isFs}
+      className={isFs ? "" : "px-[var(--ilt-page-x)] py-2 sm:py-4"}
     >
       <FullscreenTopBar
         show={isFs}
         title="Countdown Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
-            <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
+            <Button variant="primary" size="sm" onClick={startPause}>
               {running ? "Pause" : remaining <= 0 ? "Restart" : "Start"}
-            </Btn>
-            <Btn
-              kind="ghost"
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => addSeconds(60)}
-              className="py-1 text-sm"
             >
               +1:00
-            </Btn>
-            <Btn kind="ghost" onClick={resetAll} className="py-1 text-sm">
+            </Button>
+            <Button variant="secondary" size="sm" onClick={resetAll}>
               Reset
-            </Btn>
+            </Button>
           </div>
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {/* Header (normal only) */}
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex flex-wrap items-center gap-3 ml-auto">
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
         {/* Controls bar (normal only) */}
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-3">
+          <div className="order-2 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div className="flex flex-wrap items-center gap-3">
-                <Btn kind="solid" onClick={startPause}>
+              <ControlGroup className="max-w-none justify-center sm:justify-start">
+                <Button variant="primary" onClick={startPause}>
                   {running ? "Pause" : remaining <= 0 ? "Restart" : "Start"}
-                </Btn>
-                <Btn kind="ghost" onClick={resetAll}>
+                </Button>
+                <Button variant="secondary" onClick={resetAll}>
                   Reset
-                </Btn>
-                <Btn kind="ghost" onClick={() => addSeconds(60)}>
+                </Button>
+                <Button variant="secondary" onClick={() => addSeconds(60)}>
                   +1:00
-                </Btn>
-                <Btn kind="ghost" onClick={() => addSeconds(-10)}>
+                </Button>
+                <Button variant="secondary" onClick={() => addSeconds(-10)}>
                   -0:10
-                </Btn>
-              </div>
+                </Button>
+              </ControlGroup>
 
-              <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+              <ShortcutHint className="w-auto max-w-none sm:ml-auto">
                 Shortcuts: Space start/pause · R reset · A +1:00 · S -0:10 · F
                 fullscreen
-              </div>
+              </ShortcutHint>
             </div>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div className="flex flex-col gap-1">
-                  <div className="text-sm font-extrabold text-slate-900">
-                    Set countdown
-                  </div>
-                  <div className="text-xs font-semibold text-slate-600">
-                    Minutes and seconds. Seconds are clamped to 0–59.
-                  </div>
-                </div>
+            <SettingGroup
+              title="Set countdown"
+              description="Minutes and seconds. Seconds are clamped to 0-59."
+            >
+              <SettingRow className="sm:grid-cols-[minmax(0,7rem)_minmax(0,6rem)_auto] lg:grid-cols-[minmax(0,7rem)_minmax(0,6rem)_auto]">
+                  <Field
+                    label="Minutes"
+                    value={minsInput}
+                    onChange={(e) => setMinsInput(e.target.value)}
+                    onBlur={applyInputsToTotal}
+                    inputMode="numeric"
+                    disabled={running}
+                  />
 
-                <div className="flex flex-wrap items-end gap-3">
-                  <label className="flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-slate-700">
-                      Minutes
-                    </span>
-                    <input
-                      value={minsInput}
-                      onChange={(e) => setMinsInput(e.target.value)}
-                      onBlur={applyInputsToTotal}
-                      inputMode="numeric"
-                      className="w-28 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-amber-300/60"
-                      disabled={running}
-                    />
-                  </label>
+                  <Field
+                    label="Seconds"
+                    hint="0-59"
+                    value={secsInput}
+                    onChange={(e) => setSecsInput(e.target.value)}
+                    onBlur={applyInputsToTotal}
+                    inputMode="numeric"
+                    disabled={running}
+                  />
 
-                  <label className="flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-slate-700">
-                      Seconds
-                    </span>
-                    <input
-                      value={secsInput}
-                      onChange={(e) => setSecsInput(e.target.value)}
-                      onBlur={applyInputsToTotal}
-                      inputMode="numeric"
-                      className="w-24 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-amber-300/60"
-                      disabled={running}
-                    />
-                  </label>
-
-                  <Btn
-                    kind="ghost"
+                  <Button
+                    variant="secondary"
                     onClick={applyInputsToTotal}
                     disabled={running}
                   >
                     Apply
-                  </Btn>
-                </div>
-              </div>
-            </div>
+                  </Button>
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Button
+                variant="secondary"
+                onClick={() => void fullscreen.toggle()}
+              >
+                Fullscreen
+              </Button>
+            </SecondaryActionRow>
           </div>
         )}
 
         {/* Display (no buttons inside) */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface mt-4 flex flex-col items-center justify-center text-slate-950",
+            "order-1 timer-display-surface mt-4 flex flex-col items-center justify-center text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -681,14 +434,10 @@ function CountUpTimerCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {statusLabel}
-          </div>
-
           <span
             ref={timeTextRef}
             className={[
-              "mt-2 inline-block text-center font-mono font-extrabold",
+              "inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
             style={{
@@ -700,12 +449,16 @@ function CountUpTimerCard() {
             {shownTime}
           </span>
 
+          <div className="mt-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            Countdown · {statusLabel}
+          </div>
+
           {!isFs && (
             <div className="mt-3 text-xs font-semibold text-slate-600">
               Tip: Start, then use +1:00 or -0:10 while it runs.
             </div>
           )}
-        </div>
+        </DisplayStage>
 
         {/* Fullscreen bottom controls (no duplicate buttons) */}
         <FullscreenBottomBar show={isFs}>
@@ -720,7 +473,7 @@ function CountUpTimerCard() {
           </div>
         </FullscreenBottomBar>
       </div>
-    </Card>
+    </ToolFrame>
   );
 }
 
@@ -763,45 +516,25 @@ export default function CountDownTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Countdown Timer (Minutes + Seconds)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Set a duration, start or pause, add time, reset, and use a big
-            fullscreen display.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<CountUpTimerCard />}
+        title="Countdown Timer (Minutes + Seconds)"
+        description="Set a duration, start or pause, add time, reset, and use a big fullscreen display."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <CountUpTimerCard />
-        </div>
-
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Countdown Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

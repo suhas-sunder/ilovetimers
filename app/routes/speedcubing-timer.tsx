@@ -3,14 +3,32 @@ import type { Route } from "./+types/speedcubing-timer";
 import { json } from "@remix-run/node";
 import {
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  SecondaryActionRow,
+  SeoBand,
+  Select,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  StatusChip,
+  Toggle,
+  ToolFrame as Card,
+  ToolHero,
+  UtilityResultRow,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -82,245 +100,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
 
 /* =========================================================
    SPEEDCUBING TIMER CARD
@@ -332,7 +111,7 @@ type Solve = { n: number; ms: number; atISO: string };
 
 type StartMode = "instant" | "hold";
 
-function SpeedcubingTimerCard() {
+function SpeedcubingTimerTool() {
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
 
@@ -355,7 +134,8 @@ function SpeedcubingTimerCard() {
   const armTimerRef = useRef<number | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -573,9 +353,9 @@ function SpeedcubingTimerCard() {
     } else if (k === "r") {
       resetCurrent();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     } else if (k === "s") {
       if (!running && !autoSave && elapsedRef.current > 0) {
         setSolves((prev) => {
@@ -613,7 +393,7 @@ function SpeedcubingTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Speedcubing Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn
@@ -636,38 +416,13 @@ function SpeedcubingTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Speedcubing Timer
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Big mm:ss.cc display with fast start/stop and solve history.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-history-stack flex h-full flex-col"}>
         {/* Display */}
         <div
           ref={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
-            "border-slate-200 p-3 sm:p-6",
+            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-[var(--ilt-text-primary)]",
+            "border-[var(--ilt-border-subtle)] p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
@@ -711,14 +466,10 @@ function SpeedcubingTimerCard() {
             }
           }}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {statusLabel}
-          </div>
-
           <span
             ref={timeTextRef}
             className={[
-              "mt-2 inline-block text-center font-mono font-extrabold",
+              "inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
               armed && !running ? "text-amber-600" : "",
             ].join(" ")}
@@ -731,6 +482,10 @@ function SpeedcubingTimerCard() {
             {timeText}
           </span>
 
+          <div className="mt-4 ilt-content-label">
+            {statusLabel}
+          </div>
+
           {/* Fullscreen solve overlay */}
           {isFs && (
             <div
@@ -741,12 +496,12 @@ function SpeedcubingTimerCard() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
                     Solves
                   </div>
 
                   {!hasSolves ? (
-                    <div className="text-xs font-semibold text-slate-600">
+                    <div className="ilt-helper-text font-semibold">
                       Stop to save a solve
                     </div>
                   ) : (
@@ -754,12 +509,12 @@ function SpeedcubingTimerCard() {
                       {fsSolves.map((s) => (
                         <div
                           key={`${s.n}-${s.atISO}`}
-                          className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white/85 px-2 py-1 backdrop-blur"
+                          className="flex items-center justify-between gap-3 ilt-surface-card px-2 py-1 backdrop-blur"
                         >
-                          <div className="text-xs font-semibold text-slate-900">
+                          <div className="text-xs font-semibold text-[var(--ilt-text-primary)]">
                             #{s.n}
                           </div>
-                          <div className="text-xs font-extrabold text-slate-900">
+                          <div className="text-xs font-extrabold text-[var(--ilt-text-primary)]">
                             {msToStopwatch(s.ms)}
                           </div>
                         </div>
@@ -769,12 +524,12 @@ function SpeedcubingTimerCard() {
                 </div>
 
                 <div className="hidden sm:flex flex-col items-end gap-1">
-                  <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                  <div className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)] backdrop-blur">
                     Space{" "}
                     {startMode === "instant" ? "Start/Stop" : "Hold + Release"}
                   </div>
                   {!autoSave && (
-                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                    <div className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)] backdrop-blur">
                       S = Save
                     </div>
                   )}
@@ -786,8 +541,8 @@ function SpeedcubingTimerCard() {
 
         {/* Controls (normal only) */}
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-3">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="timer-control-stack mt-4">
+            <ControlGroup>
               <Btn
                 kind="solid"
                 onClick={() => {
@@ -831,6 +586,9 @@ function SpeedcubingTimerCard() {
                 </Btn>
               )}
 
+            </ControlGroup>
+
+            <SecondaryActionRow className="timer-history-actions">
               <Btn
                 kind="ghost"
                 onClick={clearHistory}
@@ -838,53 +596,50 @@ function SpeedcubingTimerCard() {
               >
                 Clear history
               </Btn>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
 
-              <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-                Shortcuts: Space{" "}
-                {startMode === "instant" ? "start/stop" : "hold+release start"}{" "}
-                · R reset · F fullscreen
-                {!autoSave ? " · S save" : ""}
-              </div>
-            </div>
+            <ShortcutHint className="timer-history-shortcut">
+              <span className="ilt-keycap">Space</span>{" "}
+              {startMode === "instant" ? "start/stop" : "hold+release start"} ·{" "}
+              <span className="ilt-keycap">R</span> reset ·{" "}
+              <span className="ilt-keycap">F</span> fullscreen
+              {!autoSave ? (
+                <>
+                  {" "}
+                  · <span className="ilt-keycap">S</span> save
+                </>
+              ) : null}
+            </ShortcutHint>
 
             {/* Settings */}
-            <div className="grid gap-3 lg:grid-cols-3">
-              <label className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
-                Start mode
-                <select
+            <SettingGroup title="Solve settings">
+              <SettingRow>
+                <Select
+                  label="Start mode"
                   value={startMode}
                   onChange={(e) =>
                     setStartMode(
                       e.target.value === "instant" ? "instant" : "hold",
                     )
                   }
-                  className="cursor-pointer rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
                 >
                   <option value="hold">Hold-to-start</option>
                   <option value="instant">Instant toggle</option>
-                </select>
-              </label>
+                </Select>
 
-              <label className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
-                Auto-save on stop
-                <button
-                  type="button"
-                  onClick={() => setAutoSave((v) => !v)}
-                  className={[
-                    "cursor-pointer rounded-lg border px-3 py-1 text-sm font-semibold",
-                    autoSave
-                      ? "border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100"
-                      : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                  ].join(" ")}
-                  aria-pressed={autoSave}
-                >
-                  {autoSave ? "On" : "Off"}
-                </button>
-              </label>
+                <div className="flex items-end">
+                  <Toggle
+                    label="Auto-save on stop"
+                    checked={autoSave}
+                    onCheckedChange={setAutoSave}
+                  />
+                </div>
 
-              <label className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
-                Max saved solves
-                <input
+                <Field
+                  label="Max saved solves"
                   type="number"
                   min={5}
                   max={200}
@@ -892,21 +647,20 @@ function SpeedcubingTimerCard() {
                   onChange={(e) =>
                     setMaxSolves(clamp(Number(e.target.value || 50), 5, 200))
                   }
-                  className="w-24 rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm font-semibold text-slate-900"
                 />
-              </label>
-            </div>
+              </SettingRow>
+            </SettingGroup>
           </div>
         )}
 
         {/* History (normal only) */}
         {!isFs && (
-          <div className="mt-5 rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+          <div className="timer-history-panel mx-auto mt-5 space-y-3">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm font-extrabold text-slate-900">
+              <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
                 Solve history
               </div>
-              <div className="text-xs font-semibold text-slate-600">
+              <div className="ilt-helper-text font-semibold">
                 {solves.length
                   ? `${solves.length} saved · Best ${best != null ? msToStopwatch(best) : "-"} · Avg ${avg != null ? msToStopwatch(avg) : "-"}`
                   : "No solves saved yet"}
@@ -914,7 +668,7 @@ function SpeedcubingTimerCard() {
             </div>
 
             {solves.length === 0 ? (
-              <div className="mt-3 text-sm text-slate-700">
+              <div className="mt-3 text-sm text-[var(--ilt-text-secondary)]">
                 Stop the timer to save a solve.
               </div>
             ) : (
@@ -922,39 +676,35 @@ function SpeedcubingTimerCard() {
                 {solves.slice(0, 20).map((s, i) => {
                   const isBest = best != null && s.ms === best;
                   return (
-                    <div
+                    <UtilityResultRow
                       key={`${s.n}-${s.atISO}`}
-                      className={[
-                        "flex flex-col gap-2 rounded-xl border px-3 py-2 sm:flex-row sm:items-center sm:justify-between",
-                        i === 0
-                          ? "border-amber-200 bg-amber-50"
-                          : "border-slate-200 bg-slate-50",
-                      ].join(" ")}
+                      className={i === 0 ? "bg-[var(--ilt-bg-subtle)]" : ""}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="text-sm font-semibold text-slate-900">
+                        <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                           #{s.n}
                         </div>
-                        <div className="font-mono text-sm font-extrabold text-slate-900">
+                        <div className="font-mono text-sm font-extrabold text-[var(--ilt-text-primary)]">
                           {msToStopwatch(s.ms)}
                         </div>
                         {isBest && (
-                          <div className="rounded-full border border-amber-200 bg-white px-2 py-0.5 text-[11px] font-extrabold uppercase tracking-widest text-amber-800">
+                          <StatusChip className="bg-[var(--ilt-selected-bg)] text-[var(--ilt-selected-text)]">
                             Best
-                          </div>
+                          </StatusChip>
                         )}
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          className="cursor-pointer text-xs font-semibold text-slate-700 hover:underline"
+                        <Btn
+                          kind="ghost"
+                          size="sm"
+                          className="min-h-0 px-2 py-1 text-xs"
                           onClick={() => removeSolve(i)}
                         >
-                          remove
-                        </button>
+                          Remove
+                        </Btn>
                       </div>
-                    </div>
+                    </UtilityResultRow>
                   );
                 })}
               </div>
@@ -965,13 +715,13 @@ function SpeedcubingTimerCard() {
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-slate-600 sm:text-sm">
+            <div className="ilt-helper-text sm:text-sm">
               Space{" "}
               {startMode === "instant" ? "start/stop" : "hold+release start"} ·
               R reset · F fullscreen
               {!autoSave ? " · S save" : ""}
             </div>
-            <div className="text-xs font-semibold text-slate-700">
+            <div className="ilt-helper-text font-semibold">
               {statusLabel}
             </div>
           </div>
@@ -1066,26 +816,71 @@ export default function SpeedcubingTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <SpeedcubingTimerCard />
-        </div>
-
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Speedcubing Timer</span>
+      <ToolHero
+        display={<SpeedcubingTimerTool />}
+        title="Speedcubing Timer"
+        description="Practice solves with instant or hold-to-start timing, autosave, solve history, averages, keyboard shortcuts, and fullscreen."
+      />
+      <SeoBand title="How this timer works">
+        <p>
+          Choose instant start or hold-to-start, run a solve, then save or remove
+          results from the solve history. Average and best-time details stay
+          below the active stopwatch so the solve display remains the first
+          thing you read.
         </p>
-      </section>
-    </main>
+        <h3>Practice workflow</h3>
+        <p>
+          Use the timer for repeated solve attempts, then review the saved times
+          to spot whether your recent solves are trending faster, slower, or more
+          variable. If inspection mode is enabled, it gives a practice rhythm
+          before the solve starts without turning the page into a full competition
+          system.
+        </p>
+        <h3>Useful settings and history</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Instant start is quick for casual practice, while hold-to-start more
+            closely matches the feel of waiting before a solve.
+          </li>
+          <li>
+            Penalties and solve removal help keep the local history useful when
+            a solve is mistimed or should not be counted.
+          </li>
+          <li>
+            Average and best-time rows are practice summaries based on the saved
+            solves in this browser.
+          </li>
+        </ul>
+        <h3>Practice notes</h3>
+        <p>
+          This timer is intended for browser-based practice. Device input
+          latency, keyboard behavior, and browser focus can affect measured
+          times, so use it as a consistent local practice tool rather than an
+          official competition timer.
+        </p>
+        <h3>Related tools</h3>
+        <p>
+          For a general elapsed timer, use the{" "}
+          <a className="ilt-content-link" href="/stopwatch">
+            stopwatch
+          </a>
+          . For timing an activity upward from zero, try the{" "}
+          <a className="ilt-content-link" href="/count-up-timer">
+            count-up timer
+          </a>
+          . For start-response practice, use the{" "}
+          <a className="ilt-content-link" href="/reaction-time-test">
+            reaction time test
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

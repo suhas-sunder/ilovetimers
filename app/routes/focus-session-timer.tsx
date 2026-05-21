@@ -1,8 +1,28 @@
 // app/routes/focus-session-timer.tsx
 import type { Route } from "./+types/focus-session-timer";
 import { json } from "@remix-run/node";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
-import { Link } from "react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/focus-session-timer/HowItWorks";
 import Disclaimer from "~/clients/components/focus-session-timer/Disclaimer";
 import FAQ from "~/clients/components/focus-session-timer/FAQ";
@@ -91,138 +111,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
 /* WebAudio beep */
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -233,7 +121,7 @@ function useBeep() {
     };
   }, []);
 
-  return (freq = 740, duration = 140, gain = 0.07) => {
+  return useCallback((freq = 880, duration = 120, gain = 0.1) => {
     try {
       const Ctx = window.AudioContext || (window as any).webkitAudioContext;
       const ctx = (ctxRef.current ??= new Ctx());
@@ -260,115 +148,10 @@ function useBeep() {
     } catch {
       // ignore
     }
-  };
+  }, []);
 }
 
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
 
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
 
 /* =========================================================
    FOCUS SESSION CARD
@@ -402,7 +185,8 @@ function FocusSessionCard() {
   const [completed, setCompleted] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -514,11 +298,11 @@ function FocusSessionCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "s") {
       setSound((x) => !x);
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -554,7 +338,7 @@ function FocusSessionCard() {
       <FullscreenTopBar
         show={isFs}
         title="Focus Session Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
@@ -564,131 +348,30 @@ function FocusSessionCard() {
               Reset
             </Btn>
 
-            <label className="hidden sm:inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900">
-              <input
-                type="checkbox"
-                checked={sound}
-                onChange={(e) => setSound(e.target.checked)}
-              />
-              Sound
-            </label>
-
-            <label className="hidden sm:inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900">
-              <input
-                type="checkbox"
-                checked={finalBeeps}
-                onChange={(e) => setFinalBeeps(e.target.checked)}
-                disabled={!sound}
-              />
-              Final beeps
-            </label>
+            <Toggle
+              label="Sound"
+              checked={sound}
+              onCheckedChange={setSound}
+              className="hidden py-1 text-sm sm:inline-flex"
+            />
+            <Toggle
+              label="Final beeps"
+              checked={finalBeeps}
+              onCheckedChange={setFinalBeeps}
+              disabled={!sound}
+              className="hidden py-1 text-sm sm:inline-flex"
+            />
           </div>
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {/* Header (normal only) */}
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <div className="text-sm font-extrabold text-slate-900">
-                Focus Session Timer
-              </div>
-              <div className="mt-1 text-sm text-slate-600">
-                One clean countdown for deep work. Pick a length and start.
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={sound}
-                  onChange={(e) => setSound(e.target.checked)}
-                />
-                Sound
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={finalBeeps}
-                  onChange={(e) => setFinalBeeps(e.target.checked)}
-                  disabled={!sound}
-                />
-                Final beeps
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
-        {/* Presets (normal only) */}
-        {!isFs && (
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            {presetsMin.map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => setPreset(m)}
-                disabled={!canEditDuration}
-                className={[
-                  "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
-                  m === minutes
-                    ? "bg-amber-500 text-slate-900 enabled:hover:bg-amber-400"
-                    : "border border-slate-200 bg-white text-slate-900 enabled:hover:bg-slate-50",
-                ].join(" ")}
-              >
-                {m}m
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Custom minutes + controls (normal only) */}
-        {!isFs && (
-          <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-            <label className="block text-sm font-semibold text-slate-900">
-              Session length (minutes)
-              <input
-                type="number"
-                min={1}
-                max={240}
-                value={minutes}
-                disabled={!canEditDuration}
-                onChange={(e) =>
-                  setMinutes(clamp(Number(e.target.value || 1), 1, 240))
-                }
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-              />
-            </label>
-
-            <div className="flex items-end gap-3">
-              <Btn kind="solid" onClick={startPause}>
-                {running ? "Pause" : "Start"}
-              </Btn>
-              <Btn kind="ghost" onClick={reset}>
-                Reset
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-session-stack flex h-full flex-col"}>
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
-            urgent ? "border-rose-200" : "border-slate-200",
+            "timer-display-surface relative flex flex-col items-center justify-center text-slate-950",
+            urgent ? "border-amber-200" : "border-slate-200",
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -728,7 +411,7 @@ function FocusSessionCard() {
 
           {completed ? (
             <div className="mt-5 w-full max-w-[980px]">
-              <div className="rounded-2xl border border-amber-200 bg-white p-5 text-center shadow-sm">
+              <div className="text-center">
                 <div className="text-xs font-extrabold uppercase tracking-widest text-amber-800">
                   Break time
                 </div>
@@ -761,7 +444,69 @@ function FocusSessionCard() {
               </div>
             </div>
           )}
-        </div>
+        </DisplayStage>
+
+        {/* Controls + settings (normal only) */}
+        {!isFs && (
+          <>
+            <ControlGroup>
+              <Btn kind="solid" onClick={startPause}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+            </ControlGroup>
+
+            <PresetGroup title="Focus presets">
+              {presetsMin.map((m) => (
+                <Chip
+                  key={m}
+                  active={m === minutes}
+                  onClick={() => setPreset(m)}
+                  disabled={!canEditDuration}
+                >
+                  {m}m
+                </Chip>
+              ))}
+            </PresetGroup>
+
+            <SettingGroup title="Settings">
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto]">
+                <Field
+                  label="Session length (minutes)"
+                  type="number"
+                  min={1}
+                  max={240}
+                  value={minutes}
+                  disabled={!canEditDuration}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 1), 1, 240))
+                  }
+                />
+                <div className="flex flex-wrap items-end gap-3">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Final beeps"
+                    checked={finalBeeps}
+                    onCheckedChange={setFinalBeeps}
+                    disabled={!sound}
+                  />
+                </div>
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause · R reset · F fullscreen · S sound
+            </ShortcutHint>
+          </>
+        )}
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -775,17 +520,6 @@ function FocusSessionCard() {
           </div>
         </FullscreenBottomBar>
 
-        {/* Shortcuts (normal only) */}
-        {!isFs && (
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space start/pause · R reset · F fullscreen · S sound
-            </div>
-            <div className="text-xs text-slate-600">
-              Tip: click the card once so keyboard shortcuts work immediately.
-            </div>
-          </div>
-        )}
       </div>
     </Card>
   );
@@ -830,45 +564,25 @@ export default function FocusSessionTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Focus Session Timer (Single Deep Work Countdown)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Choose one session length, start a distraction-free countdown, and
-            go fullscreen.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<FocusSessionCard />}
+        title="Focus Session Timer"
+        description="Choose a focus session length, start the countdown, and keep deep-work controls secondary to the active timer."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <FocusSessionCard />
-        </div>
-
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Focus Session Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

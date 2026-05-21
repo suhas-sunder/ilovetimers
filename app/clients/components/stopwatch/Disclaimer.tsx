@@ -6,24 +6,24 @@ export default function Disclaimer() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <details className="group" open>
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <h2 className="text-xl font-semibold text-sky-700">Stopwatch</h2>
-              <p className="mt-1 text-sm font-medium text-slate-600">
+              <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">Before you use this stopwatch</h2>
+              <p className="mt-1 text-sm font-medium text-[var(--ilt-text-muted)]">
                 {preview}
               </p>
             </div>
 
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           {/* What this page is for (tight, user-first) */}
-          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="mt-3 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Time anything instantly with a fast stopwatch that supports laps
               and millisecond precision.
             </strong>{" "}
@@ -32,164 +32,164 @@ export default function Disclaimer() {
           </div>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2 group-open:grid">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Start and pause fast.</strong>{" "}
-              Press <strong className="text-slate-900">Space</strong> to start
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Start and pause fast.</strong>{" "}
+              Press <strong className="text-[var(--ilt-text-primary)]">Space</strong> to start
               or pause without moving your hands to the mouse. The status label
               shows whether you’re Running, Paused, or Ready.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Record laps (splits).</strong>{" "}
-              Use <strong className="text-slate-900">Lap</strong> (or{" "}
-              <strong className="text-slate-900">L</strong>) to capture the time
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Record laps (splits).</strong>{" "}
+              Use <strong className="text-[var(--ilt-text-primary)]">Lap</strong> (or{" "}
+              <strong className="text-[var(--ilt-text-primary)]">L</strong>) to capture the time
               since the previous lap, plus the total time. Great for intervals,
               speedruns, drills, and practice sets.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Copy laps as CSV.</strong> Copy
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Copy laps as CSV.</strong> Copy
               your lap list to paste into Notes, Sheets, Excel, or a text file.
               The export includes{" "}
-              <strong className="text-slate-900">Lap #</strong>,{" "}
-              <strong className="text-slate-900">Split</strong>, and{" "}
-              <strong className="text-slate-900">Total</strong>.
+              <strong className="text-[var(--ilt-text-primary)]">Lap #</strong>,{" "}
+              <strong className="text-[var(--ilt-text-primary)]">Split</strong>, and{" "}
+              <strong className="text-[var(--ilt-text-primary)]">Total</strong>.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Fullscreen timing.</strong> Go
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Fullscreen timing.</strong> Go
               fullscreen for a big, readable stopwatch. In fullscreen, you can
               also{" "}
-              <strong className="text-slate-900">tap/click the time</strong> to
+              <strong className="text-[var(--ilt-text-primary)]">tap/click the time</strong> to
               start or pause.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Reset cleanly.</strong> Press{" "}
-              <strong className="text-slate-900">R</strong> (or use Reset) to
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Reset cleanly.</strong> Press{" "}
+              <strong className="text-[var(--ilt-text-primary)]">R</strong> (or use Reset) to
               clear elapsed time and laps. Useful between attempts so you don’t
               mix sets.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Keyboard-first flow.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Keyboard-first flow.</strong>{" "}
               Use Space, L, C, R, and F to do everything quickly. Tip: click the
               stopwatch once so the page captures shortcuts.
             </div>
           </div>
 
           {/* 3-step "do this now" guidance */}
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+          <div className="mt-4 ilt-surface-card p-4">
+            <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
               Quick use
             </div>
-            <ol className="mt-3 grid gap-2 text-sm text-slate-700 sm:grid-cols-3">
-              <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <strong className="text-slate-900">1) Start</strong>: press{" "}
-                <strong className="text-slate-900">Space</strong> (or Start) to
+            <ol className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)] sm:grid-cols-3">
+              <li className="ilt-surface-muted p-3">
+                <strong className="text-[var(--ilt-text-primary)]">1) Start</strong>: press{" "}
+                <strong className="text-[var(--ilt-text-primary)]">Space</strong> (or Start) to
                 begin timing.
               </li>
-              <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <strong className="text-slate-900">2) Add laps</strong>: press{" "}
-                <strong className="text-slate-900">L</strong> to record splits
+              <li className="ilt-surface-muted p-3">
+                <strong className="text-[var(--ilt-text-primary)]">2) Add laps</strong>: press{" "}
+                <strong className="text-[var(--ilt-text-primary)]">L</strong> to record splits
                 while you go.
               </li>
-              <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <strong className="text-slate-900">3) Copy or reset</strong>:
-                press <strong className="text-slate-900">C</strong> to copy CSV,
-                or <strong className="text-slate-900">R</strong> to start fresh.
+              <li className="ilt-surface-muted p-3">
+                <strong className="text-[var(--ilt-text-primary)]">3) Copy or reset</strong>:
+                press <strong className="text-[var(--ilt-text-primary)]">C</strong> to copy CSV,
+                or <strong className="text-[var(--ilt-text-primary)]">R</strong> to start fresh.
               </li>
             </ol>
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                 Best for
               </div>
-              <ul className="mt-3 grid gap-2 text-sm text-slate-700">
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">Intervals</strong>: track
+              <ul className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">Intervals</strong>: track
                   sets with consistent lap splits (work/rest, drills, rounds).
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">Speedcubing</strong>: time
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">Speedcubing</strong>: time
                   attempts and keep a lap list you can copy.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">
                     Practice + rehearsals
                   </strong>
                   : capture segments during music, speaking, or run-throughs.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">Any quick timing</strong>:
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">Any quick timing</strong>:
                   clean fullscreen view when you want a big display.
                 </li>
               </ul>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                 Related tools
               </div>
-              <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="ilt-surface-muted p-3">
                   Need a countdown instead of count-up?{" "}
                   <Link
                     to="/countdown-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Countdown Timer
                   </Link>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Want structured work/rest rounds?{" "}
                   <Link
                     to="/hiit-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     HIIT Timer
                   </Link>{" "}
                   or{" "}
                   <Link
                     to="/tabata-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Tabata Timer
                   </Link>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Prefer a dedicated speed solve layout?{" "}
                   <Link
                     to="/speedcubing-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Speedcubing Timer
                   </Link>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Need multiple timers at once for stations?{" "}
                   <Link
                     to="/multiple-timers"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Multiple Timers
                   </Link>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Want a clean big-screen timer view?{" "}
                   <Link
                     to="/fullscreen-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Fullscreen Timer
                   </Link>
@@ -200,40 +200,40 @@ export default function Disclaimer() {
           </div>
 
           {/* Technical / documentation content stays tucked away */}
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+          <div className="mt-4 ilt-surface-card p-4">
             <details className="group">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] ilt-focus-ring">
                 <span>How it works, shortcuts, and export notes</span>
-                <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+                <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
                   ▼
                 </span>
               </summary>
 
-              <div className="mt-2 grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              <div className="mt-2 grid gap-3 text-sm text-[var(--ilt-text-secondary)] sm:grid-cols-2">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Keyboard shortcuts
                   </div>
                   <ul className="mt-2 grid gap-2">
                     <li>
-                      <strong className="text-slate-900">Space</strong>: start /
+                      <strong className="text-[var(--ilt-text-primary)]">Space</strong>: start /
                       pause
                     </li>
                     <li>
-                      <strong className="text-slate-900">L</strong>: lap (split)
+                      <strong className="text-[var(--ilt-text-primary)]">L</strong>: lap (split)
                     </li>
                     <li>
-                      <strong className="text-slate-900">C</strong>: copy laps
+                      <strong className="text-[var(--ilt-text-primary)]">C</strong>: copy laps
                       (CSV)
                     </li>
                     <li>
-                      <strong className="text-slate-900">R</strong>: reset
+                      <strong className="text-[var(--ilt-text-primary)]">R</strong>: reset
                     </li>
                     <li>
-                      <strong className="text-slate-900">F</strong>: fullscreen
+                      <strong className="text-[var(--ilt-text-primary)]">F</strong>: fullscreen
                     </li>
                     <li>
-                      <strong className="text-slate-900">Esc</strong>: exit
+                      <strong className="text-[var(--ilt-text-primary)]">Esc</strong>: exit
                       fullscreen
                     </li>
                   </ul>
@@ -242,37 +242,37 @@ export default function Disclaimer() {
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Laps and splits
                   </div>
                   <p className="mt-2">
-                    <strong className="text-slate-900">Total</strong> is the
+                    <strong className="text-[var(--ilt-text-primary)]">Total</strong> is the
                     elapsed time since the start.{" "}
-                    <strong className="text-slate-900">Split</strong> is the
+                    <strong className="text-[var(--ilt-text-primary)]">Split</strong> is the
                     time since your previous lap. The lap list is shown with the
                     most recent lap first.
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4 sm:col-span-2">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Copy format
                   </div>
                   <p className="mt-2">
                     Copy uses a CSV header and one row per lap:{" "}
-                    <strong className="text-slate-900">
+                    <strong className="text-[var(--ilt-text-primary)]">
                       Lap, Split Time, Total Time
                     </strong>
                     . Times include milliseconds and use{" "}
-                    <strong className="text-slate-900">m:ss.mmm</strong> (or{" "}
-                    <strong className="text-slate-900">h:mm:ss.mmm</strong> for
+                    <strong className="text-[var(--ilt-text-primary)]">m:ss.mmm</strong> (or{" "}
+                    <strong className="text-[var(--ilt-text-primary)]">h:mm:ss.mmm</strong> for
                     long sessions).
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4 sm:col-span-2">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Fullscreen notes
                   </div>
                   <p className="mt-2">
@@ -285,8 +285,8 @@ export default function Disclaimer() {
             </details>
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <strong className="text-slate-900">Tip.</strong> For consistent lap
+          <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Tip.</strong> For consistent lap
             splits, press Lap at the same point each rep (for example, end of a
             round or the moment you finish a set). Then copy the CSV to compare
             attempts later.

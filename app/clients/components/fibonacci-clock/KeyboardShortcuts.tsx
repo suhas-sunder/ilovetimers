@@ -11,11 +11,11 @@ export default function KeyboardShortcuts() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-sky-700">
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
           Keyboard shortcuts
         </h2>
-        <p className="mt-2 leading-relaxed text-slate-700">
+        <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
           Click the clock card once, then use the keyboard to control it.
           Shortcuts won’t trigger while you’re typing in an input, select,
           textarea, or editable field.
@@ -24,27 +24,27 @@ export default function KeyboardShortcuts() {
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-left">
-                <th className="py-2 pr-4 font-semibold text-slate-900">Key</th>
-                <th className="py-2 font-semibold text-slate-900">Action</th>
+              <tr className="border-b border-[var(--ilt-border-subtle)] text-left">
+                <th className="py-2 pr-4 font-semibold text-[var(--ilt-text-primary)]">Key</th>
+                <th className="py-2 font-semibold text-[var(--ilt-text-primary)]">Action</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.key} className="border-b border-slate-100">
+                <tr key={r.key} className="border-b border-[var(--ilt-border-subtle)]">
                   <td className="py-2 pr-4">
-                    <kbd className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-xs text-slate-900">
+                    <kbd className="ilt-keycap px-2 py-1 font-mono text-xs text-[var(--ilt-text-primary)]">
                       {r.key}
                     </kbd>
                   </td>
-                  <td className="py-2 text-slate-700">{r.action}</td>
+                  <td className="py-2 text-[var(--ilt-text-secondary)]">{r.action}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+        <div className="mt-3 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
           Tip: if shortcuts do nothing, the clock card probably isn’t focused.
           Click the card once, then try again.
         </div>
@@ -60,37 +60,37 @@ export default function KeyboardShortcuts() {
 export function AccuracyAndPrivacySection() {
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-sky-700">
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
           Behavior and privacy
         </h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Runs locally in your browser
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               No sign-in required. Time rendering, time zone formatting, and the
               Fibonacci tile mapping happen in your browser.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               No saved history
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               This page doesn’t store a history of times you viewed or “saved
               clocks.” If you refresh, it simply shows the current time again.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Time zone behavior
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Local (device) uses your device time zone. Other options use IANA
               time zones (for example, America/New_York). If a selected zone
               can’t be resolved by your browser, the page falls back to local
@@ -98,11 +98,11 @@ export function AccuracyAndPrivacySection() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Rounding is intentional
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fibonacci minutes are shown in 5-minute steps and round to the
               nearest 5. If rounding hits :60, the hour carries +1 and minutes
               display as :00. The Rounding line on the page explains what you’re
@@ -110,22 +110,22 @@ export function AccuracyAndPrivacySection() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen is display-first
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fullscreen maximizes readability and keeps controls minimal. Exit
-              with <span className="font-semibold text-slate-900">Esc</span> or
+              with <span className="font-semibold text-[var(--ilt-text-primary)]">Esc</span> or
               the Exit button.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Live updates
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Live mode updates once per second. Explore mode freezes seconds at
               0 so the tile layout stays stable while you edit hour and minute.
             </p>
@@ -133,24 +133,24 @@ export function AccuracyAndPrivacySection() {
         </div>
 
         {/* Technical / implementation notes should be expandable */}
-        <details className="group mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-4 ilt-surface-card p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical notes (time zones + rounding + fullscreen)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Browser-related details, kept optional
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Time zone formatting
               </div>
               <p className="mt-1 leading-relaxed">
@@ -160,8 +160,8 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Minute rounding and carry
               </div>
               <p className="mt-1 leading-relaxed">
@@ -171,8 +171,8 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Tile assignment
               </div>
               <p className="mt-1 leading-relaxed">
@@ -182,8 +182,8 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen rules
               </div>
               <p className="mt-1 leading-relaxed">
@@ -194,8 +194,8 @@ export function AccuracyAndPrivacySection() {
           </div>
         </details>
 
-        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-          <strong className="text-slate-900">Note.</strong> Fibonacci time is a
+        <div className="mt-4 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
+          <strong className="text-[var(--ilt-text-primary)]">Note.</strong> Fibonacci time is a
           rounded display meant for a clean tile-based representation. Use the
           digital time panel when you need the exact second.
         </div>

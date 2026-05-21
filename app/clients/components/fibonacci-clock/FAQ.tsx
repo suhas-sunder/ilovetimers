@@ -78,42 +78,42 @@ export default function FAQ({
           If you want a standard clock with multiple zones, use{" "}
           <Link
             to="/world-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             World Clock
           </Link>
           . If you need a clean reference clock, use{" "}
           <Link
             to="/utc-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             UTC Clock
           </Link>
           . If you want to convert times between zones, use{" "}
           <Link
             to="/time-zone-converter"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Time Zone Converter
           </Link>
           . For a classic display, use{" "}
           <Link
             to="/digital-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Digital Clock
           </Link>{" "}
           or{" "}
           <Link
             to="/analog-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Analog Clock
           </Link>
           . For another “coded” clock style, try{" "}
           <Link
             to="/binary-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Binary Clock
           </Link>
@@ -142,15 +142,15 @@ export default function FAQ({
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)]">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

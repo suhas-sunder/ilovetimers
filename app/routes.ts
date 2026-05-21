@@ -2,6 +2,7 @@ import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
   index("routes/home.tsx"),
+  route("free-online-timers", "routes/free-online-timers.tsx"),
   route("about", "routes/about.tsx"),
   route("countdown-timer", "routes/countdown-timer.tsx"),
   route("stopwatch", "routes/stopwatch.tsx"),

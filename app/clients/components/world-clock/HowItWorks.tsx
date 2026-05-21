@@ -63,13 +63,13 @@ export default function HowItWorks({
   };
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-12">
+    <section className="space-y-4">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             World Clock is built for one job: show the current time in several
             cities, clearly, without forcing you to do mental offsets. It is
             designed for scheduling, coordination, and quick “is it a reasonable
@@ -81,13 +81,13 @@ export default function HowItWorks({
 
         {/* Core explanation (SEO + intent, no fluff) */}
         <div className="mt-4 grid gap-4">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-700">
+          <div className="ilt-surface-muted p-4 text-[var(--ilt-text-secondary)]">
             <p className="leading-relaxed">
               This page shows your{" "}
-              <span className="font-semibold text-slate-900">local time</span>{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">local time</span>{" "}
               and a set of selected city cards. Each card is tied to an official
               time zone identifier (for example{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 America/Toronto
               </span>
               ), so the displayed time updates correctly when daylight saving
@@ -105,47 +105,47 @@ export default function HowItWorks({
           </div>
 
           <div className="grid gap-3 md:grid-cols-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 1) Select cities
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Click chips under{" "}
-                <span className="font-semibold text-slate-900">Popular</span> to
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Popular</span> to
                 add or remove cities. Selected cities show up as cards.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 2) Search quickly
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Type a city name or region text like{" "}
-                <span className="font-semibold text-slate-900">Europe</span> or{" "}
-                <span className="font-semibold text-slate-900">America</span> to
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Europe</span> or{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">America</span> to
                 narrow the list, then click the city chip.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 3) Set format
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Toggle{" "}
-                <span className="font-semibold text-slate-900">24-hour</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">24-hour</span>{" "}
                 and{" "}
-                <span className="font-semibold text-slate-900">Seconds</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Seconds</span>{" "}
                 based on how you read times and how precise you need to be.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 4) Copy or fullscreen
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Use Copy to share your list as text, or Fullscreen for a big
                 view that works well on a second monitor.
               </p>
@@ -155,10 +155,10 @@ export default function HowItWorks({
 
         {/* Examples with real numbers users see */}
         <div className="mt-6">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Examples with real scenarios and numbers
           </h3>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             These examples mirror what people actually do with a world clock.
             The times are concrete so you can see how the page helps you avoid
             common mistakes.
@@ -166,62 +166,62 @@ export default function HowItWorks({
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {/* Scenario A */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario A: Booking a call across Toronto, London, and Tokyo
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are in Toronto and want to propose a time that is not
                 painful for London and Tokyo. You add{" "}
-                <span className="font-semibold text-slate-900">Toronto</span>,{" "}
-                <span className="font-semibold text-slate-900">London</span>,
-                and <span className="font-semibold text-slate-900">Tokyo</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Toronto</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">London</span>,
+                and <span className="font-semibold text-[var(--ilt-text-primary)]">Tokyo</span>.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What you do on this page
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Toggle{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       24-hour
                     </span>{" "}
                     on to reduce AM/PM slips. Keep{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       Seconds
                     </span>{" "}
                     off for a calmer display while you decide.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Example check (numbers)
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     If Toronto shows{" "}
-                    <span className="font-semibold text-slate-900">09:30</span>,
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">09:30</span>,
                     London might show{" "}
-                    <span className="font-semibold text-slate-900">14:30</span>,
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">14:30</span>,
                     and Tokyo might show{" "}
-                    <span className="font-semibold text-slate-900">23:30</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">23:30</span>.
                     You immediately see that a “morning Toronto” meeting becomes
                     late evening in Tokyo.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What to do next
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     If you need to convert a specific proposed time (for example
                     “Tuesday 10:00 Toronto”), use{" "}
                     <Link
                       to="/time-zone-converter"
-                      className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                      className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                     >
                       Time Zone Converter
                     </Link>{" "}
@@ -232,53 +232,53 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario B */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario B: Daily coordination with a small “core” city set
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You work with two teams and one client region every day. Instead
                 of scrolling through a long list, you keep a stable set of 4 to
                 6 cities that you can scan in one glance.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Example city set
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Toronto (you), New York (US East), Los Angeles (US West),
                     London (EU), Singapore (APAC).
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Why it helps (numbers)
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     If Toronto reads{" "}
-                    <span className="font-semibold text-slate-900">16:05</span>,
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">16:05</span>,
                     Los Angeles might be{" "}
-                    <span className="font-semibold text-slate-900">13:05</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">13:05</span>.
                     That quick difference helps you avoid sending “quick end of
                     day” requests to the West Coast while they still have a full
                     afternoon.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Presentation tip
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Click{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       Fullscreen
                     </span>{" "}
                     for a wall-board view on a second monitor. Press{" "}
-                    <span className="font-semibold text-slate-900">F</span> to
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">F</span> to
                     toggle it quickly.
                   </div>
                 </div>
@@ -286,23 +286,23 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario C */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario C: Copy a “right now” time snapshot into a message
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are trying to coordinate quickly in chat. Instead of typing
                 times manually, you select the cities and copy the list.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What Copy produces
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     A plain-text list like:
-                    <div className="mt-2 rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-xs text-slate-900">
+                    <div className="mt-2 ilt-surface-card px-3 py-2 font-mono text-xs text-[var(--ilt-text-primary)]">
                       Toronto: 09:30 (America/Toronto)
                       <br />
                       London: 14:30 (Europe/London)
@@ -312,11 +312,11 @@ export default function HowItWorks({
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     When to use seconds
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     If you are syncing a handoff (for example “start exactly at
                     10:00”), turn seconds on so you can see the boundary
                     clearly.
@@ -326,22 +326,22 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario D */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario D: Avoid a DST surprise without doing any math
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Daylight saving time changes are where manual offsets fail. This
                 page relies on time zones, so the displayed times remain correct
                 when regions shift.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What you do
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Keep the cities you coordinate with selected year-round.
                     When DST changes, the displayed time relationships update
                     automatically, and you do not need to remember which region
@@ -349,15 +349,15 @@ export default function HowItWorks({
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Useful companion
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     If you work from a UTC schedule, keep{" "}
                     <Link
                       to="/utc-clock"
-                      className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                      className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                     >
                       UTC Clock
                     </Link>{" "}
@@ -370,14 +370,14 @@ export default function HowItWorks({
         </div>
 
         {/* Practical clarifications */}
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="text-lg font-semibold text-sky-700">
+        <div className="mt-6 ilt-surface-card p-4">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Small choices that make the page more useful
           </h3>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Use 24-hour time for scheduling
               </div>
               <p className="mt-2 leading-relaxed">
@@ -387,8 +387,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Keep seconds off unless they matter
               </div>
               <p className="mt-2 leading-relaxed">
@@ -398,8 +398,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Use Reset and Clear strategically
               </div>
               <p className="mt-2 leading-relaxed">
@@ -409,8 +409,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Use fullscreen as a dashboard
               </div>
               <p className="mt-2 leading-relaxed">
@@ -423,24 +423,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical content stays expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-white p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-card p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical notes (updates, formatting, copy, fullscreen)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional details and troubleshooting for power users
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Update timing</div>
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Update timing</div>
               <p className="mt-1 leading-relaxed">
                 With seconds enabled, the clock updates on the next second
                 boundary so it stays visually aligned. With seconds disabled, it
@@ -448,8 +448,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Time zone formatting
               </div>
               <p className="mt-1 leading-relaxed">
@@ -459,8 +459,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Copy permissions
               </div>
               <p className="mt-1 leading-relaxed">
@@ -470,8 +470,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -484,28 +484,28 @@ export default function HowItWorks({
         </details>
 
         {/* Footer helper links, on-intent */}
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">
+        <div className="mt-6 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">
             Need a different tool?
           </span>{" "}
           For converting a specific scheduled time, use{" "}
           <Link
             to="/time-zone-converter"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Time Zone Converter
           </Link>
           . For a UTC anchor, use{" "}
           <Link
             to="/utc-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             UTC Clock
           </Link>
           . For a single big clock view, use{" "}
           <Link
             to="/digital-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Digital Clock
           </Link>

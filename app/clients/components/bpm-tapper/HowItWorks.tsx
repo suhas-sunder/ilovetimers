@@ -61,7 +61,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -75,7 +75,7 @@ export default function HowItWorks({
   }) => (
     <a
       href={href}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </a>
@@ -90,13 +90,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="ilt-surface-card p-5">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="font-mono text-xs whitespace-pre-wrap text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="font-mono text-xs whitespace-pre-wrap text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -107,13 +107,13 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-2 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               Tap BPM is a fast, no-setup tempo checker. You tap the beat, the
               page estimates beats per minute, and you can lock or copy the
               result when it feels right. It’s built for real usage: checking a
@@ -121,27 +121,27 @@ export default function HowItWorks({
               or sanity-checking timing in milliseconds per beat.
             </p>
 
-            <p className="mt-3 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This page is not a tutorial about music theory. The goal is
               practical: get a reliable BPM from taps, avoid accidental pauses
               messing up the number, and keep the result visible long enough to
               use it. If you want audible clicks at a fixed tempo, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/metronome")}
               >
                 Metronome
               </a>
               . If you want plain timing instead of tempo, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/stopwatch")}
               >
                 Stopwatch
               </a>{" "}
               or{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/countdown-timer")}
               >
                 Countdown Timer
@@ -151,22 +151,22 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Tap anywhere
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Auto-reset
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Hold + lock
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               ms/beat
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Copy result
             </span>
           </div>
@@ -174,63 +174,63 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fast start (what most people want)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Tap a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Tap a
                 steady beat anywhere on the tap area. Aim for at least{" "}
-                <span className="font-semibold text-slate-900">6–10 taps</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">6–10 taps</span>{" "}
                 if you want the number to settle.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Watch
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Watch
                 the BPM stabilize. The page shows{" "}
-                <span className="font-semibold text-slate-900">ms/beat</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">ms/beat</span>{" "}
                 and quick references for 8ths and 16ths.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Press{" "}
                 <Kbd>C</Kbd> to copy, or use{" "}
-                <span className="font-semibold text-slate-900">Lock</span> to
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Lock</span> to
                 freeze the result on screen.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> If you
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> If you
                 pause, the tool auto-ends the session after{" "}
-                <span className="font-semibold text-slate-900">Reset</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Reset</span>.
                 After that, it holds the last result for{" "}
-                <span className="font-semibold text-slate-900">Hold</span> (or
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Hold</span> (or
                 clears immediately if Hold is off).
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> For
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> For
                 distance viewing, press <Kbd>F</Kbd> for fullscreen. Press{" "}
                 <Kbd>Esc</Kbd> to exit.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What “Reset”, “Hold”, and “Lock” actually do
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                <span className="font-semibold text-slate-900">Reset</span>{" "}
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Reset</span>{" "}
                 controls how long you can pause before the tap session ends. If
                 you stop tapping longer than Reset, the tool stops listening for
                 beats and treats the current BPM as the last result.
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                <span className="font-semibold text-slate-900">Hold</span>{" "}
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Hold</span>{" "}
                 controls how long that last result stays visible after the
                 session ends. This is for normal workflow: glance, copy, lock,
                 or start again.
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                <span className="font-semibold text-slate-900">Lock</span>{" "}
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Lock</span>{" "}
                 freezes the result and disables tapping until you unlock. Use it
                 when you want a stable number on screen without worrying about
                 accidental clicks or auto-clear.
@@ -238,11 +238,11 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Choose settings based on your situation
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 If you’re tapping a track with short pauses between phrases, set{" "}
                 <span className="font-semibold">Reset</span> longer (like
@@ -264,8 +264,8 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Practical tip:
               </span>{" "}
               If you’re consistently “late” or “early” on one beat, ignore the
@@ -277,11 +277,11 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What you’ll see while tapping
           </h3>
 
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             The large number is your estimated BPM. Under it, you’ll see the
             timing breakdown: milliseconds per beat (ms/beat), and quick
             references for ms/8th and ms/16th. Those are computed from the same
@@ -292,7 +292,7 @@ export default function HowItWorks({
             the number you actually apply.
           </p>
 
-          <p className="mt-3 text-slate-700 leading-relaxed">
+          <p className="mt-3 text-[var(--ilt-text-secondary)] leading-relaxed">
             The session panel shows how many taps you made, how many intervals
             were used, and a simple stability label. That label is not a score
             to chase. It’s a quick signal: if you see “Wobbly,” you probably
@@ -300,11 +300,11 @@ export default function HowItWorks({
             “Steady,” you can trust the estimate more.
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Real scenarios with numbers you might actually get
           </h3>
 
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             These examples are deliberately specific and realistic. They show
             the kind of BPM swings you see early on, how ms/beat maps to BPM,
             and when Lock and Copy become useful.
@@ -384,11 +384,11 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen, copy, and “keep it usable”
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fullscreen is for readability. The BPM becomes the focal point,
               with quick controls still available. This is useful in rehearsal,
               teaching, or studio setups where you are not sitting directly at
@@ -399,25 +399,25 @@ export default function HowItWorks({
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>F</Kbd> fullscreen
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>R</Kbd> reset
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>C</Kbd> copy
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Esc</Kbd> exit
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Space</Kbd>/<Kbd>Enter</Kbd> tap (optional)
               </span>
             </div>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <span className="font-semibold text-slate-900">Copy tip:</span> If
+            <div className="mt-4 ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Copy tip:</span> If
               you are comparing tempos, lock the first result, copy it, then
               unlock and tap the second phrase. Recent results lets you copy a
               previous reading quickly without re-tapping.
@@ -426,19 +426,19 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same intent, different output)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 Use Tap BPM to discover a tempo. Use a metronome when you want
                 consistent clicks, or a timer when you want elapsed time or a
                 countdown.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>F</Kbd> <Kbd>R</Kbd> <Kbd>C</Kbd> <Kbd>Esc</Kbd>
             </div>
           </div>
@@ -461,24 +461,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (BPM math, filtering, stability, persistence)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 How the estimate is produced and why results can wobble early on
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 BPM calculation
               </div>
               <p className="mt-1 leading-relaxed">
@@ -489,8 +489,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Interval filtering
               </div>
               <p className="mt-1 leading-relaxed">
@@ -500,8 +500,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Stability label
               </div>
               <p className="mt-1 leading-relaxed">
@@ -511,8 +511,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Reset, hold, and lock behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -523,8 +523,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Local persistence
               </div>
               <p className="mt-1 leading-relaxed">
@@ -539,11 +539,11 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Want consistent clicks?</strong>{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Want consistent clicks?</strong>{" "}
             Tap to find the BPM, then use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/metronome")}
             >
               Metronome
@@ -551,17 +551,17 @@ export default function HowItWorks({
             to practice with a steady pulse.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Need pure timing?</strong> Use{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Need pure timing?</strong> Use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/stopwatch")}
             >
               Stopwatch
             </a>{" "}
             for elapsed time or{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/countdown-timer")}
             >
               Countdown Timer

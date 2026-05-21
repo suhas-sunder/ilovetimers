@@ -2,7 +2,21 @@
 import type { Route } from "./+types/work-hours-calculator";
 import { json } from "@remix-run/node";
 import { useCallback, useMemo, useState } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  Field,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  Select,
+  SeoBand,
+  SettingsPanel,
+  ShortcutHint,
+  StatusChip as MiniPill,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
 import HowItWorks from "~/clients/components/work-hours-calculator/HowItWorks";
 import Disclaimer from "~/clients/components/work-hours-calculator/Disclaimer";
 import FAQ from "~/clients/components/work-hours-calculator/FAQ";
@@ -166,66 +180,6 @@ function calcWorkedMinutes(
 }
 
 /* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-}) => (
-  <div
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const MiniPill = ({ children }: { children: React.ReactNode }) => (
-  <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700">
-    {children}
-  </span>
-);
-
-/* =========================================================
    CARD
 ========================================================= */
 function WorkHoursCalculatorCard() {
@@ -328,55 +282,15 @@ function WorkHoursCalculatorCard() {
     : "Fix inputs";
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown}>
-      <div className="timer-first-stack flex h-full flex-col">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-xl font-extrabold text-sky-700">
-            Work Hours Calculator
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Enter start, end, and subtract a break. Supports overnight shifts.
-          </p>
-
-          {summaryLine ? (
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              <MiniPill>{summaryLine}</MiniPill>
-              {result.ok && result.overnight ? (
-                <MiniPill>Overnight</MiniPill>
-              ) : null}
-              {roundTo > 0 ? (
-                <MiniPill>Rounded to {roundTo} min</MiniPill>
-              ) : null}
-              <MiniPill>{statusLabel}</MiniPill>
-            </div>
-          ) : (
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              <MiniPill>{statusLabel}</MiniPill>
-            </div>
-          )}
-        </div>
-
-        <div className="ml-auto flex flex-wrap items-center gap-3">
-          <Btn
-            kind="ghost"
-            onClick={() => result.ok && copy("Copied", copyPayload)}
-            disabled={!result.ok}
-            className="py-2"
-          >
-            Copy summary
-          </Btn>
-          <Btn kind="ghost" onClick={reset} className="py-2">
-            Reset
-          </Btn>
-        </div>
-      </div>
+    <Card tabIndex={0} onKeyDown={onKeyDown} className="p-4 sm:p-6">
+      <div className="timer-result-stack flex h-full flex-col">
 
       {/* Big Result Display */}
       <div
+        data-display-stage
         className={[
-          "timer-display-surface mt-4 flex flex-col items-center justify-start rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center sm:p-6",
-          "text-slate-950",
+          "timer-display-surface mt-4 flex flex-col items-center justify-start ilt-surface-muted p-4 text-center sm:p-6",
+          "text-[var(--ilt-text-primary)]",
         ].join(" ")}
         style={{ minHeight: "clamp(320px, 42svh, 560px)" }}
         aria-live="polite"
@@ -384,59 +298,62 @@ function WorkHoursCalculatorCard() {
         {result.ok ? (
           <div className="flex w-full flex-col items-center gap-4">
             <div>
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                Paid time (after break)
-              </div>
               <div className="mt-2 flex flex-wrap items-baseline justify-center gap-4">
-                <div className="font-mono font-extrabold leading-none text-[76px] sm:text-[144px]">
+                <div
+                  data-primary-display-value
+                  className="timer-result-value font-mono font-extrabold leading-none text-[76px] sm:text-[144px]"
+                >
                   {paidHHMM}
                 </div>
-                <div className="text-lg font-bold text-slate-700 sm:text-xl">
+                <div className="text-lg font-bold text-[var(--ilt-text-secondary)] sm:text-xl">
                   {paidDec} hrs
                 </div>
+              </div>
+              <div className="timer-result-label ilt-content-label">
+                Paid time (after break)
               </div>
             </div>
 
             <div className="grid w-full max-w-5xl gap-2 sm:grid-cols-3">
-              <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
+              <div className="timer-result-panel ilt-surface-muted px-3 py-2">
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
                   Total shift
                 </div>
-                <div className="text-sm font-extrabold text-slate-900">
+                <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
                   {shiftHHMM}
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
+              <div className="timer-result-panel ilt-surface-muted px-3 py-2">
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
                   Break
                 </div>
-                <div className="text-sm font-extrabold text-slate-900">
+                <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
                   {result.breakMin} min
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
+              <div className="timer-result-panel ilt-surface-muted px-3 py-2">
+                <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
                   Overnight?
                 </div>
-                <div className="text-sm font-extrabold text-slate-900">
+                <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
                   {result.overnight ? "Yes" : "No"}
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="text-sm font-semibold text-slate-700">
+          <div className="text-sm font-semibold text-[var(--ilt-text-secondary)]">
             {result.error}
           </div>
         )}
       </div>
 
       {/* Inputs */}
-      <div className="timer-settings-panel mt-4 grid gap-4 lg:grid-cols-3">
+      <SettingsPanel className="mt-4 grid gap-4 lg:grid-cols-3">
         <label className="block">
-          <div className="text-sm font-extrabold text-slate-900">
+          <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
             Start time
           </div>
           <div className="mt-1 flex items-center gap-2">
@@ -444,40 +361,38 @@ function WorkHoursCalculatorCard() {
               type="time"
               value={start}
               onChange={(e) => setStart(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              className="w-full ilt-input-control px-3 py-2 text-lg font-bold"
             />
             <Btn kind="ghost" onClick={setNowStart} className="px-3 py-2">
               Now
             </Btn>
           </div>
-          <div className="mt-1 text-xs text-slate-600">
+          <div className="mt-1 ilt-helper-text">
             Shortcut: <span className="font-semibold">S</span> sets Start to now
           </div>
         </label>
 
         <label className="block">
-          <div className="text-sm font-extrabold text-slate-900">End time</div>
+          <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">End time</div>
           <div className="mt-1 flex items-center gap-2">
             <input
               type="time"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+              className="w-full ilt-input-control px-3 py-2 text-lg font-bold"
             />
             <Btn kind="ghost" onClick={setNowEnd} className="px-3 py-2">
               Now
             </Btn>
           </div>
-          <div className="mt-1 text-xs text-slate-600">
+          <div className="mt-1 ilt-helper-text">
             Shortcut: <span className="font-semibold">E</span> sets End to now
           </div>
         </label>
 
-        <label className="block">
-          <div className="text-sm font-extrabold text-slate-900">
-            Subtract break (minutes)
-          </div>
-          <input
+        <div className="block">
+          <Field
+            label="Subtract break (minutes)"
             type="number"
             inputMode="numeric"
             min={0}
@@ -488,86 +403,61 @@ function WorkHoursCalculatorCard() {
               const next = raw === "" ? 0 : Number(raw);
               setBreakMin(clamp(Number.isFinite(next) ? next : 0, 0, 24 * 60));
             }}
-            className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
           />
-          <div className="mt-2 flex flex-wrap gap-2">
+          <PresetGroup className="mt-2" title="Break presets">
             {[0, 15, 30, 45, 60].map((b) => (
-              <button
+              <Chip
                 key={b}
-                type="button"
                 onClick={() => setBreakMin(b)}
-                className={[
-                  "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-                  b === breakMin
-                    ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                    : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                ].join(" ")}
+                active={b === breakMin}
               >
                 {b}m
-              </button>
+              </Chip>
             ))}
-          </div>
-        </label>
-      </div>
+          </PresetGroup>
+        </div>
+      </SettingsPanel>
 
       {/* Options */}
-      <div className="timer-settings-panel mt-4 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-          <div className="text-sm font-extrabold text-slate-900">Options</div>
+      <SettingsPanel className="mt-4 grid gap-4 lg:grid-cols-2">
+        <div className="timer-result-panel ilt-surface-muted p-4">
+          <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Options</div>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <label className="block">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                Decimal places
-              </div>
-              <select
+            <Select
+                label="Decimal places"
                 value={decimalPlaces}
                 onChange={(e) => setDecimalPlaces(Number(e.target.value))}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               >
                 {[0, 1, 2, 3, 4].map((d) => (
                   <option key={d} value={d}>
                     {d}
                   </option>
                 ))}
-              </select>
-            </label>
+              </Select>
 
-            <label className="block">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                Round paid time
-              </div>
-              <select
+            <Select
+                label="Round paid time"
                 value={roundTo}
                 onChange={(e) => setRoundTo(Number(e.target.value) as any)}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               >
                 <option value={0}>No rounding</option>
                 <option value={5}>Nearest 5 min</option>
                 <option value={10}>Nearest 10 min</option>
                 <option value={15}>Nearest 15 min</option>
-              </select>
-            </label>
+              </Select>
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-            <div className="font-extrabold text-slate-900">Shortcuts</div>
-            <ul className="mt-2 list-disc space-y-1 pl-5">
-              <li>
-                <strong>S</strong> start now, <strong>E</strong> end now
-              </li>
-              <li>
-                <strong>C</strong> copy paid time, <strong>R</strong> reset
-              </li>
-            </ul>
-          </div>
+          <ShortcutHint className="mt-4 text-left sm:text-left">
+            S start now / E end now / C copy paid time / R reset
+          </ShortcutHint>
         </div>
 
-        <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+        <div className="timer-result-panel ilt-surface-muted p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <div className="text-sm font-extrabold text-slate-900">Copy</div>
-              <div className="mt-1 text-xs text-slate-600">
+              <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Copy</div>
+              <div className="mt-1 ilt-helper-text">
                 Copy a compact payroll string
               </div>
             </div>
@@ -583,14 +473,14 @@ function WorkHoursCalculatorCard() {
             </Btn>
           </div>
 
-          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+          <div className="timer-result-panel mt-3 ilt-surface-card p-3 text-sm text-[var(--ilt-text-secondary)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="text-xs font-semibold text-slate-600">
+              <div className="ilt-helper-text font-semibold">
                 Tip: click the card once so shortcuts work.
               </div>
-              <div className="text-xs text-slate-600">
+              <div className="ilt-helper-text">
                 {lastCopied ? (
-                  <span className="rounded-lg border border-slate-200 bg-white px-2 py-1 font-semibold text-slate-900">
+                  <span className="ilt-surface-card px-2 py-1 font-semibold text-[var(--ilt-text-primary)]">
                     {lastCopied}
                   </span>
                 ) : (
@@ -600,7 +490,7 @@ function WorkHoursCalculatorCard() {
             </div>
           </div>
 
-          <div className="mt-3 flex flex-wrap gap-2">
+          <SecondaryActionRow className="timer-result-actions mt-3 sm:justify-start">
             <Btn
               kind="ghost"
               onClick={() => result.ok && copy("Copied", copyPayload)}
@@ -611,9 +501,9 @@ function WorkHoursCalculatorCard() {
             <Btn kind="ghost" onClick={reset}>
               Reset
             </Btn>
-          </div>
+          </SecondaryActionRow>
         </div>
-      </div>
+      </SettingsPanel>
       </div>
     </Card>
   );
@@ -656,32 +546,25 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
-        <div>
-          <WorkHoursCalculatorCard />
-        </div>
+      <ToolHero
+        display={<WorkHoursCalculatorCard />}
+        title="Work Hours Calculator"
+        description="Calculate paid work time from start and end times, subtract breaks, support overnight shifts, and copy payroll-friendly totals."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Work Hours Calculator</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

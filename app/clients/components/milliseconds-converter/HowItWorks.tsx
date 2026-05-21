@@ -67,7 +67,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -81,7 +81,7 @@ export default function HowItWorks({
   }) => (
     <Link
       to={to}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </Link>
@@ -96,13 +96,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="ilt-surface-card p-5">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="whitespace-pre-wrap font-mono text-xs text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="whitespace-pre-wrap font-mono text-xs text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -113,30 +113,30 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-2 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               This{" "}
-              <span className="font-semibold text-slate-900">
-                Milliseconds Converter
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
+                converter
               </span>{" "}
               is built for one job: convert{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 milliseconds (ms)
               </span>{" "}
               to{" "}
-              <span className="font-semibold text-slate-900">seconds (s)</span>{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">seconds (s)</span>{" "}
               and convert seconds back to milliseconds, instantly. It is
               designed for the moments when you do not want to “do the math in
               your head” or fight rounding issues, and you want a result you can
               copy into a ticket, note, spec, spreadsheet, or code comment.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               The interface is intentionally minimal: you choose a direction (ms
               → seconds or seconds → ms), paste a value, and the other value
               updates as soon as the input is valid. The output is built to be
@@ -145,7 +145,7 @@ export default function HowItWorks({
               conversion as a decimal shift whenever possible.
             </p>
 
-            <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               This matters most in real workflows: you might be interpreting a
               latency figure from logs, comparing a frame-time number, entering
               a timeout value in a configuration file, or cleaning numbers
@@ -158,22 +158,22 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               ms ⇄ seconds
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Exact decimals
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Flexible input
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Copy line
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Examples
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Reset
             </span>
           </div>
@@ -181,85 +181,85 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Quick use (what most people do)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Choose
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Choose
                 a direction:{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   ms → seconds
                 </span>{" "}
                 if your number is in milliseconds, or{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   seconds → ms
                 </span>{" "}
                 if your number is in seconds.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Paste a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Paste a
                 value. Decimals are allowed, and commas are ignored (so{" "}
-                <span className="font-semibold text-slate-900">1,500</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1,500</span>{" "}
                 works).
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Read
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Read
                 the result instantly. If the input is not valid, the result
                 shows a clear “enter a valid value” message.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Click{" "}
-                <span className="font-semibold text-slate-900">Copy</span> to
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Click{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Copy</span> to
                 copy a full conversion line, including both units (for example{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   1500 ms = 1.5 seconds
                 </span>
                 ).
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> Tap a
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> Tap a
                 quick example to populate the tool, or use Reset to return to
                 the common baseline{" "}
-                <span className="font-semibold text-slate-900">1000 ms</span> ↔{" "}
-                <span className="font-semibold text-slate-900">1</span> second.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1000 ms</span> ↔{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1</span> second.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What “exact decimals” means on this page
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Many calculators convert using floating-point math and then
                 round, which can introduce tiny artifacts. This tool avoids that
                 by performing conversions by shifting the decimal point by{" "}
-                <span className="font-semibold text-slate-900">3 places</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3 places</span>{" "}
                 when possible. Converting milliseconds to seconds is the same as
                 dividing by{" "}
-                <span className="font-semibold text-slate-900">1000</span>, and
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1000</span>, and
                 converting seconds to milliseconds is multiplying by 1000. A
                 decimal shift captures that cleanly:{" "}
-                <span className="font-semibold text-slate-900">16.67</span> ms
+                <span className="font-semibold text-[var(--ilt-text-primary)]">16.67</span> ms
                 becomes{" "}
-                <span className="font-semibold text-slate-900">0.01667</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">0.01667</span>{" "}
                 seconds, and{" "}
-                <span className="font-semibold text-slate-900">0.01667</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">0.01667</span>{" "}
                 seconds becomes{" "}
-                <span className="font-semibold text-slate-900">16.67</span> ms.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">16.67</span> ms.
                 The output is then normalized (unneeded trailing zeros removed)
                 so it is easy to copy and compare.
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Practical checklist
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 If nothing converts, check the input: it must be numeric
                 (digits, optional sign, optional decimal point). Commas are
@@ -267,9 +267,9 @@ export default function HowItWorks({
               </li>
               <li>
                 Use examples for common values like{" "}
-                <span className="font-semibold text-slate-900">1000</span> ms (1
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1000</span> ms (1
                 second) and{" "}
-                <span className="font-semibold text-slate-900">500</span> ms
+                <span className="font-semibold text-[var(--ilt-text-primary)]">500</span> ms
                 (0.5 s).
               </li>
               <li>
@@ -279,7 +279,7 @@ export default function HowItWorks({
               <li>
                 Need to work with minutes/hours/days too? Use{" "}
                 <Link
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   to="/time-calculator"
                 >
                   Time Calculator
@@ -289,7 +289,7 @@ export default function HowItWorks({
               <li>
                 Timing something live? Use{" "}
                 <Link
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   to="/stopwatch"
                 >
                   Stopwatch
@@ -298,8 +298,8 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Quick keys:</span>{" "}
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Quick keys:</span>{" "}
               <Kbd>C</Kbd> copy, <Kbd>R</Kbd> reset (if your page wiring
               supports shortcuts).
             </div>
@@ -308,11 +308,11 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What this converter is optimized for
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             Milliseconds show up everywhere because they are small enough to
             represent delays, frame times, timeouts, polling intervals, and
             latency numbers. Seconds show up everywhere because they are easier
@@ -322,31 +322,31 @@ export default function HowItWorks({
             confirm what a number “means” in human terms.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
             This converter focuses on the practical parts of that workflow. It
             accepts flexible input (including values like{" "}
-            <span className="font-semibold text-slate-900">.5</span> or{" "}
-            <span className="font-semibold text-slate-900">12.</span>), cleans
+            <span className="font-semibold text-[var(--ilt-text-primary)]">.5</span> or{" "}
+            <span className="font-semibold text-[var(--ilt-text-primary)]">12.</span>), cleans
             commas for pasted values, performs the conversion with exact decimal
             behavior, and produces a copyable line that includes both units so
             you do not lose context when pasting.
           </p>
 
-          <p className="mt-3 leading-relaxed text-slate-700">
+          <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">
             The copy line is intentionally explicit. When you paste a value into
             a note or ticket, “0.25” by itself is ambiguous. A line like{" "}
-            <span className="font-semibold text-slate-900">
+            <span className="font-semibold text-[var(--ilt-text-primary)]">
               250 ms = 0.25 seconds
             </span>{" "}
             carries the meaning with it. If you are scanning a list later, you
             know which side is which without re-checking the original input.
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Scenarios with concrete examples (what you will see here)
           </h3>
 
-          <p className="mt-2 leading-relaxed text-slate-700">
+          <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             The examples below match what this page does: validate your input,
             show the converted value immediately, and provide a copyable line.
             Each scenario uses numbers that people commonly encounter when
@@ -451,35 +451,35 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Pick the right page when your goal is slightly different
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               This route is specifically for milliseconds ↔ seconds conversion.
               If you need to add or subtract durations across multiple units,
               use the time calculator. If you want to measure real elapsed time,
               use stopwatch. If you want to run multiple timers at once, use
               multiple timers.
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Time math:{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/time-calculator"
               >
                 Time Calculator
               </Link>
               . Live timing:{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/stopwatch"
               >
                 Stopwatch
               </Link>
               . Multiple timers:{" "}
               <Link
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 to="/multiple-timers"
               >
                 Multiple Timers
@@ -490,17 +490,17 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same site, different job)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 Use the closest match to what you are trying to do.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Common baseline: <Kbd>1000</Kbd> ms = <Kbd>1</Kbd> second
             </div>
           </div>
@@ -515,37 +515,37 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (accepted formats, validation, exact
                 conversion)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional notes if you rely on exact parsing behavior
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Accepted numeric formats
               </div>
               <p className="mt-1 leading-relaxed">
                 Inputs support optional sign and decimal point. Examples:{" "}
-                <span className="font-semibold text-slate-900">1000</span>,{" "}
-                <span className="font-semibold text-slate-900">12.</span>,{" "}
-                <span className="font-semibold text-slate-900">.5</span>,{" "}
-                <span className="font-semibold text-slate-900">-250</span>,{" "}
-                <span className="font-semibold text-slate-900">0.01667</span>,{" "}
-                <span className="font-semibold text-slate-900">+10.2</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1000</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">12.</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">.5</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">-250</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">0.01667</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">+10.2</span>.
                 Commas in pasted values are ignored (for example{" "}
-                <span className="font-semibold text-slate-900">1,500</span>).
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1,500</span>).
               </p>
               <p className="mt-2 leading-relaxed">
                 If the input contains letters, currency symbols, or multiple
@@ -553,13 +553,13 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Exact conversion behavior
               </div>
               <p className="mt-1 leading-relaxed">
                 ms → seconds shifts the decimal point left by{" "}
-                <span className="font-semibold text-slate-900">3</span> places
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3</span> places
                 (÷1000). seconds → ms shifts right by 3 places (×1000). This
                 avoids typical floating-point rounding artifacts and keeps
                 decimal text stable for copy/paste.
@@ -567,18 +567,18 @@ export default function HowItWorks({
               <p className="mt-2 leading-relaxed">
                 Output is normalized: leading zeros are cleaned, and unnecessary
                 trailing zeros are trimmed (for example{" "}
-                <span className="font-semibold text-slate-900">001.5000</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">001.5000</span>{" "}
                 becomes{" "}
-                <span className="font-semibold text-slate-900">1.5</span>).
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1.5</span>).
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">Copy behavior</div>
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Copy behavior</div>
               <p className="mt-1 leading-relaxed">
                 Copy writes a formatted conversion line to your clipboard (for
                 example{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   0.25 seconds = 250 ms
                 </span>
                 ). If clipboard permission is blocked, the page attempts a safe
@@ -590,10 +590,10 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Doing time math?</strong> Use{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Doing time math?</strong> Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/time-calculator"
             >
               Time Calculator
@@ -601,11 +601,11 @@ export default function HowItWorks({
             to add/subtract durations across units.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Timing something live?</strong>{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Timing something live?</strong>{" "}
             Use{" "}
             <Link
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               to="/stopwatch"
             >
               Stopwatch
@@ -615,8 +615,8 @@ export default function HowItWorks({
         </div>
 
         {/* Small SEO anchor text without being bloggy */}
-        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-          <strong className="text-slate-900">In one sentence:</strong> this
+        <div className="mt-6 ilt-surface-muted px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+          <strong className="text-[var(--ilt-text-primary)]">In one sentence:</strong> this
           milliseconds converter instantly converts ms to seconds and seconds to
           ms with exact decimal behavior, validates input, normalizes output,
           and provides quick examples and a copy-ready conversion line for

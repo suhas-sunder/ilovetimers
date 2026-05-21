@@ -15,8 +15,28 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import RelatedSites from "./clients/components/navigation/RelatedSites";
 import { PHProvider } from "./provider";
 import Footer from "./clients/components/navigation/Footer";
+import {
+  THEME_STORAGE_KEY,
+  useThemeMode,
+} from "./clients/hooks/useThemeMode";
 
 import logoPng from "./clients/assets/images/ilovetimers-icon.png";
+
+const themeInitScript = `
+(function () {
+  try {
+    var key = ${JSON.stringify(THEME_STORAGE_KEY)};
+    var mode = window.localStorage.getItem(key) === "dark" ? "dark" : "light";
+    document.documentElement.dataset.theme = mode;
+    document.documentElement.dataset.themeMode = mode;
+    document.documentElement.style.colorScheme = mode;
+  } catch (error) {
+    document.documentElement.dataset.theme = "light";
+    document.documentElement.dataset.themeMode = "light";
+    document.documentElement.style.colorScheme = "light";
+  }
+})();
+`;
 
 /* ---------- Trailing slash helpers (one place, app-level) ---------- */
 function needsStrip(pathname: string) {
@@ -51,7 +71,6 @@ export const links: Route.LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
-  { rel: "canonical", href: "https://ilovetimers.com" },
 ];
 
 type TimerDirectoryItem = {
@@ -73,6 +92,14 @@ const PRIMARY_TIMER_HREFS = new Set([
 ]);
 
 const TIMER_DIRECTORY: TimerDirectoryItem[] = [
+  {
+    title: "Free Online Timers",
+    href: "/free-online-timers",
+    category: "Core",
+    description:
+      "The original four-tool page with countdown, stopwatch, Pomodoro, and HIIT timers.",
+    keywords: "original homepage four timers countdown stopwatch pomodoro hiit",
+  },
   {
     title: "Online Timer",
     href: "/online-timer",
@@ -517,6 +544,60 @@ function useLockBodyScroll(locked: boolean) {
   }, [locked]);
 }
 
+function ThemeControl({ className = "" }: { className?: string }) {
+  const { mode, toggleTheme } = useThemeMode();
+  const isDark = mode === "dark";
+  const label = isDark ? "Switch to light mode" : "Switch to dark mode";
+
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      aria-pressed={isDark}
+      title={label}
+      onClick={toggleTheme}
+      className={`ilt-focus-ring inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-[var(--ilt-button-secondary-bg)] text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] transition hover:bg-[var(--ilt-button-secondary-hover)] ${className}`}
+    >
+      <span className="sr-only">{label}</span>
+      {isDark ? (
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+        >
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2" />
+          <path d="M12 20v2" />
+          <path d="M4.93 4.93l1.41 1.41" />
+          <path d="M17.66 17.66l1.41 1.41" />
+          <path d="M2 12h2" />
+          <path d="M20 12h2" />
+          <path d="M6.34 17.66l-1.41 1.41" />
+          <path d="M19.07 4.93l-1.41 1.41" />
+        </svg>
+      ) : (
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+        >
+          <path d="M20.99 13.17A8.5 8.5 0 1 1 10.83 3.01 7 7 0 0 0 20.99 13.17Z" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
 function TimerDirectoryMenu({
   query,
   setQuery,
@@ -582,7 +663,7 @@ function TimerDirectoryMenu({
       <div className="flex flex-col gap-1">
         <label
           htmlFor={searchId}
-          className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500"
+          className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--ilt-text-muted)]"
         >
           Find a timer
         </label>
@@ -592,13 +673,13 @@ function TimerDirectoryMenu({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search clocks, workouts, cooking, focus..."
-          className="ilt-focus-ring w-full rounded-2xl bg-slate-100 px-4 py-3 text-sm font-semibold text-[var(--ilt-text-primary)] transition placeholder:text-[var(--ilt-text-muted)] focus:bg-slate-100"
+          className="ilt-focus-ring w-full rounded-2xl bg-[var(--ilt-bg-input)] px-4 py-3 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[inset_0_0_0_1px_var(--ilt-border-subtle)] transition placeholder:text-[var(--ilt-text-muted)] focus:bg-[var(--ilt-bg-input)]"
         />
       </div>
 
       <div className={resultsClass}>
         {filteredItems.length === 0 ? (
-          <div className="rounded-2xl bg-slate-50 px-4 py-5 text-sm font-medium text-slate-600">
+          <div className="rounded-2xl bg-[var(--ilt-bg-subtle)] px-4 py-5 text-sm font-medium text-[var(--ilt-text-secondary)]">
             No timers matched that search.
           </div>
         ) : (
@@ -610,7 +691,7 @@ function TimerDirectoryMenu({
 
               return (
                 <section key={category} className="min-w-0">
-                  <h3 className="px-1 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                  <h3 className="px-1 text-xs font-bold uppercase tracking-[0.18em] text-[var(--ilt-text-muted)]">
                     {category}
                   </h3>
                   <div className="mt-2 grid gap-1">
@@ -619,20 +700,20 @@ function TimerDirectoryMenu({
                         key={item.href}
                         href={item.href}
                         onClick={onNavigate}
-                        className="ilt-focus-ring group rounded-2xl px-3 py-3 transition-colors hover:bg-slate-100"
+                        className="ilt-focus-ring group rounded-2xl px-3 py-3 transition-colors hover:bg-[var(--ilt-bg-hover)]"
                       >
                         <div className="flex items-center justify-between gap-3">
-                          <div className="text-sm font-bold text-slate-950">
+                          <div className="text-sm font-bold text-[var(--ilt-text-primary)]">
                             {item.title}
                           </div>
                           <div
                             aria-hidden="true"
-                            className="text-sm font-bold text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-slate-950"
+                            className="text-sm font-bold text-[var(--ilt-text-muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--ilt-text-primary)]"
                           >
                             &gt;
                           </div>
                         </div>
-                        <p className="mt-1 text-xs leading-5 text-slate-600">
+                        <p className="mt-1 text-xs leading-5 text-[var(--ilt-text-secondary)]">
                           {item.description}
                         </p>
                       </a>
@@ -704,10 +785,10 @@ function SiteHeader() {
   }
 
   const desktopLink =
-    "ilt-focus-ring cursor-pointer rounded-full px-3 py-2 text-[var(--ilt-text-primary)] transition-colors hover:bg-slate-100 hover:text-black";
+    "ilt-focus-ring cursor-pointer rounded-full px-3 py-2 text-[var(--ilt-text-primary)] transition-colors hover:bg-[var(--ilt-bg-hover)] hover:text-[var(--ilt-text-primary)]";
 
   const mobileLink =
-    "ilt-focus-ring cursor-pointer rounded-2xl px-4 py-3 text-base font-semibold text-[var(--ilt-text-primary)] transition-colors hover:bg-slate-100";
+    "ilt-focus-ring cursor-pointer rounded-2xl px-4 py-3 text-base font-semibold text-[var(--ilt-text-primary)] transition-colors hover:bg-[var(--ilt-bg-hover)]";
 
   return (
     <>
@@ -733,7 +814,7 @@ function SiteHeader() {
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 text-sm font-semibold sm:flex">
+          <nav className="hidden items-center gap-1 text-sm font-semibold lg:flex">
             <a href="/countdown-timer" className={desktopLink}>
               Countdown
             </a>
@@ -786,7 +867,7 @@ function SiteHeader() {
                 <div
                   id="timer-directory-menu"
                   ref={directoryRef}
-                  className="fixed left-1/2 top-[64px] z-50 max-h-[calc(100svh-5rem)] w-[min(calc(100vw-2rem),92rem)] -translate-x-1/2 overflow-hidden rounded-[1.25rem] bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.08)]"
+                  className="fixed left-1/2 top-[64px] z-50 max-h-[calc(100svh-5rem)] w-[min(calc(100vw-2rem),92rem)] -translate-x-1/2 overflow-hidden rounded-[1.25rem] bg-[var(--ilt-bg-panel)] p-5 shadow-[var(--ilt-shadow-interactive-hover)]"
                 >
                   <TimerDirectoryMenu
                     query={directoryQuery}
@@ -798,10 +879,13 @@ function SiteHeader() {
                 </div>
               ) : null}
             </div>
+
+            <ThemeControl className="ml-1" />
           </nav>
 
           {/* Mobile burger */}
-          <div className="sm:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
+            <ThemeControl />
             <button
               ref={btnRef}
               type="button"
@@ -812,21 +896,21 @@ function SiteHeader() {
               aria-expanded={open}
               aria-controls="mobile-nav"
               aria-label="Open menu"
-              className="ilt-focus-ring cursor-pointer rounded-full bg-white px-3 py-2 text-[var(--ilt-text-primary)] transition-colors hover:bg-slate-100"
+              className="ilt-focus-ring cursor-pointer rounded-full bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] transition-colors hover:bg-[var(--ilt-button-secondary-hover)]"
             >
               <span className="relative block h-4 w-5" aria-hidden="true">
                 <span
-                  className={`absolute left-0 top-0 h-0.5 w-5 bg-slate-950 transition ${
+                  className={`absolute left-0 top-0 h-0.5 w-5 bg-[var(--ilt-text-primary)] transition ${
                     open ? "translate-y-2 rotate-45" : ""
                   }`}
                 />
                 <span
-                  className={`absolute left-0 top-2 h-0.5 w-5 bg-slate-950 transition ${
+                  className={`absolute left-0 top-2 h-0.5 w-5 bg-[var(--ilt-text-primary)] transition ${
                     open ? "opacity-0" : "opacity-100"
                   }`}
                 />
                 <span
-                  className={`absolute left-0 top-4 h-0.5 w-5 bg-slate-950 transition ${
+                  className={`absolute left-0 top-4 h-0.5 w-5 bg-[var(--ilt-text-primary)] transition ${
                     open ? "-translate-y-2 -rotate-45" : ""
                   }`}
                 />
@@ -837,7 +921,7 @@ function SiteHeader() {
       </header>
 
       {open ? (
-        <div className="fixed inset-0 z-[60] overflow-y-auto bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)] sm:hidden">
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)] lg:hidden">
           <div
             id="mobile-nav"
             ref={panelRef}
@@ -868,7 +952,7 @@ function SiteHeader() {
               <button
                 type="button"
                 onClick={close}
-                className="ilt-focus-ring cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] transition-colors hover:bg-slate-100"
+                className="ilt-focus-ring cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] transition-colors hover:bg-[var(--ilt-bg-hover)]"
                 aria-label="Close menu"
               >
                 Close
@@ -887,7 +971,7 @@ function SiteHeader() {
 
             {directoryQuery.trim() ? null : (
               <div className="mt-6">
-                <div className="px-1 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                <div className="px-1 text-xs font-bold uppercase tracking-[0.18em] text-[var(--ilt-text-muted)]">
                   Primary timers
                 </div>
                 <div className="mt-2 grid gap-1">
@@ -936,10 +1020,12 @@ function SiteHeader() {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="light dark" />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Meta />
         <Links />
       </head>

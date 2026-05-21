@@ -38,7 +38,7 @@ export default function FAQ({
     {
       question: "What does “Yearly change” mean?",
       answer:
-        "It’s the average net change per year. If it’s positive, the counter increases. If it’s negative, the counter decreases. The tool converts this yearly change into a per-second rate for the live counter.",
+        "It’s the average net change per year. If it’s positive, the counter increases. If it’s negative, the counter decreases. The tool converts this yearly change into a per-second rate for the running counter.",
     },
     {
       question: "Why does the counter show a per-second rate with decimals?",
@@ -56,9 +56,9 @@ export default function FAQ({
         "When you change the yearly rate while the counter is running, the tool keeps continuity from the current displayed amount and applies the new rate going forward. It does not rewind or recalculate past time.",
     },
     {
-      question: "Why don’t the keyboard shortcuts work until I click the card?",
+      question: "Why don't the keyboard shortcuts work until I click the tool?",
       answer:
-        "Shortcuts only work when the debt clock card has focus. Click/tap the card once, then use Space to start/pause, R to reset, F for fullscreen, and C to copy.",
+        "Shortcuts only work when the debt clock display has focus. Click or tap the display once, then use Space to start/pause, R to reset, F for fullscreen, and C to copy.",
     },
     {
       question: "What exactly gets copied when I press Copy?",
@@ -68,7 +68,7 @@ export default function FAQ({
     {
       question: "Why might Copy fail or do nothing sometimes?",
       answer:
-        "Some browsers restrict clipboard access unless a user gesture happens first. Click/tap the page once and try Copy again, or use the C shortcut after focusing the card.",
+        "Some browsers restrict clipboard access unless a user gesture happens first. Click or tap the page once and try Copy again, or use the C shortcut after focusing the debt clock display.",
     },
     {
       question: "What’s the fastest way to use this on a TV or projector?",
@@ -98,15 +98,15 @@ export default function FAQ({
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)]">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

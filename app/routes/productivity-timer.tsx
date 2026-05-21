@@ -4,14 +4,33 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+  UtilityResultRow,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -83,29 +102,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
 
 // WebAudio beep (same style as other pages)
 function useBeep() {
@@ -147,249 +143,6 @@ function useBeep() {
   }, []);
 }
 
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * Key change for "snappy on refresh":
- * - Start big immediately (initial fontPx = maxPx) so the digits render large on first paint
- * - Then shrink only if needed, scheduled via rAF (no blocking layout effect)
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  // Start at max so the UI is immediately readable on refresh.
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-
-      setFontPx((prev) => (prev === `${best}px` ? prev : `${best}px`));
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    // Kick once right away (next frame) so initial paint is immediate, then refine.
-    schedule();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function ChipBtn({
-  children,
-  onClick,
-  disabled,
-  title,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  disabled?: boolean;
-  title?: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-    >
-      {children}
-    </button>
-  );
-}
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
 
 /* =========================================================
    PRODUCTIVITY TIMER CARD
@@ -412,7 +165,8 @@ function ProductivityTimerCard() {
   const [running, setRunning] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const totalMs = useMemo(() => {
     if (phase === "work") return workMin * 60 * 1000;
@@ -690,9 +444,9 @@ function ProductivityTimerCard() {
     } else if (k === "n") {
       skip();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -708,7 +462,7 @@ function ProductivityTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Productivity Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
@@ -724,57 +478,11 @@ function ProductivityTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Productivity Timer (Focus + Break Cycles)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Run focused work sessions with structured breaks, optional long
-                breaks, fullscreen, and shortcuts.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={sound}
-                  onChange={(e) => setSound(e.target.checked)}
-                  className="cursor-pointer"
-                />
-                Sound
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={loop}
-                  onChange={(e) => setLoop(e.target.checked)}
-                  className="cursor-pointer"
-                />
-                Auto-advance
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
-        <div
-          ref={displayBoxRef}
+      <div className={isFs ? "flex h-full flex-col" : "timer-session-stack flex h-full flex-col"}>
+        <DisplayStage
+          stageRef={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "timer-display-surface relative flex flex-col items-center justify-center text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -830,12 +538,24 @@ function ProductivityTimerCard() {
               </div>
             </div>
           )}
-        </div>
+        </DisplayStage>
 
         {!isFs && (
-          <div className="mt-4 space-y-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <ChipBtn
+          <>
+            <ControlGroup>
+              <Btn kind="solid" onClick={startPause}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={skip}>
+                Next
+              </Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+            </ControlGroup>
+
+            <PresetGroup title="Productivity modes">
+              <Chip
                 onClick={() => {
                   setWorkMin(25);
                   setBreakMin(5);
@@ -847,9 +567,9 @@ function ProductivityTimerCard() {
                 title={settingsDisabled ? "Pause to change presets" : undefined}
               >
                 Classic 25/5
-              </ChipBtn>
+              </Chip>
 
-              <ChipBtn
+              <Chip
                 onClick={() => {
                   setWorkMin(50);
                   setBreakMin(10);
@@ -861,9 +581,9 @@ function ProductivityTimerCard() {
                 title={settingsDisabled ? "Pause to change presets" : undefined}
               >
                 Deep work 50/10
-              </ChipBtn>
+              </Chip>
 
-              <ChipBtn
+              <Chip
                 onClick={() => {
                   setWorkMin(90);
                   setBreakMin(15);
@@ -875,13 +595,13 @@ function ProductivityTimerCard() {
                 title={settingsDisabled ? "Pause to change presets" : undefined}
               >
                 Sprint 90/15
-              </ChipBtn>
-            </div>
+              </Chip>
+            </PresetGroup>
 
-            <div className="grid gap-3 lg:grid-cols-4">
-              <label className="block text-sm font-semibold text-slate-900">
-                Focus (min)
-                <input
+            <SettingGroup title="Settings">
+              <SettingRow className="lg:grid-cols-4">
+                <Field
+                  label="Focus (min)"
                   type="number"
                   min={1}
                   max={240}
@@ -890,13 +610,11 @@ function ProductivityTimerCard() {
                   onChange={(e) =>
                     setWorkMin(clamp(Number(e.target.value || 1), 1, 240))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
                 />
-              </label>
 
-              <label className="block text-sm font-semibold text-slate-900">
-                Break (min)
-                <input
+
+                <Field
+                  label="Break (min)"
                   type="number"
                   min={1}
                   max={120}
@@ -905,13 +623,11 @@ function ProductivityTimerCard() {
                   onChange={(e) =>
                     setBreakMin(clamp(Number(e.target.value || 1), 1, 120))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
                 />
-              </label>
 
-              <label className="block text-sm font-semibold text-slate-900">
-                Long break (min)
-                <input
+
+                <Field
+                  label="Long break (min)"
                   type="number"
                   min={1}
                   max={180}
@@ -920,13 +636,12 @@ function ProductivityTimerCard() {
                   onChange={(e) =>
                     setLongBreakMin(clamp(Number(e.target.value || 1), 1, 180))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
                 />
-              </label>
 
-              <label className="block text-sm font-semibold text-slate-900">
-                Long break every
-                <input
+
+                <Field
+                  label="Long break every"
+                  hint="0 = never use long breaks"
                   type="number"
                   min={0}
                   max={12}
@@ -935,38 +650,34 @@ function ProductivityTimerCard() {
                   onChange={(e) =>
                     setLongBreakEvery(clamp(Number(e.target.value || 0), 0, 12))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-60"
                 />
-                <div className="mt-1 text-xs text-slate-600">
-                  0 = never use long breaks
+              </SettingRow>
+
+              <SettingRow className="lg:grid-cols-[auto_minmax(0,1fr)]">
+                <div className="flex flex-wrap items-end gap-3">
+                  <Toggle checked={sound} onCheckedChange={setSound} label="Sound" />
+                  <Toggle checked={loop} onCheckedChange={setLoop} label="Auto-advance" />
                 </div>
-              </label>
-            </div>
+              </SettingRow>
+            </SettingGroup>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <div className="flex flex-wrap items-center gap-3">
-                <Btn kind="solid" onClick={startPause}>
-                  {running ? "Pause" : "Start"}
-                </Btn>
-                <Btn kind="ghost" onClick={skip}>
-                  Next
-                </Btn>
-                <Btn kind="ghost" onClick={reset}>
-                  Reset
-                </Btn>
-              </div>
+            <UtilityResultRow>
+              <span className="ilt-content-label">Phase</span>
+              <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
+                {label} · Completed focus sessions: {cycleCount}
+              </span>
+            </UtilityResultRow>
 
-              <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-                Phase: <span className="font-extrabold">{label}</span> ·
-                Completed focus sessions:{" "}
-                <span className="font-extrabold">{cycleCount}</span>
-              </div>
-            </div>
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
 
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+            <ShortcutHint>
               Shortcuts: Space start/pause · N next · R reset · F fullscreen
-            </div>
-          </div>
+            </ShortcutHint>
+          </>
         )}
 
         <FullscreenBottomBar show={isFs}>
@@ -1027,24 +738,63 @@ export default function ProductivityTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <ProductivityTimerCard />
-        </div>
+      <ToolHero
+        display={<ProductivityTimerCard />}
+        title="Productivity Timer"
+        description="Run structured productivity sessions with a large active phase timer and compact controls below it."
+      />
 
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Productivity Timer</span>
+      <SeoBand title="How this timer works">
+        <p>
+          Productivity Timer runs structured work and break blocks while keeping
+          the current phase and remaining time first. Presets, mode choices,
+          auto-advance, optional sound, fullscreen, and keyboard shortcuts stay
+          below the display so the active block remains easy to read.
         </p>
-      </section>
-    </main>
+        <h3>How it differs from Pomodoro</h3>
+        <p>
+          Pomodoro timing is usually a specific work/break rhythm. This
+          productivity timer is broader: it can be used for deep work blocks,
+          admin sprints, writing sessions, or planned breaks where the selected
+          mode and current session matter more than following one fixed method.
+        </p>
+        <h3>Useful settings</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Mode presets help switch between focused work and break-oriented
+            sessions without rebuilding the timer.
+          </li>
+          <li>
+            Auto-advance can move through phases when you want a hands-off
+            rhythm.
+          </li>
+          <li>
+            Sound can mark transitions when an audible cue fits the workspace.
+          </li>
+        </ul>
+        <h3>Related productivity tools</h3>
+        <p>
+          For a classic focus/break method, use the{" "}
+          <a className="ilt-content-link" href="/pomodoro-timer">
+            Pomodoro timer
+          </a>
+          . For a single deep-work block, try the{" "}
+          <a className="ilt-content-link" href="/focus-session-timer">
+            focus session timer
+          </a>
+          . For planning a day by blocks, use the{" "}
+          <a className="ilt-content-link" href="/time-blocking-clock">
+            time-blocking clock
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

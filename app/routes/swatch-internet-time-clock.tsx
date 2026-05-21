@@ -3,14 +3,29 @@ import type { Route } from "./+types/swatch-internet-time-clock";
 import { json } from "@remix-run/node";
 import {
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
+
+
+import {
+  Button as Btn,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolHero,
+  ToolFrame as Card,
+  Toggle,
+} from "~/clients/components/ui/foundation";
 
 /* =========================================================
    META
@@ -70,138 +85,9 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
 
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
 
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
 
-  return isFs;
-}
-
-/**
- * Fit a single-line string into its container by adjusting font size.
- * - ResizeObserver + rAF
- * - Binary search for max font-size that fits width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
 
 /* =========================================================
    SWATCH INTERNET TIME MATH
@@ -228,121 +114,15 @@ function getBeatPartsFromMs(nowMs: number) {
 }
 
 /* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-/* =========================================================
    CLOCK CARD
 ========================================================= */
-function SwatchInternetTimeCard() {
+function SwatchInternetTimeCard({ initialNowISO }: { initialNowISO: string }) {
   const [live, setLive] = useState(true);
-  const [nowMs, setNowMs] = useState(() => Date.now());
+  const [nowMs, setNowMs] = useState(() => new Date(initialNowISO).getTime());
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const beatTextRef = useRef<HTMLSpanElement>(null);
@@ -415,9 +195,9 @@ function SwatchInternetTimeCard() {
     } else if (k === "s") {
       if (!live) setNowMs(Date.now());
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -431,7 +211,7 @@ function SwatchInternetTimeCard() {
       <FullscreenTopBar
         show={isFs}
         title="Swatch Internet Time"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50">
@@ -464,51 +244,7 @@ function SwatchInternetTimeCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Swatch Internet Time (.beat) Clock
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Live @beat time (timezone-free). Based on Biel Mean Time
-                (UTC+1).
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  className="cursor-pointer"
-                  type="checkbox"
-                  checked={live}
-                  onChange={(e) => setLive(e.target.checked)}
-                />
-                Live
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() => setNowMs(Date.now())}
-                disabled={live}
-              >
-                Snap now
-              </Btn>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-clock-stack flex h-full flex-col"}>
         {/* Display */}
         <div
           ref={displayBoxRef}
@@ -531,14 +267,15 @@ function SwatchInternetTimeCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to toggle live/freeze" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="timer-clock-label text-xs font-extrabold uppercase tracking-widest text-slate-700">
             {statusLabel}
           </div>
 
           <span
             ref={beatTextRef}
+            data-primary-display-value
             className={[
-              "mt-2 inline-block text-center font-mono font-extrabold",
+              "timer-clock-value mt-2 inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
             style={{
@@ -550,7 +287,7 @@ function SwatchInternetTimeCard() {
             {beatStr}
           </span>
 
-          <div className="mt-4 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700">
+          <div className="timer-clock-context timer-clock-panel mt-4 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700">
             BMT (UTC+1): <span className="font-mono">{bmtTimeStr}</span>
           </div>
 
@@ -561,10 +298,20 @@ function SwatchInternetTimeCard() {
           )}
         </div>
 
-        {/* Controls bar (normal only) */}
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex flex-wrap items-center gap-3">
+          <>
+            <SettingGroup title="Internet time settings">
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+                <Toggle
+                  className="self-start"
+                  label="Live"
+                  checked={live}
+                  onCheckedChange={setLive}
+                />
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow className="timer-clock-actions">
               <Btn kind="solid" onClick={() => setLive((v) => !v)}>
                 {live ? "Freeze" : "Go live"}
               </Btn>
@@ -577,20 +324,15 @@ function SwatchInternetTimeCard() {
                 Snap
               </Btn>
 
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-              >
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
                 Fullscreen
               </Btn>
-            </div>
+            </SecondaryActionRow>
 
-            <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space live/freeze · S snap · F fullscreen
-            </div>
-          </div>
+            <ShortcutHint className="timer-clock-shortcut">
+              Shortcuts: Space live/freeze, S snap, F fullscreen
+            </ShortcutHint>
+          </>
         )}
 
         {/* Fullscreen bottom controls */}
@@ -613,7 +355,9 @@ function SwatchInternetTimeCard() {
 /* =========================================================
    PAGE
 ========================================================= */
-export default function SwatchInternetTimePage({}: Route.ComponentProps) {
+export default function SwatchInternetTimePage({
+  loaderData: { nowISO },
+}: Route.ComponentProps) {
   const url = "https://www.ilovetimers.com/swatch-internet-time-clock";
 
   const jsonLd = {
@@ -647,26 +391,66 @@ export default function SwatchInternetTimePage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <SwatchInternetTimeCard />
-        </div>
+      <ToolHero
+        display={<SwatchInternetTimeCard initialNowISO={nowISO} />}
+        title="Swatch Internet Time (.beat) Clock"
+        description="Track Swatch Internet Time in @beats, using the UTC/Biel-based calculation with normal time shown secondarily."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Swatch Internet Time (.beat)</span>
+      <SeoBand title="How Swatch Internet Time works">
+        <p>
+          The display above shows Swatch Internet Time as @beats. It uses the
+          intended UTC plus one hour basis for Biel Mean Time instead of local
+          time zone math, so the value is not the same thing as your local clock.
         </p>
-      </section>
-    </main>
+        <p>
+          A day is divided into 1000 beats, from @000 to @999. The normal clock
+          comparison is included only as context; the @beats value is the primary
+          result and updates live while the clock is running.
+        </p>
+        <h3>Why it looks different</h3>
+        <p>
+          Swatch Internet Time removes hours, minutes, seconds, and ordinary
+          time-zone labels from the display. That makes it a novelty reference
+          format rather than a replacement for local schedules or legal time.
+        </p>
+        <h3>Useful notes</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            @beats are calculated from the Biel/UTC+1 basis, not from the
+            viewer's local time zone.
+          </li>
+          <li>
+            The route uses the current browser/device time as its live source.
+          </li>
+          <li>
+            The secondary normal-time comparison helps explain the current beat
+            without changing the @beats calculation.
+          </li>
+        </ul>
+        <h3>Related clock formats</h3>
+        <p>
+          For a standard reference time, use the{" "}
+          <a className="ilt-content-link" href="/utc-clock">
+            UTC clock
+          </a>
+          . For a regular local digital display, try the{" "}
+          <a className="ilt-content-link" href="/digital-clock">
+            digital clock
+          </a>
+          . For Unix timestamps, use the{" "}
+          <a className="ilt-content-link" href="/epoch-unix-time-clock">
+            epoch Unix time clock
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

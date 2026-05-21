@@ -22,11 +22,11 @@ export default function PopularUseCases({
 }) {
   const scenarios: Scenario[] = [
     {
-      title: "Exact time with milliseconds on screen",
+      title: "Device time with milliseconds on screen",
       description:
-        "Get a clean, readable time display including milliseconds for quick precision checks.",
+        "Get a clean, readable device-time display including milliseconds for quick timing checks.",
       forWho:
-        "Presentations, recording, syncing cues, timing starts, lab/bench work, and anyone who wants a visible millisecond clock.",
+        "Presentations, recording, syncing cues, timing starts, lab/bench work, and anyone who wants a visible millisecond display.",
       notFor:
         "If you need a timer that counts up/down or alarms. Use a stopwatch or countdown timer instead.",
       links: [
@@ -132,7 +132,7 @@ export default function PopularUseCases({
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Common atomic clock scenarios",
+    name: "Common atomic-style clock scenarios",
     itemListElement: list.map((s, i) => ({
       "@type": "ListItem",
       position: i + 1,
@@ -143,17 +143,17 @@ export default function PopularUseCases({
   };
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-12">
+    <section className="space-y-4">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Pick the right tool based on what you’re trying to do with precise
-            time, milliseconds, and fullscreen display.
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
+            Pick the right tool based on what you need from device time,
+            milliseconds, and fullscreen display.
           </p>
         </div>
 
@@ -161,28 +161,28 @@ export default function PopularUseCases({
           {list.map((s) => (
             <div
               key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="ilt-surface-card p-4"
             >
-              <div className="text-base font-semibold text-slate-900">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.forWho}</div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.notFor}</div>
                 </div>
               </div>
 
@@ -191,7 +191,7 @@ export default function PopularUseCases({
                   <a
                     key={l.href}
                     href={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 hover:border-slate-300"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
                     {l.label} →
                   </a>
@@ -201,8 +201,8 @@ export default function PopularUseCases({
           ))}
         </div>
 
-        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Tip:</span> If the
+        <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Tip:</span> If the
           milliseconds look “jumpy,” keep the tab visible and disable battery
           saver/low-power mode. For a steadier display, turn off milliseconds.
         </div>

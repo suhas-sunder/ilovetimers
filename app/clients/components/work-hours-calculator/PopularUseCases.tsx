@@ -24,7 +24,7 @@ export default function PopularUseCases({
   const scenarios: Scenario[] = [
     {
       title:
-        "Timesheet entry: start, end, and break (fast payroll-ready total)",
+        "Timesheet entry: start, end, and break (copy-friendly total)",
       description:
         "Enter your Start and End times, subtract a break, and copy paid time in HH:MM and decimal hours. Enable rounding if your workplace records time in 5/10/15-minute increments.",
       forWho:
@@ -146,15 +146,15 @@ export default function PopularUseCases({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Start/end time, break deduction, overnight shifts, decimal hours,
             optional rounding, and copy outputs designed for timesheets and
-            payroll.
+            payroll logs.
           </p>
         </div>
 
@@ -162,28 +162,28 @@ export default function PopularUseCases({
           {scenarios.map((s) => (
             <div
               key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="ilt-surface-card p-4"
             >
-              <div className="text-base font-semibold text-slate-900">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.forWho}</div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.notFor}</div>
                 </div>
               </div>
 
@@ -192,7 +192,7 @@ export default function PopularUseCases({
                   <Link
                     key={`${s.title}-${l.href}`}
                     to={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
                     {l.label} →
                   </Link>
@@ -202,16 +202,16 @@ export default function PopularUseCases({
           ))}
         </div>
 
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Tip:</span> If your
+        <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Tip:</span> If your
           workplace rounds time, enable{" "}
-          <span className="font-semibold text-slate-900">Round paid time</span>{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Round paid time</span>{" "}
           so the copied result matches what gets recorded. For quick actions,
-          click the card once and use{" "}
-          <span className="font-semibold text-slate-900">S</span> (start now),{" "}
-          <span className="font-semibold text-slate-900">E</span> (end now),{" "}
-          <span className="font-semibold text-slate-900">C</span> (copy), and{" "}
-          <span className="font-semibold text-slate-900">R</span> (reset).
+          click the calculator area once and use{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]">S</span> (start now),{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]">E</span> (end now),{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]">C</span> (copy), and{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]">R</span> (reset).
         </div>
       </div>
     </section>

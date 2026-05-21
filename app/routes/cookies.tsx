@@ -1,13 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import { Link, type MetaFunction } from "react-router";
+import { ContentPage } from "~/clients/components/ui/foundation";
 
 export const meta: MetaFunction = () => {
   const canonical = "https://www.ilovetimers.com/cookies";
 
-  const title = "Cookies Policy | i💛Timers";
+  const title = "Cookies Policy | iLoveTimers";
   const description =
-    "Read the i💛Timers cookies policy. Learn how cookies and similar technologies are used on ilovetimers.com to run timers, remember preferences, measure performance, and serve ads.";
+    "Read the iLoveTimers cookies policy. Learn how cookies and similar technologies are used on ilovetimers.com to run timers, remember preferences, measure performance, and serve ads.";
 
   const ogImage = "https://www.ilovetimers.com/og/ilovetimers-cookies.jpg";
 
@@ -17,7 +18,7 @@ export const meta: MetaFunction = () => {
 
     { tagName: "link", rel: "canonical", href: canonical },
 
-    { property: "og:site_name", content: "i💛Timers" },
+    { property: "og:site_name", content: "iLoveTimers" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
@@ -37,25 +38,12 @@ export const meta: MetaFunction = () => {
 
 export default function CookiesPolicy() {
   return (
-    <div className="my-8 flex flex-col mx-10 items-center justify-center gap-8 font-nunito text-skull-brown">
-      <header className="max-w-[1200px] w-full flex flex-col gap-3">
-        <nav aria-label="Breadcrumb" className="text-sm font-lato">
-          <ol className="flex flex-wrap items-center gap-2">
-            <li>
-              <Link to="/" className="hover:underline">
-                Home
-              </Link>
-            </li>
-            <li className="opacity-70">&gt;</li>
-            <li aria-current="page" className="opacity-90">
-              Cookies Policy
-            </li>
-          </ol>
-        </nav>
-
-        <h1 className="mb-5 flex py-2 text-4xl">COOKIE POLICY</h1>
-        <h2 className="flex py-2 text-2xl">Last updated January 10, 2026</h2>
-
+    <ContentPage
+      title="Cookie Policy"
+      description="Last updated January 10, 2026"
+      className="ilt-legal-doc"
+    >
+      <section className="flex flex-col gap-4">
         <p className="flex flex-col gap-4 py-2">
           This Cookie Policy explains how https://www.ilovetimers.com
           ("Company", "we", "us", and "our") uses cookies and similar
@@ -70,16 +58,16 @@ export default function CookiesPolicy() {
           personal information, or that becomes personal information if we
           combine it with other information. For more information about how we
           handle personal information, please see our{" "}
-          <Link to="/privacy" className="hover:underline">
+          <Link to="/privacy">
             Privacy Policy
           </Link>
           .
         </p>
-      </header>
+      </section>
 
-      <main className="flex max-w-[1200px] flex-col gap-8">
+      <div className="flex flex-col gap-8">
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">What are cookies?</h2>
+          <h2>What are cookies?</h2>
           <p>
             Cookies are small data files that are placed on your computer or
             mobile device when you visit a website. Cookies are widely used by
@@ -100,7 +88,7 @@ export default function CookiesPolicy() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">Why do we use cookies?</h2>
+          <h2>Why do we use cookies?</h2>
           <p>
             We use first- and third-party cookies for several reasons. Some
             cookies are required for technical reasons in order for our Website
@@ -114,7 +102,7 @@ export default function CookiesPolicy() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             Analytics and performance cookies
           </h2>
           <p>
@@ -132,7 +120,7 @@ export default function CookiesPolicy() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">Advertising cookies</h2>
+          <h2>Advertising cookies</h2>
           <p>
             We may display advertisements on our Website through Google AdSense
             and/or other advertising partners. Advertising providers may use
@@ -141,7 +129,7 @@ export default function CookiesPolicy() {
             interests.
           </p>
 
-          <h3 className="text-xl">Google advertising cookies</h3>
+          <h3>Google advertising cookies</h3>
           <p>
             Google uses cookies to help serve the ads it displays on the
             websites of its partners, such as websites displaying Google ads or
@@ -153,19 +141,19 @@ export default function CookiesPolicy() {
           <p className="flex flex-col gap-2">
             <Link
               to="https://policies.google.com/technologies/cookies"
-              className="hover:underline"
+
             >
               Find out how Google uses cookies...
             </Link>
             <Link
               to="https://adssettings.google.com/"
-              className="hover:underline"
+
             >
               Manage Google Ads Settings...
             </Link>
             <Link
               to="https://optout.aboutads.info/?c=2&lang=EN"
-              className="hover:underline"
+
             >
               Opt out via aboutads.info...
             </Link>
@@ -173,7 +161,7 @@ export default function CookiesPolicy() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">How can I control cookies?</h2>
+          <h2>How can I control cookies?</h2>
           <p>
             You have the right to decide whether to accept or reject cookies.
             You can usually exercise your cookie rights by setting your
@@ -190,7 +178,7 @@ export default function CookiesPolicy() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             How can I control cookies on my browser?
           </h2>
           <p>
@@ -207,7 +195,7 @@ export default function CookiesPolicy() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             What about other tracking technologies, like web beacons?
           </h2>
           <p>
@@ -223,7 +211,7 @@ export default function CookiesPolicy() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             Do you use local storage or similar technologies?
           </h2>
           <p>
@@ -241,7 +229,7 @@ export default function CookiesPolicy() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             How often will you update this Cookie Policy?
           </h2>
           <p>
@@ -258,7 +246,7 @@ export default function CookiesPolicy() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             Where can I get further information?
           </h2>
           <p>
@@ -266,7 +254,7 @@ export default function CookiesPolicy() {
             technologies, please contact us at: admin@ilovetimers.com.
           </p>
         </section>
-      </main>
-    </div>
+      </div>
+    </ContentPage>
   );
 }

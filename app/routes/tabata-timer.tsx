@@ -4,14 +4,33 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+  UtilityResultRow,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -82,7 +101,6 @@ function isTypingTarget(target: EventTarget | null) {
     el.isContentEditable
   );
 }
-
 // WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -123,247 +141,6 @@ function useBeep() {
   }, []);
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
 /* =========================================================
    TABATA TIMER CARD
 ========================================================= */
@@ -396,7 +173,8 @@ function TabataTimerCard() {
   const lastBeepSecondRef = useRef<number | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -689,45 +467,14 @@ function TabataTimerCard() {
     } else if (k === "c") {
       setClassic();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
   const urgent =
     running && remainingMsRef.current > 0 && remainingMsRef.current <= 6_000;
-
-  const headerRight = (
-    <div className="flex flex-wrap items-center gap-2">
-      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-        <input
-          type="checkbox"
-          checked={sound}
-          onChange={(e) => setSound(e.target.checked)}
-        />
-        Sound
-      </label>
-
-      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-        <input
-          type="checkbox"
-          checked={finalCountdownBeeps}
-          onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-          disabled={!sound}
-        />
-        Final beeps
-      </label>
-
-      <Btn
-        kind="ghost"
-        onClick={() => cardRef.current && toggleFullscreen(cardRef.current)}
-        className="py-2"
-      >
-        Fullscreen
-      </Btn>
-    </div>
-  );
 
   const fsRight = (
     <div className="flex items-center gap-2">
@@ -765,27 +512,13 @@ function TabataTimerCard() {
         right={fsRight}
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Tabata Timer (20/10 Intervals)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Classic Tabata defaults (20s work, 10s rest, 8 rounds). Start,
-                pause, next, reset, and fullscreen with big readable intervals.
-              </p>
-            </div>
-            <div className="ml-auto">{headerRight}</div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-interval-stack flex h-full flex-col"}>
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "timer-display-surface relative order-first mt-0 flex flex-col items-center justify-center text-slate-950",
             urgent
               ? "border-rose-300 bg-rose-50"
               : phase === "work"
@@ -808,15 +541,10 @@ function TabataTimerCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {phase === "work" ? "Work" : "Rest"} · Round {roundIdx}/{rounds} ·
-            Total {totalText} · {statusLabel}
-          </div>
-
           <span
             ref={timeTextRef}
             className={[
-              "mt-2 inline-block text-center font-mono font-extrabold",
+              "inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
             style={{
@@ -828,6 +556,11 @@ function TabataTimerCard() {
             {shownTime}
           </span>
 
+          <div className="mt-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {phase === "work" ? "Work" : "Rest"} · Round {roundIdx}/{rounds} ·
+            Total {totalText} · {statusLabel}
+          </div>
+
           {/* Progress */}
           <div className="mt-4 w-full max-w-3xl">
             <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
@@ -836,38 +569,66 @@ function TabataTimerCard() {
                 style={{ width: `${Math.round(progress * 100)}%` }}
               />
             </div>
-            <div className="mt-2 text-center text-xs font-semibold text-slate-600">
-              Space start/pause · N next · R reset · F fullscreen · C classic
-            </div>
           </div>
-        </div>
+        </DisplayStage>
         {/* Config (normal only) */}
         {!isFs && (
-          <div className="mt-6 grid gap-4 lg:grid-cols-3">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                Work (seconds)
-              </div>
-              <div className="mt-2 flex flex-wrap gap-2">
+          <>
+            <ControlGroup>
+              <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+              <Btn kind="ghost" onClick={next}>
+                Next
+              </Btn>
+            </ControlGroup>
+
+            <div className="mx-auto grid w-full max-w-5xl gap-4 lg:grid-cols-3">
+              <PresetGroup title="Work">
                 {quickWork.map((s) => (
-                  <button
+                  <Chip
                     key={s}
-                    type="button"
                     onClick={() => !running && setWorkSec(s)}
                     disabled={running}
-                    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                      s === workSec
-                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                        : "bg-slate-100 text-slate-900 hover:bg-slate-200"
-                    }`}
+                    active={s === workSec}
                   >
                     {s}s
-                  </button>
+                  </Chip>
                 ))}
-              </div>
-              <label className="mt-3 block text-sm font-semibold text-slate-900">
-                Custom
-                <input
+              </PresetGroup>
+
+              <PresetGroup title="Rest">
+                {quickRest.map((s) => (
+                  <Chip
+                    key={s}
+                    onClick={() => !running && setRestSec(s)}
+                    disabled={running}
+                    active={s === restSec}
+                  >
+                    {s}s
+                  </Chip>
+                ))}
+              </PresetGroup>
+
+              <PresetGroup title="Rounds">
+                {quickRounds.map((r) => (
+                  <Chip
+                    key={r}
+                    onClick={() => !running && setRounds(r)}
+                    disabled={running}
+                    active={r === rounds}
+                  >
+                    {r}
+                  </Chip>
+                ))}
+              </PresetGroup>
+            </div>
+
+            <SettingGroup title="Tabata settings">
+              <SettingRow>
+                <Field
+                  label="Work seconds"
                   type="number"
                   min={5}
                   max={600}
@@ -876,35 +637,10 @@ function TabataTimerCard() {
                   onChange={(e) =>
                     setWorkSec(clamp(Number(e.target.value || 5), 5, 600))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:bg-slate-50"
                 />
-              </label>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                Rest (seconds)
-              </div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {quickRest.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => !running && setRestSec(s)}
-                    disabled={running}
-                    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                      s === restSec
-                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                        : "bg-slate-100 text-slate-900 hover:bg-slate-200"
-                    }`}
-                  >
-                    {s}s
-                  </button>
-                ))}
-              </div>
-              <label className="mt-3 block text-sm font-semibold text-slate-900">
-                Custom
-                <input
+                <Field
+                  label="Rest seconds"
+                  hint="Classic Tabata rest is 10 seconds."
                   type="number"
                   min={0}
                   max={600}
@@ -913,38 +649,9 @@ function TabataTimerCard() {
                   onChange={(e) =>
                     setRestSec(clamp(Number(e.target.value || 0), 0, 600))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:bg-slate-50"
                 />
-              </label>
-              <div className="mt-2 text-xs text-slate-600">
-                Tabata default rest is <strong>10s</strong>.
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                Rounds
-              </div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {quickRounds.map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => !running && setRounds(r)}
-                    disabled={running}
-                    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                      r === rounds
-                        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                        : "bg-slate-100 text-slate-900 hover:bg-slate-200"
-                    }`}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-              <label className="mt-3 block text-sm font-semibold text-slate-900">
-                Custom
-                <input
+                <Field
+                  label="Rounds"
                   type="number"
                   min={1}
                   max={50}
@@ -953,46 +660,50 @@ function TabataTimerCard() {
                   onChange={(e) =>
                     setRounds(clamp(Number(e.target.value || 1), 1, 50))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:bg-slate-50"
                 />
-              </label>
-              <div className="mt-2 text-xs text-slate-600">
-                Total (no rest after last work): <strong>{totalText}</strong>
-              </div>
-            </div>
-          </div>
-        )}
+              </SettingRow>
+              <SettingRow className="lg:grid-cols-[auto_auto_auto]">
+                <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                <Toggle
+                  label="Final beeps"
+                  checked={finalCountdownBeeps}
+                  onCheckedChange={setFinalCountdownBeeps}
+                  disabled={!sound}
+                />
+                <Btn kind="ghost" onClick={setClassic} disabled={running}>
+                  Classic 20/10 x 8
+                </Btn>
+              </SettingRow>
+            </SettingGroup>
 
-        {/* Actions (normal only) */}
-        {!isFs && (
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-            <Btn kind="ghost" onClick={reset}>
-              Reset
-            </Btn>
-            <Btn kind="ghost" onClick={next}>
-              Next
-            </Btn>
-            <Btn kind="ghost" onClick={setClassic} disabled={running}>
-              Classic 20/10 × 8
-            </Btn>
+            <UtilityResultRow>
+              <span className="ilt-content-label">Total</span>
+              <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
+                {totalText}, no rest after last work interval.
+              </span>
+            </UtilityResultRow>
 
-            <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space start/pause · N next · R reset · F fullscreen · C
-              classic
-            </div>
-          </div>
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause / N next / R reset / F fullscreen / C classic
+            </ShortcutHint>
+          </>
         )}
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · N next · R reset · F
+              Tap time to start/pause / Space start/pause / N next / R reset / F
               fullscreen
             </div>
             <div className="text-xs font-semibold text-slate-700">
-              {phase === "work" ? "Work" : "Rest"} · Round {roundIdx}/{rounds}
+              {phase === "work" ? "Work" : "Rest"} / Round {roundIdx}/{rounds}
             </div>
           </div>
         </FullscreenBottomBar>
@@ -1035,26 +746,69 @@ export default function TabataTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <TabataTimerCard />
-        </div>
+      <ToolHero
+        display={<TabataTimerCard />}
+        title="Tabata Timer (20/10 Intervals)"
+        description="Run classic Tabata work and rest intervals with round status, final beeps, and fullscreen controls."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Tabata Timer</span>
+      <SeoBand title="Tabata timer basics">
+        <p>
+          This Tabata timer keeps the classic 20 seconds work, 10 seconds rest,
+          8 round structure available while still allowing custom work, rest, and
+          round settings. The active work or rest phase stays first so the next
+          action is clear during fast sessions.
         </p>
-      </section>
-    </main>
+        <p>
+          Use the Classic control to return to the standard protocol, or adjust
+          the intervals before starting. Sound cues and final beeps remain
+          optional so the timer can work in quiet spaces or louder training rooms.
+        </p>
+        <h3>How it differs from generic HIIT</h3>
+        <p>
+          Tabata is usually understood as a fixed 20/10 rhythm repeated for 8
+          rounds. This page keeps that structure easy to restore while still
+          letting you adjust the timing for practice, warmups, or modified
+          sessions.
+        </p>
+        <h3>Tips for using the timer</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Set the interval lengths before starting so the active display can
+            stay focused on the current work or rest phase.
+          </li>
+          <li>
+            Use optional beeps only when they fit the space and will not disturb
+            others.
+          </li>
+          <li>
+            Keep the screen in fullscreen mode when the timer needs to be read
+            across a room.
+          </li>
+        </ul>
+        <h3>Related interval tools</h3>
+        <p>
+          For broader work/rest programming, use the{" "}
+          <a className="ilt-content-link" href="/hiit-timer">
+            HIIT timer
+          </a>
+          . For circuit rounds, try the{" "}
+          <a className="ilt-content-link" href="/workout-timer">
+            workout timer
+          </a>
+          . For every-minute starts, use the{" "}
+          <a className="ilt-content-link" href="/emom-timer">
+            EMOM timer
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

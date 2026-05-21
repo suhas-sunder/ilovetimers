@@ -30,11 +30,11 @@ export default function FAQ({
       question: "How do I use it for running vs rowing?",
       answer: (
         <>
-          Choose <strong className="text-slate-900">Running</strong> to work in{" "}
-          <strong className="text-slate-900">min/km</strong> or{" "}
-          <strong className="text-slate-900">min/mi</strong>. Choose{" "}
-          <strong className="text-slate-900">Rowing</strong> to work in{" "}
-          <strong className="text-slate-900">split per 500m</strong>. Then set a
+          Choose <strong className="text-[var(--ilt-text-primary)]">Running</strong> to work in{" "}
+          <strong className="text-[var(--ilt-text-primary)]">min/km</strong> or{" "}
+          <strong className="text-[var(--ilt-text-primary)]">min/mi</strong>. Choose{" "}
+          <strong className="text-[var(--ilt-text-primary)]">Rowing</strong> to work in{" "}
+          <strong className="text-[var(--ilt-text-primary)]">split per 500m</strong>. Then set a
           distance and either a target pace or finish time.
         </>
       ),
@@ -44,14 +44,14 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            Use <strong className="text-slate-900">Target pace</strong> when you
+            Use <strong className="text-[var(--ilt-text-primary)]">Target pace</strong> when you
             already know the pace/split you want to hold (example{" "}
-            <strong className="text-slate-900">5:00</strong> /km,{" "}
-            <strong className="text-slate-900">8:00</strong> /mi, or{" "}
-            <strong className="text-slate-900">2:10</strong> /500m).
+            <strong className="text-[var(--ilt-text-primary)]">5:00</strong> /km,{" "}
+            <strong className="text-[var(--ilt-text-primary)]">8:00</strong> /mi, or{" "}
+            <strong className="text-[var(--ilt-text-primary)]">2:10</strong> /500m).
           </div>
           <div>
-            Use <strong className="text-slate-900">Finish time</strong> when you
+            Use <strong className="text-[var(--ilt-text-primary)]">Finish time</strong> when you
             have a goal time and want the tool to calculate the needed pace for
             the chosen distance.
           </div>
@@ -63,17 +63,17 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            <strong className="text-slate-900">Target pace</strong>: type{" "}
-            <strong className="text-slate-900">m:ss</strong> (example{" "}
-            <strong className="text-slate-900">5:00</strong>) or seconds
-            (example <strong className="text-slate-900">300</strong>).
+            <strong className="text-[var(--ilt-text-primary)]">Target pace</strong>: type{" "}
+            <strong className="text-[var(--ilt-text-primary)]">m:ss</strong> (example{" "}
+            <strong className="text-[var(--ilt-text-primary)]">5:00</strong>) or seconds
+            (example <strong className="text-[var(--ilt-text-primary)]">300</strong>).
           </div>
           <div>
-            <strong className="text-slate-900">Finish time</strong>: type{" "}
-            <strong className="text-slate-900">mm:ss</strong> (example{" "}
-            <strong className="text-slate-900">25:00</strong>) or{" "}
-            <strong className="text-slate-900">hh:mm:ss</strong> (example{" "}
-            <strong className="text-slate-900">1:02:30</strong>).
+            <strong className="text-[var(--ilt-text-primary)]">Finish time</strong>: type{" "}
+            <strong className="text-[var(--ilt-text-primary)]">mm:ss</strong> (example{" "}
+            <strong className="text-[var(--ilt-text-primary)]">25:00</strong>) or{" "}
+            <strong className="text-[var(--ilt-text-primary)]">hh:mm:ss</strong> (example{" "}
+            <strong className="text-[var(--ilt-text-primary)]">1:02:30</strong>).
           </div>
         </div>
       ),
@@ -82,11 +82,11 @@ export default function FAQ({
       question: "What distance should I enter?",
       answer: (
         <>
-          For <strong className="text-slate-900">Running</strong>, enter
-          distance in <strong className="text-slate-900">km</strong> or{" "}
-          <strong className="text-slate-900">mi</strong> (depending on the unit
-          toggle). For <strong className="text-slate-900">Rowing</strong>, enter
-          distance in <strong className="text-slate-900">meters</strong>.
+          For <strong className="text-[var(--ilt-text-primary)]">Running</strong>, enter
+          distance in <strong className="text-[var(--ilt-text-primary)]">km</strong> or{" "}
+          <strong className="text-[var(--ilt-text-primary)]">mi</strong> (depending on the unit
+          toggle). For <strong className="text-[var(--ilt-text-primary)]">Rowing</strong>, enter
+          distance in <strong className="text-[var(--ilt-text-primary)]">meters</strong>.
         </>
       ),
     },
@@ -105,18 +105,18 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            Turn on <strong className="text-slate-900">Sound</strong>, then set{" "}
-            <strong className="text-slate-900">Beep every</strong>.
+            Turn on <strong className="text-[var(--ilt-text-primary)]">Sound</strong>, then set{" "}
+            <strong className="text-[var(--ilt-text-primary)]">Beep every</strong>.
           </div>
           <div>
             Running: beeps every X{" "}
-            <strong className="text-slate-900">km</strong> or{" "}
-            <strong className="text-slate-900">mi</strong>.
+            <strong className="text-[var(--ilt-text-primary)]">km</strong> or{" "}
+            <strong className="text-[var(--ilt-text-primary)]">mi</strong>.
           </div>
           <div>
             Rowing: beeps every X ×{" "}
-            <strong className="text-slate-900">500m</strong> (example{" "}
-            <strong className="text-slate-900">2</strong> = every 1000m).
+            <strong className="text-[var(--ilt-text-primary)]">500m</strong> (example{" "}
+            <strong className="text-[var(--ilt-text-primary)]">2</strong> = every 1000m).
           </div>
         </div>
       ),
@@ -135,9 +135,9 @@ export default function FAQ({
       question: "How do I use fullscreen mode?",
       answer: (
         <>
-          Click <strong className="text-slate-900">Fullscreen</strong> (or press{" "}
-          <strong className="text-slate-900">F</strong> after clicking the card
-          once). Press <strong className="text-slate-900">Esc</strong> to exit
+          Click <strong className="text-[var(--ilt-text-primary)]">Fullscreen</strong> (or press{" "}
+          <strong className="text-[var(--ilt-text-primary)]">F</strong> after clicking the card
+          once). Press <strong className="text-[var(--ilt-text-primary)]">Esc</strong> to exit
           fullscreen.
         </>
       ),
@@ -152,11 +152,11 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            <strong className="text-slate-900">Space</strong>: start/pause ·{" "}
-            <strong className="text-slate-900">R</strong>: reset ·{" "}
-            <strong className="text-slate-900">F</strong>: fullscreen
+            <strong className="text-[var(--ilt-text-primary)]">Space</strong>: start/pause ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">R</strong>: reset ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">F</strong>: fullscreen
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-[var(--ilt-text-muted)]">
             Tip: click the timer card once so it captures keyboard input.
           </div>
         </div>
@@ -174,42 +174,42 @@ export default function FAQ({
           Need structured intervals (work/rest/rounds)?{" "}
           <Link
             to="/hiit-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             HIIT Timer
           </Link>
           ,{" "}
           <Link
             to="/tabata-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Tabata Timer
           </Link>
           , or{" "}
           <Link
             to="/round-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Round Timer
           </Link>
           . Want a simple workout countdown?{" "}
           <Link
             to="/workout-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Workout Timer
           </Link>
           . Need a pure big-screen view?{" "}
           <Link
             to="/fullscreen-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Fullscreen Timer
           </Link>
           . Want multiple timers at once?{" "}
           <Link
             to="/multiple-timers"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Multiple Timers
           </Link>
@@ -243,15 +243,15 @@ export default function FAQ({
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)] ilt-surface-card">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

@@ -61,7 +61,7 @@ export default function HowItWorks({
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -75,7 +75,7 @@ export default function HowItWorks({
   }) => (
     <a
       href={href}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </a>
@@ -90,13 +90,13 @@ export default function HowItWorks({
     subtitle?: string;
     lines: string[];
   }) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="text-base font-semibold text-slate-900">{title}</div>
+    <div className="ilt-surface-card p-5">
+      <div className="text-base font-semibold text-[var(--ilt-text-primary)]">{title}</div>
       {subtitle ? (
-        <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+        <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">{subtitle}</div>
       ) : null}
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div className="font-mono text-xs whitespace-pre-wrap text-slate-800">
+      <div className="mt-3 ilt-surface-muted p-4">
+        <div className="font-mono text-xs whitespace-pre-wrap text-[var(--ilt-text-secondary)]">
           {lines.join("\n")}
         </div>
       </div>
@@ -104,21 +104,21 @@ export default function HowItWorks({
   );
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-10">
+    <section className="space-y-4">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="ilt-surface-card p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-2 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This Count Up Timer is built for one job: track{" "}
-              <span className="font-semibold text-slate-900">elapsed time</span>{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">elapsed time</span>{" "}
               clearly, without setup. It starts at 0 and counts upward. You can
               pause and resume without losing your place, record{" "}
-              <span className="font-semibold text-slate-900">laps</span> to mark
+              <span className="font-semibold text-[var(--ilt-text-primary)]">laps</span> to mark
               checkpoints, and switch to fullscreen for large digits that are
               readable across the room. It’s a practical fit for meetings,
               workouts, study sessions, experiments, practice attempts, and any
@@ -126,7 +126,7 @@ export default function HowItWorks({
               long until it ends?”
             </p>
 
-            <p className="mt-3 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This page is intentionally not a directory, a blog post, or a
               tutorial. It gives you a clean timer plus the controls people
               actually use in the moment: Start/Pause, Lap, Reset, and
@@ -134,35 +134,35 @@ export default function HowItWorks({
               structured intervals, or a specialized workflow, jump to the
               closest fit:{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/stopwatch")}
               >
                 Stopwatch
               </a>{" "}
               for a classic stopwatch-style experience,{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/countdown-timer")}
               >
                 Countdown Timer
               </a>{" "}
               when you need to end at zero,{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/meeting-count-up-timer")}
               >
                 Meeting Count Up Timer
               </a>{" "}
               for meeting-focused elapsed timing,{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/pomodoro-timer")}
               >
                 Pomodoro Timer
               </a>{" "}
               for work/rest cycles, or{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/fullscreen-timer")}
               >
                 Fullscreen Timer
@@ -172,19 +172,19 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Elapsed time
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Laps
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Splits
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Shortcuts
             </span>
           </div>
@@ -192,59 +192,59 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fast start (the common flow)
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Press{" "}
                 <Kbd>Space</Kbd> or click{" "}
-                <span className="font-semibold text-slate-900">Start</span> to
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Start</span> to
                 begin from 0.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Use{" "}
-                <span className="font-semibold text-slate-900">Lap</span> (or{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Use{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Lap</span> (or{" "}
                 <Kbd>L</Kbd>) to mark checkpoints. Each lap stores{" "}
-                <span className="font-semibold text-slate-900">Total</span> and{" "}
-                <span className="font-semibold text-slate-900">Split</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Total</span> and{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Split</span>.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Press{" "}
                 <Kbd>F</Kbd> for fullscreen if you want big digits. In
                 fullscreen, tap/click the time display to start/pause.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> When
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> When
                 you’re done, click{" "}
-                <span className="font-semibold text-slate-900">Reset</span> (or{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Reset</span> (or{" "}
                 <Kbd>R</Kbd>) to return to 0 and clear laps.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What a lap actually captures
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 A lap is a checkpoint you record while the timer is running.
                 Every lap stores two numbers:
-                <span className="font-semibold text-slate-900"> Total</span>,
+                <span className="font-semibold text-[var(--ilt-text-primary)]"> Total</span>,
                 which is elapsed time since the start, and{" "}
-                <span className="font-semibold text-slate-900">Split</span>,
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Split</span>,
                 which is time since the previous lap. This makes laps useful for
                 tracking segments without doing mental math.
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               What elapsed time looks like (real numbers)
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
                 <span className="font-semibold">0:45 to 3:00</span>: short
                 checkpoints, quick drills, brief task segments.
@@ -265,8 +265,8 @@ export default function HowItWorks({
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">
                 Practical habit:
               </span>{" "}
               If you’ll use keyboard shortcuts, click the timer card once first.
@@ -278,11 +278,11 @@ export default function HowItWorks({
 
         {/* Main explanation */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             What you see as you time something
           </h3>
 
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             The center readout is the elapsed time. It counts up in a steady,
             readable format. Under the hood, the timer tracks time with
             millisecond precision, but it displays whole seconds so the number
@@ -294,7 +294,7 @@ export default function HowItWorks({
             is running when it’s not.
           </p>
 
-          <p className="mt-3 text-slate-700 leading-relaxed">
+          <p className="mt-3 text-[var(--ilt-text-secondary)] leading-relaxed">
             Laps appear as a list. The newest lap is shown first, because that’s
             typically the one you care about in the moment. Each lap line shows
             the total elapsed time at the moment you pressed Lap, plus the split
@@ -303,11 +303,11 @@ export default function HowItWorks({
             subtract times yourself.
           </p>
 
-          <h3 className="mt-8 text-lg font-semibold text-sky-700">
+          <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Real scenarios (with settings you can copy)
           </h3>
 
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             These examples are designed to feel like real usage. They include
             the kinds of numbers you’d actually see on screen and the way laps
             get recorded in everyday situations. You can copy the patterns even
@@ -443,11 +443,11 @@ export default function HowItWorks({
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen and shortcuts (keep it effortless)
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fullscreen is for visibility. It makes the digits large and keeps
               controls reachable. If you’re presenting a timer to a group, it
               removes clutter. If you’re timing something from a distance, it
@@ -456,25 +456,25 @@ export default function HowItWorks({
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2 text-sm">
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Space</Kbd> start/pause
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>L</Kbd> lap
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>R</Kbd> reset
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>F</Kbd> fullscreen
               </span>
-              <span className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-800">
+              <span className="ilt-surface-card px-3 py-2 text-[var(--ilt-text-secondary)]">
                 <Kbd>Esc</Kbd> exit
               </span>
             </div>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <span className="font-semibold text-slate-900">Focus tip:</span>{" "}
+            <div className="mt-4 ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Focus tip:</span>{" "}
               If shortcuts do not respond, click the timer card once so it has
               keyboard focus. Shortcuts won’t fire while you’re typing into an
               input.
@@ -483,18 +483,18 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools (same goal, different fit)
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 Count Up Timer is for elapsed time and checkpoints. If your job
                 is different, these pages are better matches.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcuts: <Kbd>Space</Kbd> <Kbd>L</Kbd> <Kbd>R</Kbd> <Kbd>F</Kbd>{" "}
               <Kbd>Esc</Kbd>
             </div>
@@ -521,24 +521,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical details expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-muted p-6">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical details (timing, laps, fullscreen, focus)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Notes that matter when you rely on a browser timer
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Elapsed-time model
               </div>
               <p className="mt-1 leading-relaxed">
@@ -548,8 +548,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Display rounding
               </div>
               <p className="mt-1 leading-relaxed">
@@ -558,8 +558,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Lap storage</div>
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Lap storage</div>
               <p className="mt-1 leading-relaxed">
                 Each lap records the total elapsed time plus the split time
                 since the previous lap. This provides checkpoints without
@@ -567,8 +567,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -578,8 +578,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Background throttling and sleep
               </div>
               <p className="mt-1 leading-relaxed">
@@ -596,10 +596,10 @@ export default function HowItWorks({
 
         {/* Bottom note */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Need a hard stop?</strong> Use{" "}
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Need a hard stop?</strong> Use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/countdown-timer")}
             >
               Countdown Timer
@@ -607,11 +607,11 @@ export default function HowItWorks({
             when you need to end at zero.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">Timing a meeting?</strong> If you
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Timing a meeting?</strong> If you
             want meeting-specific framing, use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/meeting-count-up-timer")}
             >
               Meeting Count Up Timer

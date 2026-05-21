@@ -1,8 +1,29 @@
-// app/routes/water-reminder-timer.tsx
+// app/routes/drink-water-reminder-timer.tsx
 import type { Route } from "./+types/drink-water-reminder-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+  UtilityResultRow,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/drink-water-reminder-timer/HowItWorks";
 import Disclaimer from "~/clients/components/drink-water-reminder-timer/Disclaimer";
 import FAQ from "~/clients/components/drink-water-reminder-timer/FAQ";
@@ -17,7 +38,7 @@ export function meta({}: Route.MetaArgs) {
   const description =
     "Free drink water reminder and hydration timer. Set repeating intervals with optional sound alerts and use a clean fullscreen display to stay hydrated.";
 
-  const url = "https://www.ilovetimers.com/water-reminder-timer";
+  const url = "https://www.ilovetimers.com/drink-water-reminder-timer";
 
   return [
     { title },
@@ -91,13 +112,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
 
 /* WebAudio beep */
 function useBeep() {
@@ -139,266 +153,6 @@ function useBeep() {
   }, []);
 }
 
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: React.RefObject<HTMLElement | null>;
-  textRef: React.RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-      active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  left,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-          {left}
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
 
 /* =========================================================
    WATER REMINDER TIMER CARD
@@ -431,7 +185,8 @@ function WaterReminderTimerCard() {
   const hasStartedRef = useRef(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -609,13 +364,13 @@ function WaterReminderTimerCard() {
     } else if (k === "r") {
       resetAll();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "n") {
       if (running) fireNow();
     } else if (k === "s") {
       setSound((x) => !x);
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -629,18 +384,15 @@ function WaterReminderTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Water Reminder"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         left={
-          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={sound}
-                onChange={(e) => setSound(e.target.checked)}
-                className="accent-amber-500"
-              />
-              Sound
-            </label>
+          <div className="hidden items-center gap-2 sm:flex">
+            <Toggle
+              label="Sound"
+              checked={sound}
+              onCheckedChange={setSound}
+              className="py-1 text-sm"
+            />
           </div>
         }
         right={
@@ -659,39 +411,12 @@ function WaterReminderTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {/* Header (normal only) */}
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={sound}
-                  onChange={(e) => setSound(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Sound
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-session-stack flex h-full flex-col"}>
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "timer-display-surface relative flex flex-col items-center justify-center text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -728,74 +453,33 @@ function WaterReminderTimerCard() {
             {running || hasStartedRef.current ? shownTime : readyTime}
           </span>
 
-          {/* Controls (normal only) */}
-          {!isFs && (
-            <div className="mt-4 flex flex-wrap gap-3">
+        </DisplayStage>
+
+        {/* Settings (normal only) */}
+        {!isFs && (
+          <>
+            <ControlGroup>
               <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
               <Btn kind="ghost" onClick={resetCycleOnly}>
                 Reset cycle
               </Btn>
-              <Btn kind="ghost" onClick={resetAll}>
-                Reset all
-              </Btn>
-              <Btn kind="ghost" onClick={fireNow} disabled={!running}>
-                Remind now
-              </Btn>
-            </div>
-          )}
+            </ControlGroup>
 
-          <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Settings
-              </div>
-              <div className="mt-1 text-sm font-semibold text-slate-700">
-                Interval {intervalMin}m · Sound {sound ? "On" : "Off"}
-              </div>
-            </div>
+            <PresetGroup title="Reminder interval">
+              {presetsMin.map((m) => (
+                <Chip key={m} active={m === intervalMin} onClick={() => setIntervalMin(m)} disabled={running}>
+                  {m}m
+                </Chip>
+              ))}
+            </PresetGroup>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Shortcuts
-              </div>
-              <div className="mt-1 text-sm font-semibold text-slate-700">
-                Space start/pause · N remind now · R reset all · F fullscreen ·
-                S sound
-              </div>
-            </div>
-          </div>
-
-          {!isFs && (
-            <div className="mt-3 text-xs text-slate-600">
-              Tip: click the card once so keyboard shortcuts work immediately.
-            </div>
-          )}
-        </div>
-
-        {/* Settings (normal only) */}
-        {!isFs && (
-          <div className="mt-5 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-slate-900">
-                Reminder interval (minutes)
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                {presetsMin.map((m) => (
-                  <Chip
-                    key={m}
-                    active={m === intervalMin}
-                    onClick={() => setIntervalMin(m)}
-                    disabled={running}
-                  >
-                    {m}m
-                  </Chip>
-                ))}
-              </div>
-
-              <label className="mt-3 block text-sm font-semibold text-slate-900">
-                Minutes
-                <input
+            <SettingGroup
+              title="Settings"
+              description="This reminder cycle runs while the page is open. Background tabs may update less often."
+            >
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto]">
+                <Field
+                  label="Interval minutes"
                   type="number"
                   min={5}
                   max={360}
@@ -804,35 +488,36 @@ function WaterReminderTimerCard() {
                   onChange={(e) =>
                     setIntervalMin(clamp(Number(e.target.value || 5), 5, 360))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
                 />
-              </label>
+                <div className="flex flex-wrap items-end gap-3">
+                  <Toggle checked={sound} onCheckedChange={setSound} label="Sound" />
+                </div>
+              </SettingRow>
+            </SettingGroup>
 
-              <div className="mt-2 text-xs text-slate-600">
-                Common choices: 30 or 60 minutes.
-              </div>
-            </div>
+            <UtilityResultRow>
+              <span className="ilt-content-label">Progress</span>
+              <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
+                Reminders {remindersFired} / {statusLabel}
+              </span>
+            </UtilityResultRow>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-slate-900">
-                Progress
-              </div>
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={fireNow} disabled={!running}>
+                Remind now
+              </Btn>
+              <Btn kind="ghost" onClick={resetAll}>
+                Reset all
+              </Btn>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
 
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-800">
-                  Reminders {remindersFired}
-                </span>
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-800">
-                  Status {statusLabel}
-                </span>
-              </div>
-
-              <div className="mt-3 text-xs text-slate-600">
-                This runs while the page is open. Background tabs may update
-                less often.
-              </div>
-            </div>
-          </div>
+            <ShortcutHint>
+              Shortcuts: Space start/pause / N remind now / R reset all / F fullscreen / S sound
+            </ShortcutHint>
+          </>
         )}
 
         {/* Fullscreen bottom controls */}
@@ -879,7 +564,7 @@ function WaterReminderTimerCard() {
    PAGE
 ========================================================= */
 export default function WaterReminderTimerPage(_: Route.ComponentProps) {
-  const url = "https://www.ilovetimers.com/water-reminder-timer";
+  const url = "https://www.ilovetimers.com/drink-water-reminder-timer";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -912,47 +597,25 @@ export default function WaterReminderTimerPage(_: Route.ComponentProps) {
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Water Reminder Timer (Drink Water Reminder)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Set a repeating interval, start the countdown, and get gentle sound
-            reminders while the tab is open. Use fullscreen for a clean,
-            readable display.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<WaterReminderTimerCard />}
+        title="Drink Water Reminder Timer"
+        description="Track hydration reminders with the next reminder countdown first and settings kept compact below it."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
-        <div>
-          <WaterReminderTimerCard />
-        </div>
-
-        {/* Breadcrumb purposely at bottom */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Water Reminder Timer</span>
-        </p>
-      </section>
-
-      
-            <HowItWorks />
-            <KeyboardShortcuts />
-            <PopularUseCases />
-            <FAQ />
-            <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

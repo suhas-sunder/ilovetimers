@@ -2,7 +2,25 @@
 import type { Route } from "./+types/binary-clock";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+  Field,
+  Select,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import Disclaimer from "~/clients/components/binary-clock/Disclaimer";
 import FAQ from "~/clients/components/binary-clock/FAQ";
 import HowItWorks from "~/clients/components/binary-clock/HowItWorks";
@@ -75,14 +93,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
 function safeTimeZone() {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
@@ -145,28 +155,12 @@ function bcdBitsOfDigit(digit: number) {
   return bitsOf(digit, 4);
 }
 
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
 /**
  * Accurate clock updates aligned to the next second boundary.
  * Always updates at 1s boundaries (even if seconds are hidden) so minutes change cleanly.
  */
-function useNow() {
-  const [now, setNow] = useState<Date>(() => new Date());
+function useNow(initialNowISO: string) {
+  const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
 
   useEffect(() => {
     let t: number | null = null;
@@ -189,147 +183,12 @@ function useNow() {
 }
 
 /* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-      active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  left,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-          {left}
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-/* =========================================================
    BINARY CLOCK CARD
 ========================================================= */
 type BinaryMode = "bcd" | "pure";
 
-function BinaryClockCard() {
-  const now = useNow();
+function BinaryClockCard({ initialNowISO }: { initialNowISO: string }) {
+  const now = useNow(initialNowISO);
 
   const [use24, setUse24] = useState(true);
   const [showSeconds, setShowSeconds] = useState(true);
@@ -339,7 +198,8 @@ function BinaryClockCard() {
   const tz = useMemo(() => safeTimeZone(), []);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const timeText = useMemo(
     () => formatTimeString(now, { use24, showSeconds }),
@@ -403,8 +263,8 @@ function BinaryClockCard() {
 
     const k = e.key.toLowerCase();
 
-    if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "c") {
       copy();
     } else if (k === "s") {
@@ -415,8 +275,8 @@ function BinaryClockCard() {
       setUse24(true);
     } else if (e.key === "1") {
       setUse24(false);
-    } else if (e.key === "Escape" && document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
+    } else if (e.key === "Escape" && isFs) {
+      fullscreen.exit();
     }
   };
 
@@ -432,7 +292,7 @@ function BinaryClockCard() {
       <FullscreenTopBar
         show={isFs}
         title="Binary Clock"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         left={
           <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
             <label className="inline-flex cursor-pointer items-center gap-1">
@@ -473,9 +333,7 @@ function BinaryClockCard() {
             </Btn>
             <Btn
               kind="solid"
-              onClick={() =>
-                cardRef.current && toggleFullscreen(cardRef.current)
-              }
+              onClick={() => void fullscreen.toggle()}
               className="py-1 text-sm"
             >
               Fullscreen
@@ -484,59 +342,7 @@ function BinaryClockCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full w-full flex-col" : "timer-first-stack flex h-full w-full flex-col"}>
-        {!isFs && (
-          <div className="timer-controls-row">
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={showSeconds}
-                  onChange={(e) => setShowSeconds(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Seconds
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={use24}
-                  onChange={(e) => setUse24(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                24-hour
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                <span className="text-slate-700">Mode</span>
-                <select
-                  value={mode}
-                  onChange={(e) => setMode(e.target.value as BinaryMode)}
-                  className="cursor-pointer rounded-md border border-slate-300 bg-white px-2 py-1 text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                >
-                  <option value="bcd">BCD (digits)</option>
-                  <option value="pure">Pure binary</option>
-                </select>
-              </label>
-
-              <Btn kind="ghost" onClick={copy} className="py-2">
-                {copied ? "Copied" : "Copy"}
-              </Btn>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full w-full flex-col" : "timer-specialty-clock-stack flex h-full w-full flex-col"}>
         <div
           className={[
             "timer-display-surface mt-4 flex flex-col items-center justify-center p-3 sm:p-6",
@@ -552,7 +358,7 @@ function BinaryClockCard() {
           }}
           aria-live="polite"
           onClick={() => {
-            if (isFs && cardRef.current) toggleFullscreen(cardRef.current);
+            if (isFs && cardRef.current) void fullscreen.toggle();
           }}
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to exit fullscreen" : undefined}
@@ -597,7 +403,7 @@ function BinaryClockCard() {
           </div>
 
           {!isFs && (
-            <div className="mt-4 w-full max-w-3xl rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+            <div className="timer-specialty-clock-panel mt-4 w-full max-w-3xl rounded-lg bg-white p-4">
               <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                 Copy preview
               </div>
@@ -607,17 +413,53 @@ function BinaryClockCard() {
             </div>
           )}
 
-          <div
-            className={
-              isFs
-                ? "mt-6 text-xs font-semibold text-slate-600 text-center"
-                : "mt-4 text-xs font-semibold text-slate-600 text-center"
-            }
-          >
-            Shortcuts: F fullscreen · C copy · S seconds · B mode · 1 (12h) · 2
-            (24h) · Esc exit
-          </div>
         </div>
+
+        {!isFs && (
+          <>
+            <SettingGroup title="Binary clock settings">
+              <SettingRow>
+                <Toggle
+                  label="Seconds"
+                  checked={showSeconds}
+                  onCheckedChange={setShowSeconds}
+                />
+                <Toggle
+                  label="24-hour"
+                  checked={use24}
+                  onCheckedChange={setUse24}
+                />
+                <Select
+                  label="Mode"
+                  value={mode}
+                  onChange={(e) => setMode(e.target.value as BinaryMode)}
+                >
+                  <option value="bcd">BCD digits</option>
+                  <option value="pure">Pure binary</option>
+                </Select>
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={copy} className="py-2">
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: F fullscreen, C copy, S seconds, B mode, 1 12-hour, 2
+              24-hour
+            </ShortcutHint>
+          </>
+        )}
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -648,9 +490,7 @@ function BinaryClockCard() {
               </Btn>
               <Btn
                 kind="solid"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
+                onClick={() => void fullscreen.toggle()}
               >
                 Exit
               </Btn>
@@ -717,7 +557,7 @@ function BinaryGrid({
 
     return (
       <div
-        className="rounded-2xl border p-4"
+        className="timer-specialty-clock-visual rounded-lg border p-4"
         style={{
           background: palette.bg,
           borderColor: palette.border,
@@ -792,7 +632,7 @@ function BinaryGrid({
 
   return (
     <div
-      className="rounded-2xl border p-4"
+      className="timer-specialty-clock-visual rounded-lg border p-4"
       style={{
         background: palette.bg,
         borderColor: palette.border,
@@ -907,7 +747,7 @@ function Bit({
 }) {
   return (
     <div
-      className="grid place-items-center rounded-xl border"
+      className="grid place-items-center rounded-lg border"
       style={{
         width: 22,
         height: 22,
@@ -970,42 +810,27 @@ export default function BinaryClockPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Binary Clock (Time in Binary)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            View your current local time in binary. Switch BCD vs pure binary,
-            toggle seconds and 12/24-hour time, copy, and go fullscreen.
-          </p>
-        </div>
-      </section>
 
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <BinaryClockCard />
-        </div>
+      <ToolHero
+        display={<BinaryClockCard initialNowISO={nowISO} />}
+        title="Binary Clock (Time in Binary)"
+        description="View local time in binary using BCD or pure binary, with seconds, 12/24-hour mode, copy, and fullscreen."
+      />
 
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Binary Clock</span>
-        </p>
-      </section>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
 
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+    </PageShell>
   );
 }

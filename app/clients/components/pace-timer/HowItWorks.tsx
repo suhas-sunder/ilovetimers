@@ -67,10 +67,10 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Pace Timer is a practical pacing tool for steady efforts. You set a
             distance and a target pace (or a finish time), then follow a clear
             countdown that stays readable on any device. Optional interval beeps
@@ -80,7 +80,7 @@ export default function HowItWorks({
 
         {/* Core explanation (SEO + intent, no fluff) */}
         <div className="mt-4 grid gap-4">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-slate-700">
+          <div className="ilt-surface-muted p-4 text-[var(--ilt-text-secondary)]">
             <p className="leading-relaxed">
               This page is built for one common problem: you know the effort you
               want (a pace or split), but it is annoying to keep doing the math
@@ -106,48 +106,48 @@ export default function HowItWorks({
           </div>
 
           <div className="grid gap-3 md:grid-cols-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 1) Choose mode
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Pick{" "}
-                <span className="font-semibold text-slate-900">Running</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Running</span>{" "}
                 for min/km or min/mi, or{" "}
-                <span className="font-semibold text-slate-900">Rowing</span> for
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Rowing</span> for
                 /500m split.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 2) Set distance
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Running uses km or mi. Rowing uses meters. The finish time is
                 calculated from distance and pace (or directly from finish
                 time).
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 3) Pace or finish time
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Enter a target pace like{" "}
-                <span className="font-semibold text-slate-900">5:00</span> /km
-                or <span className="font-semibold text-slate-900">2:10</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5:00</span> /km
+                or <span className="font-semibold text-[var(--ilt-text-primary)]">2:10</span>{" "}
                 /500m, or enter a finish time like{" "}
-                <span className="font-semibold text-slate-900">52:00</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">52:00</span>.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 4) Beeps + fullscreen
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Turn Sound on for interval cues, then use Fullscreen for a big,
                 glanceable display.
               </p>
@@ -157,75 +157,75 @@ export default function HowItWorks({
 
         {/* Examples with real numbers users see */}
         <div className="mt-6">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Examples with real numbers
           </h3>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             These scenarios are written to match what you will actually type and
             what the timer will show. Copy them directly to confirm your setup.
           </p>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {/* Running: pace-based */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario A: 5K steady run at 5:00 per km
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You want a clean 5K at a steady pace with a split reminder every
                 kilometer.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Inputs
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Mode:{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       Running
                     </span>{" "}
                     (km). Distance:{" "}
-                    <span className="font-semibold text-slate-900">5</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">5</span>.
                     Target pace:{" "}
-                    <span className="font-semibold text-slate-900">5:00</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">5:00</span>{" "}
                     /km.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What you will see
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Finish shows{" "}
-                    <span className="font-semibold text-slate-900">25:00</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">25:00</span>.
                     If you start and run for 12 minutes 30 seconds, the “should
                     be at” line will read about{" "}
-                    <span className="font-semibold text-slate-900">2.50km</span>
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">2.50km</span>
                     .
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Beeps
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Turn Sound on. Set Beep every{" "}
-                    <span className="font-semibold text-slate-900">1</span> km
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">1</span> km
                     to get a cue at 1K, 2K, 3K, and 4K.
                   </div>
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 If you want structured work and rest intervals instead of a
                 steady pace countdown,{" "}
                 <Link
                   to="/hiit-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   HIIT Timer
                 </Link>{" "}
@@ -234,68 +234,68 @@ export default function HowItWorks({
             </div>
 
             {/* Rowing: split-based */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario B: 2000m rowing piece at 2:10 per 500m
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You want a 2K with a consistent split and a reminder every 500m.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Inputs
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Mode:{" "}
-                    <span className="font-semibold text-slate-900">Rowing</span>
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">Rowing</span>
                     . Distance:{" "}
-                    <span className="font-semibold text-slate-900">2000</span>m.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">2000</span>m.
                     Target pace:{" "}
-                    <span className="font-semibold text-slate-900">2:10</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">2:10</span>{" "}
                     /500m.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What you will see
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Finish shows{" "}
-                    <span className="font-semibold text-slate-900">8:40</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">8:40</span>.
                     At 4:20 elapsed, “should be at” will be about{" "}
-                    <span className="font-semibold text-slate-900">1000m</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">1000m</span>.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Beeps
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Set Beep every{" "}
-                    <span className="font-semibold text-slate-900">1</span> to
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">1</span> to
                     cue each 500m. Set it to{" "}
-                    <span className="font-semibold text-slate-900">2</span> to
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">2</span> to
                     cue every 1000m instead.
                   </div>
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 For repeating on/off intervals (not steady split), try{" "}
                 <Link
                   to="/tabata-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Tabata Timer
                 </Link>{" "}
                 or{" "}
                 <Link
                   to="/round-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Round Timer
                 </Link>
@@ -304,43 +304,43 @@ export default function HowItWorks({
             </div>
 
             {/* Finish time to pace: running */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario C: 10K goal time of 52:00 (pace calculated for you)
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You care about the finish time more than the pace. You want the
                 tool to compute the required pace and then guide the effort.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Inputs
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Mode:{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       Running
                     </span>{" "}
                     (km). Distance:{" "}
-                    <span className="font-semibold text-slate-900">10</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">10</span>.
                     Switch Input to{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       Finish time
                     </span>
                     . Enter{" "}
-                    <span className="font-semibold text-slate-900">52:00</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">52:00</span>.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What you will see
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Target pace becomes about{" "}
-                    <span className="font-semibold text-slate-900">5:12</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">5:12</span>{" "}
                     /km (52 minutes divided by 10 km). With Sound on and Beep
                     every 1 km, you get a cue each kilometer to check whether
                     you are still on target.
@@ -348,11 +348,11 @@ export default function HowItWorks({
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 If you want a simple countdown with no pace math, use{" "}
                 <Link
                   to="/countdown-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Countdown Timer
                 </Link>
@@ -361,55 +361,55 @@ export default function HowItWorks({
             </div>
 
             {/* Miles: finish time to pace */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="text-base font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 Scenario D: 3.1 miles in 27:00 (mile pace computed)
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are working in miles and want a simple target for a short
                 time trial style effort.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Inputs
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Mode:{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       Running
                     </span>{" "}
                     (mi). Distance:{" "}
-                    <span className="font-semibold text-slate-900">3.1</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">3.1</span>.
                     Input:{" "}
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">
                       Finish time
                     </span>{" "}
                     set to{" "}
-                    <span className="font-semibold text-slate-900">27:00</span>.
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">27:00</span>.
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     What you will see
                   </div>
-                  <div className="mt-1 text-slate-700">
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Target pace becomes about{" "}
-                    <span className="font-semibold text-slate-900">8:42</span>{" "}
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">8:42</span>{" "}
                     /mi (27 minutes divided by 3.1 miles). If you set Beep every{" "}
-                    <span className="font-semibold text-slate-900">0.5</span>,
+                    <span className="font-semibold text-[var(--ilt-text-primary)]">0.5</span>,
                     you will get reminders every half mile.
                   </div>
                 </div>
               </div>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 Want the biggest digits possible? Use{" "}
                 <Link
                   to="/fullscreen-timer"
-                  className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Fullscreen Timer
                 </Link>{" "}
@@ -420,14 +420,14 @@ export default function HowItWorks({
         </div>
 
         {/* Practical clarifications */}
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="text-lg font-semibold text-sky-700">
+        <div className="mt-6 ilt-surface-card p-4">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Details that prevent common mistakes
           </h3>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Pick the right unit first
               </div>
               <p className="mt-2 leading-relaxed">
@@ -441,8 +441,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Beep every is distance-based
               </div>
               <p className="mt-2 leading-relaxed">
@@ -460,24 +460,24 @@ export default function HowItWorks({
         </div>
 
         {/* Technical content stays expandable */}
-        <details className="group mt-6 rounded-2xl border border-slate-200 bg-white p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-6 ilt-surface-card p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical notes (timing accuracy, audio, fullscreen)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional troubleshooting and behavior details
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Countdown timing behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -489,8 +489,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Audio may require interaction
               </div>
               <p className="mt-1 leading-relaxed">
@@ -500,8 +500,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -513,8 +513,8 @@ export default function HowItWorks({
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 “Should be at” is guidance
               </div>
               <p className="mt-1 leading-relaxed">
@@ -529,35 +529,35 @@ export default function HowItWorks({
         </details>
 
         {/* Footer helper links, on-intent */}
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">
+        <div className="mt-6 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">
             Need a different tool?
           </span>{" "}
           For structured intervals use{" "}
           <Link
             to="/hiit-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             HIIT Timer
           </Link>{" "}
           or{" "}
           <Link
             to="/tabata-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Tabata Timer
           </Link>
           . For a pure big clock use{" "}
           <Link
             to="/fullscreen-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Fullscreen Timer
           </Link>
           . For multiple stations at once use{" "}
           <Link
             to="/multiple-timers"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Multiple Timers
           </Link>

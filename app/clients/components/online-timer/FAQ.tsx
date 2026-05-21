@@ -30,12 +30,12 @@ export default function FAQ({
       question: "How do I set the timer duration?",
       answer: (
         <>
-          Use a preset (like <strong className="text-slate-900">5m</strong> or{" "}
-          <strong className="text-slate-900">10m</strong>), or type a time and
-          press <strong className="text-slate-900">Set</strong>. Time entry
-          supports <strong className="text-slate-900">ss</strong>,{" "}
-          <strong className="text-slate-900">mm:ss</strong>, and{" "}
-          <strong className="text-slate-900">h:mm:ss</strong>.
+          Use a preset (like <strong className="text-[var(--ilt-text-primary)]">5m</strong> or{" "}
+          <strong className="text-[var(--ilt-text-primary)]">10m</strong>), or type a time and
+          press <strong className="text-[var(--ilt-text-primary)]">Set</strong>. Time entry
+          supports <strong className="text-[var(--ilt-text-primary)]">ss</strong>,{" "}
+          <strong className="text-[var(--ilt-text-primary)]">mm:ss</strong>, and{" "}
+          <strong className="text-[var(--ilt-text-primary)]">h:mm:ss</strong>.
         </>
       ),
     },
@@ -44,19 +44,19 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            <strong className="text-slate-900">ss</strong> (example{" "}
-            <strong className="text-slate-900">45</strong>) = 45 seconds
+            <strong className="text-[var(--ilt-text-primary)]">ss</strong> (example{" "}
+            <strong className="text-[var(--ilt-text-primary)]">45</strong>) = 45 seconds
           </div>
           <div>
-            <strong className="text-slate-900">mm:ss</strong> (example{" "}
-            <strong className="text-slate-900">05:00</strong>) = 5 minutes
+            <strong className="text-[var(--ilt-text-primary)]">mm:ss</strong> (example{" "}
+            <strong className="text-[var(--ilt-text-primary)]">05:00</strong>) = 5 minutes
           </div>
           <div>
-            <strong className="text-slate-900">h:mm:ss</strong> (example{" "}
-            <strong className="text-slate-900">1:02:30</strong>) = 1 hour, 2
+            <strong className="text-[var(--ilt-text-primary)]">h:mm:ss</strong> (example{" "}
+            <strong className="text-[var(--ilt-text-primary)]">1:02:30</strong>) = 1 hour, 2
             minutes, 30 seconds
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-[var(--ilt-text-muted)]">
             Note: values over 24 hours are clamped to 24 hours.
           </div>
         </div>
@@ -86,11 +86,11 @@ export default function FAQ({
       question: "How do I use fullscreen mode?",
       answer: (
         <>
-          Click <strong className="text-slate-900">Fullscreen</strong> (or press{" "}
-          <strong className="text-slate-900">F</strong> after clicking the timer
-          card once). Press <strong className="text-slate-900">Esc</strong> to
+          Click <strong className="text-[var(--ilt-text-primary)]">Fullscreen</strong> (or press{" "}
+          <strong className="text-[var(--ilt-text-primary)]">F</strong> after clicking the timer
+          card once). Press <strong className="text-[var(--ilt-text-primary)]">Esc</strong> to
           exit. In fullscreen you can also{" "}
-          <strong className="text-slate-900">tap/click the timer</strong> to
+          <strong className="text-[var(--ilt-text-primary)]">tap/click the timer</strong> to
           start or pause.
         </>
       ),
@@ -105,12 +105,12 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            <strong className="text-slate-900">Space</strong>: start/pause ·{" "}
-            <strong className="text-slate-900">R</strong>: reset ·{" "}
-            <strong className="text-slate-900">F</strong>: fullscreen ·{" "}
-            <strong className="text-slate-900">Esc</strong>: exit fullscreen
+            <strong className="text-[var(--ilt-text-primary)]">Space</strong>: start/pause ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">R</strong>: reset ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">F</strong>: fullscreen ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">Esc</strong>: exit fullscreen
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-[var(--ilt-text-muted)]">
             Tip: click the timer card once so it captures keyboard input.
           </div>
         </div>
@@ -128,35 +128,35 @@ export default function FAQ({
           Want a dedicated big-screen layout?{" "}
           <Link
             to="/fullscreen-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Fullscreen Timer
           </Link>
           . Timing a talk or lesson?{" "}
           <Link
             to="/presentation-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Presentation Timer
           </Link>{" "}
           or{" "}
           <Link
             to="/classroom-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Classroom Timer
           </Link>
           . Need multiple countdowns?{" "}
           <Link
             to="/multiple-timers"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Multiple Timers
           </Link>
           . Prefer no sound?{" "}
           <Link
             to="/silent-timer"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Silent Timer
           </Link>
@@ -190,15 +190,15 @@ export default function FAQ({
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)] ilt-surface-card">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

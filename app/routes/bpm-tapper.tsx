@@ -1,8 +1,30 @@
 // app/routes/bpm-tapper.tsx
 import type { Route } from "./+types/bpm-tapper";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Button as Btn,
+  DisplayStage,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import HowItWorks from "~/clients/components/bpm-tapper/HowItWorks";
+import Disclaimer from "~/clients/components/bpm-tapper/Disclaimer";
+import FAQ from "~/clients/components/bpm-tapper/FAQ";
+import KeyboardShortcuts from "~/clients/components/bpm-tapper/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/bpm-tapper/PopularUseCases";
 
 /* =========================================================
    META
@@ -73,281 +95,11 @@ function isTypingTarget(target: EventTarget | null) {
     el.isContentEditable
   );
 }
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
 function median(nums: number[]) {
   if (!nums.length) return 0;
   const a = [...nums].sort((x, y) => x - y);
   const m = Math.floor(a.length / 2);
   return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
-}
-
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line string into its container by adjusting font size.
- * - ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: React.RefObject<HTMLElement | null>;
-  textRef: React.RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-      active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  left,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-          {left}
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
 }
 
 /* =========================================================
@@ -373,6 +125,7 @@ function BpmTapperCard() {
   const tapsRef = useRef<number[]>([]);
   const idleTimerRef = useRef<number | null>(null);
   const holdTimerRef = useRef<number | null>(null);
+  const skipInitialSettingsPersistRef = useRef(true);
 
   const [taps, setTaps] = useState<number[]>([]);
   const [active, setActive] = useState(false);
@@ -387,7 +140,8 @@ function BpmTapperCard() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const bpmTextRef = useRef<HTMLSpanElement>(null);
@@ -447,11 +201,12 @@ function BpmTapperCard() {
   }, [bpm]);
 
   const bpmStr = bpm == null ? "--" : String(bpm);
+  const displayBpmText = bpm == null ? "TAP" : bpmStr;
 
   const fitFontPx = useFitText({
     containerRef: displayBoxRef,
     textRef: bpmTextRef,
-    deps: [bpmStr, isFs, active, tick, locked],
+    deps: [displayBpmText, isFs, active, tick, locked],
     minPx: 84,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 140 : 96,
@@ -503,6 +258,11 @@ function BpmTapperCard() {
   }, []);
 
   useEffect(() => {
+    if (skipInitialSettingsPersistRef.current) {
+      skipInitialSettingsPersistRef.current = false;
+      return;
+    }
+
     persistSettings({ resetMs, holdMs, keyboardTap });
   }, [resetMs, holdMs, keyboardTap, persistSettings]);
 
@@ -612,12 +372,12 @@ function BpmTapperCard() {
     const k = e.key.toLowerCase();
 
     if (k === "escape" && document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
       return;
     }
 
     if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
       return;
     }
 
@@ -699,8 +459,80 @@ function BpmTapperCard() {
         : `${holdMs}ms`;
 
   const shortcutsText = keyboardTap
-    ? "Tap/click anywhere · Space/Enter tap · F fullscreen · R reset · C copy"
-    : "Tap/click anywhere · F fullscreen · R reset · C copy";
+    ? "Tap/click anywhere / Space/Enter tap / F fullscreen / R reset / C copy"
+    : "Tap/click anywhere / F fullscreen / R reset / C copy";
+
+  const recentResults = !isFs && history.length > 0 ? (
+    <div className="timer-interaction-results p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+          Recent results
+        </div>
+        <Btn
+          variant="ghost"
+          size="sm"
+          className="min-h-0 px-2 py-1 text-xs"
+          onClick={() => {
+            setHistory([]);
+            try {
+              localStorage.removeItem("bpmTapper.history.v1");
+            } catch {
+              // ignore
+            }
+          }}
+        >
+          Clear
+        </Btn>
+      </div>
+
+      <div className="mt-2 grid gap-2 sm:grid-cols-2">
+        {history.slice(0, 6).map((h) => (
+          <Btn
+            key={h.id}
+            variant="ghost"
+            size="sm"
+            className="timer-interaction-panel h-auto min-h-0 flex-col items-start justify-start px-3 py-2 text-left"
+            onClick={() => {
+              // restore result (as a held session) so user can copy/lock it
+              tapsRef.current = []; // restore as display-only
+              setTaps([]);
+              setActive(false);
+              setTick((t) => t + 1);
+              setLocked(true);
+              clearIdle();
+              clearHold();
+              // store bpm by faking taps is messy; instead: lock mode + preserve via history copy
+              // We keep restore minimal: copy from history is the primary action.
+              void navigator.clipboard
+                ?.writeText(
+                  `Tap BPM\nTempo: ${h.bpm} BPM\nTaps: ${h.taps}\nIntervals used: ${h.intervals}\nStability: ${
+                    h.stability ?? "n/a"
+                  }\nhttps://www.ilovetimers.com/bpm-tapper`,
+                )
+                .then(() => {
+                  setCopied(true);
+                  window.setTimeout(() => setCopied(false), 1200);
+                })
+                .catch(() => {});
+            }}
+            title="Click to copy this result"
+          >
+            <div className="text-sm font-extrabold text-slate-950">
+              {h.bpm} BPM
+            </div>
+            <div className="mt-0.5 text-xs font-semibold text-slate-600">
+              Taps {h.taps} Â· Intervals {h.intervals}
+              {h.stability ? ` Â· ${h.stability}` : ""}
+            </div>
+          </Btn>
+        ))}
+      </div>
+
+      <div className="mt-2 text-xs text-slate-600">
+        Click a recent result to copy it.
+      </div>
+    </div>
+  ) : null;
 
   return (
     <Card
@@ -753,51 +585,14 @@ function BpmTapperCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {/* Controls (normal only) */}
-        {!isFs && (
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800">
-                Reset: {resetLabel}
-              </div>
-              <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800">
-                Hold: {holdLabel}
-              </div>
-              {locked ? (
-                <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900">
-                  Locked
-                </div>
-              ) : null}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 ml-auto">
-              <Btn kind="ghost" onClick={lockToggle} disabled={!bpm}>
-                {locked ? "Unlock" : "Lock"}
-              </Btn>
-              <Btn kind="ghost" onClick={() => void copy()} disabled={!bpm}>
-                {copied ? "Copied" : "Copy"}
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-              >
-                Fullscreen
-              </Btn>
-              <Btn kind="ghost" onClick={endSession}>
-                Reset
-              </Btn>
-            </div>
-          </div>
-        )}
+      <div className={isFs ? "flex h-full flex-col" : "timer-interaction-stack flex h-full flex-col"}>
 
         {/* Tap Stage */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface mt-4 flex flex-col items-center justify-center font-mono font-extrabold",
+            "timer-display-surface order-first mt-0 flex flex-col items-center justify-center font-mono font-extrabold",
             displayTone,
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
@@ -814,17 +609,15 @@ function BpmTapperCard() {
           aria-live="polite"
           onPointerDownCapture={onStagePointerDownCapture}
           onContextMenu={(e) => e.preventDefault()}
-          role={isFs ? "button" : undefined}
+          role="button"
+          aria-label="Tap tempo"
+          tabIndex={0}
           title={isFs ? "Tap/click anywhere to register a beat" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {statusLabel}
-          </div>
-
           <span
             ref={bpmTextRef}
             className={[
-              "mt-2 inline-block text-center text-slate-950",
+              "timer-interaction-stage-value inline-block text-center text-slate-950",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
             style={{
@@ -833,15 +626,19 @@ function BpmTapperCard() {
               transform: "translateZ(0)",
             }}
           >
-            {bpmStr}
+            {displayBpmText}
           </span>
 
-          <div className="mt-2 text-sm font-semibold text-slate-600">
+          <div className="timer-interaction-status text-xs font-extrabold uppercase tracking-widest text-slate-700">
+            {statusLabel}
+          </div>
+
+          <div className="timer-interaction-context text-sm font-semibold text-slate-600">
             {bpm ? "BPM" : "Waiting for taps"}
           </div>
 
-          <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+          <div className="timer-interaction-meta-grid grid gap-3 sm:grid-cols-2">
+            <div className="timer-interaction-panel p-4">
               <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                 Session
               </div>
@@ -883,7 +680,7 @@ function BpmTapperCard() {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+            <div className="timer-interaction-panel p-4">
               <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                 Timing
               </div>
@@ -904,7 +701,7 @@ function BpmTapperCard() {
                 </span>
               </div>
 
-              <div className="mt-2 text-xs text-slate-600">
+              <div className="hidden">
                 Shortcuts:{" "}
                 <span className="font-semibold text-slate-700">
                   {keyboardTap ? "Space/Enter tap · " : ""}F
@@ -916,15 +713,16 @@ function BpmTapperCard() {
             </div>
           </div>
 
-          {!isFs && history.length > 0 && (
-            <div className="mt-4 w-full max-w-3xl rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
+          {false && !isFs && history.length > 0 && (
+            <div className="timer-interaction-results p-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
                   Recent results
                 </div>
-                <button
-                  type="button"
-                  className="cursor-pointer text-xs font-semibold text-slate-700 hover:underline"
+                <Btn
+                  variant="ghost"
+                  size="sm"
+                  className="min-h-0 px-2 py-1 text-xs"
                   onClick={() => {
                     setHistory([]);
                     try {
@@ -935,15 +733,16 @@ function BpmTapperCard() {
                   }}
                 >
                   Clear
-                </button>
+                </Btn>
               </div>
 
               <div className="mt-2 grid gap-2 sm:grid-cols-2">
                 {history.slice(0, 6).map((h) => (
-                  <button
+                  <Btn
                     key={h.id}
-                    type="button"
-                    className="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-left hover:bg-slate-100"
+                    variant="ghost"
+                    size="sm"
+                    className="timer-interaction-panel h-auto min-h-0 flex-col items-start justify-start px-3 py-2 text-left"
                     onClick={() => {
                       // restore result (as a held session) so user can copy/lock it
                       tapsRef.current = []; // restore as display-only
@@ -976,7 +775,7 @@ function BpmTapperCard() {
                       Taps {h.taps} · Intervals {h.intervals}
                       {h.stability ? ` · ${h.stability}` : ""}
                     </div>
-                  </button>
+                  </Btn>
                 ))}
               </div>
 
@@ -987,20 +786,43 @@ function BpmTapperCard() {
           )}
 
           {!isFs && (
-            <div className="mt-3 text-xs text-slate-600">
+            <div className="hidden">
               Tip: click the card once so keyboard shortcuts work immediately.
             </div>
           )}
-        </div>
+        </DisplayStage>
+
+        {!isFs && (
+          <>
+            <SecondaryActionRow className="timer-interaction-actions">
+              <Btn kind="ghost" onClick={lockToggle} disabled={!bpm}>
+                {locked ? "Unlock" : "Lock"}
+              </Btn>
+              <Btn kind="ghost" onClick={() => void copy()} disabled={!bpm}>
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+              <Btn kind="ghost" onClick={endSession}>
+                Reset
+              </Btn>
+            </SecondaryActionRow>
+            <ShortcutHint className="timer-interaction-shortcut">{shortcutsText}</ShortcutHint>
+          </>
+        )}
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <div className="mt-5 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-slate-900">
-                Auto-reset after pause
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
+          <SettingGroup
+            title="Tapper settings"
+            description="Adjust reset timing and keyboard tapping without changing the tap target."
+          >
+            <div className="grid gap-4 lg:grid-cols-2">
+              <PresetGroup
+                title="Auto-reset after pause"
+                description="Shorter resets feel snappier. Longer resets help if you pause between phrases."
+              >
                 {RESET_PRESETS_MS.map((ms) => (
                   <Chip
                     key={ms}
@@ -1018,18 +840,9 @@ function BpmTapperCard() {
                 >
                   Off
                 </Chip>
-              </div>
-              <div className="mt-2 text-xs text-slate-600">
-                Shorter resets feel snappier. Longer resets help if you pause
-                between phrases.
-              </div>
-            </div>
+              </PresetGroup>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-sm font-extrabold text-slate-900">
-                Hold last result
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <PresetGroup title="Hold last result">
                 {HOLD_PRESETS_MS.map((ms) => (
                   <Chip
                     key={ms}
@@ -1039,24 +852,18 @@ function BpmTapperCard() {
                     {ms === 0 ? "Off" : `${Math.round(ms / 1000)}s`}
                   </Chip>
                 ))}
-              </div>
-
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-900">
-                  <input
-                    type="checkbox"
-                    checked={keyboardTap}
-                    onChange={(e) => setKeyboardTap(e.target.checked)}
-                    className="accent-amber-500"
-                  />
-                  Space/Enter to tap
-                </label>
-
-                <div className="text-xs text-slate-600">{shortcutsText}</div>
-              </div>
+              </PresetGroup>
             </div>
-          </div>
+
+            <Toggle
+              label="Space/Enter to tap"
+              checked={keyboardTap}
+              onCheckedChange={setKeyboardTap}
+            />
+          </SettingGroup>
         )}
+
+        {recentResults}
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
@@ -1132,38 +939,25 @@ export default function BpmTapperPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Tap BPM (Instant Tempo Tapper)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Tap anywhere to estimate beats per minute. Use Lock to keep the
-            result, and see milliseconds per beat for timing.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<BpmTapperCard />}
+        title="Tap BPM (Tempo Tapper)"
+        description="Tap anywhere to calculate BPM, copy results, lock a reading, and keep compact timing stats below the main BPM."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <BpmTapperCard />
-        </div>
-
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Tap BPM</span>
-        </p>
-      </section>
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

@@ -36,9 +36,9 @@ export default function FAQ({
       answer: (
         <>
           Click a city chip in{" "}
-          <strong className="text-slate-900">Popular</strong> to toggle it on or
+          <strong className="text-[var(--ilt-text-primary)]">Popular</strong> to toggle it on or
           off. You can also remove a city from its card using{" "}
-          <strong className="text-slate-900">Remove</strong>.
+          <strong className="text-[var(--ilt-text-primary)]">Remove</strong>.
         </>
       ),
     },
@@ -51,9 +51,9 @@ export default function FAQ({
       question: "How do I switch between 24-hour and 12-hour time?",
       answer: (
         <>
-          Toggle <strong className="text-slate-900">24-hour</strong> in the
+          Toggle <strong className="text-[var(--ilt-text-primary)]">24-hour</strong> in the
           controls. You can also press{" "}
-          <strong className="text-slate-900">T</strong> after clicking the world
+          <strong className="text-[var(--ilt-text-primary)]">T</strong> after clicking the world
           clock card once.
         </>
       ),
@@ -62,9 +62,9 @@ export default function FAQ({
       question: "How do I show or hide seconds?",
       answer: (
         <>
-          Toggle <strong className="text-slate-900">Seconds</strong> in the
+          Toggle <strong className="text-[var(--ilt-text-primary)]">Seconds</strong> in the
           controls. You can also press{" "}
-          <strong className="text-slate-900">S</strong> after clicking the world
+          <strong className="text-[var(--ilt-text-primary)]">S</strong> after clicking the world
           clock card once.
         </>
       ),
@@ -83,9 +83,9 @@ export default function FAQ({
       question: "How do I use fullscreen mode?",
       answer: (
         <>
-          Click <strong className="text-slate-900">Fullscreen</strong> (or press{" "}
-          <strong className="text-slate-900">F</strong> after clicking the card
-          once). Press <strong className="text-slate-900">Esc</strong> to exit
+          Click <strong className="text-[var(--ilt-text-primary)]">Fullscreen</strong> (or press{" "}
+          <strong className="text-[var(--ilt-text-primary)]">F</strong> after clicking the card
+          once). Press <strong className="text-[var(--ilt-text-primary)]">Esc</strong> to exit
           fullscreen.
         </>
       ),
@@ -95,14 +95,14 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            <strong className="text-slate-900">F</strong>: fullscreen ·{" "}
-            <strong className="text-slate-900">T</strong>: 24-hour toggle ·{" "}
-            <strong className="text-slate-900">S</strong>: seconds toggle ·{" "}
-            <strong className="text-slate-900">C</strong>: copy ·{" "}
-            <strong className="text-slate-900">R</strong>: reset ·{" "}
-            <strong className="text-slate-900">X</strong>: clear
+            <strong className="text-[var(--ilt-text-primary)]">F</strong>: fullscreen ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">T</strong>: 24-hour toggle ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">S</strong>: seconds toggle ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">C</strong>: copy ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">R</strong>: reset ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">X</strong>: clear
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-[var(--ilt-text-muted)]">
             Tip: click the world clock card once so it captures keyboard input.
             Shortcuts are ignored while you are typing in the Search input.
           </div>
@@ -121,28 +121,28 @@ export default function FAQ({
           Need to convert a specific time between zones?{" "}
           <Link
             to="/time-zone-converter"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Time Zone Converter
           </Link>
           . Want a UTC reference clock?{" "}
           <Link
             to="/utc-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             UTC Clock
           </Link>
           . Want a large single clock display?{" "}
           <Link
             to="/digital-clock"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Digital Clock
           </Link>
           . Need your device’s local time only?{" "}
           <Link
             to="/current-local-time"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Current Local Time
           </Link>
@@ -168,18 +168,18 @@ export default function FAQ({
   };
 
   return (
-    <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
+    <section id={id} className="space-y-4">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)] ilt-surface-card">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

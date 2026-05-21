@@ -11,12 +11,12 @@ export default function KeyboardShortcuts() {
   ];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-12">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-sky-700">
+    <section className="space-y-4">
+      <div className="ilt-surface-card p-5">
+        <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
           Keyboard shortcuts
         </h2>
-        <p className="mt-2 leading-relaxed text-slate-700">
+        <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
           Click the clock card once, then use the keyboard to control the time
           display. Shortcuts won’t trigger while you’re typing in an input,
           select, textarea, or editable field.
@@ -25,27 +25,27 @@ export default function KeyboardShortcuts() {
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-left">
-                <th className="py-2 pr-4 font-semibold text-slate-900">Key</th>
-                <th className="py-2 font-semibold text-slate-900">Action</th>
+              <tr className="border-b border-[var(--ilt-border-subtle)] text-left">
+                <th className="py-2 pr-4 font-semibold text-[var(--ilt-text-primary)]">Key</th>
+                <th className="py-2 font-semibold text-[var(--ilt-text-primary)]">Action</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.key} className="border-b border-slate-100">
+                <tr key={r.key} className="border-b border-[var(--ilt-border-subtle)]">
                   <td className="py-2 pr-4">
-                    <kbd className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-xs text-slate-900">
+                    <kbd className="ilt-keycap px-2 py-1 font-mono text-xs text-[var(--ilt-text-primary)]">
                       {r.key}
                     </kbd>
                   </td>
-                  <td className="py-2 text-slate-700">{r.action}</td>
+                  <td className="py-2 text-[var(--ilt-text-secondary)]">{r.action}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+        <div className="mt-3 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
           Tip: if shortcuts do nothing, the clock card probably isn’t focused.
           Click the clock once, then try again.
         </div>
@@ -60,63 +60,63 @@ export default function KeyboardShortcuts() {
 ========================================================= */
 export function AccuracyAndPrivacySection() {
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-12">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-sky-700">
+    <section className="space-y-4">
+      <div className="ilt-surface-card p-5">
+        <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
           Behavior and privacy
         </h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Runs locally in your browser
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               No sign-in required. The clock runs on your device and reads the
               current time from your browser/device settings.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Local time comes from your device settings
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               “Local” time is based on your device’s clock and timezone. If your
               device time, timezone, or daylight-saving setting is wrong, the
               displayed local time will be wrong too.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Time zones are browser-formatted
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               City comparisons (like Toronto, New York, or London) are formatted
               using your browser’s timezone database. If your browser is very
               old, a zone label or formatting may vary.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen is display-first
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fullscreen makes the digits large and adds top/bottom controls.
               Exit with{" "}
-              <span className="font-semibold text-slate-900">Esc</span> or the
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Esc</span> or the
               Exit button. In fullscreen, you can also tap/click the time area
               to copy.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Copy uses your clipboard
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Copy writes a formatted timestamp to your clipboard (time, zone
               label, date, and ISO week number). Some browsers restrict
               clipboard access in certain contexts. If copy fails, click the
@@ -124,11 +124,11 @@ export function AccuracyAndPrivacySection() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               No GPS, no account
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               This page does not request your precise location. It does not
               require sign-in. The display is based on your browser/device time
               and timezone settings.
@@ -137,29 +137,29 @@ export function AccuracyAndPrivacySection() {
         </div>
 
         {/* Technical / implementation notes should be expandable */}
-        <details className="group mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-4 ilt-surface-card p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical notes (time formatting + zones + fullscreen)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 How time is formatted, why zones can vary, and permission notes
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Formatting engine
               </div>
               <p className="mt-1 leading-relaxed">
                 The clock uses{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   Intl.DateTimeFormat
                 </span>{" "}
                 for 12/24-hour formatting and optional seconds. Some locales
@@ -168,15 +168,15 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">Time zones</div>
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Time zones</div>
               <p className="mt-1 leading-relaxed">
                 City times are rendered by formatting the same{" "}
-                <span className="font-semibold text-slate-900">Date</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Date</span>{" "}
                 instance with a{" "}
-                <span className="font-semibold text-slate-900">timeZone</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">timeZone</span>{" "}
                 option (for example{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   America/Toronto
                 </span>
                 ). The underlying timezone database comes from your browser/OS,
@@ -184,8 +184,8 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Copy string content
               </div>
               <p className="mt-1 leading-relaxed">
@@ -195,13 +195,13 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen + clipboard permissions
               </div>
               <p className="mt-1 leading-relaxed">
                 Fullscreen uses the browser Fullscreen API and updates state on{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   fullscreenchange
                 </span>
                 . Clipboard access can be restricted by browser policy; it is
@@ -211,10 +211,10 @@ export function AccuracyAndPrivacySection() {
           </div>
         </details>
 
-        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-          <strong className="text-slate-900">Note.</strong> If you need a
+        <div className="mt-4 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
+          <strong className="text-[var(--ilt-text-primary)]">Note.</strong> If you need a
           “correct” reference time independent of your device settings, use{" "}
-          <strong className="text-slate-900">UTC Clock</strong> for a dedicated
+          <strong className="text-[var(--ilt-text-primary)]">UTC Clock</strong> for a dedicated
           UTC display or a network-synced reference like an atomic time source.
           This page is designed to show what your device considers “local time.”
         </div>

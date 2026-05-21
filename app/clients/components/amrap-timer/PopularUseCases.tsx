@@ -36,87 +36,75 @@ export default function PopularUseCases({
       ],
     },
     {
-      title: "Intervals (work/rest rounds that advance automatically)",
+      title: "Prep before a time-capped workout",
       description:
-        "Use a structured interval timer when you want rounds and phases to auto-run without manual scoring.",
+        "Use the prep countdown to get equipment ready, move into position, or brief a class before the AMRAP clock starts.",
       forWho:
-        "HIIT, circuits, coaching classes, and anyone who wants work/rest cycles handled automatically.",
+        "Coaches, garage gyms, partner workouts, and athletes who want a short buffer before the scored effort.",
       notFor:
-        "If you specifically need a single time cap plus rounds/reps scoring. Use the AMRAP timer for that.",
+        "If the workout needs automatic minute-by-minute prompts. Use the EMOM timer for that structure.",
       links: [
-        { label: "HIIT timer", href: "/hiit-timer" },
-        { label: "Tabata timer", href: "/tabata-timer" },
+        { label: "AMRAP timer", href: "/amrap-timer" },
+        { label: "EMOM timer", href: "/emom-timer" },
         { label: "Workout timer", href: "/workout-timer" },
       ],
     },
     {
-      title: "Meetings that run on schedule",
+      title: "Rounds and reps scoring",
       description:
-        "Keep segments tight with a visible countdown you can start/pause fast.",
+        "Use the large tap controls or keyboard shortcuts to keep a simple score while the countdown stays visible.",
       forWho:
-        "Facilitators, interviewers, team leads, anyone running timed agenda blocks.",
+        "As-many-rounds-as-possible workouts, ladder finishers, repeatable bodyweight circuits, and coaching whiteboard scores.",
       notFor:
-        "If you need shared control, calendar automation, or attendee tracking. This is just a timer.",
+        "If you need automatic rep counting, exercise recognition, or workout history sync.",
       links: [
-        { label: "Meeting timer", href: "/meeting-timer" },
-        { label: "Presentation timer", href: "/presentation-timer" },
-        { label: "Online timer", href: "/online-timer" },
+        { label: "AMRAP timer", href: "/amrap-timer" },
+        { label: "Workout timer", href: "/workout-timer" },
+        { label: "HIIT timer", href: "/hiit-timer" },
       ],
     },
     {
-      title: "Presentations, classrooms, exams",
+      title: "Fullscreen coach display",
       description:
-        "Fullscreen gives a large, readable countdown for the whole room.",
-      forWho: "Teachers, presenters, speakers, exam proctors.",
+        "Put the AMRAP countdown on a TV, tablet, or second monitor so the room can see time remaining and score.",
+      forWho: "Coaches, small-group training, home gyms, and workout classes.",
       notFor:
-        "If you need slide cues or slide-deck integrations. This is only timing.",
+        "If you need remote shared control or participant tracking.",
       links: [
-        { label: "Classroom timer", href: "/classroom-timer" },
-        { label: "Exam timer", href: "/exam-timer" },
+        { label: "AMRAP timer", href: "/amrap-timer" },
         { label: "Fullscreen timer", href: "/fullscreen-timer" },
+        { label: "Workout timer", href: "/workout-timer" },
       ],
     },
     {
-      title: "Silent or discreet timing",
+      title: "Quiet AMRAP timing",
       description:
-        "Run a countdown with sound off for quiet rooms or recordings.",
-      forWho: "Libraries, recording sessions, meditation, quiet classrooms.",
+        "Turn sound off and use the visual countdown and manual score controls when beeps would be distracting.",
+      forWho: "Shared spaces, early workouts, recordings, and quiet coaching environments.",
       notFor:
-        "If you rely on audio cues, vibration alerts, or notifications while away from the screen.",
+        "If you rely on audio cues while looking away from the screen.",
       links: [
+        { label: "AMRAP timer", href: "/amrap-timer" },
         { label: "Silent timer", href: "/silent-timer" },
         { label: "Visual timer", href: "/visual-timer" },
-        { label: "Meditation timer", href: "/meditation-timer" },
       ],
     },
     {
-      title: "Focus blocks (work + breaks)",
+      title: "Choose another workout format",
       description:
-        "Use structured work/break cycles without extra distractions.",
-      forWho: "Students and knowledge workers who benefit from focus sessions.",
+        "Switch tools when the workout needs fixed work/rest rounds, Tabata timing, or an every-minute-on-the-minute structure.",
+      forWho:
+        "Athletes and coaches deciding between AMRAP, EMOM, HIIT, Tabata, or round-based training.",
       notFor:
-        "If you want task lists, site blocking, habit tracking, or analytics. This is just timing.",
+        "If the workout is one time cap with manual score tracking. Stay on the AMRAP timer.",
       links: [
-        { label: "Pomodoro timer", href: "/pomodoro-timer" },
-        { label: "Study timer", href: "/study-timer" },
-        { label: "Focus session timer", href: "/focus-session-timer" },
-      ],
-    },
-    {
-      title: "Timing tasks with elapsed time and splits",
-      description:
-        "Track elapsed time and record splits for practice, drills, or experiments.",
-      forWho: "Training, lab timing, speed practice, repeatable drills.",
-      notFor: "If you need exports, multi-run comparisons, or advanced stats.",
-      links: [
-        { label: "Stopwatch", href: "/stopwatch" },
-        { label: "Lab timer", href: "/lab-timer" },
-        { label: "Speedcubing timer", href: "/speedcubing-timer" },
+        { label: "EMOM timer", href: "/emom-timer" },
+        { label: "HIIT timer", href: "/hiit-timer" },
+        { label: "Tabata timer", href: "/tabata-timer" },
       ],
     },
   ];
 
-  // Build absolute URLs for schema + rendering
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
   const list = scenarios.map((s) => ({
@@ -127,12 +115,11 @@ export default function PopularUseCases({
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Common timer scenarios",
+    name: "Common ways to use the AMRAP Timer",
     itemListElement: list.map((s, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: s.title,
-      // point to the first recommended destination
       url: s.links[0]?.href,
     })),
   };
@@ -141,42 +128,44 @@ export default function PopularUseCases({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
-            Common scenarios
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
+            Common AMRAP scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Quick guidance on which timer to use based on what you’re doing.
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
+            Use this page for time-capped workouts with manual rounds and reps
+            scoring.
           </p>
         </div>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {list.map((s) => (
-            <div
-              key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-            >
-              <div className="text-base font-semibold text-slate-900">
+            <div key={s.title} className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
+                    {s.forWho}
+                  </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
+                    {s.notFor}
+                  </div>
                 </div>
               </div>
 
@@ -185,9 +174,9 @@ export default function PopularUseCases({
                   <a
                     key={l.href}
                     href={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 hover:border-slate-300"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
-                    {l.label} →
+                    {l.label} -&gt;
                   </a>
                 ))}
               </div>
@@ -195,11 +184,13 @@ export default function PopularUseCases({
           ))}
         </div>
 
-        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Note:</span> Browser
-          timers can’t guarantee alerts if you close the tab or your device puts
-          the browser to sleep. For workouts, keep this page visible or use
-          fullscreen.
+        <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">
+            Note:
+          </span>{" "}
+          Browser timers can't guarantee alerts if you close the tab or your
+          device puts the browser to sleep. For workouts, keep this page visible
+          or use fullscreen.
         </div>
       </div>
     </section>

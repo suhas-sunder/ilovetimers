@@ -24,7 +24,7 @@ export default function PopularUseCases({
     {
       title: "Fullscreen “big number” debt display",
       description:
-        "Put the live counter on a TV, projector, or second monitor. Fullscreen keeps the total readable from a distance and adds top/bottom controls.",
+        "Put the estimated counter on a TV, projector, or second monitor. Fullscreen keeps the total readable from a distance and adds top/bottom controls.",
       forWho:
         "Presentations, classrooms, stream overlays, dashboards, or any situation where you want the number visible without UI clutter.",
       notFor:
@@ -42,7 +42,7 @@ export default function PopularUseCases({
       forWho:
         "Anyone preparing talking points, slide decks, meeting notes, or a report where you need a clean pasteable number + assumptions.",
       notFor:
-        "Exporting charts or time series. This tool is meant for a live display and quick copy.",
+        "Exporting charts or time series. This tool is meant for a running display and quick copy.",
       links: [
         { label: "Debt Repayment Timer", href: "/debt-repayment-timer" },
         { label: "Count Up Timer", href: "/count-up-timer" },
@@ -73,11 +73,11 @@ export default function PopularUseCases({
       ],
     },
     {
-      title: "Controlled demo for live talks (Reset + Pause)",
+      title: "Controlled demo for talks (Reset + Pause)",
       description:
         "Pause when you want to freeze the number for discussion, then resume. Reset snaps back to your starting value for repeating a segment.",
       forWho:
-        "Speakers, teachers, and anyone rehearsing or running a live demo with a consistent starting point.",
+        "Speakers, teachers, and anyone rehearsing or running a demo with a consistent starting point.",
       notFor: "Hands-off unattended displays where you need zero interaction.",
       links: [
         { label: "Presentation Timer", href: "/presentation-timer" },
@@ -122,13 +122,13 @@ export default function PopularUseCases({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            This page is built for a live debt counter: presets or custom
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
+            This page is built for an estimated debt counter: presets or custom
             starting values, an average yearly change rate, fullscreen display,
             keyboard shortcuts, and one-click copy of a clean snapshot.
           </p>
@@ -138,28 +138,28 @@ export default function PopularUseCases({
           {scenarios.map((s) => (
             <div
               key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="ilt-surface-card p-4"
             >
-              <div className="text-base font-semibold text-slate-900">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.forWho}</div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.notFor}</div>
                 </div>
               </div>
 
@@ -168,7 +168,7 @@ export default function PopularUseCases({
                   <a
                     key={`${s.title}-${l.href}`}
                     href={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
                     {l.label} →
                   </a>
@@ -178,15 +178,15 @@ export default function PopularUseCases({
           ))}
         </div>
 
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Tip:</span> Press{" "}
-          <span className="font-semibold text-slate-900">F</span> for
+        <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+          <span className="font-semibold text-[var(--ilt-text-primary)]">Tip:</span> Press{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]">F</span> for
           fullscreen,
-          <span className="font-semibold text-slate-900"> Space</span> to
-          start/pause, <span className="font-semibold text-slate-900">R</span>{" "}
-          to reset, and <span className="font-semibold text-slate-900">C</span>{" "}
+          <span className="font-semibold text-[var(--ilt-text-primary)]"> Space</span> to
+          start/pause, <span className="font-semibold text-[var(--ilt-text-primary)]">R</span>{" "}
+          to reset, and <span className="font-semibold text-[var(--ilt-text-primary)]">C</span>{" "}
           to copy a clean snapshot. If shortcuts do nothing, click the debt
-          clock card once to focus it.
+          clock display once to focus it.
         </div>
       </div>
     </section>

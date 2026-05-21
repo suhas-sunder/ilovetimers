@@ -35,11 +35,11 @@ export default function FAQ({
       question: "Does it support overnight shifts?",
       answer: (
         <>
-          Yes. If your <strong className="text-slate-900">End time</strong> is
+          Yes. If your <strong className="text-[var(--ilt-text-primary)]">End time</strong> is
           earlier than your{" "}
-          <strong className="text-slate-900">Start time</strong>, the tool
+          <strong className="text-[var(--ilt-text-primary)]">Start time</strong>, the tool
           assumes the shift continues into the next day and labels the result as{" "}
-          <strong className="text-slate-900">Overnight</strong>.
+          <strong className="text-[var(--ilt-text-primary)]">Overnight</strong>.
         </>
       ),
     },
@@ -52,12 +52,12 @@ export default function FAQ({
       question: "Can I round the paid time?",
       answer: (
         <>
-          Yes. Use <strong className="text-slate-900">Round paid time</strong>{" "}
-          to round to the nearest <strong className="text-slate-900">5</strong>,{" "}
-          <strong className="text-slate-900">10</strong>, or{" "}
-          <strong className="text-slate-900">15</strong> minutes. Rounding
+          Yes. Use <strong className="text-[var(--ilt-text-primary)]">Round paid time</strong>{" "}
+          to round to the nearest <strong className="text-[var(--ilt-text-primary)]">5</strong>,{" "}
+          <strong className="text-[var(--ilt-text-primary)]">10</strong>, or{" "}
+          <strong className="text-[var(--ilt-text-primary)]">15</strong> minutes. Rounding
           applies to{" "}
-          <strong className="text-slate-900">paid time after breaks</strong>.
+          <strong className="text-[var(--ilt-text-primary)]">paid time after breaks</strong>.
         </>
       ),
     },
@@ -75,7 +75,7 @@ export default function FAQ({
       question: "What do the “Now” buttons do?",
       answer: (
         <>
-          <strong className="text-slate-900">Now</strong> sets Start or End to
+          <strong className="text-[var(--ilt-text-primary)]">Now</strong> sets Start or End to
           your current device time. It’s useful when you’re clocking in or out
           and want the exact time quickly.
         </>
@@ -91,12 +91,12 @@ export default function FAQ({
       answer: (
         <div className="grid gap-2">
           <div>
-            <strong className="text-slate-900">S</strong>: set Start to now ·{" "}
-            <strong className="text-slate-900">E</strong>: set End to now ·{" "}
-            <strong className="text-slate-900">C</strong>: copy paid time ·{" "}
-            <strong className="text-slate-900">R</strong>: reset
+            <strong className="text-[var(--ilt-text-primary)]">S</strong>: set Start to now ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">E</strong>: set End to now ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">C</strong>: copy paid time ·{" "}
+            <strong className="text-[var(--ilt-text-primary)]">R</strong>: reset
           </div>
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-[var(--ilt-text-muted)]">
             Tip: click the calculator card once so it captures keyboard input.
             Shortcuts are ignored while you are typing in an input field.
           </div>
@@ -115,21 +115,21 @@ export default function FAQ({
           Need to add up multiple time blocks?{" "}
           <Link
             to="/time-calculator"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Time Calculator
           </Link>
           . Tracking billable formatting and totals?{" "}
           <Link
             to="/billable-hours-calculator"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Billable Hours Calculator
           </Link>
           . Want a live clock while you log time?{" "}
           <Link
             to="/current-local-time"
-            className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Current Local Time
           </Link>
@@ -158,15 +158,15 @@ export default function FAQ({
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
 
-      <h2 className="text-2xl font-semibold text-sky-700">{title}</h2>
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
 
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)] ilt-surface-card">
         {faqs.map((f) => (
           <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-slate-900 hover:bg-slate-50">
+            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
               {f.question}
             </summary>
-            <div className="px-5 pb-4 leading-relaxed text-slate-700">
+            <div className="px-5 pb-4 leading-relaxed text-[var(--ilt-text-secondary)]">
               {f.answer}
             </div>
           </details>

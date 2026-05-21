@@ -17,12 +17,12 @@ export default function KeyboardShortcuts() {
   ];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-12">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-sky-700">
+    <section className="space-y-4">
+      <div className="ilt-surface-card p-5">
+        <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
           Keyboard shortcuts
         </h2>
-        <p className="mt-2 leading-relaxed text-slate-700">
+        <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
           Click the clock once, then use the shortcuts below. Shortcuts won’t
           trigger while you’re typing in an input, select, textarea, or editable
           field.
@@ -31,30 +31,30 @@ export default function KeyboardShortcuts() {
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-left">
-                <th className="py-2 pr-4 font-semibold text-slate-900">Key</th>
-                <th className="py-2 font-semibold text-slate-900">Action</th>
+              <tr className="border-b border-[var(--ilt-border-subtle)] text-left">
+                <th className="py-2 pr-4 font-semibold text-[var(--ilt-text-primary)]">Key</th>
+                <th className="py-2 font-semibold text-[var(--ilt-text-primary)]">Action</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
                 <tr
                   key={`${r.key}-${r.action}`}
-                  className="border-b border-slate-100"
+                  className="border-b border-[var(--ilt-border-subtle)]"
                 >
                   <td className="py-2 pr-4">
-                    <kbd className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-xs text-slate-900">
+                    <kbd className="ilt-keycap px-2 py-1 font-mono text-xs text-[var(--ilt-text-primary)]">
                       {r.key}
                     </kbd>
                   </td>
-                  <td className="py-2 text-slate-700">{r.action}</td>
+                  <td className="py-2 text-[var(--ilt-text-secondary)]">{r.action}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+        <div className="mt-3 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
           Tip: if shortcuts do nothing, the clock probably isn’t focused. Click
           the clock once, then try again.
         </div>
@@ -69,70 +69,70 @@ export default function KeyboardShortcuts() {
 ========================================================= */
 export function AccuracyAndPrivacySection() {
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-12">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-sky-700">
+    <section className="space-y-4">
+      <div className="ilt-surface-card p-5">
+        <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
           Behavior and privacy
         </h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Runs locally in your browser
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               No sign-in required. The clock display, toggles, and Zen UI hiding
               run locally in your browser.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Uses your device’s local time
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               The clock reflects your device time and detected time zone label.
               If your system time is wrong, the clock will match it.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen is a browser feature
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fullscreen requires your browser’s permission. Press{" "}
-              <span className="font-semibold text-slate-900">Esc</span> to exit
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Esc</span> to exit
               at any time.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Copy stays on your device
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Copy writes a timestamp block to your clipboard so you can paste
               it elsewhere. Nothing needs to be sent to a server to do this.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Zen mode reduces distractions
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               When Zen is on, UI elements fade after a short idle period
               (especially in fullscreen). Move/tap/press a key to bring them
               back.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               No account, no uploads
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               This page does not require an account and does not ask you to
               upload files or personal data to use the clock.
             </p>
@@ -140,25 +140,25 @@ export function AccuracyAndPrivacySection() {
         </div>
 
         {/* Technical / implementation notes should be expandable */}
-        <details className="group mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-4 ilt-surface-card p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical notes (shortcuts, ticking, fullscreen, copy)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional details about keyboard focus, update cadence, and
                 clipboard behavior
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Keyboard focus + handling
               </div>
               <p className="mt-1 leading-relaxed">
@@ -168,13 +168,13 @@ export function AccuracyAndPrivacySection() {
               </p>
               <p className="mt-2 leading-relaxed">
                 In fullscreen,{" "}
-                <span className="font-semibold text-slate-900">Esc</span> exits
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Esc</span> exits
                 immediately.
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Update cadence (seconds on/off)
               </div>
               <p className="mt-1 leading-relaxed">
@@ -185,8 +185,8 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen + clipboard behavior
               </div>
               <p className="mt-1 leading-relaxed">
@@ -202,13 +202,13 @@ export function AccuracyAndPrivacySection() {
           </div>
         </details>
 
-        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-          <strong className="text-slate-900">Related.</strong> Need multiple time
+        <div className="mt-4 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
+          <strong className="text-[var(--ilt-text-primary)]">Related.</strong> Need multiple time
           zones side-by-side?{" "}
           <span className="whitespace-nowrap">
             <Link
               to="/world-clock"
-              className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
             >
               World Clock
             </Link>
@@ -217,7 +217,7 @@ export function AccuracyAndPrivacySection() {
           <span className="whitespace-nowrap">
             <Link
               to="/utc-clock"
-              className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
             >
               UTC Clock
             </Link>
@@ -226,7 +226,7 @@ export function AccuracyAndPrivacySection() {
           <span className="whitespace-nowrap">
             <Link
               to="/fullscreen-timer"
-              className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
             >
               Fullscreen Timer
             </Link>

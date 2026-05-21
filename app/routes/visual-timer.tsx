@@ -4,14 +4,32 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SeoBand,
+  SecondaryActionRow,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolHero,
+  ToolFrame as Card,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -83,30 +101,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
 // WebAudio beep (same style as other pages)
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -147,220 +141,6 @@ function useBeep() {
   }, []);
 }
 
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * Snappy: uses useLayoutEffect so initial paint is already large.
- */
-function useFitTextLayout({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 520,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
 /* =========================================================
    VISUAL TIMER CARD
    - High readability
@@ -399,9 +179,10 @@ function VisualTimerCard() {
   const lastBeepSecondRef = useRef<number | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
-  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const displayBoxRef = useRef<HTMLElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
 
   // Visual DOM refs
@@ -546,7 +327,7 @@ function VisualTimerCard() {
 
   const shownTime = msToClock(remainingDisplayMs);
 
-  const fitFontPx = useFitTextLayout({
+  const fitFontPx = useFitText({
     containerRef: displayBoxRef,
     textRef: timeTextRef,
     deps: [shownTime, isFs, showTime, mode],
@@ -568,14 +349,14 @@ function VisualTimerCard() {
       startPause();
     } else if (k === "r") {
       reset();
-    } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    } else if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "v") {
       setMode((m) => (m === "bar" ? "ring" : "bar"));
     } else if (k === "t") {
       setShowTime((v) => !v);
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -589,7 +370,7 @@ function VisualTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Visual Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
@@ -602,39 +383,38 @@ function VisualTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
         {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Visual Timer (Bar or Ring)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                A clear countdown where the visual shrinks as time runs out.
-                Fullscreen for classrooms and smartboards.
-              </p>
-            </div>
-            <div className="ml-auto flex flex-wrap items-center gap-3">
+          <div className="mx-auto flex w-full max-w-5xl flex-col gap-3">
+            <ControlGroup>
+              <Btn onClick={startPause} kind="solid">
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
+            </ControlGroup>
+
+            <SecondaryActionRow>
               <Btn
                 kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
+                onClick={() => void fullscreen.toggle()}
                 className="py-2"
               >
                 Fullscreen
               </Btn>
-            </div>
+            </SecondaryActionRow>
           </div>
         )}
 
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "order-1 timer-display-surface relative flex flex-col items-center justify-center text-[var(--ilt-text-primary)]",
             urgent
-              ? "border-rose-200 bg-rose-50"
+              ? "bg-amber-50"
               : "border-slate-200 bg-slate-50",
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
@@ -653,7 +433,7 @@ function VisualTimerCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
             {statusLabel}
           </div>
 
@@ -673,7 +453,7 @@ function VisualTimerCard() {
               {shownTime}
             </span>
           ) : (
-            <div className="mt-3 text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            <div className="mt-3 text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
               Visual only
             </div>
           )}
@@ -682,19 +462,19 @@ function VisualTimerCard() {
           <div className={showTime ? "mt-6 w-full" : "mt-4 w-full"}>
             {mode === "bar" ? (
               <div className="mx-auto w-full max-w-5xl">
-                <div className="h-12 w-full overflow-hidden rounded-full border border-slate-200 bg-white">
+                <div className="h-12 w-full overflow-hidden rounded-full bg-[var(--ilt-bg-input)] shadow-[inset_0_0_0_1px_var(--ilt-border-subtle)]">
                   <div
                     ref={barFillRef}
                     className={[
                       "h-full origin-left",
-                      urgent ? "bg-rose-500" : "bg-amber-500",
+                      urgent ? "bg-amber-500" : "bg-amber-500",
                     ].join(" ")}
                     style={{ transform: "scaleX(1)" }}
                     aria-label="Visual time remaining bar"
                   />
                 </div>
                 {!isFs && (
-                  <div className="mt-2 flex justify-between text-xs font-semibold text-slate-600">
+                  <div className="mt-2 flex justify-between text-xs font-semibold text-[var(--ilt-text-muted)]">
                     <span>Start</span>
                     <span>Done</span>
                   </div>
@@ -712,7 +492,7 @@ function VisualTimerCard() {
                     cx={ring.size / 2}
                     cy={ring.size / 2}
                     r={ring.r}
-                    stroke={urgent ? "#fecaca" : "#e2e8f0"}
+                    stroke={urgent ? "#fde68a" : "#e2e8f0"}
                     strokeWidth={ring.stroke}
                     fill="none"
                   />
@@ -721,7 +501,7 @@ function VisualTimerCard() {
                     cx={ring.size / 2}
                     cy={ring.size / 2}
                     r={ring.r}
-                    stroke={urgent ? "#ef4444" : "#f59e0b"}
+                    stroke={urgent ? "#f59e0b" : "#f59e0b"}
                     strokeWidth={ring.stroke}
                     fill="none"
                     strokeLinecap="round"
@@ -732,130 +512,91 @@ function VisualTimerCard() {
               </div>
             )}
           </div>
-        </div>
+        </DisplayStage>
 
         {/* Settings (normal only) */}
         {!isFs && (
           <div className="mt-4 flex flex-col gap-3">
-            <div className="flex flex-wrap items-center gap-2">
+            <PresetGroup>
               {presetsMin.map((m) => (
-                <button
+                <Chip
                   key={m}
-                  type="button"
+                  active={m === minutes}
                   onClick={() => setPreset(m)}
                   disabled={running}
-                  className={[
-                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60",
-                    m === minutes
-                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                      : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                  ].join(" ")}
                   title={running ? "Pause to change duration" : `${m} minutes`}
                 >
                   {m}m
-                </button>
+                </Chip>
               ))}
-            </div>
+            </PresetGroup>
 
-            <div className="grid gap-3 lg:grid-cols-[1fr_auto]">
-              <label className="block text-sm font-semibold text-slate-900">
-                Custom minutes
-                <input
-                  type="number"
-                  min={1}
-                  max={180}
-                  value={minutes}
-                  disabled={running}
-                  onChange={(e) =>
-                    setMinutes(clamp(Number(e.target.value || 1), 1, 180))
-                  }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:bg-slate-50"
-                />
-              </label>
+            <SettingGroup>
+            <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
+              <Field
+                label="Custom minutes"
+                type="number"
+                min={1}
+                max={180}
+                value={minutes}
+                disabled={running}
+                onChange={(e) =>
+                  setMinutes(clamp(Number(e.target.value || 1), 1, 180))
+                }
+              />
 
-              <div className="flex flex-wrap items-end gap-3">
-                <Btn onClick={startPause} kind="solid">
-                  {running ? "Pause" : "Start"}
-                </Btn>
-                <Btn kind="ghost" onClick={reset}>
-                  Reset
-                </Btn>
-
-                <div className="flex flex-wrap items-center gap-2 timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-                  <button
-                    type="button"
+                <div className="flex flex-wrap items-center gap-2">
+                  <Chip
                     onClick={() => setMode("bar")}
-                    className={[
-                      "cursor-pointer rounded-md px-2 py-1",
-                      mode === "bar"
-                        ? "bg-amber-500 text-slate-900"
-                        : "hover:bg-slate-50",
-                    ].join(" ")}
+                    active={mode === "bar"}
+                    className="px-2 py-1 text-xs"
                     title="Bar mode"
                   >
                     Bar
-                  </button>
-                  <button
-                    type="button"
+                  </Chip>
+                  <Chip
                     onClick={() => setMode("ring")}
-                    className={[
-                      "cursor-pointer rounded-md px-2 py-1",
-                      mode === "ring"
-                        ? "bg-amber-500 text-slate-900"
-                        : "hover:bg-slate-50",
-                    ].join(" ")}
+                    active={mode === "ring"}
+                    className="px-2 py-1 text-xs"
                     title="Ring mode"
                   >
                     Ring
-                  </button>
+                  </Chip>
 
-                  <label className="ml-1 inline-flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={showTime}
-                      onChange={(e) => setShowTime(e.target.checked)}
-                      className="cursor-pointer"
-                    />
-                    Show time
-                  </label>
-
-                  <span className="mx-1 h-4 w-px bg-slate-200" />
-
-                  <label className="inline-flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={sound}
-                      onChange={(e) => setSound(e.target.checked)}
-                      className="cursor-pointer"
-                    />
-                    Sound
-                  </label>
-
-                  <label className="inline-flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={finalCountdownBeeps}
-                      onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-                      disabled={!sound}
-                      className="cursor-pointer disabled:cursor-not-allowed"
-                    />
-                    Final beeps
-                  </label>
                 </div>
-              </div>
-            </div>
 
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+                <Toggle
+                  label="Show time"
+                  checked={showTime}
+                  onCheckedChange={setShowTime}
+                />
+
+                <Toggle
+                  label="Sound"
+                  checked={sound}
+                  onCheckedChange={setSound}
+                />
+
+                <Toggle
+                  label="Final beeps"
+                  checked={finalCountdownBeeps}
+                  onCheckedChange={setFinalCountdownBeeps}
+                  disabled={!sound}
+                />
+            </SettingRow>
+            </SettingGroup>
+
+            <ShortcutHint>
               Shortcuts: Space start/pause · R reset · F fullscreen · V toggle
               visual · T toggle time
-            </div>
+            </ShortcutHint>
           </div>
         )}
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 sm:text-sm">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--ilt-text-muted)] sm:text-sm">
               <span>Tap visual to start/pause</span>
               <span className="hidden sm:inline">·</span>
               <span>Space start/pause</span>
@@ -869,12 +610,12 @@ function VisualTimerCard() {
               <span>F fullscreen</span>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[var(--ilt-text-secondary)]">
+              <span className="ilt-inline-pill px-3 py-1">
                 {statusLabel}
               </span>
 
-              <label className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
+              <label className="inline-flex items-center gap-2 ilt-inline-pill px-3 py-1">
                 <input
                   type="checkbox"
                   checked={showTime}
@@ -884,16 +625,14 @@ function VisualTimerCard() {
                 Time
               </label>
 
-              <button
-                type="button"
+              <Chip
                 onClick={() => setMode((m) => (m === "bar" ? "ring" : "bar"))}
-                className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 hover:bg-slate-50"
                 title="Toggle visual (V)"
               >
                 {mode === "bar" ? "Bar" : "Ring"}
-              </button>
+              </Chip>
 
-              <label className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
+              <label className="inline-flex items-center gap-2 ilt-inline-pill px-3 py-1">
                 <input
                   type="checkbox"
                   checked={sound}
@@ -903,7 +642,7 @@ function VisualTimerCard() {
                 Sound
               </label>
 
-              <label className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
+              <label className="inline-flex items-center gap-2 ilt-inline-pill px-3 py-1">
                 <input
                   type="checkbox"
                   checked={finalCountdownBeeps}
@@ -955,26 +694,64 @@ export default function VisualTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <VisualTimerCard />
-        </div>
+      <ToolHero
+        display={<VisualTimerCard />}
+        title="Visual Timer"
+        description="Show time with a shrinking bar or ring so the remaining time is easy to understand at a glance."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Visual Timer</span>
+      <SeoBand title="How this timer works">
+        <p>
+          Visual Timer pairs a large countdown with a simple bar or ring
+          indicator so time passing can be understood at a glance. The display
+          stays first, while duration presets, custom time, mode controls,
+          show-time settings, fullscreen, and optional sound remain below it.
         </p>
-      </section>
-    </main>
+        <h3>When a visual countdown helps</h3>
+        <p>
+          Use it for classroom activities, kids' routines, meetings, shared
+          rooms, or quiet tasks where a shrinking visual cue is easier to follow
+          than reading small digits. The time display can stay visible or be
+          reduced depending on how simple the screen should feel.
+        </p>
+        <h3>Display options</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Ring mode emphasizes the remaining portion of the countdown in a
+            compact visual shape.
+          </li>
+          <li>
+            Bar mode works well when the timer is projected or placed near a
+            task list.
+          </li>
+          <li>
+            Show-time controls decide whether the numeric countdown appears with
+            the visual cue.
+          </li>
+        </ul>
+        <h3>Related visual timers</h3>
+        <p>
+          For no-sound timing, use the{" "}
+          <a className="ilt-content-link" href="/silent-timer">
+            silent timer
+          </a>
+          . For a large projected countdown, try the{" "}
+          <a className="ilt-content-link" href="/fullscreen-timer">
+            fullscreen timer
+          </a>
+          . For a standard countdown with more timing options, use the{" "}
+          <a className="ilt-content-link" href="/countdown-timer">
+            countdown timer
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

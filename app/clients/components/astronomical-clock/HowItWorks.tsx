@@ -45,7 +45,7 @@ export default function HowItWorks({
       {
         "@type": "HowToStep",
         name: "Add a location (optional but recommended)",
-        text: "Click “Use my location” or enter latitude and longitude to enable sunrise, sunset, and precise day or twilight status for that spot.",
+        text: "Click “Use my location” or enter latitude and longitude to enable sunrise, sunset, and estimated day or twilight status for that spot.",
       },
       {
         "@type": "HowToStep",
@@ -55,13 +55,13 @@ export default function HowItWorks({
       {
         "@type": "HowToStep",
         name: "Go fullscreen for a wall display",
-        text: "Use Fullscreen or press F after focusing the clock card to keep sun and moon context visible across a room.",
+        text: "Use Fullscreen or press F after focusing the clock display to keep sun and moon context visible across a room.",
       },
     ],
   };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
-    <kbd className="rounded-md border border-slate-200 bg-white px-2 py-1 font-mono text-[11px] font-semibold text-slate-900">
+    <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
       {children}
     </kbd>
   );
@@ -75,7 +75,7 @@ export default function HowItWorks({
   }) => (
     <a
       href={href}
-      className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+      className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
     >
       {children} →
     </a>
@@ -85,13 +85,13 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+            <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-            <p className="mt-2 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-2 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               This page is a focused <strong>astronomical clock</strong> that
               combines four things people usually check separately:{" "}
               <strong>live local time</strong>, a clear{" "}
@@ -102,7 +102,7 @@ export default function HowItWorks({
               “when is sunset here,” not for deep astronomy charts.
             </p>
 
-            <p className="mt-3 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               The key idea is that the page becomes dramatically more useful
               once you provide <strong>coordinates</strong>. With coordinates,
               the sunrise and sunset times are computed for your spot, and the
@@ -112,31 +112,31 @@ export default function HowItWorks({
               you will see blanks for sunrise and sunset.
             </p>
 
-            <p className="mt-3 max-w-3xl text-slate-700 leading-relaxed">
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               If you only want sunrise and sunset without the rest, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/sunrise-sunset-clock")}
               >
                 Sunrise Sunset Clock
               </a>
               . If you only want the moon readout in a dedicated view, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/moon-phase-clock")}
               >
                 Moon Phase Clock
               </a>
               . If your job is comparing cities, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/world-clock")}
               >
                 World Clock
               </a>
               . For translating a meeting time across regions, use{" "}
               <a
-                className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/time-zone-converter")}
               >
                 Time Zone Converter
@@ -146,16 +146,16 @@ export default function HowItWorks({
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Sunrise & sunset
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Daylight & twilight
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Moon phase
             </span>
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+            <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               Fullscreen
             </span>
           </div>
@@ -163,29 +163,29 @@ export default function HowItWorks({
 
         {/* Quick flow */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               The “get value fast” flow
             </div>
 
-            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-slate-700">
+            <ol className="mt-3 space-y-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">1)</span> Choose
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1)</span> Choose
                 a <strong>time zone</strong> if you are checking a place that is
                 not your device’s zone.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">2)</span> Add a{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2)</span> Add a{" "}
                 <strong>location</strong> using “Use my location,” a preset
                 city, or manual latitude and longitude.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">3)</span> Read{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Read{" "}
                 <strong>Sunrise</strong> and <strong>Sunset</strong> for today
                 in the selected time zone.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">4)</span> Use the
+                <span className="font-semibold text-[var(--ilt-text-primary)]">4)</span> Use the
                 label at the top to see <strong>Daylight</strong>,{" "}
                 <strong>Civil twilight</strong>,{" "}
                 <strong>Nautical twilight</strong>,{" "}
@@ -193,30 +193,30 @@ export default function HowItWorks({
                 <strong>Night</strong>.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">5)</span> Press{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5)</span> Press{" "}
                 <Kbd>F</Kbd> to go fullscreen for a clean wall display.
               </li>
             </ol>
 
-            <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="mt-4 ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 What the page is optimized for
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 This is meant to help you answer “right now” questions quickly:
                 when does the sun set here, are we still in civil twilight, what
                 phase is the moon, and what time is it in the selected zone. It
                 is not a replacement for a detailed astronomy planner, and it is
                 not a timer. If you need a hard end time for an activity, use{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/event-countdown")}
                 >
                   Event Countdown
                 </a>{" "}
                 or{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/countdown-timer")}
                 >
                   Countdown Timer
@@ -226,32 +226,32 @@ export default function HowItWorks({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-accent p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Important: coordinates change everything
             </div>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--ilt-text-secondary)]">
               <li>
-                <span className="font-semibold text-slate-900">With</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">With</span>{" "}
                 coordinates: sunrise, sunset, and daylight or twilight status
                 are computed for that location.
               </li>
               <li>
-                <span className="font-semibold text-slate-900">Without</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">Without</span>{" "}
                 coordinates: sunrise and sunset cannot be computed, so you will
                 see blanks.
               </li>
               <li>
                 Near polar regions, some days have{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
                   no sunrise or no sunset
                 </span>{" "}
                 at all.
               </li>
             </ul>
 
-            <div className="mt-4 rounded-xl border border-amber-200 bg-white p-4 text-sm text-slate-800">
-              <span className="font-semibold text-slate-900">Shortcut:</span> if
+            <div className="mt-4 ilt-surface-accent p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <span className="font-semibold text-[var(--ilt-text-primary)]">Shortcut:</span> if
               you want a quick city check without typing, use the preset chips
               (New York, Toronto, London, Los Angeles, Tokyo, Sydney).
             </div>
@@ -259,18 +259,18 @@ export default function HowItWorks({
         </div>
 
         {/* Related tools */}
-        <div className="mt-7 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="mt-7 ilt-surface-card p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Related tools when you need a narrower view
               </div>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
                 Stay on this page when you want sun, moon, and time together.
                 Use these when you want a single-purpose tool.
               </p>
             </div>
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-[var(--ilt-text-muted)]">
               Shortcut: <Kbd>F</Kbd> fullscreen
             </div>
           </div>
@@ -295,10 +295,10 @@ export default function HowItWorks({
 
         {/* Scenarios */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-sky-700">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Real scenarios with example readings
           </h3>
-          <p className="mt-2 text-slate-700 leading-relaxed">
+          <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
             The examples below show the type of values you will see on this
             page. Exact sunrise and sunset times depend on the date and your
             coordinates, but the workflow is the same: set a location, pick a
@@ -307,29 +307,29 @@ export default function HowItWorks({
 
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             {/* Scenario 1 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="space-y-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                     Planning an evening walk, “how much light is left?”
                   </div>
-                  <div className="mt-1 text-sm text-slate-600">
+                  <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                     Quick answer: daylight vs twilight, and sunset time
                   </div>
                 </div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                   Sun status
                 </span>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are heading out after work and want to know if you will
                 finish before it gets dark. Tap the Toronto preset (or use your
                 location), then read the “Sunrise / Sunset” panel and the label
                 at the top.
               </p>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Example of what you might see: the label shows{" "}
                 <strong>Daylight</strong>, sunset reads <strong>17:43</strong>,
                 and your current time reads <strong>16:58:12</strong>. That
@@ -339,10 +339,10 @@ export default function HowItWorks({
                 dim.
               </p>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 If your main goal is sunrise and sunset only, use{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/sunrise-sunset-clock")}
                 >
                   Sunrise Sunset Clock
@@ -352,28 +352,28 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario 2 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="space-y-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                     Stargazing setup, “is it dark enough yet?”
                   </div>
-                  <div className="mt-1 text-sm text-slate-600">
+                  <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                     Use the twilight label and sun altitude
                   </div>
                 </div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                   Twilight
                 </span>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You care less about the exact sunset time and more about when
                 the sky is truly dark. Set your location and watch the label.
                 This page breaks nightfall into meaningful steps.
               </p>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Example sequence you will see: after sunset, the label moves
                 from <strong>Civil twilight</strong> to{" "}
                 <strong>Nautical twilight</strong>, then to{" "}
@@ -384,10 +384,10 @@ export default function HowItWorks({
                 the sky starts to feel “properly dark” for many uses.
               </p>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 For photo timing around warm light, try{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/golden-hour-clock")}
                 >
                   Golden Hour Clock
@@ -397,23 +397,23 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario 3 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="space-y-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                     Remote coordination, “what time is it there and is it
                     daytime?”
                   </div>
-                  <div className="mt-1 text-sm text-slate-600">
+                  <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                     Presets plus time zone switching
                   </div>
                 </div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                   Time zones
                 </span>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You are coordinating with someone in London and want to know if
                 it is morning there, and whether they are already past sunset.
                 Tap the London preset to load coordinates and the matching time
@@ -421,14 +421,14 @@ export default function HowItWorks({
                 screen.
               </p>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Example: you see <strong>21:15:40</strong> in London and the top
                 label reads <strong>Night</strong>. That is a strong signal that
                 you should not schedule something “end of day” unless it is
                 urgent. If you need to convert a specific meeting time
                 precisely, use{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/time-zone-converter")}
                 >
                   Time Zone Converter
@@ -446,22 +446,22 @@ export default function HowItWorks({
             </div>
 
             {/* Scenario 4 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="space-y-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                     “Can you show sunrise and sunset for my cabin coordinates?”
                   </div>
-                  <div className="mt-1 text-sm text-slate-600">
+                  <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                     Manual latitude and longitude entry
                   </div>
                 </div>
-                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
+                <span className="ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
                   Manual coords
                 </span>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 You do not want to use browser location, but you have
                 coordinates. Enter them into the Latitude and Longitude inputs.
                 A common pattern is pasting something like{" "}
@@ -470,7 +470,7 @@ export default function HowItWorks({
                 sunset populate.
               </p>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-700">
+              <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Example: after entering coordinates, the page shows sunrise{" "}
                 <strong>07:18</strong>
                 and sunset <strong>17:52</strong> in the selected time zone. If
@@ -479,10 +479,10 @@ export default function HowItWorks({
                 calculation is done for that time zone’s local date.
               </p>
 
-              <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 If you just want the time without sun data, use{" "}
                 <a
-                  className="cursor-pointer font-semibold text-slate-900 hover:underline"
+                  className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/current-local-time")}
                 >
                   Current Local Time
@@ -493,12 +493,12 @@ export default function HowItWorks({
           </div>
 
           {/* Practical accuracy note */}
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-            <h3 className="text-lg font-semibold text-sky-700">
+          <div className="mt-6 ilt-surface-muted p-6">
+            <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
               Accuracy expectations and “why is it blank?”
             </h3>
 
-            <p className="mt-3 text-sm leading-relaxed text-slate-700">
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               If sunrise and sunset show “—”, it almost always means coordinates
               are not set. Tap “Use my location,” choose a preset, or enter
               latitude and longitude manually. If you are at very high
@@ -507,7 +507,7 @@ export default function HowItWorks({
               times, and the daylight or night label is the more useful signal.
             </p>
 
-            <p className="mt-3 text-sm leading-relaxed text-slate-700">
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Moon phase and illumination are designed to be practical. If you
               see “First Quarter” and illumination around “50%,” that is the
               kind of quick answer the page targets. For scheduling and
@@ -518,17 +518,17 @@ export default function HowItWorks({
         </div>
 
         {/* Reliability + privacy */}
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-          <h3 className="text-lg font-semibold text-sky-700">
+        <div className="mt-8 ilt-surface-muted p-6">
+          <h3 className="text-lg font-semibold text-[var(--ilt-text-primary)]">
             Reliability and privacy (short, practical)
           </h3>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Keep the display stable
               </div>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-700">
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[var(--ilt-text-secondary)]">
                 <li>
                   Keep the tab visible if you want the smoothest updating
                   display.
@@ -541,11 +541,11 @@ export default function HowItWorks({
               </ul>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-sm font-semibold text-slate-900">
+            <div className="ilt-surface-card p-4">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Privacy and stored preferences
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 Coordinates are optional. If you use “Use my location,” your
                 browser provides coordinates so the page can compute sun events.
                 You can clear saved coordinates using “Clear location.” The page
@@ -556,25 +556,25 @@ export default function HowItWorks({
           </div>
 
           {/* Technical / implementation notes should be expandable */}
-          <details className="group mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+          <details className="group mt-4 ilt-surface-card p-4">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-900">
+                <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                   Technical notes (sunrise/sunset method, twilight thresholds,
                   moon phase)
                 </div>
-                <div className="mt-1 text-xs font-medium text-slate-600">
+                <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                   Read this if you want to understand the model and edge cases
                 </div>
               </div>
-              <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+              <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
                 ▼
               </span>
             </summary>
 
             <div className="mt-3 grid gap-3 md:grid-cols-2">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                <div className="font-semibold text-slate-900">
+              <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="font-semibold text-[var(--ilt-text-primary)]">
                   Sunrise and sunset approximation
                 </div>
                 <p className="mt-1 leading-relaxed">
@@ -585,8 +585,8 @@ export default function HowItWorks({
                 </p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                <div className="font-semibold text-slate-900">
+              <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="font-semibold text-[var(--ilt-text-primary)]">
                   Twilight thresholds
                 </div>
                 <p className="mt-1 leading-relaxed">
@@ -596,8 +596,8 @@ export default function HowItWorks({
                 </p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                <div className="font-semibold text-slate-900">
+              <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="font-semibold text-[var(--ilt-text-primary)]">
                   Time zone handling
                 </div>
                 <p className="mt-1 leading-relaxed">
@@ -608,8 +608,8 @@ export default function HowItWorks({
                 </p>
               </div>
 
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-                <div className="font-semibold text-slate-900">
+              <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="font-semibold text-[var(--ilt-text-primary)]">
                   Moon phase model
                 </div>
                 <p className="mt-1 leading-relaxed">
@@ -625,13 +625,13 @@ export default function HowItWorks({
 
         {/* Bottom CTA */}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               If you only need sunrise and sunset:
             </strong>{" "}
             use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/sunrise-sunset-clock")}
             >
               Sunrise Sunset Clock
@@ -639,13 +639,13 @@ export default function HowItWorks({
             for a simpler, single-purpose view.
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               If you need cross-zone scheduling:
             </strong>{" "}
             use{" "}
             <a
-              className="cursor-pointer font-semibold text-slate-900 hover:underline"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
               href={abs("/time-zone-converter")}
             >
               Time Zone Converter

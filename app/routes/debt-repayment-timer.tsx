@@ -1,8 +1,27 @@
 // app/routes/debt-repayment-timer.tsx
 import type { Route } from "./+types/debt-repayment-timer";
 import { json } from "@remix-run/node";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Button as Btn,
+  ControlGroup,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  Select,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/debt-repayment-timer/HowItWorks";
 import Disclaimer from "~/clients/components/debt-repayment-timer/Disclaimer";
 import FAQ from "~/clients/components/debt-repayment-timer/FAQ";
@@ -95,14 +114,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
 function formatMoney(n: number, currency = "USD") {
   try {
     return new Intl.NumberFormat(undefined, {
@@ -122,271 +133,15 @@ function safeDateInputValue(d: Date) {
   return `${y}-${m}-${day}`;
 }
 
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line string into its container by adjusting font size.
- * Binary search for max font-size that fits both width and height.
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: React.RefObject<HTMLElement | null>;
-  textRef: React.RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-      active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
 /* =========================================================
    DEBT REPAYMENT TIMER CARD
 ========================================================= */
 type Mode = "payoff-date" | "duration";
 
-function DebtRepaymentTimerCard() {
+function DebtRepaymentTimerCard({ initialNowISO }: { initialNowISO: string }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -398,14 +153,20 @@ function DebtRepaymentTimerCard() {
     [],
   );
 
+  const initialNow = useMemo(() => {
+    const parsed = new Date(initialNowISO);
+    return Number.isFinite(parsed.getTime()) ? parsed : new Date();
+  }, [initialNowISO]);
+  const initialNowMs = initialNow.getTime();
+
   const [currency, setCurrency] = useState<(typeof currencies)[number]>("USD");
   const [startingBalance, setStartingBalance] = useState<number>(5000);
   const [targetBalance, setTargetBalance] = useState<number>(0);
 
-  const today = useMemo(() => new Date(), []);
+  const today = useMemo(() => initialNow, [initialNow]);
   const [startDate, setStartDate] = useState<string>(safeDateInputValue(today));
   const [payoffDate, setPayoffDate] = useState<string>(() => {
-    const d = new Date();
+    const d = new Date(initialNow);
     d.setMonth(d.getMonth() + 6);
     return safeDateInputValue(d);
   });
@@ -414,12 +175,12 @@ function DebtRepaymentTimerCard() {
   const [running, setRunning] = useState(false);
   const rafRef = useRef<number | null>(null);
   const [remainingMs, setRemainingMs] = useState<number>(0);
-  const [nowTs, setNowTs] = useState<number>(() => Date.now());
+  const [nowTs, setNowTs] = useState<number>(() => initialNowMs);
 
   const startTs = useMemo(() => {
     const ts = new Date(startDate + "T00:00:00").getTime();
-    return Number.isFinite(ts) ? ts : Date.now();
-  }, [startDate]);
+    return Number.isFinite(ts) ? ts : initialNowMs;
+  }, [startDate, initialNowMs]);
 
   const endTs = useMemo(() => {
     if (mode === "payoff-date") {
@@ -519,18 +280,18 @@ function DebtRepaymentTimerCard() {
         : "Ready";
 
   const displayTone = invalidDates
-    ? "border-rose-200 bg-rose-50 text-rose-950"
+    ? "bg-amber-50 text-[var(--ilt-text-primary)]"
     : remainingMs <= 10_000 && running
-      ? "border-rose-200 bg-amber-50 text-rose-950"
-      : "border-slate-200 bg-slate-50 text-slate-950";
+      ? "bg-amber-50 text-[var(--ilt-text-primary)]"
+      : "bg-slate-50 text-[var(--ilt-text-primary)]";
 
   const fitFontPx = useFitText({
     containerRef: displayBoxRef,
     textRef: timeTextRef,
     deps: [shownRemaining, statusLabel, isFs, running, invalidDates],
-    minPx: 52,
+    minPx: isFs ? 52 : 34,
     maxPx: isFs ? 520 : 520,
-    paddingAllowancePx: isFs ? 56 : 64,
+    paddingAllowancePx: isFs ? 56 : 24,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -543,8 +304,8 @@ function DebtRepaymentTimerCard() {
       startPause();
     } else if (k === "r") {
       reset();
-    } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    } else if (k === "f") {
+      void fullscreen.toggle();
     }
   };
 
@@ -554,11 +315,12 @@ function DebtRepaymentTimerCard() {
       tabIndex={0}
       onKeyDown={onKeyDown}
       isFullscreen={isFs}
+      className={isFs ? "" : "p-4 sm:p-6"}
     >
       <FullscreenTopBar
         show={isFs}
         title="Debt Repayment Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn
@@ -576,26 +338,15 @@ function DebtRepaymentTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-result-stack flex h-full flex-col"}>
         {/* Header (normal only) */}
         {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h2 className="text-xl font-extrabold text-sky-700">
-                Debt Repayment Timer
-              </h2>
-              <p className="mt-1 text-sm text-slate-600">
-                Set a payoff date or a duration. This is a countdown and a
-                simple time-based progress estimate.
-              </p>
-            </div>
+          <div className="hidden">
 
             <div className="flex flex-wrap items-center gap-3 ml-auto">
               <Btn
                 kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
+                onClick={() => void fullscreen.toggle()}
                 className="py-2"
               >
                 Fullscreen
@@ -607,7 +358,7 @@ function DebtRepaymentTimerCard() {
         {/* Mode + Inputs (normal only) */}
         {!isFs && (
           <>
-            <div className="mt-5 flex flex-wrap gap-2">
+            <PresetGroup className="mt-5" title="Payoff mode">
               <Chip
                 active={mode === "payoff-date"}
                 onClick={() => setMode("payoff-date")}
@@ -622,15 +373,18 @@ function DebtRepaymentTimerCard() {
               >
                 Duration (days)
               </Chip>
-            </div>
+            </PresetGroup>
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-3">
-              <label className="block text-sm font-semibold text-slate-900">
-                Currency
-                <select
+            <SettingGroup
+              title="Debt estimate inputs"
+              description="These estimates use the balances, dates, and currency you enter."
+              className="mt-4"
+            >
+            <SettingRow>
+              <Select
+                  label="Currency"
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as any)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
                   disabled={running}
                 >
                   {currencies.map((c) => (
@@ -638,12 +392,10 @@ function DebtRepaymentTimerCard() {
                       {c}
                     </option>
                   ))}
-                </select>
-              </label>
+                </Select>
 
-              <label className="block text-sm font-semibold text-slate-900">
-                Starting balance
-                <input
+              <Field
+                  label="Starting balance"
                   type="number"
                   min={0}
                   step={50}
@@ -653,14 +405,11 @@ function DebtRepaymentTimerCard() {
                       clamp(Number(e.target.value || 0), 0, 1e9),
                     )
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
                   disabled={running}
                 />
-              </label>
 
-              <label className="block text-sm font-semibold text-slate-900">
-                Target balance
-                <input
+              <Field
+                  label="Target balance"
                   type="number"
                   min={0}
                   step={50}
@@ -668,39 +417,30 @@ function DebtRepaymentTimerCard() {
                   onChange={(e) =>
                     setTargetBalance(clamp(Number(e.target.value || 0), 0, 1e9))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
                   disabled={running}
                 />
-              </label>
-            </div>
+            </SettingRow>
 
-            <div className="mt-4 grid gap-4 lg:grid-cols-3">
-              <label className="block text-sm font-semibold text-slate-900">
-                Start date
-                <input
+            <SettingRow>
+              <Field
+                  label="Start date"
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
                   disabled={running}
                 />
-              </label>
 
               {mode === "payoff-date" ? (
-                <label className="block text-sm font-semibold text-slate-900">
-                  Payoff date
-                  <input
+                <Field
+                    label="Payoff date"
                     type="date"
                     value={payoffDate}
                     onChange={(e) => setPayoffDate(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
                     disabled={running}
                   />
-                </label>
               ) : (
-                <label className="block text-sm font-semibold text-slate-900">
-                  Duration (days)
-                  <input
+                <Field
+                    label="Duration (days)"
                     type="number"
                     min={1}
                     max={3650}
@@ -710,24 +450,33 @@ function DebtRepaymentTimerCard() {
                         clamp(Number(e.target.value || 1), 1, 3650),
                       )
                     }
-                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
                     disabled={running}
                   />
-                </label>
               )}
 
-              <div className="flex items-end gap-3">
+              <ControlGroup>
                 <Btn onClick={startPause} disabled={invalidDates}>
                   {running ? "Pause" : "Start"}
                 </Btn>
                 <Btn kind="ghost" onClick={reset}>
                   Reset
                 </Btn>
-              </div>
-            </div>
+              </ControlGroup>
+            </SettingRow>
+
+            <SecondaryActionRow className="timer-result-actions">
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Space start/pause / R reset / F fullscreen
+            </ShortcutHint>
+            </SettingGroup>
 
             {invalidDates ? (
-              <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-950">
+              <div className="mt-4 ilt-surface-accent p-4 text-sm font-semibold text-[var(--ilt-text-secondary)]">
                 End date must be after start date.
               </div>
             ) : null}
@@ -736,6 +485,7 @@ function DebtRepaymentTimerCard() {
 
         {/* Display */}
         <div
+          data-display-stage
           ref={displayBoxRef}
           className={[
             "timer-display-surface mt-4 flex flex-col items-center justify-center font-mono font-extrabold",
@@ -757,15 +507,17 @@ function DebtRepaymentTimerCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="timer-result-label ilt-content-label">
             {statusLabel}
           </div>
 
           <span
             ref={timeTextRef}
+            data-primary-display-value
             className={[
+              "timer-result-value",
               "mt-2 inline-block text-center",
-              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-wide sm:tracking-widest",
             ].join(" ")}
             style={{
               fontSize: fitFontPx,
@@ -777,37 +529,37 @@ function DebtRepaymentTimerCard() {
             {shownRemaining}
           </span>
 
-          <div className="mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+          <div className="timer-result-detail-grid mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-3">
+            <div className="timer-result-panel ilt-surface-muted p-4">
+              <div className="ilt-content-label">
                 Progress (time)
               </div>
-              <div className="mt-1 text-2xl font-extrabold text-slate-950">
+              <div className="mt-1 text-2xl font-extrabold text-[var(--ilt-text-primary)]">
                 {pct}%
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+            <div className="timer-result-panel ilt-surface-muted p-4">
+              <div className="ilt-content-label">
                 Est. paid (linear)
               </div>
-              <div className="mt-1 text-2xl font-extrabold text-slate-950">
+              <div className="mt-1 text-2xl font-extrabold text-[var(--ilt-text-primary)]">
                 {formatMoney(estPaid, currency)}
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+            <div className="timer-result-panel ilt-surface-muted p-4">
+              <div className="ilt-content-label">
                 Est. remaining
               </div>
-              <div className="mt-1 text-2xl font-extrabold text-slate-950">
+              <div className="mt-1 text-2xl font-extrabold text-[var(--ilt-text-primary)]">
                 {formatMoney(estRemaining, currency)}
               </div>
             </div>
           </div>
 
           <div className="mt-3 w-full max-w-3xl">
-            <div className="h-3 w-full overflow-hidden rounded-full bg-white ring-1 ring-slate-200">
+            <div className="h-3 w-full overflow-hidden rounded-full bg-[var(--ilt-bg-panel)] shadow-[inset_0_0_0_1px_var(--ilt-border-subtle)]">
               <div
                 className="h-full bg-amber-500"
                 style={{ width: `${clamp(progress * 100, 0, 100)}%` }}
@@ -835,7 +587,7 @@ function DebtRepaymentTimerCard() {
                 Duration
               </Chip>
 
-              <div className="h-5 w-px bg-slate-200 mx-1 hidden sm:block" />
+              <div className="h-5 w-px bg-[var(--ilt-border-subtle)] mx-1 hidden sm:block" />
 
               {currencies.map((c) => (
                 <Chip
@@ -863,7 +615,7 @@ function DebtRepaymentTimerCard() {
                 </Btn>
               </div>
 
-              <div className="text-xs text-slate-600 sm:text-sm">
+              <div className="ilt-helper-text sm:text-sm">
                 Tap time to start/pause · Space start/pause · R reset · F
                 fullscreen
               </div>
@@ -914,44 +666,25 @@ export default function DebtRepaymentTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Debt Repayment Timer (Payoff Countdown)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Set a payoff date or duration, then run a big countdown and a simple
-            time-based progress estimate.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        title="Debt Repayment Timer"
+        description="Set a payoff date or duration, then run a payoff countdown and simple time-based progress estimate based on your entries."
+        display={<DebtRepaymentTimerCard initialNowISO={nowISO} />}
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <DebtRepaymentTimerCard />
-        </div>
-
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Debt Repayment Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

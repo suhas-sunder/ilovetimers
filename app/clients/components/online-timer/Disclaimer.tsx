@@ -6,26 +6,26 @@ export default function Disclaimer() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <details className="group" open>
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <h2 className="text-xl font-semibold text-sky-700">
+              <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
                 Online countdown timer
               </h2>
-              <p className="mt-1 text-sm font-medium text-slate-600">
+              <p className="mt-1 text-sm font-medium text-[var(--ilt-text-muted)]">
                 {preview}
               </p>
             </div>
 
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           {/* What this page is for (tight, user-first) */}
-          <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <strong className="text-slate-900">
+          <div className="mt-3 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">
               Start a simple countdown fast, then switch to a big fullscreen
               view when you need distance readability.
             </strong>{" "}
@@ -34,70 +34,70 @@ export default function Disclaimer() {
           </div>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2 group-open:grid">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Presets + exact time.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Presets + exact time.</strong>{" "}
               Pick a quick preset (1–60 minutes) or enter{" "}
-              <strong className="text-slate-900">ss</strong>,{" "}
-              <strong className="text-slate-900">mm:ss</strong>, or{" "}
-              <strong className="text-slate-900">h:mm:ss</strong>.
+              <strong className="text-[var(--ilt-text-primary)]">ss</strong>,{" "}
+              <strong className="text-[var(--ilt-text-primary)]">mm:ss</strong>, or{" "}
+              <strong className="text-[var(--ilt-text-primary)]">h:mm:ss</strong>.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Start, pause, reset.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Start, pause, reset.</strong>{" "}
               One-tap controls for normal use, plus a clean restart flow when a
               timer finishes.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Fullscreen display.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Fullscreen display.</strong>{" "}
               Big digits with a minimal top bar and a bottom status strip for
               presentations, classrooms, and distance viewing.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Sound + loop.</strong> Enable a
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Sound + loop.</strong> Enable a
               beep when the timer hits{" "}
-              <strong className="text-slate-900">0</strong>, or loop to repeat
+              <strong className="text-[var(--ilt-text-primary)]">0</strong>, or loop to repeat
               the same countdown continuously.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">
                 Tap-to-control in fullscreen.
               </strong>{" "}
               Click or tap the time area to start or pause quickly while staying
               on the big display.
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-              <strong className="text-slate-900">Keyboard shortcuts.</strong>{" "}
+            <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+              <strong className="text-[var(--ilt-text-primary)]">Keyboard shortcuts.</strong>{" "}
               Space start/pause · R reset · F fullscreen · Esc exit fullscreen.
             </div>
           </div>
 
           {/* 3-step "do this now" guidance */}
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+          <div className="mt-4 ilt-surface-card p-4">
+            <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
               Quick use
             </div>
-            <ol className="mt-3 grid gap-2 text-sm text-slate-700 sm:grid-cols-3">
-              <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <strong className="text-slate-900">1) Set a time</strong>:
+            <ol className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)] sm:grid-cols-3">
+              <li className="ilt-surface-muted p-3">
+                <strong className="text-[var(--ilt-text-primary)]">1) Set a time</strong>:
                 choose a preset or type{" "}
-                <strong className="text-slate-900">mm:ss</strong> (or{" "}
-                <strong className="text-slate-900">ss</strong> /{" "}
-                <strong className="text-slate-900">h:mm:ss</strong>), then hit{" "}
-                <strong className="text-slate-900">Set</strong>.
+                <strong className="text-[var(--ilt-text-primary)]">mm:ss</strong> (or{" "}
+                <strong className="text-[var(--ilt-text-primary)]">ss</strong> /{" "}
+                <strong className="text-[var(--ilt-text-primary)]">h:mm:ss</strong>), then hit{" "}
+                <strong className="text-[var(--ilt-text-primary)]">Set</strong>.
               </li>
-              <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <strong className="text-slate-900">2) Start</strong>: press{" "}
-                <strong className="text-slate-900">Start</strong> (or{" "}
-                <strong className="text-slate-900">Space</strong>).
+              <li className="ilt-surface-muted p-3">
+                <strong className="text-[var(--ilt-text-primary)]">2) Start</strong>: press{" "}
+                <strong className="text-[var(--ilt-text-primary)]">Start</strong> (or{" "}
+                <strong className="text-[var(--ilt-text-primary)]">Space</strong>).
               </li>
-              <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <strong className="text-slate-900">3) Go fullscreen</strong>:
-                hit <strong className="text-slate-900">Fullscreen</strong> (or{" "}
-                <strong className="text-slate-900">F</strong>) for a big
+              <li className="ilt-surface-muted p-3">
+                <strong className="text-[var(--ilt-text-primary)]">3) Go fullscreen</strong>:
+                hit <strong className="text-[var(--ilt-text-primary)]">Fullscreen</strong> (or{" "}
+                <strong className="text-[var(--ilt-text-primary)]">F</strong>) for a big
                 display, then tap/click the timer to start/pause without leaving
                 fullscreen.
               </li>
@@ -105,116 +105,116 @@ export default function Disclaimer() {
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                 Best for
               </div>
-              <ul className="mt-3 grid gap-2 text-sm text-slate-700">
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">Presentations</strong>:
+              <ul className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">Presentations</strong>:
                   fullscreen timing you can glance at from across the room.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">Classrooms</strong>: quick
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">Classrooms</strong>: quick
                   presets and simple controls for transitions.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">Work & study</strong>:
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">Work & study</strong>:
                   focus blocks with a clean, readable countdown.
                 </li>
-                <li className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <strong className="text-slate-900">Workouts</strong>: repeat a
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">Workouts</strong>: repeat a
                   fixed interval using Loop.
                 </li>
               </ul>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+            <div className="ilt-surface-card p-4">
+              <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                 Related tools
               </div>
-              <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
+                <div className="ilt-surface-muted p-3">
                   Need a dedicated big display page?{" "}
                   <Link
                     to="/fullscreen-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Fullscreen Timer
                   </Link>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Want something tuned for talks?{" "}
                   <Link
                     to="/presentation-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Presentation Timer
                   </Link>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Running a room?{" "}
                   <Link
                     to="/classroom-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Classroom Timer
                   </Link>{" "}
                   or{" "}
                   <Link
                     to="/meeting-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Meeting Timer
                   </Link>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Need a completely quiet timer?{" "}
                   <Link
                     to="/silent-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Silent Timer
                   </Link>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Want more structure (rounds/intervals)?{" "}
                   <Link
                     to="/hiit-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     HIIT Timer
                   </Link>
                   ,{" "}
                   <Link
                     to="/tabata-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Tabata Timer
                   </Link>
                   , or{" "}
                   <Link
                     to="/round-timer"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Round Timer
                   </Link>
                   .
                 </div>
 
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="ilt-surface-muted p-3">
                   Need multiple countdowns side by side?{" "}
                   <Link
                     to="/multiple-timers"
-                    className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Multiple Timers
                   </Link>
@@ -225,33 +225,33 @@ export default function Disclaimer() {
           </div>
 
           {/* Technical / documentation content stays tucked away */}
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
+          <div className="mt-4 ilt-surface-card p-4">
             <details className="group">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] ilt-focus-ring">
                 <span>How it works, shortcuts, and notes</span>
-                <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+                <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
                   ▼
                 </span>
               </summary>
 
-              <div className="mt-2 grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+              <div className="mt-2 grid gap-3 text-sm text-[var(--ilt-text-secondary)] sm:grid-cols-2">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Keyboard shortcuts
                   </div>
                   <ul className="mt-2 grid gap-2">
                     <li>
-                      <strong className="text-slate-900">Space</strong>:
+                      <strong className="text-[var(--ilt-text-primary)]">Space</strong>:
                       start/pause
                     </li>
                     <li>
-                      <strong className="text-slate-900">R</strong>: reset
+                      <strong className="text-[var(--ilt-text-primary)]">R</strong>: reset
                     </li>
                     <li>
-                      <strong className="text-slate-900">F</strong>: fullscreen
+                      <strong className="text-[var(--ilt-text-primary)]">F</strong>: fullscreen
                     </li>
                     <li>
-                      <strong className="text-slate-900">Esc</strong>: exit
+                      <strong className="text-[var(--ilt-text-primary)]">Esc</strong>: exit
                       fullscreen
                     </li>
                   </ul>
@@ -260,49 +260,49 @@ export default function Disclaimer() {
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Time entry formats
                   </div>
                   <ul className="mt-2 grid gap-2">
                     <li>
-                      <strong className="text-slate-900">ss</strong> (example{" "}
-                      <strong className="text-slate-900">45</strong>) = 45
+                      <strong className="text-[var(--ilt-text-primary)]">ss</strong> (example{" "}
+                      <strong className="text-[var(--ilt-text-primary)]">45</strong>) = 45
                       seconds
                     </li>
                     <li>
-                      <strong className="text-slate-900">mm:ss</strong> (example{" "}
-                      <strong className="text-slate-900">05:00</strong>) = 5
+                      <strong className="text-[var(--ilt-text-primary)]">mm:ss</strong> (example{" "}
+                      <strong className="text-[var(--ilt-text-primary)]">05:00</strong>) = 5
                       minutes
                     </li>
                     <li>
-                      <strong className="text-slate-900">h:mm:ss</strong>{" "}
+                      <strong className="text-[var(--ilt-text-primary)]">h:mm:ss</strong>{" "}
                       (example{" "}
-                      <strong className="text-slate-900">1:02:30</strong>) = 1
+                      <strong className="text-[var(--ilt-text-primary)]">1:02:30</strong>) = 1
                       hour, 2 minutes, 30 seconds
                     </li>
                   </ul>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4 sm:col-span-2">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Behavior notes
                   </div>
                   <ul className="mt-2 grid gap-2">
                     <li>
                       Editing the time while running will{" "}
-                      <strong className="text-slate-900">pause cleanly</strong>{" "}
+                      <strong className="text-[var(--ilt-text-primary)]">pause cleanly</strong>{" "}
                       so you can adjust without losing control.
                     </li>
                     <li>
                       When the timer hits{" "}
-                      <strong className="text-slate-900">0</strong>, it will
+                      <strong className="text-[var(--ilt-text-primary)]">0</strong>, it will
                       beep if Sound is on. If Loop is enabled, it restarts the
                       same duration automatically.
                     </li>
                     <li>
                       In fullscreen, you can{" "}
-                      <strong className="text-slate-900">
+                      <strong className="text-[var(--ilt-text-primary)]">
                         tap/click the timer
                       </strong>{" "}
                       to start/pause quickly.
@@ -310,8 +310,8 @@ export default function Disclaimer() {
                   </ul>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="ilt-surface-muted p-4 sm:col-span-2">
+                  <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     Audio note
                   </div>
                   <p className="mt-2">
@@ -324,8 +324,8 @@ export default function Disclaimer() {
             </details>
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <strong className="text-slate-900">Tip.</strong> For a shared
+          <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
+            <strong className="text-[var(--ilt-text-primary)]">Tip.</strong> For a shared
             screen, go fullscreen first, then hit Start so the timer is easy to
             see from a distance. For repeating intervals, enable Loop and set a
             simple preset (like 1m or 5m).

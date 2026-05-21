@@ -18,11 +18,11 @@ export default function KeyboardShortcuts() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-sky-700">
+      <div className="ilt-surface-card p-5">
+        <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
           Keyboard shortcuts
         </h2>
-        <p className="mt-2 leading-relaxed text-slate-700">
+        <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
           Click the converter card once, then use the shortcuts below. Shortcuts
           won’t trigger while you’re typing in an input, select, textarea, or
           editable field.
@@ -31,30 +31,30 @@ export default function KeyboardShortcuts() {
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-left">
-                <th className="py-2 pr-4 font-semibold text-slate-900">Key</th>
-                <th className="py-2 font-semibold text-slate-900">Action</th>
+              <tr className="border-b border-[var(--ilt-border-subtle)] text-left">
+                <th className="py-2 pr-4 font-semibold text-[var(--ilt-text-primary)]">Key</th>
+                <th className="py-2 font-semibold text-[var(--ilt-text-primary)]">Action</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
                 <tr
                   key={`${r.key}-${r.action}`}
-                  className="border-b border-slate-100"
+                  className="border-b border-[var(--ilt-border-subtle)]"
                 >
                   <td className="py-2 pr-4">
-                    <kbd className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-xs text-slate-900">
+                    <kbd className="ilt-keycap px-2 py-1 font-mono text-xs text-[var(--ilt-text-primary)]">
                       {r.key}
                     </kbd>
                   </td>
-                  <td className="py-2 text-slate-700">{r.action}</td>
+                  <td className="py-2 text-[var(--ilt-text-secondary)]">{r.action}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+        <div className="mt-3 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
           Tip: if shortcuts do nothing, the converter card probably isn’t
           focused. Click the card once, then try again.
         </div>
@@ -70,69 +70,69 @@ export default function KeyboardShortcuts() {
 export function AccuracyAndPrivacySection() {
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-sky-700">
+      <div className="ilt-surface-card p-5">
+        <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
           Behavior and privacy
         </h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Runs locally in your browser
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               No sign-in required. Conversion, validation, fullscreen, and copy
               all run in your browser.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               No guessing on AM/PM
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Standard time must include AM or PM. If it’s missing, the standard
               side won’t convert so you don’t accidentally copy the wrong
               result.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen is copy-first
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Fullscreen maximizes the current result for quick copying. In
               fullscreen, you can tap or click the big result to copy.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Normalized output for clean pasting
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               The converter shows a normalized form of your input so you can
               paste consistent formats (useful if the original input had missing
               zeros or unusual separators).
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               No account, no uploads
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               This page does not require an account and does not ask you to
               upload files or personal data to convert time formats.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <div className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Copy stays on your device
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Using Copy writes text to your clipboard so you can paste it
               elsewhere. Nothing needs to be sent to a server to do this.
             </p>
@@ -140,35 +140,35 @@ export function AccuracyAndPrivacySection() {
         </div>
 
         {/* Technical / implementation notes should be expandable */}
-        <details className="group mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60">
+        <details className="group mt-4 ilt-surface-card p-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-slate-900">
+              <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 Technical notes (parsing, 2400, fullscreen, copy)
               </div>
-              <div className="mt-1 text-xs font-medium text-slate-600">
+              <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional details about accepted formats and edge cases
               </div>
             </div>
-            <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-700 transition group-open:rotate-180">
+            <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
               ▼
             </span>
           </summary>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Military parsing rules
               </div>
               <p className="mt-1 leading-relaxed">
                 Digits are interpreted as hours + minutes. Examples:{" "}
-                <span className="font-semibold text-slate-900">17</span> →
-                17:00, <span className="font-semibold text-slate-900">730</span>{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">17</span> →
+                17:00, <span className="font-semibold text-[var(--ilt-text-primary)]">730</span>{" "}
                 → 07:30,{" "}
-                <span className="font-semibold text-slate-900">1730</span> →
+                <span className="font-semibold text-[var(--ilt-text-primary)]">1730</span> →
                 17:30. Colon formats like{" "}
-                <span className="font-semibold text-slate-900">17:30</span> and{" "}
-                <span className="font-semibold text-slate-900">5:30</span> are
+                <span className="font-semibold text-[var(--ilt-text-primary)]">17:30</span> and{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5:30</span> are
                 also accepted.
               </p>
               <p className="mt-2 leading-relaxed">
@@ -176,19 +176,19 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Standard parsing rules
               </div>
               <p className="mt-1 leading-relaxed">
                 Standard input requires{" "}
-                <span className="font-semibold text-slate-900">AM</span> or{" "}
-                <span className="font-semibold text-slate-900">PM</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">AM</span> or{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">PM</span>.
                 Examples:{" "}
-                <span className="font-semibold text-slate-900">5 PM</span>,{" "}
-                <span className="font-semibold text-slate-900">5:30 PM</span>,{" "}
-                <span className="font-semibold text-slate-900">12 AM</span>,{" "}
-                <span className="font-semibold text-slate-900">12:05 am</span>.
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5 PM</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">5:30 PM</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">12 AM</span>,{" "}
+                <span className="font-semibold text-[var(--ilt-text-primary)]">12:05 am</span>.
                 Minutes are optional and default to 00.
               </p>
               <p className="mt-2 leading-relaxed">
@@ -196,32 +196,32 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">About 2400</div>
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">About 2400</div>
               <p className="mt-1 leading-relaxed">
-                <span className="font-semibold text-slate-900">2400</span> is
+                <span className="font-semibold text-[var(--ilt-text-primary)]">2400</span> is
                 commonly used to mean midnight at the end of a day. This tool
                 treats 2400 as{" "}
-                <span className="font-semibold text-slate-900">00:00</span> and
+                <span className="font-semibold text-[var(--ilt-text-primary)]">00:00</span> and
                 returns 12:00 AM with a note so the behavior is explicit.
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Fullscreen notes
               </div>
               <p className="mt-1 leading-relaxed">
                 Fullscreen targets the converter card element. Some browsers
                 require the action to come directly from a click or key press,
                 so use the Fullscreen button or press{" "}
-                <span className="font-semibold text-slate-900">F</span> while
+                <span className="font-semibold text-[var(--ilt-text-primary)]">F</span> while
                 the card is focused.
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">Copy behavior</div>
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">Copy behavior</div>
               <p className="mt-1 leading-relaxed">
                 Copy uses your device clipboard. The top Copy button copies the
                 “current result” (the opposite of whichever side you’re actively
@@ -230,8 +230,8 @@ export function AccuracyAndPrivacySection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 md:col-span-2">
-              <div className="font-semibold text-slate-900">
+            <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)] md:col-span-2">
+              <div className="font-semibold text-[var(--ilt-text-primary)]">
                 Focus + keyboard handling
               </div>
               <p className="mt-1 leading-relaxed">
@@ -244,13 +244,13 @@ export function AccuracyAndPrivacySection() {
           </div>
         </details>
 
-        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-          <strong className="text-slate-900">Related.</strong> Converting across
+        <div className="mt-4 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
+          <strong className="text-[var(--ilt-text-primary)]">Related.</strong> Converting across
           time zones too?{" "}
           <span className="whitespace-nowrap">
             <Link
               to="/time-zone-converter"
-              className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
             >
               Time Zone Converter
             </Link>
@@ -259,7 +259,7 @@ export function AccuracyAndPrivacySection() {
           <span className="whitespace-nowrap">
             <Link
               to="/atomic-clock"
-              className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
             >
               Atomic Clock
             </Link>
@@ -268,7 +268,7 @@ export function AccuracyAndPrivacySection() {
           <span className="whitespace-nowrap">
             <Link
               to="/time-calculator"
-              className="cursor-pointer font-semibold text-slate-900 underline decoration-slate-300 hover:decoration-slate-500"
+              className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
             >
               Time Calculator
             </Link>

@@ -9,12 +9,11 @@ export function JsonLd({ data }: { data: any }) {
     />
   );
 }
-
 /* =========================================================
    1) HOW IT WORKS (trust block)
 ========================================================= */
 export default function HowItWorks({
-  canonicalUrl = "https://ilovetimers.com/",
+  canonicalUrl = "https://www.ilovetimers.com/",
 }: {
   canonicalUrl?: string;
 }) {
@@ -29,7 +28,7 @@ export default function HowItWorks({
       {
         "@type": "HowToStep",
         name: "Pick a timer",
-        text: "Choose Countdown, Stopwatch, Pomodoro, or HIIT depending on what you’re timing.",
+        text: "Choose Countdown, Stopwatch, Pomodoro, or HIIT depending on what you are timing.",
       },
       {
         "@type": "HowToStep",
@@ -39,7 +38,7 @@ export default function HowItWorks({
       {
         "@type": "HowToStep",
         name: "Start, pause, reset",
-        text: "Use Start/Pause and Reset buttons, or focus a timer card and press Space to start/pause and R to reset.",
+        text: "Use Start/Pause and Reset buttons, or focus the timer display and press Space to start/pause and R to reset.",
       },
       {
         "@type": "HowToStep",
@@ -53,10 +52,10 @@ export default function HowItWorks({
     <section className="mx-auto max-w-7xl px-4 pb-10">
       <JsonLd data={howToLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="text-xl font-semibold text-sky-700">How it works</h2>
+      <div className="ilt-surface-card p-5">
+        <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>
 
-        <p className="mt-2 text-slate-700 leading-relaxed">
+        <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
           Everything runs locally in your browser tab. Each timer uses
           high-resolution timestamps to stay accurate, and it recalculates the
           correct remaining time after pauses or when your browser limits
@@ -64,11 +63,11 @@ export default function HowItWorks({
         </p>
 
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-          <li className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <li className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Countdown input formats
             </div>
-            <div className="mt-1 text-sm text-slate-700">
+            <div className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
               Enter <strong>ss</strong>, <strong>mm:ss</strong>, or{" "}
               <strong>h:mm:ss</strong> (for example <strong>90</strong>,{" "}
               <strong>05:00</strong>, <strong>1:15:00</strong>
@@ -76,35 +75,35 @@ export default function HowItWorks({
             </div>
           </li>
 
-          <li className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <li className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Stopwatch + laps
             </div>
-            <div className="mt-1 text-sm text-slate-700">
+            <div className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
               The stopwatch tracks precise elapsed time. Tap{" "}
               <strong>Lap</strong> to record splits and see both lap time and
               total time.
             </div>
           </li>
 
-          <li className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <li className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Pomodoro + HIIT auto-runs
             </div>
-            <div className="mt-1 text-sm text-slate-700">
+            <div className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
               Pomodoro cycles through work and break blocks. HIIT runs warm-up,
               work/rest rounds, then cool-down. Use <strong>Skip</strong> when
               you want to advance to the next phase.
             </div>
           </li>
 
-          <li className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">
+          <li className="ilt-surface-muted p-4">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
               Fullscreen + keyboard control
             </div>
-            <div className="mt-1 text-sm text-slate-700">
+            <div className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
               Each timer supports fullscreen for visibility on TVs, projectors,
-              or across a room. Click a timer card, then use{" "}
+              or across a room. Click a timer display, then use{" "}
               <strong>Space</strong> (start/pause), <strong>R</strong> (reset),{" "}
               and <strong>F</strong> (fullscreen). Stopwatch adds{" "}
               <strong>L</strong> for lap, and Pomodoro/HIIT use{" "}
@@ -113,8 +112,8 @@ export default function HowItWorks({
           </li>
         </ul>
 
-        <div className="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-          <strong className="text-slate-900">Privacy note:</strong> No account,
+        <div className="mt-4 ilt-surface-card px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
+          <strong className="text-[var(--ilt-text-primary)]">Privacy note:</strong> No account,
           no setup. Timing stays in your browser tab and starts instantly.
         </div>
       </div>

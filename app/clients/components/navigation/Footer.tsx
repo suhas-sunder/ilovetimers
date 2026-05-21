@@ -100,7 +100,7 @@ const footerLinkClass =
   "ilt-focus-ring inline-flex cursor-pointer rounded-[var(--ilt-radius-control)] text-sm font-semibold text-[var(--ilt-text-secondary)] transition hover:text-[var(--ilt-text-primary)]";
 
 const footerPillClass =
-  "ilt-focus-ring inline-flex cursor-pointer items-center rounded-[var(--ilt-radius-control)] bg-white px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] transition hover:bg-slate-100";
+  "ilt-focus-ring inline-flex cursor-pointer items-center rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] transition hover:bg-[var(--ilt-button-secondary-hover)]";
 
 export default function Footer() {
   const year = new Date().getFullYear();

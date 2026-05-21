@@ -1,10 +1,5 @@
 import { JsonLd } from "./HowItWorks";
 
-/* =========================================================
-   2) POPULAR USE CASES (scenario-first, not a tool directory)
-   Schema: ItemList (scenarios -> best matching timer/route)
-========================================================= */
-
 type ScenarioLink = { label: string; href: string };
 
 type Scenario = {
@@ -22,104 +17,73 @@ export default function PopularUseCases({
 }) {
   const scenarios: Scenario[] = [
     {
-      title: "Cooking and reminders (in the same room)",
+      title: "Kitchen countdowns that need a sound at zero",
       description:
-        "A big, simple countdown you can glance at. Use sound if you’re nearby.",
+        "Set a 5, 10, or custom minute alarm and keep the page open while you cook, steep, rest, or check a dish.",
+      forWho: "Cooking, tea, reheating, laundry, and short household reminders.",
+      notFor:
+        "Wake-up alarms, medication alerts, or anything that must ring after the tab is closed.",
+      links: [
+        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Tea Timer", href: "/tea-timer" },
+        { label: "Egg Timer", href: "/egg-timer" },
+      ],
+    },
+    {
+      title: "Room-visible alerts for meetings or classes",
+      description:
+        "Use fullscreen so everyone can see the remaining time, then stop the alarm once the segment is over.",
       forWho:
-        "Cooking, steeping tea/coffee, laundry, short chores where you’ll come back to the screen.",
+        "Teachers, facilitators, presenters, and group leaders running timed blocks.",
       notFor:
-        "If you need a guaranteed alert while the tab is closed or your phone is locked. Use a device alarm for that.",
+        "Agenda management or shared attendee controls. Use Meeting Timer for more meeting-specific structure.",
       links: [
-        { label: "Alarm timer (ring at end)", href: "/alarm-timer" },
-        { label: "Countdown timer", href: "/#countdown" },
+        { label: "Meeting Timer", href: "/meeting-timer" },
+        { label: "Classroom Timer", href: "/classroom-timer" },
+        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
       ],
     },
     {
-      title: "Meetings that run on schedule",
+      title: "Short resettable reminders",
       description:
-        "Keep segments tight with a visible countdown you can start/pause fast.",
+        "Reset returns the alarm timer to the selected minutes so you can repeat the same reminder without re-entering the duration.",
       forWho:
-        "Facilitators, interviewers, team leads, anyone running timed agenda blocks.",
+        "Repeating breaks, check-ins, cleaning intervals, and quick desk reminders.",
       notFor:
-        "If you need shared control, calendar automation, or attendee tracking. This is just a timer.",
+        "Multiple simultaneous reminders. Use Multiple Timers when several countdowns need to run at once.",
       links: [
-        { label: "Meeting timer page", href: "/meeting-timer" },
-        { label: "Countdown timer", href: "/#countdown" },
+        { label: "Multiple Timers", href: "/multiple-timers" },
+        { label: "Break Timer", href: "/break-timer" },
+        { label: "Rest Timer", href: "/rest-timer" },
       ],
     },
     {
-      title: "Presentations, speeches, classrooms",
+      title: "Quiet visual completion when sound is off",
       description:
-        "Stay on pace without guessing. Fullscreen keeps it readable from a distance.",
-      forWho: "Teachers, presenters, speakers, webinar hosts, exam proctors.",
+        "Turn Sound off when you only want a visual finished state without beeps or an audible alarm.",
+      forWho:
+        "Quiet rooms, calls, libraries, recordings, or any place where sound would distract.",
       notFor:
-        "If you need slide cues, teleprompter features, or slide-deck integrations.",
+        "Silent-by-default workflows with no alarm intent. Use Silent Timer for that simpler setup.",
       links: [
-        { label: "Presentation timer page", href: "/presentation-timer" },
-        { label: "Countdown timer", href: "/#countdown" },
+        { label: "Silent Timer", href: "/silent-timer" },
+        { label: "Meditation Timer", href: "/meditation-timer" },
       ],
-    },
-    {
-      title: "Silent or discreet timing",
-      description:
-        "Run a countdown with sound off for quiet rooms, recordings, or talks.",
-      forWho: "Libraries, recording sessions, meditation, quiet classrooms.",
-      notFor:
-        "If you rely on audio cues, vibration alerts, or notifications while away from the screen.",
-      links: [
-        { label: "Silent timer page", href: "/silent-timer" },
-        { label: "Countdown (toggle sound)", href: "/#countdown" },
-      ],
-    },
-    {
-      title: "Study sessions and deep work",
-      description:
-        "Use structured work and break cycles with minimal distractions.",
-      forWho: "Students and knowledge workers who benefit from focus blocks.",
-      notFor:
-        "If you want task lists, site blocking, habit tracking, or analytics. This is just timing.",
-      links: [
-        { label: "Pomodoro focus timer", href: "/#pomodoro" },
-        { label: "Productivity timer page", href: "/productivity-timer" },
-      ],
-    },
-    {
-      title: "HIIT and interval workouts",
-      description:
-        "Hands-free timing that auto-runs warm-up, work/rest rounds, and cool-down.",
-      forWho: "HIIT, circuits, coaching sessions, gym classes.",
-      notFor:
-        "If you need workout logging, guided programs, or heart-rate zone tracking.",
-      links: [{ label: "HIIT / interval timer", href: "/#hiit" }],
-    },
-    {
-      title: "Timing tasks with splits (laps)",
-      description:
-        "Track elapsed time and record splits for practice, drills, or experiments.",
-      forWho: "Training, lab timing, cooking tests, speed practice.",
-      notFor: "If you need exports, multi-run comparisons, or advanced stats.",
-      links: [{ label: "Stopwatch with laps", href: "/#stopwatch" }],
     },
   ];
 
-  // Build absolute URLs for schema + rendering
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
-  const list = scenarios.map((s) => ({
-    ...s,
-    links: s.links.map((l) => ({ ...l, href: abs(l.href) })),
-  }));
 
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Common timer scenarios",
-    itemListElement: list.map((s, i) => ({
+    name: "Common ways to use Alarm Timer",
+    itemListElement: scenarios.map((s, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: s.title,
-      // point to the first recommended destination
-      url: s.links[0]?.href,
+      url: abs("/alarm-timer"),
     })),
   };
 
@@ -127,66 +91,59 @@ export default function PopularUseCases({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Quick guidance on which timer to use, plus who each option is (and
-            isn’t) a fit for.
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
+            Use Alarm Timer when a countdown should end with a clear alert while
+            the browser tab stays open.
           </p>
         </div>
 
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {list.map((s) => (
-            <div
-              key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-            >
-              <div className="text-base font-semibold text-slate-900">
+        <div className="grid gap-4 md:grid-cols-2">
+          {scenarios.map((s) => (
+            <div key={s.title} className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
+                    {s.forWho}
+                  </div>
                 </div>
-
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
+                    {s.notFor}
+                  </div>
                 </div>
               </div>
 
               <div className="mt-3 flex flex-wrap gap-2">
                 {s.links.map((l) => (
                   <a
-                    key={l.href}
+                    key={`${s.title}-${l.href}`}
                     href={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 hover:border-slate-300"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
-                    {l.label} →
+                    {l.label} -&gt;
                   </a>
                 ))}
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Note:</span> Browser
-          timers can’t guarantee alerts if you close the tab or your device puts
-          the browser to sleep. If you need a guaranteed alarm, use your phone’s
-          alarm app.
         </div>
       </div>
     </section>

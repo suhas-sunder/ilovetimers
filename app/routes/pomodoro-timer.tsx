@@ -4,15 +4,30 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
-import HowItWorks from "~/clients/components/alarm-timer/HowItWorks";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  SeoBand,
+  SecondaryActionRow,
+  SettingGroup,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import HowItWorks from "~/clients/components/pomodoro-timer/HowItWorks";
 import Disclaimer from "~/clients/components/pomodoro-timer/Disclaimer";
 import FAQ from "~/clients/components/pomodoro-timer/FAQ";
 import KeyboardShortcuts from "~/clients/components/pomodoro-timer/KeyboardShortcuts";
@@ -87,30 +102,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
 // WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -151,222 +142,6 @@ function useBeep() {
   }, []);
 }
 
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
 
 /* =========================================================
    POMODORO
@@ -412,9 +187,10 @@ function PomodoroCard() {
   }, [running]);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
-  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const displayBoxRef = useRef<HTMLElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
 
   const workMs = useMemo(() => workMin * 60 * 1000, [workMin]);
@@ -605,10 +381,10 @@ function PomodoroCard() {
       resetAll();
     } else if (k === "n") {
       skipNext();
-    } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    } else if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -625,11 +401,11 @@ function PomodoroCard() {
 
   const displayTone =
     phase === "work"
-      ? "border-rose-200 bg-rose-50"
+      ? "bg-white"
       : phase === "shortBreak"
-        ? "border-emerald-200 bg-emerald-50"
+        ? "bg-white"
         : phase === "longBreak"
-          ? "border-sky-200 bg-sky-50"
+          ? "bg-white"
           : "border-slate-200 bg-slate-50";
 
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
@@ -656,10 +432,10 @@ function PomodoroCard() {
       <FullscreenTopBar
         show={isFs}
         title="Pomodoro Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
-            <label className="hidden sm:inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+            <label className="hidden sm:inline-flex cursor-pointer select-none items-center gap-2 ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               <input
                 type="checkbox"
                 checked={sound}
@@ -668,7 +444,7 @@ function PomodoroCard() {
               Sound
             </label>
 
-            <label className="hidden sm:inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+            <label className="hidden sm:inline-flex cursor-pointer select-none items-center gap-2 ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
               <input
                 type="checkbox"
                 checked={autoAdvance}
@@ -690,56 +466,13 @@ function PomodoroCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Pomodoro Timer (25/5 Focus Cycles)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Work and break cycles with clear countdown, reliable phase
-                switching, fullscreen, and keyboard control.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={sound}
-                  onChange={(e) => setSound(e.target.checked)}
-                />
-                Sound
-              </label>
-
-              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={autoAdvance}
-                  onChange={(e) => setAutoAdvance(e.target.checked)}
-                />
-                Auto
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-session-stack flex h-full flex-col"}>
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-[var(--ilt-text-primary)]",
             "p-3 sm:p-6",
             displayTone,
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
@@ -758,25 +491,12 @@ function PomodoroCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="flex w-full max-w-3xl flex-wrap items-baseline justify-center gap-x-6 gap-y-2 text-center">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              {phase === "done" ? "Done" : phase === "work" ? "Work" : "Break"}
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {phaseLabel}
-            </div>
-          </div>
-
-          <div className="mt-3 text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {statusLabel}
-          </div>
-
           <span
             ref={timeTextRef}
             className={[
-              "mt-2 inline-block text-center font-mono font-extrabold",
+              "inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
-              urgent ? "text-rose-950" : "",
+              urgent ? "text-[var(--ilt-text-primary)]" : "",
             ].join(" ")}
             style={{
               fontSize: fitFontPx,
@@ -787,50 +507,60 @@ function PomodoroCard() {
             {shownTime}
           </span>
 
+          <div className="mt-4 flex w-full max-w-3xl flex-wrap items-baseline justify-center gap-x-6 gap-y-2 text-center">
+            <div className="ilt-content-label">
+              {phase === "done" ? "Done" : phase === "work" ? "Work" : "Break"}
+            </div>
+            <div className="ilt-helper-text font-semibold">
+              {phaseLabel}
+            </div>
+            <div className="ilt-content-label">
+              {statusLabel}
+            </div>
+          </div>
+
           {isFs && (
             <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
                     Controls
                   </div>
-                  <div className="text-xs font-semibold text-slate-600">
+                  <div className="ilt-helper-text font-semibold">
                     Tap time or Space to start/pause. N next. R reset. F
                     fullscreen.
                   </div>
                 </div>
 
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                <div className="hidden sm:block ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)] backdrop-blur">
                   {phaseLabel}
                 </div>
               </div>
             </div>
           )}
-        </div>
+        </DisplayStage>
         {/* Controls + shortcuts (normal only) */}
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="mx-auto flex w-full max-w-5xl flex-col gap-3">
+            <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : phase === "done" ? "Restart" : "Start"}
               </Btn>
               <Btn kind="ghost" onClick={skipNext}>
-                Next →
+                Next
               </Btn>
               <Btn kind="ghost" onClick={resetAll}>
                 Reset
               </Btn>
-            </div>
+            </ControlGroup>
 
-            <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-              Shortcuts: Space start/pause · N next · R reset · F fullscreen
-            </div>
           </div>
         )}
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <div className="mt-5 grid gap-4 lg:grid-cols-12">
+          <SettingGroup className="mt-5">
+          <div className="grid gap-4 lg:grid-cols-12">
             <div className="lg:col-span-8">
               <div className="grid gap-3 sm:grid-cols-3">
                 <LabeledNumberStrong
@@ -857,64 +587,80 @@ function PomodoroCard() {
               </div>
 
               <div className="mt-3 flex flex-wrap items-center gap-3">
-                <label className="inline-flex cursor-pointer select-none items-center gap-2 text-sm font-semibold text-slate-800">
-                  <input
-                    type="checkbox"
-                    checked={finalCountdownBeeps}
-                    onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-                    disabled={!sound}
-                  />
-                  Final 3-2-1 beeps
-                </label>
-                <span className="text-sm text-slate-600">
+                <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                <Toggle
+                  label="Auto"
+                  checked={autoAdvance}
+                  onCheckedChange={setAutoAdvance}
+                />
+                <Toggle
+                  label="Final 3-2-1 beeps"
+                  checked={finalCountdownBeeps}
+                  onCheckedChange={setFinalCountdownBeeps}
+                  disabled={!sound}
+                />
+                <span className="text-sm text-[var(--ilt-text-secondary)]">
                   Only when Sound is on.
                 </span>
               </div>
             </div>
 
             <div className="lg:col-span-4">
-              <div className="h-full rounded-2xl bg-white p-0 shadow-sm shadow-slate-200/70">
+              <div className="h-full space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="text-sm font-extrabold text-slate-900 uppercase tracking-wide">
+                  <div className="text-sm font-extrabold text-[var(--ilt-text-primary)] uppercase tracking-wide">
                     Long break
                   </div>
 
-                  <label className="inline-flex cursor-pointer select-none items-center gap-2 text-sm font-semibold text-slate-800">
-                    <input
-                      type="checkbox"
-                      checked={useLongBreak}
-                      onChange={(e) => setUseLongBreak(e.target.checked)}
-                    />
-                    After last cycle
-                  </label>
+                  <Toggle
+                    label="After last cycle"
+                    checked={useLongBreak}
+                    onCheckedChange={setUseLongBreak}
+                  />
                 </div>
 
-                <label className="mt-3 block text-sm font-semibold text-slate-800">
-                  Minutes
-                  <input
-                    type="number"
-                    min={1}
-                    max={90}
-                    value={longBreakMin}
-                    onChange={(e) =>
-                      setLongBreakMin(clamp(Number(e.target.value || 0), 1, 90))
-                    }
-                    disabled={!useLongBreak}
-                    className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:opacity-60"
-                  />
-                </label>
+                <Field
+                  label="Minutes"
+                  type="number"
+                  min={1}
+                  max={90}
+                  value={longBreakMin}
+                  onChange={(e) =>
+                    setLongBreakMin(clamp(Number(e.target.value || 0), 1, 90))
+                  }
+                  disabled={!useLongBreak}
+                />
 
-                <div className="mt-3 text-sm text-slate-600">
+                <div className="mt-3 text-sm text-[var(--ilt-text-secondary)]">
                   Typical: 10 to 20 minutes.
                 </div>
               </div>
             </div>
           </div>
+          </SettingGroup>
+        )}
+
+        {!isFs && (
+          <SecondaryActionRow>
+            <Btn
+              kind="ghost"
+              onClick={() => void fullscreen.toggle()}
+              className="py-2"
+            >
+              Fullscreen
+            </Btn>
+          </SecondaryActionRow>
+        )}
+
+        {!isFs && (
+          <ShortcutHint>
+            Shortcuts: Space start/pause · N next · R reset · F fullscreen
+          </ShortcutHint>
         )}
 
         {/* Manual-advance hint (normal only) */}
         {!isFs && !autoAdvance && remaining === 0 && phase !== "done" && (
-          <div className="mt-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800">
+          <div className="mt-3 ilt-surface-card px-3 py-2 text-sm font-semibold text-[var(--ilt-text-secondary)]">
             Phase finished. Press <strong>Next</strong> to continue.
           </div>
         )}
@@ -922,11 +668,11 @@ function PomodoroCard() {
         {/* Fullscreen bottom info */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-slate-600 sm:text-sm">
+            <div className="ilt-helper-text sm:text-sm">
               Tap time to start/pause · Space start/pause · N next · R reset · F
               fullscreen
             </div>
-            <div className="text-xs font-semibold text-slate-700">
+            <div className="ilt-helper-text font-semibold">
               {statusLabel}
             </div>
           </div>
@@ -950,17 +696,14 @@ function LabeledNumberStrong({
   max: number;
 }) {
   return (
-    <label className="block text-sm font-semibold text-slate-800">
-      {label}
-      <input
-        type="number"
-        min={min}
-        max={max}
-        value={value}
-        onChange={(e) => set(clamp(Number(e.target.value || 0), min, max))}
-        className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-      />
-    </label>
+    <Field
+      label={label}
+      type="number"
+      min={min}
+      max={max}
+      value={value}
+      onChange={(e) => set(clamp(Number(e.target.value || 0), min, max))}
+    />
   );
 }
 
@@ -1001,32 +744,25 @@ export default function PomodoroTimerPage({}: Route.ComponentProps) {
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <PomodoroCard />
-        </div>
+      <ToolHero
+        display={<PomodoroCard />}
+        title="Pomodoro Timer (25/5 Focus Cycles)"
+        description="Work and break cycles with a clear countdown, reliable phase switching, fullscreen, and keyboard control."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Pomodoro Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

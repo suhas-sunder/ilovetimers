@@ -4,19 +4,35 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
 import HowItWorks from "~/clients/components/fibonacci-clock/HowItWorks";
 import Disclaimer from "~/clients/components/fibonacci-clock/Disclaimer";
 import FAQ from "~/clients/components/fibonacci-clock/FAQ";
 import KeyboardShortcuts from "~/clients/components/fibonacci-clock/KeyboardShortcuts";
 import PopularUseCases from "~/clients/components/fibonacci-clock/PopularUseCases";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
+
+
+import {
+  Button as Btn,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  SecondaryActionRow,
+  SeoBand,
+  Select,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolHero,
+  ToolFrame as Card,
+} from "~/clients/components/ui/foundation";
 
 /* =========================================================
    META
@@ -91,29 +107,9 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
 
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
 
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
 
-  return isFs;
-}
 
 function safeTimeZone() {
   try {
@@ -160,114 +156,6 @@ function getTimePartsForZone(date: Date, timeZone: string) {
 
 function formatHHMMSS(h24: number, m: number, s: number) {
   return `${pad2(h24)}:${pad2(m)}:${pad2(s)}`;
-}
-
-/**
- * Fit a single-line string into its container by adjusting font size.
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
 }
 
 /* =========================================================
@@ -366,113 +254,6 @@ function buildFibonacciStates(opts: { hour12: number; minute5: number }) {
 }
 
 /* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-/* =========================================================
    TIME ZONE LIST
 ========================================================= */
 type ZoneOpt = { id: string; label: string };
@@ -499,11 +280,11 @@ const COMMON_ZONES: ZoneOpt[] = [
 function Swatch({ state }: { state: TileState }) {
   const style =
     state === "hour"
-      ? "bg-rose-500"
+      ? "bg-amber-500"
       : state === "minute"
-        ? "bg-green-500"
+        ? "bg-slate-300"
         : state === "both"
-          ? "bg-blue-500"
+          ? "bg-slate-900"
           : "bg-white";
   const border = state === "white" ? "border-slate-200" : "border-transparent";
   return (
@@ -527,27 +308,27 @@ function FibonacciBoard({ tiles, dark }: { tiles: Tile[]; dark: boolean }) {
     return dark
       ? {
           white: "rgba(255,255,255,.06)",
-          hour: "rgba(244,63,94,.88)",
-          minute: "rgba(34,197,94,.85)",
-          both: "rgba(59,130,246,.88)",
+          hour: "rgba(245,158,11,.88)",
+          minute: "rgba(148,163,184,.85)",
+          both: "rgba(15,23,42,.88)",
           border: "rgba(255,255,255,.18)",
           text: "rgba(255,255,255,.92)",
           sub: "rgba(255,255,255,.78)",
           wrapBg: "rgba(255,255,255,.04)",
           wrapBorder: "rgba(255,255,255,.10)",
-          innerShadow: "0 0 0 1px rgba(255,255,255,.06) inset",
+          innerShadow: "none",
         }
       : {
           white: "rgba(255,255,255,.9)",
-          hour: "rgba(244,63,94,.68)",
-          minute: "rgba(34,197,94,.62)",
-          both: "rgba(59,130,246,.64)",
+          hour: "rgba(245,158,11,.72)",
+          minute: "rgba(148,163,184,.62)",
+          both: "rgba(100,116,139,.68)",
           border: "rgba(15,23,42,.14)",
           text: "rgba(15,23,42,.92)",
           sub: "rgba(51,65,85,.80)",
           wrapBg: "rgba(255,255,255,.55)",
           wrapBorder: "rgba(15,23,42,.12)",
-          innerShadow: "0 0 0 1px rgba(15,23,42,.08) inset",
+          innerShadow: "none",
         };
   }, [dark]);
 
@@ -573,7 +354,7 @@ function FibonacciBoard({ tiles, dark }: { tiles: Tile[]; dark: boolean }) {
 
     return (
       <div
-        className="relative rounded-2xl border shadow-sm"
+        className="timer-specialty-clock-visual timer-fibonacci-board relative rounded-lg border"
         style={{
           background: bg,
           borderColor: palette.border,
@@ -632,7 +413,7 @@ function FibonacciBoard({ tiles, dark }: { tiles: Tile[]; dark: boolean }) {
 
   return (
     <div
-      className="rounded-2xl border p-4"
+      className="rounded-lg border p-4"
       style={{
         background: palette.wrapBg,
         borderColor: palette.wrapBorder,
@@ -675,7 +456,7 @@ function FibonacciBoard({ tiles, dark }: { tiles: Tile[]; dark: boolean }) {
 ========================================================= */
 type Mode = "live" | "manual";
 
-function FibonacciClockCard() {
+function FibonacciClockCard({ initialNowISO }: { initialNowISO: string }) {
   const deviceTz = useMemo(() => safeTimeZone(), []);
   const [zoneId, setZoneId] = useState<string>("local");
   const zone = zoneId === "local" ? deviceTz : zoneId;
@@ -685,11 +466,12 @@ function FibonacciClockCard() {
   const [manualHour24, setManualHour24] = useState<number>(12);
   const [manualMinute, setManualMinute] = useState<number>(0);
 
-  const [now, setNow] = useState<Date>(() => new Date());
+  const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [copied, setCopied] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   useEffect(() => {
     if (mode !== "live") return;
@@ -829,7 +611,7 @@ function FibonacciClockCard() {
     textRef: fibTimeRef,
     deps: [fibHHMM, isFs, mode, zoneId],
     minPx: 56,
-    maxPx: isFs ? 520 : 520,
+    maxPx: isFs ? 460 : 210,
     paddingAllowancePx: isFs ? 84 : 84,
   });
 
@@ -837,11 +619,11 @@ function FibonacciClockCard() {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
-    if (k === "f" && cardRef.current) toggleFullscreen(cardRef.current);
+    if (k === "f" && cardRef.current) void fullscreen.toggle();
     else if (k === "c") copy();
     else if (k === "l") setMode("live");
     else if (k === "e") setMode("manual");
-    else if (k === "escape" && isFs) document.exitFullscreen().catch(() => {});
+    else if (k === "escape" && isFs) void fullscreen.exit();
   };
 
   const statusChip = `${mode === "live" ? "Live" : "Explore"} · ${
@@ -868,7 +650,7 @@ function FibonacciClockCard() {
       <FullscreenTopBar
         show={isFs}
         title="Fibonacci Clock"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn
@@ -892,10 +674,10 @@ function FibonacciClockCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-specialty-clock-stack flex h-full flex-col"}>
         {/* Header + controls (normal only) */}
         {!isFs && (
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="hidden">
             <div className="min-w-0">
               <div className="text-sm font-extrabold text-slate-900">
                 Fibonacci Clock
@@ -941,7 +723,7 @@ function FibonacciClockCard() {
               <Btn
                 kind="ghost"
                 onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
+                  void fullscreen.toggle()
                 }
                 className="py-2"
               >
@@ -953,7 +735,7 @@ function FibonacciClockCard() {
 
         {/* Manual controls (normal only) */}
         {!isFs && mode === "manual" ? (
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="hidden">
             <label className="block text-sm font-semibold text-slate-900">
               Hour (0–23)
               <input
@@ -1022,117 +804,145 @@ function FibonacciClockCard() {
             {fibHHMM}
           </span>
 
-          <div className="mt-3 flex w-full max-w-[980px] flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-center">
-            <div className="w-full rounded-2xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Decimal time
-              </div>
-              <div className="mt-2 font-mono text-3xl font-extrabold tracking-widest text-slate-900 sm:text-4xl">
-                {decHHMMSS}
-              </div>
-              <div className="mt-2 text-xs font-semibold text-slate-600">
-                {dateText}
-              </div>
-            </div>
-
-            <div className="w-full rounded-2xl border border-slate-200 bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Rounding
-              </div>
-              <div className="mt-2 text-sm font-semibold text-slate-700">
-                {roundingText}
-              </div>
-
-              {isFs ? (
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <Btn kind="solid" onClick={copy} className="py-2 text-sm">
-                    {copied ? "Copied" : "Copy (C)"}
-                  </Btn>
-                  <Btn
-                    kind="ghost"
-                    onClick={() => setMode("live")}
-                    className="py-2 text-sm"
-                  >
-                    Live (L)
-                  </Btn>
-                  <Btn
-                    kind="ghost"
-                    onClick={() => setMode("manual")}
-                    className="py-2 text-sm"
-                  >
-                    Explore (E)
-                  </Btn>
-                </div>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="mt-4 w-full max-w-[980px]">
+          <div className="mt-4 w-full max-w-[620px]">
             <FibonacciBoard tiles={fib.tiles} dark={false} />
-          </div>
-
-          {/* Legend (kept integral and visible; compact in fullscreen) */}
-          <div className="mt-4 w-full max-w-[980px]">
-            <div
-              className={[
-                "rounded-2xl border bg-white p-4",
-                isFs
-                  ? "border-slate-200 bg-white text-slate-900"
-                  : "border-slate-200",
-              ].join(" ")}
-            >
-              <div
-                className={[
-                  "text-xs font-extrabold uppercase tracking-widest",
-                  "text-slate-600",
-                ].join(" ")}
-              >
-                Legend
-              </div>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {legend.map((l) => (
-                  <div
-                    key={l.key}
-                    className={[
-                      "flex items-center justify-between gap-3 rounded-xl border px-3 py-2",
-                      isFs
-                        ? "border-slate-200 bg-slate-50"
-                        : "border-slate-200 bg-slate-50",
-                    ].join(" ")}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Swatch state={l.key as TileState} />
-                      <span
-                        className={
-                          "font-semibold text-slate-900"
-                        }
-                      >
-                        {l.label}
-                      </span>
-                    </div>
-                    <span
-                      className={
-                        "text-slate-600 text-sm"
-                      }
-                    >
-                      {l.desc}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
 
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+          <div className="hidden">
+            <div className="timer-control-shadow rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-700">
               Shortcuts: F fullscreen · C copy · L live · E explore
             </div>
             <div className="text-xs text-slate-600">
               Tip: click the card once so keyboard shortcuts work immediately.
             </div>
           </div>
+        )}
+
+        {!isFs && (
+          <>
+            <SettingGroup title="Fibonacci clock settings">
+              <SettingRow className="lg:grid-cols-2">
+                <Select
+                  label="Zone"
+                  value={zoneId}
+                  onChange={(event) => setZoneId(event.target.value)}
+                >
+                  {COMMON_ZONES.map((z) => (
+                    <option key={z.id} value={z.id}>
+                      {z.label}
+                    </option>
+                  ))}
+                </Select>
+                <Select
+                  label="Mode"
+                  value={mode}
+                  onChange={(event) => setMode(event.target.value as Mode)}
+                >
+                  <option value="live">Live</option>
+                  <option value="manual">Explore</option>
+                </Select>
+              </SettingRow>
+
+              {mode === "manual" ? (
+                <SettingRow className="lg:grid-cols-2">
+                  <Field
+                    label="Hour (0-23)"
+                    type="number"
+                    min={0}
+                    max={23}
+                    value={manualHour24}
+                    onChange={(event) =>
+                      setManualHour24(
+                        clamp(Number(event.target.value || 0), 0, 23),
+                      )
+                    }
+                  />
+                  <Field
+                    label="Minute (0-59)"
+                    type="number"
+                    min={0}
+                    max={59}
+                    value={manualMinute}
+                    onChange={(event) =>
+                      setManualMinute(
+                        clamp(Number(event.target.value || 0), 0, 59),
+                      )
+                    }
+                  />
+                </SettingRow>
+              ) : null}
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => setMode("live")}>
+                Live
+              </Btn>
+              <Btn kind="ghost" onClick={() => setMode("manual")}>
+                Explore
+              </Btn>
+              <Btn kind="ghost" onClick={copy}>
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: F fullscreen, C copy, L live, E explore
+            </ShortcutHint>
+
+            <div className="timer-specialty-clock-support grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+              <div className="timer-specialty-clock-panel rounded-lg border border-slate-200 bg-white p-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Decimal time
+                </div>
+                <div className="mt-2 font-mono text-3xl font-extrabold tracking-widest text-slate-900 sm:text-4xl">
+                  {decHHMMSS}
+                </div>
+                <div className="mt-2 text-xs font-semibold text-slate-600">
+                  {dateText}
+                </div>
+              </div>
+
+              <div className="timer-specialty-clock-panel rounded-lg border border-slate-200 bg-white p-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Rounding
+                </div>
+                <div className="mt-2 text-sm font-semibold text-slate-700">
+                  {roundingText}
+                </div>
+              </div>
+
+              <div className="timer-specialty-clock-panel rounded-lg border border-slate-200 bg-white p-4 lg:col-span-2">
+                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                  Legend
+                </div>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  {legend.map((l) => (
+                    <div
+                      key={l.key}
+                      className="timer-specialty-clock-panel flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Swatch state={l.key as TileState} />
+                        <span className="font-semibold text-slate-900">
+                          {l.label}
+                        </span>
+                      </div>
+                      <span className="text-sm text-slate-600">{l.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         <FullscreenBottomBar show={isFs}>
@@ -1189,45 +999,27 @@ export default function FibonacciClockPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Fibonacci Clock (Time Zones + Explore)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Live Fibonacci time using 1, 1, 2, 3, 5 squares. Switch zones,
-            explore manually, copy output, and go fullscreen.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<FibonacciClockCard initialNowISO={nowISO} />}
+        title="Fibonacci Clock (Time Zones + Explore)"
+        description="Read time through Fibonacci squares, switch time zones, explore manual times, copy the breakdown, and use fullscreen."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <FibonacciClockCard />
-        </div>
+      <SeoBand>
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Fibonacci Clock</span>
-        </p>
-      </section>
+          <HowItWorks />
+          <KeyboardShortcuts />
+          <PopularUseCases />
+          <FAQ />
+          <Disclaimer />
 
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      </SeoBand>
+    </PageShell>
   );
 }

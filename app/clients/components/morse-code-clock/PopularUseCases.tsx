@@ -1,11 +1,6 @@
 import { Link } from "react-router";
 import { JsonLd } from "./HowItWorks";
 
-/* =========================================================
-   POPULAR USE CASES (MOON PHASE CLOCK intent)
-   Schema: ItemList (scenarios -> this route)
-========================================================= */
-
 type ScenarioLink = { label: string; href: string };
 
 type Scenario = {
@@ -23,91 +18,59 @@ export default function PopularUseCases({
 }) {
   const scenarios: Scenario[] = [
     {
-      title: "See today’s moon phase instantly",
+      title: "Practice Morse numbers with a live clock",
       description:
-        "Open the page and get the current phase label, illumination estimate, and moon age in one view, with a clear “checked at” timestamp.",
-      forWho:
-        "Anyone who wants a quick, no-noise snapshot of the moon’s current state.",
+        "Keep seconds on so the Morse output changes often, then check each digit against the normal time.",
+      forWho: "Learners practicing number patterns from 0 through 9.",
       notFor:
-        "You need a full astronomy dashboard or star chart. Use Astronomical Clock for more sky-style context.",
-      links: [{ label: "Astronomical Clock", href: "/astronomical-clock" }],
+        "Learning letters or full messages. This page only encodes time digits.",
+      links: [{ label: "Current Local Time", href: "/current-local-time" }],
     },
     {
-      title: "Track the next major phase time in local time",
+      title: "Fullscreen demo for a class or workshop",
       description:
-        "The display shows what major phase is coming next and the estimated local time it occurs, plus a big countdown you can keep running.",
-      forWho:
-        "Anyone planning around the next New Moon or Full Moon and wanting the time in their own time zone.",
+        "Use block view in fullscreen so dots and dashes are large enough to read across a room.",
+      forWho: "Teachers, presenters, clubs, and quick demonstrations.",
       notFor:
-        "You need an official reference comparison for timekeeping. Use Atomic Clock.",
-      links: [{ label: "Atomic Clock", href: "/atomic-clock" }],
-    },
-    {
-      title: "Fullscreen countdown for a room display",
-      description:
-        "Go fullscreen for a large, readable countdown with the next phase name and time. Useful on a spare monitor or TV.",
-      forWho:
-        "Anyone who wants a big on-screen countdown to the next major phase.",
-      notFor:
-        "You need a countdown to a custom event time. Use Event Countdown instead.",
-      links: [{ label: "Event Countdown", href: "/event-countdown" }],
-    },
-    {
-      title: "Look up the moon phase for a specific date and time",
-      description:
-        "Switch to Manual by editing the date, hour, and minute. The page updates to show phase label, illumination, age, and the next major phase relative to that moment.",
-      forWho:
-        "Anyone checking a past or future moment without leaving the page.",
-      notFor:
-        "You are converting times across time zones. Use Time Zone Converter.",
-      links: [{ label: "Time Zone Converter", href: "/time-zone-converter" }],
-    },
-    {
-      title: "Get a simple “where are we in the cycle” view",
-      description:
-        "Use the phase position bar to see cycle progress at a glance, plus the previous and next major phase timestamps for context.",
-      forWho:
-        "Anyone who wants a quick sense of lunar cycle position without extra controls.",
-      notFor:
-        "You want a different clock style or representation. Use another clock page instead.",
+        "A standard wall clock. Use Digital Clock or Minimalist Clock for plain time.",
       links: [
         { label: "Digital Clock", href: "/digital-clock" },
         { label: "Minimalist Clock", href: "/minimalist-clock" },
       ],
     },
     {
-      title: "Pair moon phase with day and light timing",
+      title: "Copy the current time and Morse output",
       description:
-        "Use Moon Phase Clock alongside sunrise and sunset times when planning timing around daylight, especially when you want both views open.",
-      forWho:
-        "Anyone who likes having moon phase and daylight timing on separate, simple pages.",
+        "Copy creates a paste-ready block with the normal time and its Morse digit representation.",
+      forWho: "Notes, examples, chat messages, or checking a Morse exercise.",
       notFor:
-        "You need multiple locations at once. Use World Clock for side-by-side places.",
-      links: [
-        { label: "Sunrise Sunset Clock", href: "/sunrise-sunset-clock" },
-        { label: "World Clock", href: "/world-clock" },
-      ],
+        "Converting arbitrary text to Morse. This route is a clock, not a general encoder.",
+      links: [{ label: "UTC Clock", href: "/utc-clock" }],
+    },
+    {
+      title: "Switch between block and text views",
+      description:
+        "Block view emphasizes visual reading. Text view shows the raw dots and dashes for verification.",
+      forWho:
+        "Anyone comparing symbol shapes against the standard Morse text form.",
+      notFor:
+        "Time zone conversion. Use Time Zone Converter for cross-zone planning.",
+      links: [{ label: "Time Zone Converter", href: "/time-zone-converter" }],
     },
   ];
 
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  // Keep UI links relative (Remix-friendly), schema uses absolute URLs for this page
-  const schemaList = scenarios.map((s) => ({
-    title: s.title,
-    primaryUrl: abs("/moon-phase-clock"),
-  }));
-
   const itemListLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Common ways to use the Moon Phase Clock",
-    itemListElement: schemaList.map((s, i) => ({
+    name: "Common ways to use the Morse Code Clock",
+    itemListElement: scenarios.map((s, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: s.title,
-      url: s.primaryUrl,
+      url: abs("/morse-code-clock"),
     })),
   };
 
@@ -115,44 +78,43 @@ export default function PopularUseCases({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Live phase, illumination estimate, moon age, and a big countdown to
-            the next major phase. Switch to Manual to check a specific date and
-            time.
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
+            Use this clock when you want local time displayed as Morse digits in
+            either block or text form.
           </p>
         </div>
 
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {scenarios.map((s) => (
-            <div
-              key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-            >
-              <div className="text-base font-semibold text-slate-900">
+            <div key={s.title} className="ilt-surface-card p-4">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
+                    {s.forWho}
+                  </div>
                 </div>
-
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">
+                    {s.notFor}
+                  </div>
                 </div>
               </div>
 
@@ -161,22 +123,14 @@ export default function PopularUseCases({
                   <Link
                     key={`${s.title}-${l.href}`}
                     to={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
-                    {l.label} →
+                    {l.label} -&gt;
                   </Link>
                 ))}
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
-          <span className="font-semibold text-slate-900">Tip:</span> For a clean
-          display, keep Live on and go fullscreen with{" "}
-          <span className="font-semibold text-slate-900">F</span>. If you want
-          to check another moment, edit the date and time to switch to Manual,
-          then click Now to return to Live.
         </div>
       </div>
     </section>

@@ -4,14 +4,31 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
-  type KeyboardEvent,
+  type KeyboardEvent
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  Toggle,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/lab-timer/HowItWorks";
 import Disclaimer from "~/clients/components/lab-timer/Disclaimer";
 import FAQ from "~/clients/components/lab-timer/FAQ";
@@ -97,141 +114,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-// WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
 
@@ -250,132 +132,25 @@ function useBeep() {
         ctx.resume().catch(() => {});
       }
 
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = freq;
-      g.gain.value = 0.1;
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = freq;
+      gain.gain.value = 0.1;
 
-      o.connect(g);
-      g.connect(ctx.destination);
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
 
-      o.start();
+      oscillator.start();
       window.setTimeout(() => {
-        o.stop();
-        o.disconnect();
-        g.disconnect();
+        oscillator.stop();
+        oscillator.disconnect();
+        gain.disconnect();
       }, duration);
     } catch {
-      // ignore
+      // Browser audio permissions can block the cue.
     }
   }, []);
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 text-slate-900 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="timer-control-shadow rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <button
-            type="button"
-            onClick={onExit}
-            className="cursor-pointer timer-control-shadow rounded-lg bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-          >
-            Exit (Esc)
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 text-slate-900 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
 }
 
 /* =========================================================
@@ -479,7 +254,8 @@ function LabTimerCard() {
 
   /* ---------- Repeatable Countdown ---------- */
   const cdBoxRef = useRef<HTMLDivElement>(null);
-  const isCdFs = useIsFullscreen(cdBoxRef);
+  const cdFullscreen = useFullscreen(cdBoxRef);
+  const isCdFs = cdFullscreen.isFullscreen;
 
   const [stepSec, setStepSec] = useState(60);
   const stepSecRef = useRef<number>(60);
@@ -675,12 +451,12 @@ function LabTimerCard() {
 
     // Fullscreen for countdown box
     if (k === "f" && cdBoxRef.current) {
-      toggleFullscreen(cdBoxRef.current);
+      void cdFullscreen.toggle();
       return;
     }
 
     if (k === "escape" && isCdFs) {
-      document.exitFullscreen().catch(() => {});
+      void cdFullscreen.exit();
     }
   };
 
@@ -693,18 +469,11 @@ function LabTimerCard() {
 
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
-      <div className="timer-first-stack flex h-full flex-col">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-xl font-extrabold text-sky-700">Lab Timer</h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Stopwatch with laps for reaction timing, plus a repeatable countdown
-            for step-based protocols.
-          </p>
-        </div>
+      <div className="timer-list-stack flex h-full flex-col">
+      <div className="hidden">
 
         <div className="ml-auto flex flex-wrap items-center gap-2">
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+          <label className="inline-flex cursor-pointer items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
             <input
               type="checkbox"
               checked={sound}
@@ -713,7 +482,7 @@ function LabTimerCard() {
             Sound
           </label>
 
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+          <label className="inline-flex cursor-pointer items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
             <input
               type="checkbox"
               checked={finalCountdownBeeps}
@@ -726,7 +495,7 @@ function LabTimerCard() {
           <Btn
             kind="ghost"
             onClick={() =>
-              cdBoxRef.current && toggleFullscreen(cdBoxRef.current)
+              void cdFullscreen.toggle()
             }
             className="py-2"
           >
@@ -735,39 +504,66 @@ function LabTimerCard() {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="hidden">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
+          <div className="ilt-inline-pill px-3 py-2 ilt-helper-text font-semibold">
             Shortcuts: Space stopwatch · L lap · C countdown · R reset · T
             repeat · F fullscreen
           </div>
         </div>
       </div>
 
-      <div className="timer-primary-surface mt-5 grid gap-6 lg:grid-cols-2">
+      <SettingGroup
+        title="Lab timer settings"
+        description="Sound cues apply to the repeatable countdown. Stopwatch laps stay silent."
+        className="order-2 mt-5"
+      >
+        <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+          <Toggle
+            label="Sound"
+            checked={sound}
+            onCheckedChange={setSound}
+          />
+          <Toggle
+            label="Final beeps"
+            checked={finalCountdownBeeps}
+            onCheckedChange={setFinalCountdownBeeps}
+            disabled={!sound}
+          />
+        </SettingRow>
+
+        <SecondaryActionRow className="timer-list-actions">
+          <Btn kind="ghost" onClick={() => void cdFullscreen.toggle()}>
+            Fullscreen
+          </Btn>
+        </SecondaryActionRow>
+
+        <ShortcutHint>
+          Space stopwatch / L lap / C countdown / R reset / T repeat / F fullscreen
+        </ShortcutHint>
+      </SettingGroup>
+
+      <div className="order-1 timer-primary-surface timer-list-grid mt-5 grid gap-6 lg:grid-cols-2">
         {/* STOPWATCH */}
-        <div className="flex flex-col rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70 sm:p-5">
+        <div className="timer-list-panel flex min-w-0 flex-col ilt-surface-card p-4 sm:p-5">
           <div className="order-3 mt-4 flex items-baseline justify-between gap-3">
-            <h2 className="text-lg font-extrabold text-sky-700">
+            <h2 className="text-lg font-extrabold text-[var(--ilt-text-primary)]">
               Stopwatch + Laps
             </h2>
-            <div className="text-xs font-semibold text-slate-600">mm:ss.cc</div>
+            <div className="ilt-helper-text font-semibold">mm:ss.cc</div>
           </div>
 
           <div
+            data-display-stage
             ref={swInnerBoxRef}
-            className="timer-display-surface order-1 relative mt-3 overflow-hidden p-3 sm:p-6"
+            className="order-1 timer-display-surface order-1 relative mt-0 overflow-hidden p-2 sm:p-3"
             style={{ minHeight: 180, userSelect: "none" }}
             aria-live="polite"
           >
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              {swStatus}
-            </div>
-
-            <div className="mt-2 flex items-center justify-center">
+            <div className="flex items-center justify-center">
               <span
                 ref={swTimeTextRef}
-                className="inline-block text-center font-mono font-extrabold tracking-widest text-slate-950"
+                className="inline-block text-center font-mono font-extrabold tracking-widest text-[var(--ilt-text-primary)]"
                 style={{
                   fontSize: swFontPx,
                   lineHeight: "1",
@@ -776,6 +572,10 @@ function LabTimerCard() {
               >
                 {swText}
               </span>
+            </div>
+
+            <div className="mt-3 text-center ilt-content-label">
+              {swStatus}
             </div>
           </div>
 
@@ -788,7 +588,7 @@ function LabTimerCard() {
               Reset
             </Btn>
 
-            <label className="ml-auto inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+            <label className="ml-auto inline-flex items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
               Max laps
               <input
                 type="number"
@@ -798,19 +598,19 @@ function LabTimerCard() {
                 onChange={(e) =>
                   setMaxLaps(clamp(Number(e.target.value || 60), 10, 300))
                 }
-                className="w-20 rounded-md border border-slate-200 bg-white px-2 py-1 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                className="w-20 ilt-input-control px-2 py-1"
               />
             </label>
           </div>
 
-          <div className="order-4 mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="timer-list-panel order-4 mt-4 ilt-surface-muted p-4">
+            <div className="ilt-content-label">
               Laps (newest first)
             </div>
 
             {laps.length ? (
-              <div className="mt-3 max-h-[260px] overflow-auto rounded-xl border border-slate-200 bg-white">
-                <div className="divide-y divide-slate-100">
+                <div className="mt-3 max-h-[260px] overflow-auto">
+                <div className="divide-y divide-[var(--ilt-border-subtle)]">
                   {laps.map((l) => {
                     const isBest = bestLap != null && l.splitMs === bestLap;
                     return (
@@ -818,18 +618,18 @@ function LabTimerCard() {
                         key={`${l.n}-${l.atMs}`}
                         className="grid grid-cols-[70px_1fr_110px] items-center gap-2 px-3 py-2"
                       >
-                        <div className="text-sm font-bold text-slate-900">
+                        <div className="text-sm font-bold text-[var(--ilt-text-primary)]">
                           Lap {l.n}
                         </div>
                         <div className="min-w-0">
-                          <div className="font-mono text-sm font-extrabold text-slate-900">
+                          <div className="font-mono text-sm font-extrabold text-[var(--ilt-text-primary)]">
                             {msToStopwatch(l.splitMs)}
                           </div>
-                          <div className="text-xs text-slate-600">
+                          <div className="ilt-helper-text">
                             {isBest ? "Best lap" : ""}
                           </div>
                         </div>
-                        <div className="text-right font-mono text-sm font-semibold text-slate-900">
+                        <div className="text-right font-mono text-sm font-semibold text-[var(--ilt-text-primary)]">
                           {msToStopwatch(l.atMs)}
                         </div>
                       </div>
@@ -838,7 +638,7 @@ function LabTimerCard() {
                 </div>
               </div>
             ) : (
-              <div className="mt-3 text-sm text-slate-700">
+              <div className="mt-3 text-sm text-[var(--ilt-text-secondary)]">
                 Start the stopwatch, then press <strong>L</strong> to record
                 laps (splits).
               </div>
@@ -847,45 +647,34 @@ function LabTimerCard() {
         </div>
 
         {/* COUNTDOWN */}
-        <div className="flex flex-col rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70 sm:p-5">
+        <div className="timer-list-panel flex min-w-0 flex-col ilt-surface-card p-4 sm:p-5">
           <div className="order-3 mt-4 flex items-baseline justify-between gap-3">
-            <h2 className="text-lg font-extrabold text-sky-700">
+            <h2 className="text-lg font-extrabold text-[var(--ilt-text-primary)]">
               Repeatable Countdown
             </h2>
-            <div className="text-xs font-semibold text-slate-600">
+            <div className="ilt-helper-text font-semibold">
               step timer
             </div>
           </div>
 
-          <div className="order-2 mt-4">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              Common step times
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">
+          <PresetGroup className="order-2 mt-4" title="Common step times">
               {quickSteps.map((s) => (
-                <button
+                <Chip
                   key={s}
-                  type="button"
                   onClick={() => setStepSec(s)}
-                  className={[
-                    "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-                    s === stepSec
-                      ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                      : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                  ].join(" ")}
+                  active={s === stepSec}
                 >
                   {s >= 60
                     ? `${Math.floor(s / 60)}m${s % 60 ? ` ${s % 60}s` : ""}`
                     : `${s}s`}
-                </button>
+                  </Chip>
               ))}
-            </div>
-          </div>
+          </PresetGroup>
 
-          <div className="order-2 mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
-            <label className="block text-sm font-semibold text-slate-900">
-              Custom step (seconds)
-              <input
+          <SettingGroup className="order-2 mt-4" title="Countdown setup">
+            <SettingRow className="sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto]">
+              <Field
+                label="Custom step (seconds)"
                 type="number"
                 min={1}
                 max={24 * 60 * 60}
@@ -895,29 +684,25 @@ function LabTimerCard() {
                     clamp(Number(e.target.value || 1), 1, 24 * 60 * 60),
                   )
                 }
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               />
-            </label>
 
-            <div className="flex items-end gap-3">
+              <ControlGroup className="sm:justify-end">
               <Btn onClick={cdStartPause}>{cdRunning ? "Pause" : "Start"}</Btn>
               <Btn kind="ghost" onClick={cdReset}>
                 Reset
               </Btn>
-            </div>
-          </div>
+              </ControlGroup>
+            </SettingRow>
+          </SettingGroup>
 
           <div className="order-2 mt-3 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-              <input
-                type="checkbox"
-                checked={repeat}
-                onChange={(e) => setRepeat(e.target.checked)}
-              />
-              Repeat step
-            </label>
+            <Toggle
+              label="Repeat step"
+              checked={repeat}
+              onCheckedChange={setRepeat}
+            />
 
-            <div className="text-xs font-semibold text-slate-600">
+            <div className="ilt-helper-text font-semibold">
               If Repeat is on, the countdown restarts automatically after it
               hits zero.
             </div>
@@ -926,13 +711,14 @@ function LabTimerCard() {
           {/* Fullscreen overlay bars */}
           <div className="order-1 relative mt-0">
             <div
+              data-display-stage
               ref={cdBoxRef}
               className={[
-                "timer-display-surface relative overflow-hidden text-slate-950",
+            "order-1 timer-display-surface relative overflow-hidden text-[var(--ilt-text-primary)]",
                 isCdFs
-                  ? "h-screen w-screen rounded-none border-0 bg-white text-slate-950"
+                  ? "h-screen w-screen rounded-none border-0 bg-white text-[var(--ilt-text-primary)]"
                   : cdUrgent
-                    ? "border-rose-200 bg-rose-50"
+                    ? "border-amber-300 bg-amber-50"
                     : "border-slate-200 bg-slate-50",
               ].join(" ")}
               style={{
@@ -949,30 +735,30 @@ function LabTimerCard() {
               <FullscreenTopBar
                 show={isCdFs}
                 title="Lab Step Timer"
-                onExit={() => document.exitFullscreen().catch(() => {})}
+                onExit={() => void cdFullscreen.exit()}
                 right={
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
+                    <Btn
+                      kind="solid"
+                      size="sm"
                       onClick={cdStartPause}
-                      className="cursor-pointer rounded-lg bg-amber-500 px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-amber-400"
                     >
                       {cdRunning ? "Pause" : "Start"}
-                    </button>
-                    <button
-                      type="button"
+                    </Btn>
+                    <Btn
+                      kind="ghost"
+                      size="sm"
                       onClick={cdReset}
-                      className="cursor-pointer timer-control-shadow rounded-lg bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
                     >
                       Reset
-                    </button>
-                    <button
-                      type="button"
+                    </Btn>
+                    <Btn
+                      kind="ghost"
+                      size="sm"
                       onClick={() => setRepeat((v) => !v)}
-                      className="cursor-pointer timer-control-shadow rounded-lg bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
                     >
                       Repeat {repeat ? "On" : "Off"}
-                    </button>
+                    </Btn>
                   </div>
                 }
               />
@@ -981,7 +767,7 @@ function LabTimerCard() {
                 ref={cdInnerBoxRef}
                 className={[
                   "flex h-full w-full flex-col items-center justify-start",
-                  isCdFs ? "px-4 pb-16 pt-16 sm:px-8" : "p-6",
+                  isCdFs ? "px-4 pb-16 pt-16 sm:px-8" : "p-2 sm:p-3",
                 ].join(" ")}
                 style={{ minHeight: isCdFs ? "100vh" : 220 }}
               >
@@ -1006,14 +792,14 @@ function LabTimerCard() {
                 <div
                   className={[
                     "mt-3 text-xs font-extrabold uppercase tracking-widest",
-                    "text-slate-700",
+                    "text-[var(--ilt-text-secondary)]",
                   ].join(" ")}
                 >
                   Step Countdown {repeat ? "- Repeat on" : ""} - {cdStatus}
                 </div>
 
                 {!isCdFs && (
-                  <div className="mt-2 text-xs font-semibold text-slate-600">
+                  <div className="mt-2 ilt-helper-text font-semibold">
                     C start/pause - R reset - T toggle repeat - F fullscreen
                   </div>
                 )}
@@ -1021,11 +807,11 @@ function LabTimerCard() {
 
               <FullscreenBottomBar show={isCdFs}>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="text-xs text-slate-600 sm:text-sm">
+                  <div className="ilt-helper-text sm:text-sm">
                     Tap time to start/pause · C start/pause · R reset · T repeat
                     · F fullscreen
                   </div>
-                  <div className="text-xs font-semibold text-slate-700">
+                  <div className="ilt-helper-text font-semibold">
                     {cdStatus}
                   </div>
                 </div>
@@ -1073,31 +859,25 @@ export default function LabTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-primary mx-auto max-w-7xl space-y-6 px-3 py-6 sm:px-4">
-        <div>
-          <LabTimerCard />
-        </div>
+      <ToolHero
+        display={<LabTimerCard />}
+        title="Lab Timer (Experiments + Reaction Time)"
+        description="Use a stopwatch with laps and a repeatable countdown for timed lab steps, optional sound, and fullscreen step timing."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Lab Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

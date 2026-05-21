@@ -2,12 +2,29 @@
 import type { Route } from "./+types/astronomical-clock";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
 import Disclaimer from "~/clients/components/astronomical-clock/Disclaimer";
 import FAQ from "~/clients/components/astronomical-clock/FAQ";
 import HowItWorks from "~/clients/components/astronomical-clock/HowItWorks";
 import KeyboardShortcuts from "~/clients/components/astronomical-clock/KeyboardShortcuts";
 import PopularUseCases from "~/clients/components/astronomical-clock/PopularUseCases";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
+
+import {
+  Button as Btn,
+  Field,
+  PresetChip as Chip,
+  PresetGroup,
+  SecondaryActionRow,
+  Select,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  FullscreenTopBar,
+  PageShell,
+  SeoBand,
+  ToolHero,
+  ToolFrame as Card,
+} from "~/clients/components/ui/foundation";
 
 /* =========================================================
    META
@@ -15,7 +32,7 @@ import PopularUseCases from "~/clients/components/astronomical-clock/PopularUseC
 export function meta({}: Route.MetaArgs) {
   const title = "Online Astronomical Clock (Live Sun, Moon, Day & Night)";
   const description =
-    "Live astronomical clock showing the sun and moon, daylight vs night, sunrise and sunset, and local time. Clean fullscreen display that updates in real time.";
+    "Astronomical clock showing the sun and moon, daylight vs night, sunrise and sunset, and local time. Clean fullscreen display that updates while open.";
 
   const url = "https://www.ilovetimers.com/astronomical-clock";
 
@@ -79,29 +96,9 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
 
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
 
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
 
-  return isFs;
-}
 
 function degToRad(d: number) {
   return (d * Math.PI) / 180;
@@ -318,131 +315,11 @@ function moonPhaseLabel(phase: number) {
   return "Waning Crescent";
 }
 
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
-      active
-        ? "bg-slate-900 text-white hover:bg-slate-800"
-        : "bg-slate-100 text-slate-800 hover:bg-slate-200"
-    }`}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  left,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-          {left}
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function SunDot() {
   return (
     <span
       aria-hidden="true"
-      className="inline-block h-3 w-3 rounded-full bg-amber-400 shadow-[0_0_0_3px_rgba(251,191,36,0.20)]"
+      className="inline-block h-3 w-3 rounded-full bg-amber-400"
     />
   );
 }
@@ -469,11 +346,12 @@ function MoonDot({ phase }: { phase: number }) {
 /* =========================================================
    ASTRONOMICAL CLOCK CARD
 ========================================================= */
-function AstronomicalClockCard() {
-  const [now, setNow] = useState(() => new Date());
+function AstronomicalClockCard({ initialNowISO }: { initialNowISO: string }) {
+  const [now, setNow] = useState(() => new Date(initialNowISO));
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const deviceTimeZone = useMemo(() => {
     try {
@@ -618,10 +496,10 @@ function AstronomicalClockCard() {
     const k = e.key.toLowerCase();
 
     if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (e.key === "Escape") {
       if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
+        void fullscreen.exit();
       }
     }
   };
@@ -686,7 +564,7 @@ function AstronomicalClockCard() {
       return "border-slate-200 bg-slate-50 text-slate-950";
     return isDayBySun
       ? "border-amber-200 bg-amber-50 text-amber-950"
-      : "border-indigo-200 bg-indigo-50 text-slate-950";
+      : "border-slate-200 bg-slate-50 text-slate-950";
   }, [hasCoords, isDayBySun]);
 
   const latStr = useMemo(() => (lat === null ? "" : String(lat)), [lat]);
@@ -702,7 +580,7 @@ function AstronomicalClockCard() {
       <FullscreenTopBar
         show={isFs}
         title="Astronomical Clock"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="hidden text-sm font-semibold text-slate-700 sm:block">
             F fullscreen
@@ -710,9 +588,9 @@ function AstronomicalClockCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-specialty-clock-stack flex h-full flex-col"}>
         {!isFs && (
-          <div className="flex flex-col gap-3">
+          <div className="hidden">
             <div className="flex flex-wrap items-center gap-2">
               <Btn
                 kind="ghost"
@@ -729,7 +607,7 @@ function AstronomicalClockCard() {
                 Clear location
               </Btn>
 
-              <div className="ml-auto flex items-center gap-2">
+              <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">
                 <label className="text-sm font-semibold text-slate-900">
                   Time zone
                 </label>
@@ -740,7 +618,7 @@ function AstronomicalClockCard() {
                     setTimeZone(tz);
                     persistPrefs({ lat, lon, tz });
                   }}
-                  className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                  className="min-w-0 max-w-full cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                 >
                   {timeZoneOptions.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -752,7 +630,7 @@ function AstronomicalClockCard() {
                 <Btn
                   kind="ghost"
                   onClick={() =>
-                    cardRef.current && toggleFullscreen(cardRef.current)
+                    void fullscreen.toggle()
                   }
                   className="py-2"
                 >
@@ -800,7 +678,7 @@ function AstronomicalClockCard() {
               <MoonDot phase={phase} />
               Moon
             </span>
-            <span className="rounded-full border border-slate-200/60 bg-white/10 px-3 py-1">
+            <span className="timer-specialty-clock-pill rounded-full border border-slate-200/60 bg-white/10 px-3 py-1">
               {dayNightLabel}
             </span>
           </div>
@@ -812,7 +690,7 @@ function AstronomicalClockCard() {
           <div className="mt-3 text-sm opacity-90">{dateStr}</div>
 
           <div className="mt-5 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white/10 p-4">
+            <div className="timer-specialty-clock-panel rounded-lg border border-slate-200 bg-white/10 p-4">
               <div className="text-xs font-bold uppercase tracking-wide opacity-80">
                 Sunrise / Sunset
               </div>
@@ -842,7 +720,7 @@ function AstronomicalClockCard() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white/10 p-4">
+            <div className="timer-specialty-clock-panel rounded-lg border border-slate-200 bg-white/10 p-4">
               <div className="text-xs font-bold uppercase tracking-wide opacity-80">
                 Moon phase
               </div>
@@ -870,7 +748,7 @@ function AstronomicalClockCard() {
           </div>
 
           {!isFs && (
-            <div className="mt-4 w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-sm">
+            <div className="hidden">
               <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                 Coordinates (optional)
               </div>
@@ -937,6 +815,115 @@ function AstronomicalClockCard() {
             </div>
           )}
         </div>
+
+        {!isFs && (
+          <>
+            <SettingGroup title="Astronomical clock settings">
+              <SettingRow className="lg:grid-cols-3">
+                <Select
+                  label="Time zone"
+                  value={timeZone}
+                  onChange={(event) => {
+                    const tz = event.target.value;
+                    setTimeZone(tz);
+                    persistPrefs({ lat, lon, tz });
+                  }}
+                >
+                  {timeZoneOptions.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </Select>
+                <Field
+                  label="Latitude"
+                  type="number"
+                  inputMode="decimal"
+                  min={-90}
+                  max={90}
+                  step="0.0001"
+                  placeholder="e.g. 43.6532"
+                  value={latStr}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    if (value.trim() === "") {
+                      setLat(null);
+                      persistPrefs({ lat: null, lon, tz: timeZone });
+                      return;
+                    }
+                    const nextLat = clamp(Number(value), -90, 90);
+                    setLat(nextLat);
+                    persistPrefs({ lat: nextLat, lon, tz: timeZone });
+                  }}
+                />
+                <Field
+                  label="Longitude"
+                  type="number"
+                  inputMode="decimal"
+                  min={-180}
+                  max={180}
+                  step="0.0001"
+                  placeholder="e.g. -79.3832"
+                  value={lonStr}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    if (value.trim() === "") {
+                      setLon(null);
+                      persistPrefs({ lat, lon: null, tz: timeZone });
+                      return;
+                    }
+                    const nextLon = clamp(Number(value), -180, 180);
+                    setLon(nextLon);
+                    persistPrefs({ lat, lon: nextLon, tz: timeZone });
+                  }}
+                />
+              </SettingRow>
+            </SettingGroup>
+
+            <PresetGroup title="Examples">
+              {presets.map((p) => (
+                <Chip
+                  key={p.name}
+                  active={lat === p.lat && lon === p.lon && timeZone === p.tz}
+                  onClick={() => applyPreset(p)}
+                >
+                  {p.name}
+                </Chip>
+              ))}
+            </PresetGroup>
+
+            <SecondaryActionRow>
+              <Btn
+                kind="ghost"
+                onClick={requestLocation}
+                disabled={locStatus === "requesting"}
+                className="py-2"
+              >
+                {locStatus === "requesting"
+                  ? "Getting location..."
+                  : "Use my location"}
+              </Btn>
+              <Btn kind="ghost" onClick={clearSavedLocation} className="py-2">
+                Clear location
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcut: F fullscreen
+              {locStatus === "blocked"
+                ? " - Location blocked in browser settings"
+                : ""}
+              {locStatus === "error" ? " - Location unavailable" : ""}
+            </ShortcutHint>
+          </>
+        )}
       </div>
     </Card>
   );
@@ -946,7 +933,7 @@ function AstronomicalClockCard() {
    PAGE
 ========================================================= */
 export default function AstronomicalClockPage({
-  loaderData: { nowISO: _nowISO },
+  loaderData: { nowISO },
 }: Route.ComponentProps) {
   const url = "https://www.ilovetimers.com/astronomical-clock";
 
@@ -958,7 +945,7 @@ export default function AstronomicalClockPage({
         name: "Astronomical Clock",
         url,
         description:
-          "Live astronomical clock showing the sun and moon, daylight vs night, sunrise and sunset, and local time. Clean fullscreen display that updates in real time.",
+          "Astronomical clock showing the sun and moon, daylight vs night, sunrise and sunset, and local time. Clean fullscreen display that updates while open.",
       },
       {
         "@type": "BreadcrumbList",
@@ -981,43 +968,27 @@ export default function AstronomicalClockPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Astronomical Clock (Sun, Moon, Sunrise, Sunset)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Live local time for the selected time zone, with sunrise and sunset
-            plus a moon phase readout. Fullscreen supported.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<AstronomicalClockCard initialNowISO={nowISO} />}
+        title="Astronomical Clock (Sun, Moon, Sunrise, Sunset)"
+        description="Live local time for the selected time zone, with sunrise and sunset plus a moon phase readout. Fullscreen supported."
+      />
 
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <AstronomicalClockCard />
-        </div>
+      <SeoBand>
 
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Astronomical Clock</span>
-        </p>
-      </section>
+          <HowItWorks />
+          <KeyboardShortcuts />
+          <PopularUseCases />
+          <FAQ />
+          <Disclaimer />
 
-      
-            <HowItWorks />
-            <KeyboardShortcuts />
-            <PopularUseCases />
-            <FAQ />
-            <Disclaimer />  
-    </main>
+      </SeoBand>
+    </PageShell>
   );
 }

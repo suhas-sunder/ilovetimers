@@ -4,14 +4,32 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolHero,
+  ToolFrame as Card,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -82,30 +100,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
 // WebAudio beep (kept lightweight, only used when Sound is enabled)
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -144,282 +138,6 @@ function useBeep() {
       // ignore
     }
   }, []);
-}
-
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function TogglePill({
-  checked,
-  label,
-  onChange,
-  disabled,
-}: {
-  checked: boolean;
-  label: string;
-  onChange: (next: boolean) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={() => !disabled && onChange(!checked)}
-      disabled={disabled}
-      className={[
-        "cursor-pointer select-none rounded-lg border px-3 py-2 text-sm font-semibold",
-        "disabled:cursor-not-allowed disabled:opacity-60",
-        checked
-          ? "border-amber-200 bg-amber-50 text-slate-900 hover:bg-amber-100"
-          : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-      ].join(" ")}
-      aria-pressed={checked}
-    >
-      {label}: <span className="font-extrabold">{checked ? "On" : "Off"}</span>
-    </button>
-  );
-}
-
-function Chip({
-  active,
-  children,
-  onClick,
-  disabled,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={[
-        "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-        "disabled:cursor-not-allowed disabled:opacity-60",
-        active
-          ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-          : "bg-white text-slate-900 border border-slate-200 hover:bg-slate-50",
-      ].join(" ")}
-    >
-      {children}
-    </button>
-  );
-}
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
 }
 
 /* =========================================================
@@ -516,9 +234,10 @@ function SilentTimerCard() {
   }, [durationMs, status]);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
-  const displayBoxRef = useRef<HTMLDivElement>(null);
+  const displayBoxRef = useRef<HTMLElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
 
   function stopRaf() {
@@ -682,10 +401,10 @@ function SilentTimerCard() {
       onStartPause();
     } else if (k === "r") {
       onReset();
-    } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    } else if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -699,7 +418,7 @@ function SilentTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Silent Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn kind="solid" onClick={onStartPause} className="py-1 text-sm">
@@ -716,41 +435,14 @@ function SilentTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Silent Timer (No Sound Countdown)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                A quiet countdown. Sound is off by default. Use presets, custom
-                time, loop, and fullscreen.
-              </p>
-            </div>
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <TogglePill checked={sound} label="Sound" onChange={setSound} />
-              <TogglePill checked={loop} label="Loop" onChange={setLoop} />
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
+          isFullscreen={isFs}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
-            urgent ? "border-rose-200" : "border-slate-200",
+            "order-1 timer-display-surface relative flex flex-col items-center justify-center text-slate-950",
+            urgent ? "bg-amber-50" : "border-slate-200",
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -791,25 +483,6 @@ function SilentTimerCard() {
             {shownTime}
           </span>
 
-          {!isFs && (
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-              {presets.map((m) => {
-                const active =
-                  status !== "running" && durationMs === m * 60 * 1000;
-                return (
-                  <Chip
-                    key={m}
-                    active={active}
-                    onClick={() => onPreset(m)}
-                    disabled={status === "running"}
-                  >
-                    {m}m
-                  </Chip>
-                );
-              })}
-            </div>
-          )}
-
           {isFs && (
             <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
               <div className="flex items-start justify-between gap-3">
@@ -833,65 +506,80 @@ function SilentTimerCard() {
               </div>
             </div>
           )}
-        </div>
+        </DisplayStage>
 
         {/* Presets + settings (normal only, below display) */}
         {!isFs && (
-          <div className="mt-5 rounded-2xl bg-white p-4 shadow-sm shadow-slate-200/70">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm font-extrabold text-slate-900">
-                Options
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <TogglePill checked={sound} label="Sound" onChange={setSound} />
-                <TogglePill checked={loop} label="Loop" onChange={setLoop} />
-              </div>
-            </div>
+          <>
+            <ControlGroup>
+              <Btn kind="solid" onClick={onStartPause}>
+                {status === "running"
+                  ? "Pause"
+                  : status === "done"
+                    ? "Restart"
+                    : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={onReset}>
+                Reset
+              </Btn>
+            </ControlGroup>
 
-            <div className="mt-3 text-xs font-semibold text-slate-600">
-              Sound is off by default on this page. Turn it on if you want a
-              beep at 0.
-            </div>
+            <PresetGroup title="Presets">
+              {presets.map((m) => {
+                const active =
+                  status !== "running" && durationMs === m * 60 * 1000;
+                return (
+                  <Chip
+                    key={m}
+                    active={active}
+                    onClick={() => onPreset(m)}
+                    disabled={status === "running"}
+                  >
+                    {m}m
+                  </Chip>
+                );
+              })}
+            </PresetGroup>
 
-            {/* Controls bar (normal only) */}
-            {!isFs && (
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="flex flex-wrap items-center gap-3">
-                  <Btn kind="solid" onClick={onStartPause}>
-                    {status === "running"
-                      ? "Pause"
-                      : status === "done"
-                        ? "Restart"
-                        : "Start"}
+            <SettingGroup
+              title="Settings"
+              description="Sound stays off by default for quiet timing."
+            >
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto_auto]">
+                <Field
+                  label="Custom time"
+                  inputMode="numeric"
+                  value={inputStr}
+                  onChange={(e) => {
+                    if (status === "running") setStatus("paused");
+                    setInputStr(e.target.value);
+                  }}
+                  onBlur={onSet}
+                  placeholder="mm:ss or ss"
+                />
+                <div className="flex items-end">
+                  <Btn kind="ghost" onClick={onSet}>
+                    Set
                   </Btn>
-                  <Btn kind="ghost" onClick={onReset}>
-                    Reset
-                  </Btn>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      inputMode="numeric"
-                      value={inputStr}
-                      onChange={(e) => {
-                        if (status === "running") setStatus("paused");
-                        setInputStr(e.target.value);
-                      }}
-                      onBlur={onSet}
-                      placeholder="mm:ss or ss"
-                      className="w-40 rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                    />
-                    <Btn kind="ghost" onClick={onSet}>
-                      Set
-                    </Btn>
-                  </div>
+                </div>
+                <div className="flex flex-wrap items-end gap-3">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle label="Loop" checked={loop} onCheckedChange={setLoop} />
                 </div>
 
-                <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-                  Shortcuts: Space start/pause · R reset · F fullscreen
-                </div>
-              </div>
-            )}
-          </div>
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause · R reset · F fullscreen
+            </ShortcutHint>
+          </>
         )}
 
         {/* Fullscreen bottom controls */}
@@ -950,26 +638,64 @@ export default function SilentTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <SilentTimerCard />
-        </div>
+      <ToolHero
+        display={<SilentTimerCard />}
+        title="Silent Timer"
+        description="Run a quiet visual countdown for classrooms, meetings, exams, libraries, and other no-alarm settings."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Silent Timer</span>
+      <SeoBand title="How this timer works">
+        <p>
+          Silent Timer starts as a quiet visual countdown. Pick a preset or enter
+          a custom time, then run the timer without an audible alarm interrupting
+          the room. The display stays large for shared spaces, and fullscreen
+          mode keeps the countdown readable from farther away.
         </p>
-      </section>
-    </main>
+        <h3>When silent timing helps</h3>
+        <p>
+          Use it for libraries, exams, classrooms, meetings, shared offices, or
+          late-night tasks where a sound cue would be disruptive. The completion
+          state stays visual, so someone watching the screen can still see when
+          time is up.
+        </p>
+        <h3>Useful settings</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Presets cover common short and medium countdowns without opening the
+            custom time field.
+          </li>
+          <li>
+            Custom time accepts simple clock-style entries when the preset list
+            does not match the task.
+          </li>
+          <li>
+            Loop can restart the same quiet countdown for repeated desk checks,
+            station rotations, or recurring visual reminders.
+          </li>
+        </ul>
+        <h3>Related quiet timers</h3>
+        <p>
+          For a more visual display, try the{" "}
+          <a className="ilt-content-link" href="/visual-timer">
+            visual timer
+          </a>
+          . For a standard countdown with optional audio, use the{" "}
+          <a className="ilt-content-link" href="/countdown-timer">
+            countdown timer
+          </a>
+          . If the screen is being projected, the{" "}
+          <a className="ilt-content-link" href="/fullscreen-timer">
+            fullscreen timer
+          </a>{" "}
+          keeps the display especially simple.
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

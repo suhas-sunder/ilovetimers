@@ -4,14 +4,32 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
-  type KeyboardEvent,
+  type KeyboardEvent
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  Select,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  Toggle,
+  ToolFrame as Card,
+  ToolHero,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/event-countdown/HowItWorks";
 import Disclaimer from "~/clients/components/event-countdown/Disclaimer";
 import FAQ from "~/clients/components/event-countdown/FAQ";
@@ -157,30 +175,6 @@ function uid() {
   }
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
-
 // WebAudio beep
 function useBeep() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -221,115 +215,6 @@ function useBeep() {
   }, []);
 }
 
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * Uses ResizeObserver + rAF and binary search.
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
 /* =========================================================
    LOCAL STORAGE
 ========================================================= */
@@ -350,9 +235,9 @@ type StoredStateV1 = {
 
 const LS_KEY = "ilovetimers:event-countdown:v1";
 
-function makeDefaultEvent(now = Date.now()): StoredEvent {
+function makeDefaultEvent(now = Date.now(), id = uid()): StoredEvent {
   return {
-    id: uid(),
+    id,
     name: "My Event",
     targetValue: toLocalInputValue(new Date(now + 60 * 60 * 1000)),
     sound: true,
@@ -361,8 +246,11 @@ function makeDefaultEvent(now = Date.now()): StoredEvent {
   };
 }
 
-function normalizeState(input: any): StoredStateV1 {
-  const fallbackEvent = makeDefaultEvent();
+function normalizeState(
+  input: any,
+  fallbackSeed?: { now?: number; id?: string },
+): StoredStateV1 {
+  const fallbackEvent = makeDefaultEvent(fallbackSeed?.now, fallbackSeed?.id);
   const fallback: StoredStateV1 = {
     v: 1,
     selectedId: fallbackEvent.id,
@@ -414,119 +302,18 @@ function normalizeState(input: any): StoredStateV1 {
 }
 
 /* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-/* =========================================================
    EVENT COUNTDOWN CARD
 ========================================================= */
-function EventCountdownCard() {
+function EventCountdownCard({ initialNowISO }: { initialNowISO: string }) {
   const beep = useBeep();
+  const initialNowMs = useMemo(() => {
+    const parsed = Date.parse(initialNowISO);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }, [initialNowISO]);
 
-  const [store, setStore] = useState<StoredStateV1>(() => normalizeState(null));
+  const [store, setStore] = useState<StoredStateV1>(() =>
+    normalizeState(null, { now: initialNowMs, id: "default-event" }),
+  );
   const [hydrated, setHydrated] = useState(false);
 
   // Runtime-only
@@ -540,7 +327,8 @@ function EventCountdownCard() {
   const lastBeepSecondRef = useRef<number | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -788,9 +576,9 @@ function EventCountdownCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -857,7 +645,7 @@ function EventCountdownCard() {
       <FullscreenTopBar
         show={isFs}
         title="Event Countdown"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn
@@ -875,43 +663,43 @@ function EventCountdownCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-result-stack flex h-full flex-col"}>
         {/* Header (normal only) */}
         {!isFs && (
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="order-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {/* Status line (normal only) */}
             {!isFs && (
-              <div className="mt-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm">
+              <div className="ilt-surface-muted px-4 py-3 text-sm">
                 {!targetDate ? (
-                  <div className="font-semibold text-slate-900">
+                  <div className="font-semibold text-[var(--ilt-text-primary)]">
                     Pick a valid date and time to start.
                   </div>
                 ) : status === "past" ? (
-                  <div className="font-semibold text-rose-700">
+                  <div className="font-semibold text-[var(--ilt-text-primary)]">
                     That date/time is in the past.
                   </div>
                 ) : status === "done" ? (
-                  <div className="font-semibold text-emerald-700">
+                  <div className="font-semibold text-[var(--ilt-text-primary)]">
                     {(selectedEvent?.name || "Event").trim() || "Event"}{" "}
                     reached.
                   </div>
                 ) : (
-                  <div className="font-semibold text-slate-900">
+                  <div className="font-semibold text-[var(--ilt-text-primary)]">
                     Target:{" "}
                     <span className="font-extrabold">{readableTarget}</span>
                   </div>
                 )}
 
-                <div className="mt-1 text-xs font-semibold text-slate-600">
+                <div className="hidden">
                   Shortcuts: Space start/pause · R reset · F fullscreen
                 </div>
               </div>
             )}
-            <div className="ml-auto flex flex-wrap items-center gap-3">
+            <div className="hidden">
               <Btn
                 kind="ghost"
                 onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
+                  void fullscreen.toggle()
                 }
                 className="py-2"
               >
@@ -923,11 +711,12 @@ function EventCountdownCard() {
 
         {/* Display */}
         <div
+          data-display-stage
           ref={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
-            "border-slate-200 p-3 sm:p-6",
-            urgent ? "ring-2 ring-rose-300/50" : "",
+            "order-1 timer-display-surface relative mt-4 flex flex-col items-center justify-center text-[var(--ilt-text-primary)]",
+            "border-[var(--ilt-border-subtle)] p-3 sm:p-6",
+            urgent ? "ring-1 ring-amber-300/70" : "",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
@@ -944,13 +733,15 @@ function EventCountdownCard() {
           role={isFs ? "button" : undefined}
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
-          <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="timer-result-label ilt-content-label">
             {(selectedEvent?.name || "Event").trim() || "Event"}
           </div>
 
           <span
             ref={timeTextRef}
+            data-primary-display-value
             className={[
+              "timer-result-value",
               "mt-2 inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
@@ -963,7 +754,7 @@ function EventCountdownCard() {
             {shownLong}
           </span>
 
-          <div className="mt-3 text-sm font-semibold text-slate-700">
+          <div className="timer-result-context mt-3 text-sm font-semibold text-[var(--ilt-text-secondary)]">
             {shownShort}
           </div>
 
@@ -972,20 +763,20 @@ function EventCountdownCard() {
             <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
                     Status
                   </div>
-                  <div className="text-xs font-semibold text-slate-700">
+                  <div className="ilt-helper-text font-semibold">
                     {statusLabel}
                     {targetDate && status !== "past" && status !== "done" ? (
-                      <span className="ml-2 text-slate-600">
+                      <span className="ml-2 text-[var(--ilt-text-secondary)]">
                         Target: {readableTarget}
                       </span>
                     ) : null}
                   </div>
                 </div>
 
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                <div className="hidden sm:block ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)] backdrop-blur">
                   Space = Start/Pause
                 </div>
               </div>
@@ -995,27 +786,28 @@ function EventCountdownCard() {
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
+          <SettingGroup
+            title="Event setup"
+            description="Choose the saved event, target date, and countdown cues."
+            className="order-2 mt-5"
+          >
             {/* Row 1: event selector + event actions */}
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <SettingRow className="sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto]">
               <div className="min-w-0 flex-1">
-                <label className="block text-xs font-extrabold uppercase tracking-widest text-slate-600">
-                  Saved events
-                </label>
-                <select
+                <Select
+                  label="Saved events"
                   value={store.selectedId}
                   onChange={(e) => selectEvent(e.target.value)}
-                  className="cursor-pointer mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                 >
                   {sortedEvents.map((ev) => (
                     <option key={ev.id} value={ev.id}>
                       {ev.name || "Untitled Event"}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+              <SecondaryActionRow className="timer-result-actions sm:justify-end">
                 <Btn kind="ghost" onClick={addNewEvent} className="px-3 py-2">
                   New
                 </Btn>
@@ -1034,150 +826,102 @@ function EventCountdownCard() {
                 >
                   Delete
                 </Btn>
-              </div>
-            </div>
+              </SecondaryActionRow>
+            </SettingRow>
 
             {/* Row 2: name + datetime */}
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <label className="block text-sm font-semibold text-slate-900">
-                Event name
-                <input
-                  value={selectedEvent?.name ?? ""}
-                  onChange={(e) =>
-                    updateSelectedEvent({ name: e.target.value })
-                  }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                  placeholder="My Event"
-                />
-              </label>
+            <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+              <Field
+                label="Event name"
+                value={selectedEvent?.name ?? ""}
+                onChange={(e) =>
+                  updateSelectedEvent({ name: e.target.value })
+                }
+                placeholder="My Event"
+              />
 
-              <label className="block text-sm font-semibold text-slate-900">
-                Date & time (local)
-                <input
-                  type="datetime-local"
-                  value={selectedEvent?.targetValue ?? ""}
-                  onChange={(e) =>
-                    updateSelectedEvent({ targetValue: e.target.value })
-                  }
-                  className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                />
-              </label>
-            </div>
+              <Field
+                label="Date & time (local)"
+                type="datetime-local"
+                value={selectedEvent?.targetValue ?? ""}
+                onChange={(e) =>
+                  updateSelectedEvent({ targetValue: e.target.value })
+                }
+              />
+            </SettingRow>
 
-            {/* Row 3: run controls + toggles + presets */}
-            <div className="mt-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex flex-wrap items-center gap-2">
-                <Btn onClick={startPause} disabled={!canStart && !running}>
-                  {running ? "Pause" : "Start"}
-                </Btn>
-                <Btn kind="ghost" onClick={reset} disabled={!targetDate}>
-                  Reset
-                </Btn>
+            <ControlGroup>
+              <Btn onClick={startPause} disabled={!canStart && !running}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset} disabled={!targetDate}>
+                Reset
+              </Btn>
+            </ControlGroup>
 
-                <div className="ml-0 flex flex-wrap items-center gap-2 lg:ml-2">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                    <input
-                      type="checkbox"
-                      checked={!!selectedEvent?.sound}
-                      onChange={(e) =>
-                        updateSelectedEvent({ sound: e.target.checked })
-                      }
-                    />
-                    Sound
-                  </label>
+            <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+              <Toggle
+                label="Sound"
+                checked={!!selectedEvent?.sound}
+                onCheckedChange={(checked) =>
+                  updateSelectedEvent({ sound: checked })
+                }
+              />
 
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                    <input
-                      type="checkbox"
-                      checked={!!selectedEvent?.finalBeeps}
-                      onChange={(e) =>
-                        updateSelectedEvent({ finalBeeps: e.target.checked })
-                      }
-                      disabled={!selectedEvent?.sound}
-                    />
-                    Final beeps
-                  </label>
-                </div>
-              </div>
+              <Toggle
+                label="Final beeps"
+                checked={!!selectedEvent?.finalBeeps}
+                onCheckedChange={(checked) =>
+                  updateSelectedEvent({ finalBeeps: checked })
+                }
+                disabled={!selectedEvent?.sound}
+              />
+            </SettingRow>
 
-              {/* Time adjust chips */}
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-600">
-                    Adjust:
-                  </span>
+            <PresetGroup
+              title="Adjust target"
+              description="Move the selected event target without editing the date field."
+            >
+              <Chip onClick={() => adjustTargetHours(-1)} title="Subtract 1 hour">
+                -1h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(-2)} title="Subtract 2 hours">
+                -2h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(-24)} title="Subtract 24 hours">
+                -24h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(1)} title="Add 1 hour">
+                +1h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(2)} title="Add 2 hours">
+                +2h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(24)} title="Add 24 hours">
+                +24h
+              </Chip>
+            </PresetGroup>
 
-                  <button
-                    type="button"
-                    onClick={() => adjustTargetHours(-1)}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-                    title="Subtract 1 hour"
-                  >
-                    -1h
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => adjustTargetHours(-2)}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-                    title="Subtract 2 hours"
-                  >
-                    -2h
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => adjustTargetHours(-24)}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-                    title="Subtract 24 hours"
-                  >
-                    -24h
-                  </button>
+            <SecondaryActionRow className="timer-result-actions">
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
 
-                  <span className="mx-1 text-xs font-semibold text-slate-400">
-                    |
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() => adjustTargetHours(1)}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-                    title="Add 1 hour"
-                  >
-                    +1h
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => adjustTargetHours(2)}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-                    title="Add 2 hours"
-                  >
-                    +2h
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => adjustTargetHours(24)}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50"
-                    title="Add 24 hours"
-                  >
-                    +24h
-                  </button>
-                </div>
-
-                <div className="ml-1 text-xs font-semibold text-slate-600">
-                  Saved in your browser
-                </div>
-              </div>
-            </div>
-          </div>
+            <ShortcutHint>
+              Space start/pause / R reset / F fullscreen / saved in your browser
+            </ShortcutHint>
+          </SettingGroup>
         )}
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-slate-600 sm:text-sm">
+            <div className="ilt-helper-text sm:text-sm">
               Tap time to start/pause · Space start/pause · R reset · F
               fullscreen
             </div>
-            <div className="text-xs font-semibold text-slate-700">
+            <div className="ilt-helper-text font-semibold">
               {statusLabel}
             </div>
           </div>
@@ -1226,45 +970,25 @@ export default function EventCountdownPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Minimal header */}
-      <section className="timer-page-intro border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-3 sm:px-4 sm:py-1">
-          <h1 className="mt-2 text-2xl font-semibold text-sky-700 sm:text-3xl">
-            Event Countdown (Countdown to Date & Time)
-          </h1>
-          <p className="mt-2 mb-4 max-w-3xl text-sm text-slate-600">
-            Count down to an exact date and time with a big, readable fullscreen
-            display.
-          </p>
-        </div>
-      </section>
+      <ToolHero
+        display={<EventCountdownCard initialNowISO={_nowISO} />}
+        title="Event Countdown (Countdown to Date & Time)"
+        description="Count down to an exact local date and time with saved events, fullscreen, optional sound, and quick adjustments."
+      />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <EventCountdownCard />
-        </div>
-
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Event Countdown</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

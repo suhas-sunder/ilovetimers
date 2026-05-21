@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 import type { Route } from "./+types/terms";
+import { ContentPage } from "~/clients/components/ui/foundation";
 
 export const meta: Route.MetaFunction = () => {
   const canonical = "https://www.ilovetimers.com/terms";
 
-  const title = "Terms of Service | i💛Timers";
+  const title = "Terms of Service | iLoveTimers";
   const description =
     "Read the iLoveTimers Terms of Service. Learn about your rights and responsibilities when using the website.";
 
@@ -16,7 +17,7 @@ export const meta: Route.MetaFunction = () => {
 
     { tagName: "link", rel: "canonical", href: canonical },
 
-    { property: "og:site_name", content: "i💛Timers" },
+    { property: "og:site_name", content: "iLoveTimers" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
@@ -36,13 +37,13 @@ export const meta: Route.MetaFunction = () => {
 
 export default function TermsOfService() {
   return (
-    <div className="my-8 flex flex-col mx-10 items-center justify-center gap-8 font-nunito text-amber-900">
-      <main className="flex max-w-[1200px] flex-col gap-8 w-full">
+    <ContentPage
+      title="Terms of Service"
+      description="Last updated January 10, 2026"
+      className="ilt-legal-doc"
+    >
         <section className="flex flex-col gap-5">
-          <h1 className="mb-5 flex py-2 text-4xl">TERMS OF SERVICE</h1>
-          <h3 className="flex py-2 text-2xl">Last updated January 10, 2026</h3>
-
-          <h2>AGREEMENT TO OUR LEGAL TERMS</h2>
+          <h2>Agreement to our legal terms</h2>
 
           <p className="flex flex-col gap-4 py-2">
             We are iLoveTimers (https://www.ilovetimers.com) ("Company", "we",
@@ -96,7 +97,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">1. OUR SERVICES</h2>
+          <h2>1. OUR SERVICES</h2>
           <p>
             The Services provide content and tools related to timers, clocks,
             and time-based productivity and training features. The information
@@ -120,7 +121,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             2. INTELLECTUAL PROPERTY RIGHTS
           </h2>
 
@@ -144,14 +145,14 @@ export default function TermsOfService() {
             IS" for your personal, non-commercial use only.
           </p>
 
-          <h3 className="flex py-2 text-2xl">Your use of our Services</h3>
+          <h3>Your use of our Services</h3>
           <div>
             <span>
               Subject to your compliance with these Legal Terms, including the
               "PROHIBITED ACTIVITIES" section below, we grant you a
               non-exclusive, non-transferable, revocable license to:
             </span>
-            <ul className="flex list-inside list-disc flex-col gap-5 py-2 pl-5 dark:text-gray-400">
+            <ul className="flex list-inside list-disc flex-col gap-5 py-2 pl-5">
               <li>access the Services; and</li>
               <li>
                 download or print a copy of any portion of the Content to which
@@ -259,7 +260,7 @@ export default function TermsOfService() {
               by linking your account through the Services to any of your social
               networking accounts, you:
             </span>
-            <ul className="flex list-inside list-disc flex-col gap-5 py-2 pl-5 dark:text-gray-400">
+            <ul className="flex list-inside list-disc flex-col gap-5 py-2 pl-5">
               <li>
                 confirm that you have read and agree with our "PROHIBITED
                 ACTIVITIES" and will not post, send, publish, upload, or
@@ -314,7 +315,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">3. USER REPRESENTATIONS</h2>
+          <h2>3. USER REPRESENTATIONS</h2>
           <p>
             By using the Services, you represent and warrant that: (1) all
             registration information you submit will be true, accurate, current,
@@ -338,7 +339,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">4. USER REGISTRATION</h2>
+          <h2>4. USER REGISTRATION</h2>
           <p>
             You may be required to register to use the Services (for example, if
             we introduce optional accounts, subscriptions, or paid content in
@@ -359,7 +360,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">5. PRODUCTS</h2>
+          <h2>5. PRODUCTS</h2>
           <p>
             All products are subject to availability. We reserve the right to
             discontinue any products at any time for any reason. Prices for all
@@ -373,7 +374,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">6. PURCHASES AND PAYMENT</h2>
+          <h2>6. PURCHASES AND PAYMENT</h2>
           <p>
             Some parts of the Services may be free. If we offer purchases,
             subscriptions, or paid content in the future, we may accept payment
@@ -410,7 +411,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">7. REFUNDS POLICY</h2>
+          <h2>7. REFUNDS POLICY</h2>
           <p>
             All sales are final and no refund will be issued, unless required by
             applicable law or unless a separate written refund policy is
@@ -419,7 +420,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">8. PROHIBITED ACTIVITIES</h2>
+          <h2>8. PROHIBITED ACTIVITIES</h2>
           <p>
             You may not access or use the Services for any purpose other than
             that for which we make the Services available. The Services may not
@@ -428,7 +429,7 @@ export default function TermsOfService() {
           </p>
           <p>As a user of the Services, you agree not to:</p>
 
-          <ul className="flex list-inside list-disc flex-col gap-5 py-2 pl-5 dark:text-gray-400">
+          <ul className="flex list-inside list-disc flex-col gap-5 py-2 pl-5">
             <li>
               Systematically retrieve data or other content from the Services to
               create or compile, directly or indirectly, a collection,
@@ -547,7 +548,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             9. USER GENERATED CONTRIBUTIONS
           </h2>
           <p>
@@ -565,7 +566,7 @@ export default function TermsOfService() {
             available any Contributions, you thereby represent and warrant that:
           </p>
 
-          <ul className="flex list-inside list-disc flex-col gap-5 py-2 pl-5 dark:text-gray-400">
+          <ul className="flex list-inside list-disc flex-col gap-5 py-2 pl-5">
             <li>
               The creation, distribution, transmission, public display, or
               performance, and the accessing, downloading, or copying of your
@@ -643,7 +644,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">10. CONTRIBUTION LICENSE</h2>
+          <h2>10. CONTRIBUTION LICENSE</h2>
           <p>
             By posting your Contributions to any part of the Services or making
             Contributions accessible to the Services by linking your account
@@ -693,7 +694,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">11. GUIDELINES FOR REVIEWS</h2>
+          <h2>11. GUIDELINES FOR REVIEWS</h2>
           <p>
             We may provide you areas on the Services to leave reviews or
             ratings. When posting a review, you must comply with the following
@@ -727,7 +728,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">12. SOCIAL MEDIA</h2>
+          <h2>12. SOCIAL MEDIA</h2>
           <p>
             As part of the functionality of the Services, you may link your
             account with online accounts you have with third-party service
@@ -781,7 +782,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             13. THIRD-PARTY WEBSITES AND CONTENT
           </h2>
           <p>
@@ -822,7 +823,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">14. ADVERTISERS</h2>
+          <h2>14. ADVERTISERS</h2>
           <p>
             We allow advertisers (including Google AdSense and other ad
             networks) to display their advertisements and other information in
@@ -833,7 +834,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">15. SERVICES MANAGEMENT</h2>
+          <h2>15. SERVICES MANAGEMENT</h2>
           <p>
             We reserve the right, but not the obligation, to: (1) monitor the
             Services for violations of these Legal Terms; (2) take appropriate
@@ -853,7 +854,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">16. PRIVACY POLICY</h2>
+          <h2>16. PRIVACY POLICY</h2>
           <p>
             We care about data privacy and security. Please review our Privacy
             Policy: https://www.ilovetimers.com/privacy. By using the Services,
@@ -870,7 +871,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">17. COPYRIGHT INFRINGEMENTS</h2>
+          <h2>17. COPYRIGHT INFRINGEMENTS</h2>
           <p>
             We respect the intellectual property rights of others. If you
             believe that any material available on or through the Services
@@ -887,7 +888,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">18. TERM AND TERMINATION</h2>
+          <h2>18. TERM AND TERMINATION</h2>
           <p>
             These Legal Terms shall remain in full force and effect while you
             use the Services. WITHOUT LIMITING ANY OTHER PROVISION OF THESE
@@ -915,7 +916,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             19. MODIFICATIONS AND INTERRUPTIONS
           </h2>
           <p>
@@ -943,7 +944,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">20. GOVERNING LAW</h2>
+          <h2>20. GOVERNING LAW</h2>
           <p>
             These Legal Terms shall be governed by and defined following the
             laws of Canada and the Province of Ontario. iLoveTimers and yourself
@@ -955,7 +956,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">21. DISPUTE RESOLUTION</h2>
+          <h2>21. DISPUTE RESOLUTION</h2>
 
           <h3>Informal Negotiations</h3>
           <p>
@@ -1003,7 +1004,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">22. CORRECTIONS</h2>
+          <h2>22. CORRECTIONS</h2>
           <p>
             There may be information on the Services that contains typographical
             errors, inaccuracies, or omissions, including descriptions, pricing,
@@ -1015,7 +1016,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">23. DISCLAIMER</h2>
+          <h2>23. DISCLAIMER</h2>
           <p>
             THE SERVICES ARE PROVIDED ON AN "AS-IS" AND "AS-AVAILABLE" BASIS.
             YOU AGREE THAT YOUR USE OF THE SERVICES WILL BE AT YOUR SOLE RISK.
@@ -1052,7 +1053,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">24. LIMITATIONS OF LIABILITY</h2>
+          <h2>24. LIMITATIONS OF LIABILITY</h2>
           <p>
             IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE
             TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL,
@@ -1072,7 +1073,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">25. INDEMNIFICATION</h2>
+          <h2>25. INDEMNIFICATION</h2>
           <p>
             You agree to defend, indemnify, and hold us harmless, including our
             subsidiaries, affiliates, and all of our respective officers,
@@ -1095,7 +1096,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">26. USER DATA</h2>
+          <h2>26. USER DATA</h2>
           <p>
             We will maintain certain data that you transmit to the Services for
             the purpose of managing the performance of the Services, as well as
@@ -1110,7 +1111,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             27. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES
           </h2>
           <p>
@@ -1132,7 +1133,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">
+          <h2>
             28. CALIFORNIA USERS AND RESIDENTS
           </h2>
           <p>
@@ -1145,7 +1146,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">29. MISCELLANEOUS</h2>
+          <h2>29. MISCELLANEOUS</h2>
           <p>
             These Legal Terms and any policies or operating rules posted by us
             on the Services or in respect to the Services constitute the entire
@@ -1171,7 +1172,7 @@ export default function TermsOfService() {
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="flex py-2 text-2xl">30. CONTACT US</h2>
+          <h2>30. CONTACT US</h2>
           <p>
             In order to resolve a complaint regarding the Services or to receive
             further information regarding use of the Services, please contact us
@@ -1182,7 +1183,6 @@ export default function TermsOfService() {
           <p>Canada</p>
           <p>admin@ilovetimers.com</p>
         </section>
-      </main>
-    </div>
+    </ContentPage>
   );
 }

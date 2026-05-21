@@ -16,7 +16,7 @@ type Scenario = {
 };
 
 export default function PopularUseCases({
-  baseUrl = "https://ilovetimers.com",
+  baseUrl = "https://www.ilovetimers.com",
 }: {
   baseUrl?: string;
 }) {
@@ -31,7 +31,7 @@ export default function PopularUseCases({
         "If you need shared control for multiple people, calendar automation, or attendee tracking.",
       links: [
         { label: "Meeting timer page", href: "/meeting-timer" },
-        { label: "Countdown timer", href: "/#countdown" },
+        { label: "Countdown timer", href: "/countdown-timer" },
       ],
     },
     {
@@ -43,7 +43,7 @@ export default function PopularUseCases({
         "If you need slide-by-slide cues, teleprompter features, or integrations with slide decks.",
       links: [
         { label: "Presentation timer page", href: "/presentation-timer" },
-        { label: "Countdown timer", href: "/#countdown" },
+        { label: "Countdown timer", href: "/countdown-timer" },
       ],
     },
     {
@@ -54,7 +54,7 @@ export default function PopularUseCases({
       notFor: "If you rely on audio cues or vibration alerts to stay on track.",
       links: [
         { label: "Silent timer page", href: "/silent-timer" },
-        { label: "Countdown (toggle sound)", href: "/#countdown" },
+        { label: "Countdown timer", href: "/countdown-timer" },
       ],
     },
     {
@@ -65,7 +65,7 @@ export default function PopularUseCases({
       notFor:
         "If you want task lists, site blocking, habit tracking, or analytics. This is just timing.",
       links: [
-        { label: "Pomodoro focus timer", href: "/#pomodoro" },
+        { label: "Pomodoro focus timer", href: "/pomodoro-timer" },
         { label: "Productivity timer page", href: "/productivity-timer" },
       ],
     },
@@ -76,7 +76,7 @@ export default function PopularUseCases({
       forWho: "HIIT, circuits, coaching sessions, gym classes.",
       notFor:
         "If you need workout logging, guided programs, or heart-rate zone tracking.",
-      links: [{ label: "HIIT / interval timer", href: "/#hiit" }],
+      links: [{ label: "HIIT / interval timer", href: "/hiit-timer" }],
     },
     {
       title: "Timing tasks with splits (laps)",
@@ -84,7 +84,7 @@ export default function PopularUseCases({
         "Track elapsed time and record splits for practice, drills, or experiments.",
       forWho: "Training, lab timing, cooking tests, speed practice.",
       notFor: "If you need multi-run comparisons, exports, or advanced stats.",
-      links: [{ label: "Stopwatch with laps", href: "/#stopwatch" }],
+      links: [{ label: "Stopwatch with laps", href: "/stopwatch" }],
     },
   ];
 
@@ -113,12 +113,12 @@ export default function PopularUseCases({
     <section className="mx-auto max-w-7xl px-4 pb-12">
       <JsonLd data={itemListLd} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="ilt-surface-card p-5">
         <div>
-          <h2 className="text-xl font-semibold text-sky-700">
+          <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">
             Common scenarios
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Quick guidance on which timer to use, plus who each option is (and
             isn’t) a fit for.
           </p>
@@ -128,28 +128,28 @@ export default function PopularUseCases({
           {list.map((s) => (
             <div
               key={s.title}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              className="ilt-surface-card p-4"
             >
-              <div className="text-base font-semibold text-slate-900">
+              <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
                 {s.title}
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-slate-700">
+              <div className="mt-1 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 {s.description}
               </div>
 
               <div className="mt-3 grid gap-2 text-sm">
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     For
                   </div>
-                  <div className="mt-1 text-slate-700">{s.forWho}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.forWho}</div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <div className="ilt-surface-muted p-3">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ilt-text-secondary)]">
                     Not for
                   </div>
-                  <div className="mt-1 text-slate-700">{s.notFor}</div>
+                  <div className="mt-1 text-[var(--ilt-text-secondary)]">{s.notFor}</div>
                 </div>
               </div>
 
@@ -158,7 +158,7 @@ export default function PopularUseCases({
                   <a
                     key={l.href}
                     href={l.href}
-                    className="cursor-pointer rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 hover:border-slate-300"
+                    className="cursor-pointer ilt-inline-pill px-3 py-1.5 text-sm font-semibold text-[var(--ilt-text-primary)] transition hover:bg-[var(--ilt-bg-hover)]"
                   >
                     {l.label} →
                   </a>

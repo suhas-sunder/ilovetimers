@@ -2,7 +2,25 @@
 import type { Route } from "./+types/time-zone-converter";
 import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SeoBand,
+  SecondaryActionRow,
+  SettingGroup,
+  SettingRow,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+  Field,
+  Select,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/time-zone-converter/HowItWorks";
 import Disclaimer from "~/clients/components/time-zone-converter/Disclaimer";
 import FAQ from "~/clients/components/time-zone-converter/FAQ";
@@ -64,30 +82,6 @@ function isTypingTarget(target: EventTarget | null) {
     tag === "SELECT" ||
     el.isContentEditable
   );
-}
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
 }
 
 function safeParseJSON<T>(raw: string | null): T | null {
@@ -248,142 +242,6 @@ function buildShareUrl(args: {
   } catch {
     return "";
   }
-}
-
-/* =========================================================
-   UI PRIMITIVES (site style)
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-  title,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-  title?: string;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    title={title}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-const Chip = ({
-  active,
-  children,
-  onClick,
-  title,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-  title?: string;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    title={title}
-    className={[
-      "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-      active
-        ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-        : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-    ].join(" ")}
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
 }
 
 /* =========================================================
@@ -557,17 +415,15 @@ function deriveDefaultLocalStrings(nowISO: string) {
 
 function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const toTzRef = useRef<string>("UTC");
 
   const defaults = useMemo(() => deriveDefaultLocalStrings(nowISO), [nowISO]);
 
   // Initialize state synchronously (snappy first paint).
-  const [fromTz, setFromTz] = useState<string>(() => {
-    if (typeof window === "undefined") return "UTC";
-    return normalizeTz(tryGuessUserTimeZone());
-  });
+  const [fromTz, setFromTz] = useState<string>(() => "UTC");
   const [toTz, setToTz] = useState<string>(() => "UTC");
 
   const [dateStr, setDateStr] = useState<string>(() => defaults.date);
@@ -780,8 +636,8 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
     if (isTypingTarget(e.target)) return;
 
     const k = e.key.toLowerCase();
-    if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+    if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "s") {
       swap();
     } else if (k === "n") {
@@ -789,7 +645,7 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
     } else if (k === "c") {
       void onCopy();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      fullscreen.exit();
     }
   };
 
@@ -823,10 +679,10 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
       <FullscreenTopBar
         show={isFs}
         title="Time Zone Converter"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+            <label className="inline-flex cursor-pointer items-center gap-2 ilt-inline-pill px-3 py-1 text-sm font-semibold text-[var(--ilt-text-primary)]">
               <input
                 type="checkbox"
                 checked={showSeconds}
@@ -885,88 +741,64 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-result-stack flex h-full flex-col"}>
         {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Time Zone Converter
-              </h1>
-            </div>
+          <SecondaryActionRow className="timer-result-actions">
+            <Toggle
+              label="Seconds"
+              checked={showSeconds}
+              onCheckedChange={(next) => {
+                setShowSeconds(next);
+                setTimeStr((cur) => {
+                  const ss = pad2(new Date().getSeconds());
+                  if (next) {
+                    if (/^\d{2}:\d{2}$/.test(cur)) return `${cur}:${ss}`;
+                    return cur;
+                  }
+                  if (/^\d{2}:\d{2}:\d{2}$/.test(cur))
+                    return cur.slice(0, 5);
+                  return cur;
+                });
+              }}
+            />
 
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={showSeconds}
-                  onChange={(e) => {
-                    const next = e.target.checked;
-                    setShowSeconds(next);
-                    setTimeStr((cur) => {
-                      const ss = pad2(new Date().getSeconds());
-                      if (next) {
-                        if (/^\d{2}:\d{2}$/.test(cur)) return `${cur}:${ss}`;
-                        return cur;
-                      }
-                      if (/^\d{2}:\d{2}:\d{2}$/.test(cur))
-                        return cur.slice(0, 5);
-                      return cur;
-                    });
-                  }}
-                />
-                Seconds
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={swap}
-                className="py-2"
-                title="Swap (S)"
-              >
-                Swap
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={setNow}
-                className="py-2"
-                title="Now (N)"
-              >
-                Now
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={onCopy}
-                className="py-2"
-                disabled={!preview}
-                title="Copy (C)"
-              >
-                Copy
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={onCopyLink}
-                className="py-2"
-                disabled={!shareUrl}
-                title="Share link"
-              >
-                Share
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-                title="Fullscreen (F)"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
+            <Btn kind="ghost" onClick={swap} className="py-2" title="Swap (S)">
+              Swap
+            </Btn>
+            <Btn kind="ghost" onClick={setNow} className="py-2" title="Now (N)">
+              Now
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={onCopy}
+              className="py-2"
+              disabled={!preview}
+              title="Copy (C)"
+            >
+              Copy
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={onCopyLink}
+              className="py-2"
+              disabled={!shareUrl}
+              title="Share link"
+            >
+              Share
+            </Btn>
+            <Btn
+              kind="ghost"
+              onClick={() => void fullscreen.toggle()}
+              className="py-2"
+              title="Fullscreen (F)"
+            >
+              Fullscreen
+            </Btn>
+          </SecondaryActionRow>
         )}
 
         {!isFs && (
-          <div className="timer-controls-row mt-4">
+          <PresetGroup>
             {quickPairs.map((p) => (
               <Chip
                 key={p.label}
@@ -979,77 +811,67 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                 {p.label}
               </Chip>
             ))}
-          </div>
+          </PresetGroup>
         )}
 
         {/* Inputs */}
-          <div className={isFs ? "mx-2 mt-3 sm:mx-4" : "timer-settings-panel mt-4"}>
-          <div className="grid gap-3 lg:grid-cols-4">
-            <label className="block text-sm font-semibold text-slate-900">
-              Date
-              <input
+        {!isFs && (
+          <SettingGroup className="mt-4">
+            <SettingRow className="lg:grid-cols-4">
+              <Field
+                label="Date"
                 type="date"
                 value={dateStr}
                 onChange={(e) => setDateStr(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               />
-            </label>
 
-            <label className="block text-sm font-semibold text-slate-900">
-              Time {showSeconds ? "(HH:MM:SS)" : "(HH:MM)"}
-              <input
+              <Field
+                label={`Time ${showSeconds ? "(HH:MM:SS)" : "(HH:MM)"}`}
                 inputMode="numeric"
                 value={timeStr}
                 onChange={(e) => setTimeStr(e.target.value)}
                 placeholder={showSeconds ? "09:30:00" : "09:30"}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               />
-            </label>
 
-            <label className="block text-sm font-semibold text-slate-900">
-              From time zone
-              <select
+              <Select
+                label="From time zone"
                 value={fromTz}
                 onChange={(e) => setFromTz(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               >
-                {tzGroups.map((g) => (
-                  <optgroup key={g.region} label={g.region}>
-                    {g.list.map((o) => (
-                      <option key={o.id} value={o.id}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </label>
+                  {tzGroups.map((g) => (
+                    <optgroup key={g.region} label={g.region}>
+                      {g.list.map((o) => (
+                        <option key={o.id} value={o.id}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+              </Select>
 
-            <label className="block text-sm font-semibold text-slate-900">
-              To time zone
-              <select
+              <Select
+                label="To time zone"
                 value={toTz}
                 onChange={(e) => setToTz(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
               >
-                {tzGroups.map((g) => (
-                  <optgroup key={g.region} label={g.region}>
-                    {g.list.map((o) => (
-                      <option key={o.id} value={o.id}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </label>
-          </div>
-        </div>
+                  {tzGroups.map((g) => (
+                    <optgroup key={g.region} label={g.region}>
+                      {g.list.map((o) => (
+                        <option key={o.id} value={o.id}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+              </Select>
+            </SettingRow>
+          </SettingGroup>
+        )}
 
         {/* Display */}
         <div
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-start rounded-2xl border bg-slate-50 text-slate-950",
+            "timer-display-surface relative mt-4 flex flex-col items-center justify-start rounded-lg border bg-slate-50 text-[var(--ilt-text-primary)]",
             invalidInput ? "border-rose-200 bg-rose-50" : "border-slate-200",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -1062,26 +884,18 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
           aria-live="polite"
         >
           <div className="flex w-full flex-col items-center p-3 text-center sm:p-6">
-            <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-              {statusLabel}
-            </div>
-
             {!preview ? (
-              <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+              <div className="mt-4 ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
                 Enter a valid date and time.
               </div>
             ) : (
-              <div className="mt-4 grid w-full max-w-7xl gap-4 lg:grid-cols-2">
-                <div className="flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
-                    From
-                  </div>
-                  <div className="mt-1 text-sm font-bold text-slate-900">
-                    {getOptLabel(normalizeTz(fromTz))}
-                  </div>
+              <div className="grid w-full max-w-7xl gap-4 lg:grid-cols-2">
+                <div className="timer-result-panel flex flex-col items-center ilt-surface-card p-4">
                   <div
+                    data-primary-display-value
                     className={[
-                      "mt-3 font-mono font-extrabold tracking-wider text-slate-900",
+                      "timer-result-value",
+                      "font-mono font-extrabold tracking-wider text-[var(--ilt-text-primary)]",
                       isFs
                         ? "text-4xl sm:text-6xl"
                         : "text-[clamp(34px,4vw,64px)]",
@@ -1089,21 +903,23 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                   >
                     {preview.fromText}
                   </div>
-                  <div className="mt-2 text-xs font-semibold text-slate-600">
+                  <div className="timer-result-label ilt-content-label">
+                    From
+                  </div>
+                  <div className="timer-result-context mt-1 text-sm font-bold text-[var(--ilt-text-primary)]">
+                    {getOptLabel(normalizeTz(fromTz))}
+                  </div>
+                  <div className="timer-result-context mt-2 ilt-helper-text font-semibold">
                     {preview.fromAb ? `Abbr: ${preview.fromAb}` : " "}
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-4">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
-                    To
-                  </div>
-                  <div className="mt-1 text-sm font-bold text-slate-900">
-                    {getOptLabel(normalizeTz(toTz))}
-                  </div>
+                <div className="timer-result-panel flex flex-col items-center ilt-surface-card p-4">
                   <div
+                    data-primary-display-value
                     className={[
-                      "mt-3 font-mono font-extrabold tracking-wider text-slate-900",
+                      "timer-result-value",
+                      "font-mono font-extrabold tracking-wider text-[var(--ilt-text-primary)]",
                       isFs
                         ? "text-4xl sm:text-6xl"
                         : "text-[clamp(34px,4vw,64px)]",
@@ -1111,25 +927,31 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                   >
                     {preview.toText}
                   </div>
-                  <div className="mt-2 text-xs font-semibold text-slate-600">
+                  <div className="timer-result-label ilt-content-label">
+                    To
+                  </div>
+                  <div className="timer-result-context mt-1 text-sm font-bold text-[var(--ilt-text-primary)]">
+                    {getOptLabel(normalizeTz(toTz))}
+                  </div>
+                  <div className="timer-result-context mt-2 ilt-helper-text font-semibold">
                     {preview.toAb ? `Abbr: ${preview.toAb}` : " "}
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 lg:col-span-2">
-                  <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                <div className="timer-result-panel ilt-surface-card p-4 lg:col-span-2">
+                  <div className="ilt-content-label">
                     ISO
                   </div>
-                  <div className="mt-2 break-all font-mono text-sm font-semibold text-slate-900">
+                  <div className="mt-2 break-all font-mono text-sm font-semibold text-[var(--ilt-text-primary)]">
                     {preview.iso}
                   </div>
 
                   <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="text-xs font-semibold text-slate-600">
+                    <div className="ilt-helper-text font-semibold">
                       Shortcuts: S swap · N now · C copy · F fullscreen
                     </div>
                     {copied && (
-                      <div className="text-xs font-extrabold text-slate-900">
+                      <div className="text-xs font-extrabold text-[var(--ilt-text-primary)]">
                         {copied}
                       </div>
                     )}
@@ -1137,14 +959,18 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                 </div>
               </div>
             )}
+
+            <div className="mt-4 ilt-content-label">
+              {statusLabel}
+            </div>
           </div>
 
           <FullscreenBottomBar show={isFs}>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-xs text-slate-600 sm:text-sm">
+              <div className="ilt-helper-text sm:text-sm">
                 S swap · N now · C copy · F fullscreen · Esc exit
               </div>
-              <div className="text-xs font-semibold text-slate-700">
+              <div className="ilt-helper-text font-semibold">
                 {copied ? copied : statusLabel}
               </div>
             </div>
@@ -1202,32 +1028,26 @@ export default function TimeZoneConverterPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <TimeZoneConverterCard nowISO={nowISO} />
-        </div>
+      <ToolHero
+        display={<TimeZoneConverterCard nowISO={nowISO} />}
+        title="Time Zone Converter"
+        description="Convert a chosen date and time between time zones with DST-aware results, share links, copy output, and saved state."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Time Zone Converter</span>
-        </p>
-      </section>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
 
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+    </PageShell>
   );
 }

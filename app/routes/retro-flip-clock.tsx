@@ -2,7 +2,25 @@
 import type { Route } from "./+types/retro-flip-clock";
 import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+  Field,
+  Select,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 /* =========================================================
    META
@@ -57,14 +75,6 @@ function isTypingTarget(target: EventTarget | null) {
     tag === "SELECT" ||
     el.isContentEditable
   );
-}
-
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
 }
 
 function safeTimeZone() {
@@ -141,151 +151,6 @@ function splitDigits(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
     : [H[0], H[1], M[0], M[1]];
 
   return { digits, ampm };
-}
-
-/* =========================================================
-   UI PRIMITIVES (match your newer style)
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
-
-function TogglePill({
-  checked,
-  label,
-  onChange,
-}: {
-  checked: boolean;
-  label: string;
-  onChange: (next: boolean) => void;
-}) {
-  return (
-    <label className="cursor-pointer inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-      <input
-        className="cursor-pointer"
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      {label}
-    </label>
-  );
-}
-
-function useIsFullscreen(targetRef: React.RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
 }
 
 /* =========================================================
@@ -542,8 +407,8 @@ function FlipColon({ dark, size }: { dark: boolean; size: FlipSize }) {
 /* =========================================================
    RETRO FLIP CLOCK CARD
 ========================================================= */
-function RetroFlipClockCard() {
-  const [now, setNow] = useState<Date>(() => new Date());
+function RetroFlipClockCard({ initialNowISO }: { initialNowISO: string }) {
+  const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [use24, setUse24] = useState(true);
   const [showSeconds, setShowSeconds] = useState(true);
   const [showDate, setShowDate] = useState(true);
@@ -554,15 +419,16 @@ function RetroFlipClockCard() {
 
   const cardRef = useRef<HTMLDivElement>(null);
   const displayWrapRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(displayWrapRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   // Ensure keyboard shortcuts work without requiring a click/hover.
   useEffect(() => {
-    cardRef.current?.focus();
+    cardRef.current?.focus({ preventScroll: true });
   }, []);
 
   useEffect(() => {
-    cardRef.current?.focus();
+    cardRef.current?.focus({ preventScroll: true });
   }, [isFs]);
 
   // Tick on exact second boundaries when seconds are on.
@@ -627,10 +493,10 @@ function RetroFlipClockCard() {
 
     const k = e.key.toLowerCase();
 
-    if (k === "f" && displayWrapRef.current) {
-      toggleFullscreen(displayWrapRef.current);
+    if (k === "f") {
+      void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      fullscreen.exit();
     } else if (k === "s") {
       setShowSeconds((v) => !v);
     } else if (k === "t") {
@@ -658,7 +524,7 @@ function RetroFlipClockCard() {
       <FullscreenTopBar
         show={isFs}
         title="Retro Flip Clock"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn
@@ -700,32 +566,15 @@ function RetroFlipClockCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-specialty-clock-stack flex h-full flex-col"}>
         {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Retro Flip Clock
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Big flipping digits for a classic desk clock or fullscreen
-                display.
-              </p>
-            </div>
+          <div className="hidden">
 
             <div className="ml-auto flex flex-wrap items-center gap-2">
-              <TogglePill
-                checked={showSeconds}
-                label="Seconds"
-                onChange={setShowSeconds}
-              />
-              <TogglePill checked={use24} label="24-hour" onChange={setUse24} />
-              <TogglePill
-                checked={showDate}
-                label="Date"
-                onChange={setShowDate}
-              />
-              <TogglePill checked={zen} label="Zen" onChange={setZen} />
+              <Toggle checked={showSeconds} label="Seconds" onCheckedChange={setShowSeconds} />
+              <Toggle checked={use24} label="24-hour" onCheckedChange={setUse24} />
+              <Toggle checked={showDate} label="Date" onCheckedChange={setShowDate} />
+              <Toggle checked={zen} label="Zen" onCheckedChange={setZen} />
 
               <Btn kind="ghost" onClick={() => void copy()} className="py-2">
                 {copied ? "Copied" : "Copy"}
@@ -733,10 +582,7 @@ function RetroFlipClockCard() {
 
               <Btn
                 kind="ghost"
-                onClick={() =>
-                  displayWrapRef.current &&
-                  toggleFullscreen(displayWrapRef.current)
-                }
+                onClick={() => void fullscreen.toggle()}
                 className="py-2"
               >
                 Fullscreen
@@ -759,7 +605,7 @@ function RetroFlipClockCard() {
             marginBottom: isFs ? "3.6rem" : undefined,
           }}
           aria-live="polite"
-          onClick={() => cardRef.current?.focus()}
+          onClick={() => cardRef.current?.focus({ preventScroll: true })}
         >
           <style
             dangerouslySetInnerHTML={{
@@ -844,11 +690,11 @@ function RetroFlipClockCard() {
 
           <div
             data-shell="normal"
-            className="h-full w-full items-start justify-center p-3 sm:p-6"
+            className="h-full w-full items-start justify-center px-2 pb-3 pt-1 sm:px-4 sm:pb-4 sm:pt-1"
             style={{ minHeight: "clamp(300px, 52svh, 620px)" }}
           >
             <div className="w-full max-w-[1500px]">
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+              <div className="px-1 pb-2 pt-0 sm:px-2 sm:pb-3 sm:pt-0">
                 <div className="retro-flip-row flex flex-nowrap items-center justify-center gap-[clamp(0.15rem,1.5vw,1.5rem)]">
                   <FlipDigit value={digits[0]} dark={false} size="md" id="h1" />
                   <FlipDigit value={digits[1]} dark={false} size="md" id="h2" />
@@ -911,6 +757,13 @@ function RetroFlipClockCard() {
           </div>
 
           <div data-shell="fullscreen">
+            <button
+              type="button"
+              className="fs-exit"
+              onClick={() => void fullscreen.exit()}
+            >
+              Exit (Esc)
+            </button>
             <div className="fs-inner">
               <div className="fs-top fadeSoft opacity-100">Retro Flip Clock</div>
 
@@ -972,10 +825,48 @@ function RetroFlipClockCard() {
         </div>
 
         {!isFs && (
-          <div className="mt-4 timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-            Shortcuts: F fullscreen · S seconds · T 12/24 · D date · Z zen · C
-            copy
-          </div>
+          <>
+            <SettingGroup
+              title="Flip clock settings"
+              description="Display options stay below the flip digits."
+            >
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-4">
+                <Toggle
+                  checked={showSeconds}
+                  label="Seconds"
+                  onCheckedChange={setShowSeconds}
+                />
+                <Toggle
+                  checked={use24}
+                  label="24-hour"
+                  onCheckedChange={setUse24}
+                />
+                <Toggle
+                  checked={showDate}
+                  label="Date"
+                  onCheckedChange={setShowDate}
+                />
+                <Toggle checked={zen} label="Zen" onCheckedChange={setZen} />
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void copy()} className="py-2">
+                {copied ? "Copied" : "Copy"}
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: F fullscreen, S seconds, T 12/24, D date, Z zen, C copy
+            </ShortcutHint>
+          </>
         )}
       </div>
     </Card>
@@ -986,7 +877,7 @@ function RetroFlipClockCard() {
    PAGE
 ========================================================= */
 export default function RetroFlipClockPage({
-  loaderData: { nowISO: _nowISO },
+  loaderData: { nowISO },
 }: Route.ComponentProps) {
   const url = "https://www.ilovetimers.com/retro-flip-clock";
 
@@ -1021,25 +912,64 @@ export default function RetroFlipClockPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <RetroFlipClockCard />
-        </div>
+      <ToolHero
+        display={<RetroFlipClockCard initialNowISO={nowISO} />}
+        title="Retro Flip Clock"
+        description="A classic flip-clock display with animated digits, optional seconds, date, Zen mode, copy, and fullscreen."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Retro Flip Clock</span>
+      <SeoBand title="How this clock works">
+        <p>
+          Retro Flip Clock keeps the animated flip display as the main
+          experience. The digits are styled like a classic split-flap desk clock,
+          while seconds, date, Zen mode, copy, and fullscreen controls stay
+          secondary below the display.
         </p>
-      </section>
-    </main>
+        <h3>Display options</h3>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            Seconds can be shown when you want the flip display to update more
+            actively.
+          </li>
+          <li>
+            Date display adds context without changing the main time renderer.
+          </li>
+          <li>
+            Zen mode keeps the page quieter when the clock is being used as a
+            desk or room display.
+          </li>
+        </ul>
+        <h3>When fullscreen helps</h3>
+        <p>
+          Fullscreen mode makes the flip cards easier to read from farther away
+          while preserving the custom renderer. It is different from a
+          minimalist clock because the flip-card motion and segmented layout are
+          the point of the page. Copy controls remain available when you need to
+          paste the current time into notes or a message.
+        </p>
+        <h3>Related clock styles</h3>
+        <p>
+          For a plain numeric clock, use the{" "}
+          <a className="ilt-content-link" href="/digital-clock">
+            digital clock
+          </a>
+          . For a quieter display, try the{" "}
+          <a className="ilt-content-link" href="/minimalist-clock">
+            minimalist clock
+          </a>
+          . For a traditional clock face, use the{" "}
+          <a className="ilt-content-link" href="/analog-clock">
+            analog clock
+          </a>
+          .
+        </p>
+      </SeoBand>
+    </PageShell>
   );
 }

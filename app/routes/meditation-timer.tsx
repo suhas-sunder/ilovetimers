@@ -4,14 +4,32 @@ import { json } from "@remix-run/node";
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
-  type RefObject,
   type KeyboardEvent,
 } from "react";
-import { Link } from "react-router";
+import {
+  Button as Btn,
+  ControlGroup,
+  DisplayStage,
+  Field,
+  FullscreenBottomBar,
+  FullscreenTopBar,
+  PageShell,
+  PresetGroup,
+  PresetChip as Chip,
+  SecondaryActionRow,
+  SeoBand,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
+  ToolFrame as Card,
+  ToolHero,
+  Toggle,
+} from "~/clients/components/ui/foundation";
+import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/meditation-timer/HowItWorks";
 import Disclaimer from "~/clients/components/meditation-timer/Disclaimer";
 import FAQ from "~/clients/components/meditation-timer/FAQ";
@@ -88,29 +106,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-async function toggleFullscreen(el: HTMLElement) {
-  if (!document.fullscreenElement) {
-    await el.requestFullscreen().catch(() => {});
-  } else {
-    await document.exitFullscreen().catch(() => {});
-  }
-}
-
-function useIsFullscreen(targetRef: RefObject<HTMLElement | null>) {
-  const [isFs, setIsFs] = useState(false);
-
-  useEffect(() => {
-    const onChange = () => {
-      const el = targetRef.current;
-      setIsFs(!!el && document.fullscreenElement === el);
-    };
-    document.addEventListener("fullscreenchange", onChange);
-    onChange();
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, [targetRef]);
-
-  return isFs;
-}
 
 // WebAudio beep (soft)
 function useBeep() {
@@ -153,224 +148,6 @@ function useBeep() {
   }, []);
 }
 
-/**
- * Fit a single-line time string into its container by adjusting font size.
- * - Uses ResizeObserver + rAF
- * - Binary search for max font-size that fits both width and height
- *
- * NOTE: This is intentionally the same as the reference (count-up-timer) hook.
- */
-function useFitText({
-  containerRef,
-  textRef,
-  deps,
-  minPx = 44,
-  maxPx = 420,
-  paddingAllowancePx = 0,
-}: {
-  containerRef: RefObject<HTMLElement | null>;
-  textRef: RefObject<HTMLElement | null>;
-  deps: any[];
-  minPx?: number;
-  maxPx?: number;
-  paddingAllowancePx?: number;
-}) {
-  const initialFontPx = (() => {
-    const sample = deps.find(
-      (dep) => typeof dep === "string" || typeof dep === "number",
-    );
-    const charCount = Math.max(
-      1,
-      String(sample ?? "00:00").replace(/\s/g, "").length,
-    );
-    const preferredVw = Math.min(34, Math.max(8, 84 / (charCount * 0.62)));
-    return `clamp(${minPx}px, ${preferredVw.toFixed(2)}vw, ${maxPx}px)`;
-  })();
-
-  const [fontPx, setFontPx] = useState<number | string>(initialFontPx);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    const textEl = textRef.current;
-    if (!container || !textEl) return;
-
-    let raf: number | null = null;
-
-    const compute = () => {
-      const c = containerRef.current;
-      const t = textRef.current;
-      if (!c || !t) return;
-
-      const rect = c.getBoundingClientRect();
-      const availW = Math.max(0, rect.width - paddingAllowancePx);
-      const availH = Math.max(0, rect.height - paddingAllowancePx);
-
-      if (availW <= 0 || availH <= 0) return;
-
-      const originalFontSize = (t as HTMLElement).style.fontSize;
-
-      const fits = (px: number) => {
-        (t as HTMLElement).style.fontSize = `${px}px`;
-        const tr = t.getBoundingClientRect();
-        return tr.width <= availW && tr.height <= availH;
-      };
-
-      let lo = minPx;
-      let hi = maxPx;
-      let best = minPx;
-
-      if (fits(maxPx)) {
-        best = maxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((lo + hi) / 2);
-          if (fits(mid)) {
-            best = mid;
-            lo = mid + 1;
-          } else {
-            hi = mid - 1;
-          }
-        }
-      }
-
-      (t as HTMLElement).style.fontSize = originalFontSize;
-      setFontPx(`${best}px`);
-    };
-
-    const schedule = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        compute();
-      });
-    };
-
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(container);
-
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
-
-    compute();
-
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-
-  return fontPx;
-}
-
-/* =========================================================
-   UI PRIMITIVES
-========================================================= */
-const Card = ({
-  children,
-  className = "",
-  onKeyDown,
-  tabIndex,
-  cardRef,
-  isFullscreen,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-  tabIndex?: number;
-  cardRef?: React.Ref<HTMLDivElement>;
-  isFullscreen?: boolean;
-}) => (
-  <div
-    ref={cardRef}
-    tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
-    className={[
-      "relative bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
-      isFullscreen
-        ? "h-screen w-screen rounded-none border-0 p-0 shadow-none"
-        : "timer-tool-card h-full rounded-2xl bg-white p-4 sm:p-6",
-      className,
-    ].join(" ")}
-  >
-    {children}
-  </div>
-);
-
-const Btn = ({
-  kind = "solid",
-  children,
-  onClick,
-  className = "",
-  disabled,
-}: {
-  kind?: "solid" | "ghost";
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className={
-      kind === "solid"
-        ? `cursor-pointer rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-        : `cursor-pointer timer-control-shadow rounded-lg bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 ${className}`
-    }
-  >
-    {children}
-  </button>
-);
-
-function FullscreenTopBar({
-  show,
-  title,
-  right,
-  onExit,
-}: {
-  show: boolean;
-  title: string;
-  right?: React.ReactNode;
-  onExit: () => void;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute left-0 right-0 top-0 z-50 border-b border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-900">
-            {title}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {right}
-          <Btn kind="ghost" onClick={onExit} className="py-1 text-sm">
-            Exit (Esc)
-          </Btn>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FullscreenBottomBar({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) {
-  if (!show) return null;
-  return (
-    <div className="absolute bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/92 px-2 py-2 backdrop-blur sm:px-3">
-      <div className="mx-auto max-w-7xl">{children}</div>
-    </div>
-  );
-}
 
 /* =========================================================
    MEDITATION TIMER CARD
@@ -461,7 +238,8 @@ function MeditationTimerCard() {
   }, [endChime]);
 
   const cardRef = useRef<HTMLDivElement>(null);
-  const isFs = useIsFullscreen(cardRef);
+  const fullscreen = useFullscreen(cardRef);
+  const isFs = fullscreen.isFullscreen;
 
   const displayBoxRef = useRef<HTMLDivElement>(null);
   const timeTextRef = useRef<HTMLSpanElement>(null);
@@ -584,13 +362,13 @@ function MeditationTimerCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && cardRef.current) {
-      toggleFullscreen(cardRef.current);
+      void fullscreen.toggle();
     } else if (k === "l") {
       setLoop((v) => !v);
     } else if (k === "s") {
       setSound((v) => !v);
     } else if (k === "escape" && isFs) {
-      document.exitFullscreen().catch(() => {});
+      void fullscreen.exit();
     }
   };
 
@@ -619,36 +397,6 @@ function MeditationTimerCard() {
   const minutesPart = Math.floor(seconds / 60);
   const secondsPart = seconds % 60;
 
-  const SettingsChip = ({
-    checked,
-    onChange,
-    disabled,
-    label,
-    title,
-  }: {
-    checked: boolean;
-    onChange: (v: boolean) => void;
-    disabled?: boolean;
-    label: string;
-    title?: string;
-  }) => (
-    <label
-      title={title}
-      className={[
-        "inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900",
-        disabled ? "opacity-60" : "",
-      ].join(" ")}
-    >
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        disabled={disabled}
-      />
-      {label}
-    </label>
-  );
-
   return (
     <Card
       cardRef={cardRef}
@@ -659,7 +407,7 @@ function MeditationTimerCard() {
       <FullscreenTopBar
         show={isFs}
         title="Meditation Timer"
-        onExit={() => document.exitFullscreen().catch(() => {})}
+        onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
@@ -686,175 +434,87 @@ function MeditationTimerCard() {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-first-stack flex h-full flex-col"}>
-        {!isFs && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-sky-700">
-                Meditation Timer (Breathing + Yoga)
-              </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Quiet countdown with presets, optional sound, loop, and a big
-                fullscreen display.
-              </p>
-            </div>
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  cardRef.current && toggleFullscreen(cardRef.current)
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
-          </div>
-        )}
-
+      <div className={isFs ? "flex h-full flex-col" : "timer-session-stack flex h-full flex-col"}>
         {/* Controls (normal only) */}
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-3">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="order-2 mt-5 flex flex-col gap-4">
+            <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : "Start"}
               </Btn>
               <Btn kind="ghost" onClick={reset}>
                 Reset
               </Btn>
+            </ControlGroup>
 
-              <SettingsChip
-                checked={sound}
-                onChange={setSound}
-                label="Sound"
-                title="Toggle sound on/off"
-              />
-              <SettingsChip
-                checked={finalCountdownBeeps}
-                onChange={setFinalCountdownBeeps}
-                disabled={!sound}
-                label="Final beeps"
-                title="Optional soft beeps in the last 5 seconds"
-              />
-              <SettingsChip
-                checked={endChime}
-                onChange={setEndChime}
-                disabled={!sound}
-                label="End chime"
-                title="Optional gentle chime when the timer ends"
-              />
-              <SettingsChip
-                checked={loop}
-                onChange={setLoop}
-                label="Loop"
-                title="Restart automatically when finished"
-              />
-
-              <div className="sm:ml-auto timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-                Shortcuts: Space start/pause · R reset · F fullscreen · S sound
-                · L loop
-              </div>
+            <div className="mx-auto grid w-full max-w-5xl gap-4 lg:grid-cols-2">
+              <PresetGroup title="Breathing presets" className="max-w-none">
+                {breathingPresets.map((p) => (
+                  <Chip key={p.label} active={p.seconds === seconds} onClick={() => setPreset(p.seconds)} title={p.hint}>
+                    {p.label}
+                  </Chip>
+                ))}
+              </PresetGroup>
+              <PresetGroup title="Meditation + yoga presets" className="max-w-none">
+                {presets.map((p) => (
+                  <Chip key={p.label} active={p.seconds === seconds} onClick={() => setPreset(p.seconds)} title={p.hint}>
+                    {p.label}
+                  </Chip>
+                ))}
+              </PresetGroup>
             </div>
 
-            <div className="grid gap-3 lg:grid-cols-2">
-              <div>
-                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                  Breathing presets
+            <SettingGroup title="Settings">
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <Field
+                  label="Custom minutes"
+                  type="number"
+                  min={0}
+                  max={999}
+                  value={minutesPart}
+                  onChange={(e) => {
+                    const m = clamp(Number(e.target.value || 0), 0, 999);
+                    setSeconds(m * 60 + secondsPart);
+                  }}
+                />
+                <Field
+                  label="+ extra seconds"
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={secondsPart}
+                  onChange={(e) => {
+                    const s = clamp(Number(e.target.value || 0), 0, 59);
+                    setSeconds(minutesPart * 60 + s);
+                  }}
+                />
+                <div className="flex flex-wrap items-end gap-3">
+                  <Toggle checked={sound} onCheckedChange={setSound} label="Sound" title="Toggle sound on/off" />
+                  <Toggle checked={finalCountdownBeeps} onCheckedChange={setFinalCountdownBeeps} disabled={!sound} label="Final beeps" title="Optional soft beeps in the last 5 seconds" />
+                  <Toggle checked={endChime} onCheckedChange={setEndChime} disabled={!sound} label="End chime" />
+                  <Toggle checked={loop} onCheckedChange={setLoop} label="Loop" title="Restart automatically when finished" />
                 </div>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  {breathingPresets.map((p) => (
-                    <button
-                      key={p.label}
-                      type="button"
-                      onClick={() => setPreset(p.seconds)}
-                      title={p.hint}
-                      className={[
-                        "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-                        p.seconds === seconds
-                          ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                          : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                      ].join(" ")}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              </SettingRow>
+            </SettingGroup>
 
-              <div>
-                <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-                  Meditation + yoga presets
-                </div>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  {presets.map((p) => (
-                    <button
-                      key={p.label}
-                      type="button"
-                      onClick={() => setPreset(p.seconds)}
-                      title={p.hint}
-                      className={[
-                        "cursor-pointer rounded-full px-3 py-1 text-sm font-semibold transition",
-                        p.seconds === seconds
-                          ? "bg-amber-500 text-slate-900 hover:bg-amber-400"
-                          : "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50",
-                      ].join(" ")}
-                    >
-                      {p.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
 
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm font-semibold text-slate-900">
-                  Custom minutes
-                  <input
-                    type="number"
-                    min={0}
-                    max={999}
-                    value={minutesPart}
-                    onChange={(e) => {
-                      const m = clamp(Number(e.target.value || 0), 0, 999);
-                      setSeconds(m * 60 + secondsPart);
-                    }}
-                    className="mt-1 w-full rounded-lg border-2 border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                  />
-                </label>
-
-                <label className="block text-sm font-semibold text-slate-900">
-                  + extra seconds
-                  <input
-                    type="number"
-                    min={0}
-                    max={59}
-                    value={secondsPart}
-                    onChange={(e) => {
-                      const s = clamp(Number(e.target.value || 0), 0, 59);
-                      setSeconds(minutesPart * 60 + s);
-                    }}
-                    className="mt-1 w-full rounded-lg border-2 border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                  />
-                </label>
-              </div>
-
-              <div className="flex items-end gap-3">
-                <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
-                <Btn kind="ghost" onClick={reset}>
-                  Reset
-                </Btn>
-              </div>
-            </div>
+            <ShortcutHint>
+              Shortcuts: Space start/pause / R reset / F fullscreen / S sound / L loop
+            </ShortcutHint>
           </div>
         )}
 
         {/* Display */}
-        <div
-          ref={displayBoxRef}
+        <DisplayStage
+          stageRef={displayBoxRef}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
-            urgent ? "border-rose-200" : "border-slate-200",
+            "order-1 timer-display-surface relative flex flex-col items-center justify-center text-slate-950",
+            urgent ? "border-amber-200" : "border-slate-200",
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -890,7 +550,7 @@ function MeditationTimerCard() {
           >
             {shownTime}
           </span>
-        </div>
+        </DisplayStage>
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -947,32 +607,25 @@ export default function MeditationTimerPage({
   };
 
   return (
-    <main className="timer-page-shell bg-white text-slate-900">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Main Tool */}
-      <section className="timer-page-primary mx-auto max-w-7xl px-3 py-6 sm:px-4 space-y-6">
-        <div>
-          <MeditationTimerCard />
-        </div>
+      <ToolHero
+        display={<MeditationTimerCard />}
+        title="Meditation Timer"
+        description="Use a calm meditation countdown with compact bell, chime, loop, and fullscreen controls."
+      />
 
-        {/* Breadcrumb (bottom on purpose) */}
-        <p className="text-sm text-slate-600">
-          <Link to="/" className="font-medium text-slate-700 hover:underline">
-            Home
-          </Link>{" "}
-          / <span className="text-slate-900">Meditation Timer</span>
-        </p>
-      </section>
-
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
-    </main>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
+      </SeoBand>
+    </PageShell>
   );
 }

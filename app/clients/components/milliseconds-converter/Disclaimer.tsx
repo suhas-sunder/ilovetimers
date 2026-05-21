@@ -120,6 +120,18 @@ export default function Disclaimer() {
                   <span className="font-semibold text-[var(--ilt-text-primary)]">1000</span> ms
                 </li>
                 <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">1 minute</strong>:{" "}
+                  <span className="font-semibold text-[var(--ilt-text-primary)]">60000</span> ms
+                </li>
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">1 hour</strong>:{" "}
+                  <span className="font-semibold text-[var(--ilt-text-primary)]">3600000</span> ms
+                </li>
+                <li className="ilt-surface-muted p-3">
+                  <strong className="text-[var(--ilt-text-primary)]">1 day</strong>:{" "}
+                  <span className="font-semibold text-[var(--ilt-text-primary)]">86400000</span> ms
+                </li>
+                <li className="ilt-surface-muted p-3">
                   <strong className="text-[var(--ilt-text-primary)]">Half a second</strong>:{" "}
                   <span className="font-semibold text-[var(--ilt-text-primary)]">500</span> ms
                 </li>
@@ -171,6 +183,28 @@ export default function Disclaimer() {
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Multiple Timers
+                  </Link>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
+                  Working with Unix timestamps?{" "}
+                  <Link
+                    to="/epoch-unix-time-clock"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Epoch Unix Time Clock
+                  </Link>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
+                  Need a live clock display?{" "}
+                  <Link
+                    to="/digital-clock"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Digital Clock
                   </Link>
                   .
                 </div>

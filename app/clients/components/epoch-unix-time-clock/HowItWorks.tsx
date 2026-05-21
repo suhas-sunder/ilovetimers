@@ -470,6 +470,7 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/utc-clock">UTC Clock</PillLink>
+            <PillLink to="/digital-clock">Digital Clock</PillLink>
             <PillLink to="/current-local-time">Current Local Time</PillLink>
             <PillLink to="/time-zone-converter">Time Zone Converter</PillLink>
             <PillLink to="/milliseconds-converter">

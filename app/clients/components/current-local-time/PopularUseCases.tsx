@@ -71,7 +71,7 @@ export default function PopularUseCases({
       forWho:
         "Shift work, labs, training logs, dispatch/operations boards, or any environment that prefers 24-hour time.",
       notFor:
-        "If you specifically need UTC or a standardized reference time. Use UTC Clock or Atomic Clock instead.",
+        "If you specifically need UTC, use UTC Clock. If you need official time independent of your device clock, compare against the authoritative source required by your workflow.",
       links: [
         { label: "Current Local Time", href: "/current-local-time" },
         { label: "UTC Clock", href: "/utc-clock" },
@@ -100,7 +100,7 @@ export default function PopularUseCases({
       forWho:
         "Anyone troubleshooting calendar issues, missed reminders, or timezone confusion on a laptop/tablet/phone.",
       notFor:
-        "If you need a network-synced reference independent of your device clock. Use Atomic Clock instead.",
+        "If you need official time independent of your device clock, compare against the authoritative source required by your workflow.",
       links: [
         { label: "Current Local Time", href: "/current-local-time" },
         { label: "Atomic Clock", href: "/atomic-clock" },

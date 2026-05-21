@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
@@ -21,6 +22,39 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+
+const utcFaqs = [
+  {
+    question: "What is UTC?",
+    answer:
+      "UTC stands for Coordinated Universal Time. It is a shared reference time used across countries, servers, logs, aviation-style coordination, and remote teams so people do not have to guess which local timezone a timestamp uses.",
+  },
+  {
+    question: "Is UTC the same as my local time?",
+    answer:
+      "Usually no. Your local time is UTC plus or minus your timezone offset, and that offset can change with daylight saving time. This page keeps UTC as the primary display and only uses local time as a comparison view.",
+  },
+  {
+    question: "Does this clock use my browser or device time?",
+    answer:
+      "Yes. The display is calculated from your device and browser clock, formatted as UTC. If your device clock is wrong, the UTC display will be wrong by the same amount.",
+  },
+  {
+    question: "Why do logs and APIs often use UTC?",
+    answer:
+      "UTC avoids timezone ambiguity. A UTC timestamp means the same moment everywhere, which makes it easier to compare server logs, incident timelines, release notes, and API payloads across regions.",
+  },
+  {
+    question: "What is the ISO timestamp shown under the clock?",
+    answer:
+      "The ISO timestamp is a machine-readable UTC value from the same moment as the display. It is useful when copying time into logs, tickets, or systems that expect a precise date-time string.",
+  },
+  {
+    question: "Which related tool should I use instead?",
+    answer:
+      "Use Current Local Time when you want your device's local time, World Clock when you need multiple cities, Time Zone Converter when you need to convert a scheduled time, and Epoch Unix Time Clock when you need Unix timestamps.",
+  },
+] as const;
 
 /* =========================================================
    META
@@ -669,6 +703,14 @@ export default function UtcClockPage({
           { "@type": "ListItem", position: 2, name: "UTC Clock", item: url },
         ],
       },
+      {
+        "@type": "FAQPage",
+        mainEntity: utcFaqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: { "@type": "Answer", text: faq.answer },
+        })),
+      },
     ],
   };
 
@@ -686,52 +728,139 @@ export default function UtcClockPage({
         description="A large UTC time display with seconds, ISO timestamp, week number, copy, fullscreen, and quick timezone comparison."
       />
 
-      <SeoBand title="How this clock works">
-        <p>
-          UTC Clock shows the current Coordinated Universal Time as the primary
-          display, with ISO timestamp and comparison controls kept below the main
-          time. UTC is a shared reference time, so it is useful when local time
-          zones would make a schedule or log harder to read.
-        </p>
-        <h3>When UTC helps</h3>
-        <p>
-          Use UTC for remote team coordination, server logs, release notes,
-          incident timelines, aviation-style planning notes, or messages where
-          everyone needs the same time reference. The display is based on your
-          device and browser clock, so keep the device clock accurate for best
-          results.
-        </p>
-        <h3>Useful details</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Seconds make the clock useful for live coordination and timestamp
-            checks.
-          </li>
-          <li>
-            ISO timestamp output is helpful when copying a machine-readable time
-            format.
-          </li>
-          <li>
-            Local comparison rows help confirm how UTC maps to the time shown on
-            your device.
-          </li>
-        </ul>
-        <h3>Related time tools</h3>
-        <p>
-          For your browser's local time, use{" "}
-          <a className="ilt-content-link" href="/current-local-time">
-            current local time
-          </a>
-          . For multiple cities, try the{" "}
-          <a className="ilt-content-link" href="/world-clock">
-            world clock
-          </a>
-          . For converting a meeting time between zones, use the{" "}
-          <a className="ilt-content-link" href="/time-zone-converter">
-            time zone converter
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this UTC clock works">
+          <p>
+            UTC Clock shows Coordinated Universal Time as the primary display.
+            The clock reads the current moment from your device and browser,
+            then formats that moment in UTC instead of your local timezone. That
+            keeps the main display separate from local time while still giving
+            you comparison controls below the utility.
+          </p>
+          <p>
+            The page is built for quick checks: show seconds when exact timing
+            matters, switch between 12-hour and 24-hour display, copy the
+            current UTC value, and use fullscreen when a room or shared screen
+            needs a large reference clock. The ISO timestamp shown with the
+            clock is also UTC and is useful when a machine-readable value is
+            clearer than a human-readable label.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="When to use UTC">
+          <p>
+            UTC is most useful when local time would create ambiguity. Remote
+            teams use it for launch windows and incident notes. Developers use
+            it for server logs, API payloads, cron jobs, and debug timestamps.
+            Travel, operations, logistics, and aviation-style coordination also
+            benefit from one shared reference time.
+          </p>
+          <p>
+            For example, "14:00 UTC" means the same moment to someone in New
+            York, London, Vancouver, or Tokyo. Their local clocks will show
+            different wall times, but the UTC timestamp points to one shared
+            instant.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="UTC vs local time">
+          <p>
+            Local time is the time shown by your device for your configured
+            timezone. UTC is independent of your local offset. Depending on
+            where you are, your local time may be UTC-5, UTC+1, UTC+9, or
+            something else, and daylight saving time can change that offset
+            during the year.
+          </p>
+          <p>
+            This route keeps UTC first so it does not accidentally describe
+            local time as UTC. The comparison rows are there only to help you
+            understand how the current UTC moment maps to local or city times.
+            For your device's local clock, use{" "}
+            <a className="ilt-content-link" href="/current-local-time">
+              Current Local Time
+            </a>
+            . For several cities at once, use the{" "}
+            <a className="ilt-content-link" href="/world-clock">
+              World Clock
+            </a>
+            .
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Examples and copy notes">
+          <p>
+            UTC is a good fit for notes like "deploy started at 18:30 UTC",
+            "alert fired at 2026-05-21T22:14:03.000Z", or "meeting starts at
+            09:00 UTC". In those examples, the timezone is explicit, so the
+            reader does not have to infer whether the time came from the
+            writer's local clock.
+          </p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Use seconds when you are comparing live logs, events, or status
+              updates.
+            </li>
+            <li>
+              Use the ISO timestamp when you need a paste-ready value for a
+              ticket, terminal, spreadsheet, or API payload.
+            </li>
+            <li>
+              Use 24-hour mode when you want to avoid AM/PM ambiguity in
+              operations, travel, or server contexts.
+            </li>
+          </ul>
+        </ContentSection>
+
+        <ContentSection title="Accuracy and limitations">
+          <p>
+            This page formats UTC from your device and browser clock. It does
+            not contact an official time service and does not correct a
+            misconfigured device. If your operating system clock is slow, fast,
+            or set to the wrong date, the UTC display will reflect that same
+            problem.
+          </p>
+          <p>
+            For everyday coordination, logs, and scheduling notes, that browser
+            behavior is usually enough. For official metrology or regulated
+            timekeeping, compare against the authoritative time source required
+            by your organization or workflow.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Related time tools">
+          <p>
+            Need your local clock instead? Open{" "}
+            <a className="ilt-content-link" href="/current-local-time">
+              Current Local Time
+            </a>
+            . Need to convert a future meeting between locations? Use the{" "}
+            <a className="ilt-content-link" href="/time-zone-converter">
+              Time Zone Converter
+            </a>
+            . Need multiple cities on one screen? Try the{" "}
+            <a className="ilt-content-link" href="/world-clock">
+              World Clock
+            </a>
+            . Need Unix timestamps for code or logs? Use the{" "}
+            <a className="ilt-content-link" href="/epoch-unix-time-clock">
+              Epoch Unix Time Clock
+            </a>
+            .
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Frequently asked questions">
+          <div className="divide-y divide-[var(--ilt-border-subtle)]">
+            {utcFaqs.map((faq) => (
+              <details key={faq.question}>
+                <summary className="cursor-pointer py-4 font-medium text-[var(--ilt-text-primary)] hover:text-[var(--ilt-accent)]">
+                  {faq.question}
+                </summary>
+                <p className="pb-4">{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

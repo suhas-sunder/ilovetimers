@@ -37,6 +37,11 @@ export default function FAQ({
         "Yes. 2400 is commonly used to mean midnight at the end of the day. This converter treats 2400 as 00:00 (12:00 AM) and shows a note so you know how it was interpreted.",
     },
     {
+      question: "What are the most common AM/PM edge conversions?",
+      answer:
+        "12:00 AM is 00:00, 12:00 PM is 12:00, 1:05 PM is 13:05, 00:00 is 12:00 AM, and 23:59 is 11:59 PM.",
+    },
+    {
       question: "What standard time formats can I enter?",
       answer:
         "Enter a time with AM or PM, like 5 PM, 5:30 PM, 12 AM, or 12:05 am. Minutes are optional and default to 00 if omitted.",

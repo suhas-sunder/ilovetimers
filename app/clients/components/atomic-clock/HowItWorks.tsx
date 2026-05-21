@@ -130,6 +130,15 @@ export default function HowItWorks({
               </a>{" "}
               and then correct time sync in your operating system settings.
             </p>
+
+            <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
+              In everyday language, "atomic clock" usually points to official
+              high-precision time references maintained by national metrology
+              organizations. Official references such as NIST and time.gov
+              exist for that purpose. This page is different: it is an
+              atomic-style browser display with milliseconds, not a guaranteed
+              official metrology instrument or external time-sync service.
+            </p>
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
@@ -269,6 +278,9 @@ export default function HowItWorks({
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
             <PillLink href={abs("/milliseconds-converter")}>
               Milliseconds Converter
+            </PillLink>
+            <PillLink href={abs("/epoch-unix-time-clock")}>
+              Epoch Unix Time Clock
             </PillLink>
             <PillLink href={abs("/time-calculator")}>Time Calculator</PillLink>
           </div>

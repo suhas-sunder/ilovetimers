@@ -171,7 +171,7 @@ export default function HowItWorks({
               >
                 Atomic Clock
               </a>{" "}
-              for a “reference time” feel, or{" "}
+              for a millisecond device-clock display, or{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/military-time-converter")}

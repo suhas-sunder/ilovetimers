@@ -197,15 +197,15 @@ export function AccuracyAndPrivacySection() {
 
         <div className="mt-4 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
           <strong className="text-[var(--ilt-text-primary)]">Note.</strong> This clock is only
-          as accurate as your device’s time and timezone settings. For a
-          standardized reference, use{" "}
+          as accurate as your device's time and timezone settings. For UTC as a
+          shared reference, use{" "}
           <a
             href="/utc-clock"
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             UTC Clock
-          </a>{" "}
-          or{" "}
+          </a>
+          . For a millisecond device-clock display, use{" "}
           <a
             href="/atomic-clock"
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"

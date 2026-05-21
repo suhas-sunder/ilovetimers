@@ -137,20 +137,34 @@ export default function HowItWorks({
             </p>
 
             <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
+              This digital clock is intentionally focused on hours, minutes,
+              and optional seconds. It does not show milliseconds. If you need a
+              live clock with milliseconds for frame timing, cue checks, or
+              precise-looking screen recordings, use{" "}
+              <a
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
+                href={abs("/atomic-clock")}
+              >
+                Atomic Clock
+              </a>{" "}
+              instead.
+            </p>
+
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               The key point: this page displays{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">
                 your device’s time
               </span>{" "}
               and detected timezone. It does not fetch “internet time” on its
               own. If your laptop clock is off by two minutes, this page will be
-              off by two minutes. If you need a standardized reference, use{" "}
+              off by two minutes. If you need UTC as a shared reference, use{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/utc-clock")}
               >
                 UTC Clock
-              </a>{" "}
-              or{" "}
+              </a>
+              . If you need a millisecond display, use{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                 href={abs("/atomic-clock")}
@@ -438,8 +452,8 @@ export default function HowItWorks({
                 Related tools (same ecosystem, different intent)
               </div>
               <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
-                If you need multiple cities, time conversion, or a standardized
-                time source, these are better matches.
+                If you need multiple cities, time conversion, UTC, milliseconds,
+                or a different display style, these are better matches.
               </p>
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)]">
@@ -457,6 +471,10 @@ export default function HowItWorks({
             <PillLink href={abs("/atomic-clock")}>Atomic Clock</PillLink>
             <PillLink href={abs("/current-local-time")}>
               Current Local Time
+            </PillLink>
+            <PillLink href={abs("/analog-clock")}>Analog Clock</PillLink>
+            <PillLink href={abs("/fullscreen-timer")}>
+              Fullscreen Timer
             </PillLink>
           </div>
         </div>

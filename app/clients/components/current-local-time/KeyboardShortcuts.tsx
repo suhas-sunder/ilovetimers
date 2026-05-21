@@ -215,8 +215,9 @@ export function AccuracyAndPrivacySection() {
           <strong className="text-[var(--ilt-text-primary)]">Note.</strong> If you need a
           “correct” reference time independent of your device settings, use{" "}
           <strong className="text-[var(--ilt-text-primary)]">UTC Clock</strong> for a dedicated
-          UTC display or a network-synced reference like an atomic time source.
-          This page is designed to show what your device considers “local time.”
+          UTC display. For official time independent of your device settings,
+          compare against the authoritative source required by your workflow.
+          This page is designed to show what your device considers local time.
         </div>
       </div>
     </section>

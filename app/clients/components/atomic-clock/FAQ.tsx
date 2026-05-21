@@ -1,7 +1,7 @@
 import { JsonLd } from "./HowItWorks";
 
 /* =========================================================
-   5) FAQ (SEO + UX)
+   FAQ (SEO + UX)
    Schema: FAQPage (use on homepage or tool pages)
 ========================================================= */
 export type FaqItem = {
@@ -18,7 +18,6 @@ export default function FAQ({
   id?: string;
   title?: string;
 }) {
-  // Atomic-clock defaults (milliseconds + freeze/resume + fullscreen + shortcuts)
   const defaults: FaqItem[] = [
     {
       question: "What does this atomic clock show?",
@@ -28,7 +27,12 @@ export default function FAQ({
     {
       question: "Is this synced to an atomic time server?",
       answer:
-        "No. This page uses your browser/device clock for the time source. The “atomic” part refers to the style of display, not a certified atomic/NTP-synced service.",
+        "No. This page uses your browser/device clock for the time source. The atomic wording describes the millisecond display style. Official references such as NIST and time.gov exist, but this page is not a certified atomic or NTP-synced service.",
+    },
+    {
+      question: "What does atomic clock mean here?",
+      answer:
+        "Here it means an atomic-style online display: large digits, optional milliseconds, freeze/resume, and fullscreen. It does not mean the page guarantees official atomic-clock precision.",
     },
     {
       question: "How do I turn milliseconds on or off?",
@@ -53,7 +57,7 @@ export default function FAQ({
     {
       question: "Why does fullscreen sometimes not open?",
       answer:
-        "Most browsers block fullscreen unless it’s triggered by a click, tap, or keypress. Click the page/card and try again. Some mobile browsers also limit fullscreen behavior.",
+        "Most browsers block fullscreen unless it is triggered by a click, tap, or keypress. Click the page/card and try again. Some mobile browsers also limit fullscreen behavior.",
     },
     {
       question: "Why can the milliseconds look less smooth sometimes?",
@@ -63,7 +67,7 @@ export default function FAQ({
     {
       question: "Does this change time zones?",
       answer:
-        "No. This page shows your device’s local time. If you need UTC or other zones, use a UTC clock, world clock, or a time zone converter tool.",
+        "No. This page shows your device's local time. If you need UTC or other zones, use a UTC clock, world clock, or a time zone converter tool.",
     },
     {
       question: "Can I use this on a second monitor or during a presentation?",
@@ -76,9 +80,9 @@ export default function FAQ({
         "No. It runs in your browser while this page is open. If you close the tab or browser, it stops.",
     },
     {
-      question: "Does this work offline?",
+      question: "Which related time tools should I use instead?",
       answer:
-        "If the page is already loaded and your browser keeps it open, it can continue showing time without a network connection. Refreshing the page may require connectivity depending on your setup.",
+        "Use Digital Clock for a simpler seconds display, UTC Clock for UTC, Current Local Time for a local clock with copy and comparison controls, Epoch Unix Time Clock for timestamps, and Milliseconds Converter when you need to convert durations.",
     },
   ];
 
@@ -107,17 +111,11 @@ export default function FAQ({
               {f.question}
             </summary>
             <div className="px-5 pb-4 text-[var(--ilt-text-secondary)] leading-relaxed">
-              {/* Keep answers as plain text for schema consistency.
-                  If you later want clickable links, pass custom items via props. */}
               {f.answer}
             </div>
           </details>
         ))}
       </div>
-
-      {/* Note: Answers avoid clickable links for schema consistency.
-         If you want links to existing routes (digital-clock, current-local-time, utc-clock, world-clock, time-zone-converter, milliseconds-converter),
-         pass custom `items` from the page and render <Link/> there instead. */}
     </section>
   );
 }

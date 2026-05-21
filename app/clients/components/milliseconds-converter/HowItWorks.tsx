@@ -342,6 +342,23 @@ export default function HowItWorks({
             know which side is which without re-checking the original input.
           </p>
 
+          <div className="mt-6 ilt-surface-muted p-5">
+            <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
+              Common millisecond references
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
+              These are the baseline conversions people check most often:
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> 1000 ms = 1 second</span>,
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> 60000 ms = 1 minute</span>,
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> 3600000 ms = 1 hour</span>,
+              and
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> 86400000 ms = 1 day</span>.
+              They are useful when translating configuration timeouts, video or
+              audio offsets, game and animation timings, lab timing notes, and
+              stopwatch-style measurements into a unit people can read.
+            </p>
+          </div>
+
           <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
             Scenarios with concrete examples (what you will see here)
           </h3>
@@ -507,7 +524,11 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/time-calculator">Time Calculator</PillLink>
+            <PillLink to="/epoch-unix-time-clock">
+              Epoch Unix Time Clock
+            </PillLink>
             <PillLink to="/stopwatch">Stopwatch</PillLink>
+            <PillLink to="/digital-clock">Digital Clock</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
             <PillLink to="/online-timer">Online Timer</PillLink>

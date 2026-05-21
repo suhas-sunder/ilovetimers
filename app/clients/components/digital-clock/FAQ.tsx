@@ -18,7 +18,6 @@ export default function FAQ({
   id?: string;
   title?: string;
 }) {
-  // Digital Clock defaults (page-specific)
   const defaults: FaqItem[] = [
     {
       question: "What does this Digital Clock do?",
@@ -28,7 +27,12 @@ export default function FAQ({
     {
       question: "Is this showing my local time or an internet/atomic time?",
       answer:
-        "This page shows your device’s local time and detected timezone. If your device time is wrong, the clock will be wrong. For a standardized reference, use the UTC Clock or Atomic Clock.",
+        "This page shows your device's local time and detected timezone. If your device time is wrong, the clock will be wrong. For UTC as a shared reference, use the UTC Clock. For a millisecond device-clock display, use Atomic Clock.",
+    },
+    {
+      question: "Does the Digital Clock show milliseconds?",
+      answer:
+        "No. Digital Clock is focused on a large hours/minutes display with optional seconds. If you need a live clock with milliseconds, use Atomic Clock instead.",
     },
     {
       question: "How do I switch between 12-hour and 24-hour time?",
@@ -55,7 +59,7 @@ export default function FAQ({
         "Copy includes the displayed time, your timezone, the date, and an ISO timestamp. This makes it easy to paste a clear time reference into notes, chat, or logs.",
     },
     {
-      question: "Why don’t keyboard shortcuts work until I click the clock?",
+      question: "Why don't keyboard shortcuts work until I click the clock?",
       answer:
         "Shortcuts work when the clock card has focus. Click/tap the clock once, then use F for fullscreen, C to copy, S for seconds, and 1/2 for 12/24-hour.",
     },
@@ -67,7 +71,7 @@ export default function FAQ({
     {
       question: "Which related time tools should I use instead?",
       answer:
-        "Use World Clock for multiple cities, Time Zone Converter to plan calls across zones, UTC Clock for UTC time, or Atomic Clock for a network-synced reference display.",
+        "Use World Clock for multiple cities, Time Zone Converter to plan calls across zones, UTC Clock for UTC time, Atomic Clock for milliseconds, Analog Clock for a clock-face display, or Fullscreen Timer when you need a countdown instead of a clock.",
     },
   ];
 

@@ -165,6 +165,18 @@ export default function HowItWorks({
               sounds small, but it helps you avoid copying the wrong side when
               you are moving quickly through a list of times.
             </p>
+
+            <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
+              The common edge cases are handled directly:{" "}
+              <span className="font-semibold text-[var(--ilt-text-primary)]">12:00 AM = 00:00</span>,
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> 12:00 PM = 12:00</span>,
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> 1:05 PM = 13:05</span>,
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> 00:00 = 12:00 AM</span>,
+              and
+              <span className="font-semibold text-[var(--ilt-text-primary)]"> 23:59 = 11:59 PM</span>.
+              The special notation 2400 is accepted as end-of-day midnight and
+              is treated as 00:00 with a note.
+            </p>
           </div>
 
           <div className="flex flex-wrap gap-2 sm:justify-end">
@@ -519,7 +531,11 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/time-zone-converter">Time Zone Converter</PillLink>
+            <PillLink to="/utc-clock">UTC Clock</PillLink>
             <PillLink to="/time-calculator">Time Calculator</PillLink>
+            <PillLink to="/work-hours-calculator">
+              Work Hours Calculator
+            </PillLink>
             <PillLink to="/current-local-time">Current Local Time</PillLink>
             <PillLink to="/atomic-clock">Atomic Clock</PillLink>
             <PillLink to="/world-clock">World Clock</PillLink>

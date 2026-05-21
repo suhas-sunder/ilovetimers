@@ -177,12 +177,12 @@ export default function Disclaimer() {
                 </div>
 
                 <div className="ilt-surface-muted p-3">
-                  Want an always-accurate reference clock?{" "}
+                  Need UTC as a shared reference time?{" "}
                   <Link
-                    to="/atomic-clock"
+                    to="/utc-clock"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
-                    Atomic Clock
+                    UTC Clock
                   </Link>
                   .
                 </div>

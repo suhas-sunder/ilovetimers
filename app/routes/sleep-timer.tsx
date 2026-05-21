@@ -12,6 +12,7 @@ import {
 import {
   Button as Btn,
   ControlGroup,
+  ContentSection,
   DisplayStage,
   Field,
   FullscreenBottomBar,
@@ -37,7 +38,7 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
 export function meta({}: Route.MetaArgs) {
   const title = "Sleep Timer (Countdown for Bedtime, Fullscreen)";
   const description =
-    "Set a simple sleep timer with a gentle countdown before bed. Use it to time music, reading, or winding down with a calm, distraction-free display.";
+    "Set a quiet bedtime countdown for reading, device-off reminders, music timing, or a short nap timer with dim mode and optional sound.";
 
   const url = "https://www.ilovetimers.com/sleep-timer";
 
@@ -564,49 +565,57 @@ export default function SleepTimerPage({
         description="Set a quiet bedtime countdown with soft alarm, dim mode, presets, and fullscreen support."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Sleep Timer is a quiet countdown for reading, music, lights-out
-          routines, or any simple end-of-evening task. Bedtime presets, custom
-          minutes, soft alarm behavior, dim mode, optional sound, fullscreen,
-          and keyboard shortcuts stay below the main display.
-        </p>
-        <h3>When to use it</h3>
-        <p>
-          Use it when you want a visible countdown before stopping an activity or
-          switching off a screen. It can support a bedtime routine, but it is not
-          medical sleep advice and does not make claims about sleep quality.
-        </p>
-        <h3>Calm settings</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Presets make common bedtime countdown lengths quick to start.
-          </li>
-          <li>
-            Dim mode reduces visual intensity while keeping the remaining time
-            readable.
-          </li>
-          <li>
-            Soft alarm and sound settings can be used when an audio cue is
-            wanted, or left off when the timer should stay quiet.
-          </li>
-        </ul>
-        <h3>Related tools</h3>
-        <p>
-          For no-sound countdowns, use the{" "}
-          <a className="ilt-content-link" href="/silent-timer">
-            silent timer
-          </a>
-          . For a calmer timed session, try the{" "}
-          <a className="ilt-content-link" href="/meditation-timer">
-            meditation timer
-          </a>
-          . For a direct alarm time, use the{" "}
-          <a className="ilt-content-link" href="/alarm-timer">
-            alarm timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this sleep timer works">
+          <p>
+            Sleep Timer is a quiet countdown for bedtime-adjacent tasks such as
+            reading, music timing, a device-off reminder, a wind-down window, or
+            a short nap countdown. Choose a preset or custom minutes, then use
+            start, pause, reset, dim mode, soft alarm, optional sound,
+            fullscreen, and keyboard shortcuts as needed.
+          </p>
+          <p>
+            The timer stays visible first and keeps settings below the display.
+            Dim mode changes the visual intensity while keeping the remaining
+            time readable; soft alarm and sound can be left off when you want a
+            quiet page.
+          </p>
+        </ContentSection>
+        <ContentSection title="When to use it">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>Set 15 minutes for reading before stopping.</li>
+            <li>Use 30 minutes as a device-off reminder.</li>
+            <li>Use a short preset for a nap countdown or quiet pause.</li>
+            <li>
+              Keep sound off if a visual countdown is enough for the room.
+            </li>
+          </ul>
+          <p>
+            This is a browser countdown, not medical sleep advice, and it does
+            not make claims about sleep quality.
+          </p>
+        </ContentSection>
+        <ContentSection title="Related quiet timers">
+          <p>
+            For no-sound countdowns, use the{" "}
+            <a className="ilt-content-link" href="/silent-timer">
+              silent timer
+            </a>
+            . For a quiet timed session, try the{" "}
+            <a className="ilt-content-link" href="/meditation-timer">
+              meditation timer
+            </a>
+            . For a direct alarm time, use the{" "}
+            <a className="ilt-content-link" href="/alarm-timer">
+              alarm timer
+            </a>
+            . For daytime pause timing, use the{" "}
+            <a className="ilt-content-link" href="/break-timer">
+              break timer
+            </a>
+            .
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

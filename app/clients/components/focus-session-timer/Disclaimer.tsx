@@ -26,7 +26,7 @@ export default function Disclaimer() {
           {/* What this page is for (tight, user-first) */}
           <div className="mt-3 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
             <strong className="text-[var(--ilt-text-primary)]">
-              Use this page for a single, distraction-free deep work countdown.
+              Use this page for a single work countdown with a clean display.
             </strong>{" "}
             Choose one session length, start the timer, and keep the display
             clean. When you finish, you will get a short break suggestion.
@@ -51,7 +51,7 @@ export default function Disclaimer() {
             </div>
 
             <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
-              <strong className="text-[var(--ilt-text-primary)]">Fullscreen focus.</strong> Go
+              <strong className="text-[var(--ilt-text-primary)]">Fullscreen display.</strong> Go
               fullscreen for a big, readable countdown. In fullscreen, you can
               click/tap the timer to start or pause.
             </div>
@@ -99,8 +99,8 @@ export default function Disclaimer() {
               </div>
               <ul className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
                 <li className="ilt-surface-muted p-3">
-                  <strong className="text-[var(--ilt-text-primary)]">Deep work block</strong>:
-                  45 to 90 minutes on one task, no interruptions.
+                  <strong className="text-[var(--ilt-text-primary)]">Focused work block</strong>:
+                  45 to 90 minutes on one task with a visible finish time.
                 </li>
                 <li className="ilt-surface-muted p-3">
                   <strong className="text-[var(--ilt-text-primary)]">Study sprint</strong>: set
@@ -199,7 +199,7 @@ export default function Disclaimer() {
             <details className="group">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-1 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] ilt-focus-ring">
                 <span>
-                  How it behaves (accuracy, sound, fullscreen, shortcuts)
+                  How it behaves (timing, sound, fullscreen, shortcuts)
                 </span>
                 <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
                   ▼
@@ -209,12 +209,13 @@ export default function Disclaimer() {
               <div className="mt-2 grid gap-3 text-sm text-[var(--ilt-text-secondary)] sm:grid-cols-2">
                 <div className="ilt-surface-muted p-4">
                   <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-muted)]">
-                    Countdown accuracy
+                    Countdown timing
                   </div>
                   <p className="mt-2">
-                    The timer anchors to an absolute end time, then computes the
-                    remaining time from your device clock. This helps keep the
-                    countdown steady even if the tab stutters.
+                    The timer anchors to a target end time, then computes the
+                    remaining time from your device clock. Browser scheduling,
+                    sleeping devices, and power-saving modes can still affect
+                    animation smoothness and sound timing.
                   </p>
                 </div>
 

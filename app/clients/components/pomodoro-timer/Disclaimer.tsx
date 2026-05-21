@@ -30,8 +30,8 @@ export default function Disclaimer() {
               about what comes next.
             </strong>{" "}
             Start a 25/5 routine (or your own timings), let it switch phases for
-            you, and use fullscreen when you want a clean, distraction-free
-            display. Skip ahead when you need to, or turn off auto-advance for
+            you, and use fullscreen when you want a clean, minimal display.
+            Skip ahead when you need to, or turn off auto-advance for
             manual control.
           </div>
 
@@ -69,7 +69,7 @@ export default function Disclaimer() {
             </div>
 
             <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
-              <strong className="text-[var(--ilt-text-primary)]">Fullscreen focus.</strong> Go
+              <strong className="text-[var(--ilt-text-primary)]">Fullscreen display.</strong> Go
               fullscreen for a large countdown. In fullscreen you can{" "}
               <strong className="text-[var(--ilt-text-primary)]">tap/click the time</strong> to
               start or pause.
@@ -114,9 +114,9 @@ export default function Disclaimer() {
               </div>
               <ul className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
                 <li className="ilt-surface-muted p-3">
-                  <strong className="text-[var(--ilt-text-primary)]">Deep work blocks</strong>:
-                  a clear countdown and automatic breaks to reduce decision
-                  fatigue.
+                  <strong className="text-[var(--ilt-text-primary)]">Work blocks</strong>:
+                  a clear countdown and automatic breaks so the next phase is
+                  visible.
                 </li>
                 <li className="ilt-surface-muted p-3">
                   <strong className="text-[var(--ilt-text-primary)]">Study sessions</strong>:
@@ -185,7 +185,7 @@ export default function Disclaimer() {
                 </div>
 
                 <div className="ilt-surface-muted p-3">
-                  Want the biggest distraction-free display?{" "}
+                  Want the biggest minimal display?{" "}
                   <Link
                     to="/fullscreen-timer"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"

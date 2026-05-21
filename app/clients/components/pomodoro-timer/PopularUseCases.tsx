@@ -21,11 +21,13 @@ export default function PopularUseCases({
       title: "Classic 25/5 focus cycles",
       description:
         "Run 25-minute work blocks with 5-minute short breaks and repeat for the number of cycles you choose.",
-      forWho: "Study, writing, coding, reading, and focused desk work.",
+      forWho:
+        "Study blocks, writing sessions, coding sessions, chores, admin tasks, review sessions, and focused desk work.",
       notFor:
         "A single one-off countdown with no phase switching. Use Countdown Timer for that.",
       links: [
         { label: "Study Timer", href: "/study-timer" },
+        { label: "Productivity Timer", href: "/productivity-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
       ],
     },
@@ -61,6 +63,8 @@ export default function PopularUseCases({
       notFor:
         "A no-sound timer by default. Use Silent Timer if quiet completion is the main requirement.",
       links: [
+        { label: "Focus Session Timer", href: "/focus-session-timer" },
+        { label: "Time Blocking Clock", href: "/time-blocking-clock" },
         { label: "Fullscreen Timer", href: "/fullscreen-timer" },
         { label: "Silent Timer", href: "/silent-timer" },
       ],

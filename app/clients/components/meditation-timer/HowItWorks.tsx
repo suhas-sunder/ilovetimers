@@ -532,7 +532,7 @@ export default function HowItWorks({
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
               <div className="font-semibold text-[var(--ilt-text-primary)]">
-                Countdown accuracy
+                Countdown timing
               </div>
               <p className="mt-1 leading-relaxed">
                 The countdown targets the end time using a monotonic clock

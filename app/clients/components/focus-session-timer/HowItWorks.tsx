@@ -14,7 +14,7 @@ export function JsonLd({ data }: { data: any }) {
 /* =========================================================
    1) HOW IT WORKS (trust + SEO + user intent)
    Notes:
-   - Focus Session Timer intent: single deep work countdown.
+   - Focus Session Timer intent: single work countdown.
      Presets, custom minutes, fullscreen, start/pause/reset,
      optional sound, optional final beeps (last 5s), keyboard shortcuts.
    - Tool-focused, not an educational blog.
@@ -35,7 +35,7 @@ export default function HowItWorks({
   const howToLd = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: "How to use the Focus Session Timer (single deep work countdown)",
+    name: "How to use the Focus Session Timer (single work countdown)",
     description:
       "Run one clean focus session countdown. Choose a preset or custom minutes, start/pause/reset with keyboard shortcuts, use fullscreen for a big display, and optionally enable sound and final beeps.",
     url: canonicalUrl,
@@ -130,7 +130,7 @@ export default function HowItWorks({
             <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               This is not a “system” that tries to manage your day or force a
               specific method. It is a practical, one-session timer that works
-              well for deep work, study sprints, writing, coding, admin
+              well for focused work, study sprints, writing, coding, admin
               clean-up, and any timebox where you want a visible finish line. If
               you want cycles and built-in breaks, use a dedicated cycle tool
               instead.
@@ -145,8 +145,8 @@ export default function HowItWorks({
               <span className="font-semibold text-[var(--ilt-text-primary)]">MM:SS</span> style
               countdown (for example{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">25:00</span>).
-              Fullscreen is available when you want a big, distraction-free
-              clock on a second monitor or during a screen share.
+              Fullscreen is available when you want a big, minimal clock on a
+              second monitor or during a screen share.
             </p>
           </div>
 
@@ -311,7 +311,7 @@ export default function HowItWorks({
 
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             <ExampleBlock
-              title="Scenario 1: 45-minute deep work block (single task)"
+              title="Scenario 1: 45-minute focused work block (single task)"
               subtitle="A straightforward session where you want one finish line"
               lines={[
                 "Setup:",
@@ -590,7 +590,7 @@ export default function HowItWorks({
         {/* Small SEO anchor text without being bloggy */}
         <div className="mt-6 ilt-surface-muted px-4 py-3 text-sm text-[var(--ilt-text-secondary)]">
           <strong className="text-[var(--ilt-text-primary)]">In one sentence:</strong> this is a
-          fullscreen focus session timer for a single deep work countdown, with
+          fullscreen focus session timer for a single work countdown, with
           presets, custom minutes, optional sound and final beeps, and keyboard
           shortcuts for fast control.
         </div>

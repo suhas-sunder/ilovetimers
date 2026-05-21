@@ -12,6 +12,7 @@ import {
 import {
   Button as Btn,
   ControlGroup,
+  ContentSection,
   DisplayStage,
   Field,
   FullscreenBottomBar,
@@ -37,7 +38,7 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
 export function meta({}: Route.MetaArgs) {
   const title = "Study Timer (Focus & Homework, Fullscreen)";
   const description =
-    "Stay focused while studying with a simple study timer. Run distraction-free study sessions using a clear fullscreen countdown built for homework and deep focus.";
+    "Structure study blocks with a simple study timer, clear countdown, fullscreen display, optional sound, milestones, and end-time visibility.";
 
   const url = "https://www.ilovetimers.com/study-timer";
 
@@ -591,51 +592,75 @@ export default function StudyTimerPage({
         description="Run a large, quiet study countdown with presets, focus mode, optional sound, milestones, and fullscreen mode."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Study Timer keeps a study block visible first, then places presets,
-          custom duration, optional sound, focus mode, milestone labels,
-          end-time visibility, fullscreen, and keyboard shortcuts below the
-          countdown. The result is a simple block timer for reading, review, and
-          focused homework.
-        </p>
-        <h3>When to use it</h3>
-        <p>
-          Use it for single-subject study blocks, reading sessions, problem
-          sets, flashcard review, writing time, or deep work that does not need a
-          repeating Pomodoro cycle. The timer can help structure a session, but
-          it does not guarantee academic performance.
-        </p>
-        <h3>Useful settings</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Presets cover common study lengths so a session can start quickly.
-          </li>
-          <li>
-            End-time visibility helps you see when the current block is expected
-            to finish.
-          </li>
-          <li>
-            Focus mode keeps the active countdown visually quiet when you do not
-            need extra labels.
-          </li>
-        </ul>
-        <h3>Related tools</h3>
-        <p>
-          For work and break cycles, use the{" "}
-          <a className="ilt-content-link" href="/pomodoro-timer">
-            Pomodoro timer
-          </a>
-          . For a single focused block, try the{" "}
-          <a className="ilt-content-link" href="/focus-session-timer">
-            focus session timer
-          </a>
-          . For a short pause after studying, use the{" "}
-          <a className="ilt-content-link" href="/break-timer">
-            break timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this study timer works">
+          <p>
+            Study Timer keeps the active study block first: the countdown, ready
+            state, running state, and completion state are the main event. Below
+            the display you can choose presets, set a custom duration, toggle
+            sound, use focus mode, show milestones, reveal the expected end
+            time, enter fullscreen, and use keyboard shortcuts.
+          </p>
+          <p>
+            It is useful for homework, reading, flashcard review, timed problem
+            sets, writing drafts, exam-prep practice, or review windows where a
+            visible stop point helps you plan the session. It helps structure
+            time, but it does not make academic-performance claims.
+          </p>
+        </ContentSection>
+        <ContentSection title="Study examples and settings">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Use a 20 or 25 minute preset for a short reading block or a
+              flashcard pass.
+            </li>
+            <li>
+              Use a 45 or 60 minute preset for a longer homework block, then
+              take a separate break if needed.
+            </li>
+            <li>
+              Turn on end-time visibility when you want to know the expected
+              finish time before starting.
+            </li>
+            <li>
+              Use milestone labels when you want visible checkpoints during a
+              longer session; use focus mode when the countdown alone is enough.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Related study timers">
+          <p>
+            For structured work and break cycles, use the{" "}
+            <a className="ilt-content-link" href="/pomodoro-timer">
+              Pomodoro timer
+            </a>
+            . For one focused countdown without study-specific labels, use the{" "}
+            <a className="ilt-content-link" href="/focus-session-timer">
+              focus session timer
+            </a>
+            . For a quiet room, use the{" "}
+            <a className="ilt-content-link" href="/silent-timer">
+              silent timer
+            </a>
+            . For timed practice sections, use the{" "}
+            <a className="ilt-content-link" href="/exam-timer">
+              exam timer
+            </a>
+            . For a short pause after studying, use the{" "}
+            <a className="ilt-content-link" href="/break-timer">
+              break timer
+            </a>
+            .
+          </p>
+        </ContentSection>
+        <ContentSection title="Limits to keep in mind">
+          <p>
+            This page runs in your browser and depends on the device staying
+            awake, the tab remaining available, and your audio settings if sound
+            is enabled. For proctored or formal timing, follow the rules for
+            your class, school, or test environment.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

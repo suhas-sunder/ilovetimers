@@ -78,7 +78,7 @@ export default function FAQ({
     {
       question: "Which related timers should I use instead?",
       answer:
-        "Use Countdown Timer for a one-time countdown, Multiple Timers for several reminders at once, Silent Timer for a no-sound setup, or Fullscreen Timer for a big display without repeating reminders.",
+        "Use Break Timer for a short pause, Focus Session Timer for one timed work block, Time Blocking Clock for named blocks across a day, Silent Timer for a no-sound setup, Countdown Timer for a one-time countdown, Multiple Timers for several reminders at once, or Fullscreen Timer for a big display without repeating reminders.",
     },
   ];
 

@@ -105,6 +105,27 @@ export default function FAQ({
           >
             Focus Session Timer
           </Link>
+          . Setting a bedtime-adjacent countdown?{" "}
+          <Link
+            to="/sleep-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Sleep Timer
+          </Link>
+          . Timing holds or short routines?{" "}
+          <Link
+            to="/stretch-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Stretch Timer
+          </Link>
+          . Need a simple work-break countdown?{" "}
+          <Link
+            to="/break-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Break Timer
+          </Link>
           .
         </>
       ),

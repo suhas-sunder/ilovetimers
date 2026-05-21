@@ -35,7 +35,7 @@ import PopularUseCases from "~/clients/components/focus-session-timer/PopularUse
 export function meta({}: Route.MetaArgs) {
   const title = "Focus Session Timer (Single Deep Work Countdown, Fullscreen)";
   const description =
-    "Free focus session timer for deep work. Choose one session length, start a distraction-free countdown, use fullscreen mode, and get a short break suggestion when you finish.";
+    "Free focus session timer for one work block. Choose one session length, start a clear countdown, use fullscreen mode, and get a short break suggestion when you finish.";
 
   const url = "https://www.ilovetimers.com/focus-session-timer";
 
@@ -541,7 +541,7 @@ export default function FocusSessionTimerPage({
         name: "Focus Session Timer",
         url,
         description:
-          "Focus session timer for deep work. Set a single session length, use fullscreen, optional sound, and a clean countdown.",
+          "Focus session timer for one work block. Set a single session length, use fullscreen, optional sound, and a clean countdown.",
       },
       {
         "@type": "BreadcrumbList",
@@ -573,7 +573,7 @@ export default function FocusSessionTimerPage({
       <ToolHero
         display={<FocusSessionCard />}
         title="Focus Session Timer"
-        description="Choose a focus session length, start the countdown, and keep deep-work controls secondary to the active timer."
+        description="Choose a focus session length, start the countdown, and keep session controls secondary to the active timer."
       />
 
       <SeoBand>

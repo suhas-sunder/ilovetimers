@@ -144,7 +144,7 @@ export function AccuracyAndPrivacySection() {
                 Technical notes (timing, sound, fullscreen)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
-                Optional details about accuracy across tab switches, audio
+                Optional details about timing across tab switches, audio
                 requirements, and phase behavior
               </div>
             </div>
@@ -156,16 +156,17 @@ export function AccuracyAndPrivacySection() {
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
               <div className="font-semibold text-[var(--ilt-text-primary)]">
-                Timer accuracy across tab switches
+                Timer behavior across tab switches
               </div>
               <p className="mt-1 leading-relaxed">
-                While running, the timer uses a real end time, which helps it
-                stay accurate through normal tab switches and brief pauses in
-                rendering.
+                While running, the timer uses a target end time and recalculates
+                remaining time from the device clock during normal tab switches
+                and brief pauses in rendering.
               </p>
               <p className="mt-2 leading-relaxed">
-                Power-saving modes can reduce animation smoothness, but
-                remaining time is still computed from the end time.
+                Power-saving modes can reduce animation smoothness and delay
+                audio cues, but the visible countdown is recomputed from the
+                target end time when the page updates.
               </p>
             </div>
 

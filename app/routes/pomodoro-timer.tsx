@@ -39,7 +39,7 @@ import PopularUseCases from "~/clients/components/pomodoro-timer/PopularUseCases
 export function meta({}: Route.MetaArgs) {
   const title = "Pomodoro Timer (25/5 Focus Cycles, Fullscreen)";
   const description =
-    "Stay focused with a clean Pomodoro timer. Run 25/5 work and break cycles, adjust timings, and keep deep work sessions on track with a clear countdown.";
+    "Run Pomodoro-style work and break cycles with adjustable timings, auto-advance, optional sound, long breaks, and a clear countdown.";
 
   const url = "https://www.ilovetimers.com/pomodoro-timer";
 

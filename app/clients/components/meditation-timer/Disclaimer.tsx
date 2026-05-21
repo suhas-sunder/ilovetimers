@@ -26,8 +26,8 @@ export default function Disclaimer() {
           {/* What this page is for (tight, user-first) */}
           <div className="mt-3 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
             <strong className="text-[var(--ilt-text-primary)]">
-              Use this page for a calm, distraction-free countdown for
-              meditation, breathing exercises, or yoga.
+              Use this page for a quiet, minimal countdown for meditation,
+              breathing exercises, or yoga.
             </strong>{" "}
             Pick a preset or set a custom time, then start. Go fullscreen for a
             large, readable display, and optionally enable a gentle end chime,
@@ -38,13 +38,13 @@ export default function Disclaimer() {
             <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
               <strong className="text-[var(--ilt-text-primary)]">Quick presets.</strong> Choose
               common meditation lengths (5, 10, 15, 20, 30 minutes and more) or
-              short sessions for quick resets.
+              short sessions for brief quiet blocks.
             </div>
 
             <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
               <strong className="text-[var(--ilt-text-primary)]">Breathing options.</strong> Use
               breathing presets (including box breathing practice) when you want
-              a structured, timed breathing block without distractions.
+              a structured, timed breathing block with simple timing.
             </div>
 
             <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">

@@ -12,6 +12,7 @@ import {
 import {
   Button as Btn,
   ControlGroup,
+  ContentSection,
   DisplayStage,
   Field,
   FullscreenBottomBar,
@@ -38,7 +39,7 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
 export function meta({}: Route.MetaArgs) {
   const title = "Stretch Timer (Mobility & Yoga Intervals, Fullscreen)";
   const description =
-    "Guide your stretching with a simple interval stretch timer. Alternate stretch and rest periods with a clear fullscreen countdown built for mobility work.";
+    "Run stretch and rest intervals with rounds, presets, optional sound, and a clear fullscreen countdown for simple routines.";
 
   const url = "https://www.ilovetimers.com/stretch-timer";
 
@@ -704,49 +705,57 @@ export default function StretchTimerPage({
         description="Alternate stretch and rest intervals with the active interval timer kept large and readable."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Stretch Timer alternates stretch intervals and rest intervals for a
-          simple routine. Choose a preset or set custom stretch, rest, and round
-          values, then keep the current interval display large while optional
-          cues, fullscreen, and keyboard shortcuts stay below the tool.
-        </p>
-        <h3>When to use it</h3>
-        <p>
-          Use it for short mobility routines, desk breaks, cooldowns, yoga-style
-          holds, or repeated stretch/rest sequences. Choose durations that fit
-          your own routine and comfort level; this timer is not medical advice
-          and does not promise flexibility, pain relief, or injury prevention.
-        </p>
-        <h3>Useful settings</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Stretch length controls how long each active hold or movement lasts.
-          </li>
-          <li>
-            Rest length gives time to switch position before the next interval.
-          </li>
-          <li>
-            Rounds repeat the same sequence without rebuilding the timer between
-            stretches.
-          </li>
-        </ul>
-        <h3>Related tools</h3>
-        <p>
-          For short non-stretch pauses, use the{" "}
-          <a className="ilt-content-link" href="/break-timer">
-            break timer
-          </a>
-          . For workout recovery intervals, try the{" "}
-          <a className="ilt-content-link" href="/rest-timer">
-            rest timer
-          </a>
-          . For a quieter timed session, use the{" "}
-          <a className="ilt-content-link" href="/meditation-timer">
-            meditation timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this stretch timer works">
+          <p>
+            Stretch Timer alternates stretch intervals and rest intervals for a
+            simple routine. Choose a preset or set custom stretch length, rest
+            length, and rounds, then keep the current interval display large
+            while optional cues, fullscreen, and keyboard shortcuts stay below
+            the tool.
+          </p>
+          <p>
+            Use Next when you want to move to the next stretch or rest interval
+            early. Reset returns the routine to the beginning with the current
+            settings.
+          </p>
+        </ContentSection>
+        <ContentSection title="Examples and settings">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>Use short stretch and rest intervals for a desk break sequence.</li>
+            <li>Use longer rounds for yoga-style holds or a cooldown routine.</li>
+            <li>Use rest intervals to switch position before the next stretch.</li>
+            <li>
+              Choose durations appropriate for your own routine and comfort
+              level.
+            </li>
+          </ul>
+          <p>
+            This timer is not medical advice and does not promise flexibility,
+            pain relief, or injury prevention.
+          </p>
+        </ContentSection>
+        <ContentSection title="Related movement timers">
+          <p>
+            For short non-stretch pauses, use the{" "}
+            <a className="ilt-content-link" href="/break-timer">
+              break timer
+            </a>
+            . For rest intervals between sets, try the{" "}
+            <a className="ilt-content-link" href="/rest-timer">
+              rest timer
+            </a>
+            . For a quiet timed session, use the{" "}
+            <a className="ilt-content-link" href="/meditation-timer">
+              meditation timer
+            </a>
+            . For fuller exercise intervals, use the{" "}
+            <a className="ilt-content-link" href="/workout-timer">
+              workout timer
+            </a>
+            .
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

@@ -12,6 +12,7 @@ import {
 import {
   Button as Btn,
   ControlGroup,
+  ContentSection,
   DisplayStage,
   Field,
   FullscreenBottomBar,
@@ -38,7 +39,7 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
 export function meta({}: Route.MetaArgs) {
   const title = "Productivity Timer (Focus & Deep Work, Fullscreen)";
   const description =
-    "Stay focused with a simple productivity timer. Run deep work sessions, structured breaks, and focus blocks with a clear fullscreen countdown.";
+    "Structure work sessions, break blocks, and task batches with a clear productivity timer and fullscreen countdown.";
 
   const url = "https://www.ilovetimers.com/productivity-timer";
 
@@ -750,50 +751,87 @@ export default function ProductivityTimerPage({
         description="Run structured productivity sessions with a large active phase timer and compact controls below it."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Productivity Timer runs structured work and break blocks while keeping
-          the current phase and remaining time first. Presets, mode choices,
-          auto-advance, optional sound, fullscreen, and keyboard shortcuts stay
-          below the display so the active block remains easy to read.
-        </p>
-        <h3>How it differs from Pomodoro</h3>
-        <p>
-          Pomodoro timing is usually a specific work/break rhythm. This
-          productivity timer is broader: it can be used for deep work blocks,
-          admin sprints, writing sessions, or planned breaks where the selected
-          mode and current session matter more than following one fixed method.
-        </p>
-        <h3>Useful settings</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Mode presets help switch between focused work and break-oriented
-            sessions without rebuilding the timer.
-          </li>
-          <li>
-            Auto-advance can move through phases when you want a hands-off
-            rhythm.
-          </li>
-          <li>
-            Sound can mark transitions when an audible cue fits the workspace.
-          </li>
-        </ul>
-        <h3>Related productivity tools</h3>
-        <p>
-          For a classic focus/break method, use the{" "}
-          <a className="ilt-content-link" href="/pomodoro-timer">
-            Pomodoro timer
-          </a>
-          . For a single deep-work block, try the{" "}
-          <a className="ilt-content-link" href="/focus-session-timer">
-            focus session timer
-          </a>
-          . For planning a day by blocks, use the{" "}
-          <a className="ilt-content-link" href="/time-blocking-clock">
-            time-blocking clock
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this productivity timer works">
+          <p>
+            Productivity Timer runs a visible work or break session based on the
+            mode and preset you choose. The active phase, remaining time,
+            session count, and controls stay in the utility area, while settings
+            such as auto-advance, sound, fullscreen, and keyboard shortcuts
+            remain close enough to adjust without turning the page into a setup
+            form.
+          </p>
+          <p>
+            Use it when you want a flexible work timer rather than one fixed
+            method. It can structure task batching, admin work, writing blocks,
+            code review, planning, inbox cleanup, or light routines where the
+            selected session length matters more than following a strict
+            Pomodoro cycle.
+          </p>
+        </ContentSection>
+        <ContentSection title="Productivity timer, Pomodoro, and time blocking">
+          <p>
+            A{" "}
+            <a className="ilt-content-link" href="/pomodoro-timer">
+              Pomodoro timer
+            </a>{" "}
+            is best when you want repeatable work and break cycles. A{" "}
+            <a className="ilt-content-link" href="/focus-session-timer">
+              focus session timer
+            </a>{" "}
+            is simpler when you only need one focused countdown. This page sits
+            between them: it gives you work and break modes, presets, optional
+            auto-advance, and a large display without requiring a full daily
+            schedule.
+          </p>
+          <p>
+            If you are planning a whole day by named blocks, the{" "}
+            <a className="ilt-content-link" href="/time-blocking-clock">
+              time-blocking clock
+            </a>{" "}
+            is a better fit. Use this page for the active block you are timing
+            right now.
+          </p>
+        </ContentSection>
+        <ContentSection title="Settings and examples">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Use work presets for a task batch such as 20 minutes of email,
+              45 minutes of writing, or 60 minutes of focused project work.
+            </li>
+            <li>
+              Use break presets when you want a bounded pause between sessions
+              without opening a separate page.
+            </li>
+            <li>
+              Turn on auto-advance only when you want the next phase to begin
+              automatically; leave it off when you prefer to decide manually.
+            </li>
+            <li>
+              Keep sound off in shared spaces, or turn it on when an audible
+              transition cue fits your workspace.
+            </li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Limitations and related tools">
+          <p>
+            This is a browser timer for structuring time; it does not guarantee
+            productivity or decide what you should work on. Background tabs,
+            sleeping devices, muted audio, and browser power-saving behavior can
+            affect cues and animation smoothness.
+          </p>
+          <p>
+            For a dedicated pause, use the{" "}
+            <a className="ilt-content-link" href="/break-timer">
+              break timer
+            </a>
+            . For keeping a group agenda visible, use the{" "}
+            <a className="ilt-content-link" href="/meeting-timer">
+              meeting timer
+            </a>
+            .
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

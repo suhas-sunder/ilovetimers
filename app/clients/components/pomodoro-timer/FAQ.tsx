@@ -114,9 +114,9 @@ export default function FAQ({
       ),
     },
     {
-      question: "Does the timer stay accurate if I switch tabs?",
+      question: "What happens if I switch tabs?",
       answer:
-        "Yes in most cases. The timer uses a real end time so remaining time stays accurate across normal tab switches. Power-saving modes can affect animation smoothness, but the countdown remains based on the end time.",
+        "The timer uses a target end time and recalculates remaining time from the device clock. Background tabs, sleeping devices, and power-saving modes can still affect animation smoothness and audio cues.",
     },
     {
       question: "Does this tool send any data anywhere?",
@@ -154,6 +154,20 @@ export default function FAQ({
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Break Timer
+          </Link>
+          . Want broader work and break modes?{" "}
+          <Link
+            to="/productivity-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Productivity Timer
+          </Link>
+          . Planning several blocks in a day?{" "}
+          <Link
+            to="/time-blocking-clock"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Time Blocking Clock
           </Link>
           . Want a pure big-screen view?{" "}
           <Link

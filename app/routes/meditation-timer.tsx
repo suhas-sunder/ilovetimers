@@ -42,7 +42,7 @@ import PopularUseCases from "~/clients/components/meditation-timer/PopularUseCas
 export function meta({}: Route.MetaArgs) {
   const title = "Meditation Timer (Breathing & Yoga, Fullscreen)";
   const description =
-    "Calm, distraction-free meditation timer. Set a quiet fullscreen countdown for breathing exercises, yoga sessions, or mindfulness practice. Clear, easy to read, and ready instantly.";
+    "Set a quiet meditation countdown for breathing practice, yoga holds, or reflection time with fullscreen display and optional chimes.";
 
   const url = "https://www.ilovetimers.com/meditation-timer";
 

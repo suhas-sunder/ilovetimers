@@ -12,6 +12,7 @@ import {
 import {
   Button as Btn,
   ControlGroup,
+  ContentSection,
   DisplayStage,
   Field,
   FullscreenBottomBar,
@@ -556,58 +557,57 @@ export default function RestTimerPage({
         description="Time rest periods between sets with a large countdown and simple workout-focused controls."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Rest Timer is built for short repeatable recovery periods between
-          sets, rounds, or drills. Pick a seconds-based preset or enter a custom
-          rest length, then keep the countdown visible while the next effort is
-          being prepared.
-        </p>
-        <h3>When to use it</h3>
-        <p>
-          Use it between lifting sets, circuit stations, boxing rounds, mobility
-          drills, or short practice attempts. The timer can keep rest intervals
-          consistent, but it does not determine safe recovery length or training
-          intensity.
-        </p>
-        <h3>Useful settings</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Seconds presets are useful for common 30, 45, 60, and 90 second rest
-            periods.
-          </li>
-          <li>
-            Optional sound can mark the end of a rest period when you are not
-            looking at the screen.
-          </li>
-          <li>
-            Auto-restart can repeat the same rest interval for simple training
-            flows.
-          </li>
-        </ul>
-        <h3>Practical examples</h3>
-        <p>
-          Set 60 seconds between strength sets, 30 seconds between short drills,
-          or 90 seconds between heavier attempts. Keep the timer visible while
-          setting up the next set so the rest interval does not stretch without
-          noticing.
-        </p>
-        <h3>Related tools</h3>
-        <p>
-          For full work/rest structure, use the{" "}
-          <a className="ilt-content-link" href="/workout-timer">
-            workout timer
-          </a>
-          . For round-based sessions, try the{" "}
-          <a className="ilt-content-link" href="/round-timer">
-            round timer
-          </a>
-          . For movement breaks, use the{" "}
-          <a className="ilt-content-link" href="/stretch-timer">
-            stretch timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this rest timer works">
+          <p>
+            Rest Timer is built for short repeatable intervals between sets,
+            rounds, drills, rehearsals, or practice attempts. Choose a
+            seconds-based preset or enter a custom rest length, then keep the
+            countdown visible while you prepare for the next round.
+          </p>
+          <p>
+            Presets are useful for common 30, 45, 60, and 90 second intervals.
+            Optional sound can mark the end when you are not looking at the
+            screen, and auto-restart can repeat the same interval for simple
+            routines.
+          </p>
+        </ContentSection>
+        <ContentSection title="Common rest timer examples">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>Set 60 seconds between strength sets.</li>
+            <li>Use 30 seconds between short drills or practice attempts.</li>
+            <li>Use 90 seconds between heavier attempts or rehearsal passes.</li>
+            <li>
+              Keep the timer visible so a short rest window does not stretch
+              without noticing.
+            </li>
+          </ul>
+          <p>
+            Choose durations that fit your own routine. This page does not
+            determine training intensity, recovery needs, or safe rest length.
+          </p>
+        </ContentSection>
+        <ContentSection title="Related interval tools">
+          <p>
+            For full work/rest structure, use the{" "}
+            <a className="ilt-content-link" href="/workout-timer">
+              workout timer
+            </a>
+            . For round-based sessions, try the{" "}
+            <a className="ilt-content-link" href="/round-timer">
+              round timer
+            </a>
+            . For movement breaks, use the{" "}
+            <a className="ilt-content-link" href="/stretch-timer">
+              stretch timer
+            </a>
+            . For general work pauses, use the{" "}
+            <a className="ilt-content-link" href="/break-timer">
+              break timer
+            </a>
+            .
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

@@ -24,7 +24,7 @@ export default function FAQ({
     {
       question: "What does this Focus Session Timer do?",
       answer:
-        "It runs a single deep work countdown. Choose a session length (preset or custom minutes), start/pause, optionally enable sound and final beeps, use fullscreen for a clean display, and get a short break suggestion when the session ends.",
+        "It runs a single work countdown. Choose a session length (preset or custom minutes), start/pause, optionally enable sound and final beeps, use fullscreen for a clean display, and get a short break suggestion when the session ends.",
     },
     {
       question: "How do I set the session length?",
@@ -57,9 +57,9 @@ export default function FAQ({
         "Some browsers block audio until you interact with the page. Click Start once (or press Space) and make sure your tab and device are not muted. If you still don’t hear beeps, try toggling Sound off and on.",
     },
     {
-      question: "Will the timer stay accurate if the tab stutters?",
+      question: "What happens if the tab stutters?",
       answer:
-        "It’s anchored to an absolute end time and recalculates remaining time from your device clock, which helps keep the countdown steady across typical browser scheduling delays.",
+        "It is anchored to a target end time and recalculates remaining time from your device clock. Browser scheduling delays, sleeping devices, and power-saving modes can still affect animation smoothness and sound timing.",
     },
     {
       question: "What happens when the session ends?",
@@ -76,6 +76,20 @@ export default function FAQ({
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Pomodoro Timer
+          </Link>
+          . If you want broader work and break modes, use{" "}
+          <Link
+            to="/productivity-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Productivity Timer
+          </Link>
+          . If you are planning a day by named blocks, use{" "}
+          <Link
+            to="/time-blocking-clock"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Time Blocking Clock
           </Link>
           . If you need a general-purpose countdown, use{" "}
           <Link

@@ -23,7 +23,7 @@ export default function PopularUseCases({
 }) {
   const scenarios: Scenario[] = [
     {
-      title: "Single deep work block (one task, one timer)",
+      title: "Single work block (one task, one timer)",
       description:
         "Set one session length and commit to a single task. Use Start/Pause as needed, and finish with a short break suggestion.",
       forWho:
@@ -32,13 +32,14 @@ export default function PopularUseCases({
         "You want a work/break cycle that repeats automatically. Use the Pomodoro timer instead.",
       links: [
         { label: "Pomodoro Timer", href: "/pomodoro-timer" },
+        { label: "Productivity Timer", href: "/productivity-timer" },
         { label: "Break Timer", href: "/break-timer" },
       ],
     },
     {
       title: "Fullscreen focus (big, clean countdown)",
       description:
-        "Go fullscreen for a distraction-free display. In fullscreen you can click/tap the timer to start or pause quickly.",
+        "Go fullscreen for a large, minimal display. In fullscreen you can click/tap the timer to start or pause quickly.",
       forWho:
         "Second monitors, screen shares, classrooms, or anyone who wants a big readable countdown.",
       notFor:
@@ -84,6 +85,7 @@ export default function PopularUseCases({
         "You need a timer that counts up during the meeting. Use the meeting count-up timer.",
       links: [
         { label: "Meeting Timer", href: "/meeting-timer" },
+        { label: "Time Blocking Clock", href: "/time-blocking-clock" },
         { label: "Meeting Count Up Timer", href: "/meeting-count-up-timer" },
       ],
     },
@@ -133,7 +135,7 @@ export default function PopularUseCases({
             Common scenarios
           </h2>
           <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
-            Use this page to run a single deep work countdown: choose a session
+            Use this page to run a single work countdown: choose a session
             length, start/pause, go fullscreen, and optionally enable sound and
             final beeps.
           </p>

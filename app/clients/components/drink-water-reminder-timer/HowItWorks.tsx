@@ -397,7 +397,7 @@ export default function HowItWorks({
                 "- The reminder may fire late (when the tab becomes active again)",
                 "- The timer restarts its next cycle from 'now' when it fires",
                 "",
-                "If you need guaranteed reminders while away:",
+                "If you need reminders while away from the tab:",
                 "- Use device notifications, not a browser tab.",
               ]}
             />
@@ -479,6 +479,12 @@ export default function HowItWorks({
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/break-timer")}>Break Timer</PillLink>
+            <PillLink href={abs("/focus-session-timer")}>
+              Focus Session Timer
+            </PillLink>
+            <PillLink href={abs("/time-blocking-clock")}>
+              Time Blocking Clock
+            </PillLink>
             <PillLink href={abs("/stretch-timer")}>Stretch Timer</PillLink>
           </div>
         </div>

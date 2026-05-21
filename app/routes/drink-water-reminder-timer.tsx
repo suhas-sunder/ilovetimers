@@ -36,7 +36,7 @@ import PopularUseCases from "~/clients/components/drink-water-reminder-timer/Pop
 export function meta({}: Route.MetaArgs) {
   const title = "Drink Water Reminder (Hydration Timer + Repeating Alerts)";
   const description =
-    "Free drink water reminder and hydration timer. Set repeating intervals with optional sound alerts and use a clean fullscreen display to stay hydrated.";
+    "Free drink water reminder and hydration timer. Set repeating intervals with optional sound alerts and use a clean fullscreen display for a visible reminder cycle.";
 
   const url = "https://www.ilovetimers.com/drink-water-reminder-timer";
 
@@ -606,7 +606,7 @@ export default function WaterReminderTimerPage(_: Route.ComponentProps) {
       <ToolHero
         display={<WaterReminderTimerCard />}
         title="Drink Water Reminder Timer"
-        description="Track hydration reminders with the next reminder countdown first and settings kept compact below it."
+        description="Track drink-water reminder intervals with the next reminder countdown first and settings kept compact below it."
       />
 
       <SeoBand>

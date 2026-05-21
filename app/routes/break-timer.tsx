@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
   ControlGroup,
+  ContentSection,
   DisplayStage,
   Field,
   FullscreenBottomBar,
@@ -579,56 +580,58 @@ export default function BreakTimerPage({
         description="Start a calm break countdown with quick presets, custom duration, optional sound, and fullscreen mode."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Break Timer is a short countdown for stepping away and coming back on
-          time. Pick a preset, enter custom minutes, start the timer, and keep
-          the display visible while the controls stay below the countdown.
-        </p>
-        <h3>When to use it</h3>
-        <p>
-          Use it for screen breaks, study breaks, Pomodoro breaks, quick walks,
-          coffee refills, or short reset periods between tasks. It is meant to
-          keep a break bounded, not to provide medical or wellness advice.
-        </p>
-        <h3>Useful settings</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Short presets make it easy to start a 1, 2, 5, 10, or 15 minute
-            break without typing.
-          </li>
-          <li>
-            Optional sound and final beeps can be used when an audible cue is
-            appropriate.
-          </li>
-          <li>
-            Loop is useful for repeating the same short break rhythm during a
-            longer work block.
-          </li>
-        </ul>
-        <h3>Practical examples</h3>
-        <p>
-          Start a 2 minute break after finishing an email batch, a 5 minute
-          pause between study topics, or a 10 minute reset after a long meeting.
-          If you need a completely quiet break, leave sound off and keep the
-          screen visible instead of relying on a chime.
-        </p>
-        <h3>Related tools</h3>
-        <p>
-          For work and break cycles, use the{" "}
-          <a className="ilt-content-link" href="/pomodoro-timer">
-            Pomodoro timer
-          </a>
-          . For gym rest periods, use the{" "}
-          <a className="ilt-content-link" href="/rest-timer">
-            rest timer
-          </a>
-          . For movement breaks, try the{" "}
-          <a className="ilt-content-link" href="/stretch-timer">
-            stretch timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this break timer works">
+          <p>
+            Break Timer is a short countdown for stepping away and coming back
+            at the time you choose. Pick a preset, enter custom minutes, start,
+            pause, or reset, and keep the remaining time visible while the
+            controls stay below the countdown.
+          </p>
+          <p>
+            Reset returns the timer to the currently selected duration. If loop
+            is enabled, the same break length can repeat; if sound or final
+            beeps are enabled, browser audio settings still apply.
+          </p>
+        </ContentSection>
+        <ContentSection title="When to use a break timer">
+          <p>
+            Use it for desk breaks, screen breaks, Pomodoro breaks, eye-rest
+            pauses, between study sessions, short meeting breaks, coffee
+            refills, cleanup pauses, or a simple pause between tasks. It is a
+            timing tool, not medical or wellness advice.
+          </p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>Start 2 minutes after a quick task batch.</li>
+            <li>Use 5 minutes between study topics or focus blocks.</li>
+            <li>Use 10 or 15 minutes for a longer pause between meetings.</li>
+          </ul>
+        </ContentSection>
+        <ContentSection title="Quiet and related break tools">
+          <p>
+            For work and break cycles, use the{" "}
+            <a className="ilt-content-link" href="/pomodoro-timer">
+              Pomodoro timer
+            </a>
+            . For a single work block before the break, use the{" "}
+            <a className="ilt-content-link" href="/focus-session-timer">
+              focus session timer
+            </a>
+            . For no-sound timing, use the{" "}
+            <a className="ilt-content-link" href="/silent-timer">
+              silent timer
+            </a>
+            . For workout rest periods, use the{" "}
+            <a className="ilt-content-link" href="/rest-timer">
+              rest timer
+            </a>
+            . For movement breaks, try the{" "}
+            <a className="ilt-content-link" href="/stretch-timer">
+              stretch timer
+            </a>
+            .
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

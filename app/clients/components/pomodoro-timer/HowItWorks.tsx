@@ -87,7 +87,28 @@ export default function HowItWorks({
         </div>
 
         <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
-          Need a plain countdown instead of focus cycles?{" "}
+          Need one work block without cycles? Try the{" "}
+          <Link
+            to="/focus-session-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Focus Session Timer
+          </Link>
+          . Want more flexible work and break modes? Use the{" "}
+          <Link
+            to="/productivity-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Productivity Timer
+          </Link>
+          . Planning a day by blocks? Use the{" "}
+          <Link
+            to="/time-blocking-clock"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Time Blocking Clock
+          </Link>
+          . Need a plain countdown instead?{" "}
           <Link
             to="/countdown-timer"
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"

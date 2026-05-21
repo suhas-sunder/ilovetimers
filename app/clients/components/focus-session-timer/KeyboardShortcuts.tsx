@@ -54,7 +54,7 @@ export default function KeyboardShortcuts() {
 }
 
 /* =========================================================
-   BEHAVIOR + PRIVACY (countdown accuracy, fullscreen, audio, local-only)
+   BEHAVIOR + PRIVACY (countdown timing, fullscreen, audio, local-only)
    Schema: none required
 ========================================================= */
 export function AccuracyAndPrivacySection() {
@@ -88,12 +88,13 @@ export function AccuracyAndPrivacySection() {
 
           <div className="ilt-surface-muted p-4">
             <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-              Countdown accuracy
+              Countdown timing
             </div>
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
-              The timer anchors to an absolute end time and recalculates
-              remaining time from your device clock. This helps keep the
-              countdown steady across typical browser scheduling delays.
+              The timer anchors to a target end time and recalculates remaining
+              time from your device clock. Background tabs, sleeping devices,
+              and power-saving modes can still affect animation smoothness and
+              sound timing.
             </p>
           </div>
 

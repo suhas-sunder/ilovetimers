@@ -23,15 +23,16 @@ export default function PopularUseCases({
 }) {
   const scenarios: Scenario[] = [
     {
-      title: "Quick calm reset (1 to 3 minutes)",
+      title: "Quick quiet pause (1 to 3 minutes)",
       description:
-        "Pick a 1m, 2m, or 3m preset, press Start, and keep the screen simple. This is ideal when you want a short pause between tasks or a fast nervous system reset.",
+        "Pick a 1m, 2m, or 3m preset, press Start, and keep the screen simple. This is useful when you want a short timed pause between tasks or a brief quiet block.",
       forWho:
         "Anyone who wants a short, repeatable break that ends cleanly without thinking about timing.",
       notFor:
         "You want a guided routine or breathing prompts. Use Breathing Timer for more structured breathwork.",
       links: [
         { label: "Breathing Timer", href: "/breathing-timer" },
+        { label: "Break Timer", href: "/break-timer" },
         { label: "Focus Session Timer", href: "/focus-session-timer" },
       ],
     },

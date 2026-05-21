@@ -37,7 +37,7 @@ import PopularUseCases from "~/clients/components/stopwatch/PopularUseCases";
 export function meta({}: Route.MetaArgs) {
   const title = "Online Stopwatch (Laps, Fullscreen Stopwatch)";
   const description =
-    "Use a fast, accurate online stopwatch with laps. Start instantly, track splits, and keep time with a clean fullscreen display built for serious timing.";
+    "Use an online stopwatch with laps and a millisecond display. Start instantly, track splits, and keep elapsed time with a clean fullscreen view.";
 
   const url = "https://www.ilovetimers.com/stopwatch";
 
@@ -515,7 +515,7 @@ export default function StopwatchPage({
         name: "Stopwatch",
         url,
         description:
-          "Free online stopwatch with laps and millisecond precision. Fullscreen display, keyboard shortcuts, and copy for lap splits and totals.",
+          "Free online stopwatch with laps and a millisecond display. Fullscreen view, keyboard shortcuts, and copy for lap splits and totals.",
       },
       {
         "@type": "BreadcrumbList",

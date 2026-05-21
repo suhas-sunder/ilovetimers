@@ -284,7 +284,8 @@ export default function HowItWorks({
             timer becomes the main control surface. You can click or tap the
             time to start or pause. That matters in real rooms, because the
             person controlling the timer often is not seated at a keyboard, or
-            is moving between stations.
+            is moving between stations. Placeholder ad slots stay outside the
+            active fullscreen view so the countdown remains distraction-free.
           </p>
 
           <p className="mt-3 leading-relaxed text-[var(--ilt-text-secondary)]">

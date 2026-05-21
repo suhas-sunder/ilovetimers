@@ -87,12 +87,14 @@ export function AccuracyAndPrivacySection() {
 
           <div className="ilt-surface-muted p-4">
             <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-              Countdown accuracy
+              Countdown timing behavior
             </div>
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               The timer anchors to an absolute end time and recalculates
               remaining time from your device clock. This helps keep the
-              countdown steady across typical browser scheduling delays.
+              countdown steady across typical browser scheduling delays, though
+              sleeping devices and aggressive power saving can still affect the
+              visible update until the page resumes.
             </p>
           </div>
 

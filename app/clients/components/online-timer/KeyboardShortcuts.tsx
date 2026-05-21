@@ -143,7 +143,7 @@ export function AccuracyAndPrivacySection() {
                 Technical notes (timing, sound, fullscreen)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
-                Optional details about accuracy across tab switches, audio
+                Optional details about timing across tab switches, audio
                 requirements, and fullscreen behavior
               </div>
             </div>
@@ -158,9 +158,9 @@ export function AccuracyAndPrivacySection() {
                 Countdown timing behavior
               </div>
               <p className="mt-1 leading-relaxed">
-                The timer uses a real end time while running, which keeps it
-                accurate through normal tab switches and brief pauses in
-                rendering.
+                The timer uses a real end time while running, so it reconciles
+                remaining time after normal tab switches and brief pauses in
+                rendering instead of relying only on interval ticks.
               </p>
               <p className="mt-2 leading-relaxed">
                 Reset returns to the currently set duration. If Loop is enabled,

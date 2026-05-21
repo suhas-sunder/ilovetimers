@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   Field,
   FullscreenBottomBar,
@@ -545,52 +546,102 @@ export default function PresentationTimerPage({}: Route.ComponentProps) {
         description="Keep talks, pitches, and meeting segments on time with a large countdown, presets, optional sound, and fullscreen mode."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Presentation Timer keeps the talk clock visible first, then places
-          duration presets, custom minutes, sound, final beeps, and fullscreen
-          controls below it. It can show elapsed or remaining time based on the
-          current mode, so a speaker can rehearse against the same timing view
-          they plan to use live.
-        </p>
-        <h3>When to use it</h3>
-        <p>
-          Use it for talks, pitches, classroom presentations, meeting timeboxes,
-          panels, or rehearsal runs. The large display is useful on a laptop
-          nearby or in fullscreen mode on a room display, but it does not make
-          claims about official event timing or compliance.
-        </p>
-        <h3>Settings that matter</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Duration presets are useful for common 5, 10, 15, 30, and 60 minute
-            talk formats.
-          </li>
-          <li>
-            Warning and final-beep options can help mark the end of a segment
-            without changing the countdown itself.
-          </li>
-          <li>
-            Fullscreen mode keeps the display readable for rehearsal rooms,
-            podium screens, and projector use.
-          </li>
-        </ul>
-        <h3>Related tools</h3>
-        <p>
-          For structured agenda timing, use the{" "}
-          <a className="ilt-content-link" href="/meeting-timer">
-            meeting timer
-          </a>
-          . For a date-based launch or event, use the{" "}
-          <a className="ilt-content-link" href="/event-countdown">
-            event countdown
-          </a>
-          . For the simplest projected countdown, try the{" "}
-          <a className="ilt-content-link" href="/fullscreen-timer">
-            fullscreen timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <ContentSection title="How this presentation timer works">
+          <p>
+            Presentation Timer is a speaker countdown. Choose a talk length,
+            press Start, and keep the remaining time visible while you rehearse
+            or present. The tool keeps the timer display first, then places
+            presets, custom minutes, sound, final beeps, and fullscreen controls
+            below it.
+          </p>
+          <p>
+            It shows remaining time, not timezone information or an agenda
+            document. That makes it useful as a simple confidence monitor on a
+            laptop, podium screen, second monitor, or projected room display.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="When to use it">
+          <p>
+            Use it for talks, lectures, workshops, demos, pitches, conference
+            sessions, student presentations, and rehearsal runs. The large
+            display helps a speaker glance at the remaining time without
+            turning the page into a control panel.
+          </p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Presets cover common short talks, classroom presentations, demos,
+              and longer sessions.
+            </li>
+            <li>
+              Custom minutes handle unusual time slots, rehearsal targets, or
+              short Q&A buffers.
+            </li>
+            <li>
+              Final beeps can mark the last five seconds when Sound is enabled.
+            </li>
+            <li>
+              Fullscreen keeps the display readable for rehearsal rooms,
+              podiums, projectors, and shared screens.
+            </li>
+          </ul>
+        </ContentSection>
+
+        <ContentSection title="Limitations and room setup notes">
+          <p>
+            This is a browser-based presentation timer, not professional AV
+            timing equipment and not an official event compliance tool. Keep the
+            page visible if you rely on the display, test sound before the
+            session if you plan to use beeps, and use the venue's timing rules
+            when a talk has formal requirements.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Related tools">
+          <p>
+            For structured agenda timing, use the{" "}
+            <a className="ilt-content-link" href="/meeting-timer">
+              meeting timer
+            </a>
+            . For a date-based launch or event, use the{" "}
+            <a className="ilt-content-link" href="/event-countdown">
+              event countdown
+            </a>
+            . For the simplest projected countdown, try the{" "}
+            <a className="ilt-content-link" href="/fullscreen-timer">
+              fullscreen timer
+            </a>
+            . For student-facing classroom activities, use the{" "}
+            <a className="ilt-content-link" href="/classroom-timer">
+              classroom timer
+            </a>
+            .
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Presentation timer FAQ">
+          <h3>Can I use this as a rehearsal timer?</h3>
+          <p>
+            Yes. Pick the time limit you expect for the real talk, run through
+            the material, and use the remaining-time display to learn where you
+            tend to speed up or run long.
+          </p>
+          <h3>Does fullscreen remove distractions?</h3>
+          <p>
+            Fullscreen focuses the view on the timer controls and large digits.
+            Active fullscreen views do not include ad placements.
+          </p>
+          <h3>Is this a meeting timer?</h3>
+          <p>
+            It can time a meeting segment, but the{" "}
+            <a className="ilt-content-link" href="/meeting-timer">
+              meeting timer
+            </a>{" "}
+            is better when the main job is agenda timeboxing instead of speaker
+            timing.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

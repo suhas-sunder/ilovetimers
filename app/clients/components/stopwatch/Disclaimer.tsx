@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 export default function Disclaimer() {
   const preview =
-    "Millisecond stopwatch • Laps + splits • Copy laps as CSV • Fullscreen mode • Keyboard shortcuts";
+    "Millisecond display • Laps + splits • Copy laps as CSV • Fullscreen mode • Keyboard shortcuts";
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-6">
@@ -25,7 +25,7 @@ export default function Disclaimer() {
           <div className="mt-3 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
             <strong className="text-[var(--ilt-text-primary)]">
               Time anything instantly with a fast stopwatch that supports laps
-              and millisecond precision.
+              and a millisecond display.
             </strong>{" "}
             Start or pause, record lap splits, reset when you’re done, and use
             fullscreen when you need a big, clean display.

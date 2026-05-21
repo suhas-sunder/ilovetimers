@@ -290,7 +290,7 @@ export default function Disclaimer() {
 
           <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
             <strong className="text-[var(--ilt-text-primary)]">Tip.</strong> For a clean,
-            proctor-style setup, go fullscreen and keep your hands on the
+            quiet practice setup, go fullscreen and keep your hands on the
             keyboard. Use Space and R only.
           </div>
         </details>

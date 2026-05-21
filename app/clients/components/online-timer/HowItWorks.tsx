@@ -476,7 +476,7 @@ export default function HowItWorks({
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl px-1 py-2 ilt-focus-ring">
             <div className="min-w-0">
               <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-                Technical notes (timing accuracy, audio, fullscreen)
+                Technical notes (timing behavior, audio, fullscreen)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
                 Optional details for troubleshooting and demos

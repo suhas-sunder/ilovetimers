@@ -129,7 +129,7 @@ export default function HowItWorks({
               This page is not a scheduling tool and it does not try to manage
               your study plan. It focuses on what you need in the moment: preset
               durations, custom minutes, clean start/pause/reset, optional sound
-              cues, and keyboard shortcuts that work well in a proctored-style
+              cues, and keyboard shortcuts that work well in a quiet practice
               setup. If you want a quiet room, turn sound off and it becomes a
               purely visual timer.
             </p>

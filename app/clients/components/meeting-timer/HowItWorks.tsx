@@ -508,6 +508,8 @@ export default function HowItWorks({
             </PillLink>
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
             <PillLink to="/presentation-timer">Presentation Timer</PillLink>
+            <PillLink to="/event-countdown">Event Countdown</PillLink>
+            <PillLink to="/time-blocking-clock">Time Blocking Clock</PillLink>
             <PillLink to="/silent-timer">Silent Timer</PillLink>
             <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>

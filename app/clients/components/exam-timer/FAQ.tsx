@@ -73,6 +73,11 @@ export default function FAQ({
         "Custom minutes supports 1 to 360 minutes. Presets cover common exam and practice lengths up to 180 minutes.",
     },
     {
+      question: "Can I use this for a real exam?",
+      answer:
+        "Use this page only if it fits the rules for your school, class, proctor, or practice setting. It is a browser timer, not an official exam system or compliance tool.",
+    },
+    {
       question: "Which related tool should I use instead?",
       answer: (
         <>
@@ -96,6 +101,20 @@ export default function FAQ({
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Fullscreen Timer
+          </Link>
+          . For classroom activities, use{" "}
+          <Link
+            to="/classroom-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Classroom Timer
+          </Link>
+          . For speaker timing, use{" "}
+          <Link
+            to="/presentation-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Presentation Timer
           </Link>
           . If you need a no-audio setup, use{" "}
           <Link

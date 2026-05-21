@@ -235,7 +235,8 @@ export default function HowItWorks({
               <li>
                 <span className="font-semibold text-[var(--ilt-text-primary)]">6)</span> Press{" "}
                 <Kbd>F</Kbd> for fullscreen, <Kbd>Esc</Kbd> to exit. Fullscreen
-                is the “projector mode” for visibility.
+                is the "projector mode" for visibility, and ad placeholders
+                stay outside the active fullscreen view.
               </li>
             </ol>
 

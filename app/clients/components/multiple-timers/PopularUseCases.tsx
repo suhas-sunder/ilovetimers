@@ -106,6 +106,35 @@ export default function PopularUseCases({
         { label: "Fullscreen Timer", href: "/fullscreen-timer" },
       ],
     },
+    {
+      title: "Childcare routines and household batching",
+      description:
+        "Label timers for separate routines such as reading, cleanup, laundry, screen breaks, or snack prep so each task has its own visible countdown.",
+      forWho:
+        "Caregivers and households juggling several ordinary timing tasks at once.",
+      notFor:
+        "You need one large projected countdown. Use Countdown Timer or Fullscreen Timer.",
+      links: [
+        { label: "Countdown Timer", href: "/countdown-timer" },
+        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Break Timer", href: "/break-timer" },
+      ],
+    },
+    {
+      title: "Game cooldowns, work batching, and experiment steps",
+      description:
+        "Keep separate timers for cooldowns, focus batches, animation checks, lab steps, or process intervals where each timer needs its own label and reset button.",
+      forWho:
+        "Players, developers, lab users, and focused workers who need several independent countdowns visible at once.",
+      notFor:
+        "You need a daily schedule view or elapsed-time tracker. Use Time Blocking Clock or Stopwatch.",
+      links: [
+        { label: "Lab Timer", href: "/lab-timer" },
+        { label: "Time Blocking Clock", href: "/time-blocking-clock" },
+        { label: "Game Challenge Timer", href: "/video-game-challenge-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
+      ],
+    },
   ];
 
   const abs = (href: string) =>

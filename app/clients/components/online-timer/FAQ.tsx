@@ -119,7 +119,7 @@ export default function FAQ({
     {
       question: "Does this timer keep running if I switch tabs?",
       answer:
-        "Yes in most cases. The timer uses a real end time so it stays accurate across normal tab switches. Very aggressive power-saving modes can affect animation smoothness, but the remaining time is still calculated from the end time.",
+        "In normal tab switches, it reconciles remaining time from a real end time instead of only counting interval ticks. Very aggressive power-saving modes, sleeping devices, or paused browser activity can affect what you see until the page resumes.",
     },
     {
       question: "Which related timer should I use instead?",
@@ -152,6 +152,13 @@ export default function FAQ({
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Multiple Timers
+          </Link>
+          . Want the standard one-off countdown page?{" "}
+          <Link
+            to="/countdown-timer"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Countdown Timer
           </Link>
           . Prefer no sound?{" "}
           <Link

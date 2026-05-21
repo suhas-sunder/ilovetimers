@@ -19,6 +19,11 @@ const faqs = [
     answer:
       "No. This is a browser timer, so the page needs to stay open. Use your device alarm for anything critical.",
   },
+  {
+    question: "When should I use a specialized timer instead?",
+    answer:
+      "Use Countdown Timer for a simple one-off duration. Use Online Timer for the fastest generic setup, Fullscreen Timer for a projected display, Silent Timer for no-sound rooms, Multiple Timers for concurrent tasks, Break Timer for short pauses, or Cooking Timer for kitchen timing.",
+  },
 ];
 
 export default function FAQ({ title = "Frequently asked questions" }: { title?: string }) {

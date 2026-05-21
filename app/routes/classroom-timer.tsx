@@ -22,6 +22,11 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import HowItWorks from "~/clients/components/classroom-timer/HowItWorks";
+import KeyboardShortcuts from "~/clients/components/classroom-timer/KeyboardShortcuts";
+import PopularUseCases from "~/clients/components/classroom-timer/PopularUseCases";
+import FAQ from "~/clients/components/classroom-timer/FAQ";
+import Disclaimer from "~/clients/components/classroom-timer/Disclaimer";
 
 /* =========================================================
    META
@@ -637,48 +642,12 @@ export default function ClassroomTimerPage({
         description="Big, readable countdown for smartboards and projectors with presets, custom labels, sound cues, and keyboard shortcuts."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Classroom Timer keeps the countdown large enough for a projected
-          display while putting presets, custom labels, quick adjustments, sound
-          controls, and fullscreen mode below the timer. The label can name the
-          current activity so students see both the task and the time remaining.
-        </p>
-        <h3>Classroom uses</h3>
-        <p>
-          Use it for transitions, group work, station rotations, warmups, exit
-          tickets, reading time, quizzes, or cleanup. The timer is a classroom
-          display aid, not an official testing or student-safety system.
-        </p>
-        <h3>Helpful controls</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Presets make common short activities quick to start without typing.
-          </li>
-          <li>
-            The label field can show the activity name on the projected timer.
-          </li>
-          <li>
-            Plus and minus time controls are useful when a lesson segment needs
-            a small adjustment without rebuilding the timer.
-          </li>
-        </ul>
-        <h3>Related tools</h3>
-        <p>
-          For timed tests or reading periods, use the{" "}
-          <a className="ilt-content-link" href="/exam-timer">
-            exam timer
-          </a>
-          . For student presentations, try the{" "}
-          <a className="ilt-content-link" href="/presentation-timer">
-            presentation timer
-          </a>
-          . For a plain countdown, use the{" "}
-          <a className="ilt-content-link" href="/countdown-timer">
-            countdown timer
-          </a>
-          .
-        </p>
+      <SeoBand>
+        <HowItWorks />
+        <KeyboardShortcuts />
+        <PopularUseCases />
+        <FAQ />
+        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

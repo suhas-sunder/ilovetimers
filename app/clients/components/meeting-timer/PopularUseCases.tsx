@@ -113,6 +113,20 @@ export default function PopularUseCases({
         { label: "Alarm Timer", href: "/alarm-timer" },
       ],
     },
+    {
+      title: "Interviews, one-on-ones, office hours, and group discussions",
+      description:
+        "Use a visible countdown for each block so openings, questions, demos, and wrap-up time do not blur together. The timer can guide the room, but it does not make the conversation productive by itself.",
+      forWho:
+        "Interviewers, managers, facilitators, instructors, and teams running structured discussions.",
+      notFor:
+        "You need to count down to a future date or plan a whole day. Use Event Countdown or Time Blocking Clock.",
+      links: [
+        { label: "Event Countdown", href: "/event-countdown" },
+        { label: "Time Blocking Clock", href: "/time-blocking-clock" },
+        { label: "Presentation Timer", href: "/presentation-timer" },
+      ],
+    },
   ];
 
   const abs = (href: string) =>

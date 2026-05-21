@@ -24,7 +24,7 @@ export default function FAQ({
     {
       question: "What is this stopwatch?",
       answer:
-        "This is a fast online stopwatch with millisecond precision and lap tracking. You can start/pause instantly, record lap splits, copy laps as CSV, and use fullscreen for a clean large display.",
+        "This is an online stopwatch that displays milliseconds and supports lap tracking. You can start/pause quickly, record lap splits, copy laps as CSV, and use fullscreen for a clean large display.",
     },
     {
       question: "How do I start and pause?",

@@ -1,7 +1,7 @@
 const uses = [
   {
     title: "Cooking steps",
-    text: "Run a visible countdown for pasta, oven checks, resting time, or short prep stages.",
+    text: "Run a visible countdown for pasta, oven checks, resting time, short prep stages, or a quick kitchen reminder.",
   },
   {
     title: "Meetings and presentations",
@@ -13,7 +13,15 @@ const uses = [
   },
   {
     title: "Breaks and transitions",
-    text: "Set a short timer for stretch breaks, room resets, or returning from a pause.",
+    text: "Set a short timer for stretch breaks, laundry checks, room resets, cleaning bursts, or returning from a pause.",
+  },
+  {
+    title: "Study sprints and focus work",
+    text: "Use one countdown for a homework block, reading sprint, writing session, or quick admin task.",
+  },
+  {
+    title: "Workout rests and reminders",
+    text: "Time a rest period, mobility hold, warmup block, or simple reminder without opening a more structured interval tool.",
   },
 ];
 

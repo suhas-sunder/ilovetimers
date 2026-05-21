@@ -243,28 +243,26 @@ function OnlineTimerCard() {
   );
 
   const onStartPause = useCallback(() => {
-    setStatus((s) => {
-      if (s === "running") {
-        const now = performance.now();
-        const rem = Math.max(0, (endTimeRef.current ?? now) - now);
-        endTimeRef.current = null;
-        stopRaf();
-        setRemainingMs(rem);
-        remainingRef.current = rem;
-        return rem <= 0 ? "done" : "paused";
-      }
+    if (status === "running") {
+      const now = performance.now();
+      const rem = Math.max(0, (endTimeRef.current ?? now) - now);
+      endTimeRef.current = null;
+      stopRaf();
+      setRemainingMs(rem);
+      remainingRef.current = rem;
+      setStatus(rem <= 0 ? "done" : "paused");
+      return;
+    }
 
-      // Start / restart
-      const base =
-        s === "done" ? durationMs : Math.max(0, remainingRef.current);
-      const nextRemaining = base <= 0 ? durationMs : base;
+    const base =
+      status === "done" ? durationMs : Math.max(0, remainingRef.current);
+    const nextRemaining = base <= 0 ? durationMs : base;
 
-      setRemainingMs(nextRemaining);
-      remainingRef.current = nextRemaining;
-      endTimeRef.current = performance.now() + nextRemaining;
-      return "running";
-    });
-  }, [durationMs, stopRaf]);
+    setRemainingMs(nextRemaining);
+    remainingRef.current = nextRemaining;
+    endTimeRef.current = performance.now() + nextRemaining;
+    setStatus("running");
+  }, [durationMs, status, stopRaf]);
 
   const onReset = useCallback(() => {
     safeReset();
@@ -438,7 +436,7 @@ function OnlineTimerCard() {
           <span
             ref={timeTextRef}
             className={[
-              "inline-block text-center font-mono font-extrabold",
+              "pointer-events-none inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
             ].join(" ")}
             style={{

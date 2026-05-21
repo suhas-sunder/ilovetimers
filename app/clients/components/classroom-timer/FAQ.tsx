@@ -38,7 +38,7 @@ export default function FAQ({
     {
       question: "Can I set a custom time?",
       answer:
-        "Yes. Use the Minutes input to set a custom value. The input accepts 1 to 180 minutes. For safety and clarity, minutes can’t be edited while the timer is running.",
+        "Yes. Use the Minutes input to set a custom value. The input accepts 1 to 180 minutes. To avoid accidental changes, minutes can’t be edited while the timer is running.",
     },
     {
       question: "What does the Label option do?",
@@ -63,7 +63,7 @@ export default function FAQ({
     {
       question: "How does fullscreen work?",
       answer:
-        "Fullscreen makes the countdown large and uncluttered. Press F to toggle fullscreen and Esc to exit. In fullscreen, you can also click or tap empty space in the display area to start or pause.",
+        "Fullscreen makes the countdown large and uncluttered. Press F to toggle fullscreen and Esc to exit. In fullscreen, you can also click or tap empty space in the display area to start or pause. Placeholder ad slots stay outside the active fullscreen view.",
     },
     {
       question: "What keyboard shortcuts are supported?",

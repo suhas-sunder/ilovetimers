@@ -29,7 +29,7 @@ export default function HowItWorks({
   const howToLd = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: "How to use an online stopwatch with laps and millisecond precision",
+    name: "How to use an online stopwatch with laps and millisecond display",
     description:
       "Use this online stopwatch to start and pause quickly, record laps (splits), copy lap results as CSV, and use fullscreen mode with keyboard shortcuts.",
     url: pageUrl,
@@ -457,6 +457,12 @@ export default function HowItWorks({
                   h:mm:ss.mmm
                 </span>
                 . This keeps the readout compact but still precise.
+              </p>
+              <p className="mt-2 leading-relaxed">
+                The display includes milliseconds, but browser rendering,
+                device performance, background tabs, and sleep states can affect
+                perceived smoothness. Use dedicated calibrated timing equipment
+                when a result has formal stakes.
               </p>
             </div>
 

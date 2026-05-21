@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -37,7 +38,7 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
 export function meta({}: Route.MetaArgs) {
   const title = "Silent Timer (No Sound Countdown, Fullscreen)";
   const description =
-    "Use a silent countdown timer with no sound alerts. Ideal for classrooms, exams, libraries, and meetings where quiet timing matters.";
+    "Use a quiet visual countdown timer that starts with sound off. Ideal for classrooms, exams, libraries, meetings, and focus rooms where no-sound timing matters.";
 
   const url = "https://www.ilovetimers.com/silent-timer";
 
@@ -650,51 +651,106 @@ export default function SilentTimerPage({
         description="Run a quiet visual countdown for classrooms, meetings, exams, libraries, and other no-alarm settings."
       />
 
-      <SeoBand title="How this timer works">
-        <p>
-          Silent Timer starts as a quiet visual countdown. Pick a preset or enter
-          a custom time, then run the timer without an audible alarm interrupting
-          the room. The display stays large for shared spaces, and fullscreen
-          mode keeps the countdown readable from farther away.
-        </p>
-        <h3>When silent timing helps</h3>
-        <p>
-          Use it for libraries, exams, classrooms, meetings, shared offices, or
-          late-night tasks where a sound cue would be disruptive. The completion
-          state stays visual, so someone watching the screen can still see when
-          time is up.
-        </p>
-        <h3>Useful settings</h3>
-        <ul className="list-disc space-y-2 pl-5">
-          <li>
-            Presets cover common short and medium countdowns without opening the
-            custom time field.
-          </li>
-          <li>
-            Custom time accepts simple clock-style entries when the preset list
-            does not match the task.
-          </li>
-          <li>
-            Loop can restart the same quiet countdown for repeated desk checks,
-            station rotations, or recurring visual reminders.
-          </li>
-        </ul>
-        <h3>Related quiet timers</h3>
-        <p>
-          For a more visual display, try the{" "}
-          <a className="ilt-content-link" href="/visual-timer">
-            visual timer
-          </a>
-          . For a standard countdown with optional audio, use the{" "}
-          <a className="ilt-content-link" href="/countdown-timer">
-            countdown timer
-          </a>
-          . If the screen is being projected, the{" "}
-          <a className="ilt-content-link" href="/fullscreen-timer">
-            fullscreen timer
-          </a>{" "}
-          keeps the display especially simple.
-        </p>
+      <SeoBand>
+        <ContentSection title="How this silent timer works">
+          <p>
+            Silent Timer is for a quiet countdown first. Sound starts off, the
+            timer stays visual, and the main display shows the remaining time in
+            large digits. Pick a preset, type a custom time, press Start, and
+            use the screen itself as the cue when time is up.
+          </p>
+          <p>
+            The page still includes an optional Sound toggle for cases where you
+            decide a short beep is appropriate, but the quiet use case is the
+            default. Leave Sound off for libraries, classrooms, shared offices,
+            naps, meditation sessions, meetings, exams, and focus work where an
+            audible alert would be distracting.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="When to use a no-sound countdown">
+          <p>
+            Use this route when the end of the timer should be noticed by the
+            person watching the screen, not announced to the whole room. It is a
+            good fit for projected classroom transitions, reading periods,
+            quiet exam practice, meditation blocks, desk focus sessions, and
+            meeting timeboxes where a visual finish state is enough.
+          </p>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              Presets cover common short and medium countdowns without opening
+              the custom time field.
+            </li>
+            <li>
+              Custom time accepts seconds, minutes and seconds, or an
+              hour-style entry when the preset list does not match the task.
+            </li>
+            <li>
+              Loop can restart the same visual countdown for recurring desk
+              checks, station rotations, repeated practice rounds, or quiet
+              reminders.
+            </li>
+            <li>
+              Fullscreen keeps the digits readable on a second screen, shared
+              screen, projector, or nearby tablet.
+            </li>
+          </ul>
+        </ContentSection>
+
+        <ContentSection title="Limits and quiet-room notes">
+          <p>
+            A silent browser timer is not a safety alarm, proctoring system, or
+            official time source. Keep the page open and visible if the visual
+            finish state matters. If the device sleeps, the display updates when
+            the browser resumes, and audio only plays if you explicitly turn
+            Sound on and the browser allows playback after interaction.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Related quiet and visual tools">
+          <p>
+            For an even more visual countdown, try the{" "}
+            <a className="ilt-content-link" href="/visual-timer">
+              visual timer
+            </a>
+            . For the largest projected display, use the{" "}
+            <a className="ilt-content-link" href="/fullscreen-timer">
+              fullscreen timer
+            </a>
+            . For a standard countdown with more general wording, use the{" "}
+            <a className="ilt-content-link" href="/countdown-timer">
+              countdown timer
+            </a>
+            . For quiet practice blocks, see the{" "}
+            <a className="ilt-content-link" href="/meditation-timer">
+              meditation timer
+            </a>{" "}
+            or{" "}
+            <a className="ilt-content-link" href="/exam-timer">
+              exam timer
+            </a>
+            .
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Silent timer FAQ">
+          <h3>Does this timer make sound?</h3>
+          <p>
+            Sound is off by default. If you leave Sound off, the timer ends with
+            a visual state instead of an audible beep. If you turn Sound on, the
+            browser may play a short beep at the end after user interaction.
+          </p>
+          <h3>Can I use it in fullscreen?</h3>
+          <p>
+            Yes. Fullscreen keeps the countdown large and simple, and the active
+            fullscreen view does not include ad placements.
+          </p>
+          <h3>Is this the same as timezone conversion?</h3>
+          <p>
+            No. This page counts down a duration. It does not convert time zones
+            or calculate clock times.
+          </p>
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

@@ -52,6 +52,11 @@ export default function FAQ({
         "Click Fullscreen (or press F). Press Esc or the Exit button to leave fullscreen. In fullscreen, the page shows a minimal top bar and you can click/tap the timer display to start or pause.",
     },
     {
+      question: "Do ads appear in fullscreen?",
+      answer:
+        "No. Placeholder ad slots stay outside the active fullscreen timer view so the fullscreen countdown remains focused on the display and controls.",
+    },
+    {
       question: "What do Sound and Loop do?",
       answer:
         "Sound plays a short beep when the countdown completes. Loop automatically restarts the same duration when it reaches zero (useful for stations, rotations, and repeated rounds).",
@@ -62,9 +67,9 @@ export default function FAQ({
         "Some browsers block audio until you interact with the page. Click Start once (or press Space) and make sure your tab and device are not muted. If you still don’t hear beeps, try toggling Sound off and on.",
     },
     {
-      question: "Will the timer stay accurate if the tab stutters?",
+      question: "What happens if the tab stutters?",
       answer:
-        "It’s anchored to an absolute end time and recalculates remaining time from your device clock, which helps keep the countdown steady across typical browser scheduling delays.",
+        "The countdown is anchored to an absolute end time and recalculates remaining time from your device clock. That helps normal tab switches and small rendering pauses, but sleeping devices or aggressive power saving can still affect what you see until the page resumes.",
     },
     {
       question: "Is there a maximum timer length?",

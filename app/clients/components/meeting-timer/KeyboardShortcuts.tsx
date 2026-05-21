@@ -82,13 +82,13 @@ export function AccuracyAndPrivacySection() {
 
           <div className="ilt-surface-muted p-4">
             <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-              Countdown stays accurate while running
+              Countdown reconciles while running
             </div>
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               The timer uses your device performance clock to keep the countdown
               aligned with real time. If your device is under heavy load, the
-              display may update less smoothly, but it still aims to reflect the
-              correct remaining time.
+              display may update less smoothly, but the page recalculates from
+              elapsed time rather than relying only on interval ticks.
             </p>
           </div>
 

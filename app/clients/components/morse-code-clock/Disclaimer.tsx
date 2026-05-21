@@ -78,7 +78,7 @@ export default function Disclaimer() {
             <ol className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)] sm:grid-cols-3">
               <li className="ilt-surface-muted p-3">
                 <strong className="text-[var(--ilt-text-primary)]">1) Pick a view</strong>:
-                Blocks for readability, Text for exact Morse strings.
+                Blocks for readability, Text for literal Morse strings.
               </li>
               <li className="ilt-surface-muted p-3">
                 <strong className="text-[var(--ilt-text-primary)]">2) Set format</strong>:

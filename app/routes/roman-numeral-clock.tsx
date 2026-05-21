@@ -644,14 +644,27 @@ export default function RomanNumeralClockPage({
 
       <SeoBand title="How Roman numeral time works">
         <p>
-          The clock above converts the live hour, minute, and second values into
-          Roman numerals. The visual display stays dominant, with the standard
-          time kept nearby as a comparison.
+          The clock above converts the live hour, minute, and second values
+          into Roman numerals while keeping the normal time nearby for
+          comparison. It is a display format, not a separate time system: the
+          browser reads your device clock, formats the hour/minute/second
+          values, and then renders each segment as Roman numerals.
         </p>
         <p>
-          Roman numerals are a display format rather than a separate time
-          system. Midnight, noon, and current live values are represented by
-          converting each numeric segment into its Roman numeral form.
+          The controls let you show or hide seconds, switch between 12-hour and
+          24-hour time, copy the current display, and use fullscreen when the
+          clock is meant to be seen from a desk, classroom, or second monitor.
+          In 12-hour mode, the IIII option controls whether four is shown as
+          IIII, which is common on many clock faces, or IV, which is the more
+          familiar Roman numeral form in text.
+        </p>
+        <h3>How to read the display</h3>
+        <p>
+          Read each segment the same way you would read a digital clock: hour,
+          minute, and optionally second. For example, 8:04 can appear as VIII:IIII
+          when the clock-style IIII option is on, or VIII:IV when it is off. In
+          24-hour mode, afternoon hours are converted directly, so 14 becomes
+          XIV instead of II PM.
         </p>
         <h3>Display limitations</h3>
         <p>
@@ -662,13 +675,23 @@ export default function RomanNumeralClockPage({
         </p>
         <h3>When to use it</h3>
         <p>
-          Use this as a novelty or presentation clock when the format matters
-          more than fast scanning. For precise scheduling, compare the Roman
-          display with the normal time shown nearby.
+          Use this as a novelty clock, classical-style display, classroom
+          example, or quick demo of Roman numerals in a live clock context. It
+          works well when the format matters more than fast scanning. For
+          scheduling, compare the Roman display with the normal time shown
+          nearby.
         </p>
         <h3>Related specialty clocks</h3>
         <p>
-          For base-two time display, use the{" "}
+          For a normal numeric clock, use the{" "}
+          <a className="ilt-content-link" href="/digital-clock">
+            digital clock
+          </a>
+          . For a traditional clock face, use the{" "}
+          <a className="ilt-content-link" href="/analog-clock">
+            analog clock
+          </a>
+          . For base-two time display, use the{" "}
           <a className="ilt-content-link" href="/binary-clock">
             binary clock
           </a>

@@ -53,7 +53,7 @@ export default function FAQ({
     {
       question: "Is this an “atomic” clock?",
       answer:
-        "No. This page displays the time your device reports. If you want a reference aligned to an atomic time source, use the Atomic Clock page.",
+        "No. This page displays the time your device reports. If you want an atomic-style display with the same browser/device limitations explained, use the Atomic Clock page.",
     },
     {
       question: "Does it keep running if I close the tab?",

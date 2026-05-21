@@ -107,6 +107,13 @@ export default function FAQ({
           >
             Binary Clock
           </Link>
+          {" "}or{" "}
+          <Link
+            to="/fibonacci-clock"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Fibonacci Clock
+          </Link>
           . Need time in other locations?{" "}
           <Link
             to="/world-clock"

@@ -88,12 +88,12 @@ export default function PopularUseCases({
       ],
     },
     {
-      title: "When you just need the exact current local time",
+      title: "When you just need the current local time",
       description:
         "Use the minimalist view for big digits, or switch to the dedicated local time page when you want a straightforward ‘current time’ reference.",
       forWho: "Anyone verifying local time quickly without extra controls.",
       notFor:
-        "You need UTC or an ‘official’ reference comparison. Use UTC Clock or Atomic Clock.",
+        "You need UTC or another reference format. Use UTC Clock or the relevant clock page.",
       links: [
         { label: "Current Local Time", href: "/current-local-time" },
         { label: "UTC Clock", href: "/utc-clock" },

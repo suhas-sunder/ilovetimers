@@ -118,12 +118,12 @@ export default function HowItWorks({
                 World Clock
               </a>
               . If you need a reference-aligned time source to compare against
-              your device clock, use{" "}
+              your device clock, compare it with a plain local-time view such as{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                href={abs("/atomic-clock")}
+                href={abs("/current-local-time")}
               >
-                Atomic Clock
+                Current Local Time
               </a>
               .
             </p>
@@ -207,7 +207,7 @@ export default function HowItWorks({
               </li>
               <li>
                 <span className="font-semibold text-[var(--ilt-text-primary)]">Is not:</span> a
-                guaranteed reference time source if your device clock is wrong.
+                reference time source if your device clock is wrong.
               </li>
             </ul>
 
@@ -249,9 +249,13 @@ export default function HowItWorks({
             <PillLink href={abs("/minimalist-clock")}>
               Minimalist Clock
             </PillLink>
-            <PillLink href={abs("/utc-clock")}>UTC Clock</PillLink>
+            <PillLink href={abs("/current-local-time")}>
+              Current Local Time
+            </PillLink>
             <PillLink href={abs("/world-clock")}>World Clock</PillLink>
-            <PillLink href={abs("/atomic-clock")}>Atomic Clock</PillLink>
+            <PillLink href={abs("/fullscreen-timer")}>
+              Fullscreen Timer
+            </PillLink>
             <PillLink href={abs("/time-zone-converter")}>
               Time Zone Converter
             </PillLink>
@@ -394,8 +398,8 @@ export default function HowItWorks({
                 Concrete example: you are timing a 90-second rest between sets.
                 You finish at <strong>14:12:10</strong>. When the seconds hand
                 reaches the 12 and the minute hand is halfway between 2 and 3,
-                you are around <strong>14:13:40</strong>. If you need exact
-                elapsed timing and splits, use a{" "}
+                you are around <strong>14:13:40</strong>. If you need elapsed
+                timing and splits, use a{" "}
                 <a
                   className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
                   href={abs("/stopwatch")}

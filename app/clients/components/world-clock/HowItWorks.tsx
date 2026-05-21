@@ -85,7 +85,7 @@ export default function HowItWorks({
             <p className="leading-relaxed">
               This page shows your{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">local time</span>{" "}
-              and a set of selected city cards. Each card is tied to an official
+              and a set of selected city cards. Each card is tied to a standard
               time zone identifier (for example{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">
                 America/Toronto
@@ -317,7 +317,7 @@ export default function HowItWorks({
                     When to use seconds
                   </div>
                   <div className="mt-1 text-[var(--ilt-text-secondary)]">
-                    If you are syncing a handoff (for example “start exactly at
+                    If you are syncing a handoff (for example “start right at
                     10:00”), turn seconds on so you can see the boundary
                     clearly.
                   </div>
@@ -508,6 +508,13 @@ export default function HowItWorks({
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Digital Clock
+          </Link>
+          . For a named launch, stream, birthday, or classroom event, use{" "}
+          <Link
+            to="/event-countdown"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Event Countdown
           </Link>
           .
         </div>

@@ -49,7 +49,7 @@ export default function FAQ({
     {
       question: "What time zone is being used?",
       answer:
-        "The displayed decimal time is your device’s local time zone. The copy block also includes an ISO timestamp in UTC, so even if you share across time zones, the exact moment is preserved.",
+        "The displayed decimal time is your device’s local time zone. The copy block also includes an ISO timestamp in UTC, so shared output has a clear timestamp.",
     },
     {
       question: "How does hex color mode work?",

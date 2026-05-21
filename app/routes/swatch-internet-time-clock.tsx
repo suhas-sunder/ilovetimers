@@ -33,7 +33,7 @@ import {
 export function meta({}: Route.MetaArgs) {
   const title = "Swatch Internet Time (.beat) Clock, Live";
   const description =
-    "View the current Swatch Internet Time (@beat) live. A clean, timezone-free clock that shows the exact .beat time with a clear, readable display.";
+    "View the current Swatch Internet Time (@beat) live. A clean, timezone-free clock that shows .beats with a clear, readable display.";
 
   const url = "https://www.ilovetimers.com/swatch-internet-time-clock";
 
@@ -414,11 +414,34 @@ export default function SwatchInternetTimePage({
           comparison is included only as context; the @beats value is the primary
           result and updates live while the clock is running.
         </p>
+        <h3>How to read @beats</h3>
+        <p>
+          Swatch Internet Time removes hours and minutes from the main display.
+          @000 is the start of the Biel Mean Time day, @500 is halfway through
+          that day, and @999 is near the end. Because the basis is UTC+1, two
+          people in different local time zones see the same @beat at the same
+          moment.
+        </p>
+        <h3>Controls and display options</h3>
+        <p>
+          Live mode keeps the beat value moving from the browser/device clock.
+          Freeze pauses the display so you can read or copy the value, Snap
+          refreshes a frozen value to the current moment, and Fullscreen makes
+          the @beat display easier to read across a room.
+        </p>
         <h3>Why it looks different</h3>
         <p>
           Swatch Internet Time removes hours, minutes, seconds, and ordinary
           time-zone labels from the display. That makes it a novelty reference
           format rather than a replacement for local schedules or legal time.
+        </p>
+        <h3>Common examples</h3>
+        <p>
+          Use this page for internet-time demos, time-format learning, novelty
+          clock displays, or comparing a local clock with a timezone-free
+          @beat value. For ordinary scheduling, keep using local time, UTC, or a
+          time-zone converter because @beats do not include a city or local
+          offset.
         </p>
         <h3>Useful notes</h3>
         <ul className="list-disc space-y-2 pl-5">
@@ -447,6 +470,10 @@ export default function SwatchInternetTimePage({
           . For Unix timestamps, use the{" "}
           <a className="ilt-content-link" href="/epoch-unix-time-clock">
             epoch Unix time clock
+          </a>
+          . For your device's local clock, use{" "}
+          <a className="ilt-content-link" href="/current-local-time">
+            current local time
           </a>
           .
         </p>

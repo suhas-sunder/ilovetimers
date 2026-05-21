@@ -309,7 +309,7 @@ export default function HowItWorks({
 
           <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             These examples are written in the same shape as the output you copy
-            from this page. The exact values will change with your current time,
+            from this page. The values will change with your current time,
             but the structure and ranges are consistent.
           </p>
 
@@ -348,7 +348,7 @@ export default function HowItWorks({
                 "ISO: 2026-02-23T20:59:08.214Z",
                 "",
                 "Why this helps:",
-                "- The person reading it can use ISO as the exact moment",
+                "- The person reading it can use ISO as a UTC timestamp",
                 "- The local line explains what you saw on your device",
               ]}
             />
@@ -478,6 +478,7 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/binary-clock">Binary Clock</PillLink>
+            <PillLink to="/digital-clock">Digital Clock</PillLink>
             <PillLink to="/morse-code-clock">Morse Code Clock</PillLink>
             <PillLink to="/utc-clock">UTC Clock</PillLink>
             <PillLink to="/epoch-unix-time-clock">
@@ -499,7 +500,7 @@ export default function HowItWorks({
                 Technical details (formats, time zone, refresh rate, clipboard)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
-                Optional notes if you rely on exact behavior
+                Optional notes if you rely on display behavior
               </div>
             </div>
             <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">

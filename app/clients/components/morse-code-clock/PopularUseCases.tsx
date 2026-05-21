@@ -21,7 +21,8 @@ export default function PopularUseCases({
       title: "Practice Morse numbers with a live clock",
       description:
         "Keep seconds on so the Morse output changes often, then check each digit against the normal time.",
-      forWho: "Learners practicing number patterns from 0 through 9.",
+      forWho:
+        "Learners practicing number patterns from 0 through 9, including radio-adjacent clubs that want a simple digit-only demo.",
       notFor:
         "Learning letters or full messages. This page only encodes time digits.",
       links: [{ label: "Current Local Time", href: "/current-local-time" }],

@@ -257,7 +257,7 @@ export default function Disclaimer() {
                   <p className="mt-2">
                     Copy includes: formatted time, timezone label, formatted
                     date line, a binary line (mode-dependent), and an ISO
-                    timestamp for exact reference.
+                    timestamp as a UTC reference.
                   </p>
                 </div>
 

@@ -42,7 +42,7 @@ export default function PopularUseCases({
       forWho:
         "Classrooms, libraries, focus sessions, meetings, or anyone who finds the seconds hand distracting.",
       notFor:
-        "If you need exact second-level tracking or timing intervals. Use a stopwatch or timer.",
+        "If you need elapsed tracking or timed intervals. Use a stopwatch or timer.",
       links: [
         { label: "Analog clock", href: "/analog-clock" },
         { label: "Minimalist clock", href: "/minimalist-clock" },
@@ -78,15 +78,15 @@ export default function PopularUseCases({
       ],
     },
     {
-      title: "Reference time (device clock vs trusted source)",
+      title: "Device clock comparison",
       description:
-        "If you suspect your device time is off, compare against a reference-aligned display.",
+        "If you suspect your device time is off, compare it with a simpler clock view and then check your operating-system time settings.",
       forWho:
-        "Anyone troubleshooting time drift, meetings that must start exactly, or device setup checks.",
+        "Anyone troubleshooting time drift, meeting-room setup, or device clock settings.",
       notFor:
         "If you need your system clock corrected automatically. You must fix that in OS settings.",
       links: [
-        { label: "Atomic clock", href: "/atomic-clock" },
+        { label: "Current local time", href: "/current-local-time" },
         { label: "UTC clock", href: "/utc-clock" },
         { label: "Analog clock", href: "/analog-clock" },
       ],

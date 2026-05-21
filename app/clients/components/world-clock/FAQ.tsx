@@ -146,6 +146,13 @@ export default function FAQ({
           >
             Current Local Time
           </Link>
+          . Counting down to a named event?{" "}
+          <Link
+            to="/event-countdown"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Event Countdown
+          </Link>
           .
         </>
       ),

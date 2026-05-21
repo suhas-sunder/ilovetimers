@@ -431,7 +431,7 @@ function RetroFlipClockCard({ initialNowISO }: { initialNowISO: string }) {
     cardRef.current?.focus({ preventScroll: true });
   }, [isFs]);
 
-  // Tick on exact second boundaries when seconds are on.
+  // Tick on whole-second boundaries when seconds are on.
   useEffect(() => {
     let intervalId: number | null = null;
     let timeoutId: number | null = null;
@@ -931,6 +931,11 @@ export default function RetroFlipClockPage({
           while seconds, date, Zen mode, copy, and fullscreen controls stay
           secondary below the display.
         </p>
+        <p>
+          This is a browser-rendered visual style, not a mechanical flip clock.
+          The page reads your device time and animates the digit changes so it
+          feels retro while still behaving like a live local clock.
+        </p>
         <h3>Display options</h3>
         <ul className="list-disc space-y-2 pl-5">
           <li>
@@ -944,6 +949,10 @@ export default function RetroFlipClockPage({
             Zen mode keeps the page quieter when the clock is being used as a
             desk or room display.
           </li>
+          <li>
+            Copy captures a plain text snapshot with the displayed time, time
+            zone label, optional date, and ISO timestamp.
+          </li>
         </ul>
         <h3>When fullscreen helps</h3>
         <p>
@@ -952,6 +961,13 @@ export default function RetroFlipClockPage({
           minimalist clock because the flip-card motion and segmented layout are
           the point of the page. Copy controls remain available when you need to
           paste the current time into notes or a message.
+        </p>
+        <h3>Common uses</h3>
+        <p>
+          Use it as a desk display, second-screen clock, room clock, stream
+          backdrop, or retro visual clock when a standard digital display feels
+          too plain. If you need a countdown, alarm, or elapsed-time tool, use a
+          timer route instead of treating the flip clock as an alert.
         </p>
         <h3>Related clock styles</h3>
         <p>
@@ -966,6 +982,10 @@ export default function RetroFlipClockPage({
           . For a traditional clock face, use the{" "}
           <a className="ilt-content-link" href="/analog-clock">
             analog clock
+          </a>
+          . For a large countdown display rather than a live clock, use the{" "}
+          <a className="ilt-content-link" href="/fullscreen-timer">
+            fullscreen timer
           </a>
           .
         </p>

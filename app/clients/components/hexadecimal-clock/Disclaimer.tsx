@@ -28,7 +28,7 @@ export default function Disclaimer() {
             <strong className="text-[var(--ilt-text-primary)]">
               Use this page to view the current local time rendered as
               hexadecimal values (HH:MM:SS), optionally including milliseconds,
-              and copy the exact output in one tap.
+              and copy the current output in one tap.
             </strong>{" "}
             Switch between standard hex time and a{" "}
             <span className="font-semibold text-[var(--ilt-text-primary)]">

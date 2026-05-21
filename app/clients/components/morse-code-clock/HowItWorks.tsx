@@ -149,7 +149,7 @@ export default function HowItWorks({
               uses simple shapes so you can read from a distance and quickly
               spot patterns.{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">Text view</span>{" "}
-              shows the exact Morse strings, which is ideal if you want to copy,
+              shows the literal Morse strings, which is ideal if you want to copy,
               compare, or verify what you are seeing.
             </p>
           </div>
@@ -197,7 +197,7 @@ export default function HowItWorks({
                 <span className="font-semibold text-[var(--ilt-text-primary)]">Blocks</span> for
                 readability or{" "}
                 <span className="font-semibold text-[var(--ilt-text-primary)]">Text</span> to
-                see the exact dot and dash strings.
+                see the literal dot and dash strings.
               </li>
               <li>
                 <span className="font-semibold text-[var(--ilt-text-primary)]">3)</span> Toggle{" "}
@@ -329,7 +329,7 @@ export default function HowItWorks({
 
           <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
             These scenarios are written like real “screen moments” with actual
-            digits, realistic times, and the exact style of output this page
+            digits, realistic times, and the style of output this page
             produces. Your values will vary based on the current time, but the
             format is the same. Each example includes the normal time and the
             Morse representation that matches the digits on screen.
@@ -525,6 +525,7 @@ export default function HowItWorks({
             <PillLink to="/world-clock">World Clock</PillLink>
             <PillLink to="/time-zone-converter">Time Zone Converter</PillLink>
             <PillLink to="/binary-clock">Binary Clock</PillLink>
+            <PillLink to="/fibonacci-clock">Fibonacci Clock</PillLink>
             <PillLink to="/hexadecimal-clock">Hexadecimal Clock</PillLink>
             <PillLink to="/roman-numeral-clock">Roman Numeral Clock</PillLink>
           </div>
@@ -539,7 +540,7 @@ export default function HowItWorks({
                 clipboard)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
-                Optional notes if you rely on exact behavior and expectations
+                Optional notes if you rely on display behavior and expectations
               </div>
             </div>
             <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">

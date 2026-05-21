@@ -63,7 +63,7 @@ export default function Disclaimer() {
 
             <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
               <strong className="text-[var(--ilt-text-primary)]">Copy output.</strong> Copy
-              includes the Fibonacci time, the exact digital time for the
+              includes the Fibonacci time, the standard digital time for the
               selected zone, rounding notes, and the tile sums used for hours
               and minutes.
             </div>
@@ -294,7 +294,7 @@ export default function Disclaimer() {
             <strong className="text-[var(--ilt-text-primary)]">Tip.</strong> If you are sharing
             a Fibonacci time with someone in another region, select their time
             zone first, then hit Copy so the message includes both the zone and
-            the exact digital time.
+            the standard digital time.
           </div>
         </details>
       </div>

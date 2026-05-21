@@ -23,11 +23,11 @@ export default function PopularUseCases({
 }) {
   const scenarios: Scenario[] = [
     {
-      title: "Quick world time (visual + exact)",
+      title: "Quick world time (visual + digital)",
       description:
-        "Pick a time zone and see the exact digital time plus the Fibonacci tile breakdown for that same moment. Useful when you want both a normal time readout and a quick visual representation.",
+        "Pick a time zone and see the standard digital time plus the Fibonacci tile breakdown for that same moment. Useful when you want both a normal time readout and a quick visual representation.",
       forWho:
-        "Anyone checking time in another region while still wanting an exact HH:MM:SS reference.",
+        "Anyone checking time in another region while still wanting an HH:MM:SS readout.",
       notFor:
         "You need to convert a specific meeting time between zones. Use the time zone converter instead.",
       links: [
@@ -64,7 +64,7 @@ export default function PopularUseCases({
     {
       title: "Share a time snapshot (copy breakdown)",
       description:
-        "Use Copy to grab a ready-to-paste breakdown: Fibonacci time, exact digital time for the selected zone, rounding notes, and the tile sums used for hours and minutes.",
+        "Use Copy to grab a ready-to-paste breakdown: Fibonacci time, standard digital time for the selected zone, rounding notes, and the tile sums used for hours and minutes.",
       forWho:
         "Anyone sending a timestamp or tile breakdown to a friend, teammate, or chat.",
       notFor:

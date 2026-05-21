@@ -61,7 +61,7 @@ export default function Disclaimer() {
               <strong className="text-[var(--ilt-text-primary)]">
                 Clock accuracy depends on the device.
               </strong>{" "}
-              Most systems stay accurate, but if your device clock drifts, this
+              Most systems keep reasonably close time, but if your device clock drifts, this
               page will reflect that drift. For a reference time source, use the{" "}
               <a
                 href="/atomic-clock"

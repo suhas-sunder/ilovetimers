@@ -27,7 +27,7 @@ export default function HowItWorks({
       {
         "@type": "HowToStep",
         name: "Read the digital time first",
-        text: "The page shows the exact digital time and the Fibonacci HH:MM version. Minutes are represented in 5-minute steps.",
+        text: "The page shows the standard digital time and the Fibonacci HH:MM version. Minutes are represented in 5-minute steps.",
       },
       {
         "@type": "HowToStep",
@@ -42,7 +42,7 @@ export default function HowItWorks({
       {
         "@type": "HowToStep",
         name: "Copy or go fullscreen",
-        text: "Copy outputs the Fibonacci time, exact digital time, rounding note, and tile sums. Fullscreen keeps the visual clock large.",
+        text: "Copy outputs the Fibonacci time, standard digital time, rounding note, and tile sums. Fullscreen keeps the visual clock large.",
       },
     ],
   };
@@ -83,13 +83,13 @@ export default function HowItWorks({
               and 5. The tiles combine to represent the hour and the minutes,
               with minutes rounded to the nearest 5-minute step. The normal
               digital time remains visible so you can compare the visual
-              pattern against the exact time.
+              pattern against the standard time.
             </p>
             <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">
               Live mode follows your selected time zone. Explore mode lets you
               enter a manual hour and minute so you can study how a specific
-              time maps onto the tiles. Copy gives you the Fibonacci time, exact
-              digital time, rounding note, and tile sums.
+              time maps onto the tiles. Copy gives you the Fibonacci time, the
+              standard digital time, rounding note, and tile sums.
             </p>
           </div>
 
@@ -115,7 +115,7 @@ export default function HowItWorks({
               Reading the display
             </div>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
-              <li>The digital time shows the exact selected-zone time.</li>
+              <li>The digital time shows the selected-zone time.</li>
               <li>
                 Fibonacci time uses HH:MM where minutes are in 5-minute steps.
               </li>
@@ -156,6 +156,8 @@ export default function HowItWorks({
             <PillLink to="/world-clock">World Clock</PillLink>
             <PillLink to="/time-zone-converter">Time Zone Converter</PillLink>
             <PillLink to="/binary-clock">Binary Clock</PillLink>
+            <PillLink to="/roman-numeral-clock">Roman Numeral Clock</PillLink>
+            <PillLink to="/hexadecimal-clock">Hexadecimal Clock</PillLink>
           </div>
         </div>
       </div>

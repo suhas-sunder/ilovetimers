@@ -197,7 +197,7 @@ export function AccuracyAndPrivacySection() {
         <div className="mt-4 ilt-surface-muted px-3 py-2 text-sm text-[var(--ilt-text-secondary)]">
           <strong className="text-[var(--ilt-text-primary)]">Note.</strong> Fibonacci time is a
           rounded display meant for a clean tile-based representation. Use the
-          digital time panel when you need the exact second.
+          digital time panel when you need the current second.
         </div>
       </div>
     </section>

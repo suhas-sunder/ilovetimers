@@ -151,6 +151,13 @@ export default function HowItWorks({
               >
                 Analog Clock
               </a>
+              . If you want elapsed time in a binary-style format, try the{" "}
+              <a
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
+                href={abs("/binary-stopwatch")}
+              >
+                Binary Stopwatch
+              </a>{" "}
               . If you need time across locations, use{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
@@ -329,7 +336,7 @@ export default function HowItWorks({
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             <ExampleBlock
               title="Scenario 1: Debug a specific moment (24-hour + seconds on)"
-              subtitle="You want an exact binary snapshot of a visible time"
+              subtitle="You want a binary snapshot of a visible time"
               lines={[
                 "Displayed time: 13:07:42 (24-hour, seconds on)",
                 "",
@@ -388,7 +395,7 @@ export default function HowItWorks({
                 "H:01101 M:000111 S:101010",
                 "ISO: 2026-02-20T18:07:42.123Z",
                 "",
-                "Tip: If you need the exact moment, keep seconds on and use Copy.",
+                "Tip: If you need a timestamped moment, keep seconds on and use Copy.",
               ]}
             />
           </div>
@@ -450,6 +457,9 @@ export default function HowItWorks({
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink href={abs("/hexadecimal-clock")}>
               Hexadecimal Clock
+            </PillLink>
+            <PillLink href={abs("/binary-stopwatch")}>
+              Binary Stopwatch
             </PillLink>
             <PillLink href={abs("/morse-code-clock")}>
               Morse Code Clock
@@ -516,7 +526,7 @@ export default function HowItWorks({
               <p className="mt-1 leading-relaxed">
                 Copy includes the formatted time, a timezone label, a date line,
                 a mode-specific binary line, and an ISO timestamp. ISO is
-                included as an exact reference even if your display format is
+                included as a UTC reference even if your display format is
                 12-hour.
               </p>
             </div>

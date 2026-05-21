@@ -24,7 +24,7 @@ export default function FAQ({
     {
       question: "What does this Fibonacci Clock do?",
       answer:
-        "It shows the current time using Fibonacci-sized tiles (1, 1, 2, 3, 5) and also displays the exact digital time (HH:MM:SS). You can switch time zones, explore a time manually, go fullscreen, and copy a breakdown of the tile sums.",
+        "It shows the current time using Fibonacci-sized tiles (1, 1, 2, 3, 5) and also displays the standard digital time (HH:MM:SS). You can switch time zones, explore a time manually, go fullscreen, and copy a breakdown of the tile sums.",
     },
     {
       question: "What is “Fibonacci time” on this page?",
@@ -59,7 +59,7 @@ export default function FAQ({
     {
       question: "How do I copy the output?",
       answer:
-        "Press Copy (or C) to copy a text block that includes Fibonacci time, the exact digital time for the selected zone, the rounding note, and the tile sums used for hours and minutes.",
+        "Press Copy (or C) to copy a text block that includes Fibonacci time, the standard digital time for the selected zone, the rounding note, and the tile sums used for hours and minutes.",
     },
     {
       question: "What keyboard shortcuts are supported?",

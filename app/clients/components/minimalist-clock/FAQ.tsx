@@ -105,6 +105,20 @@ export default function FAQ({
           >
             Digital Clock
           </Link>
+          ,{" "}
+          <Link
+            to="/analog-clock"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Analog Clock
+          </Link>
+          , or{" "}
+          <Link
+            to="/retro-flip-clock"
+            className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+          >
+            Retro Flip Clock
+          </Link>
           . Need a timer instead of a clock?{" "}
           <Link
             to="/fullscreen-timer"

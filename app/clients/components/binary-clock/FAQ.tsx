@@ -49,7 +49,7 @@ export default function FAQ({
     {
       question: "What exactly gets copied when I press Copy?",
       answer:
-        "Copy captures a snapshot of the current moment including your formatted time, timezone label, the date line, the binary representation for the selected mode, and an ISO timestamp for exact reference.",
+        "Copy captures a snapshot of the current moment including your formatted time, timezone label, the date line, the binary representation for the selected mode, and an ISO timestamp as a UTC reference.",
     },
     {
       question: "What keyboard shortcuts are supported?",

@@ -508,6 +508,9 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/digital-clock">Digital Clock</PillLink>
+            <PillLink to="/analog-clock">Analog Clock</PillLink>
+            <PillLink to="/retro-flip-clock">Retro Flip Clock</PillLink>
+            <PillLink to="/current-local-time">Current Local Time</PillLink>
             <PillLink to="/world-clock">World Clock</PillLink>
             <PillLink to="/utc-clock">UTC Clock</PillLink>
             <PillLink to="/time-zone-converter">Time Zone Converter</PillLink>
@@ -524,7 +527,7 @@ export default function HowItWorks({
                 Technical details (time source, fullscreen, Zen, copy)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
-                Optional notes if you rely on exact behavior and shortcuts
+                Optional notes if you rely on display behavior and shortcuts
               </div>
             </div>
             <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">

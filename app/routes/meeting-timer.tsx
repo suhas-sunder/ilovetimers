@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   Field,
   FullscreenBottomBar,
@@ -542,6 +543,16 @@ export default function MeetingTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need separate durations for each agenda topic? Use the{" "}
+            <a className="ilt-content-link" href="/meeting-agenda-timer">
+              meeting agenda timer
+            </a>{" "}
+            to edit agenda items, move between topics, and track total
+            remaining meeting time.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   Field,
   PageShell,
   PresetGroup,
@@ -499,6 +500,16 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Working with epoch values from logs or APIs? The{" "}
+            <a className="ilt-content-link" href="/unix-timestamp-converter">
+              Unix timestamp converter
+            </a>{" "}
+            converts timestamp seconds and milliseconds into UTC, local time,
+            and ISO strings.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

@@ -91,6 +91,12 @@ const SECTIONS: SitemapSection[] = [
           "Keep speeches, talks, and presentations on time with a clear timer.",
       },
       {
+        title: "Speech Timer",
+        href: "/speech-timer",
+        description:
+          "Practice or deliver a talk with visible speaking-time warning thresholds.",
+      },
+      {
         title: "Classroom Timer",
         href: "/classroom-timer",
         description:
@@ -101,6 +107,12 @@ const SECTIONS: SitemapSection[] = [
         href: "/meeting-timer",
         description:
           "Keep meetings focused with visible timing for agendas and discussion blocks.",
+      },
+      {
+        title: "Meeting Agenda Timer",
+        href: "/meeting-agenda-timer",
+        description:
+          "Run meeting agenda items one by one with active item timing.",
       },
       {
         title: "Exam Timer",
@@ -301,6 +313,12 @@ const SECTIONS: SitemapSection[] = [
           "View the current Coordinated Universal Time in your browser.",
       },
       {
+        title: "Military Time Clock",
+        href: "/military-time-clock",
+        description:
+          "View the current time as a live 24-hour military-style clock.",
+      },
+      {
         title: "Analog Clock",
         href: "/analog-clock",
         description:
@@ -420,6 +438,12 @@ const SECTIONS: SitemapSection[] = [
         title: "Military Time Converter",
         href: "/military-time-converter",
         description: "Convert between 12-hour time and 24-hour military time.",
+      },
+      {
+        title: "Unix Timestamp Converter",
+        href: "/unix-timestamp-converter",
+        description:
+          "Convert Unix timestamps to UTC, local time, ISO, seconds, and milliseconds.",
       },
       {
         title: "Work Hours Calculator",

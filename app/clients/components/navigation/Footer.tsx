@@ -28,8 +28,10 @@ const footerSections: TimerMenuSection[] = [
       { to: "/silent-timer", label: "Silent Timer" },
       { to: "/online-timer", label: "Online Timer" },
       { to: "/presentation-timer", label: "Presentation Timer" },
+      { to: "/speech-timer", label: "Speech Timer" },
       { to: "/classroom-timer", label: "Classroom Timer" },
       { to: "/meeting-timer", label: "Meeting Timer" },
+      { to: "/meeting-agenda-timer", label: "Meeting Agenda Timer" },
       { to: "/exam-timer", label: "Exam Timer" },
       { to: "/break-timer", label: "Break Timer" },
       { to: "/study-timer", label: "Study Timer" },
@@ -78,6 +80,7 @@ const footerSections: TimerMenuSection[] = [
       { to: "/world-clock", label: "World Clock" },
       { to: "/current-local-time", label: "Current Local Time" },
       { to: "/utc-clock", label: "UTC Clock" },
+      { to: "/military-time-clock", label: "Military Time Clock" },
       { to: "/analog-clock", label: "Analog Clock" },
       { to: "/digital-clock", label: "Digital Clock" },
       { to: "/binary-clock", label: "Binary Clock" },
@@ -107,6 +110,7 @@ const footerSections: TimerMenuSection[] = [
     links: [
       { to: "/time-zone-converter", label: "Time Zone Converter" },
       { to: "/military-time-converter", label: "Military Time Converter" },
+      { to: "/unix-timestamp-converter", label: "Unix Timestamp Converter" },
       { to: "/work-hours-calculator", label: "Work Hours Calculator" },
       { to: "/time-calculator", label: "Time Calculator" },
       {

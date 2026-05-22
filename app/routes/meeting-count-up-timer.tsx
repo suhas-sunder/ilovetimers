@@ -9,6 +9,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   Field,
   FullscreenBottomBar,
@@ -566,6 +567,16 @@ export default function MeetingCountupTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            If the meeting needs planned topic durations instead of elapsed
+            discussion time, use the{" "}
+            <a className="ilt-content-link" href="/meeting-agenda-timer">
+              meeting agenda timer
+            </a>{" "}
+            for item-by-item countdowns and agenda overrun visibility.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

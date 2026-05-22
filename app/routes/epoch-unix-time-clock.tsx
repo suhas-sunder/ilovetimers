@@ -12,6 +12,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
@@ -492,6 +493,15 @@ export default function EpochUnixTimeClockPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need to convert a pasted epoch value into a readable date? Use the{" "}
+            <a className="ilt-content-link" href="/unix-timestamp-converter">
+              Unix timestamp converter
+            </a>{" "}
+            for seconds, milliseconds, UTC, local time, and ISO output.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

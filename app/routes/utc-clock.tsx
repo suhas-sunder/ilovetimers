@@ -841,6 +841,10 @@ export default function UtcClockPage({
             <a className="ilt-content-link" href="/world-clock">
               World Clock
             </a>
+            . Need current 24-hour or Zulu-style display? Use the{" "}
+            <a className="ilt-content-link" href="/military-time-clock">
+              Military Time Clock
+            </a>
             . Need Unix timestamps for code or logs? Use the{" "}
             <a className="ilt-content-link" href="/epoch-unix-time-clock">
               Epoch Unix Time Clock

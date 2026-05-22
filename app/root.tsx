@@ -132,10 +132,24 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "Keep talks, pitches, and speeches on schedule.",
   },
   {
+    title: "Speech Timer",
+    href: "/speech-timer",
+    category: "Core",
+    description: "Practice talks with visible warning thresholds.",
+    keywords: "speaker speaking speech talk rehearsal warning thresholds",
+  },
+  {
     title: "Meeting Timer",
     href: "/meeting-timer",
     category: "Work",
     description: "Run timed agenda blocks for focused meetings.",
+  },
+  {
+    title: "Meeting Agenda Timer",
+    href: "/meeting-agenda-timer",
+    category: "Work",
+    description: "Time agenda items one by one with next and previous controls.",
+    keywords: "agenda timer timed meeting item run of show",
   },
   {
     title: "Meeting Count Up Timer",
@@ -306,6 +320,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "Display current Coordinated Universal Time.",
   },
   {
+    title: "Military Time Clock",
+    href: "/military-time-clock",
+    category: "Clocks",
+    description: "Show current time as a live 24-hour military clock.",
+    keywords: "military time now 24 hour army zulu clock",
+  },
+  {
     title: "Atomic Clock",
     href: "/atomic-clock",
     category: "Clocks",
@@ -466,6 +487,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     href: "/milliseconds-converter",
     category: "Calculators",
     description: "Convert milliseconds into readable time units.",
+  },
+  {
+    title: "Unix Timestamp Converter",
+    href: "/unix-timestamp-converter",
+    category: "Calculators",
+    description: "Convert Unix timestamps to UTC, local time, ISO, seconds, and milliseconds.",
+    keywords: "epoch converter timestamp date javascript milliseconds unix",
   },
   {
     title: "Military Time Converter",

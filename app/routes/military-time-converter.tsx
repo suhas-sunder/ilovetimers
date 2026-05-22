@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   Field,
   FullscreenBottomBar,
   FullscreenTopBar,
@@ -911,6 +912,16 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need the current live 24-hour time instead of converting a written
+            value? Open the{" "}
+            <a className="ilt-content-link" href="/military-time-clock">
+              military time clock
+            </a>{" "}
+            for local or UTC/Zulu display with seconds and fullscreen.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

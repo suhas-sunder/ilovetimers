@@ -604,6 +604,10 @@ export default function PresentationTimerPage({}: Route.ComponentProps) {
             <a className="ilt-content-link" href="/meeting-timer">
               meeting timer
             </a>
+            . For a speaker-focused countdown with warning thresholds, use the{" "}
+            <a className="ilt-content-link" href="/speech-timer">
+              speech timer
+            </a>
             . For a date-based launch or event, use the{" "}
             <a className="ilt-content-link" href="/event-countdown">
               event countdown

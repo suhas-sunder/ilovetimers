@@ -131,6 +131,14 @@ export const routeMonetization = [
       "Presentation timer now has expanded speaker timing, warning, rehearsal, fullscreen, and related-tool content.",
   },
   {
+    path: "/speech-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Speech timer has route-specific speaking countdown content, warning thresholds, fullscreen support, and limitation notes.",
+  },
+  {
     path: "/classroom-timer",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -145,6 +153,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Meeting timer has expanded agenda-specific content and practical support sections.",
+  },
+  {
+    path: "/meeting-agenda-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Meeting agenda timer has utility-first agenda item timing, support content, FAQ, and practical limitations.",
   },
   {
     path: "/exam-timer",
@@ -459,6 +475,14 @@ export const routeMonetization = [
       "UTC clock now has expanded UTC-use guidance, device-clock limitation notes, ISO details, and related time-tool links.",
   },
   {
+    path: "/military-time-clock",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Military time clock has route-specific live 24-hour clock content, copy/fullscreen controls, and format notes.",
+  },
+  {
     path: "/analog-clock",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -665,6 +689,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Milliseconds converter has expanded examples, FAQ, and precision notes.",
+  },
+  {
+    path: "/unix-timestamp-converter",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Unix timestamp converter has timestamp conversion utility content, examples, FAQ, and UTC/local limitation notes.",
   },
   {
     path: "/privacy",

@@ -234,7 +234,7 @@ export default function Disclaimer() {
           <div className="mt-4 ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
             <strong className="text-[var(--ilt-text-primary)]">Tip.</strong> For a clean
             display, go fullscreen and keep Live on. If you only want to look
-            something up, switch to Manual and set the exact date and time.
+            something up, switch to Manual and set the specific date and time.
           </div>
         </details>
       </div>

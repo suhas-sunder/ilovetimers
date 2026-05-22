@@ -77,8 +77,8 @@ export default function Disclaimer() {
                 Moon phase is an approximation.
               </strong>{" "}
               The phase label and illumination are based on a standard synodic
-              month model. It’s great for a quick readout, but it is not a
-              telescope-grade ephemeris. If you want a dedicated view, try{" "}
+              month model. It is useful for a quick readout, but it is not a
+              specialized ephemeris. If you want a dedicated view, try{" "}
               <a
                 href="/moon-phase-clock"
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"

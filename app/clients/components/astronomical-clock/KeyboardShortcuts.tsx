@@ -104,7 +104,7 @@ export function AccuracyAndPrivacySection() {
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               The phase label and illumination are computed from a standard
               lunar cycle model. It’s accurate enough for planning and general
-              awareness, but it is not a precision ephemeris.
+              awareness, but it is not a specialized ephemeris.
             </p>
           </div>
 

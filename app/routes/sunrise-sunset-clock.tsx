@@ -961,60 +961,161 @@ export default function SunriseSunsetClockPage({
       <ToolHero
         display={<SunriseSunsetClockCard initialNowISO={nowISO} />}
         title="Sunrise & Sunset Clock"
-        description="Check sunrise, sunset, solar noon, and the next solar event for a selected date and location."
+        description="Check today's sunrise, sunset, solar noon, and the next solar event for your selected location and time zone."
       />
 
       <SeoBand title="How sunrise and sunset estimates work">
         <p>
-          Use the clock above to calculate sunrise, sunset, solar noon, and the
-          next solar event for a location and date. The display stays focused on
-          the current result while location, date, and timezone-facing controls
-          remain secondary.
+          Use the clock above to estimate sunrise, sunset, solar noon, daylight
+          length, and the next solar event for the current date and location.
+          The main display stays focused on the result first, while location,
+          time zone, seconds, and 12/24-hour settings stay below the active
+          clock.
         </p>
         <p>
-          Sunrise and sunset calculations are estimates based on the coordinates
-          and date you provide. Manual coordinates are useful when browser
-          location access is unavailable or when you are planning for another
-          place.
+          This page is useful when you want a quick daylight check without
+          opening a full weather app or almanac. Choose device location or
+          manual coordinates, and the display shows today's sunrise and sunset
+          windows using the page's solar calculation model.
         </p>
-        <h3>When to use it</h3>
+
+        <h3>When to use this daylight clock</h3>
         <p>
-          Use it for planning a walk, comparing daylight across dates, checking
-          the next sunrise or sunset, or estimating how much daylight is left.
-          Do not use the result as a safety-critical, navigation, aviation, or
-          official almanac source.
+          Use it for planning a walk, comparing daylight across locations,
+          checking the next sunrise or sunset, estimating how much daylight remains,
+          checking travel daylight for the current day, or giving a classroom
+          astronomy demo about how daylight changes by season and location. It
+          is designed for everyday
+          planning and general daylight awareness, not for safety-critical
+          navigation, aviation, marine use, or official almanac decisions.
         </p>
-        <h3>Location and date notes</h3>
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            The selected location controls the solar estimate more than the
-            browser's current time zone.
+            <strong>Outdoor planning:</strong> check whether sunset is before or
+            after your walk, commute, practice, or casual outdoor schedule.
           </li>
           <li>
-            Changing the date is useful for comparing seasonal daylight or
-            planning around a future day.
+            <strong>Travel planning:</strong> enter destination coordinates and
+            a matching time zone to understand roughly how much daylight that
+            place has today.
           </li>
           <li>
-            Browser location permission is optional; manual coordinates can be
-            entered when you prefer not to share location.
+            <strong>Classroom use:</strong> compare different latitudes or talk
+            through seasonal daylight changes using the live result as context.
+          </li>
+          <li>
+            <strong>Daily awareness:</strong> keep the next solar event visible
+            when you simply want to know whether sunrise or sunset is coming up.
           </li>
         </ul>
-        <h3>Related sky clocks</h3>
+
+        <h3>Location and time zone settings</h3>
         <p>
-          For photo-light windows, use the{" "}
+          Sunrise and sunset depend heavily on the selected coordinates. Device
+          location uses browser geolocation when permission is available. Manual
+          coordinates are useful when you prefer not to share location, when the
+          browser cannot access it, or when you are planning for somewhere else.
+        </p>
+        <p>
+          The time zone field controls how the resulting times are formatted and
+          which local date the page uses for today's live clock. Your device
+          time zone is fine for a local check. If you are planning for another
+          city or country, enter a matching IANA time zone such as{" "}
+          <strong>Europe/Berlin</strong>,{" "}
+          <strong>Asia/Tokyo</strong>, or <strong>UTC</strong>. For scheduled
+          calls or travel comparisons, use the{" "}
+          <a className="ilt-content-link" href="/time-zone-converter">
+            time zone converter
+          </a>{" "}
+          after checking the daylight window.
+        </p>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>
+            The date shown in the display comes from the live clock and selected
+            time zone; this route does not include a manual date picker.
+          </li>
+          <li>
+            The seconds and 24-hour toggles change the display format only; they
+            do not change the solar estimate.
+          </li>
+          <li>
+            Location permission is optional. If it is blocked, switch to manual
+            coordinates.
+          </li>
+          <li>
+            High-latitude places may have dates with no sunrise or no sunset,
+            depending on the season.
+          </li>
+        </ul>
+
+        <h3>Accuracy and practical interpretation</h3>
+        <p>
+          Results are estimates based on the coordinates, current date, time
+          zone, and the calculation assumptions used by the page. Terrain, buildings,
+          elevation, haze, and local horizon shape can change what you actually
+          see outside. Treat the times as useful planning guidance, and check
+          official or local sources when timing is critical.
+        </p>
+        <p>
+          If the page is left open, the clock updates from your browser and
+          device clock. Background tabs, low-power modes, or sleeping devices can
+          delay visible updates, though the display reconciles when the page is
+          active again.
+        </p>
+
+        <h3>Related tools</h3>
+        <p>
+          For warm-light and blue-hour planning, use the{" "}
           <a className="ilt-content-link" href="/golden-hour-clock">
             golden hour clock
           </a>
-          . For lunar context, try the{" "}
+          . For lunar phase and illumination estimates, try the{" "}
           <a className="ilt-content-link" href="/moon-phase-clock">
             moon phase clock
           </a>
-          . For broader solar and lunar details, use the{" "}
+          . For a broader sun, moon, twilight, and time display, use the{" "}
           <a className="ilt-content-link" href="/astronomical-clock">
             astronomical clock
           </a>
+          . For multiple cities side by side, use the{" "}
+          <a className="ilt-content-link" href="/world-clock">
+            world clock
+          </a>
           .
         </p>
+
+        <h3>Frequently asked questions</h3>
+        <div className="space-y-4">
+          <div>
+            <h4>Does this page use my current location?</h4>
+            <p>
+              Only if you choose device location and your browser grants
+              permission. You can also enter latitude and longitude manually.
+            </p>
+          </div>
+          <div>
+            <h4>Why does the time zone matter?</h4>
+            <p>
+              The selected time zone controls the local date and the way the
+              sunrise and sunset times are displayed. A faraway destination may
+              already be on a different calendar day.
+            </p>
+          </div>
+          <div>
+            <h4>Are the sunrise and sunset times official?</h4>
+            <p>
+              No. They are practical estimates for everyday planning. Use an
+              official almanac or local authority for critical timing.
+            </p>
+          </div>
+          <div>
+            <h4>Why might the visible sunrise look different outside?</h4>
+            <p>
+              Hills, buildings, trees, elevation, clouds, haze, and the shape of
+              the local horizon can all affect when you personally see the sun.
+            </p>
+          </div>
+        </div>
       </SeoBand>
     </PageShell>
   );

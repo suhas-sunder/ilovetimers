@@ -45,7 +45,7 @@ export default function FAQ({
     {
       question: "Why do the solar-angle times sometimes look unusual?",
       answer:
-        "At some latitudes and dates, the sun’s angle changes faster or slower than expected, so the 0° to 6° window can be much shorter or longer than 60 minutes. In rare cases where the calculation produces an invalid window, the page falls back to a safe 60-minute estimate and shows a note.",
+        "At some latitudes and dates, the sun’s angle changes faster or slower than expected, so the 0° to 6° window can be much shorter or longer than 60 minutes. In rare cases where the calculation produces an invalid window, the page falls back to a simple 60-minute window and shows a note.",
     },
     {
       question: "How does the live countdown work?",

@@ -131,8 +131,8 @@ export function AccuracyAndPrivacySection() {
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               Phase, illumination, and major-phase times are computed from a
               lightweight lunar-cycle estimate for a smooth, always-on display.
-              It is great for everyday planning, but not intended as
-              observatory-grade ephemeris data.
+              It is useful for everyday planning, but not intended as
+              specialized ephemeris data.
             </p>
           </div>
         </div>

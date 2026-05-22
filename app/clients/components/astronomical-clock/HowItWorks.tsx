@@ -368,7 +368,7 @@ export default function HowItWorks({
               </div>
 
               <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
-                You care less about the exact sunset time and more about when
+                You care less about the specific sunset minute and more about when
                 the sky is truly dark. Set your location and watch the label.
                 This page breaks nightfall into meaningful steps.
               </p>
@@ -511,7 +511,7 @@ export default function HowItWorks({
               Moon phase and illumination are designed to be practical. If you
               see “First Quarter” and illumination around “50%,” that is the
               kind of quick answer the page targets. For scheduling and
-              coordination, the exact seconds do not matter as much as the phase
+              coordination, the specific seconds do not matter as much as the phase
               and whether it is broadly bright or dark.
             </p>
           </div>

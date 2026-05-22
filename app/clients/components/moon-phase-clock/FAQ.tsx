@@ -129,7 +129,7 @@ export default function FAQ({
     {
       question: "How accurate is this?",
       answer:
-        "It’s a fast lunar-cycle estimate designed for a smooth clock experience. It is great for everyday planning and quick checks, but it is not intended to replace observatory-grade ephemeris data.",
+        "It’s a fast lunar-cycle estimate designed for a smooth clock experience. It is useful for everyday planning and quick checks, but it is not intended to replace specialized ephemeris data.",
     },
   ];
 

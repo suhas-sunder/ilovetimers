@@ -39,8 +39,21 @@ export default function PopularUseCases({
       forWho:
         "Anyone planning around the next New Moon or Full Moon and wanting the time in their own time zone.",
       notFor:
-        "You need an official reference comparison for timekeeping. Use Atomic Clock.",
+        "You need a precise timekeeping reference instead of a lunar phase estimate. Use Atomic Clock.",
       links: [{ label: "Atomic Clock", href: "/atomic-clock" }],
+    },
+    {
+      title: "Plan a casual skywatching or photo note",
+      description:
+        "Use the phase label and illumination estimate as a quick context check before a moonrise walk, casual skywatching plan, or photo scouting note.",
+      forWho:
+        "Students, hobbyists, photographers, and anyone who wants moon context alongside the current local date and time.",
+      notFor:
+        "You need weather, visibility, or horizon conditions. This page only estimates the lunar phase and timing.",
+      links: [
+        { label: "Current Local Time", href: "/current-local-time" },
+        { label: "Golden Hour Clock", href: "/golden-hour-clock" },
+      ],
     },
     {
       title: "Fullscreen countdown for a room display",

@@ -28,7 +28,7 @@ export default function FAQ({
     {
       question: "Do I need to share my location?",
       answer:
-        "No. You can use the clock without location access. Location (or manual coordinates) is only needed to compute sunrise, sunset, and the daylight or twilight labels for your exact position.",
+        "No. You can use the clock without location access. Location (or manual coordinates) is only needed to compute sunrise, sunset, and the daylight or twilight labels for your chosen position.",
     },
     {
       question: "How do I get sunrise and sunset times?",
@@ -62,7 +62,7 @@ export default function FAQ({
         "Click Fullscreen (or press F after clicking the clock card once). Fullscreen must be initiated by a user gesture and may be limited on some mobile browsers. Press Esc to exit.",
     },
     {
-      question: "Why doesn’t the display look perfectly smooth all the time?",
+      question: "Why can the display look less smooth sometimes?",
       answer:
         "Browsers can throttle timers and animations in background tabs, low-power modes, or during screen sharing. Keep the tab visible for the smoothest updates.",
     },

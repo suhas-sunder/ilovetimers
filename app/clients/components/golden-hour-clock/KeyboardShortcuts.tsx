@@ -171,7 +171,7 @@ export function AccuracyAndPrivacySection() {
               </div>
               <p className="mt-1 leading-relaxed">
                 If the solar-angle window is invalid or unusual for the selected
-                latitude/date, the page falls back to a safe 60-minute estimate
+                latitude/date, the page falls back to a simple 60-minute window
                 and shows a note so you know what happened.
               </p>
             </div>

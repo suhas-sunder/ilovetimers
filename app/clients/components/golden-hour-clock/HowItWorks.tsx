@@ -305,8 +305,8 @@ export default function HowItWorks({
             defines golden hour by sun height above the horizon. That can be
             shorter or longer than 60 minutes, depending on latitude, date, and
             season. If the solar-angle window is invalid for the selected
-            conditions, the page falls back to a safe 60-minute estimate and
-            shows a note, so you are not left with broken or misleading times.
+            conditions, the page falls back to a simple 60-minute window and
+            shows a note, so the display stays understandable.
           </p>
 
           <h3 className="mt-8 text-lg font-semibold text-[var(--ilt-text-primary)]">
@@ -314,8 +314,8 @@ export default function HowItWorks({
           </h3>
 
           <p className="mt-2 leading-relaxed text-[var(--ilt-text-secondary)]">
-            These are realistic ways people use this page. The exact times will
-            vary by date and location, but the{" "}
+            These are realistic ways people use this page. The displayed times
+            will vary by date and location, but the{" "}
             <span className="font-semibold text-[var(--ilt-text-primary)]">
               shape of the output
             </span>{" "}
@@ -499,7 +499,7 @@ export default function HowItWorks({
                 Technical details (methods, time zone, GPS, audio, edge cases)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
-                Optional notes if you rely on exact behavior
+                Optional notes about behavior and expectations
               </div>
             </div>
             <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
@@ -533,7 +533,7 @@ export default function HowItWorks({
             </div>
 
             <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
-              <div className="font-semibold text-[var(--ilt-text-primary)]">GPS precision</div>
+              <div className="font-semibold text-[var(--ilt-text-primary)]">GPS location accuracy</div>
               <p className="mt-1 leading-relaxed">
                 GPS coordinates come from your browser’s geolocation API and can
                 vary depending on device and signal. If GPS is blocked or
@@ -558,8 +558,11 @@ export default function HowItWorks({
                 Some high-latitude dates can produce no sunrise or no sunset.
                 Solar-angle golden hour can also produce invalid windows in
                 unusual conditions. In these cases, the page shows a note and
-                may fall back to a safe fixed-duration golden hour so the UI
-                stays usable.
+                may fall back to a fixed-duration golden hour so the UI
+                stays usable. The clock estimates timing windows, not weather
+                or scene quality; clouds, haze, terrain, buildings, tree cover,
+                elevation, and the local horizon can all change what the light
+                actually looks like at your spot.
               </p>
             </div>
           </div>

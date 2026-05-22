@@ -360,7 +360,7 @@ export default function HowItWorks({
             The examples below are designed to look like real “screen moments.”
             They include the kinds of numbers this page shows: phase label,
             illumination percent, age in days, and a countdown to the next major
-            phase. Your exact values will differ based on the date and time, but
+            phase. Your displayed values will differ based on the date and time, but
             the structure and interpretation stays consistent.
           </p>
 
@@ -533,6 +533,8 @@ export default function HowItWorks({
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/sunrise-sunset-clock">Sunrise Sunset Clock</PillLink>
             <PillLink to="/astronomical-clock">Astronomical Clock</PillLink>
+            <PillLink to="/golden-hour-clock">Golden Hour Clock</PillLink>
+            <PillLink to="/current-local-time">Current Local Time</PillLink>
             <PillLink to="/world-clock">World Clock</PillLink>
             <PillLink to="/time-zone-converter">Time Zone Converter</PillLink>
             <PillLink to="/event-countdown">Event Countdown</PillLink>
@@ -548,7 +550,7 @@ export default function HowItWorks({
                 Technical details (lunar model, timestamps, sound, and limits)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
-                Optional notes if you rely on exact behavior and expectations
+                Optional notes about behavior and expectations
               </div>
             </div>
             <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">
@@ -570,7 +572,7 @@ export default function HowItWorks({
               </p>
               <p className="mt-2 leading-relaxed">
                 This is designed for a smooth clock experience and everyday
-                planning. It is not intended to replace high-precision ephemeris
+                planning. It is not intended to replace specialized ephemeris
                 data used for scientific observation.
               </p>
             </div>

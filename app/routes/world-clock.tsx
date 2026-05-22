@@ -622,6 +622,18 @@ export default function WorldClockPage({
             </a>{" "}
             to compare dates, duration, and local work-hour windows.
           </p>
+          <p>
+            Need seconds or milliseconds visible on every selected city row?
+            Try the{" "}
+            <a className="ilt-content-link" href="/world-clock-with-seconds">
+              world clock with seconds
+            </a>{" "}
+            or the{" "}
+            <a className="ilt-content-link" href="/world-clock-with-milliseconds">
+              world clock with milliseconds
+            </a>
+            .
+          </p>
         </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />

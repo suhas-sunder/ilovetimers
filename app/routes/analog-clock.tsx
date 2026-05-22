@@ -647,7 +647,12 @@ export default function AnalogClockPage({
               smooth second hand clock
             </a>{" "}
             defaults to a sweeping second hand and also lets you switch back to
-            ticking mode.
+            ticking mode. Need a direct page where the second hand is the main
+            promise? Open the{" "}
+            <a className="ilt-content-link" href="/analog-clock-with-second-hand">
+              analog clock with second hand
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

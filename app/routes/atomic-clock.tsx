@@ -457,7 +457,12 @@ export default function AtomicClockPage({
               clock with milliseconds
             </a>{" "}
             shows local or UTC time with milliseconds as the main display while
-            still relying on your browser and device clock.
+            still relying on your browser and device clock. To compare
+            millisecond-style displays across a few time zones, use the{" "}
+            <a className="ilt-content-link" href="/world-clock-with-milliseconds">
+              world clock with milliseconds
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

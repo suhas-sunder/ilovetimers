@@ -555,6 +555,22 @@ export const routeMonetization = [
       "World clock has expanded time zone content and city-management support sections.",
   },
   {
+    path: "/world-clock-with-seconds",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent world clock route has seconds visible on local and selected city rows, add/remove controls, copy, fullscreen support, and route-specific content.",
+  },
+  {
+    path: "/world-clock-with-milliseconds",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent world clock route has milliseconds visible for local and selected time zones, modest defaults, copy, fullscreen support, and route-specific content.",
+  },
+  {
     path: "/debt-clock",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -611,6 +627,14 @@ export const routeMonetization = [
       "Analog clock has expanded content supporting the custom clock face.",
   },
   {
+    path: "/analog-clock-with-second-hand",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent analog clock route has second-hand-first display, ticking and smooth modes, copy, fullscreen support, and route-specific content.",
+  },
+  {
     path: "/smooth-second-hand-clock",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -625,6 +649,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Digital clock has expanded route-specific clock content and fullscreen support notes.",
+  },
+  {
+    path: "/full-screen-clock",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent fullscreen clock route has a large live display, prominent fullscreen action, seconds/date/format toggles, copy, and route-specific content.",
   },
   {
     path: "/clock-with-seconds",

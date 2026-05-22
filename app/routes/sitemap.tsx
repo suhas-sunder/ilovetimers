@@ -373,6 +373,18 @@ const SECTIONS: SitemapSection[] = [
           "Check current times across cities and time zones around the world.",
       },
       {
+        title: "World Clock With Seconds",
+        href: "/world-clock-with-seconds",
+        description:
+          "Compare live world times with seconds visible on local and selected city rows.",
+      },
+      {
+        title: "World Clock With Milliseconds",
+        href: "/world-clock-with-milliseconds",
+        description:
+          "Compare local and selected world times with live milliseconds.",
+      },
+      {
         title: "Current Local Time",
         href: "/current-local-time",
         description:
@@ -409,6 +421,12 @@ const SECTIONS: SitemapSection[] = [
           "Use a classic analog clock display with hour, minute, and second hands.",
       },
       {
+        title: "Analog Clock With Second Hand",
+        href: "/analog-clock-with-second-hand",
+        description:
+          "Use an analog clock face with the second hand visible by default.",
+      },
+      {
         title: "Smooth Second Hand Clock",
         href: "/smooth-second-hand-clock",
         description:
@@ -419,6 +437,12 @@ const SECTIONS: SitemapSection[] = [
         href: "/digital-clock",
         description:
           "View a clean digital clock for desktop, mobile, or fullscreen use.",
+      },
+      {
+        title: "Full Screen Clock",
+        href: "/full-screen-clock",
+        description:
+          "Open a large live clock optimized for fullscreen room and second-monitor display.",
       },
       {
         title: "Clock With Seconds",

@@ -410,6 +410,11 @@ export default function SmoothSecondHandClockPage({
             <a className="ilt-content-link" href="/analog-clock">
               analog clock
             </a>
+            . For a direct page focused on a visible second hand with ticking
+            mode as the starting point, use the{" "}
+            <a className="ilt-content-link" href="/analog-clock-with-second-hand">
+              analog clock with second hand
+            </a>
             . For large digital time, use the{" "}
             <a className="ilt-content-link" href="/digital-clock">
               digital clock

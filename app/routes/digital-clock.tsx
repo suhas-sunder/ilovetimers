@@ -485,6 +485,10 @@ export default function DigitalClockPage({
             <a className="ilt-content-link" href="/clock-with-milliseconds">
               clock with milliseconds
             </a>
+            . Need a page optimized for room display? Use the{" "}
+            <a className="ilt-content-link" href="/full-screen-clock">
+              full screen clock
+            </a>
             . Need a dedicated 24-hour display? Use the{" "}
             <a className="ilt-content-link" href="/24-hour-clock">
               24 hour clock

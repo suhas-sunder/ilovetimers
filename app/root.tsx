@@ -399,6 +399,20 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "Compare current times across cities and time zones.",
   },
   {
+    title: "World Clock With Seconds",
+    href: "/world-clock-with-seconds",
+    category: "Clocks",
+    description: "Compare live world times with seconds visible in each row.",
+    keywords: "world clock with seconds global clock live seconds",
+  },
+  {
+    title: "World Clock With Milliseconds",
+    href: "/world-clock-with-milliseconds",
+    category: "Clocks",
+    description: "Compare local and selected world times with milliseconds.",
+    keywords: "world clock with milliseconds world time milliseconds",
+  },
+  {
     title: "Time Zone Converter",
     href: "/time-zone-converter",
     category: "Clocks",
@@ -452,6 +466,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     keywords: "clock with seconds live clock seconds fullscreen clock",
   },
   {
+    title: "Full Screen Clock",
+    href: "/full-screen-clock",
+    category: "Clocks",
+    description: "Open a large live clock optimized for fullscreen display.",
+    keywords: "full screen clock online clock full screen fullscreen clock",
+  },
+  {
     title: "Retro Flip Clock",
     href: "/retro-flip-clock",
     category: "Clocks",
@@ -474,6 +495,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     href: "/analog-clock",
     category: "Clocks",
     description: "A classic analog clock face in the browser.",
+  },
+  {
+    title: "Analog Clock With Second Hand",
+    href: "/analog-clock-with-second-hand",
+    category: "Clocks",
+    description: "A live analog clock face with the second hand visible.",
+    keywords: "analog clock second hand clock face with second hand",
   },
   {
     title: "Smooth Second Hand Clock",

@@ -93,14 +93,24 @@ const footerSections: TimerMenuSection[] = [
     title: "Clocks and time displays",
     links: [
       { to: "/world-clock", label: "World Clock" },
+      { to: "/world-clock-with-seconds", label: "World Clock With Seconds" },
+      {
+        to: "/world-clock-with-milliseconds",
+        label: "World Clock With Milliseconds",
+      },
       { to: "/current-local-time", label: "Current Local Time" },
       { to: "/utc-clock", label: "UTC Clock" },
       { to: "/24-hour-clock", label: "24 Hour Clock" },
       { to: "/12-hour-clock", label: "12 Hour Clock" },
       { to: "/military-time-clock", label: "Military Time Clock" },
       { to: "/analog-clock", label: "Analog Clock" },
+      {
+        to: "/analog-clock-with-second-hand",
+        label: "Analog Clock With Second Hand",
+      },
       { to: "/smooth-second-hand-clock", label: "Smooth Second Hand Clock" },
       { to: "/digital-clock", label: "Digital Clock" },
+      { to: "/full-screen-clock", label: "Full Screen Clock" },
       { to: "/clock-with-seconds", label: "Clock With Seconds" },
       {
         to: "/clock-with-milliseconds",

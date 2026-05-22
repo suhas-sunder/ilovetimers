@@ -434,9 +434,17 @@ export default function ClockWithSecondsPage({
             <a className="ilt-content-link" href="/digital-clock">
               digital clock
             </a>
+            . For a room-sized display, use the{" "}
+            <a className="ilt-content-link" href="/full-screen-clock">
+              full screen clock
+            </a>
             . For smaller fractions of a second, use the{" "}
             <a className="ilt-content-link" href="/clock-with-milliseconds">
               clock with milliseconds
+            </a>
+            . For a clock face with a visible second hand, open the{" "}
+            <a className="ilt-content-link" href="/analog-clock-with-second-hand">
+              analog clock with second hand
             </a>
             . For a smooth analog display, try the{" "}
             <a className="ilt-content-link" href="/smooth-second-hand-clock">

@@ -418,6 +418,10 @@ export default function ClockWithMillisecondsPage({
             <a className="ilt-content-link" href="/atomic-clock">
               atomic clock
             </a>
+            . To compare millisecond-style time across a few zones, open the{" "}
+            <a className="ilt-content-link" href="/world-clock-with-milliseconds">
+              world clock with milliseconds
+            </a>
             .
           </p>
         </ContentSection>

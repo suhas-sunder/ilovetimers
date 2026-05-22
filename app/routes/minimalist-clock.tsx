@@ -13,6 +13,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
@@ -569,6 +570,17 @@ export default function MinimalistClockPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need a clock page centered on immediate room or second-monitor
+            display? The{" "}
+            <a className="ilt-content-link" href="/full-screen-clock">
+              full screen clock
+            </a>{" "}
+            keeps the large live time display first and makes fullscreen the
+            primary action below the clock.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

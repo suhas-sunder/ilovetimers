@@ -412,6 +412,11 @@ export default function NewYearCountdownPage({
             <a className="ilt-content-link" href="/date-duration-calculator">
               date duration calculator
             </a>
+            . For a simple days-until result from today or another start date,
+            use the{" "}
+            <a className="ilt-content-link" href="/days-until-calculator">
+              days until calculator
+            </a>
             .
           </p>
         </ContentSection>

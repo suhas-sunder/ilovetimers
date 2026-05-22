@@ -714,7 +714,11 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
         </p>
         <h3>Related calculators</h3>
         <p>
-          For calendar dates, use the{" "}
+          For a focused start-time to end-time result, use the{" "}
+          <a className="ilt-content-link" href="/time-duration-calculator">
+            time duration calculator
+          </a>
+          . For calendar dates, use the{" "}
           <a className="ilt-content-link" href="/date-duration-calculator">
             date duration calculator
           </a>{" "}

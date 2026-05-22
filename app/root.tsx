@@ -616,6 +616,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "Add, subtract, and convert time values.",
   },
   {
+    title: "Time Duration Calculator",
+    href: "/time-duration-calculator",
+    category: "Calculators",
+    description: "Calculate elapsed hours and minutes between two times.",
+    keywords: "time duration hours between times elapsed time difference",
+  },
+  {
     title: "Date Duration Calculator",
     href: "/date-duration-calculator",
     category: "Calculators",
@@ -635,6 +642,27 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     category: "Calculators",
     description: "Count weekdays between dates while excluding weekends.",
     keywords: "business days calculator workdays weekdays between dates",
+  },
+  {
+    title: "Age Calculator",
+    href: "/age-calculator",
+    category: "Calculators",
+    description: "Calculate age in years, months, days, and total days.",
+    keywords: "age calculator calculate age how old am i age on date",
+  },
+  {
+    title: "Days Until Calculator",
+    href: "/days-until-calculator",
+    category: "Calculators",
+    description: "Calculate days remaining until a target date.",
+    keywords: "days until calculator days until date days remaining",
+  },
+  {
+    title: "Weekday Calculator",
+    href: "/weekday-calculator",
+    category: "Calculators",
+    description: "Find the day of the week for one date.",
+    keywords: "weekday calculator day of week what day was date",
   },
   {
     title: "Milliseconds Converter",

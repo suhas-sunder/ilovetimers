@@ -32,13 +32,13 @@ const LONG_DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
   day: "numeric",
 });
 
-type LocalDateParts = {
+export type LocalDateParts = {
   year: number;
   month: number;
   day: number;
 };
 
-type FaqItem = {
+export type FaqItem = {
   question: string;
   answer: string;
 };
@@ -132,7 +132,7 @@ export function createDateToolLinks(path: string) {
   return [{ rel: "canonical", href: `${SITE_URL}${path}` }];
 }
 
-function parseDateInput(value: string): LocalDateParts | null {
+export function parseDateInput(value: string): LocalDateParts | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (!match) return null;
   const year = Number(match[1]);
@@ -144,15 +144,15 @@ function parseDateInput(value: string): LocalDateParts | null {
   return { year, month, day };
 }
 
-function dateInputFromParts(parts: LocalDateParts) {
+export function dateInputFromParts(parts: LocalDateParts) {
   return `${parts.year}-${String(parts.month).padStart(2, "0")}-${String(parts.day).padStart(2, "0")}`;
 }
 
-function dayNumberFromParts(parts: LocalDateParts) {
+export function dayNumberFromParts(parts: LocalDateParts) {
   return Math.floor(Date.UTC(parts.year, parts.month - 1, parts.day) / MS_PER_DAY);
 }
 
-function partsFromDayNumber(dayNumber: number): LocalDateParts {
+export function partsFromDayNumber(dayNumber: number): LocalDateParts {
   const date = new Date(dayNumber * MS_PER_DAY);
   return {
     year: date.getUTCFullYear(),
@@ -161,23 +161,23 @@ function partsFromDayNumber(dayNumber: number): LocalDateParts {
   };
 }
 
-function localDateObject(parts: LocalDateParts) {
+export function localDateObject(parts: LocalDateParts) {
   return new Date(parts.year, parts.month - 1, parts.day, 12, 0, 0, 0);
 }
 
-function weekdayName(parts: LocalDateParts) {
+export function weekdayName(parts: LocalDateParts) {
   return WEEKDAY_FORMATTER.format(localDateObject(parts));
 }
 
-function longDate(parts: LocalDateParts) {
+export function longDate(parts: LocalDateParts) {
   return LONG_DATE_FORMATTER.format(localDateObject(parts));
 }
 
-function daysInMonth(year: number, month: number) {
+export function daysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate();
 }
 
-function todayInputValue() {
+export function todayInputValue() {
   const now = new Date();
   return dateInputFromParts({
     year: now.getFullYear(),
@@ -186,12 +186,12 @@ function todayInputValue() {
   });
 }
 
-function clampInt(value: number, min: number, max: number) {
+export function clampInt(value: number, min: number, max: number) {
   if (!Number.isFinite(value)) return min;
   return Math.min(max, Math.max(min, Math.trunc(value)));
 }
 
-async function copyToClipboard(text: string) {
+export async function copyToClipboard(text: string) {
   try {
     await navigator.clipboard.writeText(text);
     return true;
@@ -200,7 +200,7 @@ async function copyToClipboard(text: string) {
   }
 }
 
-function plural(value: number, singular: string, pluralLabel = `${singular}s`) {
+export function plural(value: number, singular: string, pluralLabel = `${singular}s`) {
   return `${value} ${Math.abs(value) === 1 ? singular : pluralLabel}`;
 }
 
@@ -211,7 +211,7 @@ function signedDaysText(value: number) {
     : plural(value, "elapsed day");
 }
 
-function ResultDisplay({
+export function ResultDisplay({
   label,
   value,
   context,
@@ -264,7 +264,7 @@ function ResultDisplay({
   );
 }
 
-function CopyState({ state }: { state: string | null }) {
+export function CopyState({ state }: { state: string | null }) {
   if (!state) return null;
 
   return (
@@ -274,7 +274,7 @@ function CopyState({ state }: { state: string | null }) {
   );
 }
 
-function JsonLd({
+export function JsonLd({
   name,
   path,
   description,
@@ -850,6 +850,10 @@ export function DateDurationCalculatorPage() {
             <a className="ilt-content-link" href="/event-countdown">
               event countdown
             </a>
+            . For a simple days-left result, use the{" "}
+            <a className="ilt-content-link" href="/days-until-calculator">
+              days until calculator
+            </a>
             . For January 1, use the{" "}
             <a className="ilt-content-link" href="/new-year-countdown">
               New Year countdown
@@ -861,6 +865,14 @@ export function DateDurationCalculatorPage() {
             . For weekdays only, use the{" "}
             <a className="ilt-content-link" href="/business-days-calculator">
               business days calculator
+            </a>
+            . To find the weekday for one date, use the{" "}
+            <a className="ilt-content-link" href="/weekday-calculator">
+              weekday calculator
+            </a>
+            . To calculate age on a date, use the{" "}
+            <a className="ilt-content-link" href="/age-calculator">
+              age calculator
             </a>
             . For duration math with hours and minutes, use the{" "}
             <a className="ilt-content-link" href="/time-calculator">
@@ -933,6 +945,14 @@ export function DateCalculatorPage() {
             . For weekday-only ranges, use the{" "}
             <a className="ilt-content-link" href="/business-days-calculator">
               business days calculator
+            </a>
+            . To find the weekday for the result date, use the{" "}
+            <a className="ilt-content-link" href="/weekday-calculator">
+              weekday calculator
+            </a>
+            . To count days until a target date, use the{" "}
+            <a className="ilt-content-link" href="/days-until-calculator">
+              days until calculator
             </a>
             . For a live countdown to a date, use the{" "}
             <a className="ilt-content-link" href="/event-countdown">
@@ -1007,6 +1027,10 @@ export function BusinessDaysCalculatorPage() {
             . For adding or subtracting dates, use the{" "}
             <a className="ilt-content-link" href="/date-calculator">
               date calculator
+            </a>
+            . To identify one date's weekday, use the{" "}
+            <a className="ilt-content-link" href="/weekday-calculator">
+              weekday calculator
             </a>
             . For shift-style time math, use the{" "}
             <a className="ilt-content-link" href="/work-hours-calculator">

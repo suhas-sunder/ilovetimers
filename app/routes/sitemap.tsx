@@ -566,6 +566,12 @@ const SECTIONS: SitemapSection[] = [
           "Add, subtract, and calculate durations using hours, minutes, and seconds.",
       },
       {
+        title: "Time Duration Calculator",
+        href: "/time-duration-calculator",
+        description:
+          "Calculate elapsed hours and minutes between two times, including overnight spans.",
+      },
+      {
         title: "Date Duration Calculator",
         href: "/date-duration-calculator",
         description:
@@ -582,6 +588,24 @@ const SECTIONS: SitemapSection[] = [
         href: "/business-days-calculator",
         description:
           "Count workdays between two dates while excluding Saturdays and Sundays.",
+      },
+      {
+        title: "Age Calculator",
+        href: "/age-calculator",
+        description:
+          "Calculate age in years, months, days, total days, and birthday context.",
+      },
+      {
+        title: "Days Until Calculator",
+        href: "/days-until-calculator",
+        description:
+          "Calculate days remaining until a target date from today or another start date.",
+      },
+      {
+        title: "Weekday Calculator",
+        href: "/weekday-calculator",
+        description:
+          "Find the day of the week for one date and see weekday or weekend status.",
       },
       {
         title: "Billable Hours Calculator",

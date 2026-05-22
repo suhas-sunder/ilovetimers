@@ -996,6 +996,11 @@ export default function EventCountdownPage({
             <a className="ilt-content-link" href="/date-duration-calculator">
               date duration calculator
             </a>
+            . For a plain days-remaining result without a live event timer, use
+            the{" "}
+            <a className="ilt-content-link" href="/days-until-calculator">
+              days until calculator
+            </a>
             . To add or subtract days, weeks, months, or years from a date, use
             the{" "}
             <a className="ilt-content-link" href="/date-calculator">

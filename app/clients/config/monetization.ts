@@ -827,6 +827,14 @@ export const routeMonetization = [
       "Time calculator now has expanded add/subtract, duration, validation, non-payroll limitation, and related calculator content.",
   },
   {
+    path: "/time-duration-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Time duration calculator has result-first start/end time duration math, overnight handling, copy/reset actions, and route-specific support content.",
+  },
+  {
     path: "/date-duration-calculator",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -849,6 +857,30 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Business days calculator has result-first weekday counting, weekend exclusion settings, copy/reset shortcuts, and route-specific support content.",
+  },
+  {
+    path: "/age-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Age calculator has result-first years/months/days math, total-day context, copy/today/reset actions, and route-specific support content.",
+  },
+  {
+    path: "/days-until-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Days until calculator has result-first target-date counting, preset target dates, copy/reset actions, and route-specific support content.",
+  },
+  {
+    path: "/weekday-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Weekday calculator has result-first single-date weekday lookup, weekday/weekend context, copy/today/reset actions, and route-specific support content.",
   },
   {
     path: "/billable-hours-calculator",

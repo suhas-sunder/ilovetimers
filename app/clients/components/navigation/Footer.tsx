@@ -140,9 +140,16 @@ const footerSections: TimerMenuSection[] = [
       { to: "/unix-timestamp-converter", label: "Unix Timestamp Converter" },
       { to: "/work-hours-calculator", label: "Work Hours Calculator" },
       { to: "/time-calculator", label: "Time Calculator" },
+      {
+        to: "/time-duration-calculator",
+        label: "Time Duration Calculator",
+      },
       { to: "/date-duration-calculator", label: "Date Duration Calculator" },
       { to: "/date-calculator", label: "Date Calculator" },
       { to: "/business-days-calculator", label: "Business Days Calculator" },
+      { to: "/age-calculator", label: "Age Calculator" },
+      { to: "/days-until-calculator", label: "Days Until Calculator" },
+      { to: "/weekday-calculator", label: "Weekday Calculator" },
       {
         to: "/billable-hours-calculator",
         label: "Billable Hours Calculator",

@@ -1570,6 +1570,10 @@ export function TimeDurationCalculatorPage() {
             <a className="ilt-content-link" href="/work-hours-calculator">
               work hours calculator
             </a>
+            . For several clock-in and clock-out rows, use the{" "}
+            <a className="ilt-content-link" href="/time-card-calculator">
+              time card calculator
+            </a>
             . For live elapsed timing, use the{" "}
             <a className="ilt-content-link" href="/stopwatch">
               stopwatch
@@ -1956,6 +1960,10 @@ export function MonthsBetweenDatesCalculatorPage() {
             For elapsed calendar days, use the{" "}
             <a className="ilt-content-link" href="/date-duration-calculator">
               date duration calculator
+            </a>
+            . For full weeks and remaining days, use the{" "}
+            <a className="ilt-content-link" href="/weeks-between-dates-calculator">
+              weeks between dates calculator
             </a>
             . To add or subtract months from a date, use the{" "}
             <a className="ilt-content-link" href="/date-calculator">

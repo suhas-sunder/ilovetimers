@@ -473,6 +473,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     keywords: "full screen clock online clock full screen fullscreen clock",
   },
   {
+    title: "Big Digital Clock",
+    href: "/big-digital-clock",
+    category: "Clocks",
+    description: "Show a large room-readable digital clock display.",
+    keywords: "big digital clock large digital clock large clock display",
+  },
+  {
     title: "Retro Flip Clock",
     href: "/retro-flip-clock",
     category: "Clocks",
@@ -502,6 +509,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     category: "Clocks",
     description: "A live analog clock face with the second hand visible.",
     keywords: "analog clock second hand clock face with second hand",
+  },
+  {
+    title: "Full Screen Analog Clock",
+    href: "/full-screen-analog-clock",
+    category: "Clocks",
+    description: "A large analog clock face optimized for fullscreen display.",
+    keywords: "full screen analog clock analog clock fullscreen clock face",
   },
   {
     title: "Smooth Second Hand Clock",
@@ -638,6 +652,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "Calculate work duration, breaks, and paid time.",
   },
   {
+    title: "Time Card Calculator",
+    href: "/time-card-calculator",
+    category: "Calculators",
+    description: "Total multiple clock-in and clock-out rows with breaks.",
+    keywords: "time card calculator time clock calculator hours total",
+  },
+  {
     title: "Time Calculator",
     href: "/time-calculator",
     category: "Calculators",
@@ -705,6 +726,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     category: "Calculators",
     description: "Calculate full months and remaining days between dates.",
     keywords: "months between dates calculator months and days date range",
+  },
+  {
+    title: "Weeks Between Dates Calculator",
+    href: "/weeks-between-dates-calculator",
+    category: "Calculators",
+    description: "Calculate full weeks and remaining days between dates.",
+    keywords: "weeks between dates calculator weeks and days date range",
   },
   {
     title: "Birthday Countdown",

@@ -108,9 +108,14 @@ const footerSections: TimerMenuSection[] = [
         to: "/analog-clock-with-second-hand",
         label: "Analog Clock With Second Hand",
       },
+      {
+        to: "/full-screen-analog-clock",
+        label: "Full Screen Analog Clock",
+      },
       { to: "/smooth-second-hand-clock", label: "Smooth Second Hand Clock" },
       { to: "/digital-clock", label: "Digital Clock" },
       { to: "/full-screen-clock", label: "Full Screen Clock" },
+      { to: "/big-digital-clock", label: "Big Digital Clock" },
       { to: "/clock-with-seconds", label: "Clock With Seconds" },
       {
         to: "/clock-with-milliseconds",
@@ -149,6 +154,7 @@ const footerSections: TimerMenuSection[] = [
       { to: "/military-time-converter", label: "Military Time Converter" },
       { to: "/unix-timestamp-converter", label: "Unix Timestamp Converter" },
       { to: "/work-hours-calculator", label: "Work Hours Calculator" },
+      { to: "/time-card-calculator", label: "Time Card Calculator" },
       { to: "/time-calculator", label: "Time Calculator" },
       {
         to: "/time-duration-calculator",
@@ -164,6 +170,10 @@ const footerSections: TimerMenuSection[] = [
       {
         to: "/months-between-dates-calculator",
         label: "Months Between Dates Calculator",
+      },
+      {
+        to: "/weeks-between-dates-calculator",
+        label: "Weeks Between Dates Calculator",
       },
       { to: "/birthday-countdown", label: "Birthday Countdown" },
       { to: "/hours-until-calculator", label: "Hours Until Calculator" },

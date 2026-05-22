@@ -635,6 +635,14 @@ export const routeMonetization = [
       "Direct-intent analog clock route has second-hand-first display, ticking and smooth modes, copy, fullscreen support, and route-specific content.",
   },
   {
+    path: "/full-screen-analog-clock",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent full screen analog clock route has a large analog face, visible second hand, ticking and smooth modes, prominent fullscreen action, and route-specific content.",
+  },
+  {
     path: "/smooth-second-hand-clock",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -657,6 +665,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Direct-intent fullscreen clock route has a large live display, prominent fullscreen action, seconds/date/format toggles, copy, and route-specific content.",
+  },
+  {
+    path: "/big-digital-clock",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent big digital clock route has a large room-readable time display, minimal display controls, copy, fullscreen support, and route-specific content.",
   },
   {
     path: "/clock-with-seconds",
@@ -931,6 +947,14 @@ export const routeMonetization = [
       "Months between dates calculator has result-first completed-month and remaining-day math, copy/reset actions, and route-specific support content.",
   },
   {
+    path: "/weeks-between-dates-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Weeks between dates calculator has result-first weeks and remaining days math, total-day context, inclusive count, copy/reset actions, and route-specific support content.",
+  },
+  {
     path: "/birthday-countdown",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -945,6 +969,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Hours until calculator has result-first target date/time duration math, presets, copy/reset actions, and route-specific support content.",
+  },
+  {
+    path: "/time-card-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Time card calculator has result-first multi-row clock-in and clock-out totals, break subtraction, per-row totals, add/remove rows, copy/reset actions, and route-specific support content.",
   },
   {
     path: "/billable-hours-calculator",

@@ -569,7 +569,12 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
               business days calculator
             </a>
             . It excludes Saturdays and Sundays by default and keeps holiday,
-            payroll, HR, and policy decisions outside the result.
+            payroll, HR, and policy decisions outside the result.{" "}
+            For multiple clock-in and clock-out rows with breaks, use the{" "}
+            <a className="ilt-content-link" href="/time-card-calculator">
+              time card calculator
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

@@ -489,6 +489,10 @@ export default function DigitalClockPage({
             <a className="ilt-content-link" href="/full-screen-clock">
               full screen clock
             </a>
+            . Need the biggest room-readable digits? Open the{" "}
+            <a className="ilt-content-link" href="/big-digital-clock">
+              big digital clock
+            </a>
             . Need a dedicated 24-hour display? Use the{" "}
             <a className="ilt-content-link" href="/24-hour-clock">
               24 hour clock

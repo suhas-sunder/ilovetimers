@@ -578,7 +578,12 @@ export default function MinimalistClockPage({
               full screen clock
             </a>{" "}
             keeps the large live time display first and makes fullscreen the
-            primary action below the clock.
+            primary action below the clock. For maximum distance readability,
+            use the{" "}
+            <a className="ilt-content-link" href="/big-digital-clock">
+              big digital clock
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

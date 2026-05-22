@@ -652,6 +652,10 @@ export default function AnalogClockPage({
             <a className="ilt-content-link" href="/analog-clock-with-second-hand">
               analog clock with second hand
             </a>
+            . For a room-display version, use the{" "}
+            <a className="ilt-content-link" href="/full-screen-analog-clock">
+              full screen analog clock
+            </a>
             .
           </p>
         </ContentSection>

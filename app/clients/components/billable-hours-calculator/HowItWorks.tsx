@@ -430,6 +430,9 @@ export default function HowItWorks({
             <PillLink href={abs("/work-hours-calculator")}>
               Work Hours Calculator
             </PillLink>
+            <PillLink href={abs("/time-card-calculator")}>
+              Time Card Calculator
+            </PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
           </div>
         </div>

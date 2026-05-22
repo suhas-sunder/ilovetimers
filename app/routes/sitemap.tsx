@@ -427,6 +427,12 @@ const SECTIONS: SitemapSection[] = [
           "Use an analog clock face with the second hand visible by default.",
       },
       {
+        title: "Full Screen Analog Clock",
+        href: "/full-screen-analog-clock",
+        description:
+          "Use a large analog clock face optimized for fullscreen display.",
+      },
+      {
         title: "Smooth Second Hand Clock",
         href: "/smooth-second-hand-clock",
         description:
@@ -443,6 +449,12 @@ const SECTIONS: SitemapSection[] = [
         href: "/full-screen-clock",
         description:
           "Open a large live clock optimized for fullscreen room and second-monitor display.",
+      },
+      {
+        title: "Big Digital Clock",
+        href: "/big-digital-clock",
+        description:
+          "Open a large digital clock display optimized for distance readability.",
       },
       {
         title: "Clock With Seconds",
@@ -584,6 +596,12 @@ const SECTIONS: SitemapSection[] = [
           "Calculate work hours, shifts, breaks, and total time worked.",
       },
       {
+        title: "Time Card Calculator",
+        href: "/time-card-calculator",
+        description:
+          "Total multiple clock-in and clock-out rows with break minutes.",
+      },
+      {
         title: "Time Calculator",
         href: "/time-calculator",
         description:
@@ -642,6 +660,12 @@ const SECTIONS: SitemapSection[] = [
         href: "/months-between-dates-calculator",
         description:
           "Calculate full months and remaining days between two calendar dates.",
+      },
+      {
+        title: "Weeks Between Dates Calculator",
+        href: "/weeks-between-dates-calculator",
+        description:
+          "Calculate full weeks and remaining days between two calendar dates.",
       },
       {
         title: "Birthday Countdown",

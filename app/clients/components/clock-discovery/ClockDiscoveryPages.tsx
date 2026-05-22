@@ -128,6 +128,42 @@ const ANALOG_SECOND_HAND_FAQ: FaqItem[] = [
   },
 ];
 
+const FULL_SCREEN_ANALOG_FAQ: FaqItem[] = [
+  {
+    question: "Does the full screen analog clock open fullscreen automatically?",
+    answer:
+      "No. Browsers require a user action before entering fullscreen, so the fullscreen control stays below the analog face.",
+  },
+  {
+    question: "Is the second hand visible in fullscreen?",
+    answer:
+      "Yes. The second hand is visible by default, and you can hide it or switch between ticking and smooth movement.",
+  },
+  {
+    question: "Is this an official clock source?",
+    answer:
+      "No. It uses your browser and device clock, so device settings, browser scheduling, and display refresh rate can affect the display.",
+  },
+];
+
+const BIG_DIGITAL_CLOCK_FAQ: FaqItem[] = [
+  {
+    question: "How is this different from the regular digital clock?",
+    answer:
+      "This page keeps the digital time as large and room-readable as possible, with fewer settings around the display.",
+  },
+  {
+    question: "Can the big digital clock show seconds?",
+    answer:
+      "Yes. Seconds are visible by default and can be hidden when you want a calmer large display.",
+  },
+  {
+    question: "Does the big digital clock use an official time source?",
+    answer:
+      "No. The display uses your browser and device clock. It is useful as a large display, not a certified time source.",
+  },
+];
+
 function isTypingTarget(target: EventTarget | null) {
   const element = target as HTMLElement | null;
   return (
@@ -1160,6 +1196,499 @@ function AnalogClockWithSecondHandTool({
   );
 }
 
+function FullScreenAnalogClockTool({
+  initialNowISO,
+}: {
+  initialNowISO: string;
+}) {
+  const [now, setNow] = useState(() => new Date(initialNowISO));
+  const [smooth, setSmooth] = useState(false);
+  const [showSecondHand, setShowSecondHand] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const frameRef = useRef<HTMLDivElement | null>(null);
+  const fullscreen = useFullscreen(frameRef);
+  const isFullscreen = fullscreen.isFullscreen;
+  const timeZone = useMemo(() => safeTimeZone(), []);
+
+  useEffect(() => {
+    let raf = 0;
+    let timeout = 0;
+    let interval = 0;
+
+    if (smooth && showSecondHand) {
+      const tick = () => {
+        setNow(new Date());
+        raf = window.requestAnimationFrame(tick);
+      };
+      raf = window.requestAnimationFrame(tick);
+      return () => window.cancelAnimationFrame(raf);
+    }
+
+    const update = () => setNow(new Date());
+    update();
+    timeout = window.setTimeout(() => {
+      update();
+      interval = window.setInterval(update, 1000);
+    }, Math.max(50, 1000 - new Date().getMilliseconds()));
+
+    return () => {
+      window.clearTimeout(timeout);
+      window.clearInterval(interval);
+    };
+  }, [smooth, showSecondHand]);
+
+  const angles = useMemo(
+    () => calcAnalogAngles(now, smooth && showSecondHand),
+    [now, showSecondHand, smooth],
+  );
+  const digitalText = formatClockTime(now, {
+    use24: false,
+    showSeconds: true,
+  });
+  const modeText = showSecondHand
+    ? smooth
+      ? "Smooth second hand"
+      : "Ticking second hand"
+    : "Second hand hidden";
+
+  const copyTime = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(`${digitalText} - ${modeText} - ${timeZone}`);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch {
+      setCopied(false);
+    }
+  }, [digitalText, modeText, timeZone]);
+
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(event.target)) return;
+    const key = event.key.toLowerCase();
+    if (key === "f") {
+      void fullscreen.toggle();
+    } else if (key === "c") {
+      void copyTime();
+    } else if (key === "s") {
+      setShowSecondHand((value) => !value);
+    } else if (key === "m") {
+      setSmooth((value) => !value);
+    } else if (key === "escape" && isFullscreen) {
+      void fullscreen.exit();
+    }
+  };
+
+  const marks = Array.from({ length: 60 }, (_, index) => {
+    const major = index % 5 === 0;
+    return (
+      <line
+        key={index}
+        x1="0"
+        y1={major ? "-128" : "-134"}
+        x2="0"
+        y2="-144"
+        stroke="currentColor"
+        strokeWidth={major ? 3 : 1.5}
+        opacity={major ? 0.76 : 0.32}
+        transform={`rotate(${index * 6})`}
+      />
+    );
+  });
+
+  return (
+    <ToolFrame
+      frameRef={frameRef}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFullscreen}
+      className={isFullscreen ? "" : "px-4 pb-4 pt-0 sm:px-6 sm:pb-6"}
+    >
+      <FullscreenTopBar
+        show={isFullscreen}
+        title="Full Screen Analog Clock"
+        onExit={() => void fullscreen.exit()}
+        right={
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSmooth((value) => !value)}
+              disabled={!showSecondHand}
+            >
+              {smooth ? "Tick" : "Smooth"}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowSecondHand((value) => !value)}
+            >
+              {showSecondHand ? "Hide seconds" : "Show seconds"}
+            </Button>
+          </div>
+        }
+      />
+
+      <div className={isFullscreen ? "flex h-full flex-col" : "timer-specialty-clock-stack flex h-full flex-col"}>
+        <DisplayStage
+          isFullscreen={isFullscreen}
+          className="timer-display-surface mt-4 flex flex-col items-center justify-center p-4 sm:p-6"
+          style={{
+            minHeight: isFullscreen ? 0 : "clamp(420px, 54vw, 620px)",
+            marginTop: isFullscreen ? "3.6rem" : undefined,
+            marginBottom: isFullscreen ? "3.6rem" : undefined,
+            overflow: "hidden",
+          }}
+          aria-live="off"
+        >
+          <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
+            Fullscreen-ready analog face
+          </div>
+          <div className="mt-4 aspect-square w-[min(86vw,36rem)] max-w-full text-[var(--ilt-text-primary)] sm:w-[min(68vw,44rem)]">
+            <svg
+              viewBox="-160 -160 320 320"
+              role="img"
+              aria-label="Large analog clock face with visible second hand"
+              className="h-full w-full"
+            >
+              <circle
+                cx="0"
+                cy="0"
+                r="150"
+                fill="var(--ilt-bg-panel)"
+                stroke="currentColor"
+                strokeWidth="2"
+                opacity="0.98"
+              />
+              <g>{marks}</g>
+              {[12, 3, 6, 9].map((number) => {
+                const positions: Record<number, [number, number]> = {
+                  12: [0, -106],
+                  3: [106, 8],
+                  6: [0, 118],
+                  9: [-106, 8],
+                };
+                const [x, y] = positions[number];
+                return (
+                  <text
+                    key={number}
+                    x={x}
+                    y={y}
+                    textAnchor="middle"
+                    fontSize="24"
+                    fontWeight="800"
+                    fill="currentColor"
+                  >
+                    {number}
+                  </text>
+                );
+              })}
+              <line
+                x1="0"
+                y1="16"
+                x2="0"
+                y2="-70"
+                stroke="currentColor"
+                strokeWidth="8"
+                strokeLinecap="round"
+                transform={`rotate(${angles.hour})`}
+              />
+              <line
+                x1="0"
+                y1="20"
+                x2="0"
+                y2="-104"
+                stroke="currentColor"
+                strokeWidth="5"
+                strokeLinecap="round"
+                opacity="0.86"
+                transform={`rotate(${angles.minute})`}
+              />
+              {showSecondHand ? (
+                <line
+                  data-second-hand
+                  x1="0"
+                  y1="26"
+                  x2="0"
+                  y2="-124"
+                  stroke="var(--ilt-accent)"
+                  strokeWidth="2.6"
+                  strokeLinecap="round"
+                  transform={`rotate(${angles.second})`}
+                />
+              ) : null}
+              <circle cx="0" cy="0" r="8" fill="var(--ilt-accent)" />
+            </svg>
+          </div>
+          <div className="mt-4 text-center font-mono text-2xl font-extrabold tracking-widest text-[var(--ilt-text-primary)] sm:text-3xl">
+            {digitalText}
+          </div>
+          <div className="mt-2 text-sm font-semibold text-[var(--ilt-text-secondary)] sm:text-base">
+            {modeText} / {timeZone}
+          </div>
+        </DisplayStage>
+
+        {!isFullscreen ? (
+          <>
+            <SettingGroup
+              title="Fullscreen analog settings"
+              description="The analog face is kept large for room display. Fullscreen starts only after you choose it."
+            >
+              <SettingRow className="sm:grid-cols-2">
+                <Toggle
+                  label="Show second hand"
+                  checked={showSecondHand}
+                  onCheckedChange={setShowSecondHand}
+                />
+                <Toggle
+                  label="Smooth movement"
+                  checked={smooth}
+                  disabled={!showSecondHand}
+                  onCheckedChange={setSmooth}
+                />
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow>
+              <Button variant="secondary" onClick={() => void copyTime()}>
+                {copied ? "Copied" : "Copy current time"}
+              </Button>
+              <Button variant="primary" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Button>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: F fullscreen / C copy / S second hand / M smooth-tick
+            </ShortcutHint>
+          </>
+        ) : null}
+
+        <FullscreenBottomBar show={isFullscreen}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <Toggle
+                label="Second hand"
+                checked={showSecondHand}
+                onCheckedChange={setShowSecondHand}
+              />
+              <Toggle
+                label="Smooth"
+                checked={smooth}
+                disabled={!showSecondHand}
+                onCheckedChange={setSmooth}
+              />
+            </div>
+            <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
+              No ads appear in fullscreen
+            </div>
+          </div>
+        </FullscreenBottomBar>
+      </div>
+    </ToolFrame>
+  );
+}
+
+function BigDigitalClockTool({ initialNowISO }: { initialNowISO: string }) {
+  const [now, setNow] = useState(() => new Date(initialNowISO));
+  const [use24, setUse24] = useState(false);
+  const [showSeconds, setShowSeconds] = useState(true);
+  const [showDate, setShowDate] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const timeZone = useMemo(() => safeTimeZone(), []);
+  const frameRef = useRef<HTMLDivElement | null>(null);
+  const displayRef = useRef<HTMLElement | null>(null);
+  const textRef = useRef<HTMLSpanElement | null>(null);
+  const fullscreen = useFullscreen(frameRef);
+  const isFullscreen = fullscreen.isFullscreen;
+
+  useEffect(() => {
+    let timeout = 0;
+    let cancelled = false;
+
+    const sync = () => {
+      if (cancelled) return;
+      const next = new Date();
+      setNow(next);
+      const delay = showSeconds
+        ? 1000 - next.getMilliseconds()
+        : (60 - next.getSeconds()) * 1000 - next.getMilliseconds();
+      timeout = window.setTimeout(sync, Math.max(50, delay));
+    };
+
+    sync();
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeout);
+    };
+  }, [showSeconds]);
+
+  const timeText = formatClockTime(now, { use24, showSeconds });
+  const dateText = formatDateLine(now);
+  const copyText = `${timeText} (${timeZone})${showDate ? ` - ${dateText}` : ""}`;
+  const fitFontPx = useFitDisplayText({
+    containerRef: displayRef,
+    textRef,
+    deps: [timeText, isFullscreen, showSeconds, use24, showDate],
+    minPx: 50,
+    maxPx: isFullscreen ? 700 : 640,
+    paddingAllowancePx: isFullscreen ? 72 : 84,
+  });
+
+  const copy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(copyText);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch {
+      setCopied(false);
+    }
+  }, [copyText]);
+
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (isTypingTarget(event.target)) return;
+    const key = event.key.toLowerCase();
+    if (key === "f") {
+      void fullscreen.toggle();
+    } else if (key === "c") {
+      void copy();
+    } else if (key === "s") {
+      setShowSeconds((value) => !value);
+    } else if (key === "d") {
+      setShowDate((value) => !value);
+    } else if (event.key === "1") {
+      setUse24(false);
+    } else if (event.key === "2") {
+      setUse24(true);
+    } else if (key === "escape" && isFullscreen) {
+      void fullscreen.exit();
+    }
+  };
+
+  return (
+    <ToolFrame
+      frameRef={frameRef}
+      onKeyDown={onKeyDown}
+      isFullscreen={isFullscreen}
+      className={isFullscreen ? "" : "px-4 pb-4 pt-0 sm:px-6 sm:pb-6"}
+    >
+      <FullscreenTopBar
+        show={isFullscreen}
+        title="Big Digital Clock"
+        onExit={() => void fullscreen.exit()}
+        right={
+          <Button variant="ghost" size="sm" onClick={() => void copy()}>
+            {copied ? "Copied" : "Copy"}
+          </Button>
+        }
+      />
+
+      <div className={isFullscreen ? "flex h-full flex-col" : "timer-clock-stack flex h-full flex-col"}>
+        <DisplayStage
+          stageRef={displayRef}
+          isFullscreen={isFullscreen}
+          className="timer-display-surface mt-4 flex flex-col items-center justify-center p-4 font-mono sm:p-6"
+          style={{
+            minHeight: isFullscreen ? 0 : "clamp(380px, 48vw, 560px)",
+            marginTop: isFullscreen ? "3.6rem" : undefined,
+            marginBottom: isFullscreen ? "3.6rem" : undefined,
+            overflow: isFullscreen ? "hidden" : "visible",
+            userSelect: "none",
+          }}
+          aria-live="polite"
+          onClick={() => {
+            if (isFullscreen) void copy();
+          }}
+          role={isFullscreen ? "button" : undefined}
+          title={isFullscreen ? "Tap or click to copy the current time" : undefined}
+        >
+          <div className="timer-clock-label text-xs font-extrabold uppercase tracking-widest">
+            Large local display
+          </div>
+          <span
+            ref={textRef}
+            data-primary-display-value
+            className="timer-clock-value mt-3 inline-block max-w-full text-center font-extrabold"
+            style={{
+              fontSize: fitFontPx,
+              lineHeight: "0.86",
+              transform: "translateZ(0)",
+            }}
+          >
+            {timeText}
+          </span>
+          <div className="timer-clock-context mt-4 text-center text-sm font-semibold sm:text-base">
+            {showDate ? `${dateText} / ` : ""}
+            {timeZone}
+          </div>
+        </DisplayStage>
+
+        {!isFullscreen ? (
+          <>
+            <SettingGroup
+              title="Display settings"
+              description="Keep the display large for distance viewing. The clock uses your browser and device time."
+            >
+              <SettingRow className="sm:grid-cols-3">
+                <Toggle
+                  label="Seconds"
+                  checked={showSeconds}
+                  onCheckedChange={setShowSeconds}
+                />
+                <Toggle
+                  label="24-hour"
+                  checked={use24}
+                  onCheckedChange={setUse24}
+                />
+                <Toggle
+                  label="Date"
+                  checked={showDate}
+                  onCheckedChange={setShowDate}
+                />
+              </SettingRow>
+            </SettingGroup>
+
+            <SecondaryActionRow className="timer-clock-actions">
+              <Button variant="secondary" onClick={() => void copy()}>
+                {copied ? "Copied" : "Copy current time"}
+              </Button>
+              <Button variant="primary" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Button>
+            </SecondaryActionRow>
+
+            <ShortcutHint className="timer-clock-shortcut">
+              Shortcuts: F fullscreen / C copy / S seconds / D date / 1 12-hour / 2 24-hour
+            </ShortcutHint>
+          </>
+        ) : null}
+
+        <FullscreenBottomBar show={isFullscreen}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <Toggle
+                label="Seconds"
+                checked={showSeconds}
+                onCheckedChange={setShowSeconds}
+              />
+              <Toggle
+                label="24-hour"
+                checked={use24}
+                onCheckedChange={setUse24}
+              />
+              <Toggle
+                label="Date"
+                checked={showDate}
+                onCheckedChange={setShowDate}
+              />
+            </div>
+            <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
+              Tap time to copy / No ads appear in fullscreen
+            </div>
+          </div>
+        </FullscreenBottomBar>
+      </div>
+    </ToolFrame>
+  );
+}
+
 export function FullScreenClockPage({
   initialNowISO,
 }: {
@@ -1204,7 +1733,11 @@ export function FullScreenClockPage({
             a distance.
           </p>
           <p>
-            For a general digital clock, use the{" "}
+            For a display tuned for the largest possible digits, use the{" "}
+            <a className="ilt-content-link" href="/big-digital-clock">
+              big digital clock
+            </a>
+            . For a general digital clock, use the{" "}
             <a className="ilt-content-link" href="/digital-clock">
               digital clock
             </a>
@@ -1461,6 +1994,10 @@ export function AnalogClockWithSecondHandPage({
             <a className="ilt-content-link" href="/smooth-second-hand-clock">
               smooth second hand clock
             </a>
+            . For a room display, use the{" "}
+            <a className="ilt-content-link" href="/full-screen-analog-clock">
+              full screen analog clock
+            </a>
             .
           </p>
         </ContentSection>
@@ -1486,6 +2023,169 @@ export function AnalogClockWithSecondHandPage({
         <FaqContent
           title="Analog clock with second hand FAQ"
           items={ANALOG_SECOND_HAND_FAQ}
+        />
+      </SeoBand>
+    </PageShell>
+  );
+}
+
+export function FullScreenAnalogClockPage({
+  initialNowISO,
+}: {
+  initialNowISO: string;
+}) {
+  return (
+    <PageShell>
+      <JsonLd
+        name="Full Screen Analog Clock"
+        routePath="/full-screen-analog-clock"
+        description="A browser-based full screen analog clock with a large clock face, visible second hand, ticking or smooth movement, copy, and fullscreen support."
+        faqItems={FULL_SCREEN_ANALOG_FAQ}
+      />
+
+      <ToolHero
+        display={<FullScreenAnalogClockTool initialNowISO={initialNowISO} />}
+        title="Full Screen Analog Clock"
+        description="Use a large analog clock face for classroom, room, second-screen, or teaching display with a visible second hand and ad-free fullscreen mode."
+      />
+
+      <SeoBand>
+        <ContentSection title="How this full screen analog clock works">
+          <p>
+            This page opens with a large analog clock face as the main display.
+            The second hand is visible by default, and the fullscreen control is
+            kept close to the clock so you can turn it into a room display after
+            a click or keyboard action.
+          </p>
+          <p>
+            Ticking mode moves the second hand once per second. Smooth mode uses
+            browser animation frames for a sweeping motion. The time comes from
+            your browser and device clock, so it is not a certified time source.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="When to use a fullscreen analog clock">
+          <p>
+            A full screen analog clock can be useful as a classroom display,
+            wall-clock substitute, meeting room clock, second-screen clock, or
+            visual clock face for teaching analog time.
+          </p>
+          <p>
+            For a general analog display, use the{" "}
+            <a className="ilt-content-link" href="/analog-clock">
+              analog clock
+            </a>
+            . For a second-hand-first face, open the{" "}
+            <a className="ilt-content-link" href="/analog-clock-with-second-hand">
+              analog clock with second hand
+            </a>
+            . For smooth motion as the main focus, try the{" "}
+            <a className="ilt-content-link" href="/smooth-second-hand-clock">
+              smooth second hand clock
+            </a>
+            .
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Related clocks">
+          <p>
+            Use the{" "}
+            <a className="ilt-content-link" href="/full-screen-clock">
+              full screen clock
+            </a>{" "}
+            for a digital room clock, or the{" "}
+            <a className="ilt-content-link" href="/digital-clock">
+              digital clock
+            </a>{" "}
+            when digits are a better fit than a clock face.
+          </p>
+        </ContentSection>
+
+        <FaqContent
+          title="Full screen analog clock FAQ"
+          items={FULL_SCREEN_ANALOG_FAQ}
+        />
+      </SeoBand>
+    </PageShell>
+  );
+}
+
+export function BigDigitalClockPage({
+  initialNowISO,
+}: {
+  initialNowISO: string;
+}) {
+  return (
+    <PageShell>
+      <JsonLd
+        name="Big Digital Clock"
+        routePath="/big-digital-clock"
+        description="A browser-based big digital clock optimized for large, room-readable current time display with seconds, 12/24-hour mode, date, copy, and fullscreen support."
+        faqItems={BIG_DIGITAL_CLOCK_FAQ}
+      />
+
+      <ToolHero
+        display={<BigDigitalClockTool initialNowISO={initialNowISO} />}
+        title="Big Digital Clock"
+        description="Use a large room-readable digital clock for classrooms, meetings, second screens, desk monitors, gym displays, or livestream timing reference."
+      />
+
+      <SeoBand>
+        <ContentSection title="How this big digital clock works">
+          <p>
+            This page prioritizes one large current-time display with seconds
+            visible by default. The controls stay simple: show or hide seconds,
+            switch between 12-hour and 24-hour time, show the date, copy the
+            current time, or enter fullscreen.
+          </p>
+          <p>
+            The display uses your browser and device clock. Browser scheduling,
+            device settings, and screen refresh rate can affect what you see, so
+            this is a practical clock display rather than an official time
+            source.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="When a large clock display helps">
+          <p>
+            A big digital clock is useful in classrooms, meeting rooms, gyms,
+            desk-monitor setups, livestream reference screens, and second-screen
+            displays where the current time needs to be readable at a distance.
+          </p>
+          <p>
+            For a more general digital clock, use the{" "}
+            <a className="ilt-content-link" href="/digital-clock">
+              digital clock
+            </a>
+            . For fullscreen-first display, use the{" "}
+            <a className="ilt-content-link" href="/full-screen-clock">
+              full screen clock
+            </a>
+            . For a quieter face, try the{" "}
+            <a className="ilt-content-link" href="/minimalist-clock">
+              minimalist clock
+            </a>
+            .
+          </p>
+        </ContentSection>
+
+        <ContentSection title="Related digital clocks">
+          <p>
+            Open the{" "}
+            <a className="ilt-content-link" href="/clock-with-seconds">
+              clock with seconds
+            </a>{" "}
+            when seconds are the main detail, or the{" "}
+            <a className="ilt-content-link" href="/clock-with-milliseconds">
+              clock with milliseconds
+            </a>{" "}
+            when you want smaller fractions visible.
+          </p>
+        </ContentSection>
+
+        <FaqContent
+          title="Big digital clock FAQ"
+          items={BIG_DIGITAL_CLOCK_FAQ}
         />
       </SeoBand>
     </PageShell>

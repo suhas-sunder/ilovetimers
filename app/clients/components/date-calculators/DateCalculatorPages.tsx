@@ -870,6 +870,10 @@ export function DateDurationCalculatorPage() {
             <a className="ilt-content-link" href="/months-between-dates-calculator">
               months between dates calculator
             </a>
+            . For a weeks and days view, use the{" "}
+            <a className="ilt-content-link" href="/weeks-between-dates-calculator">
+              weeks between dates calculator
+            </a>
             . For hours until a date and time, use the{" "}
             <a className="ilt-content-link" href="/hours-until-calculator">
               hours until calculator

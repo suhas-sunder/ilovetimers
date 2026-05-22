@@ -415,6 +415,10 @@ export default function SmoothSecondHandClockPage({
             <a className="ilt-content-link" href="/analog-clock-with-second-hand">
               analog clock with second hand
             </a>
+            . For the same clock-face style tuned for room display, open the{" "}
+            <a className="ilt-content-link" href="/full-screen-analog-clock">
+              full screen analog clock
+            </a>
             . For large digital time, use the{" "}
             <a className="ilt-content-link" href="/digital-clock">
               digital clock

@@ -9,7 +9,7 @@ export const meta: Route.MetaFunction = () => {
   const description =
     "Read the iLoveTimers Terms of Service. Learn about your rights and responsibilities when using the website.";
 
-  const ogImage = "https://www.ilovetimers.com/og/ilovetimers-terms.jpg";
+  const ogImage = "https://www.ilovetimers.com/og-image.png";
 
   return [
     { title },

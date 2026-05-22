@@ -60,7 +60,7 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: url },
-    { property: "og:image", content: "https://www.ilovetimers.com/og-image.jpg" },
+    { property: "og:image", content: "https://www.ilovetimers.com/og-image.png" },
 
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },

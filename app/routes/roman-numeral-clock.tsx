@@ -49,7 +49,7 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:url", content: url },
     {
       property: "og:image",
-      content: "https://www.ilovetimers.com/og-image.jpg",
+      content: "https://www.ilovetimers.com/og-image.png",
     },
 
     { name: "twitter:card", content: "summary_large_image" },

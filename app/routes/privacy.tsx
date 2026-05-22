@@ -11,7 +11,7 @@ export const meta: Route.MetaFunction = () => {
   const description =
     "Read the iLoveTimers privacy policy. Learn how your data is handled and protected when using ilovetimers.com timer and clock tools.";
 
-  const ogImage = "https://www.ilovetimers.com/og/ilovetimers-privacy.jpg";
+  const ogImage = "https://www.ilovetimers.com/og-image.png";
 
   return [
     { title },

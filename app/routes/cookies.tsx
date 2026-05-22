@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
   const description =
     "Read the iLoveTimers cookies policy. Learn how cookies and similar technologies are used on ilovetimers.com to run timers, remember preferences, measure performance, and serve ads.";
 
-  const ogImage = "https://www.ilovetimers.com/og/ilovetimers-cookies.jpg";
+  const ogImage = "https://www.ilovetimers.com/og-image.png";
 
   return [
     { title },

@@ -58,7 +58,7 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:url", content: url },
     {
       property: "og:image",
-      content: "https://www.ilovetimers.com/og-image.jpg",
+      content: "https://www.ilovetimers.com/og-image.png",
     },
 
     { name: "twitter:card", content: "summary_large_image" },
@@ -521,8 +521,8 @@ function BpmTapperCard() {
               {h.bpm} BPM
             </div>
             <div className="mt-0.5 text-xs font-semibold text-slate-600">
-              Taps {h.taps} Â· Intervals {h.intervals}
-              {h.stability ? ` Â· ${h.stability}` : ""}
+              Taps {h.taps} / Intervals {h.intervals}
+              {h.stability ? ` / ${h.stability}` : ""}
             </div>
           </Btn>
         ))}

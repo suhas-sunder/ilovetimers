@@ -150,6 +150,13 @@ const footerSections: TimerMenuSection[] = [
       { to: "/age-calculator", label: "Age Calculator" },
       { to: "/days-until-calculator", label: "Days Until Calculator" },
       { to: "/weekday-calculator", label: "Weekday Calculator" },
+      { to: "/week-number-calculator", label: "Week Number Calculator" },
+      {
+        to: "/months-between-dates-calculator",
+        label: "Months Between Dates Calculator",
+      },
+      { to: "/birthday-countdown", label: "Birthday Countdown" },
+      { to: "/hours-until-calculator", label: "Hours Until Calculator" },
       {
         to: "/billable-hours-calculator",
         label: "Billable Hours Calculator",

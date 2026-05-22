@@ -883,6 +883,38 @@ export const routeMonetization = [
       "Weekday calculator has result-first single-date weekday lookup, weekday/weekend context, copy/today/reset actions, and route-specific support content.",
   },
   {
+    path: "/week-number-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Week number calculator has result-first ISO week lookup, week-year context, copy/today/reset actions, and route-specific support content.",
+  },
+  {
+    path: "/months-between-dates-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Months between dates calculator has result-first completed-month and remaining-day math, copy/reset actions, and route-specific support content.",
+  },
+  {
+    path: "/birthday-countdown",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Birthday countdown has result-first days-until-birthday math, optional turning-age context, copy/share actions, and route-specific support content.",
+  },
+  {
+    path: "/hours-until-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Hours until calculator has result-first target date/time duration math, presets, copy/reset actions, and route-specific support content.",
+  },
+  {
     path: "/billable-hours-calculator",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,

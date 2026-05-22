@@ -718,6 +718,10 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
           <a className="ilt-content-link" href="/time-duration-calculator">
             time duration calculator
           </a>
+          . For hours remaining until a specific date and time, use the{" "}
+          <a className="ilt-content-link" href="/hours-until-calculator">
+            hours until calculator
+          </a>
           . For calendar dates, use the{" "}
           <a className="ilt-content-link" href="/date-duration-calculator">
             date duration calculator

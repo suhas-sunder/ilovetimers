@@ -1001,6 +1001,14 @@ export default function EventCountdownPage({
             <a className="ilt-content-link" href="/days-until-calculator">
               days until calculator
             </a>
+            . For a birthday-specific date entry, use the{" "}
+            <a className="ilt-content-link" href="/birthday-countdown">
+              birthday countdown
+            </a>
+            . For hours until a target date and time, use the{" "}
+            <a className="ilt-content-link" href="/hours-until-calculator">
+              hours until calculator
+            </a>
             . To add or subtract days, weeks, months, or years from a date, use
             the{" "}
             <a className="ilt-content-link" href="/date-calculator">

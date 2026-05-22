@@ -608,6 +608,30 @@ const SECTIONS: SitemapSection[] = [
           "Find the day of the week for one date and see weekday or weekend status.",
       },
       {
+        title: "Week Number Calculator",
+        href: "/week-number-calculator",
+        description:
+          "Find the ISO week number, ISO week-year, and week date range for a selected date.",
+      },
+      {
+        title: "Months Between Dates Calculator",
+        href: "/months-between-dates-calculator",
+        description:
+          "Calculate full months and remaining days between two calendar dates.",
+      },
+      {
+        title: "Birthday Countdown",
+        href: "/birthday-countdown",
+        description:
+          "Count days until the next birthday with next date, weekday, and optional turning age.",
+      },
+      {
+        title: "Hours Until Calculator",
+        href: "/hours-until-calculator",
+        description:
+          "Calculate hours until a target date and time with days, hours, minutes, and past-state handling.",
+      },
+      {
         title: "Billable Hours Calculator",
         href: "/billable-hours-calculator",
         description:

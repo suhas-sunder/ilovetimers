@@ -866,6 +866,14 @@ export function DateDurationCalculatorPage() {
             <a className="ilt-content-link" href="/business-days-calculator">
               business days calculator
             </a>
+            . For completed months and remaining days, use the{" "}
+            <a className="ilt-content-link" href="/months-between-dates-calculator">
+              months between dates calculator
+            </a>
+            . For hours until a date and time, use the{" "}
+            <a className="ilt-content-link" href="/hours-until-calculator">
+              hours until calculator
+            </a>
             . To find the weekday for one date, use the{" "}
             <a className="ilt-content-link" href="/weekday-calculator">
               weekday calculator
@@ -950,6 +958,14 @@ export function DateCalculatorPage() {
             <a className="ilt-content-link" href="/weekday-calculator">
               weekday calculator
             </a>
+            . To find the ISO week number for a date, use the{" "}
+            <a className="ilt-content-link" href="/week-number-calculator">
+              week number calculator
+            </a>
+            . To compare completed months between two dates, use the{" "}
+            <a className="ilt-content-link" href="/months-between-dates-calculator">
+              months between dates calculator
+            </a>
             . To count days until a target date, use the{" "}
             <a className="ilt-content-link" href="/days-until-calculator">
               days until calculator
@@ -1031,6 +1047,10 @@ export function BusinessDaysCalculatorPage() {
             . To identify one date's weekday, use the{" "}
             <a className="ilt-content-link" href="/weekday-calculator">
               weekday calculator
+            </a>
+            . To find ISO week numbers, use the{" "}
+            <a className="ilt-content-link" href="/week-number-calculator">
+              week number calculator
             </a>
             . For shift-style time math, use the{" "}
             <a className="ilt-content-link" href="/work-hours-calculator">

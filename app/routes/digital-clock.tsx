@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   DisplayStage,
   FullscreenBottomBar,
   FullscreenTopBar,
@@ -478,6 +479,19 @@ export default function DigitalClockPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need milliseconds as the main focus? Open the{" "}
+            <a className="ilt-content-link" href="/clock-with-milliseconds">
+              clock with milliseconds
+            </a>
+            . Prefer an analog face with continuous motion? Try the{" "}
+            <a className="ilt-content-link" href="/smooth-second-hand-clock">
+              smooth second hand clock
+            </a>
+            .
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

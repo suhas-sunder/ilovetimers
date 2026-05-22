@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   FullscreenBottomBar,
@@ -552,6 +553,17 @@ export default function StopwatchPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need a countdown that starts from a set duration and shows
+            milliseconds? Use the{" "}
+            <a className="ilt-content-link" href="/millisecond-timer">
+              millisecond timer
+            </a>
+            . This stopwatch is for elapsed time; the millisecond timer is for
+            counting down with minute, second, and millisecond inputs.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

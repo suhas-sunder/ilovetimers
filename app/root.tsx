@@ -115,6 +115,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     keywords: "custom interval repeating work break practice routine",
   },
   {
+    title: "Millisecond Timer",
+    href: "/millisecond-timer",
+    category: "Core",
+    description: "Run a countdown with minutes, seconds, and milliseconds.",
+    keywords: "millisecond timer countdown milliseconds online timer",
+  },
+  {
     title: "Count Up Timer",
     href: "/count-up-timer",
     category: "Core",
@@ -347,6 +354,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "A precise-looking live clock with optional milliseconds.",
   },
   {
+    title: "Clock With Milliseconds",
+    href: "/clock-with-milliseconds",
+    category: "Clocks",
+    description: "Show current local or UTC time with large live milliseconds.",
+    keywords: "clock with milliseconds live time milliseconds current time",
+  },
+  {
     title: "Retro Flip Clock",
     href: "/retro-flip-clock",
     category: "Clocks",
@@ -369,6 +383,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     href: "/analog-clock",
     category: "Clocks",
     description: "A classic analog clock face in the browser.",
+  },
+  {
+    title: "Smooth Second Hand Clock",
+    href: "/smooth-second-hand-clock",
+    category: "Clocks",
+    description: "An analog clock focused on smooth sweeping second-hand motion.",
+    keywords: "smooth second hand clock analog clock seconds hand",
   },
   {
     title: "Binary Clock",

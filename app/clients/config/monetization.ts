@@ -131,6 +131,14 @@ export const routeMonetization = [
       "Custom interval timer route has utility-first step timing, presets, fullscreen support, and route-specific support content.",
   },
   {
+    path: "/millisecond-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Millisecond timer has utility-first countdown controls, millisecond input, fullscreen support, and route-specific support content.",
+  },
+  {
     path: "/presentation-timer",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -507,12 +515,28 @@ export const routeMonetization = [
       "Analog clock has expanded content supporting the custom clock face.",
   },
   {
+    path: "/smooth-second-hand-clock",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Smooth second hand clock has utility-first analog display, fullscreen support, and route-specific support content.",
+  },
+  {
     path: "/digital-clock",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
     contentExpansionNeeded: false,
     reason:
       "Digital clock has expanded route-specific clock content and fullscreen support notes.",
+  },
+  {
+    path: "/clock-with-milliseconds",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Clock with milliseconds has a utility-first live millisecond display, copy/fullscreen controls, and route-specific support content.",
   },
   {
     path: "/binary-clock",

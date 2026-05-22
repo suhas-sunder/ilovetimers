@@ -507,7 +507,16 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
               Unix timestamp converter
             </a>{" "}
             converts timestamp seconds and milliseconds into UTC, local time,
-            and ISO strings.
+            and ISO strings. For running a countdown that displays
+            milliseconds, use the{" "}
+            <a className="ilt-content-link" href="/millisecond-timer">
+              millisecond timer
+            </a>
+            . For current time with live milliseconds, use the{" "}
+            <a className="ilt-content-link" href="/clock-with-milliseconds">
+              clock with milliseconds
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   DisplayStage,
   Field,
   FullscreenBottomBar,
@@ -680,6 +681,19 @@ export default function FullscreenTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need a fullscreen clock instead of a countdown? Use the{" "}
+            <a className="ilt-content-link" href="/smooth-second-hand-clock">
+              smooth second hand clock
+            </a>{" "}
+            for an analog face, or the{" "}
+            <a className="ilt-content-link" href="/clock-with-milliseconds">
+              clock with milliseconds
+            </a>{" "}
+            for a large digital display with milliseconds.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

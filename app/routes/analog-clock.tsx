@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import {
   Button,
+  ContentSection,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
@@ -639,6 +640,16 @@ export default function AnalogClockPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Want a route focused on continuous second-hand motion? The{" "}
+            <a className="ilt-content-link" href="/smooth-second-hand-clock">
+              smooth second hand clock
+            </a>{" "}
+            defaults to a sweeping second hand and also lets you switch back to
+            ticking mode.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

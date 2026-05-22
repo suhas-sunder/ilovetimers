@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   Button,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -530,6 +531,16 @@ export default function CountDownTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need a countdown with visible milliseconds and millisecond input?
+            Use the{" "}
+            <a className="ilt-content-link" href="/millisecond-timer">
+              millisecond timer
+            </a>
+            . This page stays focused on simple minutes-and-seconds countdowns.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

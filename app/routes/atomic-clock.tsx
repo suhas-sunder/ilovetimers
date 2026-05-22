@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
@@ -449,6 +450,16 @@ export default function AtomicClockPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need a page focused directly on large millisecond digits? The{" "}
+            <a className="ilt-content-link" href="/clock-with-milliseconds">
+              clock with milliseconds
+            </a>{" "}
+            shows local or UTC time with milliseconds as the main display while
+            still relying on your browser and device clock.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

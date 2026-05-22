@@ -845,6 +845,11 @@ export default function UtcClockPage({
             <a className="ilt-content-link" href="/military-time-clock">
               Military Time Clock
             </a>
+            . Need UTC or local time with milliseconds as the main display? Try
+            the{" "}
+            <a className="ilt-content-link" href="/clock-with-milliseconds">
+              Clock With Milliseconds
+            </a>
             . Need Unix timestamps for code or logs? Use the{" "}
             <a className="ilt-content-link" href="/epoch-unix-time-clock">
               Epoch Unix Time Clock

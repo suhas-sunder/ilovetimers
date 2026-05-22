@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
@@ -635,6 +636,16 @@ export default function CurrentLocalTimePage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            If you need the current time with milliseconds visible, use the{" "}
+            <a className="ilt-content-link" href="/clock-with-milliseconds">
+              clock with milliseconds
+            </a>
+            . It shows local or UTC time in a larger millisecond-focused
+            display while still using browser/device time.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

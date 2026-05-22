@@ -91,6 +91,12 @@ const SECTIONS: SitemapSection[] = [
           "Build a custom interval timer with labeled steps, repeats, and fullscreen display.",
       },
       {
+        title: "Millisecond Timer",
+        href: "/millisecond-timer",
+        description:
+          "Run a countdown timer with visible milliseconds and custom millisecond input.",
+      },
+      {
         title: "Presentation Timer",
         href: "/presentation-timer",
         description:
@@ -331,10 +337,22 @@ const SECTIONS: SitemapSection[] = [
           "Use a classic analog clock display with hour, minute, and second hands.",
       },
       {
+        title: "Smooth Second Hand Clock",
+        href: "/smooth-second-hand-clock",
+        description:
+          "Use an analog clock that defaults to smooth sweeping second-hand motion.",
+      },
+      {
         title: "Digital Clock",
         href: "/digital-clock",
         description:
           "View a clean digital clock for desktop, mobile, or fullscreen use.",
+      },
+      {
+        title: "Clock With Milliseconds",
+        href: "/clock-with-milliseconds",
+        description:
+          "View current local or UTC time with large live milliseconds.",
       },
       {
         title: "Binary Clock",

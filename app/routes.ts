@@ -57,7 +57,9 @@ export default [
   route("current-local-time", "routes/current-local-time.tsx"),
   route("utc-clock", "routes/utc-clock.tsx"),
   route("analog-clock", "routes/analog-clock.tsx"),
+  route("smooth-second-hand-clock", "routes/smooth-second-hand-clock.tsx"),
   route("digital-clock", "routes/digital-clock.tsx"),
+  route("clock-with-milliseconds", "routes/clock-with-milliseconds.tsx"),
   route("binary-clock", "routes/binary-clock.tsx"),
   route("hexadecimal-clock", "routes/hexadecimal-clock.tsx"),
   route("event-countdown", "routes/event-countdown.tsx"),
@@ -84,6 +86,7 @@ export default [
   route("time-calculator", "routes/time-calculator.tsx"),
   route("billable-hours-calculator", "routes/billable-hours-calculator.tsx"),
   route("milliseconds-converter", "routes/milliseconds-converter.tsx"),
+  route("millisecond-timer", "routes/millisecond-timer.tsx"),
   route("unix-timestamp-converter", "routes/unix-timestamp-converter.tsx"),
   route("chess-clock", "routes/chess-clock.tsx"),
 

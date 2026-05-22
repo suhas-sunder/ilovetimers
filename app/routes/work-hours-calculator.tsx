@@ -29,7 +29,7 @@ import PopularUseCases from "~/clients/components/work-hours-calculator/PopularU
 export function meta({}: Route.MetaArgs) {
   const title = "Work Hours Calculator (Time Worked, Breaks Subtracted)";
   const description =
-    "Calculate hours worked from start and end times. Subtract breaks and get total work hours instantly with a simple, accurate calculator.";
+    "Calculate hours worked from start and end times. Subtract breaks and get total work hours instantly with a simple planning calculator.";
 
   const url = "https://www.ilovetimers.com/work-hours-calculator";
 
@@ -458,7 +458,7 @@ function WorkHoursCalculatorCard() {
             <div>
               <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Copy</div>
               <div className="mt-1 ilt-helper-text">
-                Copy a compact payroll string
+                Copy a compact work-hours summary
               </div>
             </div>
 
@@ -523,7 +523,7 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
         name: "Work Hours Calculator",
         url,
         description:
-          "Calculate hours worked for payroll with start time, end time, and break deduction. Supports overnight shifts and decimal hours.",
+          "Calculate hours worked from start time, end time, and break deduction for planning and checking time. Supports overnight shifts and decimal hours.",
       },
       {
         "@type": "BreadcrumbList",
@@ -555,7 +555,7 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
       <ToolHero
         display={<WorkHoursCalculatorCard />}
         title="Work Hours Calculator"
-        description="Calculate paid work time from start and end times, subtract breaks, support overnight shifts, and copy payroll-friendly totals."
+        description="Calculate paid work time from start and end times, subtract breaks, support overnight shifts, and copy planning-friendly totals."
       />
 
       <SeoBand>

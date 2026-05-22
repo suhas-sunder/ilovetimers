@@ -23,7 +23,7 @@ export default function PopularUseCases({
 }) {
   const scenarios: Scenario[] = [
     {
-      title: "Meeting scheduling: confirm the exact local time on both sides",
+      title: "Meeting scheduling: confirm the local time on both sides",
       description:
         "Enter the meeting date and time in the organizer’s time zone, then convert to the attendee’s time zone. Use Swap to verify the reverse direction quickly, and Copy to paste the result into a message or invite.",
       forWho:
@@ -65,7 +65,7 @@ export default function PopularUseCases({
       ],
     },
     {
-      title: "Support and ops: capture exact timing for handoffs",
+      title: "Support and ops: capture clear timing for handoffs",
       description:
         "Convert the local time a customer reports into your team’s zone, then Copy to paste a clean record (From, To, input, both outputs, ISO). This helps reduce back-and-forth and prevents ambiguous timestamps.",
       forWho: "Support, SRE, and operations teams coordinating across regions.",

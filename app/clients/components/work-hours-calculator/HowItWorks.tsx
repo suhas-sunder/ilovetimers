@@ -31,7 +31,7 @@ export default function HowItWorks({
     "@type": "HowTo",
     name: "How to calculate work hours from start and end time (subtract breaks)",
     description:
-      "Use the Work Hours Calculator to compute paid time from a start and end time, subtract a break, support overnight shifts, optionally round paid time, and copy results for payroll or timesheets.",
+      "Use the Work Hours Calculator to compute planned work time from a start and end time, subtract a break, support overnight shifts, optionally round paid time, and copy results for checking or timesheet prep.",
     url: pageUrl,
     step: [
       {
@@ -76,7 +76,7 @@ export default function HowItWorks({
             <strong className="text-[var(--ilt-text-primary)]">HH:MM</strong> and{" "}
             <strong className="text-[var(--ilt-text-primary)]">decimal hours</strong>. It is
             built for quick shift math, overnight shifts that cross midnight,
-            and clean copy output for payroll, managers, clients, or your own
+            and clean copy output for timesheet prep, managers, clients, or your own
             logs.
           </p>
         </div>
@@ -273,7 +273,7 @@ export default function HowItWorks({
                 Some workplaces record time to fixed increments. Suppose your
                 paid time comes out to{" "}
                 <strong className="text-[var(--ilt-text-primary)]">7:53</strong> after breaks,
-                but payroll rounds to the nearest 15 minutes.
+                but your workplace records time to the nearest 15 minutes.
               </p>
 
               <div className="mt-3 grid gap-2 text-sm">
@@ -419,8 +419,8 @@ export default function HowItWorks({
               </div>
               <p className="mt-2 leading-relaxed">
                 If your workplace rounds, turn it on so your copied value
-                matches what gets recorded. If your workplace uses exact
-                minutes, leave rounding off and copy the exact paid time.
+                matches how time is recorded. If your workplace uses minute-by-minute
+                entries, leave rounding off and copy the unrounded paid time.
               </p>
             </div>
 

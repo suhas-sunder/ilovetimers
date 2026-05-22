@@ -28,7 +28,7 @@ export default function PopularUseCases({
       description:
         "Enter your Start and End times, subtract a break, and copy paid time in HH:MM and decimal hours. Enable rounding if your workplace records time in 5/10/15-minute increments.",
       forWho:
-        "Anyone filling out a timesheet, payroll form, or logging a single shift quickly.",
+        "Anyone filling out a timesheet draft, checking a shift total, or logging a single shift quickly.",
       notFor:
         "You need to add multiple separate work blocks or split shifts. Use Time Calculator instead.",
       links: [
@@ -37,6 +37,7 @@ export default function PopularUseCases({
           label: "Billable Hours Calculator",
           href: "/billable-hours-calculator",
         },
+        { label: "Billable Hours Clock", href: "/billable-hours-clock" },
         { label: "Current Local Time", href: "/current-local-time" },
       ],
     },
@@ -68,6 +69,10 @@ export default function PopularUseCases({
       links: [
         { label: "Stopwatch", href: "/stopwatch" },
         { label: "Count Up Timer", href: "/count-up-timer" },
+        {
+          label: "Meeting Count Up Timer",
+          href: "/meeting-count-up-timer",
+        },
         { label: "Current Local Time", href: "/current-local-time" },
       ],
     },
@@ -76,9 +81,9 @@ export default function PopularUseCases({
       description:
         "Turn on rounding for paid time so your copied number matches how time is recorded. The HH:MM and decimal hours shown reflect the rounded paid minutes.",
       forWho:
-        "Anyone whose workplace rounds recorded time for timesheets or payroll.",
+        "Anyone whose workplace records time in rounded increments for timesheets.",
       notFor:
-        "You need exact minute-by-minute logs with multiple entries. Use Billable Hours Calculator instead.",
+        "You need minute-by-minute logs with multiple entries. Use Billable Hours Calculator instead.",
       links: [
         {
           label: "Billable Hours Calculator",
@@ -101,6 +106,7 @@ export default function PopularUseCases({
           label: "Billable Hours Calculator",
           href: "/billable-hours-calculator",
         },
+        { label: "Billable Hours Clock", href: "/billable-hours-clock" },
         { label: "Time Calculator", href: "/time-calculator" },
         { label: "Pomodoro Timer", href: "/pomodoro-timer" },
       ],
@@ -112,7 +118,7 @@ export default function PopularUseCases({
       forWho:
         "Anyone who wants a quick validation check before logging paid time.",
       notFor:
-        "You need compliance rules by jurisdiction or policy interpretation. This tool focuses on the math only.",
+        "You need policy, legal, payroll, or jurisdiction-specific interpretation. This tool focuses on the time math only.",
       links: [
         { label: "Time Calculator", href: "/time-calculator" },
         { label: "Current Local Time", href: "/current-local-time" },
@@ -154,7 +160,7 @@ export default function PopularUseCases({
           <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Start/end time, break deduction, overnight shifts, decimal hours,
             optional rounding, and copy outputs designed for timesheets and
-            payroll logs.
+            work logs.
           </p>
         </div>
 

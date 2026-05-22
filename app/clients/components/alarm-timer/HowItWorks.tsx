@@ -92,8 +92,8 @@ export default function HowItWorks({
               This is still a browser timer, so keep the tab open and test audio
               before relying on it. It is useful for kitchen reminders, meeting
               breaks, classroom transitions, and other situations where you are
-              near the screen. For a guaranteed wake-up or safety alert, use
-              your device alarm.
+              near the screen. For wake-up alarms or safety-critical alerts, use
+              a device alarm or another system intended for that job.
             </p>
           </div>
 
@@ -167,7 +167,9 @@ export default function HowItWorks({
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
+            <PillLink href={abs("/online-timer")}>Online Timer</PillLink>
             <PillLink href={abs("/silent-timer")}>Silent Timer</PillLink>
+            <PillLink href={abs("/break-timer")}>Break Timer</PillLink>
             <PillLink href={abs("/cooking-timer")}>Cooking Timer</PillLink>
             <PillLink href={abs("/fullscreen-timer")}>
               Fullscreen Timer

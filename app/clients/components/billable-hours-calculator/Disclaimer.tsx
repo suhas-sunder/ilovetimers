@@ -82,6 +82,13 @@ export default function Disclaimer() {
               off, the chosen times will be off too. For tracking time live
               while you work, use{" "}
               <a
+                href="/billable-hours-clock"
+                className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+              >
+                Billable Hours Clock
+              </a>
+              ,{" "}
+              <a
                 href="/stopwatch"
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
               >

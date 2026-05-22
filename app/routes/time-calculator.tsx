@@ -30,7 +30,7 @@ import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayTe
 export function meta({}: Route.MetaArgs) {
   const title = "Time Calculator (Add & Subtract Time, Instant Results)";
   const description =
-    "Add or subtract time in seconds. Calculate time durations between two times with a simple, accurate time calculator.";
+    "Add or subtract time in seconds. Calculate durations between two times with a simple time calculator for planning and checking intervals.";
 
   const url = "https://www.ilovetimers.com/time-calculator";
 
@@ -674,8 +674,10 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
         </p>
         <p>
           Duration mode supports overnight time ranges, so an end time earlier
-          than the start time is treated as crossing midnight. Invalid time
-          entries show validation text instead of a misleading zero result.
+          than the start time is treated as crossing midnight. Add and subtract
+          modes are useful when you already know the amount of time you want to
+          apply to a starting value. Invalid entries show validation text instead
+          of a misleading zero result.
         </p>
         <h3>Practical examples</h3>
         <ul className="list-disc space-y-2 pl-5">
@@ -691,7 +693,19 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
             Compare two clock times when you need the elapsed time between a
             start and end.
           </li>
+          <li>
+            Check a planned shift, call, study block, or countdown length before
+            copying the final duration into another note or tool.
+          </li>
         </ul>
+        <h3>Add, subtract, and duration modes</h3>
+        <p>
+          Add mode answers questions like "what time is it 2 hours and 15
+          minutes from now?" Subtract mode works the other direction. Duration
+          mode compares two clock times and can handle a range that crosses
+          midnight, which is common for late shifts, travel, events, and
+          overnight tasks.
+        </p>
         <h3>Notes and limitations</h3>
         <p>
           This calculator is intended for ordinary time math and planning. For
@@ -712,7 +726,28 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
           <a className="ilt-content-link" href="/time-zone-converter">
             time zone converter
           </a>
+          . For timing something live instead of calculating it ahead of time,
+          open the{" "}
+          <a className="ilt-content-link" href="/stopwatch">
+            stopwatch
+          </a>{" "}
+          or a{" "}
+          <a className="ilt-content-link" href="/countdown-timer">
+            countdown timer
+          </a>
           .
+        </p>
+        <h3>FAQ</h3>
+        <p>
+          <strong>Does this replace a timesheet or billing system?</strong> No.
+          It is a planning and checking tool for time math. Use the rules,
+          records, or systems that apply to formal work, billing, payroll, tax,
+          legal, or compliance needs.
+        </p>
+        <p>
+          <strong>Why does the duration cross midnight?</strong> If the end time
+          is earlier than the start time, the calculator treats the end as the
+          next day so late-night ranges can be checked without manual date math.
         </p>
       </SeoBand>
     </PageShell>

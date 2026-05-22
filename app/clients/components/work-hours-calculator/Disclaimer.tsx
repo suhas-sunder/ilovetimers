@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 export default function Disclaimer() {
   const preview =
-    "Start/end time • Breaks subtracted • Overnight shifts • Decimal hours + rounding • Copy for payroll";
+    "Start/end time • Breaks subtracted • Overnight shifts • Decimal hours + rounding • Copy for checking";
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-6">
@@ -76,7 +76,7 @@ export default function Disclaimer() {
 
             <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
               <strong className="text-[var(--ilt-text-primary)]">
-                Copy for payroll or timesheets.
+                Copy for checking or timesheet prep.
               </strong>{" "}
               Copy a compact string like{" "}
               <strong className="text-[var(--ilt-text-primary)]">7:30 (7.50 hrs)</strong>, or
@@ -131,11 +131,11 @@ export default function Disclaimer() {
                   overnight shifts without manual math.
                 </li>
                 <li className="ilt-surface-muted p-3">
-                  <strong className="text-[var(--ilt-text-primary)]">Hourly payroll</strong>:
+                  <strong className="text-[var(--ilt-text-primary)]">Hourly planning</strong>:
                   quickly convert minutes worked into decimal hours.
                 </li>
                 <li className="ilt-surface-muted p-3">
-                  <strong className="text-[var(--ilt-text-primary)]">Break compliance</strong>:
+                  <strong className="text-[var(--ilt-text-primary)]">Break checks</strong>:
                   confirm break deductions don’t exceed your shift length.
                 </li>
               </ul>

@@ -127,6 +127,13 @@ export default function Disclaimer() {
                   >
                     Time Calculator
                   </a>
+                  , or{" "}
+                  <a
+                    href="/work-hours-calculator"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Work Hours Calculator
+                  </a>
                   .
                 </div>
                 <div className="ilt-surface-muted p-3">
@@ -143,6 +150,13 @@ export default function Disclaimer() {
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Count Up Timer
+                  </a>
+                  . For open-ended discussion timing, use{" "}
+                  <a
+                    href="/meeting-count-up-timer"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Meeting Count Up Timer
                   </a>
                   .
                 </div>

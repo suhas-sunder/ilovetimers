@@ -715,10 +715,11 @@ export default function VisualTimerPage({
         </p>
         <h3>When a visual countdown helps</h3>
         <p>
-          Use it for classroom activities, kids' routines, meetings, shared
-          rooms, or quiet tasks where a shrinking visual cue is easier to follow
-          than reading small digits. The time display can stay visible or be
-          reduced depending on how simple the screen should feel.
+          Use it for classroom activities, focus work, kids' routines,
+          presentations, shared spaces, or quiet tasks where a shrinking visual
+          cue is easier to follow than reading small digits. The time display can
+          stay visible or be reduced depending on how simple the screen should
+          feel.
         </p>
         <h3>Display options</h3>
         <ul className="list-disc space-y-2 pl-5">
@@ -734,7 +735,19 @@ export default function VisualTimerPage({
             Show-time controls decide whether the numeric countdown appears with
             the visual cue.
           </li>
+          <li>
+            Fullscreen mode is useful when the timer is projected, shared on a
+            call, or placed on a second screen.
+          </li>
         </ul>
+        <h3>Tips and limitations</h3>
+        <p>
+          A visual timer helps show time remaining without requiring everyone to
+          read small numbers. It is still a browser timer, so device sleep, tab
+          throttling, audio permissions, and system settings can affect what you
+          see or hear. Keep the page visible for important shared-room timing and
+          use a dedicated device alarm for safety-critical reminders.
+        </p>
         <h3>Related visual timers</h3>
         <p>
           For no-sound timing, use the{" "}
@@ -749,7 +762,26 @@ export default function VisualTimerPage({
           <a className="ilt-content-link" href="/countdown-timer">
             countdown timer
           </a>
+          . For classroom use, compare the{" "}
+          <a className="ilt-content-link" href="/classroom-timer">
+            classroom timer
+          </a>
+          . For speaker timing, use the{" "}
+          <a className="ilt-content-link" href="/presentation-timer">
+            presentation timer
+          </a>
           .
+        </p>
+        <h3>FAQ</h3>
+        <p>
+          <strong>Can I hide the numbers?</strong> Use the show-time setting if
+          you want the visual cue to carry more of the display. Keeping numbers
+          visible is helpful when people need the remaining minutes and
+          seconds.
+        </p>
+        <p>
+          <strong>Does fullscreen show ads?</strong> No. Fullscreen keeps the
+          active timer display separate from page content and ad placeholders.
         </p>
       </SeoBand>
     </PageShell>

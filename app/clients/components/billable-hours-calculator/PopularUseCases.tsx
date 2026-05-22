@@ -31,6 +31,10 @@ export default function PopularUseCases({
         "If you need to track time live while you work. Use a stopwatch or count-up timer, then plug the result into billing.",
       links: [
         {
+          label: "Billable hours clock",
+          href: "/billable-hours-clock",
+        },
+        {
           label: "Billable hours calculator",
           href: "/billable-hours-calculator",
         },
@@ -77,7 +81,7 @@ export default function PopularUseCases({
       description:
         "Get a clean total amount from time + breaks + rate, then copy the summary line for an email or invoice note.",
       forWho:
-        "Anyone who needs a fast, defensible total without building a full invoice.",
+        "Anyone who needs a fast, clear total without building a full invoice.",
       notFor:
         "If you need invoice generation, taxes, fees, or retainers. This calculator does time and hourly totals only.",
       links: [
@@ -94,10 +98,14 @@ export default function PopularUseCases({
       description:
         "Run a stopwatch or count-up timer during a task, then enter the start/end times (or your duration) for billing and rounding.",
       forWho:
-        "People who want a live timer while working, then a billing-ready total afterward.",
+        "People who want a live timer while working, then a billable total afterward.",
       notFor:
         "If you only need a finished total from known start/end times. Use the billable calculator directly.",
       links: [
+        {
+          label: "Billable hours clock",
+          href: "/billable-hours-clock",
+        },
         { label: "Stopwatch", href: "/stopwatch" },
         { label: "Count up timer", href: "/count-up-timer" },
         {

@@ -183,7 +183,7 @@ export function AccuracyAndPrivacySection() {
               <div className="font-semibold text-[var(--ilt-text-primary)]">ISO timestamp</div>
               <p className="mt-1 leading-relaxed">
                 ISO is included as a single, unambiguous instant in time. It’s
-                useful for logs, tickets, and systems that need an exact moment
+                useful for logs, tickets, and systems that need a specific moment
                 rather than a local representation.
               </p>
             </div>

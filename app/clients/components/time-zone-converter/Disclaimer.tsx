@@ -31,7 +31,7 @@ export default function Disclaimer() {
             </strong>{" "}
             Pick your <strong className="text-[var(--ilt-text-primary)]">From</strong> and{" "}
             <strong className="text-[var(--ilt-text-primary)]">To</strong> time zones, enter a
-            date and time, and the tool shows both local times plus the exact{" "}
+            date and time, and the tool shows both local times plus the matching{" "}
             <strong className="text-[var(--ilt-text-primary)]">ISO instant</strong> you can copy
             or share.
           </div>
@@ -41,7 +41,7 @@ export default function Disclaimer() {
               <strong className="text-[var(--ilt-text-primary)]">
                 Date + time input you control.
               </strong>{" "}
-              Choose the exact day and time you mean (not “right now”) and get
+              Choose the specific day and time you mean (not “right now”) and get
               the corresponding local time in another zone.
             </div>
 
@@ -100,7 +100,7 @@ export default function Disclaimer() {
               </li>
               <li className="ilt-surface-muted p-3">
                 <strong className="text-[var(--ilt-text-primary)]">3) Copy or share</strong>:
-                use Copy for paste-ready text, or Share to send the exact setup.
+                use Copy for paste-ready text, or Share to send the same setup.
               </li>
             </ol>
           </div>
@@ -115,7 +115,7 @@ export default function Disclaimer() {
                   <strong className="text-[var(--ilt-text-primary)]">
                     Scheduling meetings
                   </strong>
-                  : confirm the exact local time for both sides before sending
+                  : confirm the local time for both sides before sending
                   an invite.
                 </li>
                 <li className="ilt-surface-muted p-3">
@@ -193,6 +193,28 @@ export default function Disclaimer() {
                     Fullscreen Timer
                   </Link>
                   .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
+                  Planning a launch, class event, or webinar across zones?{" "}
+                  <Link
+                    to="/event-countdown"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Event Countdown
+                  </Link>{" "}
+                  pairs well with a checked conversion.
+                </div>
+
+                <div className="ilt-surface-muted p-3">
+                  Running the meeting after the time is agreed?{" "}
+                  <Link
+                    to="/meeting-timer"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Meeting Timer
+                  </Link>{" "}
+                  keeps the room on the planned block.
                 </div>
               </div>
             </div>

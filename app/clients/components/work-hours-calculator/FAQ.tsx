@@ -46,7 +46,7 @@ export default function FAQ({
     {
       question: "What do the results mean: Paid time, Total shift, and Break?",
       answer:
-        "Total shift is the full time between start and end. Break is the minutes you subtract. Paid time is Total shift minus Break (and it’s the number you typically use for payroll or timesheets).",
+        "Total shift is the full time between start and end. Break is the minutes you subtract. Paid time is Total shift minus Break, which is useful for checking a timesheet or planning a work block.",
     },
     {
       question: "Can I round the paid time?",
@@ -77,7 +77,7 @@ export default function FAQ({
         <>
           <strong className="text-[var(--ilt-text-primary)]">Now</strong> sets Start or End to
           your current device time. It’s useful when you’re clocking in or out
-          and want the exact time quickly.
+          and want the time quickly.
         </>
       ),
     },

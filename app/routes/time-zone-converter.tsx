@@ -33,7 +33,7 @@ import PopularUseCases from "~/clients/components/time-zone-converter/PopularUse
 export function meta({}: Route.MetaArgs) {
   const title = "Time Zone Converter (World Time, Instant Conversion)";
   const description =
-    "Convert time between time zones instantly. Pick a date and time and see the exact local time anywhere in the world with a clear, simple layout.";
+    "Convert time between time zones instantly. Pick a date and time and see the matching local time in another zone with a clear, simple layout.";
 
   const url = "https://www.ilovetimers.com/time-zone-converter";
 

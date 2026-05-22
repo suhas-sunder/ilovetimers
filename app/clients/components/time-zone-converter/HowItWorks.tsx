@@ -72,7 +72,7 @@ export default function HowItWorks({
           <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Time Zone Converter is for one very specific job: convert a planned
             date and time between two time zones without guessing offsets. Pick
-            a From zone, pick a To zone, enter the exact date and time you mean,
+            a From zone, pick a To zone, enter the date and time you mean,
             and the page shows the corresponding local time in both places for
             the same instant. It is designed for scheduling, deadlines, travel
             plans, and “what time is that for you?” messages where being off by
@@ -84,7 +84,7 @@ export default function HowItWorks({
         <div className="mt-4 grid gap-4">
           <div className="ilt-surface-muted p-4 text-[var(--ilt-text-secondary)]">
             <p className="leading-relaxed">
-              The converter works with official IANA time zones (for example{" "}
+              The converter works with IANA time zone identifiers (for example{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">
                 America/Toronto
               </span>{" "}
@@ -288,7 +288,7 @@ export default function HowItWorks({
                   </div>
                   <div className="mt-1 text-[var(--ilt-text-secondary)]">
                     Turn on Seconds if you are submitting close to the deadline
-                    and want an exact boundary like{" "}
+                    and want a specific boundary like{" "}
                     <span className="font-semibold text-[var(--ilt-text-primary)]">
                       16:59:59
                     </span>{" "}
@@ -416,7 +416,7 @@ export default function HowItWorks({
                 ISO: 2026-03-12T13:30:00.000Z
               </div>
               <div className="mt-2 text-sm text-[var(--ilt-text-secondary)]">
-                The exact text varies by your locale and the zones you choose,
+                The copied text varies by your locale and the zones you choose,
                 but the structure stays consistent: input, both outputs, and
                 ISO.
               </div>
@@ -438,7 +438,7 @@ export default function HowItWorks({
               <p className="mt-2 leading-relaxed">
                 Offsets change across the year. When you set a concrete date,
                 the tool applies the correct rule set for that day, which is
-                exactly what you want for meetings and deadlines.
+                helpful for meetings and deadlines.
               </p>
             </div>
 
@@ -466,7 +466,7 @@ export default function HowItWorks({
 
             <div className="ilt-surface-muted p-4 text-sm text-[var(--ilt-text-secondary)]">
               <div className="font-semibold text-[var(--ilt-text-primary)]">
-                Use Share when someone needs the exact setup
+                Use Share when someone needs the same setup
               </div>
               <p className="mt-2 leading-relaxed">
                 If you are coordinating with another person, Share avoids “did

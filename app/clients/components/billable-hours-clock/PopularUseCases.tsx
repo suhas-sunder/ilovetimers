@@ -26,7 +26,7 @@ export default function PopularUseCases({
       description:
         "Start a live timer, pause for breaks, and see billable time + total pay update automatically.",
       forWho:
-        "Freelancers, consultants, agencies, lawyers, contractors, and anyone who wants a billing-ready total while they work.",
+        "Freelancers, consultants, agencies, lawyers, contractors, and anyone who wants a live billable total while they work.",
       notFor:
         "If you already know your start/end times and just need a one-off calculation. Use the billable hours calculator instead.",
       links: [
@@ -35,6 +35,7 @@ export default function PopularUseCases({
           label: "Billable hours calculator",
           href: "/billable-hours-calculator",
         },
+        { label: "Count Up Timer", href: "/count-up-timer" },
         { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
@@ -91,7 +92,7 @@ export default function PopularUseCases({
       description:
         "Copy a single timer (or all timers) as a compact summary, or print a clean PDF-ready view for records.",
       forWho:
-        "Anyone who needs a quick, defensible time-and-total summary to paste into an email, invoice note, or timesheet.",
+        "Anyone who needs a quick time-and-total summary to paste into an email, invoice note, or timesheet.",
       notFor:
         "If you need invoice generation, taxes, fees, retainers, or trust accounting. This page tracks time and computes hourly totals only.",
       links: [
@@ -101,6 +102,10 @@ export default function PopularUseCases({
           href: "/billable-hours-calculator",
         },
         { label: "Work hours calculator", href: "/work-hours-calculator" },
+        {
+          label: "Meeting Count Up Timer",
+          href: "/meeting-count-up-timer",
+        },
       ],
     },
     {

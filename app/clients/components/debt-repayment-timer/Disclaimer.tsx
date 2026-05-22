@@ -152,6 +152,17 @@ export default function Disclaimer() {
               </div>
               <div className="mt-3 grid gap-2 text-sm text-[var(--ilt-text-secondary)]">
                 <div className="ilt-surface-muted p-3">
+                  Want a live estimate-style counter instead?{" "}
+                  <a
+                    href="/debt-clock"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Debt Clock
+                  </a>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
                   Need a general countdown for anything?{" "}
                   <a
                     href="/countdown-timer"
@@ -180,6 +191,24 @@ export default function Disclaimer() {
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Meeting Timer
+                  </a>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
+                  Comparing payoff time with other time math?{" "}
+                  <a
+                    href="/time-calculator"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Time Calculator
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="/billable-hours-calculator"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Billable Hours Calculator
                   </a>
                   .
                 </div>
@@ -277,7 +306,8 @@ export default function Disclaimer() {
             provides a time-based countdown and a simple linear estimate for
             “paid/remaining” based on your dates and balances. It does not
             account for interest, fees, payment schedules, or lender
-            calculations.
+            calculations, and it is not financial, credit, legal, tax, or
+            accounting advice.
           </div>
         </details>
       </div>

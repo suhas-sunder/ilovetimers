@@ -83,8 +83,8 @@ export function AccuracyAndPrivacySection() {
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               These timers run inside your browser. If you close the tab/app or
               the browser suspends, they cannot ring like a phone alarm or send
-              push notifications. If you need a guaranteed wake-up alarm, use
-              your device alarm app.
+              push notifications. If you need a wake-up alarm or safety-critical
+              alert, use a device alarm or another system intended for that job.
             </p>
           </div>
 

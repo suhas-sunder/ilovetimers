@@ -34,7 +34,7 @@ import PopularUseCases from "~/clients/components/debt-repayment-timer/PopularUs
 export function meta({}: Route.MetaArgs) {
   const title = "Debt Payoff Countdown (Debt Repayment Timer to Payoff Date)";
   const description =
-    "Free debt repayment timer and payoff countdown. Set a payoff date or duration to track time remaining and see estimated progress toward being debt-free.";
+    "Free debt repayment timer and payoff countdown. Set a payoff date or duration to track time remaining and see estimated progress toward a target balance.";
 
   const url = "https://www.ilovetimers.com/debt-repayment-timer";
 

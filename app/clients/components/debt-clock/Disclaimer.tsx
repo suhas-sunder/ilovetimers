@@ -178,6 +178,24 @@ export default function Disclaimer() {
                 </div>
 
                 <div className="ilt-surface-muted p-3">
+                  Need supporting time or money math?{" "}
+                  <a
+                    href="/time-calculator"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Time Calculator
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="/billable-hours-calculator"
+                    className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
+                  >
+                    Billable Hours Calculator
+                  </a>
+                  .
+                </div>
+
+                <div className="ilt-surface-muted p-3">
                   Want a running “time spent” counter instead?{" "}
                   <a
                     href="/count-up-timer"
@@ -265,7 +283,8 @@ export default function Disclaimer() {
             <strong className="text-[var(--ilt-text-primary)]">Disclosure.</strong> This page
             shows an estimated counter based on the starting value and average
             rate you provide (or the selected preset). It is not an official
-            reporting source.
+            reporting source and is not financial, credit, legal, tax, or
+            accounting advice.
           </div>
         </details>
       </div>

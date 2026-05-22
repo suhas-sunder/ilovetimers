@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -649,6 +650,16 @@ export default function EggTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need a general kitchen countdown instead of an egg-specific preset?
+            Use the{" "}
+            <a className="ilt-content-link" href="/kitchen-timer">
+              kitchen timer
+            </a>
+            .
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

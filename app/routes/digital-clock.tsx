@@ -489,6 +489,14 @@ export default function DigitalClockPage({
             <a className="ilt-content-link" href="/24-hour-clock">
               24 hour clock
             </a>
+            . Prefer AM/PM as the main view? Use the{" "}
+            <a className="ilt-content-link" href="/12-hour-clock">
+              12 hour clock
+            </a>
+            . Need seconds called out directly? Open the{" "}
+            <a className="ilt-content-link" href="/clock-with-seconds">
+              clock with seconds
+            </a>
             . Prefer an analog face with continuous motion? Try the{" "}
             <a className="ilt-content-link" href="/smooth-second-hand-clock">
               smooth second hand clock

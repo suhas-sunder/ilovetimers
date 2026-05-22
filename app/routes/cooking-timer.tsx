@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -676,6 +677,17 @@ export default function CookingTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            For a more direct kitchen countdown with common minute presets, use
+            the{" "}
+            <a className="ilt-content-link" href="/kitchen-timer">
+              kitchen timer
+            </a>
+            . This cooking timer keeps broader cooking presets and kitchen
+            workflow notes available.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

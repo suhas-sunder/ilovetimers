@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -574,6 +575,17 @@ export default function AlarmTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need an alarm for a clock time instead of a countdown duration? Use
+            the{" "}
+            <a className="ilt-content-link" href="/online-alarm-clock">
+              online alarm clock
+            </a>
+            . This alarm timer stays focused on counting down from a chosen
+            number of minutes.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

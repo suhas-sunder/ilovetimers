@@ -644,6 +644,15 @@ export default function CurrentLocalTimePage({
             </a>
             . It shows local or UTC time in a larger millisecond-focused
             display while still using browser/device time.
+            For a seconds-focused clock, use the{" "}
+            <a className="ilt-content-link" href="/clock-with-seconds">
+              clock with seconds
+            </a>
+            . For AM/PM as the main display, use the{" "}
+            <a className="ilt-content-link" href="/12-hour-clock">
+              12 hour clock
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

@@ -449,6 +449,10 @@ export default function MilitaryTimeClockPage({
             <a className="ilt-content-link" href="/current-local-time">
               current local time
             </a>
+            . Prefer AM/PM? Use the{" "}
+            <a className="ilt-content-link" href="/12-hour-clock">
+              12 hour clock
+            </a>
             .
           </p>
         </ContentSection>

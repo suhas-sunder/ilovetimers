@@ -108,6 +108,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     keywords: "countdown simple fullscreen",
   },
   {
+    title: "Seconds Timer",
+    href: "/seconds-timer",
+    category: "Core",
+    description: "A short countdown with seconds presets and custom seconds.",
+    keywords: "seconds timer short timer timer with seconds online seconds",
+  },
+  {
     title: "Interval Timer",
     href: "/interval-timer",
     category: "Core",
@@ -246,6 +253,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "A countdown with a stronger alarm-style finish.",
   },
   {
+    title: "Online Alarm Clock",
+    href: "/online-alarm-clock",
+    category: "Core",
+    description: "Set an alarm for a time of day in the browser.",
+    keywords: "online alarm clock alarm clock online set alarm web alarm",
+  },
+  {
     title: "Workout Timer",
     href: "/workout-timer",
     category: "Fitness",
@@ -325,6 +339,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "Time cooking steps, prep, simmering, baking, and resting.",
   },
   {
+    title: "Kitchen Timer",
+    href: "/kitchen-timer",
+    category: "Cooking",
+    description: "A simple kitchen countdown with common cooking presets.",
+    keywords: "kitchen timer online kitchen timer cooking timer",
+  },
+  {
     title: "Tea Timer",
     href: "/tea-timer",
     category: "Cooking",
@@ -362,6 +383,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     keywords: "24 hour clock twenty four hour digital clock current time",
   },
   {
+    title: "12 Hour Clock",
+    href: "/12-hour-clock",
+    category: "Clocks",
+    description: "Show current AM/PM time with copy and fullscreen.",
+    keywords: "12 hour clock am pm clock current time 12-hour",
+  },
+  {
     title: "Military Time Clock",
     href: "/military-time-clock",
     category: "Clocks",
@@ -380,6 +408,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     category: "Clocks",
     description: "Show current local or UTC time with large live milliseconds.",
     keywords: "clock with milliseconds live time milliseconds current time",
+  },
+  {
+    title: "Clock With Seconds",
+    href: "/clock-with-seconds",
+    category: "Clocks",
+    description: "Show a live clock with seconds visible by default.",
+    keywords: "clock with seconds live clock seconds fullscreen clock",
   },
   {
     title: "Retro Flip Clock",

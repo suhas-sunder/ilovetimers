@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -813,6 +814,16 @@ export default function PizzaTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need a general kitchen countdown for oven checks, simmering, or
+            prep? Use the{" "}
+            <a className="ilt-content-link" href="/kitchen-timer">
+              kitchen timer
+            </a>
+            .
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

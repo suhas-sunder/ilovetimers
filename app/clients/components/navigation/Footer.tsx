@@ -27,6 +27,7 @@ const footerSections: TimerMenuSection[] = [
       { to: "/fullscreen-timer", label: "Fullscreen Timer" },
       { to: "/silent-timer", label: "Silent Timer" },
       { to: "/online-timer", label: "Online Timer" },
+      { to: "/seconds-timer", label: "Seconds Timer" },
       { to: "/interval-timer", label: "Interval Timer" },
       { to: "/millisecond-timer", label: "Millisecond Timer" },
       {
@@ -46,6 +47,7 @@ const footerSections: TimerMenuSection[] = [
       { to: "/multiple-timers", label: "Multiple Timers" },
       { to: "/visual-timer", label: "Visual Timer" },
       { to: "/alarm-timer", label: "Alarm Timer" },
+      { to: "/online-alarm-clock", label: "Online Alarm Clock" },
       { to: "/count-up-timer", label: "Count Up Timer" },
       { to: "/meeting-count-up-timer", label: "Meeting Count Up Timer" },
     ],
@@ -68,6 +70,7 @@ const footerSections: TimerMenuSection[] = [
     title: "Cooking and daily routine timers",
     links: [
       { to: "/cooking-timer", label: "Cooking Timer" },
+      { to: "/kitchen-timer", label: "Kitchen Timer" },
       { to: "/tea-timer", label: "Tea Timer" },
       { to: "/egg-timer", label: "Egg Timer" },
       { to: "/pizza-timer", label: "Pizza Timer" },
@@ -88,10 +91,12 @@ const footerSections: TimerMenuSection[] = [
       { to: "/current-local-time", label: "Current Local Time" },
       { to: "/utc-clock", label: "UTC Clock" },
       { to: "/24-hour-clock", label: "24 Hour Clock" },
+      { to: "/12-hour-clock", label: "12 Hour Clock" },
       { to: "/military-time-clock", label: "Military Time Clock" },
       { to: "/analog-clock", label: "Analog Clock" },
       { to: "/smooth-second-hand-clock", label: "Smooth Second Hand Clock" },
       { to: "/digital-clock", label: "Digital Clock" },
+      { to: "/clock-with-seconds", label: "Clock With Seconds" },
       {
         to: "/clock-with-milliseconds",
         label: "Clock With Milliseconds",

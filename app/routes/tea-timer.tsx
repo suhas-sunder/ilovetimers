@@ -731,6 +731,10 @@ export default function TeaTimerPage({
             <a className="ilt-content-link" href="/egg-timer">
               egg timer
             </a>
+            . For a general kitchen countdown, use the{" "}
+            <a className="ilt-content-link" href="/kitchen-timer">
+              kitchen timer
+            </a>
             . For plain custom minutes and seconds, use the{" "}
             <a className="ilt-content-link" href="/countdown-timer">
               countdown timer

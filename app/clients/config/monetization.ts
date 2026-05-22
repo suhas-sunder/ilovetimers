@@ -131,6 +131,14 @@ export const routeMonetization = [
       "General online timer route has expanded route-specific content and utility-first structure.",
   },
   {
+    path: "/seconds-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent seconds timer route has short countdown presets, custom seconds input, sound, copy, fullscreen support, and route-specific content.",
+  },
+  {
     path: "/interval-timer",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -251,6 +259,14 @@ export const routeMonetization = [
       "Cooking timer has expanded kitchen-specific content, presets, FAQ, and disclaimer sections.",
   },
   {
+    path: "/kitchen-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent kitchen timer route has common kitchen presets, custom minutes and seconds, sound, copy, fullscreen support, and route-specific content.",
+  },
+  {
     path: "/meditation-timer",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -281,6 +297,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Alarm timer has expanded alarm-specific content and audio limitation notes.",
+  },
+  {
+    path: "/online-alarm-clock",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent online alarm clock route has time-of-day alarm scheduling, next occurrence labels, sound controls, fullscreen support, and limitation-safe content.",
   },
   {
     path: "/multiple-timers",
@@ -523,6 +547,14 @@ export const routeMonetization = [
       "Direct-intent 24-hour clock route has live 24-hour display, seconds/date toggles, local or UTC mode, copy, fullscreen support, and route-specific content.",
   },
   {
+    path: "/12-hour-clock",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent 12-hour clock route has AM/PM-first live display, seconds/date toggles, comparison, copy, fullscreen support, and route-specific content.",
+  },
+  {
     path: "/military-time-clock",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -553,6 +585,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Digital clock has expanded route-specific clock content and fullscreen support notes.",
+  },
+  {
+    path: "/clock-with-seconds",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent clock with seconds route has seconds-first live display, 12/24-hour toggle, date, copy, fullscreen support, and route-specific content.",
   },
   {
     path: "/clock-with-milliseconds",

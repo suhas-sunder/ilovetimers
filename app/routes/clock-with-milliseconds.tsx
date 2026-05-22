@@ -184,7 +184,7 @@ function ClockWithMillisecondsTool({ initialNowISO }: { initialNowISO: string })
     containerRef: displayBoxRef,
     textRef: timeTextRef,
     deps: [timeText, isFs, showMilliseconds, mode],
-    minPx: 44,
+    minPx: 36,
     maxPx: isFs ? 520 : 500,
     paddingAllowancePx: isFs ? 64 : 72,
   });
@@ -264,7 +264,7 @@ function ClockWithMillisecondsTool({ initialNowISO }: { initialNowISO: string })
           <span
             ref={timeTextRef}
             data-primary-display-value
-            className="mt-3 inline-block whitespace-nowrap text-center font-mono font-extrabold tracking-widest"
+            className="mt-3 inline-block max-w-full whitespace-nowrap text-center font-mono font-extrabold"
             style={{
               fontSize: fitFontPx,
               lineHeight: "1",
@@ -409,6 +409,10 @@ export default function ClockWithMillisecondsPage({
             For a broader clock display, try the{" "}
             <a className="ilt-content-link" href="/digital-clock">
               digital clock
+            </a>
+            . For a seconds-first live display without milliseconds, use the{" "}
+            <a className="ilt-content-link" href="/clock-with-seconds">
+              clock with seconds
             </a>
             . For an atomic-style page with freeze controls, use the{" "}
             <a className="ilt-content-link" href="/atomic-clock">

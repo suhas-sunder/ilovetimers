@@ -539,6 +539,15 @@ export default function CountDownTimerPage({
               millisecond timer
             </a>
             . This page stays focused on simple minutes-and-seconds countdowns.
+            For a short countdown built around whole seconds, use the{" "}
+            <a className="ilt-content-link" href="/seconds-timer">
+              seconds timer
+            </a>
+            . For cooking presets and kitchen checks, use the{" "}
+            <a className="ilt-content-link" href="/kitchen-timer">
+              kitchen timer
+            </a>
+            .{" "}
             For a date-based countdown to January 1, use the{" "}
             <a className="ilt-content-link" href="/new-year-countdown">
               New Year countdown

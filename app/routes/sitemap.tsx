@@ -91,6 +91,12 @@ const SECTIONS: SitemapSection[] = [
           "Start a browser-based timer instantly without installing anything.",
       },
       {
+        title: "Seconds Timer",
+        href: "/seconds-timer",
+        description:
+          "Run a short countdown with seconds presets, custom seconds, sound, and fullscreen support.",
+      },
+      {
         title: "Interval Timer",
         href: "/interval-timer",
         description:
@@ -181,6 +187,12 @@ const SECTIONS: SitemapSection[] = [
           "Set a timer with an alarm-style alert when time is finished.",
       },
       {
+        title: "Online Alarm Clock",
+        href: "/online-alarm-clock",
+        description:
+          "Set an alarm for a time of day with next occurrence labels and optional sound.",
+      },
+      {
         title: "Count Up Timer",
         href: "/count-up-timer",
         description:
@@ -267,6 +279,12 @@ const SECTIONS: SitemapSection[] = [
           "Time cooking tasks, baking steps, simmering, resting, and prep work.",
       },
       {
+        title: "Kitchen Timer",
+        href: "/kitchen-timer",
+        description:
+          "Use a simple kitchen timer with common presets and custom minutes and seconds.",
+      },
+      {
         title: "Tea Timer",
         href: "/tea-timer",
         description:
@@ -343,6 +361,12 @@ const SECTIONS: SitemapSection[] = [
           "View the current time in 24-hour format with seconds, date, copy, and fullscreen support.",
       },
       {
+        title: "12 Hour Clock",
+        href: "/12-hour-clock",
+        description:
+          "View the current time in 12-hour AM/PM format with seconds, date, copy, and fullscreen support.",
+      },
+      {
         title: "Military Time Clock",
         href: "/military-time-clock",
         description:
@@ -365,6 +389,12 @@ const SECTIONS: SitemapSection[] = [
         href: "/digital-clock",
         description:
           "View a clean digital clock for desktop, mobile, or fullscreen use.",
+      },
+      {
+        title: "Clock With Seconds",
+        href: "/clock-with-seconds",
+        description:
+          "View a live online clock with seconds visible by default.",
       },
       {
         title: "Clock With Milliseconds",

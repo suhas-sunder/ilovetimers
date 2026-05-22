@@ -1,4 +1,4 @@
-import type { Route } from "./+types/24-hour-clock";
+import type { Route } from "./+types/12-hour-clock";
 import { json } from "@remix-run/node";
 import {
   useCallback,
@@ -16,7 +16,6 @@ import {
   FullscreenTopBar,
   PageShell,
   SecondaryActionRow,
-  Select,
   SeoBand,
   SettingGroup,
   SettingRow,
@@ -29,34 +28,32 @@ import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayTe
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 const SITE_URL = "https://www.ilovetimers.com";
-const ROUTE_PATH = "/24-hour-clock";
+const ROUTE_PATH = "/12-hour-clock";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
-type ClockMode = "local" | "utc";
-
 const FAQ_ITEMS = [
   {
-    question: "What is a 24-hour clock?",
+    question: "What is a 12-hour clock?",
     answer:
-      "A 24-hour clock shows hours from 00 through 23 instead of using AM and PM.",
+      "A 12-hour clock shows hours from 1 through 12 and uses AM or PM to identify the half of the day.",
   },
   {
-    question: "Does this page use an official time source?",
+    question: "Does this clock use my local time?",
     answer:
-      "No. It formats the time from your browser and device clock, with an optional UTC display mode.",
+      "Yes. It formats the time from your browser and device clock using your local timezone.",
   },
   {
-    question: "How is this different from the military time clock?",
+    question: "How is this different from a 24-hour clock?",
     answer:
-      "This page focuses on general 24-hour time with colon formatting. The military time clock also emphasizes compact HHMM notation and Zulu-style context.",
+      "This page makes AM and PM the main display. A 24-hour clock uses hours 00 through 23 without AM or PM.",
   },
 ];
 
 export function meta({}: Route.MetaArgs) {
-  const title = "24 Hour Clock Online (Current Time in 24-Hour Format)";
+  const title = "12 Hour Clock Online (Current AM PM Time)";
   const description =
-    "View the current time in 24-hour format with a large live clock, seconds and date toggles, local or UTC mode, copy, and fullscreen support.";
+    "View the current time in 12-hour AM/PM format with a large live clock, seconds and date toggles, 24-hour comparison, copy, and fullscreen support.";
 
   return [
     { title },
@@ -64,11 +61,11 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "keywords",
       content: [
-        "24 hour clock",
-        "24-hour clock online",
-        "current time in 24 hour format",
-        "24 hour digital clock",
-        "clock in 24-hour format",
+        "12 hour clock",
+        "12-hour clock online",
+        "AM PM clock",
+        "current time in 12 hour format",
+        "12 hour digital clock",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -90,41 +87,59 @@ export function loader() {
   return json({ nowISO: new Date().toISOString() });
 }
 
-const pad2 = (value: number) => String(value).padStart(2, "0");
-
-function format24HourTime(date: Date, mode: ClockMode, showSeconds: boolean) {
-  const hours = mode === "utc" ? date.getUTCHours() : date.getHours();
-  const minutes = mode === "utc" ? date.getUTCMinutes() : date.getMinutes();
-  const seconds = mode === "utc" ? date.getUTCSeconds() : date.getSeconds();
-  return `${pad2(hours)}:${pad2(minutes)}${showSeconds ? `:${pad2(seconds)}` : ""}`;
-}
-
-function format12HourTime(date: Date, mode: ClockMode, showSeconds: boolean) {
-  return new Intl.DateTimeFormat(undefined, {
-    hour: "numeric",
-    minute: "2-digit",
-    second: showSeconds ? "2-digit" : undefined,
-    hour12: true,
-    timeZone: mode === "utc" ? "UTC" : undefined,
-    timeZoneName: "short",
-  }).format(date);
-}
-
-function formatDateLine(date: Date, mode: ClockMode) {
-  return new Intl.DateTimeFormat(undefined, {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "2-digit",
-    timeZone: mode === "utc" ? "UTC" : undefined,
-  }).format(date);
-}
-
 function safeTimeZone() {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
   } catch {
     return "Local";
+  }
+}
+
+function cleanTime(value: string) {
+  return value.replace(/\u200e/g, "").trim();
+}
+
+function format12Hour(date: Date, showSeconds: boolean) {
+  try {
+    return cleanTime(
+      new Intl.DateTimeFormat(undefined, {
+        hour: "numeric",
+        minute: "2-digit",
+        second: showSeconds ? "2-digit" : undefined,
+        hour12: true,
+      }).format(date),
+    );
+  } catch {
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const hourText = String(hours % 12 || 12).padStart(2, "0");
+    return showSeconds
+      ? `${hourText}:${minutes}:${seconds} ${ampm}`
+      : `${hourText}:${minutes} ${ampm}`;
+  }
+}
+
+function format24Hour(date: Date, showSeconds: boolean) {
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return showSeconds ? `${hours}:${minutes}:${seconds}` : `${hours}:${minutes}`;
+}
+
+function formatDateLine(date: Date) {
+  try {
+    return cleanTime(
+      new Intl.DateTimeFormat(undefined, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "2-digit",
+      }).format(date),
+    );
+  } catch {
+    return date.toDateString();
   }
 }
 
@@ -139,13 +154,13 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
+function TwelveHourClockTool({ initialNowISO }: { initialNowISO: string }) {
   const [now, setNow] = useState(() => new Date(initialNowISO));
   const [showSeconds, setShowSeconds] = useState(true);
   const [showDate, setShowDate] = useState(true);
-  const [mode, setMode] = useState<ClockMode>("local");
+  const [showComparison, setShowComparison] = useState(true);
   const [copied, setCopied] = useState(false);
-  const localTimeZone = useMemo(() => safeTimeZone(), []);
+  const timeZone = useMemo(() => safeTimeZone(), []);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const displayBoxRef = useRef<HTMLElement | null>(null);
   const timeTextRef = useRef<HTMLSpanElement | null>(null);
@@ -153,34 +168,45 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
   const isFs = fullscreen.isFullscreen;
 
   useEffect(() => {
-    const interval = window.setInterval(
-      () => setNow(new Date()),
-      showSeconds ? 250 : 1000,
-    );
-    return () => window.clearInterval(interval);
+    let timeout: number | null = null;
+    let cancelled = false;
+
+    const schedule = () => {
+      if (cancelled) return;
+      const next = new Date();
+      setNow(next);
+      const untilNext = showSeconds
+        ? 1000 - next.getMilliseconds()
+        : (60 - next.getSeconds()) * 1000 - next.getMilliseconds();
+      timeout = window.setTimeout(schedule, Math.max(50, untilNext));
+    };
+
+    schedule();
+    return () => {
+      cancelled = true;
+      if (timeout) window.clearTimeout(timeout);
+    };
   }, [showSeconds]);
 
-  const timeText = format24HourTime(now, mode, showSeconds);
-  const dateText = formatDateLine(now, mode);
-  const equivalentText = format12HourTime(now, mode, showSeconds);
-  const zoneLabel = mode === "utc" ? "UTC" : localTimeZone;
-  const modeLabel = mode === "utc" ? "UTC time" : "Local device time";
-  const copyText = `${timeText} ${zoneLabel}${showDate ? ` / ${dateText}` : ""}`;
+  const timeText = format12Hour(now, showSeconds);
+  const comparisonText = format24Hour(now, showSeconds);
+  const dateText = formatDateLine(now);
+  const copyText = `${timeText} (${timeZone})${showDate ? ` - ${dateText}` : ""}`;
 
   const fitFontPx = useFitText({
     containerRef: displayBoxRef,
     textRef: timeTextRef,
-    deps: [timeText, isFs, showSeconds, mode],
-    minPx: 58,
-    maxPx: isFs ? 560 : 520,
-    paddingAllowancePx: isFs ? 72 : 84,
+    deps: [timeText, isFs, showSeconds],
+    minPx: 38,
+    maxPx: isFs ? 540 : 500,
+    paddingAllowancePx: isFs ? 88 : 92,
   });
 
   const copy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(copyText);
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 1400);
+      window.setTimeout(() => setCopied(false), 1300);
     } catch {
       setCopied(false);
     }
@@ -197,8 +223,8 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
       setShowSeconds((value) => !value);
     } else if (key === "d") {
       setShowDate((value) => !value);
-    } else if (key === "u") {
-      setMode((value) => (value === "utc" ? "local" : "utc"));
+    } else if (key === "h") {
+      setShowComparison((value) => !value);
     } else if (key === "escape" && isFs) {
       void fullscreen.exit();
     }
@@ -213,7 +239,7 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
     >
       <FullscreenTopBar
         show={isFs}
-        title="24 Hour Clock"
+        title="12 Hour Clock"
         onExit={() => void fullscreen.exit()}
         right={
           <Btn kind="ghost" size="sm" onClick={() => void copy()}>
@@ -242,12 +268,12 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
           title={isFs ? "Tap or click to copy the current time" : undefined}
         >
           <div className="timer-clock-label text-xs font-extrabold uppercase tracking-widest">
-            {modeLabel}
+            Local AM/PM time
           </div>
           <span
             ref={timeTextRef}
             data-primary-display-value
-            className="timer-clock-value mt-3 inline-block whitespace-nowrap text-center font-extrabold tracking-widest"
+            className="timer-clock-value mt-3 inline-block max-w-full whitespace-nowrap text-center font-extrabold"
             style={{
               fontSize: fitFontPx,
               lineHeight: "1",
@@ -256,20 +282,20 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
           >
             {timeText}
           </span>
-          <div className="timer-clock-context mt-4 text-sm font-semibold sm:text-base">
-            12-hour equivalent: {equivalentText}
-          </div>
-          {showDate ? (
-            <div className="timer-clock-context mt-2 text-sm font-semibold sm:text-base">
-              {dateText} / {zoneLabel}
+          {showComparison ? (
+            <div className="timer-clock-context mt-4 text-sm font-semibold sm:text-base">
+              24-hour equivalent: {comparisonText}
             </div>
           ) : null}
+          <div className="timer-clock-context mt-2 text-sm font-semibold sm:text-base">
+            {showDate ? `${dateText} / ` : ""}{timeZone}
+          </div>
         </DisplayStage>
 
         {!isFs ? (
           <>
             <SettingGroup title="Clock settings">
-              <SettingRow className="sm:grid-cols-2 lg:grid-cols-4">
+              <SettingRow className="sm:grid-cols-3">
                 <Toggle
                   label="Seconds"
                   checked={showSeconds}
@@ -280,26 +306,17 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
                   checked={showDate}
                   onCheckedChange={setShowDate}
                 />
-                <Select
-                  label="Time source"
-                  value={mode}
-                  onChange={(event) =>
-                    setMode(event.currentTarget.value as ClockMode)
-                  }
-                >
-                  <option value="local">Local</option>
-                  <option value="utc">UTC</option>
-                </Select>
-                <div className="ilt-helper-text flex items-end">
-                  Local mode uses your device clock and timezone. UTC mode
-                  formats that same instant as UTC.
-                </div>
+                <Toggle
+                  label="24-hour comparison"
+                  checked={showComparison}
+                  onCheckedChange={setShowComparison}
+                />
               </SettingRow>
             </SettingGroup>
 
             <SecondaryActionRow className="timer-clock-actions">
               <Btn kind="ghost" onClick={() => void copy()}>
-                {copied ? "Copied" : "Copy 24-hour time"}
+                {copied ? "Copied" : "Copy 12-hour time"}
               </Btn>
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
                 Fullscreen
@@ -307,7 +324,7 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
             </SecondaryActionRow>
 
             <ShortcutHint className="timer-clock-shortcut">
-              Shortcuts: F fullscreen / C copy / S seconds / D date / U UTC or local
+              Shortcuts: F fullscreen / C copy / S seconds / D date / H comparison
             </ShortcutHint>
           </>
         ) : null}
@@ -325,9 +342,14 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
                 checked={showDate}
                 onCheckedChange={setShowDate}
               />
+              <Toggle
+                label="Comparison"
+                checked={showComparison}
+                onCheckedChange={setShowComparison}
+              />
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap time to copy / F fullscreen / U UTC or local / no ads in fullscreen
+              Tap time to copy / No ads appear in fullscreen
             </div>
           </div>
         </FullscreenBottomBar>
@@ -336,7 +358,7 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
   );
 }
 
-export default function TwentyFourHourClockPage({
+export default function TwelveHourClockPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
   const jsonLd = {
@@ -344,18 +366,18 @@ export default function TwentyFourHourClockPage({
     "@graph": [
       {
         "@type": "WebApplication",
-        name: "24 Hour Clock",
+        name: "12 Hour Clock",
         url: ROUTE_URL,
         applicationCategory: "UtilityApplication",
         operatingSystem: "Any",
         description:
-          "A browser-based live 24-hour clock with seconds, date, local or UTC mode, copy, and fullscreen display.",
+          "A browser-based live 12-hour AM/PM clock with seconds, date, 24-hour comparison, copy, and fullscreen support.",
       },
       {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
-          { "@type": "ListItem", position: 2, name: "24 Hour Clock", item: ROUTE_URL },
+          { "@type": "ListItem", position: 2, name: "12 Hour Clock", item: ROUTE_URL },
         ],
       },
       {
@@ -377,44 +399,43 @@ export default function TwentyFourHourClockPage({
       />
 
       <ToolHero
-        display={<TwentyFourHourClockTool initialNowISO={nowISO} />}
-        title="24 Hour Clock"
-        description="See the current time in 24-hour format with a large live display, seconds and date toggles, local or UTC mode, copy, and fullscreen support."
+        display={<TwelveHourClockTool initialNowISO={nowISO} />}
+        title="12 Hour Clock"
+        description="See the current local time in a large AM/PM display with seconds, date, 24-hour comparison, copy, and fullscreen controls."
       />
 
       <SeoBand>
-        <ContentSection title="How this 24-hour clock works">
+        <ContentSection title="How this 12-hour clock works">
           <p>
-            This clock displays the current time in 24-hour format, where the
-            day runs from 00:00 through 23:59 instead of repeating 1 through 12
-            with AM and PM labels.
+            This clock displays the current local time in 12-hour format, using
+            AM and PM to distinguish morning from afternoon and evening. It uses
+            your browser and device clock, so it is a practical display tool
+            rather than an official time source.
           </p>
           <p>
-            Local mode uses the time and timezone from your browser and device.
-            UTC mode formats the same current instant as Coordinated Universal
-            Time. This page is a display tool, not an official time source.
+            Seconds are available when you need to watch the live rollover, and
+            the date can stay visible for desk, classroom, or second-screen use.
           </p>
         </ContentSection>
 
-        <ContentSection title="24-hour format vs AM/PM time">
+        <ContentSection title="12-hour time vs 24-hour time">
           <p>
-            In 24-hour format, 13:00 means 1:00 PM, 18:30 means 6:30 PM, and
-            00:00 means midnight at the start of a day. The 12-hour equivalent
-            stays visible as secondary context so you can compare both formats.
+            The 12-hour format repeats 1 through 12 twice each day and adds AM
+            or PM. The 24-hour format runs from 00 through 23 and does not need
+            AM or PM labels.
           </p>
           <p>
-            For compact military-style notation such as 0930 or 1745, use the{" "}
+            For the opposite format as the main display, use the{" "}
+            <a className="ilt-content-link" href="/24-hour-clock">
+              24 hour clock
+            </a>
+            . For compact military-style notation and conversion notes, try the{" "}
             <a className="ilt-content-link" href="/military-time-clock">
               military time clock
-            </a>
-            . To convert a written time between 12-hour and 24-hour format, use
-            the{" "}
+            </a>{" "}
+            or{" "}
             <a className="ilt-content-link" href="/military-time-converter">
               military time converter
-            </a>
-            . If you prefer AM/PM as the main display, open the{" "}
-            <a className="ilt-content-link" href="/12-hour-clock">
-              12 hour clock
             </a>
             .
           </p>
@@ -422,26 +443,21 @@ export default function TwentyFourHourClockPage({
 
         <ContentSection title="Common uses">
           <p>
-            A 24-hour digital clock is useful for international schedules, work
-            shifts, travel planning, classrooms, wall-clock display, and
-            fullscreen second-screen clocks. For a general AM/PM-capable clock,
-            try the{" "}
+            A 12-hour AM/PM clock is useful for everyday local time, classroom
+            displays, desk clocks, fullscreen second-screen clocks, and users
+            who prefer AM/PM time. For a general clock page, open the{" "}
             <a className="ilt-content-link" href="/digital-clock">
               digital clock
             </a>
-            . For UTC only, open the{" "}
-            <a className="ilt-content-link" href="/utc-clock">
-              UTC clock
-            </a>{" "}
-            or compare your device time on the{" "}
+            . For local time context, use{" "}
             <a className="ilt-content-link" href="/current-local-time">
               current local time
-            </a>{" "}
-            page.
+            </a>
+            .
           </p>
         </ContentSection>
 
-        <ContentSection title="24-hour clock FAQ">
+        <ContentSection title="12-hour clock FAQ">
           {FAQ_ITEMS.map((item) => (
             <div key={item.question}>
               <h3>{item.question}</h3>

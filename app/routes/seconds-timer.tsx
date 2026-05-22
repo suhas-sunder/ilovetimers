@@ -1,6 +1,12 @@
-// app/routes/millisecond-timer.tsx
-import type { Route } from "./+types/millisecond-timer";
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import type { Route } from "./+types/seconds-timer";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import {
   Button as Btn,
   ContentSection,
@@ -19,28 +25,40 @@ import {
   ShortcutHint,
   ToolFrame as Card,
   ToolHero,
+  Toggle,
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 const SITE_URL = "https://www.ilovetimers.com";
-const ROUTE_PATH = "/millisecond-timer";
+const ROUTE_PATH = "/seconds-timer";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
-const PRESETS = [
-  { label: "100 ms", ms: 100 },
-  { label: "1 second", ms: 1000 },
-  { label: "10 seconds", ms: 10_000 },
-  { label: "30 seconds", ms: 30_000 },
-  { label: "1 minute", ms: 60_000 },
-  { label: "5 minutes", ms: 300_000 },
+const PRESETS = [5, 10, 15, 30, 45, 60, 90];
+
+const FAQ_ITEMS = [
+  {
+    question: "Can I set a timer for only a few seconds?",
+    answer:
+      "Yes. Choose a preset such as 5, 10, 15, or 30 seconds, or enter a custom total number of seconds.",
+  },
+  {
+    question: "How is this different from a millisecond timer?",
+    answer:
+      "This page is optimized for whole-second countdowns. The millisecond timer includes millisecond input and a millisecond display.",
+  },
+  {
+    question: "Does this guarantee exact timing?",
+    answer:
+      "No. It reconciles against the browser performance clock, but display refresh, inactive tabs, and device behavior can affect visible updates.",
+  },
 ];
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Millisecond Timer (Countdown With Milliseconds)";
+  const title = "Seconds Timer Online (Short Timer With Seconds)";
   const description =
-    "Run an online countdown timer with milliseconds, custom minutes, seconds, milliseconds, presets, start, pause, reset, copy, and fullscreen support.";
+    "Set a simple online seconds timer with 5, 10, 15, 30, 45, 60, and 90 second presets, custom seconds, sound toggle, copy, and fullscreen.";
 
   return [
     { title },
@@ -48,12 +66,11 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "keywords",
       content: [
-        "millisecond timer",
-        "timer with milliseconds",
-        "online timer milliseconds",
-        "millisecond countdown timer",
-        "timer with seconds and milliseconds",
-        "countdown timer milliseconds",
+        "seconds timer",
+        "timer with seconds",
+        "online seconds timer",
+        "timer for seconds",
+        "short timer",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -67,28 +84,30 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
     { name: "twitter:image", content: OG_IMAGE },
     { rel: "canonical", href: ROUTE_URL },
+    { name: "theme-color", content: "#ffffff" },
   ];
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
 }
 
 function clampInt(value: number, min: number, max: number) {
   if (!Number.isFinite(value)) return min;
-  return Math.trunc(clamp(value, min, max));
+  return Math.min(max, Math.max(min, Math.trunc(value)));
 }
 
-function formatMs(ms: number) {
-  const value = Math.max(0, Math.ceil(ms));
-  const hours = Math.floor(value / 3_600_000);
-  const minutes = Math.floor((value % 3_600_000) / 60_000);
-  const seconds = Math.floor((value % 60_000) / 1000);
-  const millis = value % 1000;
-  if (hours > 0) {
-    return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${String(millis).padStart(3, "0")}`;
-  }
-  return `${minutes}:${String(seconds).padStart(2, "0")}.${String(millis).padStart(3, "0")}`;
+function formatSecondsDisplay(ms: number) {
+  const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  if (minutes === 0) return `${seconds}s`;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function formatSecondsLabel(totalSeconds: number) {
+  if (totalSeconds < 60) return `${totalSeconds} seconds`;
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return seconds === 0
+    ? `${minutes} minute${minutes === 1 ? "" : "s"}`
+    : `${minutes} minute${minutes === 1 ? "" : "s"} ${seconds} seconds`;
 }
 
 function isTypingTarget(target: EventTarget | null) {
@@ -102,34 +121,63 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-function splitMs(totalMs: number) {
-  const safe = Math.max(0, Math.round(totalMs));
-  return {
-    minutes: Math.floor(safe / 60_000),
-    seconds: Math.floor((safe % 60_000) / 1000),
-    milliseconds: safe % 1000,
-  };
+function useBeep() {
+  const ctxRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    return () => {
+      ctxRef.current?.close().catch(() => {});
+    };
+  }, []);
+
+  return useCallback((frequency = 880, duration = 140, gain = 0.1) => {
+    try {
+      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = (ctxRef.current ??= new Ctx());
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = frequency;
+      gainNode.gain.value = gain;
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.start();
+      window.setTimeout(() => {
+        oscillator.stop();
+        oscillator.disconnect();
+        gainNode.disconnect();
+      }, duration);
+    } catch {
+      // Audio can be blocked until user interaction.
+    }
+  }, []);
 }
 
-function MillisecondTimerTool() {
-  const [totalMs, setTotalMs] = useState(10_000);
-  const [remainingMs, setRemainingMs] = useState(10_000);
-  const [minutesInput, setMinutesInput] = useState("0");
-  const [secondsInput, setSecondsInput] = useState("10");
-  const [millisecondsInput, setMillisecondsInput] = useState("0");
+function SecondsTimerTool() {
+  const [totalSeconds, setTotalSeconds] = useState(30);
+  const [secondsInput, setSecondsInput] = useState("30");
+  const [remainingMs, setRemainingMs] = useState(30_000);
   const [running, setRunning] = useState(false);
+  const [sound, setSound] = useState(true);
   const [copied, setCopied] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const displayBoxRef = useRef<HTMLElement | null>(null);
   const timeTextRef = useRef<HTMLSpanElement | null>(null);
-  const remainingRef = useRef(remainingMs);
   const endRef = useRef<number | null>(null);
+  const remainingRef = useRef(remainingMs);
+  const totalMsRef = useRef(totalSeconds * 1000);
+  const beep = useBeep();
   const fullscreen = useFullscreen(cardRef);
   const isFs = fullscreen.isFullscreen;
 
   useEffect(() => {
     remainingRef.current = remainingMs;
   }, [remainingMs]);
+
+  useEffect(() => {
+    totalMsRef.current = totalSeconds * 1000;
+  }, [totalSeconds]);
 
   useEffect(() => {
     if (!running) return;
@@ -143,6 +191,10 @@ function MillisecondTimerTool() {
       if (next <= 0) {
         setRunning(false);
         endRef.current = null;
+        if (sound) {
+          beep(880, 150, 0.11);
+          window.setTimeout(() => beep(660, 180, 0.11), 190);
+        }
         return;
       }
       frame = window.requestAnimationFrame(tick);
@@ -150,41 +202,43 @@ function MillisecondTimerTool() {
 
     frame = window.requestAnimationFrame(tick);
     return () => window.cancelAnimationFrame(frame);
-  }, [running]);
+  }, [beep, running, sound]);
 
-  const display = formatMs(remainingMs);
-  const status = running ? "Running" : remainingMs <= 0 ? "Complete" : remainingMs < totalMs ? "Paused" : "Ready";
+  const display = formatSecondsDisplay(remainingMs);
+  const status = running
+    ? "Running"
+    : remainingMs <= 0
+      ? "Complete"
+      : remainingMs < totalSeconds * 1000
+        ? "Paused"
+        : "Ready";
   const progress = useMemo(() => {
+    const totalMs = totalSeconds * 1000;
     if (totalMs <= 0) return 0;
-    return clamp((totalMs - Math.max(0, remainingMs)) / totalMs, 0, 1);
-  }, [remainingMs, totalMs]);
+    return Math.min(1, Math.max(0, (totalMs - remainingMs) / totalMs));
+  }, [remainingMs, totalSeconds]);
 
   const fitFontPx = useFitText({
     containerRef: displayBoxRef,
     textRef: timeTextRef,
     deps: [display, isFs, status],
-    minPx: 48,
+    minPx: 58,
     maxPx: isFs ? 540 : 510,
-    paddingAllowancePx: isFs ? 64 : 72,
+    paddingAllowancePx: isFs ? 76 : 84,
   });
 
-  function applyDuration(ms: number) {
-    const next = clampInt(ms, 1, 86_400_000);
-    const parts = splitMs(next);
-    setTotalMs(next);
-    setRemainingMs(next);
-    setMinutesInput(String(parts.minutes));
-    setSecondsInput(String(parts.seconds));
-    setMillisecondsInput(String(parts.milliseconds));
+  function applyDuration(seconds: number) {
+    const nextSeconds = clampInt(seconds, 1, 86_400);
+    const nextMs = nextSeconds * 1000;
+    setTotalSeconds(nextSeconds);
+    setSecondsInput(String(nextSeconds));
+    setRemainingMs(nextMs);
     setRunning(false);
     endRef.current = null;
   }
 
-  function applyCustomInputs() {
-    const minutes = clampInt(Number(minutesInput || 0), 0, 1440);
-    const seconds = clampInt(Number(secondsInput || 0), 0, 59);
-    const milliseconds = clampInt(Number(millisecondsInput || 0), 0, 999);
-    applyDuration(Math.max(1, minutes * 60_000 + seconds * 1000 + milliseconds));
+  function applyCustom() {
+    applyDuration(Number(secondsInput || 0));
   }
 
   function startPause() {
@@ -193,21 +247,22 @@ function MillisecondTimerTool() {
       endRef.current = null;
       return;
     }
-    const nextRemaining = remainingMs <= 0 ? totalMs : remainingMs;
-    remainingRef.current = nextRemaining;
-    if (remainingMs <= 0) setRemainingMs(totalMs);
+    const seed = remainingMs <= 0 ? totalMsRef.current : remainingMs;
+    if (seed <= 0) return;
+    remainingRef.current = seed;
+    if (remainingMs <= 0) setRemainingMs(seed);
     setRunning(true);
   }
 
   function reset() {
     setRunning(false);
     endRef.current = null;
-    setRemainingMs(totalMs);
+    setRemainingMs(totalSeconds * 1000);
   }
 
   async function copyRemaining() {
     try {
-      await navigator.clipboard.writeText(`${formatMs(remainingMs)} remaining`);
+      await navigator.clipboard.writeText(`${formatSecondsDisplay(remainingMs)} remaining`);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1200);
     } catch {
@@ -225,6 +280,8 @@ function MillisecondTimerTool() {
       reset();
     } else if (key === "f") {
       void fullscreen.toggle();
+    } else if (key === "s") {
+      setSound((value) => !value);
     } else if (key === "c") {
       void copyRemaining();
     } else if (key === "escape" && isFs) {
@@ -241,12 +298,12 @@ function MillisecondTimerTool() {
     >
       <FullscreenTopBar
         show={isFs}
-        title="Millisecond Timer"
+        title="Seconds Timer"
         onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
             <Btn kind="solid" size="sm" onClick={startPause}>
-              {running ? "Pause" : remainingMs < totalMs && remainingMs > 0 ? "Resume" : "Start"}
+              {running ? "Pause" : remainingMs < totalSeconds * 1000 && remainingMs > 0 ? "Resume" : "Start"}
             </Btn>
             <Btn kind="ghost" size="sm" onClick={reset}>
               Reset
@@ -274,7 +331,7 @@ function MillisecondTimerTool() {
           title={isFs ? "Tap or click to start or pause" : undefined}
         >
           <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
-            {status} / Countdown with milliseconds
+            {status} / Seconds countdown
           </div>
           <span
             ref={timeTextRef}
@@ -288,7 +345,7 @@ function MillisecondTimerTool() {
             <div className="h-full bg-[var(--ilt-accent)]" style={{ width: `${Math.round(progress * 100)}%` }} />
           </div>
           <div className="mt-4 text-sm font-semibold text-[var(--ilt-text-secondary)] sm:text-base">
-            Set duration: {formatMs(totalMs)}
+            Set duration: {formatSecondsLabel(totalSeconds)}
           </div>
         </DisplayStage>
 
@@ -296,67 +353,54 @@ function MillisecondTimerTool() {
           <>
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
-                {running ? "Pause" : remainingMs < totalMs && remainingMs > 0 ? "Resume" : "Start"}
+                {running ? "Pause" : remainingMs < totalSeconds * 1000 && remainingMs > 0 ? "Resume" : "Start"}
               </Btn>
               <Btn kind="ghost" onClick={reset}>
                 Reset
               </Btn>
             </ControlGroup>
 
-            <PresetGroup
-              title="Millisecond timer presets"
-              description="Pick a short countdown or enter a custom duration below."
-            >
-              {PRESETS.map((preset) => (
+            <PresetGroup title="Seconds presets">
+              {PRESETS.map((seconds) => (
                 <Chip
-                  key={preset.label}
-                  active={totalMs === preset.ms}
+                  key={seconds}
+                  active={totalSeconds === seconds}
                   disabled={running}
-                  onClick={() => applyDuration(preset.ms)}
+                  onClick={() => applyDuration(seconds)}
                 >
-                  {preset.label}
+                  {seconds}s
                 </Chip>
               ))}
             </PresetGroup>
 
             <SettingGroup
-              title="Custom duration"
-              description="Use minutes, seconds, and milliseconds together. Inputs are applied as one countdown duration."
+              title="Custom seconds"
+              description="Enter a whole number of seconds from 1 to 86400."
             >
               <SettingRow className="sm:grid-cols-3">
                 <Field
-                  label="Minutes"
+                  label="Total seconds"
                   type="number"
-                  min={0}
-                  max={1440}
-                  value={minutesInput}
-                  disabled={running}
-                  onChange={(event) => setMinutesInput(event.currentTarget.value)}
-                />
-                <Field
-                  label="Seconds"
-                  type="number"
-                  min={0}
-                  max={59}
+                  min={1}
+                  max={86400}
                   value={secondsInput}
                   disabled={running}
                   onChange={(event) => setSecondsInput(event.currentTarget.value)}
                 />
-                <Field
-                  label="Milliseconds"
-                  type="number"
-                  min={0}
-                  max={999}
-                  value={millisecondsInput}
-                  disabled={running}
-                  onChange={(event) => setMillisecondsInput(event.currentTarget.value)}
+                <Toggle
+                  label="Sound"
+                  checked={sound}
+                  onCheckedChange={setSound}
                 />
+                <div className="ilt-helper-text flex items-end">
+                  Final sound uses browser audio and may require interaction.
+                </div>
               </SettingRow>
             </SettingGroup>
 
             <SecondaryActionRow>
-              <Btn kind="ghost" onClick={applyCustomInputs} disabled={running}>
-                Apply duration
+              <Btn kind="ghost" onClick={applyCustom} disabled={running}>
+                Apply seconds
               </Btn>
               <Btn kind="ghost" onClick={() => void copyRemaining()}>
                 {copied ? "Copied" : "Copy remaining"}
@@ -367,7 +411,7 @@ function MillisecondTimerTool() {
             </SecondaryActionRow>
 
             <ShortcutHint>
-              Shortcuts: Space start/pause / R reset / C copy / F fullscreen
+              Shortcuts: Space start/pause / R reset / C copy / S sound / F fullscreen
             </ShortcutHint>
           </>
         ) : null}
@@ -376,7 +420,7 @@ function MillisecondTimerTool() {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <ControlGroup className="mx-0 justify-start">
               <Btn kind="solid" onClick={startPause}>
-                {running ? "Pause" : remainingMs < totalMs && remainingMs > 0 ? "Resume" : "Start"}
+                {running ? "Pause" : remainingMs < totalSeconds * 1000 && remainingMs > 0 ? "Resume" : "Start"}
               </Btn>
               <Btn kind="ghost" onClick={reset}>
                 Reset
@@ -392,117 +436,110 @@ function MillisecondTimerTool() {
   );
 }
 
-export default function MillisecondTimerPage() {
+export default function SecondsTimerPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "WebApplication",
-        name: "Millisecond Timer",
+        name: "Seconds Timer",
         url: ROUTE_URL,
         applicationCategory: "UtilityApplication",
         operatingSystem: "Any",
         description:
-          "A browser-based countdown timer that displays milliseconds with custom minutes, seconds, milliseconds, presets, controls, and fullscreen support.",
+          "A browser-based seconds countdown timer with short presets, custom total seconds, sound toggle, copy, and fullscreen support.",
       },
       {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
-          { "@type": "ListItem", position: 2, name: "Millisecond Timer", item: ROUTE_URL },
+          { "@type": "ListItem", position: 2, name: "Seconds Timer", item: ROUTE_URL },
         ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
       },
     ],
   };
 
   return (
     <PageShell>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       <ToolHero
-        display={<MillisecondTimerTool />}
-        title="Millisecond Timer"
-        description="Run a countdown timer that visibly includes milliseconds, with presets, custom minute/second/millisecond inputs, copy, and fullscreen support."
+        display={<SecondsTimerTool />}
+        title="Seconds Timer"
+        description="Start a short countdown in seconds with quick presets, custom total seconds, sound, copy, and fullscreen controls."
       />
 
       <SeoBand>
-        <ContentSection title="How this millisecond timer works">
+        <ContentSection title="How this seconds timer works">
           <p>
-            This is a countdown timer that displays minutes, seconds, and
-            milliseconds. Enter a custom duration or choose a preset, then
-            start, pause, resume, or reset the countdown.
+            This timer is focused on short whole-second countdowns. Pick a
+            preset such as 5, 10, 30, or 60 seconds, or enter a custom total
+            number of seconds and apply it before starting.
           </p>
           <p>
-            The timer reconciles against the browser performance clock while it
-            is running, so the visible display updates with milliseconds rather
-            than only whole seconds.
-          </p>
-        </ContentSection>
-
-        <ContentSection title="When to use a timer with milliseconds">
-          <p>
-            Use it for short timing drills, animation checks, video or audio
-            timing, quick developer tests, classroom demos, games, practice
-            timing, or any countdown where seconds alone are too coarse.
-          </p>
-          <p>
-            For elapsed timing instead of countdown timing, use the{" "}
-            <a className="ilt-content-link" href="/stopwatch-with-milliseconds">
-              stopwatch with milliseconds
-            </a>
-            . For a simpler whole-second countdown, use the{" "}
-            <a className="ilt-content-link" href="/seconds-timer">
-              seconds timer
-            </a>
-            . For current time with milliseconds, use the{" "}
-            <a className="ilt-content-link" href="/clock-with-milliseconds">
-              clock with milliseconds
-            </a>
-            .
+            The running countdown reconciles against the browser performance
+            clock instead of simply subtracting one second at a time. Browser
+            scheduling, display refresh rate, and inactive tabs can still affect
+            visible updates.
           </p>
         </ContentSection>
 
-        <ContentSection title="Milliseconds, converters, and limits">
+        <ContentSection title="When to use a seconds timer">
           <p>
-            A duration of 1000 milliseconds is one second. A duration of 1500
-            milliseconds is one and a half seconds. If you need to convert
-            values instead of run a countdown, use the{" "}
-            <a className="ilt-content-link" href="/milliseconds-converter">
-              milliseconds converter
-            </a>
-            .
+            A seconds-only timer is useful for short drills, quick reminders,
+            classroom countdowns, speaking pauses, exercise rests, games, and
+            practice intervals where a full minutes-and-hours timer feels too
+            heavy.
           </p>
           <p>
-            Browser update rate, inactive tab throttling, display refresh rate,
-            and device performance can affect the visible millisecond display.
-            This page is useful for practical browser timing, not calibrated
-            measurement.
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Millisecond timer FAQ">
-          <h3>Can I set 1000 milliseconds?</h3>
-          <p>
-            Yes. Set milliseconds to 1000 by using the 1 second preset, or set
-            0 minutes, 1 second, and 0 milliseconds in the custom inputs.
-          </p>
-          <h3>How is this different from the countdown timer?</h3>
-          <p>
-            The{" "}
+            For a broader countdown, use the{" "}
             <a className="ilt-content-link" href="/countdown-timer">
               countdown timer
-            </a>{" "}
-            is a general minutes-and-seconds timer. This page is built around a
-            millisecond display and millisecond input.
+            </a>
+            . For millisecond input and display, use the{" "}
+            <a className="ilt-content-link" href="/millisecond-timer">
+              millisecond timer
+            </a>
+            . For elapsed time, use the{" "}
+            <a className="ilt-content-link" href="/stopwatch">
+              stopwatch
+            </a>
+            .
           </p>
-          <h3>Can I use it for reaction practice?</h3>
+        </ContentSection>
+
+        <ContentSection title="Related tools">
           <p>
-            For click-response practice, use the{" "}
+            Try the{" "}
             <a className="ilt-content-link" href="/reaction-time-test">
               reaction time test
-            </a>
-            . This page is a countdown timer, not a reaction measurement tool.
+            </a>{" "}
+            for response practice or the{" "}
+            <a className="ilt-content-link" href="/interval-timer">
+              interval timer
+            </a>{" "}
+            for repeated work and rest blocks.
           </p>
+        </ContentSection>
+
+        <ContentSection title="Seconds timer FAQ">
+          {FAQ_ITEMS.map((item) => (
+            <div key={item.question}>
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </div>
+          ))}
         </ContentSection>
       </SeoBand>
     </PageShell>

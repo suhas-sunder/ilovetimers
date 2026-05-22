@@ -552,6 +552,14 @@ export default function MeetingTimerPage({
             to edit agenda items, move between topics, and track total
             remaining meeting time.
           </p>
+          <p>
+            Planning the meeting time across several locations first? The{" "}
+            <a className="ilt-content-link" href="/time-zone-meeting-planner">
+              time zone meeting planner
+            </a>{" "}
+            compares dates, work windows, and local times before the meeting
+            starts.
+          </p>
         </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />

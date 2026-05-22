@@ -27,6 +27,7 @@ const footerSections: TimerMenuSection[] = [
       { to: "/fullscreen-timer", label: "Fullscreen Timer" },
       { to: "/silent-timer", label: "Silent Timer" },
       { to: "/online-timer", label: "Online Timer" },
+      { to: "/interval-timer", label: "Interval Timer" },
       { to: "/presentation-timer", label: "Presentation Timer" },
       { to: "/speech-timer", label: "Speech Timer" },
       { to: "/classroom-timer", label: "Classroom Timer" },
@@ -109,6 +110,10 @@ const footerSections: TimerMenuSection[] = [
     title: "Calculators and converters",
     links: [
       { to: "/time-zone-converter", label: "Time Zone Converter" },
+      {
+        to: "/time-zone-meeting-planner",
+        label: "Time Zone Meeting Planner",
+      },
       { to: "/military-time-converter", label: "Military Time Converter" },
       { to: "/unix-timestamp-converter", label: "Unix Timestamp Converter" },
       { to: "/work-hours-calculator", label: "Work Hours Calculator" },
@@ -124,6 +129,7 @@ const footerSections: TimerMenuSection[] = [
     title: "Games, tests, rhythm, and specialty tools",
     links: [
       { to: "/reaction-time-test", label: "Reaction Time Test" },
+      { to: "/chess-clock", label: "Chess Clock" },
       { to: "/metronome", label: "Metronome" },
       { to: "/bpm-tapper", label: "BPM Tapper" },
       { to: "/speedcubing-timer", label: "Speedcubing Timer" },

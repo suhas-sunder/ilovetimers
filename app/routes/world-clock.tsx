@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
@@ -612,6 +613,16 @@ export default function WorldClockPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            If current times are not enough and you need to choose a future
+            meeting slot, use the{" "}
+            <a className="ilt-content-link" href="/time-zone-meeting-planner">
+              time zone meeting planner
+            </a>{" "}
+            to compare dates, duration, and local work-hour windows.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

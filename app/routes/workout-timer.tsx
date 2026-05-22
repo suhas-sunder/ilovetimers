@@ -757,6 +757,11 @@ export default function WorkoutTimerPage({
             <a className="ilt-content-link" href="/pace-timer">
               pace timer
             </a>
+            . For non-workout routines with custom labels and multiple step
+            types, use the{" "}
+            <a className="ilt-content-link" href="/interval-timer">
+              interval timer
+            </a>
             .
           </p>
         </ContentSection>

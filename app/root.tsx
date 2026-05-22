@@ -108,6 +108,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     keywords: "countdown simple fullscreen",
   },
   {
+    title: "Interval Timer",
+    href: "/interval-timer",
+    category: "Core",
+    description: "Build custom repeating interval steps with labels and rounds.",
+    keywords: "custom interval repeating work break practice routine",
+  },
+  {
     title: "Count Up Timer",
     href: "/count-up-timer",
     category: "Core",
@@ -150,6 +157,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     category: "Work",
     description: "Time agenda items one by one with next and previous controls.",
     keywords: "agenda timer timed meeting item run of show",
+  },
+  {
+    title: "Time Zone Meeting Planner",
+    href: "/time-zone-meeting-planner",
+    category: "Work",
+    description: "Compare meeting times across multiple time zones and work windows.",
+    keywords: "timezone meeting planner remote scheduling DST overlap",
   },
   {
     title: "Meeting Count Up Timer",
@@ -494,6 +508,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     category: "Calculators",
     description: "Convert Unix timestamps to UTC, local time, ISO, seconds, and milliseconds.",
     keywords: "epoch converter timestamp date javascript milliseconds unix",
+  },
+  {
+    title: "Chess Clock",
+    href: "/chess-clock",
+    category: "Games",
+    description: "Run a casual two-player chess clock with presets and increment.",
+    keywords: "chess clock two player timer blitz board game increment",
   },
   {
     title: "Military Time Converter",

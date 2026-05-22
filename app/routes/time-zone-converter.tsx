@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import {
   Button as Btn,
+  ContentSection,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
@@ -1042,6 +1043,16 @@ export default function TimeZoneConverterPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Need to compare several people or cities before choosing a meeting
+            slot? Use the{" "}
+            <a className="ilt-content-link" href="/time-zone-meeting-planner">
+              time zone meeting planner
+            </a>{" "}
+            for multi-zone work windows and candidate meeting times.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

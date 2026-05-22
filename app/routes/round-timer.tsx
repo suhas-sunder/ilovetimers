@@ -899,6 +899,14 @@ export default function RoundTimerPage({
             <a className="ilt-content-link" href="/rest-timer">
               rest timer
             </a>
+            . For generic labeled steps, use the{" "}
+            <a className="ilt-content-link" href="/interval-timer">
+              interval timer
+            </a>
+            . For two-player turn timing, use the{" "}
+            <a className="ilt-content-link" href="/chess-clock">
+              chess clock
+            </a>
             .
           </p>
         </ContentSection>

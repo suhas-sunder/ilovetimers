@@ -85,6 +85,12 @@ const SECTIONS: SitemapSection[] = [
           "Start a browser-based timer instantly without installing anything.",
       },
       {
+        title: "Interval Timer",
+        href: "/interval-timer",
+        description:
+          "Build a custom interval timer with labeled steps, repeats, and fullscreen display.",
+      },
+      {
         title: "Presentation Timer",
         href: "/presentation-timer",
         description:
@@ -435,6 +441,12 @@ const SECTIONS: SitemapSection[] = [
           "Convert times between different time zones for meetings, travel, and planning.",
       },
       {
+        title: "Time Zone Meeting Planner",
+        href: "/time-zone-meeting-planner",
+        description:
+          "Plan meeting times across multiple time zones using date, duration, and work windows.",
+      },
+      {
         title: "Military Time Converter",
         href: "/military-time-converter",
         description: "Convert between 12-hour time and 24-hour military time.",
@@ -476,6 +488,12 @@ const SECTIONS: SitemapSection[] = [
     description:
       "Timing tools for games, speedruns, rhythm, reaction time, and unusual timer formats.",
     links: [
+      {
+        title: "Chess Clock",
+        href: "/chess-clock",
+        description:
+          "Use a casual two-player chess clock with presets, increment, and fullscreen mode.",
+      },
       {
         title: "Reaction Time Test",
         href: "/reaction-time-test",

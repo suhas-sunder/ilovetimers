@@ -673,6 +673,14 @@ export default function MeetingAgendaTimerPage() {
             </a>
             .
           </p>
+          <p>
+            If the meeting time itself still needs to work across locations,
+            use the{" "}
+            <a className="ilt-content-link" href="/time-zone-meeting-planner">
+              time zone meeting planner
+            </a>{" "}
+            before running the agenda.
+          </p>
         </ContentSection>
 
         <ContentSection title="Practical limitations">

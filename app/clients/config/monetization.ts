@@ -123,6 +123,14 @@ export const routeMonetization = [
       "General online timer route has expanded route-specific content and utility-first structure.",
   },
   {
+    path: "/interval-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Custom interval timer route has utility-first step timing, presets, fullscreen support, and route-specific support content.",
+  },
+  {
     path: "/presentation-timer",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -161,6 +169,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Meeting agenda timer has utility-first agenda item timing, support content, FAQ, and practical limitations.",
+  },
+  {
+    path: "/time-zone-meeting-planner",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Time zone meeting planner has utility-first multi-zone comparison, candidate times, copy/share actions, and route-specific support content.",
   },
   {
     path: "/exam-timer",
@@ -697,6 +713,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Unix timestamp converter has timestamp conversion utility content, examples, FAQ, and UTC/local limitation notes.",
+  },
+  {
+    path: "/chess-clock",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Chess clock has utility-first two-player timing, presets, increment controls, fullscreen support, and route-specific support content.",
   },
   {
     path: "/privacy",

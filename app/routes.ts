@@ -11,6 +11,7 @@ export default [
   route("fullscreen-timer", "routes/fullscreen-timer.tsx"),
   route("silent-timer", "routes/silent-timer.tsx"),
   route("online-timer", "routes/online-timer.tsx"),
+  route("interval-timer", "routes/interval-timer.tsx"),
   route("presentation-timer", "routes/presentation-timer.tsx"),
   route("speech-timer", "routes/speech-timer.tsx"),
   route("classroom-timer", "routes/classroom-timer.tsx"),
@@ -69,6 +70,7 @@ export default [
   route("time-blocking-clock", "routes/time-blocking-clock.tsx"),
   route("atomic-clock", "routes/atomic-clock.tsx"),
   route("time-zone-converter", "routes/time-zone-converter.tsx"),
+  route("time-zone-meeting-planner", "routes/time-zone-meeting-planner.tsx"),
   route("military-time-clock", "routes/military-time-clock.tsx"),
   route("binary-stopwatch", "routes/binary-stopwatch.tsx"),
   route("roman-numeral-clock", "routes/roman-numeral-clock.tsx"),
@@ -83,6 +85,7 @@ export default [
   route("billable-hours-calculator", "routes/billable-hours-calculator.tsx"),
   route("milliseconds-converter", "routes/milliseconds-converter.tsx"),
   route("unix-timestamp-converter", "routes/unix-timestamp-converter.tsx"),
+  route("chess-clock", "routes/chess-clock.tsx"),
 
   route("privacy", "routes/privacy.tsx"),
   route("terms", "routes/terms.tsx"),

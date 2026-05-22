@@ -992,6 +992,16 @@ export default function EventCountdownPage({
               New Year countdown
             </a>{" "}
             for an automatic local-time countdown that rolls forward each year.
+            To count days between two dates, use the{" "}
+            <a className="ilt-content-link" href="/date-duration-calculator">
+              date duration calculator
+            </a>
+            . To add or subtract days, weeks, months, or years from a date, use
+            the{" "}
+            <a className="ilt-content-link" href="/date-calculator">
+              date calculator
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

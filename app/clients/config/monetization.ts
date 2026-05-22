@@ -827,6 +827,30 @@ export const routeMonetization = [
       "Time calculator now has expanded add/subtract, duration, validation, non-payroll limitation, and related calculator content.",
   },
   {
+    path: "/date-duration-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Date duration calculator has result-first elapsed day calculations, inclusive count, weekday context, copy/reset shortcuts, and route-specific support content.",
+  },
+  {
+    path: "/date-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Date calculator has result-first date add/subtract behavior, presets, copy/reset shortcuts, month-end notes, and route-specific support content.",
+  },
+  {
+    path: "/business-days-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Business days calculator has result-first weekday counting, weekend exclusion settings, copy/reset shortcuts, and route-specific support content.",
+  },
+  {
     path: "/billable-hours-calculator",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,

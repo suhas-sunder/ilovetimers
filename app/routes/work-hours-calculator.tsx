@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useMemo, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   Field,
   PageShell,
   PresetGroup,
@@ -560,6 +561,17 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection title="Related workday calculator">
+          <p>
+            If you need to count weekdays between two calendar dates instead of
+            clock time within one shift, use the{" "}
+            <a className="ilt-content-link" href="/business-days-calculator">
+              business days calculator
+            </a>
+            . It excludes Saturdays and Sundays by default and keeps holiday,
+            payroll, HR, and policy decisions outside the result.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

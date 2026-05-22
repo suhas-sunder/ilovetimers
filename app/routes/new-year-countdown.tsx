@@ -407,6 +407,11 @@ export default function NewYearCountdownPage({
             <a className="ilt-content-link" href="/fullscreen-timer">
               fullscreen timer
             </a>
+            . To compare New Year with another calendar date without a live
+            countdown, use the{" "}
+            <a className="ilt-content-link" href="/date-duration-calculator">
+              date duration calculator
+            </a>
             .
           </p>
         </ContentSection>

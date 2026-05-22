@@ -566,6 +566,24 @@ const SECTIONS: SitemapSection[] = [
           "Add, subtract, and calculate durations using hours, minutes, and seconds.",
       },
       {
+        title: "Date Duration Calculator",
+        href: "/date-duration-calculator",
+        description:
+          "Calculate elapsed days, inclusive days, and weekdays between two dates.",
+      },
+      {
+        title: "Date Calculator",
+        href: "/date-calculator",
+        description:
+          "Add or subtract days, weeks, months, and years from a start date.",
+      },
+      {
+        title: "Business Days Calculator",
+        href: "/business-days-calculator",
+        description:
+          "Count workdays between two dates while excluding Saturdays and Sundays.",
+      },
+      {
         title: "Billable Hours Calculator",
         href: "/billable-hours-calculator",
         description:

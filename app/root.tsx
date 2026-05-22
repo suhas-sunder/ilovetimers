@@ -616,6 +616,27 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "Add, subtract, and convert time values.",
   },
   {
+    title: "Date Duration Calculator",
+    href: "/date-duration-calculator",
+    category: "Calculators",
+    description: "Calculate elapsed days and inclusive days between two dates.",
+    keywords: "date duration date to date days between dates elapsed days",
+  },
+  {
+    title: "Date Calculator",
+    href: "/date-calculator",
+    category: "Calculators",
+    description: "Add or subtract days, weeks, months, and years from a date.",
+    keywords: "date calculator add days subtract days add weeks add months",
+  },
+  {
+    title: "Business Days Calculator",
+    href: "/business-days-calculator",
+    category: "Calculators",
+    description: "Count weekdays between dates while excluding weekends.",
+    keywords: "business days calculator workdays weekdays between dates",
+  },
+  {
     title: "Milliseconds Converter",
     href: "/milliseconds-converter",
     category: "Calculators",

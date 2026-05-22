@@ -714,6 +714,17 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
         </p>
         <h3>Related calculators</h3>
         <p>
+          For calendar dates, use the{" "}
+          <a className="ilt-content-link" href="/date-duration-calculator">
+            date duration calculator
+          </a>{" "}
+          to count days between dates or the{" "}
+          <a className="ilt-content-link" href="/date-calculator">
+            date calculator
+          </a>{" "}
+          to add and subtract days, weeks, months, or years.
+        </p>
+        <p>
           For unit conversions, use the{" "}
           <a className="ilt-content-link" href="/milliseconds-converter">
             milliseconds converter

@@ -539,6 +539,11 @@ export default function CountDownTimerPage({
               millisecond timer
             </a>
             . This page stays focused on simple minutes-and-seconds countdowns.
+            For a date-based countdown to January 1, use the{" "}
+            <a className="ilt-content-link" href="/new-year-countdown">
+              New Year countdown
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

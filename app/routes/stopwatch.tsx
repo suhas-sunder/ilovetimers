@@ -562,6 +562,11 @@ export default function StopwatchPage({
             </a>
             . This stopwatch is for elapsed time; the millisecond timer is for
             counting down with minute, second, and millisecond inputs.
+            For a page that puts millisecond precision first, use the{" "}
+            <a className="ilt-content-link" href="/stopwatch-with-milliseconds">
+              stopwatch with milliseconds
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

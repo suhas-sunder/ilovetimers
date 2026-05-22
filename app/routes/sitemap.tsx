@@ -57,6 +57,12 @@ const SECTIONS: SitemapSection[] = [
         description: "Measure elapsed time with a fast online stopwatch.",
       },
       {
+        title: "Stopwatch With Milliseconds",
+        href: "/stopwatch-with-milliseconds",
+        description:
+          "Measure elapsed time with milliseconds, laps, copy, and fullscreen support.",
+      },
+      {
         title: "Pomodoro Timer",
         href: "/pomodoro-timer",
         description: "Use structured work and break cycles for focused work.",
@@ -236,6 +242,12 @@ const SECTIONS: SitemapSection[] = [
           "Use round-based timing for boxing, martial arts, drills, and circuits.",
       },
       {
+        title: "Boxing Timer",
+        href: "/boxing-timer",
+        description:
+          "Run boxing-style rounds with rest periods, prep time, presets, sound cues, and fullscreen support.",
+      },
+      {
         title: "Pace Timer",
         href: "/pace-timer",
         description:
@@ -323,6 +335,12 @@ const SECTIONS: SitemapSection[] = [
         href: "/utc-clock",
         description:
           "View the current Coordinated Universal Time in your browser.",
+      },
+      {
+        title: "24 Hour Clock",
+        href: "/24-hour-clock",
+        description:
+          "View the current time in 24-hour format with seconds, date, copy, and fullscreen support.",
       },
       {
         title: "Military Time Clock",
@@ -565,6 +583,12 @@ const SECTIONS: SitemapSection[] = [
           "Count down to a specific event, deadline, launch, or special date.",
       },
       {
+        title: "New Year Countdown",
+        href: "/new-year-countdown",
+        description:
+          "Count down to the next January 1 in your local timezone.",
+      },
+      {
         title: "Debt Repayment Timer",
         href: "/debt-repayment-timer",
         description: "Track debt repayment timing and payoff progress.",
@@ -658,7 +682,7 @@ export default function Sitemap() {
     <ContentPage
       title="HTML Sitemap"
       description="Browse every public page on I Love Timers, including countdown timers, stopwatches, Pomodoro tools, workout timers, clocks, calculators, converters, and policy pages."
-      meta={`${allLinks.length} pages. Updated May 16, 2026`}
+      meta={`${allLinks.length} pages. Updated May 22, 2026`}
     >
       <script
         type="application/ld+json"

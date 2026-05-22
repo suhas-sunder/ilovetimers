@@ -83,6 +83,14 @@ export const routeMonetization = [
       "Core stopwatch route with expanded route-specific content and export-oriented support sections.",
   },
   {
+    path: "/stopwatch-with-milliseconds",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent stopwatch route has milliseconds-first elapsed timing, precision settings, laps, copy, fullscreen support, and route-specific content.",
+  },
+  {
     path: "/pomodoro-timer",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -371,6 +379,14 @@ export const routeMonetization = [
       "Round timer now has expanded round/rest setup guidance, warning and sound cue notes, non-official wording, and related links.",
   },
   {
+    path: "/boxing-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent boxing timer route has boxing-style round/rest presets, prep timing, sound controls, fullscreen support, and route-specific content.",
+  },
+  {
     path: "/pace-timer",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -499,6 +515,14 @@ export const routeMonetization = [
       "UTC clock now has expanded UTC-use guidance, device-clock limitation notes, ISO details, and related time-tool links.",
   },
   {
+    path: "/24-hour-clock",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent 24-hour clock route has live 24-hour display, seconds/date toggles, local or UTC mode, copy, fullscreen support, and route-specific content.",
+  },
+  {
     path: "/military-time-clock",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -561,6 +585,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Event countdown has expanded event-specific setup and sharing content.",
+  },
+  {
+    path: "/new-year-countdown",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Direct-intent New Year countdown route has automatic next-January-1 targeting, copy/share, fullscreen support, and route-specific content.",
   },
   {
     path: "/golden-hour-clock",

@@ -919,7 +919,12 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
             <a className="ilt-content-link" href="/military-time-clock">
               military time clock
             </a>{" "}
-            for local or UTC/Zulu display with seconds and fullscreen.
+            for local or UTC/Zulu display with seconds and fullscreen. For a
+            general colon-formatted live display, use the{" "}
+            <a className="ilt-content-link" href="/24-hour-clock">
+              24 hour clock
+            </a>
+            .
           </p>
         </ContentSection>
         <KeyboardShortcuts />

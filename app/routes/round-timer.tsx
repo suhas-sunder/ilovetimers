@@ -903,6 +903,10 @@ export default function RoundTimerPage({
             <a className="ilt-content-link" href="/interval-timer">
               interval timer
             </a>
+            . For boxing-specific presets and terminology, use the{" "}
+            <a className="ilt-content-link" href="/boxing-timer">
+              boxing timer
+            </a>
             . For two-player turn timing, use the{" "}
             <a className="ilt-content-link" href="/chess-clock">
               chess clock

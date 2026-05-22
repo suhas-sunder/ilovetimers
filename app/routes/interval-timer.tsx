@@ -698,7 +698,12 @@ export default function IntervalTimerPage() {
             <a className="ilt-content-link" href="/round-timer">
               round timer
             </a>{" "}
-            may be a better fit.
+            may be a better fit. For boxing-style round and rest presets, use
+            the{" "}
+            <a className="ilt-content-link" href="/boxing-timer">
+              boxing timer
+            </a>
+            .
           </p>
         </ContentSection>
 

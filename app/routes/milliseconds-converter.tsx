@@ -512,6 +512,10 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
             <a className="ilt-content-link" href="/millisecond-timer">
               millisecond timer
             </a>
+            . For measuring elapsed time with milliseconds, use the{" "}
+            <a className="ilt-content-link" href="/stopwatch-with-milliseconds">
+              stopwatch with milliseconds
+            </a>
             . For current time with live milliseconds, use the{" "}
             <a className="ilt-content-link" href="/clock-with-milliseconds">
               clock with milliseconds

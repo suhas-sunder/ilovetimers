@@ -122,6 +122,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     keywords: "millisecond timer countdown milliseconds online timer",
   },
   {
+    title: "Stopwatch With Milliseconds",
+    href: "/stopwatch-with-milliseconds",
+    category: "Core",
+    description: "Measure elapsed time with milliseconds, laps, copy, and fullscreen.",
+    keywords: "stopwatch milliseconds millisecond stopwatch elapsed time splits",
+  },
+  {
     title: "Count Up Timer",
     href: "/count-up-timer",
     category: "Core",
@@ -269,6 +276,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "Round timing for boxing, martial arts, and circuits.",
   },
   {
+    title: "Boxing Timer",
+    href: "/boxing-timer",
+    category: "Fitness",
+    description: "Run boxing-style rounds with rest, prep, presets, and sound cues.",
+    keywords: "boxing round timer boxing timer bag rounds martial arts",
+  },
+  {
     title: "Pace Timer",
     href: "/pace-timer",
     category: "Fitness",
@@ -339,6 +353,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     href: "/utc-clock",
     category: "Clocks",
     description: "Display current Coordinated Universal Time.",
+  },
+  {
+    title: "24 Hour Clock",
+    href: "/24-hour-clock",
+    category: "Clocks",
+    description: "Show current time in 24-hour format with copy and fullscreen.",
+    keywords: "24 hour clock twenty four hour digital clock current time",
   },
   {
     title: "Military Time Clock",
@@ -468,6 +489,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     href: "/event-countdown",
     category: "Events",
     description: "Countdown to a specific date and time.",
+  },
+  {
+    title: "New Year Countdown",
+    href: "/new-year-countdown",
+    category: "Events",
+    description: "Count down to the next January 1 in your local timezone.",
+    keywords: "new year countdown countdown to new year january 1",
   },
   {
     title: "Reaction Time Test",

@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   Field,
   FullscreenBottomBar,
@@ -984,6 +985,15 @@ export default function EventCountdownPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection>
+          <p>
+            Counting down specifically to the next January 1? Use the{" "}
+            <a className="ilt-content-link" href="/new-year-countdown">
+              New Year countdown
+            </a>{" "}
+            for an automatic local-time countdown that rolls forward each year.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

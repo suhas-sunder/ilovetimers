@@ -447,8 +447,8 @@ export default function MillisecondTimerPage() {
           </p>
           <p>
             For elapsed timing instead of countdown timing, use the{" "}
-            <a className="ilt-content-link" href="/stopwatch">
-              stopwatch
+            <a className="ilt-content-link" href="/stopwatch-with-milliseconds">
+              stopwatch with milliseconds
             </a>
             . For current time with milliseconds, use the{" "}
             <a className="ilt-content-link" href="/clock-with-milliseconds">

@@ -1,5 +1,4 @@
-// app/routes/military-time-clock.tsx
-import type { Route } from "./+types/military-time-clock";
+import type { Route } from "./+types/24-hour-clock";
 import { json } from "@remix-run/node";
 import {
   useCallback,
@@ -29,17 +28,35 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
-type ClockMode = "local" | "utc";
-
 const SITE_URL = "https://www.ilovetimers.com";
-const ROUTE_PATH = "/military-time-clock";
+const ROUTE_PATH = "/24-hour-clock";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
+type ClockMode = "local" | "utc";
+
+const FAQ_ITEMS = [
+  {
+    question: "What is a 24-hour clock?",
+    answer:
+      "A 24-hour clock shows hours from 00 through 23 instead of using AM and PM.",
+  },
+  {
+    question: "Does this page use an official time source?",
+    answer:
+      "No. It formats the time from your browser and device clock, with an optional UTC display mode.",
+  },
+  {
+    question: "How is this different from the military time clock?",
+    answer:
+      "This page focuses on general 24-hour time with colon formatting. The military time clock also emphasizes compact HHMM notation and Zulu-style context.",
+  },
+];
+
 export function meta({}: Route.MetaArgs) {
-  const title = "Military Time Clock (Live 24-Hour Clock)";
+  const title = "24 Hour Clock Online (Current Time in 24-Hour Format)";
   const description =
-    "See the current time as a live military-style 24-hour clock with seconds, local or UTC mode, copy, and fullscreen display.";
+    "View the current time in 24-hour format with a large live clock, seconds and date toggles, local or UTC mode, copy, and fullscreen support.";
 
   return [
     { title },
@@ -47,12 +64,11 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "keywords",
       content: [
-        "military time clock",
-        "military time now",
         "24 hour clock",
-        "army time clock",
-        "current military time",
-        "zulu time clock",
+        "24-hour clock online",
+        "current time in 24 hour format",
+        "24 hour digital clock",
+        "clock in 24-hour format",
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
@@ -66,39 +82,24 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:description", content: description },
     { name: "twitter:image", content: OG_IMAGE },
     { rel: "canonical", href: ROUTE_URL },
+    { name: "theme-color", content: "#ffffff" },
   ];
 }
 
-export async function loader() {
+export function loader() {
   return json({ nowISO: new Date().toISOString() });
 }
 
-function pad(value: number) {
-  return String(value).padStart(2, "0");
+const pad2 = (value: number) => String(value).padStart(2, "0");
+
+function format24HourTime(date: Date, mode: ClockMode, showSeconds: boolean) {
+  const hours = mode === "utc" ? date.getUTCHours() : date.getHours();
+  const minutes = mode === "utc" ? date.getUTCMinutes() : date.getMinutes();
+  const seconds = mode === "utc" ? date.getUTCSeconds() : date.getSeconds();
+  return `${pad2(hours)}:${pad2(minutes)}${showSeconds ? `:${pad2(seconds)}` : ""}`;
 }
 
-function getParts(date: Date, mode: ClockMode) {
-  return mode === "utc"
-    ? {
-        hours: date.getUTCHours(),
-        minutes: date.getUTCMinutes(),
-        seconds: date.getUTCSeconds(),
-      }
-    : {
-        hours: date.getHours(),
-        minutes: date.getMinutes(),
-        seconds: date.getSeconds(),
-      };
-}
-
-function formatMilitaryTime(date: Date, mode: ClockMode, showSeconds: boolean) {
-  const parts = getParts(date, mode);
-  const compact = `${pad(parts.hours)}${pad(parts.minutes)}${showSeconds ? pad(parts.seconds) : ""}`;
-  const readable = `${pad(parts.hours)}:${pad(parts.minutes)}${showSeconds ? `:${pad(parts.seconds)}` : ""}`;
-  return { compact, readable };
-}
-
-function formatStandardTime(date: Date, mode: ClockMode, showSeconds: boolean) {
+function format12HourTime(date: Date, mode: ClockMode, showSeconds: boolean) {
   return new Intl.DateTimeFormat(undefined, {
     hour: "numeric",
     minute: "2-digit",
@@ -109,14 +110,22 @@ function formatStandardTime(date: Date, mode: ClockMode, showSeconds: boolean) {
   }).format(date);
 }
 
-function formatDate(date: Date, mode: ClockMode) {
+function formatDateLine(date: Date, mode: ClockMode) {
   return new Intl.DateTimeFormat(undefined, {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
+    weekday: "long",
     year: "numeric",
+    month: "long",
+    day: "2-digit",
     timeZone: mode === "utc" ? "UTC" : undefined,
   }).format(date);
+}
+
+function safeTimeZone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+  } catch {
+    return "Local";
+  }
 }
 
 function isTypingTarget(target: EventTarget | null) {
@@ -130,17 +139,13 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-function MilitaryTimeClockTool({
-  nowISO,
-}: {
-  nowISO: string;
-}) {
-  const initialDate = useMemo(() => new Date(nowISO), [nowISO]);
-  const [now, setNow] = useState(initialDate);
+function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
+  const [now, setNow] = useState(() => new Date(initialNowISO));
   const [showSeconds, setShowSeconds] = useState(true);
   const [showDate, setShowDate] = useState(true);
   const [mode, setMode] = useState<ClockMode>("local");
   const [copied, setCopied] = useState(false);
+  const localTimeZone = useMemo(() => safeTimeZone(), []);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const displayBoxRef = useRef<HTMLElement | null>(null);
   const timeTextRef = useRef<HTMLSpanElement | null>(null);
@@ -155,47 +160,45 @@ function MilitaryTimeClockTool({
     return () => window.clearInterval(interval);
   }, [showSeconds]);
 
-  const military = formatMilitaryTime(now, mode, showSeconds);
-  const standardTime = formatStandardTime(now, mode, showSeconds);
-  const dateText = formatDate(now, mode);
-  const modeLabel = mode === "utc" ? "UTC / Zulu time" : "Local device time";
-  const zoneLabel =
-    mode === "utc"
-      ? "Zulu"
-      : Intl.DateTimeFormat().resolvedOptions().timeZone || "local timezone";
+  const timeText = format24HourTime(now, mode, showSeconds);
+  const dateText = formatDateLine(now, mode);
+  const equivalentText = format12HourTime(now, mode, showSeconds);
+  const zoneLabel = mode === "utc" ? "UTC" : localTimeZone;
+  const modeLabel = mode === "utc" ? "UTC time" : "Local device time";
+  const copyText = `${timeText} ${zoneLabel}${showDate ? ` / ${dateText}` : ""}`;
 
   const fitFontPx = useFitText({
     containerRef: displayBoxRef,
     textRef: timeTextRef,
-    deps: [military.readable, isFs, showSeconds, mode],
-    minPx: 56,
-    maxPx: isFs ? 560 : 500,
-    paddingAllowancePx: isFs ? 64 : 72,
+    deps: [timeText, isFs, showSeconds, mode],
+    minPx: 58,
+    maxPx: isFs ? 560 : 520,
+    paddingAllowancePx: isFs ? 72 : 84,
   });
 
   const copy = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(military.compact);
+      await navigator.clipboard.writeText(copyText);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1400);
     } catch {
       setCopied(false);
     }
-  }, [military.compact]);
+  }, [copyText]);
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(event.target)) return;
     const key = event.key.toLowerCase();
     if (key === "f") {
       void fullscreen.toggle();
-    } else if (key === "s") {
-      setShowSeconds((value) => !value);
-    } else if (key === "u") {
-      setMode((value) => (value === "utc" ? "local" : "utc"));
-    } else if (key === "d") {
-      setShowDate((value) => !value);
     } else if (key === "c") {
       void copy();
+    } else if (key === "s") {
+      setShowSeconds((value) => !value);
+    } else if (key === "d") {
+      setShowDate((value) => !value);
+    } else if (key === "u") {
+      setMode((value) => (value === "utc" ? "local" : "utc"));
     } else if (key === "escape" && isFs) {
       void fullscreen.exit();
     }
@@ -210,10 +213,10 @@ function MilitaryTimeClockTool({
     >
       <FullscreenTopBar
         show={isFs}
-        title="Military Time Clock"
+        title="24 Hour Clock"
         onExit={() => void fullscreen.exit()}
         right={
-          <Btn kind="ghost" onClick={() => void copy()} size="sm">
+          <Btn kind="ghost" size="sm" onClick={() => void copy()}>
             {copied ? "Copied" : "Copy"}
           </Btn>
         }
@@ -225,7 +228,7 @@ function MilitaryTimeClockTool({
           isFullscreen={isFs}
           className="timer-display-surface mt-4 flex flex-col items-center justify-center p-4 font-mono sm:p-6"
           style={{
-            minHeight: isFs ? 0 : 340,
+            minHeight: isFs ? 0 : "clamp(320px, 38vw, 430px)",
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
             userSelect: "none",
@@ -236,7 +239,7 @@ function MilitaryTimeClockTool({
             if (isFs) void copy();
           }}
           role={isFs ? "button" : undefined}
-          title={isFs ? "Tap or click to copy military time" : undefined}
+          title={isFs ? "Tap or click to copy the current time" : undefined}
         >
           <div className="timer-clock-label text-xs font-extrabold uppercase tracking-widest">
             {modeLabel}
@@ -251,13 +254,10 @@ function MilitaryTimeClockTool({
               transform: "translateZ(0)",
             }}
           >
-            {military.readable}
+            {timeText}
           </span>
           <div className="timer-clock-context mt-4 text-sm font-semibold sm:text-base">
-            Military format: {military.compact}
-          </div>
-          <div className="timer-clock-context mt-2 text-sm font-semibold sm:text-base">
-            Standard time: {standardTime}
+            12-hour equivalent: {equivalentText}
           </div>
           {showDate ? (
             <div className="timer-clock-context mt-2 text-sm font-semibold sm:text-base">
@@ -283,31 +283,31 @@ function MilitaryTimeClockTool({
                 <Select
                   label="Time source"
                   value={mode}
-                  onChange={(event) => setMode(event.currentTarget.value as ClockMode)}
+                  onChange={(event) =>
+                    setMode(event.currentTarget.value as ClockMode)
+                  }
                 >
                   <option value="local">Local</option>
-                  <option value="utc">UTC / Zulu</option>
+                  <option value="utc">UTC</option>
                 </Select>
                 <div className="ilt-helper-text flex items-end">
-                  {mode === "utc"
-                    ? "Zulu mode shows UTC, not your local time."
-                    : "Local mode uses your device clock and timezone."}
+                  Local mode uses your device clock and timezone. UTC mode
+                  formats that same instant as UTC.
                 </div>
               </SettingRow>
             </SettingGroup>
 
-            <SecondaryActionRow>
+            <SecondaryActionRow className="timer-clock-actions">
               <Btn kind="ghost" onClick={() => void copy()}>
-                {copied ? "Copied" : "Copy military time"}
+                {copied ? "Copied" : "Copy 24-hour time"}
               </Btn>
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
                 Fullscreen
               </Btn>
             </SecondaryActionRow>
 
-            <ShortcutHint>
-              Shortcuts: F fullscreen / C copy / S seconds / U UTC or local / D
-              date
+            <ShortcutHint className="timer-clock-shortcut">
+              Shortcuts: F fullscreen / C copy / S seconds / D date / U UTC or local
             </ShortcutHint>
           </>
         ) : null}
@@ -325,18 +325,9 @@ function MilitaryTimeClockTool({
                 checked={showDate}
                 onCheckedChange={setShowDate}
               />
-              <Select
-                label="Mode"
-                value={mode}
-                onChange={(event) => setMode(event.currentTarget.value as ClockMode)}
-                className="min-w-[10rem]"
-              >
-                <option value="local">Local</option>
-                <option value="utc">UTC / Zulu</option>
-              </Select>
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap time to copy / F fullscreen / U UTC or local
+              Tap time to copy / F fullscreen / U UTC or local / no ads in fullscreen
             </div>
           </div>
         </FullscreenBottomBar>
@@ -345,7 +336,7 @@ function MilitaryTimeClockTool({
   );
 }
 
-export default function MilitaryTimeClockPage({
+export default function TwentyFourHourClockPage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
   const jsonLd = {
@@ -353,29 +344,27 @@ export default function MilitaryTimeClockPage({
     "@graph": [
       {
         "@type": "WebApplication",
-        name: "Military Time Clock",
+        name: "24 Hour Clock",
         url: ROUTE_URL,
         applicationCategory: "UtilityApplication",
         operatingSystem: "Any",
         description:
-          "Show the current time as a live military-style 24-hour clock with local and UTC display options.",
+          "A browser-based live 24-hour clock with seconds, date, local or UTC mode, copy, and fullscreen display.",
       },
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: `${SITE_URL}/`,
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Military Time Clock",
-            item: ROUTE_URL,
-          },
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "24 Hour Clock", item: ROUTE_URL },
         ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
       },
     ],
   };
@@ -388,96 +377,73 @@ export default function MilitaryTimeClockPage({
       />
 
       <ToolHero
-        display={<MilitaryTimeClockTool nowISO={nowISO} />}
-        title="Military Time Clock"
-        description="See the current time in live 24-hour military format, copy the HHMM value, and switch between local time and UTC/Zulu display."
+        display={<TwentyFourHourClockTool initialNowISO={nowISO} />}
+        title="24 Hour Clock"
+        description="See the current time in 24-hour format with a large live display, seconds and date toggles, local or UTC mode, copy, and fullscreen support."
       />
 
       <SeoBand>
-        <ContentSection title="How this military time clock works">
+        <ContentSection title="How this 24-hour clock works">
           <p>
-            This clock shows the current time in 24-hour military-style format.
-            It uses your browser and device clock, then formats the hour from
-            00 through 23 instead of using AM and PM.
+            This clock displays the current time in 24-hour format, where the
+            day runs from 00:00 through 23:59 instead of repeating 1 through 12
+            with AM and PM labels.
           </p>
           <p>
-            Local mode follows your device timezone. UTC / Zulu mode shows the
-            same instant against Coordinated Universal Time, which is useful
-            when schedules use Z time. It does not convert a written time
-            between zones; for that, use the{" "}
-            <a className="ilt-content-link" href="/time-zone-converter">
-              time zone converter
+            Local mode uses the time and timezone from your browser and device.
+            UTC mode formats the same current instant as Coordinated Universal
+            Time. This page is a display tool, not an official time source.
+          </p>
+        </ContentSection>
+
+        <ContentSection title="24-hour format vs AM/PM time">
+          <p>
+            In 24-hour format, 13:00 means 1:00 PM, 18:30 means 6:30 PM, and
+            00:00 means midnight at the start of a day. The 12-hour equivalent
+            stays visible as secondary context so you can compare both formats.
+          </p>
+          <p>
+            For compact military-style notation such as 0930 or 1745, use the{" "}
+            <a className="ilt-content-link" href="/military-time-clock">
+              military time clock
             </a>
-            .
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Reading 0000, 1200, 2359, and 2400">
-          <p>
-            Military time starts at 0000, which means 12:00 AM at the start of
-            the day. Noon is 1200. One minute before midnight is 2359.
-          </p>
-          <p>
-            You may see 2400 in schedules as an end-of-day notation, especially
-            when a shift or service period ends at midnight. This live clock
-            rolls from 2359 to 0000 because 0000 is the actual start of the next
-            day.
-          </p>
-        </ContentSection>
-
-        <ContentSection title="When to use it">
-          <p>
-            A live military time clock is useful for work shifts, logistics,
-            travel, healthcare-style schedules, international coordination,
-            operations rooms, classrooms, and any situation where AM/PM wording
-            can cause confusion.
-          </p>
-          <p>
-            If you need to convert a specific written time, use the{" "}
+            . To convert a written time between 12-hour and 24-hour format, use
+            the{" "}
             <a className="ilt-content-link" href="/military-time-converter">
               military time converter
             </a>
-            . For a general large clock, use the{" "}
-            <a className="ilt-content-link" href="/digital-clock">
-              digital clock
-            </a>{" "}
-            or{" "}
-            <a className="ilt-content-link" href="/24-hour-clock">
-              24 hour clock
-            </a>{" "}
-            for colon-formatted 24-hour time, or the{" "}
-            <a className="ilt-content-link" href="/current-local-time">
-              current local time
-            </a>
             .
           </p>
         </ContentSection>
 
-        <ContentSection title="Military time clock FAQ">
-          <h3>Is military time the same as timezone conversion?</h3>
+        <ContentSection title="Common uses">
           <p>
-            No. Military time is a 24-hour display format. Timezone conversion
-            changes the location or UTC offset used to interpret a time.
-          </p>
-          <h3>Does this clock use an official military time source?</h3>
-          <p>
-            No. It runs in your browser and depends on your device clock. UTC /
-            Zulu mode formats the browser time as UTC.
-          </p>
-          <h3>Can I show seconds?</h3>
-          <p>
-            Yes. Use the Seconds toggle to include or hide seconds in the live
-            display and copied value.
-          </p>
-          <h3>How is this related to UTC?</h3>
-          <p>
-            UTC is a shared time reference. Military schedules often use Zulu
-            time for UTC, and the{" "}
+            A 24-hour digital clock is useful for international schedules, work
+            shifts, travel planning, classrooms, wall-clock display, and
+            fullscreen second-screen clocks. For a general AM/PM-capable clock,
+            try the{" "}
+            <a className="ilt-content-link" href="/digital-clock">
+              digital clock
+            </a>
+            . For UTC only, open the{" "}
             <a className="ilt-content-link" href="/utc-clock">
               UTC clock
             </a>{" "}
-            shows that reference in a dedicated display.
+            or compare your device time on the{" "}
+            <a className="ilt-content-link" href="/current-local-time">
+              current local time
+            </a>{" "}
+            page.
           </p>
+        </ContentSection>
+
+        <ContentSection title="24-hour clock FAQ">
+          {FAQ_ITEMS.map((item) => (
+            <div key={item.question}>
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </div>
+          ))}
         </ContentSection>
       </SeoBand>
     </PageShell>

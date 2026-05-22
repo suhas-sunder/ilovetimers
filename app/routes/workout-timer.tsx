@@ -749,6 +749,10 @@ export default function WorkoutTimerPage({
             <a className="ilt-content-link" href="/round-timer">
               round timer
             </a>
+            . For boxing-style presets, use the{" "}
+            <a className="ilt-content-link" href="/boxing-timer">
+              boxing timer
+            </a>
             . For a plain rest countdown between sets, use the{" "}
             <a className="ilt-content-link" href="/rest-timer">
               rest timer

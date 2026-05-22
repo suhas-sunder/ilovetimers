@@ -28,6 +28,11 @@ const footerSections: TimerMenuSection[] = [
       { to: "/silent-timer", label: "Silent Timer" },
       { to: "/online-timer", label: "Online Timer" },
       { to: "/seconds-timer", label: "Seconds Timer" },
+      { to: "/1-minute-timer", label: "1 Minute Timer" },
+      { to: "/5-minute-timer", label: "5 Minute Timer" },
+      { to: "/10-minute-timer", label: "10 Minute Timer" },
+      { to: "/15-minute-timer", label: "15 Minute Timer" },
+      { to: "/30-minute-timer", label: "30 Minute Timer" },
       { to: "/interval-timer", label: "Interval Timer" },
       { to: "/millisecond-timer", label: "Millisecond Timer" },
       {

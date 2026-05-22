@@ -613,6 +613,14 @@ export default function BreakTimerPage({
             <a className="ilt-content-link" href="/pomodoro-timer">
               Pomodoro timer
             </a>
+            . For direct short break countdowns, use the{" "}
+            <a className="ilt-content-link" href="/5-minute-timer">
+              5 minute timer
+            </a>{" "}
+            or{" "}
+            <a className="ilt-content-link" href="/10-minute-timer">
+              10 minute timer
+            </a>
             . For a single work block before the break, use the{" "}
             <a className="ilt-content-link" href="/focus-session-timer">
               focus session timer

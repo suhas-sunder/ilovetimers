@@ -685,7 +685,19 @@ export default function CookingTimerPage({
               kitchen timer
             </a>
             . This cooking timer keeps broader cooking presets and kitchen
-            workflow notes available.
+            workflow notes available. For fixed kitchen checks, the{" "}
+            <a className="ilt-content-link" href="/5-minute-timer">
+              5 minute timer
+            </a>
+            ,{" "}
+            <a className="ilt-content-link" href="/10-minute-timer">
+              10 minute timer
+            </a>
+            , and{" "}
+            <a className="ilt-content-link" href="/30-minute-timer">
+              30 minute timer
+            </a>{" "}
+            open with those durations ready.
           </p>
         </ContentSection>
         <KeyboardShortcuts />

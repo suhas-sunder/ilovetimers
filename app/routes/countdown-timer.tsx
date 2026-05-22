@@ -543,7 +543,28 @@ export default function CountDownTimerPage({
             <a className="ilt-content-link" href="/seconds-timer">
               seconds timer
             </a>
-            . For cooking presets and kitchen checks, use the{" "}
+            , or open a direct{" "}
+            <a className="ilt-content-link" href="/1-minute-timer">
+              1 minute
+            </a>
+            ,{" "}
+            <a className="ilt-content-link" href="/5-minute-timer">
+              5 minute
+            </a>
+            ,{" "}
+            <a className="ilt-content-link" href="/10-minute-timer">
+              10 minute
+            </a>
+            ,{" "}
+            <a className="ilt-content-link" href="/15-minute-timer">
+              15 minute
+            </a>
+            , or{" "}
+            <a className="ilt-content-link" href="/30-minute-timer">
+              30 minute
+            </a>{" "}
+            timer when you want the duration ready immediately. For cooking
+            presets and kitchen checks, use the{" "}
             <a className="ilt-content-link" href="/kitchen-timer">
               kitchen timer
             </a>

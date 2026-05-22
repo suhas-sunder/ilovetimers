@@ -521,6 +521,15 @@ export default function SecondsTimerPage() {
 
         <ContentSection title="Related tools">
           <p>
+            For direct preset countdowns, open the{" "}
+            <a className="ilt-content-link" href="/1-minute-timer">
+              1 minute timer
+            </a>{" "}
+            or{" "}
+            <a className="ilt-content-link" href="/5-minute-timer">
+              5 minute timer
+            </a>
+            .{" "}
             Try the{" "}
             <a className="ilt-content-link" href="/reaction-time-test">
               reaction time test

@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -758,6 +759,17 @@ export default function PomodoroTimerPage({}: Route.ComponentProps) {
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection title="Related single-block timer">
+          <p>
+            If you want one half-hour countdown without Pomodoro cycles, use
+            the{" "}
+            <a className="ilt-content-link" href="/30-minute-timer">
+              30 minute timer
+            </a>
+            . This Pomodoro timer stays focused on repeated work and break
+            phases.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

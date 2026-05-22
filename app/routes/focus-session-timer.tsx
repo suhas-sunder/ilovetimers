@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -578,6 +579,20 @@ export default function FocusSessionTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ContentSection title="Related preset focus blocks">
+          <p>
+            For a fixed countdown without focus-session settings, open the{" "}
+            <a className="ilt-content-link" href="/15-minute-timer">
+              15 minute timer
+            </a>{" "}
+            or{" "}
+            <a className="ilt-content-link" href="/30-minute-timer">
+              30 minute timer
+            </a>
+            . This focus session timer stays broader, with session presets,
+            sound options, and completion guidance.
+          </p>
+        </ContentSection>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />

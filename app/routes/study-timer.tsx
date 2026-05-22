@@ -638,6 +638,14 @@ export default function StudyTimerPage({
             <a className="ilt-content-link" href="/focus-session-timer">
               focus session timer
             </a>
+            . For fixed preset blocks, use the{" "}
+            <a className="ilt-content-link" href="/15-minute-timer">
+              15 minute timer
+            </a>{" "}
+            or{" "}
+            <a className="ilt-content-link" href="/30-minute-timer">
+              30 minute timer
+            </a>
             . For a quiet room, use the{" "}
             <a className="ilt-content-link" href="/silent-timer">
               silent timer

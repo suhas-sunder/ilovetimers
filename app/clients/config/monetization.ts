@@ -139,6 +139,46 @@ export const routeMonetization = [
       "Direct-intent seconds timer route has short countdown presets, custom seconds input, sound, copy, fullscreen support, and route-specific content.",
   },
   {
+    path: "/1-minute-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Preset one-minute timer route opens ready at 1:00 with start, pause, reset, sound toggle, fullscreen support, and route-specific support content.",
+  },
+  {
+    path: "/5-minute-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Preset five-minute timer route opens ready at 5:00 with start, pause, reset, sound toggle, fullscreen support, and route-specific support content.",
+  },
+  {
+    path: "/10-minute-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Preset ten-minute timer route opens ready at 10:00 with start, pause, reset, sound toggle, fullscreen support, and route-specific support content.",
+  },
+  {
+    path: "/15-minute-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Preset fifteen-minute timer route opens ready at 15:00 with start, pause, reset, sound toggle, fullscreen support, and route-specific support content.",
+  },
+  {
+    path: "/30-minute-timer",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Preset thirty-minute timer route opens ready at 30:00 with start, pause, reset, sound toggle, fullscreen support, and route-specific support content.",
+  },
+  {
     path: "/interval-timer",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,

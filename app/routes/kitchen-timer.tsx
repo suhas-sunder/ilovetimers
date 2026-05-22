@@ -550,6 +550,18 @@ export default function KitchenTimerPage() {
             <a className="ilt-content-link" href="/pizza-timer">
               pizza timer
             </a>
+            . For direct preset checks, open the{" "}
+            <a className="ilt-content-link" href="/5-minute-timer">
+              5 minute timer
+            </a>
+            ,{" "}
+            <a className="ilt-content-link" href="/10-minute-timer">
+              10 minute timer
+            </a>
+            , or{" "}
+            <a className="ilt-content-link" href="/30-minute-timer">
+              30 minute timer
+            </a>
             . For tracking several tasks at once, try{" "}
             <a className="ilt-content-link" href="/multiple-timers">
               multiple timers

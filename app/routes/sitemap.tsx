@@ -97,6 +97,36 @@ const SECTIONS: SitemapSection[] = [
           "Run a short countdown with seconds presets, custom seconds, sound, and fullscreen support.",
       },
       {
+        title: "1 Minute Timer",
+        href: "/1-minute-timer",
+        description:
+          "Start a direct 60-second countdown that opens ready at 1:00.",
+      },
+      {
+        title: "5 Minute Timer",
+        href: "/5-minute-timer",
+        description:
+          "Start a direct five-minute countdown that opens ready at 5:00.",
+      },
+      {
+        title: "10 Minute Timer",
+        href: "/10-minute-timer",
+        description:
+          "Start a direct ten-minute countdown that opens ready at 10:00.",
+      },
+      {
+        title: "15 Minute Timer",
+        href: "/15-minute-timer",
+        description:
+          "Start a direct fifteen-minute countdown that opens ready at 15:00.",
+      },
+      {
+        title: "30 Minute Timer",
+        href: "/30-minute-timer",
+        description:
+          "Start a direct half-hour countdown that opens ready at 30:00.",
+      },
+      {
         title: "Interval Timer",
         href: "/interval-timer",
         description:

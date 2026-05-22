@@ -602,6 +602,12 @@ const SECTIONS: SitemapSection[] = [
           "Total multiple clock-in and clock-out rows with break minutes.",
       },
       {
+        title: "Weekly Timesheet Calculator",
+        href: "/weekly-timesheet-calculator",
+        description:
+          "Calculate weekly hours from fixed daily start, end, and break rows.",
+      },
+      {
         title: "Time Calculator",
         href: "/time-calculator",
         description:
@@ -630,6 +636,12 @@ const SECTIONS: SitemapSection[] = [
         href: "/business-days-calculator",
         description:
           "Count workdays between two dates while excluding Saturdays and Sundays.",
+      },
+      {
+        title: "Workdays Calculator",
+        href: "/workdays-calculator",
+        description:
+          "Count selected workdays between dates with a configurable workweek.",
       },
       {
         title: "Age Calculator",
@@ -757,10 +769,22 @@ const SECTIONS: SitemapSection[] = [
           "Count down to a specific event, deadline, launch, or special date.",
       },
       {
+        title: "Countdown To Date",
+        href: "/countdown-to-date",
+        description:
+          "Set a simple countdown to one selected local date and time.",
+      },
+      {
         title: "New Year Countdown",
         href: "/new-year-countdown",
         description:
           "Count down to the next January 1 in your local timezone.",
+      },
+      {
+        title: "Christmas Countdown",
+        href: "/christmas-countdown",
+        description:
+          "Count down to the next December 25 in your local timezone.",
       },
       {
         title: "Debt Repayment Timer",

@@ -433,6 +433,9 @@ export default function HowItWorks({
             <PillLink href={abs("/time-card-calculator")}>
               Time Card Calculator
             </PillLink>
+            <PillLink href={abs("/weekly-timesheet-calculator")}>
+              Weekly Timesheet Calculator
+            </PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
           </div>
         </div>

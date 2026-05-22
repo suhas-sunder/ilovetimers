@@ -155,6 +155,10 @@ const footerSections: TimerMenuSection[] = [
       { to: "/unix-timestamp-converter", label: "Unix Timestamp Converter" },
       { to: "/work-hours-calculator", label: "Work Hours Calculator" },
       { to: "/time-card-calculator", label: "Time Card Calculator" },
+      {
+        to: "/weekly-timesheet-calculator",
+        label: "Weekly Timesheet Calculator",
+      },
       { to: "/time-calculator", label: "Time Calculator" },
       {
         to: "/time-duration-calculator",
@@ -163,6 +167,7 @@ const footerSections: TimerMenuSection[] = [
       { to: "/date-duration-calculator", label: "Date Duration Calculator" },
       { to: "/date-calculator", label: "Date Calculator" },
       { to: "/business-days-calculator", label: "Business Days Calculator" },
+      { to: "/workdays-calculator", label: "Workdays Calculator" },
       { to: "/age-calculator", label: "Age Calculator" },
       { to: "/days-until-calculator", label: "Days Until Calculator" },
       { to: "/weekday-calculator", label: "Weekday Calculator" },
@@ -200,7 +205,9 @@ const footerSections: TimerMenuSection[] = [
       },
       { to: "/speedrun-timer", label: "Speedrun Timer" },
       { to: "/event-countdown", label: "Event Countdown" },
+      { to: "/countdown-to-date", label: "Countdown To Date" },
       { to: "/new-year-countdown", label: "New Year Countdown" },
+      { to: "/christmas-countdown", label: "Christmas Countdown" },
       { to: "/debt-repayment-timer", label: "Debt Repayment Timer" },
     ],
   },

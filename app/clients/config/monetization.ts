@@ -715,12 +715,28 @@ export const routeMonetization = [
       "Event countdown has expanded event-specific setup and sharing content.",
   },
   {
+    path: "/countdown-to-date",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Countdown to date has a simple live date/time countdown, copy/share, fullscreen support, and route-specific support content.",
+  },
+  {
     path: "/new-year-countdown",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
     contentExpansionNeeded: false,
     reason:
       "Direct-intent New Year countdown route has automatic next-January-1 targeting, copy/share, fullscreen support, and route-specific content.",
+  },
+  {
+    path: "/christmas-countdown",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Christmas countdown has automatic next-December-25 targeting, copy/share, fullscreen support, and route-specific support content.",
   },
   {
     path: "/golden-hour-clock",
@@ -907,6 +923,14 @@ export const routeMonetization = [
       "Business days calculator has result-first weekday counting, weekend exclusion settings, copy/reset shortcuts, and route-specific support content.",
   },
   {
+    path: "/workdays-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Workdays calculator has result-first selected-weekday counting, configurable workweek controls, copy/reset shortcuts, and route-specific support content.",
+  },
+  {
     path: "/age-calculator",
     eligibility: "eligible-tool-page",
     allowedSlots: FULL_TOOL_AD_SLOTS,
@@ -977,6 +1001,14 @@ export const routeMonetization = [
     contentExpansionNeeded: false,
     reason:
       "Time card calculator has result-first multi-row clock-in and clock-out totals, break subtraction, per-row totals, add/remove rows, copy/reset actions, and route-specific support content.",
+  },
+  {
+    path: "/weekly-timesheet-calculator",
+    eligibility: "eligible-tool-page",
+    allowedSlots: FULL_TOOL_AD_SLOTS,
+    contentExpansionNeeded: false,
+    reason:
+      "Weekly timesheet calculator has result-first fixed daily rows, break subtraction, per-day totals, copy/reset actions, and route-specific support content.",
   },
   {
     path: "/billable-hours-calculator",

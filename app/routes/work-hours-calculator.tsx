@@ -574,6 +574,10 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
             <a className="ilt-content-link" href="/time-card-calculator">
               time card calculator
             </a>
+            . For a fixed Monday-through-Sunday row layout, use the{" "}
+            <a className="ilt-content-link" href="/weekly-timesheet-calculator">
+              weekly timesheet calculator
+            </a>
             .
           </p>
         </ContentSection>

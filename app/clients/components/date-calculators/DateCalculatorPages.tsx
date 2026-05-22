@@ -1052,6 +1052,10 @@ export function BusinessDaysCalculatorPage() {
             <a className="ilt-content-link" href="/weekday-calculator">
               weekday calculator
             </a>
+            . For a configurable workweek, use the{" "}
+            <a className="ilt-content-link" href="/workdays-calculator">
+              workdays calculator
+            </a>
             . To find ISO week numbers, use the{" "}
             <a className="ilt-content-link" href="/week-number-calculator">
               week number calculator

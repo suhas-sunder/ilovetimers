@@ -641,6 +641,10 @@ export function TimeCardCalculatorPage() {
             <a className="ilt-content-link" href="/time-duration-calculator">
               time duration calculator
             </a>
+            . For a fixed day-by-day week layout, use the{" "}
+            <a className="ilt-content-link" href="/weekly-timesheet-calculator">
+              weekly timesheet calculator
+            </a>
             .
           </p>
         </ContentSection>

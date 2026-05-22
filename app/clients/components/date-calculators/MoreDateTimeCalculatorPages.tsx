@@ -1728,6 +1728,10 @@ export function DaysUntilCalculatorPage({ initialToday }: { initialToday: string
             <a className="ilt-content-link" href="/event-countdown">
               event countdown
             </a>
+            . For a simple date and time countdown, use{" "}
+            <a className="ilt-content-link" href="/countdown-to-date">
+              countdown to date
+            </a>
             . For all days between dates, use the{" "}
             <a className="ilt-content-link" href="/date-duration-calculator">
               date duration calculator
@@ -1743,6 +1747,10 @@ export function DaysUntilCalculatorPage({ initialToday }: { initialToday: string
             . For birthday dates, use the{" "}
             <a className="ilt-content-link" href="/birthday-countdown">
               birthday countdown
+            </a>
+            . For December 25, use the{" "}
+            <a className="ilt-content-link" href="/christmas-countdown">
+              Christmas countdown
             </a>
             . For date and time targets, use the{" "}
             <a className="ilt-content-link" href="/hours-until-calculator">
@@ -2054,6 +2062,10 @@ export function BirthdayCountdownPage({ initialToday }: { initialToday: string }
             . For January 1, use the{" "}
             <a className="ilt-content-link" href="/new-year-countdown">
               New Year countdown
+            </a>
+            . For December 25, use the{" "}
+            <a className="ilt-content-link" href="/christmas-countdown">
+              Christmas countdown
             </a>
             .
           </p>

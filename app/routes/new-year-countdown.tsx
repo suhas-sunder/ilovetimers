@@ -417,6 +417,10 @@ export default function NewYearCountdownPage({
             <a className="ilt-content-link" href="/days-until-calculator">
               days until calculator
             </a>
+            . For December 25, use the{" "}
+            <a className="ilt-content-link" href="/christmas-countdown">
+              Christmas countdown
+            </a>
             .
           </p>
         </ContentSection>

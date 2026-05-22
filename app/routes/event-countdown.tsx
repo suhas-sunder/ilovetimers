@@ -992,6 +992,15 @@ export default function EventCountdownPage({
               New Year countdown
             </a>{" "}
             for an automatic local-time countdown that rolls forward each year.
+            For a simpler one-date setup without saved event management, use{" "}
+            <a className="ilt-content-link" href="/countdown-to-date">
+              countdown to date
+            </a>
+            . For a December 25 display, use the{" "}
+            <a className="ilt-content-link" href="/christmas-countdown">
+              Christmas countdown
+            </a>
+            .{" "}
             To count days between two dates, use the{" "}
             <a className="ilt-content-link" href="/date-duration-calculator">
               date duration calculator

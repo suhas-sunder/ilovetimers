@@ -603,11 +603,25 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     description: "Countdown to a specific date and time.",
   },
   {
+    title: "Countdown To Date",
+    href: "/countdown-to-date",
+    category: "Events",
+    description: "Set a simple countdown to one selected date and time.",
+    keywords: "countdown to date date countdown countdown to any date",
+  },
+  {
     title: "New Year Countdown",
     href: "/new-year-countdown",
     category: "Events",
     description: "Count down to the next January 1 in your local timezone.",
     keywords: "new year countdown countdown to new year january 1",
+  },
+  {
+    title: "Christmas Countdown",
+    href: "/christmas-countdown",
+    category: "Events",
+    description: "Count down to the next December 25 in your local timezone.",
+    keywords: "christmas countdown days until christmas countdown to christmas",
   },
   {
     title: "Reaction Time Test",
@@ -659,6 +673,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     keywords: "time card calculator time clock calculator hours total",
   },
   {
+    title: "Weekly Timesheet Calculator",
+    href: "/weekly-timesheet-calculator",
+    category: "Calculators",
+    description: "Total weekly day-by-day start, end, and break rows.",
+    keywords: "weekly timesheet calculator weekly time card weekly hours",
+  },
+  {
     title: "Time Calculator",
     href: "/time-calculator",
     category: "Calculators",
@@ -691,6 +712,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     category: "Calculators",
     description: "Count weekdays between dates while excluding weekends.",
     keywords: "business days calculator workdays weekdays between dates",
+  },
+  {
+    title: "Workdays Calculator",
+    href: "/workdays-calculator",
+    category: "Calculators",
+    description: "Count selected workdays between dates with a custom workweek.",
+    keywords: "workdays calculator work days between dates custom workweek",
   },
   {
     title: "Age Calculator",

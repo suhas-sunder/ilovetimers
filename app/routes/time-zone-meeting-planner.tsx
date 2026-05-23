@@ -335,7 +335,7 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
           {displayCandidate ? (
             <div className="order-20 mt-5 grid w-full max-w-5xl gap-2 text-left sm:grid-cols-2 lg:grid-cols-3">
               {displayCandidate.zoneTimes.map((entry) => (
-                <div key={entry.zone} className="ilt-surface-muted px-3 py-2">
+                <div key={entry.zone} className="px-2 py-1">
                   <div className="text-xs font-bold uppercase tracking-widest text-[var(--ilt-text-muted)]">
                     {entry.label}
                   </div>
@@ -355,7 +355,7 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
           title="Meeting details"
           description="Date matters because daylight saving rules can change across the year."
         >
-          <SettingRow className="sm:grid-cols-2 lg:grid-cols-4">
+          <SettingRow className="sm:grid-cols-2">
             <Field
               label="Meeting date"
               type="date"
@@ -373,6 +373,14 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
                 setDurationMinutes(clamp(Number(event.currentTarget.value || 15), 15, 720))
               }
             />
+          </SettingRow>
+        </SettingGroup>
+
+        <SettingGroup
+          title="Work-hour window"
+          description="Use local 24-hour times for the regular work window you want to compare."
+        >
+          <SettingRow className="sm:grid-cols-2">
             <Field
               label="Workday start hour"
               type="number"
@@ -426,23 +434,23 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
             </div>
           </SettingRow>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="grid gap-2 sm:grid-cols-2">
             {zones.map((zone) => (
-              <span
+              <div
                 key={zone}
-                className="ilt-inline-pill inline-flex items-center gap-2"
+                className="flex items-center justify-between gap-3 px-1 py-1 text-sm font-semibold text-[var(--ilt-text-primary)]"
               >
-                {zoneLabel(zone)}
+                <span className="min-w-0 truncate">{zoneLabel(zone)}</span>
                 <button
                   type="button"
-                  className="ilt-focus-ring cursor-pointer rounded-[var(--ilt-radius-control)] px-1 text-[var(--ilt-text-primary)]"
+                  className="ilt-focus-ring cursor-pointer rounded-[var(--ilt-radius-control)] px-2 py-1 text-xs text-[var(--ilt-text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={() => removeZone(zone)}
                   disabled={zones.length <= 1}
                   aria-label={`Remove ${zoneLabel(zone)}`}
                 >
-                  x
+                  Remove
                 </button>
-              </span>
+              </div>
             ))}
           </div>
         </SettingGroup>
@@ -453,7 +461,7 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
         >
           <div className="grid gap-3">
             {candidates.slice(0, 6).map((candidate) => (
-              <div key={candidate.utcMs} className="ilt-surface-muted px-3 py-3">
+              <div key={candidate.utcMs} className="px-1 py-3">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                   <div className="font-mono text-lg font-extrabold text-[var(--ilt-text-primary)]">
                     {candidate.utcLabel}

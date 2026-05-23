@@ -328,46 +328,6 @@ function WorldClockCard({ initialNowISO }: { initialNowISO: string }) {
       />
 
       <div className={isFs ? "flex h-full flex-col" : "timer-list-stack flex h-full flex-col"}>
-        {/* Header (normal only) */}
-        {!isFs && (
-          <div className="hidden">
-
-            <div className="ml-auto flex flex-wrap items-center gap-3">
-              <label className="inline-flex cursor-pointer items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
-                <input
-                  className="cursor-pointer"
-                  type="checkbox"
-                  checked={use24h}
-                  onChange={(e) => setUse24h(e.target.checked)}
-                />
-                24-hour
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
-                <input
-                  className="cursor-pointer"
-                  type="checkbox"
-                  checked={showSeconds}
-                  onChange={(e) => setShowSeconds(e.target.checked)}
-                />
-                Seconds
-              </label>
-
-              <Btn
-                kind="ghost"
-                onClick={() => void fullscreen.toggle()}
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-
-              <Btn kind="ghost" onClick={copy} className="py-2">
-                {copied ? "Copied" : "Copy"}
-              </Btn>
-            </div>
-          </div>
-        )}
-
         {/* Display */}
         <div
           className={[
@@ -381,68 +341,6 @@ function WorldClockCard({ initialNowISO }: { initialNowISO: string }) {
           }}
           aria-live="polite"
         >
-          {/* Top row: search + local time */}
-          <div className="order-2 mt-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="w-full lg:max-w-xl">
-              <div className="ilt-content-label">
-                Cities and time zones
-              </div>
-              <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
-                Shortcuts: F fullscreen · T 24-hour · S seconds · C copy · R
-                reset · X clear
-              </p>
-
-              <label className="mt-4 block text-sm font-semibold text-[var(--ilt-text-primary)]">
-                Search
-              </label>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Type: London, Tokyo, America, Europe..."
-                className="mt-2 w-full ilt-input-control px-4 py-3 text-sm font-semibold placeholder:text-[var(--ilt-text-muted)]"
-              />
-            </div>
-
-            <div className="timer-list-panel ilt-surface-card px-4 py-3">
-              <div className="ilt-content-label">
-                Your local time
-              </div>
-              <div className="mt-2 font-mono text-3xl font-extrabold tracking-widest text-[var(--ilt-text-primary)]">
-                {rows.localText}
-              </div>
-              <div className="mt-1 ilt-helper-text font-semibold">
-                {statusLabel}
-              </div>
-            </div>
-          </div>
-
-          {/* Popular chips */}
-          <div className="order-3 mt-5">
-            <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Popular</div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {filteredPopular.map((c) => (
-                <Chip
-                  key={c.id}
-                  active={selectedIds.includes(c.id)}
-                  onClick={() => toggleCity(c.id)}
-                  title={`${c.timeZone}${c.note ? ` (${c.note})` : ""}`}
-                >
-                  {c.name}
-                </Chip>
-              ))}
-            </div>
-          </div>
-
-          {/* Action row */}
-          <div className="hidden">
-            <Btn kind="ghost" onClick={resetDefault} className="py-2">
-              Reset
-            </Btn>
-            <Btn kind="ghost" onClick={clearAll} className="py-2">
-              Clear
-            </Btn>
-          </div>
-
           {/* Grid */}
           <div
             className={[
@@ -452,8 +350,20 @@ function WorldClockCard({ initialNowISO }: { initialNowISO: string }) {
                 : "md:grid-cols-2 xl:grid-cols-3",
             ].join(" ")}
           >
+            <div className="timer-list-row p-5">
+              <div className="font-mono text-4xl font-extrabold tracking-widest text-[var(--ilt-text-primary)]">
+                {rows.localText}
+              </div>
+              <div className="mt-3 text-lg font-extrabold text-[var(--ilt-text-primary)]">
+                Your local time
+              </div>
+              <div className="mt-1 ilt-helper-text font-semibold">
+                {statusLabel}
+              </div>
+            </div>
+
             {rows.items.length === 0 ? (
-              <div className="timer-list-empty ilt-surface-card p-5">
+              <div className="timer-list-empty p-5">
                 <div className="text-lg font-extrabold text-[var(--ilt-text-primary)]">
                   No cities selected
                 </div>
@@ -466,7 +376,7 @@ function WorldClockCard({ initialNowISO }: { initialNowISO: string }) {
                 <div
                   key={r.id}
                   className={[
-                    "timer-list-row ilt-surface-card p-5",
+                    "timer-list-row p-5",
                     isFs ? "backdrop-blur" : "",
                   ].join(" ")}
                 >
@@ -498,9 +408,6 @@ function WorldClockCard({ initialNowISO }: { initialNowISO: string }) {
                     </Btn>
                   </div>
 
-                  <div className="mt-3 ilt-helper-text">
-                    Zone label: {safeZoneLabel(r.timeZone)}
-                  </div>
                 </div>
               ))
             )}
@@ -509,6 +416,33 @@ function WorldClockCard({ initialNowISO }: { initialNowISO: string }) {
 
         {!isFs && (
           <>
+            <SettingGroup
+              title="Cities and time zones"
+              description="Search, add, or remove cities. Selected city rows update live above."
+            >
+              <SettingRow>
+                <Field
+                  label="Search"
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Type: London, Tokyo, America, Europe..."
+                />
+              </SettingRow>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {filteredPopular.map((c) => (
+                  <Chip
+                    key={c.id}
+                    active={selectedIds.includes(c.id)}
+                    onClick={() => toggleCity(c.id)}
+                    title={`${c.timeZone}${c.note ? ` (${c.note})` : ""}`}
+                  >
+                    {c.name}
+                  </Chip>
+                ))}
+              </div>
+            </SettingGroup>
+
             <SettingGroup title="World clock settings">
               <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
                 <Toggle
@@ -553,7 +487,7 @@ function WorldClockCard({ initialNowISO }: { initialNowISO: string }) {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="ilt-helper-text sm:text-sm">
-              F fullscreen · T 24-hour · S seconds · C copy · R reset · X clear
+              F fullscreen / T 24-hour / S seconds / C copy / R reset / X clear
             </div>
             <div className="ilt-helper-text font-semibold">
               {statusLabel}

@@ -886,7 +886,7 @@ function WorldClockDiscoveryTool({
               </Button>
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              {statusLabel} / No ads appear in fullscreen
+              F fullscreen / C copy / H 12-24 hour / R reset / {statusLabel}
             </div>
           </div>
         </FullscreenBottomBar>

@@ -14,6 +14,7 @@ import {
   SecondaryActionRow,
   SettingGroup,
   SettingRow,
+  ShortcutHint,
   ToolFrame as Card,
   ToolHero,
   Toggle,
@@ -744,62 +745,7 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
 
       <div className={isFs ? "flex h-full flex-col" : "timer-result-stack flex h-full flex-col"}>
         {!isFs && (
-          <SecondaryActionRow className="timer-result-actions">
-            <Toggle
-              label="Seconds"
-              checked={showSeconds}
-              onCheckedChange={(next) => {
-                setShowSeconds(next);
-                setTimeStr((cur) => {
-                  const ss = pad2(new Date().getSeconds());
-                  if (next) {
-                    if (/^\d{2}:\d{2}$/.test(cur)) return `${cur}:${ss}`;
-                    return cur;
-                  }
-                  if (/^\d{2}:\d{2}:\d{2}$/.test(cur))
-                    return cur.slice(0, 5);
-                  return cur;
-                });
-              }}
-            />
-
-            <Btn kind="ghost" onClick={swap} className="py-2" title="Swap (S)">
-              Swap
-            </Btn>
-            <Btn kind="ghost" onClick={setNow} className="py-2" title="Now (N)">
-              Now
-            </Btn>
-            <Btn
-              kind="ghost"
-              onClick={onCopy}
-              className="py-2"
-              disabled={!preview}
-              title="Copy (C)"
-            >
-              Copy
-            </Btn>
-            <Btn
-              kind="ghost"
-              onClick={onCopyLink}
-              className="py-2"
-              disabled={!shareUrl}
-              title="Share link"
-            >
-              Share
-            </Btn>
-            <Btn
-              kind="ghost"
-              onClick={() => void fullscreen.toggle()}
-              className="py-2"
-              title="Fullscreen (F)"
-            >
-              Fullscreen
-            </Btn>
-          </SecondaryActionRow>
-        )}
-
-        {!isFs && (
-          <PresetGroup>
+          <PresetGroup title="Common timezone pairs">
             {quickPairs.map((p) => (
               <Chip
                 key={p.label}
@@ -869,11 +815,72 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
           </SettingGroup>
         )}
 
+        {!isFs && (
+          <>
+            <SecondaryActionRow className="timer-result-actions">
+              <Toggle
+                label="Seconds"
+                checked={showSeconds}
+                onCheckedChange={(next) => {
+                  setShowSeconds(next);
+                  setTimeStr((cur) => {
+                    const ss = pad2(new Date().getSeconds());
+                    if (next) {
+                      if (/^\d{2}:\d{2}$/.test(cur)) return `${cur}:${ss}`;
+                      return cur;
+                    }
+                    if (/^\d{2}:\d{2}:\d{2}$/.test(cur))
+                      return cur.slice(0, 5);
+                    return cur;
+                  });
+                }}
+              />
+
+              <Btn kind="ghost" onClick={swap} className="py-2" title="Swap (S)">
+                Swap
+              </Btn>
+              <Btn kind="ghost" onClick={setNow} className="py-2" title="Now (N)">
+                Now
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={onCopy}
+                className="py-2"
+                disabled={!preview}
+                title="Copy (C)"
+              >
+                {copied === "Copied" ? "Copied" : "Copy"}
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={onCopyLink}
+                className="py-2"
+                disabled={!shareUrl}
+                title="Share link"
+              >
+                {copied === "Link copied" ? "Link copied" : "Share"}
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+                title="Fullscreen (F)"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint className="timer-result-shortcut">
+              Shortcuts: S swap / N now / C copy / F fullscreen
+            </ShortcutHint>
+          </>
+        )}
+
         {/* Display */}
         <div
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-start rounded-lg border bg-slate-50 text-[var(--ilt-text-primary)]",
-            invalidInput ? "border-rose-200 bg-rose-50" : "border-slate-200",
+            "timer-display-surface relative mt-4 flex flex-col items-center justify-start text-[var(--ilt-text-primary)]",
+            invalidInput ? "bg-[var(--ilt-bg-subtle)]" : "",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
@@ -947,16 +954,6 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                     {preview.iso}
                   </div>
 
-                  <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="ilt-helper-text font-semibold">
-                      Shortcuts: S swap · N now · C copy · F fullscreen
-                    </div>
-                    {copied && (
-                      <div className="text-xs font-extrabold text-[var(--ilt-text-primary)]">
-                        {copied}
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
             )}
@@ -969,7 +966,7 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
           <FullscreenBottomBar show={isFs}>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="ilt-helper-text sm:text-sm">
-                S swap · N now · C copy · F fullscreen · Esc exit
+                S swap / N now / C copy / F fullscreen / Esc exit
               </div>
             </div>
           </FullscreenBottomBar>

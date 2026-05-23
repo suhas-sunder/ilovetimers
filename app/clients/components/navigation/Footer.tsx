@@ -25,6 +25,9 @@ const footerSections: TimerMenuSection[] = [
     title: "Core Timers",
     links: [
       { to: "/countdown-timer", label: "Countdown Timer" },
+      { to: "/count-up-timer", label: "Count Up Timer" },
+      { to: "/stopwatch", label: "Stopwatch" },
+      { to: "/pomodoro-timer", label: "Pomodoro Timer" },
       { to: "/online-timer", label: "Online Timer" },
       { to: "/fullscreen-timer", label: "Fullscreen Timer" },
       { to: "/silent-timer", label: "Silent Timer" },
@@ -32,8 +35,6 @@ const footerSections: TimerMenuSection[] = [
       { to: "/alarm-timer", label: "Alarm Timer" },
       { to: "/online-alarm-clock", label: "Online Alarm Clock" },
       { to: "/multiple-timers", label: "Multiple Timers" },
-      { to: "/count-up-timer", label: "Count Up Timer" },
-      { to: "/meeting-count-up-timer", label: "Meeting Count Up Timer" },
       { to: "/millisecond-timer", label: "Millisecond Timer" },
       { to: "/interval-timer", label: "Interval Timer" },
     ],
@@ -52,7 +53,6 @@ const footerSections: TimerMenuSection[] = [
   {
     title: "Stopwatch Tools",
     links: [
-      { to: "/stopwatch", label: "Stopwatch" },
       {
         to: "/stopwatch-with-milliseconds",
         label: "Stopwatch With Milliseconds",
@@ -63,25 +63,25 @@ const footerSections: TimerMenuSection[] = [
   {
     title: "Focus & Productivity",
     links: [
-      { to: "/pomodoro-timer", label: "Pomodoro Timer" },
-      { to: "/break-timer", label: "Break Timer" },
-      { to: "/study-timer", label: "Study Timer" },
       { to: "/focus-session-timer", label: "Focus Session Timer" },
       { to: "/productivity-timer", label: "Productivity Timer" },
-      { to: "/presentation-timer", label: "Presentation Timer" },
-      { to: "/speech-timer", label: "Speech Timer" },
-      { to: "/classroom-timer", label: "Classroom Timer" },
+      { to: "/study-timer", label: "Study Timer" },
+      { to: "/break-timer", label: "Break Timer" },
       { to: "/meeting-timer", label: "Meeting Timer" },
+      { to: "/meeting-count-up-timer", label: "Meeting Count Up Timer" },
+      { to: "/presentation-timer", label: "Presentation Timer" },
+      { to: "/classroom-timer", label: "Classroom Timer" },
       { to: "/meeting-agenda-timer", label: "Meeting Agenda Timer" },
+      { to: "/speech-timer", label: "Speech Timer" },
       { to: "/exam-timer", label: "Exam Timer" },
     ],
   },
   {
     title: "Health & Wellness",
     links: [
-      { to: "/meditation-timer", label: "Meditation Timer" },
-      { to: "/breathing-timer", label: "Breathing Timer" },
       { to: "/sleep-timer", label: "Sleep Timer" },
+      { to: "/breathing-timer", label: "Breathing Timer" },
+      { to: "/meditation-timer", label: "Meditation Timer" },
       { to: "/stretch-timer", label: "Stretch Timer" },
       {
         to: "/drink-water-reminder-timer",
@@ -92,15 +92,15 @@ const footerSections: TimerMenuSection[] = [
   {
     title: "Fitness & Training",
     links: [
-      { to: "/hiit-timer", label: "HIIT Timer" },
       { to: "/workout-timer", label: "Workout Timer" },
-      { to: "/rest-timer", label: "Rest Timer" },
+      { to: "/hiit-timer", label: "HIIT Timer" },
       { to: "/tabata-timer", label: "Tabata Timer" },
       { to: "/emom-timer", label: "EMOM Timer" },
       { to: "/amrap-timer", label: "AMRAP Timer" },
       { to: "/round-timer", label: "Round Timer" },
-      { to: "/boxing-timer", label: "Boxing Timer" },
       { to: "/pace-timer", label: "Pace Timer" },
+      { to: "/rest-timer", label: "Rest Timer" },
+      { to: "/boxing-timer", label: "Boxing Timer" },
     ],
   },
   {
@@ -181,7 +181,7 @@ const footerSections: TimerMenuSection[] = [
     ],
   },
   {
-    title: "Events & Countdowns",
+    title: "Events & Tracking",
     links: [
       { to: "/event-countdown", label: "Event Countdown" },
       { to: "/countdown-to-date", label: "Countdown To Date" },
@@ -219,7 +219,7 @@ const footerSections: TimerMenuSection[] = [
     ],
   },
   {
-    title: "Work, Billing & Date Tools",
+    title: "Finance, Work & Calculators",
     links: [
       { to: "/work-hours-calculator", label: "Work Hours Calculator" },
       { to: "/time-card-calculator", label: "Time Card Calculator" },
@@ -279,13 +279,13 @@ function buildFooterJsonLd(baseUrl = SITE_URL) {
   };
 }
 
-function FooterSection({ title, links }: TimerMenuSection) {
+function FooterSectionDesktop({ title, links }: TimerMenuSection) {
   return (
-    <section>
-      <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">
+    <div>
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-sky-400">
         {title}
       </h3>
-      <ul className="mt-3 grid gap-2">
+      <ul className="mt-3 space-y-2">
         {links.map((link) => (
           <li key={link.to}>
             <Link to={link.to} className={footerLinkClass}>
@@ -294,55 +294,111 @@ function FooterSection({ title, links }: TimerMenuSection) {
           </li>
         ))}
       </ul>
-    </section>
+    </div>
+  );
+}
+
+function FooterSectionMobile({ title, links }: TimerMenuSection) {
+  return (
+    <details className="rounded-xl border border-slate-700/60 bg-slate-800 px-4 py-3">
+      <summary className="cursor-pointer list-none">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-sky-400">{title}</span>
+          <span className="text-slate-400" aria-hidden="true">
+            v
+          </span>
+        </div>
+      </summary>
+
+      <div className="mt-3 grid grid-cols-1 gap-2">
+        {links.map((link) => (
+          <Link key={link.to} to={link.to} className={footerMobileRowClass}>
+            {link.label}
+          </Link>
+        ))}
+      </div>
+    </details>
   );
 }
 
 const footerLinkClass =
-  "ilt-focus-ring inline-flex cursor-pointer rounded-sm text-sm font-medium leading-5 text-slate-300 transition-colors hover:text-cyan-100";
+  "cursor-pointer text-sm text-slate-300 transition hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
+
+const footerMobileRowClass =
+  "cursor-pointer rounded-lg border border-slate-700/60 bg-slate-700/40 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
 
 const footerPillClass =
-  "ilt-focus-ring inline-flex cursor-pointer items-center rounded-full bg-slate-800/80 px-3 py-1.5 text-sm font-semibold text-slate-100 transition-colors hover:bg-slate-700 hover:text-white";
+  "cursor-pointer rounded-full border border-slate-700/60 bg-slate-700/40 px-3 py-1.5 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
+
+const sectionOrder = [
+  "Core Timers",
+  "Focus & Productivity",
+  "Health & Wellness",
+  "Fitness & Training",
+  "Cooking & Food",
+  "Clocks & Time",
+  "Events & Tracking",
+  "Finance, Work & Calculators",
+  "Preset Timers",
+  "Stopwatch Tools",
+  "Analog & Specialty Clocks",
+  "World Time & Time Zones",
+  "Calculators & Converters",
+  "Games, Rhythm & Interaction",
+];
+
+function orderedDirectorySections() {
+  const order = new Map(sectionOrder.map((title, index) => [title, index]));
+  return footerSections
+    .filter((section) => section.title !== "Site")
+    .slice()
+    .sort(
+      (a, b) =>
+        (order.get(a.title) ?? Number.MAX_SAFE_INTEGER) -
+        (order.get(b.title) ?? Number.MAX_SAFE_INTEGER),
+    );
+}
 
 export default function Footer() {
   const year = new Date().getFullYear();
   const jsonLd = buildFooterJsonLd(SITE_URL);
+  const directorySections = orderedDirectorySections();
 
   return (
-    <footer
-      className="bg-[#0f172a] px-[var(--ilt-page-x)] py-10 text-slate-100"
-      data-nosnippet
-    >
+    <footer className="bg-slate-800" data-nosnippet>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-[112rem]">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+      <div className="mx-auto max-w-7xl px-4 py-10">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 to="/"
-                className="ilt-focus-ring inline-flex cursor-pointer rounded-sm text-base font-bold tracking-tight text-white transition-colors hover:text-cyan-100"
+                className="cursor-pointer text-base font-semibold text-white transition hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
               >
-                iLoveTimers.com
+                i<span className="text-amber-500">💛</span>Timers
               </Link>
-              <span className="rounded-full bg-amber-400/10 px-2.5 py-1 text-xs font-semibold text-amber-300">
+              <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-400">
                 Free time tools
               </span>
             </div>
 
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+            <p
+              id="all-timers"
+              className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300"
+            >
               Free online timers, stopwatches, clocks, countdowns, interval
-              timers, and time tools built for quick setup, large displays, and
-              predictable keyboard control.
+              timers, and time tools. Built for quick setup, fullscreen
+              visibility, and clean keyboard control.
             </p>
           </div>
 
           <nav
             aria-label="Popular footer links"
-            className="flex flex-wrap gap-2 lg:justify-end"
+            className="flex flex-wrap gap-2 sm:justify-end"
           >
             <Link to="/about" className={footerPillClass}>
               About
@@ -359,41 +415,48 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="mt-8 h-px bg-slate-700/70" />
+        <div className="mt-8 border-t border-slate-700/60" />
 
-        <div className="mt-8">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-cyan-300">
-            Timer Tools Directory
+        <div className="mt-8 hidden lg:block">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-sky-400">
+            Timer tools directory
           </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-            Browse every current timer, clock, stopwatch, countdown,
-            calculator, converter, and time tool.
-          </p>
+
+          <div className="mt-5 grid gap-8 lg:grid-cols-4">
+            {directorySections.map((section) => (
+              <FooterSectionDesktop key={section.title} {...section} />
+            ))}
+          </div>
         </div>
 
-        <nav
-          aria-label="Global footer menu"
-          className="mt-6 grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5"
-        >
-          {footerSections.map((section) => (
-            <FooterSection key={section.title} {...section} />
-          ))}
-        </nav>
+        <div className="mt-8 lg:hidden">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-sky-400">
+            Tools directory
+          </h2>
+          <p className="mt-2 text-sm text-slate-400">Tap a section to expand.</p>
 
-        <div className="mt-10 h-px bg-slate-700/70" />
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {directorySections.map((section) => (
+              <FooterSectionMobile key={section.title} {...section} />
+            ))}
+          </div>
+        </div>
 
-        <div className="mt-6 flex flex-col gap-3 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-2 border-t border-slate-700/60 pt-6 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            Copyright {year}{" "}
-            <span className="font-semibold text-white">
-              iLoveTimers.com
-            </span>
+            © {year} <span className="font-semibold text-white">i💛Timers</span>
           </div>
 
           <nav
             aria-label="Legal and site links"
-            className="flex flex-wrap gap-x-4 gap-y-2"
+            className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium"
           >
+            <Link to="/free-online-timers" className={footerLinkClass}>
+              Free Online Timers
+            </Link>
+            <Link to="/about" className={footerLinkClass}>
+              About
+            </Link>
             <Link to="/sitemap" className={footerLinkClass}>
               Sitemap
             </Link>

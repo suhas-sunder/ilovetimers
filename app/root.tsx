@@ -16,6 +16,12 @@ import RelatedSites from "./clients/components/navigation/RelatedSites";
 import { PHProvider } from "./provider";
 import Footer from "./clients/components/navigation/Footer";
 import {
+  ListIcon,
+  MoonIcon,
+  SearchIcon,
+  ThemeSunIcon,
+} from "./clients/assets/svg/Icons";
+import {
   THEME_STORAGE_KEY,
   useThemeMode,
 } from "./clients/hooks/useThemeMode";
@@ -889,39 +895,19 @@ function ThemeControl({ className = "" }: { className?: string }) {
     >
       <span className="sr-only">{label}</span>
       {isDark ? (
-        <svg
+        <ThemeSunIcon
+          size={16}
+          title={undefined}
           aria-hidden="true"
-          viewBox="0 0 24 24"
           className="h-4 w-4"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-        >
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2" />
-          <path d="M12 20v2" />
-          <path d="M4.93 4.93l1.41 1.41" />
-          <path d="M17.66 17.66l1.41 1.41" />
-          <path d="M2 12h2" />
-          <path d="M20 12h2" />
-          <path d="M6.34 17.66l-1.41 1.41" />
-          <path d="M19.07 4.93l-1.41 1.41" />
-        </svg>
+        />
       ) : (
-        <svg
+        <MoonIcon
+          size={16}
+          title={undefined}
           aria-hidden="true"
-          viewBox="0 0 24 24"
           className="h-4 w-4"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-        >
-          <path d="M20.99 13.17A8.5 8.5 0 1 1 10.83 3.01 7 7 0 0 0 20.99 13.17Z" />
-        </svg>
+        />
       )}
     </button>
   );
@@ -996,14 +982,22 @@ function TimerDirectoryMenu({
         >
           Find a timer
         </label>
-        <input
-          id={searchId}
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search clocks, workouts, cooking, focus..."
-          className="ilt-focus-ring w-full rounded-2xl bg-[var(--ilt-bg-input)] px-4 py-3 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[inset_0_0_0_1px_var(--ilt-border-subtle)] transition placeholder:text-[var(--ilt-text-muted)] focus:bg-[var(--ilt-bg-input)]"
-        />
+        <div className="relative">
+          <SearchIcon
+            size={16}
+            title={undefined}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ilt-text-muted)]"
+          />
+          <input
+            id={searchId}
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search clocks, workouts, cooking, focus..."
+            className="ilt-focus-ring w-full rounded-2xl bg-[var(--ilt-bg-input)] py-3 pl-10 pr-4 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[inset_0_0_0_1px_var(--ilt-border-subtle)] transition placeholder:text-[var(--ilt-text-muted)] focus:bg-[var(--ilt-bg-input)]"
+          />
+        </div>
       </div>
 
       <div className={resultsClass}>
@@ -1181,6 +1175,12 @@ function SiteHeader() {
                 aria-haspopup="dialog"
                 className={`${desktopLink} flex items-center gap-1`}
               >
+                <ListIcon
+                  size={16}
+                  title={undefined}
+                  aria-hidden="true"
+                  className="h-4 w-4"
+                />
                 More
                 <span
                   aria-hidden="true"

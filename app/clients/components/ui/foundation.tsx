@@ -1,4 +1,4 @@
-import { Children } from "react";
+import { Children, cloneElement, isValidElement } from "react";
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
@@ -9,6 +9,27 @@ import type {
   SelectHTMLAttributes,
 } from "react";
 import { useLocation } from "react-router";
+import {
+  CalendarIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  CopyIcon,
+  DownloadIcon,
+  ListIcon,
+  OpenInNewIcon,
+  PauseIcon,
+  PlayIcon,
+  PrintIcon,
+  RefreshIcon,
+  SaveIcon,
+  SearchIcon,
+  ShareIcon,
+  StopIcon,
+  SwapArrowsIcon,
+  TrashIcon,
+  TuneIcon,
+  VolumeIcon,
+} from "~/clients/assets/svg/Icons";
 import { getRouteMonetization } from "~/clients/config/monetization";
 import { cx } from "./utils";
 
@@ -401,16 +422,21 @@ export function SeoBand({
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonKind = "solid" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
+type ButtonIconOptions = {
+  leadingIcon?: ReactNode;
+  trailingIcon?: ReactNode;
+  autoIcon?: boolean;
+};
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   kind?: ButtonKind;
   size?: ButtonSize;
-};
+} & ButtonIconOptions;
 type ButtonLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   variant?: ButtonVariant;
   kind?: ButtonKind;
   size?: ButtonSize;
-};
+} & ButtonIconOptions;
 export type AdSlotType =
   | "top-banner"
   | "below-header-banner"
@@ -435,11 +461,82 @@ const buttonSizes: Record<ButtonSize, string> = {
   lg: "min-h-12 px-5 text-base",
 };
 
+type IconElementProps = {
+  className?: string;
+  size?: number | string;
+  title?: string;
+  "aria-hidden"?: boolean | "true" | "false";
+  focusable?: boolean | "true" | "false";
+};
+
+function buttonText(children: ReactNode) {
+  const parts = Children.toArray(children);
+  if (parts.length === 0) return "";
+  if (parts.some((part) => typeof part !== "string" && typeof part !== "number")) {
+    return "";
+  }
+  return parts.join("").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function autoButtonIcon(children: ReactNode) {
+  const label = buttonText(children);
+  if (!label) return null;
+
+  if (label === "start" || label.startsWith("start ")) return <PlayIcon />;
+  if (label === "resume" || label.startsWith("resume ")) return <PlayIcon />;
+  if (label === "pause" || label.startsWith("pause ")) return <PauseIcon />;
+  if (label === "stop" || label.startsWith("stop ")) return <StopIcon />;
+  if (label === "reset" || label.startsWith("reset ")) return <RefreshIcon />;
+  if (label === "restart" || label.startsWith("restart ")) return <RefreshIcon />;
+  if (label === "copy" || label.startsWith("copy ")) return <CopyIcon />;
+  if (label === "copied") return <CheckCircleIcon />;
+  if (label === "share" || label.startsWith("share ")) return <ShareIcon />;
+  if (label === "print" || label.startsWith("print ")) return <PrintIcon />;
+  if (label === "download" || label.startsWith("download ")) return <DownloadIcon />;
+  if (label === "export" || label.startsWith("export ")) return <DownloadIcon />;
+  if (label === "save" || label.startsWith("save ")) return <SaveIcon />;
+  if (label === "delete" || label.startsWith("delete ")) return <TrashIcon />;
+  if (label === "remove" || label.startsWith("remove ")) return <TrashIcon />;
+  if (label === "clear" || label.startsWith("clear ")) return <TrashIcon />;
+  if (label === "fullscreen" || label.startsWith("fullscreen ")) return <OpenInNewIcon />;
+  if (label === "open" || label.startsWith("open ")) return <OpenInNewIcon />;
+  if (label === "search" || label.startsWith("search ")) return <SearchIcon />;
+  if (label === "settings" || label.startsWith("settings ")) return <TuneIcon />;
+  if (label === "options" || label.startsWith("options ")) return <TuneIcon />;
+  if (label === "apply" || label.startsWith("apply ")) return <CheckCircleIcon />;
+  if (label === "swap" || label.startsWith("swap ")) return <SwapArrowsIcon />;
+  if (label === "today" || label.startsWith("today ")) return <CalendarIcon />;
+  if (label === "now" || label.startsWith("now ")) return <ClockIcon />;
+  if (label === "set now" || label.startsWith("set now ")) return <ClockIcon />;
+  if (label === "add row" || label === "add city" || label === "add timezone") return <ListIcon />;
+  if (label === "test sound" || label === "sound" || label.startsWith("sound ")) return <VolumeIcon />;
+
+  return null;
+}
+
+function renderButtonIcon(icon: ReactNode, size: ButtonSize) {
+  if (!icon) return null;
+  const iconSize = size === "lg" ? 18 : 16;
+  if (!isValidElement<IconElementProps>(icon)) return icon;
+
+  return cloneElement(icon, {
+    size: iconSize,
+    title: undefined,
+    "aria-hidden": true,
+    focusable: "false",
+    className: cx("shrink-0", icon.props.className),
+  });
+}
+
 export function Button({
   variant = "secondary",
   kind,
   size = "md",
   className,
+  children,
+  leadingIcon,
+  trailingIcon,
+  autoIcon = true,
   type = "button",
   ...props
 }: ButtonProps) {
@@ -451,6 +548,9 @@ export function Button({
           ? "danger"
           : "secondary"
       : variant;
+  const resolvedLeadingIcon =
+    leadingIcon ?? (autoIcon ? autoButtonIcon(children) : null);
+  const hasIcon = Boolean(resolvedLeadingIcon || trailingIcon);
 
   return (
     <button
@@ -459,10 +559,15 @@ export function Button({
         "ilt-focus-ring inline-flex cursor-pointer items-center justify-center rounded-[var(--ilt-radius-control)] font-semibold transition disabled:cursor-not-allowed disabled:opacity-50",
         buttonVariants[resolvedVariant],
         buttonSizes[size],
+        hasIcon ? "gap-2" : "",
         className,
       )}
       {...props}
-    />
+    >
+      {renderButtonIcon(resolvedLeadingIcon, size)}
+      {children}
+      {renderButtonIcon(trailingIcon, size)}
+    </button>
   );
 }
 
@@ -491,6 +596,10 @@ export function ButtonLink({
   kind,
   size = "md",
   className,
+  children,
+  leadingIcon,
+  trailingIcon,
+  autoIcon = true,
   ...props
 }: ButtonLinkProps) {
   const resolvedVariant =
@@ -501,6 +610,9 @@ export function ButtonLink({
           ? "danger"
           : "secondary"
       : variant;
+  const resolvedLeadingIcon =
+    leadingIcon ?? (autoIcon ? autoButtonIcon(children) : null);
+  const hasIcon = Boolean(resolvedLeadingIcon || trailingIcon);
 
   return (
     <a
@@ -508,10 +620,15 @@ export function ButtonLink({
         "ilt-focus-ring inline-flex cursor-pointer items-center justify-center rounded-[var(--ilt-radius-control)] font-semibold transition",
         buttonVariants[resolvedVariant],
         buttonSizes[size],
+        hasIcon ? "gap-2" : "",
         className,
       )}
       {...props}
-    />
+    >
+      {renderButtonIcon(resolvedLeadingIcon, size)}
+      {children}
+      {renderButtonIcon(trailingIcon, size)}
+    </a>
   );
 }
 

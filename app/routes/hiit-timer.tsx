@@ -560,39 +560,15 @@ function HIITCard() {
               </span>
             </div>
 
-            <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+          <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
               {statusLabel}
             </div>
           </div>
-
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Controls
-                  </div>
-                  <div className="text-xs font-semibold text-slate-600">
-                    Tap time to start/pause · N next · R reset · F fullscreen
-                  </div>
-                </div>
-
-                <div className="hidden sm:flex items-center gap-2">
-                  <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                    Space = Start/Pause
-                  </div>
-                  <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                    N = Next
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Controls, presets, and settings (normal only) */}
         {!isFs && (
-          <>
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn onClick={startPause}>
                 {running ? "Pause" : step === "done" ? "Restart" : "Start"}
@@ -605,7 +581,10 @@ function HIITCard() {
               </Btn>
             </ControlGroup>
 
-            <PresetGroup title="Quick presets">
+            <PresetGroup
+              title="HIIT presets"
+              description="Load a common work/rest pattern, then fine-tune the timing below."
+            >
               <Chip onClick={applyTabata}>Tabata 20/10 x 8</Chip>
               <Chip onClick={applyIntervals}>Intervals 40/20 x 10</Chip>
               <Chip onClick={applyBoxing}>Boxing 3:00/1:00 x 6</Chip>
@@ -613,7 +592,7 @@ function HIITCard() {
 
             <SettingGroup
               title="Interval settings"
-              description="Presets load values. Press Start when ready."
+              description="Set warm-up, work, rest, rounds, cool-down, and optional cues."
             >
               <SettingRow className="sm:grid-cols-2 lg:grid-cols-5">
                 <Field
@@ -670,15 +649,17 @@ function HIITCard() {
                   hint="0 = skip"
                 />
               </SettingRow>
-              <SettingRow className="lg:grid-cols-[auto_auto]">
-                <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
-                <Toggle
-                  label="Final 3-2-1 beeps"
-                  description="Work only"
-                  checked={finalCountdownBeeps}
-                  onCheckedChange={setFinalCountdownBeeps}
-                  disabled={!sound}
-                />
+              <SettingRow className="justify-items-center lg:grid-cols-[auto]">
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Final 3-2-1 beeps"
+                    description="Work only"
+                    checked={finalCountdownBeeps}
+                    onCheckedChange={setFinalCountdownBeeps}
+                    disabled={!sound}
+                  />
+                </div>
               </SettingRow>
             </SettingGroup>
 
@@ -691,7 +672,7 @@ function HIITCard() {
             <ShortcutHint>
               Shortcuts: Space start/pause / R reset / N next / F fullscreen
             </ShortcutHint>
-          </>
+          </div>
         )}
 
         <FullscreenBottomBar show={isFs}>
@@ -699,9 +680,6 @@ function HIITCard() {
             <div className="text-xs text-slate-600 sm:text-sm">
               Tap time to start/pause / Space start/pause / N next / R reset / F
               fullscreen
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
             </div>
           </div>
         </FullscreenBottomBar>

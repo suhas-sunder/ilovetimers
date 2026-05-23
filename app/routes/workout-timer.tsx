@@ -28,7 +28,6 @@ import {
   ToolFrame as Card,
   ToolHero,
   Toggle,
-  UtilityResultRow,
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
@@ -483,26 +482,13 @@ function WorkoutTimerCard() {
           </span>
 
           <div className="mt-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {phaseLabel} · Round {roundIdx}/{rounds} · {statusLabel}
+            {phaseLabel} / Round {roundIdx}/{rounds} / {statusLabel}
           </div>
-
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-center justify-between gap-3">
-                <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Space = Start/Pause · N = Next · R = Reset · F = Fullscreen
-                </div>
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Tap time to Start/Pause
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Controls, presets, and settings (normal only) */}
         {!isFs && (
-          <>
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : "Start"}
@@ -560,8 +546,11 @@ function WorkoutTimerCard() {
               </PresetGroup>
             </div>
 
-            <SettingGroup title="Settings">
-              <SettingRow>
+            <SettingGroup
+              title="Workout settings"
+              description="Adjust work length, rest length, rounds, and sound cues before starting."
+            >
+              <SettingRow className="sm:grid-cols-3">
                 <Field
                   label="Work minutes"
                   type="number"
@@ -601,23 +590,18 @@ function WorkoutTimerCard() {
                   }
                 />
               </SettingRow>
-              <SettingRow className="lg:grid-cols-[auto_auto]">
-                <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
-                <Toggle
-                  label="Final beeps"
-                  checked={finalCountdownBeeps}
-                  onCheckedChange={setFinalCountdownBeeps}
-                  disabled={!sound}
-                />
+              <SettingRow className="justify-items-center lg:grid-cols-[auto]">
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Final beeps"
+                    checked={finalCountdownBeeps}
+                    onCheckedChange={setFinalCountdownBeeps}
+                    disabled={!sound}
+                  />
+                </div>
               </SettingRow>
             </SettingGroup>
-
-            <UtilityResultRow>
-              <span className="ilt-content-label">Session</span>
-              <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-                {phaseLabel} / Round {roundIdx} of {rounds} / {statusLabel}
-              </span>
-            </UtilityResultRow>
 
             <SecondaryActionRow>
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
@@ -628,7 +612,7 @@ function WorkoutTimerCard() {
             <ShortcutHint>
               Shortcuts: Space start/pause / N next / R reset / F fullscreen
             </ShortcutHint>
-          </>
+          </div>
         )}
 
         <FullscreenBottomBar show={isFs}>

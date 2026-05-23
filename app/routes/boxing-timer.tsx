@@ -26,7 +26,6 @@ import {
   ToolFrame as Card,
   ToolHero,
   Toggle,
-  UtilityResultRow,
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
@@ -553,7 +552,7 @@ function BoxingTimerTool() {
         </DisplayStage>
 
         {!isFs ? (
-          <>
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {phase === "idle" || phase === "done" ? "Start" : paused ? "Resume" : "Pause"}
@@ -639,25 +638,18 @@ function BoxingTimerTool() {
                   }}
                 />
               </SettingRow>
-              <div className="flex flex-wrap gap-2">
-                <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
-                <Toggle
-                  label="Final beeps"
-                  checked={warningBeeps}
-                  onCheckedChange={setWarningBeeps}
-                  disabled={!sound}
-                />
-              </div>
+              <SettingRow className="justify-items-center lg:grid-cols-[auto]">
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Final beeps"
+                    checked={warningBeeps}
+                    onCheckedChange={setWarningBeeps}
+                    disabled={!sound}
+                  />
+                </div>
+              </SettingRow>
             </SettingGroup>
-
-            <UtilityResultRow>
-              <span className="font-semibold text-[var(--ilt-text-primary)]">
-                Current setup
-              </span>
-              <span>
-                {rounds} rounds / {roundSec}s round / {restSec}s rest / {prepSec}s prep
-              </span>
-            </UtilityResultRow>
 
             <SecondaryActionRow>
               <Btn kind="ghost" onClick={() => bell(660, 150, 0.1)} disabled={!sound}>
@@ -671,7 +663,7 @@ function BoxingTimerTool() {
             <ShortcutHint>
               Shortcuts: Space start/pause / N next / R reset / S sound / F fullscreen
             </ShortcutHint>
-          </>
+          </div>
         ) : null}
 
         <FullscreenBottomBar show={isFs}>

@@ -458,7 +458,7 @@ function IntervalTimerTool() {
         </DisplayStage>
 
         {!isFs ? (
-          <>
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : "Start"}
@@ -486,7 +486,7 @@ function IntervalTimerTool() {
               title="Interval steps"
               description="Each step has its own label and duration. Keep this generic for work, study, practice, household, or light routine timing."
             >
-              <SettingRow className="sm:grid-cols-[minmax(0,1fr)_minmax(8rem,0.35fr)]">
+              <SettingRow className="justify-items-center sm:grid-cols-[minmax(0,16rem)]">
                 <Field
                   label="Repeat rounds"
                   type="number"
@@ -587,24 +587,13 @@ function IntervalTimerTool() {
             <ShortcutHint>
               Shortcuts: Space start/pause / N next / R reset / F fullscreen
             </ShortcutHint>
-          </>
+          </div>
         ) : null}
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <ControlGroup className="mx-0 justify-start">
-              <Btn kind="solid" onClick={startPause}>
-                {running ? "Pause" : "Start"}
-              </Btn>
-              <Btn kind="ghost" onClick={nextStep}>
-                Next
-              </Btn>
-              <Btn kind="ghost" onClick={reset}>
-                Reset
-              </Btn>
-            </ControlGroup>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap display to start or pause / No ads appear in fullscreen
+              Tap display to start/pause / Space start/pause / N next / R reset / F fullscreen
             </div>
           </div>
         </FullscreenBottomBar>

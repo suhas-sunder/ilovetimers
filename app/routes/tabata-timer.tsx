@@ -558,8 +558,8 @@ function TabataTimerCard() {
           </span>
 
           <div className="mt-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {phase === "work" ? "Work" : "Rest"} · Round {roundIdx}/{rounds} ·
-            Total {totalText} · {statusLabel}
+            {phase === "work" ? "Work" : "Rest"} / Round {roundIdx}/{rounds} /
+            Total {totalText} / {statusLabel}
           </div>
 
           {/* Progress */}
@@ -574,7 +574,7 @@ function TabataTimerCard() {
         </DisplayStage>
         {/* Config (normal only) */}
         {!isFs && (
-          <>
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
               <Btn kind="ghost" onClick={reset}>
@@ -626,8 +626,11 @@ function TabataTimerCard() {
               </PresetGroup>
             </div>
 
-            <SettingGroup title="Tabata settings">
-              <SettingRow>
+            <SettingGroup
+              title="Tabata settings"
+              description="Keep the 20/10 rhythm clear, or adjust work, rest, rounds, and cues."
+            >
+              <SettingRow className="sm:grid-cols-3">
                 <Field
                   label="Work seconds"
                   type="number"
@@ -663,17 +666,16 @@ function TabataTimerCard() {
                   }
                 />
               </SettingRow>
-              <SettingRow className="lg:grid-cols-[auto_auto_auto]">
-                <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
-                <Toggle
-                  label="Final beeps"
-                  checked={finalCountdownBeeps}
-                  onCheckedChange={setFinalCountdownBeeps}
-                  disabled={!sound}
-                />
-                <Btn kind="ghost" onClick={setClassic} disabled={running}>
-                  Classic 20/10 x 8
-                </Btn>
+              <SettingRow className="justify-items-center lg:grid-cols-[auto]">
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Final beeps"
+                    checked={finalCountdownBeeps}
+                    onCheckedChange={setFinalCountdownBeeps}
+                    disabled={!sound}
+                  />
+                </div>
               </SettingRow>
             </SettingGroup>
 
@@ -685,6 +687,9 @@ function TabataTimerCard() {
             </UtilityResultRow>
 
             <SecondaryActionRow>
+              <Btn kind="ghost" onClick={setClassic} disabled={running}>
+                Classic 20/10 x 8
+              </Btn>
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
                 Fullscreen
               </Btn>
@@ -693,7 +698,7 @@ function TabataTimerCard() {
             <ShortcutHint>
               Shortcuts: Space start/pause / N next / R reset / F fullscreen / C classic
             </ShortcutHint>
-          </>
+          </div>
         )}
 
         {/* Fullscreen bottom controls */}

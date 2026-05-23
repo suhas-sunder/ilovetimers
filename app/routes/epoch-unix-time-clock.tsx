@@ -420,9 +420,6 @@ function EpochUnixTimeClockCard({ initialNowISO }: { initialNowISO: string }) {
               Tap to live or freeze · Space live or freeze · C copy seconds · M
               copy milliseconds · N snap now · F fullscreen
             </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

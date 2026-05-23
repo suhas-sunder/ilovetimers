@@ -334,7 +334,7 @@ function ClockWithMillisecondsTool({ initialNowISO }: { initialNowISO: string })
               <Toggle label="UTC" checked={mode === "utc"} onCheckedChange={(checked) => setMode(checked ? "utc" : "local")} />
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap time to copy / No ads appear in fullscreen
+              Tap time to copy / M milliseconds / U UTC mode
             </div>
           </div>
         </FullscreenBottomBar>

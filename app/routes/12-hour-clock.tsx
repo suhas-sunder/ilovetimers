@@ -349,7 +349,7 @@ function TwelveHourClockTool({ initialNowISO }: { initialNowISO: string }) {
               />
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap time to copy / No ads appear in fullscreen
+              Tap time to copy / S seconds / D date / H comparison
             </div>
           </div>
         </FullscreenBottomBar>

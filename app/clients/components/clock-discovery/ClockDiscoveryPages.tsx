@@ -585,7 +585,7 @@ function FullScreenClockTool({ initialNowISO }: { initialNowISO: string }) {
               />
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap time to copy / No ads appear in fullscreen
+              Tap time to copy / S seconds / M minimal / 1 or 2 for hour mode
             </div>
           </div>
         </FullscreenBottomBar>
@@ -1652,7 +1652,7 @@ function BigDigitalClockTool({ initialNowISO }: { initialNowISO: string }) {
               />
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap time to copy / No ads appear in fullscreen
+              Tap time to copy / S seconds / D date / 1 or 2 for hour mode
             </div>
           </div>
         </FullscreenBottomBar>

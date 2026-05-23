@@ -563,10 +563,6 @@ function UtcClockCard({ initialNowISO }: { initialNowISO: string }) {
               </Btn>
             </SecondaryActionRow>
 
-            <ShortcutHint className="timer-clock-shortcut">
-              Shortcuts: F fullscreen, C copy, S seconds, 1 12-hour, 2 24-hour,
-              U UTC, L local
-            </ShortcutHint>
           </>
         )}
 
@@ -648,23 +644,19 @@ function UtcClockCard({ initialNowISO }: { initialNowISO: string }) {
           </div>
         )}
 
+        {!isFs && (
+          <ShortcutHint className="timer-clock-shortcut">
+            Shortcuts: F fullscreen, C copy, S seconds, 1 12-hour, 2 24-hour,
+            U UTC, L local
+          </ShortcutHint>
+        )}
+
         {/* Fullscreen bottom bar */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
               Tap time to copy · F fullscreen · C copy · S seconds · 1 (12h) · 2
               (24h) · U UTC · L local
-            </div>
-            <div className="flex items-center gap-2">
-              <Btn kind="ghost" onClick={copy}>
-                {copied ? "Copied" : "Copy"}
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={() => void fullscreen.toggle()}
-              >
-                Exit fullscreen
-              </Btn>
             </div>
           </div>
         </FullscreenBottomBar>

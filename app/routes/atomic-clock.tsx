@@ -355,40 +355,20 @@ function AtomicClockCard({ initialNowISO }: { initialNowISO: string }) {
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={live}
-                  onChange={(e) => setLive(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Live
-              </label>
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900">
-                <input
-                  type="checkbox"
-                  checked={showMs}
-                  onChange={(e) => setShowMs(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Milliseconds
-              </label>
+            <div className="flex flex-wrap items-center gap-2 sm:hidden">
+              <Toggle
+                label="Live"
+                checked={live}
+                onCheckedChange={setLive}
+              />
+              <Toggle
+                label="Milliseconds"
+                checked={showMs}
+                onCheckedChange={setShowMs}
+              />
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div className="flex items-center gap-2">
-                <Btn
-                  kind={live ? "solid" : "ghost"}
-                  onClick={() => setLive((v) => !v)}
-                >
-                  {live ? "Freeze" : "Resume"}
-                </Btn>
-                <Btn kind="ghost" onClick={() => setShowMs((v) => !v)}>
-                  {showMs ? "Hide ms" : "Show ms"}
-                </Btn>
-              </div>
-
               <div className="text-xs text-slate-600 sm:text-sm">
                 Tap time to freeze/resume · Space freeze/resume · M ms · F
                 fullscreen

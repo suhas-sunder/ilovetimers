@@ -327,7 +327,7 @@ function TwentyFourHourClockTool({ initialNowISO }: { initialNowISO: string }) {
               />
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap time to copy / F fullscreen / U UTC or local / no ads in fullscreen
+              Tap time to copy / S seconds / D date / U UTC or local
             </div>
           </div>
         </FullscreenBottomBar>

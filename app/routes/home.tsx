@@ -468,9 +468,6 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-9 sm:mt-10">
-            <AdPlaceholder slot="below-header-banner" />
-          </div>
         </div>
       </section>
 
@@ -536,12 +533,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <div className="px-[var(--ilt-page-x)] pb-9 pt-1">
-        <div className="mx-auto max-w-[90rem]">
-          <AdPlaceholder slot="below-header-banner" />
-        </div>
-      </div>
 
       <section className="bg-[var(--ilt-bg-content)] px-[var(--ilt-page-x)] py-11 sm:py-12">
         <div className="mx-auto max-w-[90rem]">

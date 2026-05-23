@@ -18,20 +18,16 @@ export type RouteMonetizationConfig = {
 };
 
 export const FULL_TOOL_AD_SLOTS = [
-  "top-banner",
-  "below-header-banner",
   "in-content-square",
   "bottom-banner",
 ] as const satisfies readonly AdSlotType[];
 
 export const HOMEPAGE_AD_SLOTS = [
-  "below-header-banner",
   "in-content-square",
   "bottom-banner",
 ] as const satisfies readonly AdSlotType[];
 
 export const CONTENT_PAGE_AD_SLOTS = [
-  "below-header-banner",
   "bottom-banner",
 ] as const satisfies readonly AdSlotType[];
 

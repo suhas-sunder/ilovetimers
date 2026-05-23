@@ -64,7 +64,7 @@ export function meta({}: Route.MetaArgs) {
       ].join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
-    { rel: "canonical", href: url },
+    { tagName: "link", rel: "canonical", href: url },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },

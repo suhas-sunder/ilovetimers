@@ -556,7 +556,7 @@ export function createPresetTimerMeta(config: PresetDurationTimerConfig) {
     { name: "twitter:title", content: config.metaTitle },
     { name: "twitter:description", content: config.metaDescription },
     { name: "twitter:image", content: OG_IMAGE },
-    { rel: "canonical", href: routeUrl },
+    { tagName: "link", rel: "canonical", href: routeUrl },
     { name: "theme-color", content: "#ffffff" },
   ];
 }

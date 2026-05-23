@@ -109,7 +109,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
-    { rel: "canonical", href: PAGE_URL },
+    { tagName: "link", rel: "canonical", href: PAGE_URL },
     { name: "theme-color", content: "#ffffff" },
   ];
 }

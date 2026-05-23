@@ -129,7 +129,7 @@ export function createDateToolMeta({
 }
 
 export function createDateToolLinks(path: string) {
-  return [{ rel: "canonical", href: `${SITE_URL}${path}` }];
+  return [{ tagName: "link", rel: "canonical", href: `${SITE_URL}${path}` }];
 }
 
 export function parseDateInput(value: string): LocalDateParts | null {

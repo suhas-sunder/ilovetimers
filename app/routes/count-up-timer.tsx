@@ -270,8 +270,8 @@ function CountUpTimerCard() {
           data-display-stage
           ref={displayBoxRef}
           className={[
-            "order-1 timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
-            "border-slate-200 p-3 sm:p-6",
+            "order-1 timer-display-surface relative mt-4 flex flex-col items-center justify-center text-[var(--ilt-text-primary)]",
+            "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
@@ -303,7 +303,7 @@ function CountUpTimerCard() {
             {shownTime}
           </span>
 
-          <div className="mt-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="mt-4 ilt-content-label">
             {statusLabel}
           </div>
 
@@ -317,12 +317,12 @@ function CountUpTimerCard() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
                     Laps
                   </div>
 
                   {!hasLaps ? (
-                    <div className="text-xs font-semibold text-slate-600">
+                    <div className="ilt-helper-text font-semibold">
                       Press Lap (L) to record splits
                     </div>
                   ) : (
@@ -330,16 +330,16 @@ function CountUpTimerCard() {
                       {fsLaps.map((l) => (
                         <div
                           key={l.n}
-                          className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white/85 px-2 py-1 backdrop-blur"
+                          className="flex items-center justify-between gap-3 ilt-surface-card px-2 py-1 backdrop-blur"
                         >
-                          <div className="text-xs font-semibold text-slate-900">
+                          <div className="text-xs font-semibold text-[var(--ilt-text-primary)]">
                             Lap {l.n}
                           </div>
                           <div className="flex items-center gap-3">
-                            <div className="text-xs font-extrabold text-slate-900">
+                            <div className="text-xs font-extrabold text-[var(--ilt-text-primary)]">
                               {msToClockUp(l.ms)}
                             </div>
-                            <div className="text-[11px] font-semibold text-slate-700">
+                            <div className="text-[11px] font-semibold text-[var(--ilt-text-secondary)]">
                               +{msToClockUp(l.splitMs)}
                             </div>
                           </div>
@@ -350,7 +350,7 @@ function CountUpTimerCard() {
                 </div>
 
                 {/* Right-side hint chip */}
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                <div className="hidden sm:block ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)] backdrop-blur">
                   L = Lap
                 </div>
               </div>
@@ -387,14 +387,14 @@ function CountUpTimerCard() {
         {!isFs && (
           <div className="timer-history-panel order-4 space-y-3">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm font-extrabold text-slate-900">Laps</div>
-              <div className="text-xs font-semibold text-slate-600">
+              <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Laps</div>
+              <div className="ilt-helper-text font-semibold">
                 Most recent first / Split is time since previous lap
               </div>
             </div>
 
             {laps.length === 0 ? (
-              <div className="mt-3 text-sm text-slate-700">
+              <div className="mt-3 text-sm text-[var(--ilt-text-secondary)]">
                 Press <strong>Lap</strong> (or <strong>L</strong>) while running
                 to record splits.
               </div>
@@ -402,15 +402,15 @@ function CountUpTimerCard() {
               <div className="mt-3 space-y-2">
                 {laps.slice(0, 12).map((l) => (
                   <UtilityResultRow key={l.n}>
-                    <div className="text-sm font-semibold text-slate-900">
+                    <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                       Lap {l.n}
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3">
-                      <div className="text-sm font-extrabold text-slate-900">
+                      <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
                         Total {msToClockUp(l.ms)}
                       </div>
-                      <div className="text-xs font-semibold text-slate-700">
+                      <div className="text-xs font-semibold text-[var(--ilt-text-secondary)]">
                         Split {msToClockUp(l.splitMs)}
                       </div>
                     </div>
@@ -423,13 +423,8 @@ function CountUpTimerCard() {
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause / Space start/pause / L lap / R reset / F fullscreen
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
-            </div>
+          <div className="ilt-helper-text text-center sm:text-sm">
+            Tap time to start/pause / Space start/pause / L lap / R reset / F fullscreen
           </div>
         </FullscreenBottomBar>
       </div>

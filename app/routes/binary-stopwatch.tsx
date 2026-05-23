@@ -597,54 +597,6 @@ function BinaryStopwatchTool() {
         show={isFs}
         title="Binary Stopwatch"
         onExit={() => void fullscreen.exit()}
-        left={
-          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
-            <div className="flex items-center gap-2">
-              <Chip
-                onClick={() => setToolMode("stopwatch")}
-                active={toolMode === "stopwatch"}
-              >
-                Stopwatch
-              </Chip>
-              <Chip
-                onClick={() => setToolMode("timer")}
-                active={toolMode === "timer"}
-              >
-                Timer
-              </Chip>
-            </div>
-
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={showWeights}
-                onChange={(e) => setShowWeights(e.target.checked)}
-                className="accent-amber-500"
-              />
-              Weights
-            </label>
-
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={practiceMode}
-                onChange={(e) => setPracticeMode(e.target.checked)}
-                className="accent-amber-500"
-              />
-              Practice
-            </label>
-
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={dimMode}
-                onChange={(e) => setDimMode(e.target.checked)}
-                className="accent-amber-500"
-              />
-              Dim
-            </label>
-          </div>
-        }
         right={
           <div className="flex items-center gap-2">
             <Btn
@@ -790,11 +742,6 @@ function BinaryStopwatchTool() {
               </div>
             </div>
 
-            {!isFs && (
-              <div className="text-xs text-slate-600 text-center">
-                Tip: click the card once so keyboard shortcuts work immediately.
-              </div>
-            )}
           </div>
         </div>
 
@@ -956,7 +903,7 @@ function BinaryStopwatchTool() {
                 Timer
               </Chip>
 
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)]">
                 <input
                   type="checkbox"
                   checked={showWeights}
@@ -966,7 +913,7 @@ function BinaryStopwatchTool() {
                 Weights
               </label>
 
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)]">
                 <input
                   type="checkbox"
                   checked={practiceMode}
@@ -976,7 +923,7 @@ function BinaryStopwatchTool() {
                 Practice
               </label>
 
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)]">
                 <input
                   type="checkbox"
                   checked={dimMode}
@@ -1009,31 +956,9 @@ function BinaryStopwatchTool() {
               ) : null}
             </div>
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div className="flex items-center gap-2">
-                <Btn
-                  kind={running ? "solid" : "ghost"}
-                  onClick={startPause}
-                >
-                  {running ? "Pause" : "Start"}
-                </Btn>
-                <Btn kind="ghost" onClick={reset}>
-                  Reset
-                </Btn>
-                {practiceMode && !revealed ? (
-                  <Btn
-                    kind="solid"
-                    onClick={() => setRevealed(true)}
-                  >
-                    Reveal
-                  </Btn>
-                ) : null}
-              </div>
-
-              <div className="text-xs text-slate-600 sm:text-sm">
+            <div className="ilt-helper-text sm:text-sm">
                 Tap to start/pause · Space · R reset · F fullscreen · W weights
                 · P practice · E reveal · S sound
-              </div>
             </div>
           </div>
         </FullscreenBottomBar>

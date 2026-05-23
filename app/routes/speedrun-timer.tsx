@@ -18,6 +18,8 @@ import {
   PageShell,
   SecondaryActionRow,
   SeoBand,
+  SettingGroup,
+  SettingRow,
   ShortcutHint,
   ToolFrame as Card,
   ToolHero,
@@ -427,20 +429,26 @@ function SpeedrunTimerTool() {
               </Btn>
             </ControlGroup>
 
-            <SecondaryActionRow className="timer-history-actions">
+            <SecondaryActionRow className="timer-history-actions order-3">
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
                 Fullscreen
               </Btn>
             </SecondaryActionRow>
 
-            <div className="mx-auto w-full max-w-5xl">
-              <Field
-                label="Next split name (optional)"
-                value={nextSplitName}
-                onChange={(e) => setNextSplitName(e.target.value)}
-                placeholder={`Split ${splits.length + 1}`}
-              />
-            </div>
+            <SettingGroup
+              title="Split setup"
+              description="Optional label for the next split you record."
+              className="order-2"
+            >
+              <SettingRow className="sm:grid-cols-1">
+                <Field
+                  label="Next split name (optional)"
+                  value={nextSplitName}
+                  onChange={(e) => setNextSplitName(e.target.value)}
+                  placeholder={`Split ${splits.length + 1}`}
+                />
+              </SettingRow>
+            </SettingGroup>
           </div>
         )}
 
@@ -507,14 +515,9 @@ function SpeedrunTimerTool() {
         )}
 
         <FullscreenBottomBar show={isFs}>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="ilt-helper-text sm:text-sm">
+          <div className="ilt-helper-text text-center sm:text-sm">
               Tap time to start/pause · Space start/pause · S split · U undo · E
               end · R reset · F fullscreen
-            </div>
-            <div className="ilt-helper-text font-semibold">
-              {statusLabel}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

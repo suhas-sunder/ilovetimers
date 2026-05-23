@@ -280,37 +280,6 @@ function MeetingCountupCard() {
       />
 
       <div className={isFs ? "flex h-full flex-col" : "timer-history-stack flex h-full flex-col"}>
-
-        {!isFs && (
-          <>
-            <ControlGroup className="order-2">
-              <Btn kind="solid" onClick={startPause}>
-                {running ? "Pause" : "Start"}
-              </Btn>
-              <Btn
-                kind="ghost"
-                onClick={() => markTopic()}
-                disabled={!canTopic}
-              >
-                Topic
-              </Btn>
-              <Btn kind="ghost" onClick={resetAll}>
-                Reset
-              </Btn>
-            </ControlGroup>
-
-            <SecondaryActionRow className="timer-history-actions order-3">
-              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
-                Fullscreen
-              </Btn>
-            </SecondaryActionRow>
-
-            <ShortcutHint className="timer-history-shortcut order-3">
-              Shortcuts: Space start/pause / T topic / R reset / F fullscreen
-            </ShortcutHint>
-          </>
-        )}
-
         <div
           data-display-stage
           ref={displayBoxRef}
@@ -404,10 +373,26 @@ function MeetingCountupCard() {
 
         {!isFs && (
           <>
+            <ControlGroup className="order-2">
+              <Btn kind="solid" onClick={startPause}>
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => markTopic()}
+                disabled={!canTopic}
+              >
+                Topic
+              </Btn>
+              <Btn kind="ghost" onClick={resetAll}>
+                Reset
+              </Btn>
+            </ControlGroup>
+
             <SettingGroup
               title="Agenda helper"
               description="Optional topic label and cap for agenda splits."
-              className="order-4"
+              className="order-3"
             >
               <SettingRow className="lg:grid-cols-2">
                 <Field
@@ -458,7 +443,17 @@ function MeetingCountupCard() {
               </p>
             </SettingGroup>
 
-            <div className="timer-history-panel order-5 space-y-3">
+            <SecondaryActionRow className="timer-history-actions order-4">
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint className="timer-history-shortcut order-5">
+              Shortcuts: Space start/pause / T topic / R reset / F fullscreen
+            </ShortcutHint>
+
+            <div className="timer-history-panel order-6 space-y-3">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
                   Topic splits
@@ -498,13 +493,8 @@ function MeetingCountupCard() {
         )}
 
         <FullscreenBottomBar show={isFs}>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="ilt-helper-text sm:text-sm">
-              Tap time to start/pause / Space start/pause / T topic / R reset / F fullscreen
-            </div>
-            <div className="ilt-helper-text font-semibold">
-              {statusLabel}
-            </div>
+          <div className="ilt-helper-text text-center sm:text-sm">
+            Tap time to start/pause / Space start/pause / T topic / R reset / F fullscreen
           </div>
         </FullscreenBottomBar>
       </div>

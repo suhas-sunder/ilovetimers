@@ -309,8 +309,8 @@ function StopwatchCard() {
           stageRef={displayBoxRef}
           isFullscreen={isFs}
           className={[
-            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
-            "border-slate-200 p-3 sm:p-6",
+            "timer-display-surface relative mt-4 flex flex-col items-center justify-center text-[var(--ilt-text-primary)]",
+            "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
@@ -342,7 +342,7 @@ function StopwatchCard() {
             {shownTime}
           </span>
 
-          <div className="mt-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
+          <div className="mt-4 ilt-content-label">
             {statusLabel}
           </div>
 
@@ -356,12 +356,12 @@ function StopwatchCard() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
+                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
                     Laps
                   </div>
 
                   {!hasLaps ? (
-                    <div className="text-xs font-semibold text-slate-600">
+                    <div className="ilt-helper-text font-semibold">
                       Press Lap (L) to record splits
                     </div>
                   ) : (
@@ -369,16 +369,16 @@ function StopwatchCard() {
                       {fsLaps.map((l) => (
                         <div
                           key={l.n}
-                          className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white/85 px-2 py-1 backdrop-blur"
+                          className="flex items-center justify-between gap-3 ilt-surface-card px-2 py-1 backdrop-blur"
                         >
-                          <div className="text-xs font-semibold text-slate-900">
+                          <div className="text-xs font-semibold text-[var(--ilt-text-primary)]">
                             Lap {l.n}
                           </div>
                           <div className="flex items-center gap-3">
-                            <div className="text-xs font-extrabold text-slate-900">
+                            <div className="text-xs font-extrabold text-[var(--ilt-text-primary)]">
                               {msToClockMs(l.totalMs)}
                             </div>
-                            <div className="text-[11px] font-semibold text-slate-700">
+                            <div className="text-[11px] font-semibold text-[var(--ilt-text-secondary)]">
                               +{msToClockMs(l.splitMs)}
                             </div>
                           </div>
@@ -388,7 +388,7 @@ function StopwatchCard() {
                   )}
                 </div>
 
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
+                <div className="hidden sm:block ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)] backdrop-blur">
                   L = Lap
                 </div>
               </div>
@@ -406,6 +406,9 @@ function StopwatchCard() {
               <Btn kind="ghost" onClick={lap} disabled={elapsed <= 0}>
                 Lap
               </Btn>
+              <Btn kind="ghost" onClick={resetAll}>
+                Reset
+              </Btn>
             </ControlGroup>
 
             <SecondaryActionRow className="timer-history-actions">
@@ -418,9 +421,6 @@ function StopwatchCard() {
               </Btn>
               <Btn kind="ghost" onClick={copyLaps} disabled={laps.length === 0}>
                 Copy laps
-              </Btn>
-              <Btn kind="ghost" onClick={resetAll}>
-                Reset
               </Btn>
             </SecondaryActionRow>
 
@@ -441,14 +441,14 @@ function StopwatchCard() {
         {!isFs && (
           <div className="timer-history-panel mt-5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm font-extrabold text-slate-900">Laps</div>
-              <div className="text-xs font-semibold text-slate-600">
+              <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Laps</div>
+              <div className="ilt-helper-text font-semibold">
                 Most recent first · Split is time since previous lap
               </div>
             </div>
 
             {laps.length === 0 ? (
-              <div className="mt-3 text-sm text-slate-700">
+              <div className="mt-3 text-sm text-[var(--ilt-text-secondary)]">
                 Press <strong>Lap</strong> (or <strong>L</strong>) to record
                 splits.
               </div>
@@ -485,11 +485,9 @@ function StopwatchCard() {
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-slate-600 sm:text-sm">
+          <div className="ilt-helper-text text-center sm:text-sm">
               Tap time to start/pause · Space start/pause · L lap · C copy · R
               reset · F fullscreen
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

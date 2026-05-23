@@ -449,13 +449,8 @@ function MillisecondStopwatchTool() {
         ) : null}
 
         <FullscreenBottomBar show={isFs}>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap time to start or pause / Space start/pause / L lap / R reset
-            </div>
-            <div className="text-xs font-semibold text-[var(--ilt-text-secondary)]">
-              {statusLabel} / no ad placeholders in fullscreen
-            </div>
+          <div className="ilt-helper-text text-center sm:text-sm">
+            Tap time to start or pause / Space start/pause / L lap / R reset / F fullscreen
           </div>
         </FullscreenBottomBar>
       </div>

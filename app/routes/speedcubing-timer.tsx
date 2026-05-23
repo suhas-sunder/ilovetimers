@@ -589,7 +589,7 @@ function SpeedcubingTimerTool() {
 
             </ControlGroup>
 
-            <SecondaryActionRow className="timer-history-actions">
+            <SecondaryActionRow className="timer-history-actions order-3">
               <Btn
                 kind="ghost"
                 onClick={clearHistory}
@@ -602,7 +602,7 @@ function SpeedcubingTimerTool() {
               </Btn>
             </SecondaryActionRow>
 
-            <ShortcutHint className="timer-history-shortcut">
+            <ShortcutHint className="timer-history-shortcut order-4">
               <span className="ilt-keycap">Space</span>{" "}
               {startMode === "instant" ? "start/stop" : "hold+release start"} ·{" "}
               <span className="ilt-keycap">R</span> reset ·{" "}
@@ -616,7 +616,7 @@ function SpeedcubingTimerTool() {
             </ShortcutHint>
 
             {/* Settings */}
-            <SettingGroup title="Solve settings">
+            <SettingGroup title="Solve settings" className="order-2">
               <SettingRow>
                 <Select
                   label="Start mode"
@@ -715,16 +715,11 @@ function SpeedcubingTimerTool() {
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="ilt-helper-text sm:text-sm">
+          <div className="ilt-helper-text text-center sm:text-sm">
               Space{" "}
               {startMode === "instant" ? "start/stop" : "hold+release start"} ·
               R reset · F fullscreen
               {!autoSave ? " · S save" : ""}
-            </div>
-            <div className="ilt-helper-text font-semibold">
-              {statusLabel}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

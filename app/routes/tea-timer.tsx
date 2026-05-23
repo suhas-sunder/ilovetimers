@@ -28,7 +28,6 @@ import {
   ToolHero,
   ToolFrame as Card,
   Toggle,
-  UtilityResultRow,
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
@@ -546,8 +545,11 @@ function TeaTimerCard() {
               ))}
             </PresetGroup>
 
-            <SettingGroup title="Settings">
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+            <SettingGroup
+              title="Timer settings"
+              description="Set a custom steep time and choose whether the timer should make sound."
+            >
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(16rem,auto)]">
                 <Field
                   label="Minutes"
                   type="number"
@@ -572,7 +574,7 @@ function TeaTimerCard() {
                   disabled={isMatcha}
                 />
 
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                   <Toggle
                     label="Final beeps"
@@ -584,14 +586,9 @@ function TeaTimerCard() {
               </SettingRow>
             </SettingGroup>
 
-            <UtilityResultRow>
-              <span className="ilt-content-label">Preset note</span>
-              <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-                {isMatcha
-                  ? "Matcha is usually whisked, not steeped."
-                  : presetNote}
-              </span>
-            </UtilityResultRow>
+            <div className="ilt-helper-text ilt-settings-width mx-auto w-full text-center">
+              {isMatcha ? "Matcha is usually whisked, not steeped." : presetNote}
+            </div>
 
             <SecondaryActionRow>
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
@@ -600,7 +597,7 @@ function TeaTimerCard() {
             </SecondaryActionRow>
 
             <ShortcutHint>
-              Shortcuts: Space start/pause · R reset · F fullscreen
+              Shortcuts: Space start/pause / R reset / F fullscreen
             </ShortcutHint>
           </>
         )}
@@ -608,7 +605,7 @@ function TeaTimerCard() {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · R reset · F
+              Tap time to start/pause / Space start/pause / R reset / F
               fullscreen
             </div>
             <div className="text-xs font-semibold text-slate-700">

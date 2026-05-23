@@ -471,17 +471,6 @@ function CookingTimerCard() {
             {running || hasStartedRef.current ? shownTime : readyTime}
           </span>
 
-          <div className="mt-4 w-full max-w-3xl">
-            <div className="text-center">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Set time
-              </div>
-              <div className="mt-1 text-2xl font-extrabold text-slate-950">
-                {mins}m {secs}s
-              </div>
-            </div>
-          </div>
-
         </DisplayStage>
 
         {!isFs && (
@@ -495,31 +484,31 @@ function CookingTimerCard() {
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <div className="mx-auto grid w-full max-w-5xl gap-4 lg:grid-cols-2">
-            <PresetGroup title="Egg presets" className="max-w-none">
-                {eggPresets.map((p) => (
-                  <Chip
-                    key={p.label}
-                    active={p.seconds === seconds}
-                    onClick={() => setPreset(p.seconds)}
-                    disabled={running}
-                  >
-                    {p.label}
-                  </Chip>
-                ))}
+          <div className="ilt-settings-width mx-auto grid w-full gap-4 lg:grid-cols-2">
+            <PresetGroup title="Egg timing presets" className="max-w-none">
+              {eggPresets.map((p) => (
+                <Chip
+                  key={p.label}
+                  active={p.seconds === seconds}
+                  onClick={() => setPreset(p.seconds)}
+                  disabled={running}
+                >
+                  {p.label}
+                </Chip>
+              ))}
             </PresetGroup>
 
-            <PresetGroup title="Common presets" className="max-w-none">
-                {kitchenPresets.map((p) => (
-                  <Chip
-                    key={p.label}
-                    active={p.seconds === seconds}
-                    onClick={() => setPreset(p.seconds)}
-                    disabled={running}
-                  >
-                    {p.label}
-                  </Chip>
-                ))}
+            <PresetGroup title="Common cooking presets" className="max-w-none">
+              {kitchenPresets.map((p) => (
+                <Chip
+                  key={p.label}
+                  active={p.seconds === seconds}
+                  onClick={() => setPreset(p.seconds)}
+                  disabled={running}
+                >
+                  {p.label}
+                </Chip>
+              ))}
             </PresetGroup>
           </div>
         )}
@@ -527,8 +516,11 @@ function CookingTimerCard() {
         {/* Custom inputs (normal only) */}
         {!isFs && (
           <>
-            <SettingGroup title="Settings">
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+            <SettingGroup
+              title="Timer settings"
+              description="Set a custom cooking duration and choose how the timer alerts you."
+            >
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(16rem,auto)]">
                 <Field
                   label="Minutes"
                   type="number"
@@ -553,7 +545,7 @@ function CookingTimerCard() {
                     setSeconds(mins * 60 + s);
                   }}
                 />
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                   <Toggle
                     label="Final beeps"
@@ -573,7 +565,7 @@ function CookingTimerCard() {
             </SecondaryActionRow>
 
             <ShortcutHint>
-              Shortcuts: Space start/pause · R reset · F fullscreen · S sound · L loop
+              Shortcuts: Space start/pause / R reset / F fullscreen / S sound / L loop
             </ShortcutHint>
           </>
         )}
@@ -581,27 +573,6 @@ function CookingTimerCard() {
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              {eggPresets.map((p) => (
-                <Chip
-                  key={`egg-${p.label}`}
-                  active={p.seconds === seconds}
-                  onClick={() => setPreset(p.seconds)}
-                >
-                  {p.label}
-                </Chip>
-              ))}
-              {kitchenPresets.slice(0, 7).map((p) => (
-                <Chip
-                  key={`k-${p.label}`}
-                  active={p.seconds === seconds}
-                  onClick={() => setPreset(p.seconds)}
-                >
-                  {p.label}
-                </Chip>
-              ))}
-            </div>
-
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <div className="flex items-center gap-2">
                 <Btn kind={running ? "solid" : "ghost"} onClick={startPause}>
@@ -613,7 +584,7 @@ function CookingTimerCard() {
               </div>
 
               <div className="text-xs text-slate-600 sm:text-sm">
-                Tap time to start/pause · Space start/pause · R reset · F
+                Tap time to start/pause / Space start/pause / R reset / F
                 fullscreen
               </div>
             </div>

@@ -221,11 +221,11 @@ export function PresetGroup({
 }) {
   return (
     <div
-      className={cx("ilt-settings-width mx-auto w-full space-y-2", className)}
+      className={cx("ilt-settings-width mx-auto w-full space-y-3", className)}
       {...props}
     >
       {title || description ? (
-        <div className="text-center sm:text-left">
+        <div className="text-center">
           {title ? (
             <div className="text-sm font-bold text-[var(--ilt-text-primary)]">
               {title}
@@ -236,7 +236,7 @@ export function PresetGroup({
           ) : null}
         </div>
       ) : null}
-      <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+      <div className="flex flex-wrap items-center justify-center gap-2">
         {children}
       </div>
     </div>
@@ -267,11 +267,11 @@ export function SettingGroup({
 }) {
   return (
     <SettingsPanel
-      className={cx("ilt-settings-width mx-auto w-full space-y-4", className)}
+      className={cx("ilt-settings-width mx-auto w-full space-y-3", className)}
       {...props}
     >
       {title || description ? (
-        <div className="text-center sm:text-left">
+        <div className="text-center">
           {title ? (
             <h2 className="text-sm font-bold text-[var(--ilt-text-primary)]">
               {title}
@@ -291,7 +291,7 @@ export function SettingRow({ className, ...props }: DivProps) {
   return (
     <div
       className={cx(
-        "ilt-setting-row grid w-full items-end gap-3",
+        "ilt-setting-row grid w-full items-start gap-3 sm:gap-4",
         className,
       )}
       {...props}
@@ -303,7 +303,7 @@ export function SecondaryActionRow({ className, ...props }: DivProps) {
   return (
     <div
       className={cx(
-        "ilt-settings-width mx-auto flex w-full flex-wrap items-center justify-center gap-2",
+        "ilt-settings-width mx-auto flex w-full flex-wrap items-center justify-center gap-2 pt-1 sm:gap-3",
         className,
       )}
       {...props}
@@ -315,7 +315,7 @@ export function ShortcutHint({ className, ...props }: DivProps) {
   return (
     <div
       className={cx(
-        "ilt-helper-text ilt-settings-width mx-auto w-full text-center",
+        "ilt-helper-text ilt-settings-width mx-auto w-full pt-1 text-center text-xs leading-5",
         className,
       )}
       {...props}

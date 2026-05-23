@@ -555,7 +555,7 @@ function PizzaTimerCard() {
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
           <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {methodLabel} · {statusLabel}
+            {methodLabel} / {statusLabel}
           </div>
 
           <span
@@ -587,7 +587,10 @@ function PizzaTimerCard() {
               </Btn>
             </ControlGroup>
 
-            <PresetGroup title="Pizza presets">
+            <PresetGroup
+              title="Pizza presets"
+              description="Choose a starting point, then adjust method and reminder settings below."
+            >
                 {PRESETS.map((p) => {
                   const active =
                     p.method === method &&
@@ -605,8 +608,11 @@ function PizzaTimerCard() {
                 })}
             </PresetGroup>
 
-            <SettingGroup title="Settings">
-              <SettingRow className="lg:grid-cols-4">
+            <SettingGroup
+              title="Timer settings"
+              description="Set the duration, cooking method, check reminder, and sound behavior."
+            >
+              <SettingRow className="lg:grid-cols-3">
 
                 <Field
                   label="Minutes"
@@ -644,16 +650,6 @@ function PizzaTimerCard() {
                 <option value="skillet">Skillet</option>
                 <option value="custom">Custom</option>
                 </Select>
-
-                <div className="flex flex-wrap items-end gap-3">
-                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
-                  <Toggle
-                    label="Final beeps"
-                    checked={finalCountdownBeeps}
-                    onCheckedChange={setFinalCountdownBeeps}
-                    disabled={!sound}
-                  />
-                </div>
               </SettingRow>
 
               <SettingRow className="lg:grid-cols-2">
@@ -686,6 +682,15 @@ function PizzaTimerCard() {
                   <option value="none">None</option>
                 </Select>
               </SettingRow>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                <Toggle
+                  label="Final beeps"
+                  checked={finalCountdownBeeps}
+                  onCheckedChange={setFinalCountdownBeeps}
+                  disabled={!sound}
+                />
+              </div>
             </SettingGroup>
 
             <SecondaryActionRow>
@@ -709,7 +714,7 @@ function PizzaTimerCard() {
             </SecondaryActionRow>
 
             <ShortcutHint>
-              Shortcuts: Space start/pause · R reset · F fullscreen
+              Shortcuts: Space start/pause / R reset / F fullscreen
             </ShortcutHint>
           </>
         )}
@@ -718,11 +723,11 @@ function PizzaTimerCard() {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · R reset · F
+              Tap time to start/pause / Space start/pause / R reset / F
               fullscreen
             </div>
             <div className="text-xs font-semibold text-slate-700">
-              {methodLabel} · {statusLabel}
+              {methodLabel} / {statusLabel}
             </div>
           </div>
         </FullscreenBottomBar>

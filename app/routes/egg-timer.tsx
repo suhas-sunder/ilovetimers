@@ -359,26 +359,20 @@ function EggTimerCard() {
         title="Egg Timer"
         onExit={() => void fullscreen.exit()}
         left={
-          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={sound}
-                onChange={(e) => setSound(e.target.checked)}
-                className="accent-amber-500"
-              />
-              Sound
-            </label>
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={finalCountdownBeeps}
-                onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-                disabled={!sound}
-                className="accent-amber-500"
-              />
-              Final beeps
-            </label>
+          <div className="hidden items-center gap-2 sm:flex">
+            <Toggle
+              label="Sound"
+              checked={sound}
+              onCheckedChange={setSound}
+              className="py-1 text-sm"
+            />
+            <Toggle
+              label="Final beeps"
+              checked={finalCountdownBeeps}
+              onCheckedChange={setFinalCountdownBeeps}
+              disabled={!sound}
+              className="py-1 text-sm"
+            />
           </div>
         }
         right={
@@ -411,23 +405,13 @@ function EggTimerCard() {
           </ControlGroup>
         )}
 
-        {/* Secondary actions (normal only) */}
-        {!isFs && (
-          <SecondaryActionRow>
-            <Btn
-              kind="ghost"
-              onClick={() => void fullscreen.toggle()}
-              className="py-2"
-            >
-              Fullscreen
-            </Btn>
-          </SecondaryActionRow>
-        )}
-
         {/* Presets + inputs (normal only) */}
         {!isFs && (
           <>
-            <PresetGroup>
+            <PresetGroup
+              title="Egg presets"
+              description="Choose a doneness preset or adjust the duration below."
+            >
               {presets.map((p) => (
                 <Chip
                   key={p.key}
@@ -440,8 +424,11 @@ function EggTimerCard() {
               ))}
             </PresetGroup>
 
-            <SettingGroup>
-              <SettingRow className="sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+            <SettingGroup
+              title="Timer settings"
+              description="Set custom minutes and seconds, then choose whether sound and final countdown beeps should run."
+            >
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(16rem,auto)]">
                 <Field
                   label="Minutes"
                   type="number"
@@ -466,20 +453,32 @@ function EggTimerCard() {
                   }
                 />
 
-                <Toggle
-                  label="Sound"
-                  checked={sound}
-                  onCheckedChange={setSound}
-                />
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                  <Toggle
+                    label="Sound"
+                    checked={sound}
+                    onCheckedChange={setSound}
+                  />
 
-                <Toggle
-                  label="Final beeps"
-                  checked={finalCountdownBeeps}
-                  onCheckedChange={setFinalCountdownBeeps}
-                  disabled={!sound}
-                />
+                  <Toggle
+                    label="Final beeps"
+                    checked={finalCountdownBeeps}
+                    onCheckedChange={setFinalCountdownBeeps}
+                    disabled={!sound}
+                  />
+                </div>
               </SettingRow>
             </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
           </>
         )}
 
@@ -526,76 +525,30 @@ function EggTimerCard() {
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              {presets.map((p) => (
-                <Chip
-                  key={p.key}
-                  active={p.key === presetKey}
-                  onClick={() => setPresetKey(p.key)}
-                  disabled={running}
-                >
-                  {p.label}
-                </Chip>
-              ))}
+            <div className="flex items-center gap-2">
+              <Btn
+                kind={running ? "solid" : "ghost"}
+                onClick={startPause}
+                disabled={totalMs <= 0}
+              >
+                {running ? "Pause" : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={reset}>
+                Reset
+              </Btn>
             </div>
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-slate-700">
-                  Time
-                </span>
-                <input
-                  type="number"
-                  min={0}
-                  max={60}
-                  value={minutes}
-                  disabled={running}
-                  onChange={(e) =>
-                    setMinutes(clamp(Number(e.target.value || 0), 0, 60))
-                  }
-                  className="w-20 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
-                />
-                <span className="text-slate-600">:</span>
-                <input
-                  type="number"
-                  min={0}
-                  max={59}
-                  value={seconds}
-                  disabled={running}
-                  onChange={(e) =>
-                    setSeconds(clamp(Number(e.target.value || 0), 0, 59))
-                  }
-                  className="w-20 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60 disabled:cursor-not-allowed disabled:opacity-70"
-                />
-                <Btn
-                  kind={running ? "solid" : "ghost"}
-                  onClick={startPause}
-                  disabled={totalMs <= 0}
-                >
-                  {running ? "Pause" : "Start"}
-                </Btn>
-                <Btn kind="ghost" onClick={reset}>
-                  Reset
-                </Btn>
-              </div>
-
-              <div className="text-xs text-slate-600 sm:text-sm">
-                Tap time to start/pause • Space start/pause • R reset • F fullscreen • S sound
-              </div>
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause / Space start/pause / R reset / F fullscreen / S sound
             </div>
           </div>
         </FullscreenBottomBar>
 
         {/* Footer (normal only) */}
         {!isFs && (
-          <div className="mt-6 flex flex-col gap-2">
-            <ShortcutHint>
-              Shortcuts: Space start/pause - R reset - F fullscreen - S sound
-            </ShortcutHint>
-            <ShortcutHint>
-              Tip: click the display once so keyboard shortcuts work immediately.
-            </ShortcutHint>
-          </div>
+          <ShortcutHint>
+            Shortcuts: Space start/pause / R reset / F fullscreen / S sound
+          </ShortcutHint>
         )}
       </div>
     </Card>

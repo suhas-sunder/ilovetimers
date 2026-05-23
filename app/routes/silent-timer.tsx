@@ -484,29 +484,6 @@ function SilentTimerCard() {
             {shownTime}
           </span>
 
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Settings
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                      Sound: {sound ? "On" : "Off"}
-                    </div>
-                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                      Loop: {loop ? "On" : "Off"}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Space = Start/Pause
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Presets + settings (normal only, below display) */}
@@ -543,27 +520,27 @@ function SilentTimerCard() {
             </PresetGroup>
 
             <SettingGroup
-              title="Settings"
+              title="Silent timer settings"
               description="Sound stays off by default for quiet timing."
             >
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto_auto]">
-                <Field
-                  label="Custom time"
-                  inputMode="numeric"
-                  value={inputStr}
-                  onChange={(e) => {
-                    if (status === "running") setStatus("paused");
-                    setInputStr(e.target.value);
-                  }}
-                  onBlur={onSet}
-                  placeholder="mm:ss or ss"
-                />
-                <div className="flex items-end">
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(16rem,auto)]">
+                <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+                  <Field
+                    label="Custom time"
+                    inputMode="numeric"
+                    value={inputStr}
+                    onChange={(e) => {
+                      if (status === "running") setStatus("paused");
+                      setInputStr(e.target.value);
+                    }}
+                    onBlur={onSet}
+                    placeholder="mm:ss or ss"
+                  />
                   <Btn kind="ghost" onClick={onSet}>
                     Set
                   </Btn>
                 </div>
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                   <Toggle label="Loop" checked={loop} onCheckedChange={setLoop} />
                 </div>
@@ -578,7 +555,7 @@ function SilentTimerCard() {
             </SecondaryActionRow>
 
             <ShortcutHint>
-              Shortcuts: Space start/pause · R reset · F fullscreen
+              Shortcuts: Space start/pause / R reset / F fullscreen
             </ShortcutHint>
           </>
         )}
@@ -587,11 +564,8 @@ function SilentTimerCard() {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · R reset · F
+              Tap time to start/pause / Space start/pause / R reset / F
               fullscreen
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
             </div>
           </div>
         </FullscreenBottomBar>

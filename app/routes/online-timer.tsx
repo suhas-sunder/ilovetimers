@@ -397,14 +397,8 @@ function OnlineTimerCard() {
               </Btn>
             </ControlGroup>
 
-            <SecondaryActionRow>
-              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
-                Fullscreen
-              </Btn>
-            </SecondaryActionRow>
-
             <ShortcutHint>
-              Shortcuts: Space start/pause · R reset · F fullscreen
+              Shortcuts: Space start/pause / R reset / F fullscreen
             </ShortcutHint>
           </div>
         )}
@@ -449,14 +443,17 @@ function OnlineTimerCard() {
           </span>
 
           <div className="mt-4 text-xs font-semibold uppercase tracking-widest text-slate-700">
-            Countdown · {statusLabel}
+            Countdown / {statusLabel}
           </div>
         </DisplayStage>
 
         {/* Presets + input (normal only) */}
         {!isFs && (
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
-              <PresetGroup>
+              <PresetGroup
+                title="Quick presets"
+                description="Pick a common duration or enter a custom time below."
+              >
                 {presets.map((m) => (
                   <Chip
                     key={m}
@@ -470,43 +467,52 @@ function OnlineTimerCard() {
                 ))}
               </PresetGroup>
 
-              <SettingGroup>
-              <SettingRow className="md:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto]">
-                <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
-                  <Field
-                    label="Custom time"
-                    inputMode="numeric"
-                    value={inputStr}
-                    onChange={(e) => {
-                      if (status === "running") {
-                        // Pause cleanly when editing
-                        const now = performance.now();
-                        const rem = Math.max(
-                          0,
-                          (endTimeRef.current ?? now) - now,
-                        );
-                        endTimeRef.current = null;
-                        stopRaf();
-                        setRemainingMs(rem);
-                        remainingRef.current = rem;
-                        setStatus(rem <= 0 ? "done" : "paused");
-                      }
-                      setInputStr(e.target.value);
-                    }}
-                    onBlur={onSet}
-                    placeholder="mm:ss or ss"
-                  />
-                  <Btn kind="ghost" onClick={onSet}>
-                    Set
-                  </Btn>
-                </div>
+              <SettingGroup
+                title="Timer settings"
+                description="Set a custom duration, then choose optional sound and loop behavior."
+              >
+                <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(16rem,auto)]">
+                  <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+                    <Field
+                      label="Custom time"
+                      inputMode="numeric"
+                      value={inputStr}
+                      onChange={(e) => {
+                        if (status === "running") {
+                          // Pause cleanly when editing
+                          const now = performance.now();
+                          const rem = Math.max(
+                            0,
+                            (endTimeRef.current ?? now) - now,
+                          );
+                          endTimeRef.current = null;
+                          stopRaf();
+                          setRemainingMs(rem);
+                          remainingRef.current = rem;
+                          setStatus(rem <= 0 ? "done" : "paused");
+                        }
+                        setInputStr(e.target.value);
+                      }}
+                      onBlur={onSet}
+                      placeholder="mm:ss or ss"
+                    />
+                    <Btn kind="ghost" onClick={onSet}>
+                      Set
+                    </Btn>
+                  </div>
 
-                <div className="flex items-center justify-end gap-2">
-                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
-                  <Toggle label="Loop" checked={loop} onCheckedChange={setLoop} />
-                </div>
-              </SettingRow>
+                  <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                    <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                    <Toggle label="Loop" checked={loop} onCheckedChange={setLoop} />
+                  </div>
+                </SettingRow>
               </SettingGroup>
+
+              <SecondaryActionRow>
+                <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                  Fullscreen
+                </Btn>
+              </SecondaryActionRow>
           </div>
         )}
 
@@ -514,27 +520,11 @@ function OnlineTimerCard() {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="ilt-helper-text sm:text-sm">
-              Tap time to start/pause · Space start/pause · R reset · F
+              Tap time to start/pause / Space start/pause / R reset / F
               fullscreen
             </div>
-            <div className="flex items-center gap-2">
-              <Toggle
-                label="Sound"
-                checked={sound}
-                onCheckedChange={setSound}
-                className="px-3 py-1 text-xs"
-              />
-
-              <Toggle
-                label="Loop"
-                checked={loop}
-                onCheckedChange={setLoop}
-                className="px-3 py-1 text-xs"
-              />
-
-              <div className="ilt-helper-text font-semibold">
-                {statusLabel}
-              </div>
+            <div className="ilt-helper-text font-semibold">
+              {statusLabel}
             </div>
           </div>
         </FullscreenBottomBar>

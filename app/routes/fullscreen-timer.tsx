@@ -11,14 +11,19 @@ import {
 import {
   Button as Btn,
   ContentSection,
+  ControlGroup,
   DisplayStage,
   Field,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
+  PresetGroup,
   PresetChip as Chip,
   SeoBand,
-  SettingsPanel,
+  SecondaryActionRow,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
   ToolHero,
   ToolFrame as Card,
   Toggle,
@@ -437,68 +442,13 @@ function FullscreenCountdownCard() {
             {shownTime}
           </span>
 
-          {/* Fullscreen settings overlay */}
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-2">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Settings
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div
-                      className={[
-                        "pointer-events-auto inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold backdrop-blur",
-                        sound
-                          ? "border-slate-200 bg-white/85 text-slate-900"
-                          : "border-slate-200 bg-white/70 text-slate-700",
-                      ].join(" ")}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={sound}
-                        onChange={(e) => setSound(e.target.checked)}
-                        className="cursor-pointer"
-                      />
-                      Sound
-                    </div>
-
-                    <div
-                      className={[
-                        "pointer-events-auto inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold backdrop-blur",
-                        loop
-                          ? "border-slate-200 bg-white/85 text-slate-900"
-                          : "border-slate-200 bg-white/70 text-slate-700",
-                      ].join(" ")}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={loop}
-                        onChange={(e) => setLoop(e.target.checked)}
-                        className="cursor-pointer"
-                      />
-                      Loop
-                    </div>
-
-                    <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                      Space = Start/Pause · R = Reset · F = Fullscreen
-                    </div>
-                  </div>
-                </div>
-
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Tap time to start/pause
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Controls (normal only) */}
         {!isFs && (
-          <SettingsPanel className="mx-auto flex w-full max-w-5xl flex-col gap-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-wrap items-center gap-2">
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
+            <div className="flex flex-col gap-3">
+              <ControlGroup>
                 <Btn onClick={onStartPause}>
                   {status === "running"
                     ? "Pause"
@@ -509,15 +459,18 @@ function FullscreenCountdownCard() {
                 <Btn kind="ghost" onClick={onReset}>
                   Reset
                 </Btn>
-              </div>
+              </ControlGroup>
 
-              <div className="timer-control-shadow rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700">
-                Shortcuts: Space start/pause · R reset · F fullscreen · Esc exit
-              </div>
+              <ShortcutHint>
+                Shortcuts: Space start/pause / R reset / F fullscreen / Esc exit
+              </ShortcutHint>
             </div>
 
             <div className="mt-4 flex flex-col gap-3">
-              <div className="flex flex-wrap items-center justify-center gap-2">
+              <PresetGroup
+                title="Fullscreen timer presets"
+                description="Pick a room-display duration or set a custom countdown below."
+              >
                 {presets.map((m) => (
                   <Chip
                     key={m}
@@ -530,73 +483,60 @@ function FullscreenCountdownCard() {
                     {m}m
                   </Chip>
                 ))}
-              </div>
+              </PresetGroup>
 
-              <div className="mx-auto grid w-full max-w-3xl gap-3 md:grid-cols-[1fr_auto]">
-                <div className="flex items-center gap-2">
-                  <input
-                    inputMode="numeric"
-                    value={inputStr}
-                    onChange={(e) => {
-                      if (status === "running") setStatus("paused");
-                      setInputStr(e.target.value);
-                    }}
-                    onBlur={onSet}
-                    placeholder="mm:ss or ss"
-                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
-                  />
-                  <Btn kind="ghost" onClick={onSet}>
-                    Set
-                  </Btn>
-                </div>
+              <SettingGroup
+                title="Timer settings"
+                description="Set a custom duration, then choose optional sound and loop behavior."
+              >
+                <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(16rem,auto)]">
+                  <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+                    <Field
+                      label="Custom time"
+                      inputMode="numeric"
+                      value={inputStr}
+                      onChange={(e) => {
+                        if (status === "running") setStatus("paused");
+                        setInputStr(e.target.value);
+                      }}
+                      onBlur={onSet}
+                      placeholder="mm:ss or ss"
+                    />
+                    <Btn kind="ghost" onClick={onSet}>
+                      Set
+                    </Btn>
+                  </div>
 
-                <Btn
-                  kind="ghost"
-                  onClick={() => {
-                    if (status === "running") setStatus("paused");
-                    onPreset(5);
-                  }}
-                >
-                  5m
-                </Btn>
-
-              </div>
+                  <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                    <Toggle
+                      label="Sound"
+                      checked={sound}
+                      onCheckedChange={setSound}
+                    />
+                    <Toggle
+                      label="Loop"
+                      checked={loop}
+                      onCheckedChange={setLoop}
+                    />
+                  </div>
+                </SettingRow>
+              </SettingGroup>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={sound}
-                  onChange={(e) => setSound(e.target.checked)}
-                  className="cursor-pointer"
-                />
-                Sound
-              </label>
-
-              <label className="inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={loop}
-                  onChange={(e) => setLoop(e.target.checked)}
-                  className="cursor-pointer"
-                />
-                Loop
-              </label>
-
+            <SecondaryActionRow>
               <Btn kind="ghost" onClick={requestFs} className="py-2">
                 Fullscreen
               </Btn>
-            </div>
-          </SettingsPanel>
+            </SecondaryActionRow>
+          </div>
         )}
 
         {/* Fullscreen bottom bar */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · R reset · F
-              fullscreen · Esc exit
+              Tap time to start/pause / Space start/pause / R reset / F
+              fullscreen / Esc exit
             </div>
           </div>
         </FullscreenBottomBar>

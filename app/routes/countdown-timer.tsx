@@ -345,8 +345,8 @@ function CountUpTimerCard() {
         {/* Controls bar (normal only) */}
         {!isFs && (
           <div className="order-2 mx-auto flex w-full max-w-5xl flex-col gap-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <ControlGroup className="max-w-none justify-center sm:justify-start">
+            <div className="flex flex-col gap-3">
+              <ControlGroup>
                 <Button variant="primary" onClick={startPause}>
                   {running ? "Pause" : remaining <= 0 ? "Restart" : "Start"}
                 </Button>
@@ -361,8 +361,8 @@ function CountUpTimerCard() {
                 </Button>
               </ControlGroup>
 
-              <ShortcutHint className="w-auto max-w-none sm:ml-auto">
-                Shortcuts: Space start/pause · R reset · A +1:00 · S -0:10 · F
+              <ShortcutHint>
+                Shortcuts: Space start/pause / R reset / A +1:00 / S -0:10 / F
                 fullscreen
               </ShortcutHint>
             </div>
@@ -371,26 +371,27 @@ function CountUpTimerCard() {
               title="Set countdown"
               description="Minutes and seconds. Seconds are clamped to 0-59."
             >
-              <SettingRow className="sm:grid-cols-[minmax(0,7rem)_minmax(0,6rem)_auto] lg:grid-cols-[minmax(0,7rem)_minmax(0,6rem)_auto]">
-                  <Field
-                    label="Minutes"
-                    value={minsInput}
-                    onChange={(e) => setMinsInput(e.target.value)}
-                    onBlur={applyInputsToTotal}
-                    inputMode="numeric"
-                    disabled={running}
-                  />
+              <SettingRow className="mx-auto max-w-3xl sm:grid-cols-[minmax(0,10rem)_minmax(0,10rem)_auto] sm:justify-center">
+                <Field
+                  label="Minutes"
+                  value={minsInput}
+                  onChange={(e) => setMinsInput(e.target.value)}
+                  onBlur={applyInputsToTotal}
+                  inputMode="numeric"
+                  disabled={running}
+                />
 
-                  <Field
-                    label="Seconds"
-                    hint="0-59"
-                    value={secsInput}
-                    onChange={(e) => setSecsInput(e.target.value)}
-                    onBlur={applyInputsToTotal}
-                    inputMode="numeric"
-                    disabled={running}
-                  />
+                <Field
+                  label="Seconds"
+                  hint="0-59"
+                  value={secsInput}
+                  onChange={(e) => setSecsInput(e.target.value)}
+                  onBlur={applyInputsToTotal}
+                  inputMode="numeric"
+                  disabled={running}
+                />
 
+                <div className="flex items-end justify-center sm:justify-start">
                   <Button
                     variant="secondary"
                     onClick={applyInputsToTotal}
@@ -398,6 +399,7 @@ function CountUpTimerCard() {
                   >
                     Apply
                   </Button>
+                </div>
               </SettingRow>
             </SettingGroup>
 
@@ -451,22 +453,16 @@ function CountUpTimerCard() {
           </span>
 
           <div className="mt-4 text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            Countdown · {statusLabel}
+            Countdown / {statusLabel}
           </div>
 
-          {!isFs && (
-            <div className="mt-3 text-xs font-semibold text-slate-600">
-              Tip: Start, then use +1:00 or -0:10 while it runs.
-            </div>
-          )}
         </DisplayStage>
 
         {/* Fullscreen bottom controls (no duplicate buttons) */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · A +1:00 · S -0:10 ·
-              R reset · F fullscreen
+              Tap time to start/pause / Space start/pause / A +1:00 / S -0:10 / R reset / F fullscreen
             </div>
           </div>
         </FullscreenBottomBar>

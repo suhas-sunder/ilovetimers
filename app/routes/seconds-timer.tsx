@@ -375,9 +375,9 @@ function SecondsTimerTool() {
 
             <SettingGroup
               title="Custom seconds"
-              description="Enter a whole number of seconds from 1 to 86400."
+              description="Enter a whole number of seconds from 1 to 86400. Final sound uses browser audio and may require interaction."
             >
-              <SettingRow className="sm:grid-cols-3">
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
                 <Field
                   label="Total seconds"
                   type="number"
@@ -387,13 +387,12 @@ function SecondsTimerTool() {
                   disabled={running}
                   onChange={(event) => setSecondsInput(event.currentTarget.value)}
                 />
-                <Toggle
-                  label="Sound"
-                  checked={sound}
-                  onCheckedChange={setSound}
-                />
-                <div className="ilt-helper-text flex items-end">
-                  Final sound uses browser audio and may require interaction.
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                  <Toggle
+                    label="Sound"
+                    checked={sound}
+                    onCheckedChange={setSound}
+                  />
                 </div>
               </SettingRow>
             </SettingGroup>
@@ -418,14 +417,6 @@ function SecondsTimerTool() {
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <ControlGroup className="mx-0 justify-start">
-              <Btn kind="solid" onClick={startPause}>
-                {running ? "Pause" : remainingMs < totalSeconds * 1000 && remainingMs > 0 ? "Resume" : "Start"}
-              </Btn>
-              <Btn kind="ghost" onClick={reset}>
-                Reset
-              </Btn>
-            </ControlGroup>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
               Tap display to start or pause / No ads appear in fullscreen
             </div>

@@ -762,17 +762,15 @@ function PresetDurationTimerTool({
 
             <SettingGroup
               title="Timer settings"
-              description={`This route is fixed to ${config.durationLabel}; use another preset link or the custom countdown timer for different durations.`}
+              description={`This route is fixed to ${config.durationLabel}. Browser sound may require interaction and depends on device volume.`}
             >
-              <SettingRow className="sm:grid-cols-[auto_minmax(0,1fr)]">
+              <SettingRow className="justify-items-center lg:grid-cols-[auto]">
                 <Toggle
                   label={config.soundLabel}
                   checked={sound}
                   onCheckedChange={setSound}
+                  className="justify-self-center"
                 />
-                <div className="ilt-helper-text flex items-end">
-                  Browser sound may require interaction and depends on device volume.
-                </div>
               </SettingRow>
             </SettingGroup>
 
@@ -801,14 +799,6 @@ function PresetDurationTimerTool({
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <ControlGroup className="mx-0 justify-start">
-              <Button variant="primary" onClick={startPause}>
-                {primaryButtonLabel}
-              </Button>
-              <Button variant="secondary" onClick={reset}>
-                Reset
-              </Button>
-            </ControlGroup>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
               Tap display to start or pause / No ads appear in fullscreen
             </div>

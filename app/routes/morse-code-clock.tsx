@@ -369,20 +369,6 @@ function MorseCodeClockCard({ initialNowISO }: { initialNowISO: string }) {
                 <div className="text-sm font-extrabold text-slate-900">
                   Morse output
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <Btn
-                    kind="ghost"
-                    onClick={() =>
-                      setStyle((v) => (v === "blocks" ? "text" : "blocks"))
-                    }
-                    className="py-2"
-                  >
-                    {style === "blocks" ? "Text view" : "Block view"}
-                  </Btn>
-                  <Btn kind="ghost" onClick={copy} className="py-2">
-                    {copied ? "Copied" : "Copy"}
-                  </Btn>
-                </div>
               </div>
 
               {style === "text" ? (
@@ -430,12 +416,12 @@ function MorseCodeClockCard({ initialNowISO }: { initialNowISO: string }) {
                         >
                           {blocks.map((b) => {
                             const dot = isFs
-                              ? "inline-block h-5 w-5 rounded-full bg-slate-900"
-                              : "inline-block h-4 w-4 rounded-full bg-slate-900";
+                              ? "inline-block h-5 w-5 rounded-full bg-[var(--ilt-text-primary)]"
+                              : "inline-block h-4 w-4 rounded-full bg-[var(--ilt-text-primary)]";
 
                             const dash = isFs
-                              ? "inline-block h-5 w-14 rounded-full bg-slate-900"
-                              : "inline-block h-4 w-10 rounded-full bg-slate-900";
+                              ? "inline-block h-5 w-14 rounded-full bg-[var(--ilt-text-primary)]"
+                              : "inline-block h-4 w-10 rounded-full bg-[var(--ilt-text-primary)]";
 
                             const gap = isFs
                               ? "inline-block h-5 w-3"
@@ -517,11 +503,6 @@ function MorseCodeClockCard({ initialNowISO }: { initialNowISO: string }) {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
               F fullscreen · T 24-hour · S seconds · V view · C copy · Esc exit
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {use24h ? "24-hour" : "12-hour"} ·{" "}
-              {showSeconds ? "Seconds on" : "Seconds off"} ·{" "}
-              {style === "blocks" ? "Blocks" : "Text"}
             </div>
           </div>
         </FullscreenBottomBar>

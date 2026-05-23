@@ -331,13 +331,6 @@ function BinaryClockCard({ initialNowISO }: { initialNowISO: string }) {
             <Btn kind="ghost" onClick={copy} className="py-1 text-sm">
               {copied ? "Copied" : "Copy"}
             </Btn>
-            <Btn
-              kind="solid"
-              onClick={() => void fullscreen.toggle()}
-              className="py-1 text-sm"
-            >
-              Fullscreen
-            </Btn>
           </div>
         }
       />
@@ -484,16 +477,8 @@ function BinaryClockCard({ initialNowISO }: { initialNowISO: string }) {
               </Chip>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Btn kind="ghost" onClick={copy}>
-                {copied ? "Copied" : "Copy"}
-              </Btn>
-              <Btn
-                kind="solid"
-                onClick={() => void fullscreen.toggle()}
-              >
-                Exit
-              </Btn>
+            <div className="text-xs text-slate-600 sm:text-sm">
+              F fullscreen / C copy / S seconds / B mode / 1 12-hour / 2 24-hour
             </div>
           </div>
         </FullscreenBottomBar>

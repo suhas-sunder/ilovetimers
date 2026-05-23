@@ -337,7 +337,7 @@ function SmoothSecondHandClockTool({ initialNowISO }: { initialNowISO: string })
               <Toggle label="Seconds" checked={showSeconds} onCheckedChange={setShowSeconds} />
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              No ads appear in fullscreen
+              F fullscreen / S smooth-tick / H seconds hand / C copy
             </div>
           </div>
         </FullscreenBottomBar>

@@ -903,9 +903,6 @@ function SunriseSunsetClockCard({ initialNowISO }: { initialNowISO: string }) {
               Tap time to toggle seconds · F fullscreen · T 12/24 · S seconds ·
               L location mode
             </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

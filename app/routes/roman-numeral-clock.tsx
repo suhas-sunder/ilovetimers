@@ -522,9 +522,6 @@ function RomanNumeralClockCard({ initialNowISO }: { initialNowISO: string }) {
                   </div>
                 </div>
 
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  C = Copy
-                </div>
               </div>
             </div>
           )}
@@ -580,9 +577,6 @@ function RomanNumeralClockCard({ initialNowISO }: { initialNowISO: string }) {
             <div className="text-xs text-slate-600 sm:text-sm">
               Shortcuts: F fullscreen · C copy · S seconds · I IIII · 1 (12h) ·
               2 (24h)
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLine}
             </div>
           </div>
         </FullscreenBottomBar>

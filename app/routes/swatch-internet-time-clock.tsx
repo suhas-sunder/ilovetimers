@@ -291,11 +291,6 @@ function SwatchInternetTimeCard({ initialNowISO }: { initialNowISO: string }) {
             BMT (UTC+1): <span className="font-mono">{bmtTimeStr}</span>
           </div>
 
-          {isFs && (
-            <div className="pointer-events-none absolute right-3 top-3 hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-              Space = Live/Frozen · S = Snap · F = Fullscreen
-            </div>
-          )}
         </div>
 
         {!isFs && (
@@ -341,9 +336,6 @@ function SwatchInternetTimeCard({ initialNowISO }: { initialNowISO: string }) {
             <div className="text-xs text-slate-600 sm:text-sm">
               Tap beat to toggle live/freeze · Space live/freeze · S snap · F
               fullscreen
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
             </div>
           </div>
         </FullscreenBottomBar>

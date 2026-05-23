@@ -1173,7 +1173,7 @@ function AnalogClockWithSecondHandTool({
               />
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              No ads appear in fullscreen
+              F fullscreen / C copy / S second hand / M smooth-tick
             </div>
           </div>
         </FullscreenBottomBar>
@@ -1449,7 +1449,7 @@ function FullScreenAnalogClockTool({
               />
             </div>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              No ads appear in fullscreen
+              F fullscreen / C copy / S second hand / M smooth-tick
             </div>
           </div>
         </FullscreenBottomBar>

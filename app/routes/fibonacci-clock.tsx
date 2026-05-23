@@ -950,9 +950,6 @@ function FibonacciClockCard({ initialNowISO }: { initialNowISO: string }) {
             <div className="text-xs text-slate-600 sm:text-sm">
               Shortcuts: F fullscreen · C copy · L live · E explore
             </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusChip}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

@@ -892,9 +892,6 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
                 </div>
               </div>
 
-              <div className="timer-specialty-clock-pill hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                F = Fullscreen · G = GPS
-              </div>
             </div>
           </div>
         </div>

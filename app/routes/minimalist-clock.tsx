@@ -502,14 +502,6 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
               Shortcuts: F fullscreen · S seconds · T 12/24 · D date · Z zen · C
               copy
             </div>
-            <div
-              className={[
-                "text-xs font-semibold text-slate-700 transition-opacity duration-200",
-                softHidden ? "opacity-0" : "opacity-100",
-              ].join(" ")}
-            >
-              {metaLine}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

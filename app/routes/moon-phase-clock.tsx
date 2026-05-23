@@ -520,11 +520,6 @@ function MoonPhaseClockCard({ initialNowISO }: { initialNowISO: string }) {
             </div>
           </div>
 
-          {!isFs && (
-            <div className="timer-specialty-clock-panel mt-5 timer-control-shadow rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-700 text-center">
-              Shortcuts: F fullscreen · Esc exit
-            </div>
-          )}
         </div>
 
         {/* CONTROLS (always interactable; editing switches to Manual) */}
@@ -754,9 +749,6 @@ function MoonPhaseClockCard({ initialNowISO }: { initialNowISO: string }) {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
               F fullscreen · Esc exit · {live ? "Live updating" : "Manual time"}
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {urgent ? "Event soon" : "OK"}
             </div>
           </div>
         </FullscreenBottomBar>

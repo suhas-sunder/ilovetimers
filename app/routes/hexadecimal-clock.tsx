@@ -511,9 +511,6 @@ function HexClockCard({ initialNowISO }: { initialNowISO: string }) {
               Tap display to copy · F fullscreen · C copy · S seconds · M ms · X
               mode · 1 (12h) · 2 (24h)
             </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {copied ? "Copied" : "Ready"}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

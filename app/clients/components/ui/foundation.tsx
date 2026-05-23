@@ -303,7 +303,7 @@ export function SecondaryActionRow({ className, ...props }: DivProps) {
   return (
     <div
       className={cx(
-        "ilt-settings-width mx-auto flex w-full flex-wrap items-center justify-center gap-2 sm:justify-end",
+        "ilt-settings-width mx-auto flex w-full flex-wrap items-center justify-center gap-2",
         className,
       )}
       {...props}
@@ -315,7 +315,7 @@ export function ShortcutHint({ className, ...props }: DivProps) {
   return (
     <div
       className={cx(
-        "ilt-helper-text ilt-settings-width mx-auto w-full text-center sm:text-right",
+        "ilt-helper-text ilt-settings-width mx-auto w-full text-center",
         className,
       )}
       {...props}

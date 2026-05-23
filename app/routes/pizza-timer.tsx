@@ -28,7 +28,6 @@ import {
   ToolHero,
   ToolFrame as Card,
   Toggle,
-  UtilityResultRow,
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
@@ -574,26 +573,6 @@ function PizzaTimerCard() {
             {shownTime}
           </span>
 
-          {!isFs && (
-            <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-slate-700">
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
-                Check at {checkAtMin} min left
-              </span>
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
-                Reminder{" "}
-                {sound
-                  ? reminderMode === "repeat"
-                    ? "repeating"
-                    : reminderMode === "triple"
-                      ? "triple"
-                      : "off"
-                  : "off"}
-              </span>
-              <span className="rounded-full border border-slate-200 bg-white px-3 py-1">
-                Sound {sound ? "on" : "off"}
-              </span>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Controls (normal only) */}
@@ -677,10 +656,11 @@ function PizzaTimerCard() {
                 </div>
               </SettingRow>
 
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+              <SettingRow className="lg:grid-cols-2">
 
                 <Field
-                  label={`Check at ${checkAtMin} min left`}
+                  label="Check minutes left"
+                  hint="Reminder point before the timer ends."
                   type="number"
                   min={0}
                   max={30}
@@ -705,34 +685,24 @@ function PizzaTimerCard() {
                   <option value="triple">Triple beep</option>
                   <option value="none">None</option>
                 </Select>
-
-              <SecondaryActionRow className="max-w-none justify-start sm:justify-start">
-                <Btn
-                  kind="ghost"
-                  onClick={() => playReminder()}
-                  disabled={!sound || reminderMode === "none"}
-                >
-                  Test reminder
-                </Btn>
-                <Btn
-                  kind="ghost"
-                  onClick={() => stopReminder()}
-                  disabled={!sound}
-                >
-                  Stop sound
-                </Btn>
-              </SecondaryActionRow>
               </SettingRow>
             </SettingGroup>
 
-            <UtilityResultRow>
-              <span className="ilt-content-label">Method</span>
-              <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-                {methodLabel}
-              </span>
-            </UtilityResultRow>
-
             <SecondaryActionRow>
+              <Btn
+                kind="ghost"
+                onClick={() => playReminder()}
+                disabled={!sound || reminderMode === "none"}
+              >
+                Test reminder
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={() => stopReminder()}
+                disabled={!sound}
+              >
+                Stop sound
+              </Btn>
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
                 Fullscreen
               </Btn>

@@ -39,7 +39,16 @@ function initialDisplaySize({
   const widthScale = charCount * averageDigitEm;
   const preferredVw = Math.min(52, Math.max(10, 100 / widthScale));
   const preferredOffset = (paddingAllowancePx + 48) / widthScale;
-  return `clamp(${minPx}px, calc(${(preferredVw * initialScale).toFixed(2)}vw - ${(preferredOffset * initialScale).toFixed(1)}px), ${maxPx}px)`;
+  const initialMaxPx = Math.round(maxPx * 1.28);
+  return `clamp(${minPx}px, calc(${(preferredVw * initialScale).toFixed(2)}vw - ${(preferredOffset * initialScale).toFixed(1)}px), ${initialMaxPx}px)`;
+}
+
+function largeScreenMaxPx(maxPx: number, containerWidth: number) {
+  if (containerWidth < 960) return maxPx;
+
+  const scale = containerWidth >= 1600 ? 1.35 : 1.22;
+  const widthBound = containerWidth * 0.46;
+  return Math.max(maxPx, Math.round(Math.min(maxPx * scale, widthBound)));
 }
 
 export function useFitDisplayText({
@@ -90,12 +99,13 @@ export function useFitDisplayText({
         );
       };
 
+      const effectiveMaxPx = largeScreenMaxPx(maxPx, rect.width);
       let low = minPx;
-      let high = maxPx;
+      let high = effectiveMaxPx;
       let best = minPx;
 
-      if (fits(maxPx)) {
-        best = maxPx;
+      if (fits(effectiveMaxPx)) {
+        best = effectiveMaxPx;
       } else {
         for (let i = 0; i < 16; i++) {
           const mid = Math.floor((low + high) / 2);

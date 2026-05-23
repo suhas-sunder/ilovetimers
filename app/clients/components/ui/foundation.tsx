@@ -33,6 +33,7 @@ export function PageShell({ className, children, ...props }: DivProps) {
       )}
       {...props}
     >
+      <ToolAdSlot slot="top-banner" className="pt-2 pb-0 sm:pt-3" />
       {children}
       <ToolAdSlot slot="bottom-banner" className="pt-8 pb-10 sm:pt-10 sm:pb-12" />
     </main>
@@ -413,7 +414,7 @@ type ButtonLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   kind?: ButtonKind;
   size?: ButtonSize;
 } & ButtonIconOptions;
-export type AdSlotType = "in-content-square" | "bottom-banner";
+export type AdSlotType = "top-banner" | "in-content-square" | "bottom-banner";
 type AdPlaceholderVariant = "banner" | "horizontal" | "square" | "vertical";
 
 const buttonVariants: Record<ButtonVariant, string> = {

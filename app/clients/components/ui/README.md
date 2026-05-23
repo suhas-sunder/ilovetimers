@@ -14,12 +14,12 @@ Use the route-opt-in visual stack classes in `app.css` for family rhythm. `timer
 
 Use `SettingsPanel` and `SettingsDrawer` for compact setup areas, `SeoBand` for explanatory content below the tool experience, and `ContentPage`, `ContentSection`, or `ContentPanel` for non-tool informational pages. Content primitives should create readable rhythm without boxed sections by default.
 
-Use `AdPlaceholder` only for quiet reserved ad areas. It is a visual placeholder, not an ad integration, and it should stay out of active timer tool surfaces unless a dedicated ad-placement pass calls for it. It supports these slot names: `in-content-square` and `bottom-banner`. The label should stay policy-safe, normally `Advertisement`, with no fake calls to action or misleading surrounding headings.
+Use `AdPlaceholder` only for quiet reserved ad areas. It is a visual placeholder, not an ad integration, and it should stay out of active timer tool surfaces unless a dedicated ad-placement pass calls for it. It supports these slot names: `top-banner`, `in-content-square`, and `bottom-banner`. The label should stay policy-safe, normally `Advertisement`, with no fake calls to action or misleading surrounding headings.
 
 The final monetized tool-page contract is:
 
 1. Site nav/header.
-2. No ad placeholder directly below the site header/nav.
+2. Optional `top-banner` ad placeholder below nav with enough breathing room from navigation.
 3. Utility header: display first, primary controls below display, then presets, settings, and secondary actions. No SEO copy, duplicated page title, marketing text, or ad inside controls.
 4. Page title section with one visible H1 and one short description.
 5. No banner placeholder directly after the page title/header section.

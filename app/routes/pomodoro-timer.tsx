@@ -532,10 +532,6 @@ function PomodoroCard() {
                     fullscreen.
                   </div>
                 </div>
-
-                <div className="hidden sm:block ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)] backdrop-blur">
-                  {phaseLabel}
-                </div>
               </div>
             </div>
           )}
@@ -672,9 +668,6 @@ function PomodoroCard() {
             <div className="ilt-helper-text sm:text-sm">
               Tap time to start/pause · Space start/pause · N next · R reset · F
               fullscreen
-            </div>
-            <div className="ilt-helper-text font-semibold">
-              {statusLabel}
             </div>
           </div>
         </FullscreenBottomBar>

@@ -679,9 +679,6 @@ function BoxingTimerTool() {
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
               Tap time to start or pause / Space start/pause / N next / R reset
             </div>
-            <div className="text-xs font-semibold text-[var(--ilt-text-secondary)]">
-              {phaseLabel} / no ads in fullscreen
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

@@ -1016,23 +1016,9 @@ function AnalogClockWithSecondHandTool({
         title="Analog Clock With Second Hand"
         onExit={() => void fullscreen.exit()}
         right={
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSmooth((value) => !value)}
-              disabled={!showSecondHand}
-            >
-              {smooth ? "Tick" : "Smooth"}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowSecondHand((value) => !value)}
-            >
-              {showSecondHand ? "Hide seconds" : "Show seconds"}
-            </Button>
-          </div>
+          <Button variant="ghost" size="sm" onClick={() => void copyTime()}>
+            {copied ? "Copied" : "Copy"}
+          </Button>
         }
       />
 
@@ -1306,23 +1292,9 @@ function FullScreenAnalogClockTool({
         title="Full Screen Analog Clock"
         onExit={() => void fullscreen.exit()}
         right={
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSmooth((value) => !value)}
-              disabled={!showSecondHand}
-            >
-              {smooth ? "Tick" : "Smooth"}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowSecondHand((value) => !value)}
-            >
-              {showSecondHand ? "Hide seconds" : "Show seconds"}
-            </Button>
-          </div>
+          <Button variant="ghost" size="sm" onClick={() => void copyTime()}>
+            {copied ? "Copied" : "Copy"}
+          </Button>
         }
       />
 

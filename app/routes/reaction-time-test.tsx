@@ -760,9 +760,6 @@ function ReactionTimeTestTool() {
                 Tap anywhere on the stage or press Spacebar/Enter · F fullscreen
                 · R reset · Z zen · C copy
               </div>
-              <div className="text-xs font-semibold text-slate-700">
-                {statusLabel}
-              </div>
             </div>
           </FullscreenBottomBar>
         </div>

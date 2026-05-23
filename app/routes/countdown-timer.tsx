@@ -468,9 +468,6 @@ function CountUpTimerCard() {
               Tap time to start/pause · Space start/pause · A +1:00 · S -0:10 ·
               R reset · F fullscreen
             </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

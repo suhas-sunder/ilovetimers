@@ -637,9 +637,6 @@ function WorkoutTimerCard() {
               Tap time to start/pause / Space start/pause / N next / R reset / F
               fullscreen
             </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {phaseLabel} / Round {roundIdx}/{rounds} / {statusLabel}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

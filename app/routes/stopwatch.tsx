@@ -490,9 +490,6 @@ function StopwatchCard() {
               Tap time to start/pause · Space start/pause · L lap · C copy · R
               reset · F fullscreen
             </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
-            </div>
           </div>
         </FullscreenBottomBar>
       </div>

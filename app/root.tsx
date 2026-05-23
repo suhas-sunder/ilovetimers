@@ -16,7 +16,6 @@ import RelatedSites from "./clients/components/navigation/RelatedSites";
 import { PHProvider } from "./provider";
 import Footer from "./clients/components/navigation/Footer";
 import {
-  ListIcon,
   MoonIcon,
   SearchIcon,
   ThemeSunIcon,
@@ -1025,16 +1024,8 @@ function TimerDirectoryMenu({
                         onClick={onNavigate}
                         className="ilt-focus-ring group rounded-2xl px-3 py-3 transition-colors hover:bg-[var(--ilt-bg-hover)]"
                       >
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="text-sm font-bold text-[var(--ilt-text-primary)]">
-                            {item.title}
-                          </div>
-                          <div
-                            aria-hidden="true"
-                            className="text-sm font-bold text-[var(--ilt-text-muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--ilt-text-primary)]"
-                          >
-                            &gt;
-                          </div>
+                        <div className="text-sm font-bold text-[var(--ilt-text-primary)]">
+                          {item.title}
                         </div>
                         <p className="mt-1 text-xs leading-5 text-[var(--ilt-text-secondary)]">
                           {item.description}
@@ -1175,12 +1166,6 @@ function SiteHeader() {
                 aria-haspopup="dialog"
                 className={`${desktopLink} flex items-center gap-1`}
               >
-                <ListIcon
-                  size={16}
-                  title={undefined}
-                  aria-hidden="true"
-                  className="h-4 w-4"
-                />
                 More
                 <span
                   aria-hidden="true"

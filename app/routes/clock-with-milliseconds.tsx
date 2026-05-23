@@ -229,14 +229,9 @@ function ClockWithMillisecondsTool({ initialNowISO }: { initialNowISO: string })
         title="Clock With Milliseconds"
         onExit={() => void fullscreen.exit()}
         right={
-          <div className="flex items-center gap-2">
-            <Btn kind="ghost" size="sm" onClick={() => setShowMilliseconds((value) => !value)}>
-              {showMilliseconds ? "Hide ms" : "Show ms"}
-            </Btn>
-            <Btn kind="ghost" size="sm" onClick={() => setMode((value) => (value === "local" ? "utc" : "local"))}>
-              {mode === "local" ? "UTC" : "Local"}
-            </Btn>
-          </div>
+          <Btn kind="ghost" size="sm" onClick={() => void copyTime()}>
+            {copied ? "Copied" : "Copy"}
+          </Btn>
         }
       />
 

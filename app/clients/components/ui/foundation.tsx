@@ -9,27 +9,6 @@ import type {
   SelectHTMLAttributes,
 } from "react";
 import { useLocation } from "react-router";
-import {
-  CalendarIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  CopyIcon,
-  DownloadIcon,
-  ListIcon,
-  OpenInNewIcon,
-  PauseIcon,
-  PlayIcon,
-  PrintIcon,
-  RefreshIcon,
-  SaveIcon,
-  SearchIcon,
-  ShareIcon,
-  StopIcon,
-  SwapArrowsIcon,
-  TrashIcon,
-  TuneIcon,
-  VolumeIcon,
-} from "~/clients/assets/svg/Icons";
 import { getRouteMonetization } from "~/clients/config/monetization";
 import { cx } from "./utils";
 
@@ -425,7 +404,6 @@ type ButtonSize = "sm" | "md" | "lg";
 type ButtonIconOptions = {
   leadingIcon?: ReactNode;
   trailingIcon?: ReactNode;
-  autoIcon?: boolean;
 };
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
@@ -469,51 +447,6 @@ type IconElementProps = {
   focusable?: boolean | "true" | "false";
 };
 
-function buttonText(children: ReactNode) {
-  const parts = Children.toArray(children);
-  if (parts.length === 0) return "";
-  if (parts.some((part) => typeof part !== "string" && typeof part !== "number")) {
-    return "";
-  }
-  return parts.join("").replace(/\s+/g, " ").trim().toLowerCase();
-}
-
-function autoButtonIcon(children: ReactNode) {
-  const label = buttonText(children);
-  if (!label) return null;
-
-  if (label === "start" || label.startsWith("start ")) return <PlayIcon />;
-  if (label === "resume" || label.startsWith("resume ")) return <PlayIcon />;
-  if (label === "pause" || label.startsWith("pause ")) return <PauseIcon />;
-  if (label === "stop" || label.startsWith("stop ")) return <StopIcon />;
-  if (label === "reset" || label.startsWith("reset ")) return <RefreshIcon />;
-  if (label === "restart" || label.startsWith("restart ")) return <RefreshIcon />;
-  if (label === "copy" || label.startsWith("copy ")) return <CopyIcon />;
-  if (label === "copied") return <CheckCircleIcon />;
-  if (label === "share" || label.startsWith("share ")) return <ShareIcon />;
-  if (label === "print" || label.startsWith("print ")) return <PrintIcon />;
-  if (label === "download" || label.startsWith("download ")) return <DownloadIcon />;
-  if (label === "export" || label.startsWith("export ")) return <DownloadIcon />;
-  if (label === "save" || label.startsWith("save ")) return <SaveIcon />;
-  if (label === "delete" || label.startsWith("delete ")) return <TrashIcon />;
-  if (label === "remove" || label.startsWith("remove ")) return <TrashIcon />;
-  if (label === "clear" || label.startsWith("clear ")) return <TrashIcon />;
-  if (label === "fullscreen" || label.startsWith("fullscreen ")) return <OpenInNewIcon />;
-  if (label === "open" || label.startsWith("open ")) return <OpenInNewIcon />;
-  if (label === "search" || label.startsWith("search ")) return <SearchIcon />;
-  if (label === "settings" || label.startsWith("settings ")) return <TuneIcon />;
-  if (label === "options" || label.startsWith("options ")) return <TuneIcon />;
-  if (label === "apply" || label.startsWith("apply ")) return <CheckCircleIcon />;
-  if (label === "swap" || label.startsWith("swap ")) return <SwapArrowsIcon />;
-  if (label === "today" || label.startsWith("today ")) return <CalendarIcon />;
-  if (label === "now" || label.startsWith("now ")) return <ClockIcon />;
-  if (label === "set now" || label.startsWith("set now ")) return <ClockIcon />;
-  if (label === "add row" || label === "add city" || label === "add timezone") return <ListIcon />;
-  if (label === "test sound" || label === "sound" || label.startsWith("sound ")) return <VolumeIcon />;
-
-  return null;
-}
-
 function renderButtonIcon(icon: ReactNode, size: ButtonSize) {
   if (!icon) return null;
   const iconSize = size === "lg" ? 18 : 16;
@@ -536,7 +469,6 @@ export function Button({
   children,
   leadingIcon,
   trailingIcon,
-  autoIcon = true,
   type = "button",
   ...props
 }: ButtonProps) {
@@ -546,11 +478,9 @@ export function Button({
         ? "primary"
         : kind === "danger"
           ? "danger"
-          : "secondary"
+        : "secondary"
       : variant;
-  const resolvedLeadingIcon =
-    leadingIcon ?? (autoIcon ? autoButtonIcon(children) : null);
-  const hasIcon = Boolean(resolvedLeadingIcon || trailingIcon);
+  const hasIcon = Boolean(leadingIcon || trailingIcon);
 
   return (
     <button
@@ -564,7 +494,7 @@ export function Button({
       )}
       {...props}
     >
-      {renderButtonIcon(resolvedLeadingIcon, size)}
+      {renderButtonIcon(leadingIcon, size)}
       {children}
       {renderButtonIcon(trailingIcon, size)}
     </button>
@@ -599,7 +529,6 @@ export function ButtonLink({
   children,
   leadingIcon,
   trailingIcon,
-  autoIcon = true,
   ...props
 }: ButtonLinkProps) {
   const resolvedVariant =
@@ -608,11 +537,9 @@ export function ButtonLink({
         ? "primary"
         : kind === "danger"
           ? "danger"
-          : "secondary"
+        : "secondary"
       : variant;
-  const resolvedLeadingIcon =
-    leadingIcon ?? (autoIcon ? autoButtonIcon(children) : null);
-  const hasIcon = Boolean(resolvedLeadingIcon || trailingIcon);
+  const hasIcon = Boolean(leadingIcon || trailingIcon);
 
   return (
     <a
@@ -625,7 +552,7 @@ export function ButtonLink({
       )}
       {...props}
     >
-      {renderButtonIcon(resolvedLeadingIcon, size)}
+      {renderButtonIcon(leadingIcon, size)}
       {children}
       {renderButtonIcon(trailingIcon, size)}
     </a>

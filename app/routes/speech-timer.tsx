@@ -389,14 +389,6 @@ function SpeechTimerTool() {
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <ControlGroup className="mx-0 justify-start">
-              <Btn kind="solid" onClick={startPause}>
-                {running ? "Pause" : "Start"}
-              </Btn>
-              <Btn kind="ghost" onClick={reset}>
-                Reset
-              </Btn>
-            </ControlGroup>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
               Tap timer to start or pause / Space start-pause / R reset
             </div>

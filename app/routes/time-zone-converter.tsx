@@ -971,9 +971,6 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
               <div className="ilt-helper-text sm:text-sm">
                 S swap · N now · C copy · F fullscreen · Esc exit
               </div>
-              <div className="ilt-helper-text font-semibold">
-                {copied ? copied : statusLabel}
-              </div>
             </div>
           </FullscreenBottomBar>
         </div>

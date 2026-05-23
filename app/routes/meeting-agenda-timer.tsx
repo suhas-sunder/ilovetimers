@@ -375,6 +375,9 @@ function MeetingAgendaTimerTool() {
             <Btn kind="solid" size="sm" onClick={startPause}>
               {running ? "Pause" : "Start"}
             </Btn>
+            <Btn kind="ghost" size="sm" onClick={reset}>
+              Reset
+            </Btn>
             <Btn kind="ghost" size="sm" onClick={() => goToItem(activeIndex + 1)} disabled={activeIndex >= agenda.length - 1}>
               Next
             </Btn>
@@ -548,20 +551,6 @@ function MeetingAgendaTimerTool() {
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <ControlGroup className="mx-0 justify-start">
-              <Btn kind="ghost" onClick={() => goToItem(activeIndex - 1)} disabled={activeIndex === 0}>
-                Previous
-              </Btn>
-              <Btn kind="solid" onClick={startPause}>
-                {running ? "Pause" : "Start"}
-              </Btn>
-              <Btn kind="ghost" onClick={reset}>
-                Reset
-              </Btn>
-              <Btn kind="ghost" onClick={() => goToItem(activeIndex + 1)} disabled={activeIndex >= agenda.length - 1}>
-                Next
-              </Btn>
-            </ControlGroup>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
               Tap display to start or pause / No ads appear in fullscreen
             </div>

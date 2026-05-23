@@ -266,28 +266,6 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
         show={isFs}
         title="Digital Clock"
         onExit={() => void fullscreen.exit()}
-        left={
-          <div className="hidden items-center gap-3 text-sm text-slate-700 sm:flex">
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={showSeconds}
-                onChange={(e) => setShowSeconds(e.target.checked)}
-                className="accent-amber-500"
-              />
-              Seconds
-            </label>
-            <label className="inline-flex cursor-pointer items-center gap-1">
-              <input
-                type="checkbox"
-                checked={use24}
-                onChange={(e) => setUse24(e.target.checked)}
-                className="accent-amber-500"
-              />
-              24-hour
-            </label>
-          </div>
-        }
         right={
           <div className="flex items-center gap-2">
             <Btn kind="ghost" onClick={copy} className="py-1 text-sm">
@@ -387,34 +365,19 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={showSeconds}
-                  onChange={(e) => setShowSeconds(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                Seconds
-              </label>
-
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
-                <input
-                  type="checkbox"
-                  checked={use24}
-                  onChange={(e) => setUse24(e.target.checked)}
-                  className="accent-amber-500"
-                />
-                24-hour
-              </label>
+              <Toggle
+                label="Seconds"
+                checked={showSeconds}
+                onCheckedChange={setShowSeconds}
+              />
+              <Toggle
+                label="24-hour"
+                checked={use24}
+                onCheckedChange={setUse24}
+              />
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div className="flex items-center gap-2">
-                <Btn kind="ghost" onClick={copy}>
-                  {copied ? "Copied" : "Copy"}
-                </Btn>
-              </div>
-
               <div className="text-xs text-slate-600 sm:text-sm">
                 Tap time to copy · F fullscreen · S seconds · 1/2 12/24-hour
               </div>

@@ -196,14 +196,9 @@ function SmoothSecondHandClockTool({ initialNowISO }: { initialNowISO: string })
         title="Smooth Second Hand Clock"
         onExit={() => void fullscreen.exit()}
         right={
-          <div className="flex items-center gap-2">
-            <Btn kind="ghost" size="sm" onClick={() => setSmooth((value) => !value)} disabled={!showSeconds}>
-              {smooth ? "Tick" : "Smooth"}
-            </Btn>
-            <Btn kind="ghost" size="sm" onClick={() => setShowSeconds((value) => !value)}>
-              {showSeconds ? "Hide seconds" : "Show seconds"}
-            </Btn>
-          </div>
+          <Btn kind="ghost" size="sm" onClick={() => void copyTime()}>
+            {copied ? "Copied" : "Copy"}
+          </Btn>
         }
       />
 

@@ -365,12 +365,6 @@ function FullscreenCountdownCard() {
     }
   };
 
-  const exitFs = async () => {
-    if (document.fullscreenElement) {
-      await void fullscreen.exit();
-    }
-  };
-
   return (
     <Card
       cardRef={cardRef}
@@ -393,15 +387,6 @@ function FullscreenCountdownCard() {
             </Btn>
             <Btn kind="ghost" onClick={onReset} className="py-1 text-sm">
               Reset
-            </Btn>
-            <Btn
-              kind="ghost"
-              onClick={() =>
-                void fullscreen.toggle()
-              }
-              className="py-1 text-sm"
-            >
-              Fullscreen
             </Btn>
           </div>
         }
@@ -612,14 +597,6 @@ function FullscreenCountdownCard() {
             <div className="text-xs text-slate-600 sm:text-sm">
               Tap time to start/pause · Space start/pause · R reset · F
               fullscreen · Esc exit
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="text-xs font-semibold text-slate-700">
-                {phaseLabel}
-              </div>
-              <Btn kind="ghost" onClick={exitFs} className="py-1 text-sm">
-                Exit (Esc)
-              </Btn>
             </div>
           </div>
         </FullscreenBottomBar>

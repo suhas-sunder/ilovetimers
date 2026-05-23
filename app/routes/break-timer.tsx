@@ -344,29 +344,6 @@ function BreakTimerCard() {
         show={isFs}
         title="Break Timer"
         onExit={() => void fullscreen.exit()}
-        left={
-          <div className="hidden items-center gap-2 sm:flex">
-            <Toggle
-              label="Sound (S)"
-              checked={sound}
-              onCheckedChange={setSound}
-              className="py-1 text-sm"
-            />
-            <Toggle
-              label="Final beeps"
-              checked={finalBeeps}
-              onCheckedChange={setFinalBeeps}
-              disabled={!sound}
-              className="py-1 text-sm"
-            />
-            <Toggle
-              label="Loop (L)"
-              checked={loop}
-              onCheckedChange={setLoop}
-              className="py-1 text-sm"
-            />
-          </div>
-        }
         right={
           <div className="flex items-center gap-2">
             <Btn
@@ -430,7 +407,7 @@ function BreakTimerCard() {
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <>
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : hasStartedRef.current ? "Resume" : "Start"}
@@ -440,7 +417,10 @@ function BreakTimerCard() {
               </Btn>
             </ControlGroup>
 
-            <PresetGroup title="Presets">
+            <PresetGroup
+              title="Break presets"
+              description="Pick a common break length or set a custom duration."
+            >
               {presetsMin.map((m) => (
                 <Chip key={m} active={m === minutes} onClick={() => setMinutes(m)} disabled={running}>
                   {m}m
@@ -449,10 +429,10 @@ function BreakTimerCard() {
             </PresetGroup>
 
             <SettingGroup
-              title="Settings"
+              title="Break settings"
               description="Common breaks: 1 to 3 minutes for a quick reset, 5 minutes for a short break, and 10 to 15 minutes for a longer break."
             >
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto]">
+              <SettingRow className="lg:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
                 <Field
                   label="Break length (minutes)"
                   type="number"
@@ -464,7 +444,7 @@ function BreakTimerCard() {
                     setMinutes(clamp(Number(e.target.value || 1), 1, 180))
                   }
                 />
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                   <Toggle checked={loop} onCheckedChange={setLoop} label="Loop" />
                   <Toggle checked={sound} onCheckedChange={setSound} label="Sound" />
                   <Toggle
@@ -486,41 +466,14 @@ function BreakTimerCard() {
             <ShortcutHint>
               Shortcuts: Space start/pause / R reset / F fullscreen / S sound / L loop
             </ShortcutHint>
-          </>
+          </div>
         )}
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              {presetsMin.map((m) => (
-                <Chip
-                  key={m}
-                  active={m === minutes}
-                  onClick={() => setMinutes(m)}
-                >
-                  {m}m
-                </Chip>
-              ))}
-            </div>
-
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-              <div className="flex items-center gap-2">
-                <Btn kind={running ? "solid" : "ghost"} onClick={startPause}>
-                  {running
-                    ? "Pause"
-                    : hasStartedRef.current
-                      ? "Resume"
-                      : "Start"}
-                </Btn>
-                <Btn kind="ghost" onClick={resetTimer}>
-                  Reset
-                </Btn>
-              </div>
-
-              <div className="text-xs text-slate-600 sm:text-sm">
-                Tap time to start/pause · Space · R reset · S sound · L loop
-              </div>
+            <div className="text-xs text-slate-600 sm:text-sm">
+              Tap time to start/pause / Space start/pause / R reset / F fullscreen / S sound / L loop
             </div>
           </div>
         </FullscreenBottomBar>

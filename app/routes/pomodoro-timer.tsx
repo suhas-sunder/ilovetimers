@@ -21,6 +21,7 @@ import {
   SeoBand,
   SecondaryActionRow,
   SettingGroup,
+  SettingRow,
   ShortcutHint,
   ToolFrame as Card,
   ToolHero,
@@ -436,24 +437,6 @@ function PomodoroCard() {
         onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
-            <label className="hidden sm:inline-flex cursor-pointer select-none items-center gap-2 ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
-              <input
-                type="checkbox"
-                checked={sound}
-                onChange={(e) => setSound(e.target.checked)}
-              />
-              Sound
-            </label>
-
-            <label className="hidden sm:inline-flex cursor-pointer select-none items-center gap-2 ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)]">
-              <input
-                type="checkbox"
-                checked={autoAdvance}
-                onChange={(e) => setAutoAdvance(e.target.checked)}
-              />
-              Auto
-            </label>
-
             <Btn kind="solid" onClick={startPause} className="py-1 text-sm">
               {running ? "Pause" : phase === "done" ? "Restart" : "Start"}
             </Btn>
@@ -520,25 +503,11 @@ function PomodoroCard() {
             </div>
           </div>
 
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
-                    Controls
-                  </div>
-                  <div className="ilt-helper-text font-semibold">
-                    Tap time or Space to start/pause. N next. R reset. F
-                    fullscreen.
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
-        {/* Controls + shortcuts (normal only) */}
+
+        {/* Controls, settings, and shortcuts (normal only) */}
         {!isFs && (
-          <div className="mx-auto flex w-full max-w-5xl flex-col gap-3">
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : phase === "done" ? "Restart" : "Start"}
@@ -551,73 +520,60 @@ function PomodoroCard() {
               </Btn>
             </ControlGroup>
 
-          </div>
-        )}
-
-        {/* Settings (normal only) */}
-        {!isFs && (
-          <SettingGroup className="mt-5">
-          <div className="grid gap-4 lg:grid-cols-12">
-            <div className="lg:col-span-8">
-              <div className="grid gap-3 sm:grid-cols-3">
-                <LabeledNumberStrong
-                  label="Work (minutes)"
-                  value={workMin}
-                  set={setWorkMin}
-                  min={1}
-                  max={180}
-                />
-                <LabeledNumberStrong
-                  label="Break (minutes)"
-                  value={shortBreakMin}
-                  set={setShortBreakMin}
-                  min={1}
-                  max={60}
-                />
-                <LabeledNumberStrong
-                  label="Cycles"
-                  value={cycles}
-                  set={setCycles}
-                  min={1}
-                  max={12}
-                />
-              </div>
-
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
-                <Toggle
-                  label="Auto"
-                  checked={autoAdvance}
-                  onCheckedChange={setAutoAdvance}
-                />
-                <Toggle
-                  label="Final 3-2-1 beeps"
-                  checked={finalCountdownBeeps}
-                  onCheckedChange={setFinalCountdownBeeps}
-                  disabled={!sound}
-                />
-                <span className="text-sm text-[var(--ilt-text-secondary)]">
-                  Only when Sound is on.
-                </span>
-              </div>
-            </div>
-
-            <div className="lg:col-span-4">
-              <div className="h-full space-y-3">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="text-sm font-extrabold text-[var(--ilt-text-primary)] uppercase tracking-wide">
-                    Long break
-                  </div>
-
-                  <Toggle
-                    label="After last cycle"
-                    checked={useLongBreak}
-                    onCheckedChange={setUseLongBreak}
+            <SettingGroup
+              title="Pomodoro settings"
+              description="Set the work block, break length, cycle count, and optional cues."
+            >
+              <SettingRow className="lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <LabeledNumberStrong
+                    label="Work (minutes)"
+                    value={workMin}
+                    set={setWorkMin}
+                    min={1}
+                    max={180}
+                  />
+                  <LabeledNumberStrong
+                    label="Break (minutes)"
+                    value={shortBreakMin}
+                    set={setShortBreakMin}
+                    min={1}
+                    max={60}
+                  />
+                  <LabeledNumberStrong
+                    label="Cycles"
+                    value={cycles}
+                    set={setCycles}
+                    min={1}
+                    max={12}
                   />
                 </div>
 
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Auto"
+                    checked={autoAdvance}
+                    onCheckedChange={setAutoAdvance}
+                  />
+                  <Toggle
+                    label="Final 3-2-1 beeps"
+                    checked={finalCountdownBeeps}
+                    onCheckedChange={setFinalCountdownBeeps}
+                    disabled={!sound}
+                  />
+                </div>
+              </SettingRow>
+
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)]">
+                <Toggle
+                  label="Long break after last cycle"
+                  checked={useLongBreak}
+                  onCheckedChange={setUseLongBreak}
+                />
                 <Field
-                  label="Minutes"
+                  label="Long break (minutes)"
+                  hint="Typical: 10 to 20"
                   type="number"
                   min={1}
                   max={90}
@@ -627,38 +583,28 @@ function PomodoroCard() {
                   }
                   disabled={!useLongBreak}
                 />
+              </SettingRow>
+            </SettingGroup>
 
-                <div className="mt-3 text-sm text-[var(--ilt-text-secondary)]">
-                  Typical: 10 to 20 minutes.
-                </div>
+            <SecondaryActionRow>
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause / N next / R reset / F fullscreen
+            </ShortcutHint>
+
+            {!autoAdvance && remaining === 0 && phase !== "done" && (
+              <div className="ilt-helper-text text-center font-semibold">
+                Phase finished. Press <strong>Next</strong> to continue.
               </div>
-            </div>
-          </div>
-          </SettingGroup>
-        )}
-
-        {!isFs && (
-          <SecondaryActionRow>
-            <Btn
-              kind="ghost"
-              onClick={() => void fullscreen.toggle()}
-              className="py-2"
-            >
-              Fullscreen
-            </Btn>
-          </SecondaryActionRow>
-        )}
-
-        {!isFs && (
-          <ShortcutHint>
-            Shortcuts: Space start/pause · N next · R reset · F fullscreen
-          </ShortcutHint>
-        )}
-
-        {/* Manual-advance hint (normal only) */}
-        {!isFs && !autoAdvance && remaining === 0 && phase !== "done" && (
-          <div className="mt-3 ilt-surface-card px-3 py-2 text-sm font-semibold text-[var(--ilt-text-secondary)]">
-            Phase finished. Press <strong>Next</strong> to continue.
+            )}
           </div>
         )}
 
@@ -666,7 +612,7 @@ function PomodoroCard() {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="ilt-helper-text sm:text-sm">
-              Tap time to start/pause · Space start/pause · N next · R reset · F
+              Tap time to start/pause / Space start/pause / N next / R reset / F
               fullscreen
             </div>
           </div>

@@ -418,8 +418,8 @@ function StudyTimerCard() {
             ].join(" ")}
           >
             {milestoneText ? milestoneText : "Study session"}
-            {` · ${statusLabel}`}
-            {endsAt ? ` · Ends at ${endsAt}` : ""}
+            {` / ${statusLabel}`}
+            {endsAt ? ` / Ends at ${endsAt}` : ""}
           </div>
 
           <span
@@ -458,7 +458,7 @@ function StudyTimerCard() {
 
         {/* Settings + Presets (normal only) */}
         {!isFs && (
-          <>
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : "Start"}
@@ -468,7 +468,10 @@ function StudyTimerCard() {
               </Btn>
             </ControlGroup>
 
-            <PresetGroup title="Study presets">
+            <PresetGroup
+              title="Study presets"
+              description="Pick a study block length or set a custom session below."
+            >
               {presetsMin.map((m) => (
                 <Chip
                   key={m}
@@ -481,8 +484,11 @@ function StudyTimerCard() {
               ))}
             </PresetGroup>
 
-            <SettingGroup title="Settings">
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto]">
+            <SettingGroup
+              title="Study settings"
+              description="Choose the session length and quiet study cues."
+            >
+              <SettingRow className="lg:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
                 <Field
                   label="Custom minutes"
                   type="number"
@@ -494,7 +500,7 @@ function StudyTimerCard() {
                     setMinutes(clamp(Number(e.target.value || 1), 1, 240))
                   }
                 />
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={(v) => setSound(v)} />
                   <Toggle
                     label="Final beeps"
@@ -514,25 +520,19 @@ function StudyTimerCard() {
                 Fullscreen
               </Btn>
             </SecondaryActionRow>
-          </>
-        )}
 
-        {!isFs && (
-          <ShortcutHint>
-            Shortcuts: Space start/pause · R reset · F fullscreen · M focus mode · S sound
-          </ShortcutHint>
+            <ShortcutHint>
+              Shortcuts: Space start/pause / R reset / F fullscreen / M focus mode / S sound
+            </ShortcutHint>
+          </div>
         )}
 
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · R reset · F
-              fullscreen · M focus mode · S sound
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
-              {sound ? "" : " · Sound off"}
+              Tap time to start/pause / Space start/pause / R reset / F
+              fullscreen / M focus mode / S sound
             </div>
           </div>
         </FullscreenBottomBar>

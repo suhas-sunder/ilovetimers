@@ -348,20 +348,6 @@ function FocusSessionCard() {
             <Btn kind="ghost" onClick={reset} className="py-1 text-sm">
               Reset
             </Btn>
-
-            <Toggle
-              label="Sound"
-              checked={sound}
-              onCheckedChange={setSound}
-              className="hidden py-1 text-sm sm:inline-flex"
-            />
-            <Toggle
-              label="Final beeps"
-              checked={finalBeeps}
-              onCheckedChange={setFinalBeeps}
-              disabled={!sound}
-              className="hidden py-1 text-sm sm:inline-flex"
-            />
           </div>
         }
       />
@@ -426,30 +412,11 @@ function FocusSessionCard() {
             </div>
           ) : null}
 
-          {/* Fullscreen hint chip */}
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Session
-                  </div>
-                  <div className="mt-1 text-sm font-semibold text-slate-900">
-                    {minutes} minutes{urgent ? " · final seconds" : ""}
-                  </div>
-                </div>
-
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Tap timer to start or pause
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Controls + settings (normal only) */}
         {!isFs && (
-          <>
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : "Start"}
@@ -459,7 +426,10 @@ function FocusSessionCard() {
               </Btn>
             </ControlGroup>
 
-            <PresetGroup title="Focus presets">
+            <PresetGroup
+              title="Focus presets"
+              description="Pick a calm single-session length or set a custom duration."
+            >
               {presetsMin.map((m) => (
                 <Chip
                   key={m}
@@ -472,8 +442,11 @@ function FocusSessionCard() {
               ))}
             </PresetGroup>
 
-            <SettingGroup title="Settings">
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto]">
+            <SettingGroup
+              title="Focus settings"
+              description="Keep this timer simple: one session length, optional sound, and final cues."
+            >
+              <SettingRow className="lg:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
                 <Field
                   label="Session length (minutes)"
                   type="number"
@@ -485,7 +458,7 @@ function FocusSessionCard() {
                     setMinutes(clamp(Number(e.target.value || 1), 1, 240))
                   }
                 />
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                   <Toggle
                     label="Final beeps"
@@ -504,19 +477,16 @@ function FocusSessionCard() {
             </SecondaryActionRow>
 
             <ShortcutHint>
-              Shortcuts: Space start/pause · R reset · F fullscreen · S sound
+              Shortcuts: Space start/pause / R reset / F fullscreen / S sound
             </ShortcutHint>
-          </>
+          </div>
         )}
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap timer to start/pause · Space start/pause · R reset · F
-              fullscreen · S sound
-            </div>
-            <div className="text-xs font-semibold text-slate-700">
-              {statusLabel}
+              Tap timer to start/pause / Space start/pause / R reset / F
+              fullscreen / S sound
             </div>
           </div>
         </FullscreenBottomBar>

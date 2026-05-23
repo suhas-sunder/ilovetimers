@@ -502,7 +502,7 @@ function ProductivityTimerCard() {
           title={isFs ? "Tap/click to start or pause" : undefined}
         >
           <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
-            {label} ·{" "}
+            {label} /{" "}
             {running ? "Running" : remaining < totalMs ? "Paused" : "Ready"}
           </div>
 
@@ -521,28 +521,10 @@ function ProductivityTimerCard() {
             {shownTime}
           </span>
 
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Controls
-                  </div>
-                  <div className="text-xs font-semibold text-slate-600">
-                    Tap time to start/pause · N next · R reset · F fullscreen
-                  </div>
-                </div>
-
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Space = Start/Pause
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {!isFs && (
-          <>
+          <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : "Start"}
@@ -555,7 +537,10 @@ function ProductivityTimerCard() {
               </Btn>
             </ControlGroup>
 
-            <PresetGroup title="Productivity modes">
+            <PresetGroup
+              title="Productivity modes"
+              description="Switch between common focus and break patterns."
+            >
               <Chip
                 onClick={() => {
                   setWorkMin(25);
@@ -599,8 +584,11 @@ function ProductivityTimerCard() {
               </Chip>
             </PresetGroup>
 
-            <SettingGroup title="Settings">
-              <SettingRow className="lg:grid-cols-4">
+            <SettingGroup
+              title="Session settings"
+              description="Set focus blocks, short breaks, and long-break cadence."
+            >
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-4">
                 <Field
                   label="Focus (min)"
                   type="number"
@@ -654,8 +642,8 @@ function ProductivityTimerCard() {
                 />
               </SettingRow>
 
-              <SettingRow className="lg:grid-cols-[auto_minmax(0,1fr)]">
-                <div className="flex flex-wrap items-end gap-3">
+              <SettingRow className="justify-items-center lg:grid-cols-[auto]">
+                <div className="flex flex-wrap items-center justify-center gap-2">
                   <Toggle checked={sound} onCheckedChange={setSound} label="Sound" />
                   <Toggle checked={loop} onCheckedChange={setLoop} label="Auto-advance" />
                 </div>
@@ -665,7 +653,7 @@ function ProductivityTimerCard() {
             <UtilityResultRow>
               <span className="ilt-content-label">Phase</span>
               <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-                {label} · Completed focus sessions: {cycleCount}
+                {label} / Completed focus sessions: {cycleCount}
               </span>
             </UtilityResultRow>
 
@@ -676,20 +664,20 @@ function ProductivityTimerCard() {
             </SecondaryActionRow>
 
             <ShortcutHint>
-              Shortcuts: Space start/pause · N next · R reset · F fullscreen
+              Shortcuts: Space start/pause / N next / R reset / F fullscreen
             </ShortcutHint>
-          </>
+          </div>
         )}
 
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-slate-600 sm:text-sm">
-              Tap time to start/pause · Space start/pause · N next · R reset · F
+              Tap time to start/pause / Space start/pause / N next / R reset / F
               fullscreen
             </div>
             <div className="text-xs font-semibold text-slate-700">
-              {label} ·{" "}
-              {running ? "Running" : remaining < totalMs ? "Paused" : "Ready"} ·
+              {label} /{" "}
+              {running ? "Running" : remaining < totalMs ? "Paused" : "Ready"} /
               Completed focus sessions:{" "}
               <span className="font-extrabold">{cycleCount}</span>
             </div>

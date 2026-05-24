@@ -440,11 +440,6 @@ function ClassroomTimerCard() {
             {shownTime}
           </span>
 
-          {!isFs && (
-            <div className="mt-3 ilt-helper-text">
-              Tip: click the card once so keyboard shortcuts work immediately.
-            </div>
-          )}
         </div>
 
         {!isFs && (

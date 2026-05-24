@@ -388,9 +388,6 @@ function PresentationTimerCard() {
               </SettingRow>
             </SettingGroup>
 
-            <div className="hidden">
-              Shortcuts: Space start/pause · R reset · F fullscreen
-            </div>
             <SecondaryActionRow>
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
                 Fullscreen
@@ -453,28 +450,6 @@ function PresentationTimerCard() {
             {shownTime}
           </span>
 
-          {/* Fullscreen hint chips */}
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Time limit
-                  </div>
-                  <div className="text-xs font-semibold text-slate-700">
-                    {minutes} minute{minutes === 1 ? "" : "s"}
-                    {urgent ? " · Final seconds" : ""}
-                  </div>
-                </div>
-
-                <div className="hidden sm:flex items-center gap-2">
-                  <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                    Space = Start/Pause
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Fullscreen bottom bar */}

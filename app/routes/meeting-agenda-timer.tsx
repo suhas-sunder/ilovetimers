@@ -468,7 +468,7 @@ function MeetingAgendaTimerTool() {
                 {agenda.map((item, index) => (
                   <div
                     key={item.id}
-                    className="ilt-surface-muted grid gap-3 px-3 py-3 lg:grid-cols-[minmax(0,2fr)_minmax(8rem,0.7fr)_auto]"
+                    className="timer-list-row grid gap-3 px-3 py-3 lg:grid-cols-[minmax(0,2fr)_minmax(8rem,0.7fr)_auto]"
                   >
                     <Field
                       label={`Item ${index + 1} title`}
@@ -496,32 +496,36 @@ function MeetingAgendaTimerTool() {
                         size="sm"
                         onClick={() => goToItem(index)}
                         disabled={index === activeIndex}
+                        aria-label={`Set item ${index + 1} active`}
                       >
-                        Set item {index + 1} active
+                        Use
                       </Btn>
                       <Btn
                         kind="ghost"
                         size="sm"
                         onClick={() => moveItem(item.id, -1)}
                         disabled={index === 0}
+                        aria-label={`Move item ${index + 1} up`}
                       >
-                        Move item {index + 1} up
+                        Up
                       </Btn>
                       <Btn
                         kind="ghost"
                         size="sm"
                         onClick={() => moveItem(item.id, 1)}
                         disabled={index === agenda.length - 1}
+                        aria-label={`Move item ${index + 1} down`}
                       >
-                        Move item {index + 1} down
+                        Down
                       </Btn>
                       <Btn
                         variant="danger"
                         size="sm"
                         onClick={() => deleteItem(item.id)}
                         disabled={agenda.length <= 1}
+                        aria-label={`Delete item ${index + 1}`}
                       >
-                        Delete item {index + 1}
+                        Delete
                       </Btn>
                     </div>
                   </div>
@@ -554,7 +558,7 @@ function MeetingAgendaTimerTool() {
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap display to start or pause / No ads appear in fullscreen
+              Tap display to start or pause / Space start-pause / N next / P previous
             </div>
           </div>
         </FullscreenBottomBar>

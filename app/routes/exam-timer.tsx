@@ -380,9 +380,6 @@ function ExamTimerCard() {
                 </Btn>
               </div>
 
-              <div className="hidden">
-                Shortcuts: Space start/pause · R reset · F fullscreen
-              </div>
             </ControlGroup>
 
             <PresetGroup title="Exam duration">
@@ -506,12 +503,6 @@ function ExamTimerCard() {
             {shownTime}
           </span>
 
-          {!isFs && (
-            <div className="hidden">
-              Space start/pause · R reset · F fullscreen
-            </div>
-          )}
-
           {!isFs && warnings && (warnAt5Min || warnAt1Min) ? (
             <div className="mt-1 text-xs text-slate-600">
               Warnings: {warnAt5Min ? "5m" : ""}{" "}
@@ -520,28 +511,6 @@ function ExamTimerCard() {
             </div>
           ) : null}
 
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Settings
-                  </div>
-                  <div className="text-xs font-semibold text-slate-700">
-                    {sound ? "Sound on" : "Sound off"}
-                    {sound && warnings && (warnAt5Min || warnAt1Min)
-                      ? ` · Warnings ${warnAt5Min ? "5m" : ""}${warnAt5Min && warnAt1Min ? " + " : ""}${warnAt1Min ? "1m" : ""}`
-                      : ""}
-                    {sound && finalCountdownBeeps ? " · Final beeps" : ""}
-                  </div>
-                </div>
-
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Tap time to start/pause
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Fullscreen bottom controls */}

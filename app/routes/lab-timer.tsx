@@ -474,49 +474,6 @@ function LabTimerCard() {
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="timer-list-stack flex h-full flex-col">
-      <div className="hidden">
-
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <label className="inline-flex cursor-pointer items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
-            <input
-              type="checkbox"
-              checked={sound}
-              onChange={(e) => setSound(e.target.checked)}
-            />
-            Sound
-          </label>
-
-          <label className="inline-flex cursor-pointer items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
-            <input
-              type="checkbox"
-              checked={finalCountdownBeeps}
-              onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-              disabled={!sound}
-            />
-            Final beeps
-          </label>
-
-          <Btn
-            kind="ghost"
-            onClick={() =>
-              void cdFullscreen.toggle()
-            }
-            className="py-2"
-          >
-            Fullscreen
-          </Btn>
-        </div>
-      </div>
-
-      <div className="hidden">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="ilt-inline-pill px-3 py-2 ilt-helper-text font-semibold">
-            Shortcuts: Space stopwatch · L lap · C countdown · R reset · T
-            repeat · F fullscreen
-          </div>
-        </div>
-      </div>
-
       <SettingGroup
         title="Lab timer settings"
         description="Sound cues apply to the repeatable countdown. Stopwatch laps stay silent."

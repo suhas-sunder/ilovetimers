@@ -395,15 +395,6 @@ function VisualTimerCard() {
               </Btn>
             </ControlGroup>
 
-            <SecondaryActionRow>
-              <Btn
-                kind="ghost"
-                onClick={() => void fullscreen.toggle()}
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </SecondaryActionRow>
           </div>
         )}
 
@@ -585,6 +576,16 @@ function VisualTimerCard() {
                 />
             </SettingRow>
             </SettingGroup>
+
+            <SecondaryActionRow>
+              <Btn
+                kind="ghost"
+                onClick={() => void fullscreen.toggle()}
+                className="py-2"
+              >
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
 
             <ShortcutHint>
               Shortcuts: Space start/pause · R reset · F fullscreen · V toggle

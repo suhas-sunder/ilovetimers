@@ -758,37 +758,6 @@ function MetronomeCard() {
             </div>
           </div>
 
-          {/* Fullscreen hint overlay */}
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Settings
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                      {beatsPerBar}/4
-                    </div>
-                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                      {subLabel(subdivision)}
-                    </div>
-                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                      Sound: {mode}
-                    </div>
-                    <div className="rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                      Vol {Math.round(volume * 100)}%
-                    </div>
-                  </div>
-                </div>
-
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Space = Start/Stop
-                </div>
-              </div>
-            </div>
-          )}
-
           <style
             dangerouslySetInnerHTML={{
               __html: `

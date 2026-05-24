@@ -10,13 +10,19 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ControlGroup,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
   PresetChip,
   SeoBand,
+  SecondaryActionRow,
+  SettingGroup,
+  SettingRow,
+  ShortcutHint,
   ToolFrame as Card,
   ToolHero,
+  Toggle,
 } from "~/clients/components/ui/foundation";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/multiple-timers/HowItWorks";
@@ -639,13 +645,8 @@ function MultipleTimersCard() {
 
       <div className={isFs ? "flex h-full flex-col" : "timer-list-stack flex h-full flex-col"}>
         {!isFs && (
-          <div className="flex flex-col gap-4 text-center sm:items-center">
-          </div>
-        )}
-
-        {!isFs && (
-          <div className="timer-controls-row timer-list-actions mt-4">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="timer-control-stack">
+            <ControlGroup className="timer-list-actions">
               <Btn onClick={anyRunning ? pauseAll : startAll}>
                 {anyRunning ? "Pause all" : "Start all"}
               </Btn>
@@ -662,38 +663,36 @@ function MultipleTimersCard() {
               >
                 Stop alarms
               </Btn>
-            </div>
+            </ControlGroup>
 
-            <label className="inline-flex cursor-pointer select-none items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
-              <input
-                type="checkbox"
-                checked={sound}
-                onChange={(e) => setSound(e.target.checked)}
-              />
-              Sound
-            </label>
-
-            <label className="inline-flex cursor-pointer select-none items-center gap-2 ilt-inline-pill px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
-              <input
-                type="checkbox"
-                checked={finalCountdownBeeps}
-                onChange={(e) => setFinalCountdownBeeps(e.target.checked)}
-                disabled={!sound}
-              />
-              Final beeps
-            </label>
-
-            <Btn
-              kind="ghost"
-              onClick={() => void fullscreen.toggle()}
-              className="py-2"
+            <SettingGroup
+              title="Shared timer options"
+              description="Sound cues apply to every timer in the list."
             >
-              Fullscreen
-            </Btn>
+              <SettingRow className="sm:grid-cols-2">
+                <Toggle
+                  label="Sound"
+                  checked={sound}
+                  onCheckedChange={setSound}
+                />
+                <Toggle
+                  label="Final beeps"
+                  checked={finalCountdownBeeps}
+                  onCheckedChange={setFinalCountdownBeeps}
+                  disabled={!sound}
+                />
+              </SettingRow>
+            </SettingGroup>
 
-            <div className="timer-list-shortcut ilt-inline-pill px-3 py-2 text-xs font-semibold text-[var(--ilt-text-secondary)]">
-              Shortcuts: Space start/pause all - R reset - A add - X stop alarms - F fullscreen
-            </div>
+            <SecondaryActionRow className="timer-list-actions">
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <ShortcutHint className="timer-list-shortcut">
+              Space start/pause all / R reset / A add / X stop alarms / F fullscreen
+            </ShortcutHint>
           </div>
         )}
 

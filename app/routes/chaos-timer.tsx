@@ -658,17 +658,8 @@ function ChaosTimerTool() {
                   {nextDurationSec}s
                 </span>
               </div>
-              <div className="hidden">
-                Tap time to start/pause in fullscreen
-              </div>
             </div>
           </div>
-
-          {!isFs && (
-            <div className="hidden">
-              Tip: click the card once so keyboard shortcuts work immediately.
-            </div>
-          )}
         </div>
 
         {/* Settings (normal only) */}

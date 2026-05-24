@@ -576,7 +576,7 @@ function ReactionTimeTestTool() {
         <div
           ref={stageRef}
           className={[
-            "reaction-display-stage timer-display-surface relative mt-4 overflow-hidden rounded-2xl border",
+            "reaction-display-stage timer-display-surface relative mt-4 overflow-hidden",
             stageTheme.border,
             stageTheme.bg,
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
@@ -607,12 +607,12 @@ function ReactionTimeTestTool() {
           aria-label="Reaction time stage. Tap/click or press Spacebar to respond."
         >
           <div className="flex h-full w-full flex-col items-center justify-center p-3 sm:p-6">
-            <div className="w-full max-w-4xl rounded-2xl bg-white p-4 sm:p-6">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:p-5">
+            <div className="w-full max-w-4xl p-4 sm:p-6">
+              <div className="p-3 sm:p-5">
                 <div className="flex flex-col items-center justify-center gap-2">
                   <div
                     ref={bigBoxRef}
-                    className="w-full rounded-2xl border border-slate-200 bg-white p-3 sm:p-6"
+                    className="w-full p-3 sm:p-6"
                     style={{ overflow: "hidden" }}
                     aria-live="polite"
                   >

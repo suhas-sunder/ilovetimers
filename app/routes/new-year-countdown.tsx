@@ -11,11 +11,11 @@ import {
 import {
   Button as Btn,
   ContentSection,
-  ControlGroup,
   DisplayStage,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
+  SecondaryActionRow,
   SeoBand,
   ShortcutHint,
   StatusChip,
@@ -278,7 +278,7 @@ function NewYearCountdownTool({ initialNowISO }: { initialNowISO: string }) {
 
         {!isFs ? (
           <>
-            <ControlGroup>
+            <SecondaryActionRow>
               <Btn kind="ghost" onClick={() => void copy()}>
                 {copyState === "copied" ? "Copied" : "Copy countdown"}
               </Btn>
@@ -288,22 +288,24 @@ function NewYearCountdownTool({ initialNowISO }: { initialNowISO: string }) {
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
                 Fullscreen
               </Btn>
-            </ControlGroup>
-
-            <UtilityResultRow>
-              <span className="font-semibold text-[var(--ilt-text-primary)]">
-                Time left
-              </span>
-              <span>
-                {parts.days} days / {parts.hours} hours / {parts.minutes} minutes / {parts.seconds} seconds
-              </span>
-            </UtilityResultRow>
+            </SecondaryActionRow>
 
             {copyState === "fail" ? (
               <StatusChip className="self-center tracking-normal">
                 Could not copy or share.
               </StatusChip>
             ) : null}
+
+            <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)]">
+              <UtilityResultRow>
+                <span className="font-semibold text-[var(--ilt-text-primary)]">
+                  Time left
+                </span>
+                <span>
+                  {parts.days} days / {parts.hours} hours / {parts.minutes} minutes / {parts.seconds} seconds
+                </span>
+              </UtilityResultRow>
+            </div>
 
             <ShortcutHint>
               Shortcuts: C copy / S share / F fullscreen

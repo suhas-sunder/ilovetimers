@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Button,
   ContentSection,
@@ -279,6 +279,33 @@ export function CopyState({ state }: { state: string | null }) {
   );
 }
 
+export function ResultDetails({
+  children,
+  columns = "4",
+  className = "",
+}: {
+  children: ReactNode;
+  columns?: "2" | "3" | "4";
+  className?: string;
+}) {
+  const columnsClass =
+    columns === "2"
+      ? "sm:grid-cols-2 lg:grid-cols-2"
+      : columns === "3"
+        ? "sm:grid-cols-3 lg:grid-cols-3"
+        : "sm:grid-cols-2 lg:grid-cols-4";
+
+  return (
+    <div
+      className={["grid gap-2", columnsClass, className]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function JsonLd({
   name,
   path,
@@ -455,8 +482,21 @@ function DateDurationTool() {
         </SettingRow>
       </SettingGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={setBothToday}>
+          Today
+        </Button>
+        <Button variant="secondary" onClick={reset}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultDetails>
           <UtilityResultRow>
             <span>Weeks + days</span>
             <strong>
@@ -477,22 +517,8 @@ function DateDurationTool() {
               {weekdayName(result.start)} / {weekdayName(result.end)}
             </strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={setBothToday}>
-          Today
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         Uses local calendar dates. It does not apply official deadline rules.
       </ShortcutHint>
@@ -610,21 +636,6 @@ function DateCalculatorTool() {
         <PresetChip onClick={() => applyPreset("subtract", { days: 7 })}>-7 days</PresetChip>
       </PresetGroup>
 
-      <div className="grid gap-2 sm:grid-cols-3">
-        <UtilityResultRow>
-          <span>Start date</span>
-          <strong>{start ? longDate(start) : "Invalid"}</strong>
-        </UtilityResultRow>
-        <UtilityResultRow>
-          <span>Operation</span>
-          <strong>{summary}</strong>
-        </UtilityResultRow>
-        <UtilityResultRow>
-          <span>Result weekday</span>
-          <strong>{result ? weekdayName(result) : "Invalid"}</strong>
-        </UtilityResultRow>
-      </div>
-
       <SecondaryActionRow>
         <Button variant="secondary" onClick={copyResult}>
           Copy result
@@ -638,6 +649,16 @@ function DateCalculatorTool() {
       </SecondaryActionRow>
 
       <CopyState state={copyState} />
+      <ResultDetails columns="2">
+        <UtilityResultRow>
+          <span>Start date</span>
+          <strong>{start ? longDate(start) : "Invalid"}</strong>
+        </UtilityResultRow>
+        <UtilityResultRow>
+          <span>Result weekday</span>
+          <strong>{result ? weekdayName(result) : "Invalid"}</strong>
+        </UtilityResultRow>
+      </ResultDetails>
       <ShortcutHint>
         Month and year additions clamp invalid month-end dates to the last valid day.
       </ShortcutHint>
@@ -753,7 +774,7 @@ function BusinessDaysTool() {
             onBlur={(event) => setEndDate(event.currentTarget.value)}
           />
         </SettingRow>
-        <div className="flex flex-wrap gap-3">
+        <SettingRow className="sm:grid-cols-2">
           <Toggle
             label="Include start date"
             checked={includeStart}
@@ -764,11 +785,24 @@ function BusinessDaysTool() {
             checked={includeEnd}
             onCheckedChange={setIncludeEnd}
           />
-        </div>
+        </SettingRow>
       </SettingGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={setBothToday}>
+          Today
+        </Button>
+        <Button variant="secondary" onClick={reset}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultDetails>
           <UtilityResultRow>
             <span>Calendar days counted</span>
             <strong>{result.calendarDays}</strong>
@@ -787,22 +821,8 @@ function BusinessDaysTool() {
               {weekdayName(result.start)} / {weekdayName(result.end)}
             </strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={setBothToday}>
-          Today
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         Weekend-only estimate. Holidays and organization-specific calendars are not included.
       </ShortcutHint>

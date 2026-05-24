@@ -23,6 +23,7 @@ import {
   longDate,
   parseDateInput,
   plural,
+  ResultDetails,
   ResultDisplay,
   todayInputValue,
   type FaqItem,
@@ -195,8 +196,21 @@ function WeeksBetweenDatesTool() {
         </SettingRow>
       </SettingGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={setBothToday}>
+          Today
+        </Button>
+        <Button variant="secondary" onClick={reset}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultDetails>
           <UtilityResultRow>
             <span>Total days</span>
             <strong>{signedDaysText(result.totalDays)}</strong>
@@ -213,22 +227,8 @@ function WeeksBetweenDatesTool() {
             <span>End weekday</span>
             <strong>{weekdayName(result.end)}</strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={setBothToday}>
-          Today
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         Uses local calendar dates. It does not apply official deadline or medical rules.
       </ShortcutHint>

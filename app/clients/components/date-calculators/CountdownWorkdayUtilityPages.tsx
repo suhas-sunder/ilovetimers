@@ -31,6 +31,7 @@ import {
   parseDateInput,
   partsFromDayNumber,
   plural,
+  ResultDetails,
   ResultDisplay,
   todayInputValue,
   type FaqItem,
@@ -583,21 +584,6 @@ function ChristmasCountdownTool({ initialNowISO }: { initialNowISO: string }) {
 
         {!isFullscreen ? (
           <>
-            <div className="grid gap-2 sm:grid-cols-3">
-              <UtilityResultRow>
-                <span>Target year</span>
-                <strong>{christmas.targetParts.year}</strong>
-              </UtilityResultRow>
-              <UtilityResultRow>
-                <span>Target weekday</span>
-                <strong>{weekdayName(christmas.targetParts)}</strong>
-              </UtilityResultRow>
-              <UtilityResultRow>
-                <span>Timezone</span>
-                <strong>{timeZone}</strong>
-              </UtilityResultRow>
-            </div>
-
             <SecondaryActionRow>
               <Button variant="secondary" onClick={() => void copyResult()}>
                 Copy countdown
@@ -611,6 +597,20 @@ function ChristmasCountdownTool({ initialNowISO }: { initialNowISO: string }) {
             </SecondaryActionRow>
 
             <CopyState state={copyState} />
+            <ResultDetails columns="3">
+              <UtilityResultRow>
+                <span>Target year</span>
+                <strong>{christmas.targetParts.year}</strong>
+              </UtilityResultRow>
+              <UtilityResultRow>
+                <span>Target weekday</span>
+                <strong>{weekdayName(christmas.targetParts)}</strong>
+              </UtilityResultRow>
+              <UtilityResultRow>
+                <span>Timezone</span>
+                <strong>{timeZone}</strong>
+              </UtilityResultRow>
+            </ResultDetails>
             <ShortcutHint>
               Uses fixed December 25 local calendar targeting and your browser/device clock.
             </ShortcutHint>
@@ -787,7 +787,7 @@ function WorkdaysCalculatorTool() {
             onCheckedChange={setIncludeEnd}
           />
         </SettingRow>
-        <div className="flex flex-wrap gap-2">
+        <SettingRow className="grid-cols-2 sm:grid-cols-4 lg:grid-cols-7">
           {WEEKDAYS.map((weekday) => (
             <Toggle
               key={weekday.index}
@@ -796,7 +796,7 @@ function WorkdaysCalculatorTool() {
               onCheckedChange={(checked) => toggleWeekday(weekday.index, checked)}
             />
           ))}
-        </div>
+        </SettingRow>
       </SettingGroup>
 
       <PresetGroup title="Workweek presets">
@@ -814,8 +814,21 @@ function WorkdaysCalculatorTool() {
         </PresetChip>
       </PresetGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={() => void copyResult()}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={setTodayRange}>
+          Today
+        </Button>
+        <Button variant="secondary" onClick={reset}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultDetails>
           <UtilityResultRow>
             <span>Total calendar span</span>
             <strong>{plural(result.calendarDays, "day")}</strong>
@@ -834,22 +847,8 @@ function WorkdaysCalculatorTool() {
               {weekdayName(result.start)} / {weekdayName(result.end)}
             </strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={() => void copyResult()}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={setTodayRange}>
-          Today
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         Counts selected weekdays only. It does not apply holidays, payroll, HR, or legal rules.
       </ShortcutHint>

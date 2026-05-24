@@ -29,6 +29,7 @@ import {
   parseDateInput,
   partsFromDayNumber,
   plural,
+  ResultDetails,
   ResultDisplay,
   todayInputValue,
   type FaqItem,
@@ -401,15 +402,27 @@ function TimeDurationTool() {
             onBlur={(event) => setEndTime(event.currentTarget.value)}
           />
         </SettingRow>
-        <Toggle
-          label="End time is next day"
-          checked={overnight}
-          onCheckedChange={setOvernight}
-        />
+        <SettingRow>
+          <Toggle
+            label="End time is next day"
+            checked={overnight}
+            onCheckedChange={setOvernight}
+          />
+        </SettingRow>
       </SettingGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={reset}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-3">
+        <ResultDetails columns="3">
           <UtilityResultRow>
             <span>Total minutes</span>
             <strong>{result.totalMinutes}</strong>
@@ -422,19 +435,8 @@ function TimeDurationTool() {
             <span>Decimal hours</span>
             <strong>{result.decimalHours.toFixed(2)}</strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         General elapsed-time math. It is not payroll or official recordkeeping.
       </ShortcutHint>
@@ -566,8 +568,21 @@ function AgeCalculatorTool({ initialToday }: { initialToday: string }) {
         </SettingRow>
       </SettingGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={() => setAgeOnDate(todayInputValue())}>
+          Today
+        </Button>
+        <Button variant="secondary" onClick={reset}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {validResult ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultDetails>
           <UtilityResultRow>
             <span>Total days</span>
             <strong>{validResult.totalDays}</strong>
@@ -584,22 +599,8 @@ function AgeCalculatorTool({ initialToday }: { initialToday: string }) {
             <span>Birth weekday</span>
             <strong>{validResult.birthWeekday}</strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={() => setAgeOnDate(todayInputValue())}>
-          Today
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         Date math helper only. It does not verify legal age or eligibility.
       </ShortcutHint>
@@ -715,8 +716,21 @@ function DaysUntilTool({ initialToday }: { initialToday: string }) {
         </PresetChip>
       </PresetGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={() => setStartDate(todayInputValue())}>
+          Today
+        </Button>
+        <Button variant="secondary" onClick={reset}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-3">
+        <ResultDetails columns="3">
           <UtilityResultRow>
             <span>Weeks + days</span>
             <strong>
@@ -731,22 +745,8 @@ function DaysUntilTool({ initialToday }: { initialToday: string }) {
             <span>Target state</span>
             <strong>{result.state}</strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={() => setStartDate(todayInputValue())}>
-          Today
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         Simple date counting only. Check official rules separately when they matter.
       </ShortcutHint>
@@ -797,23 +797,6 @@ function WeekdayTool({ initialToday }: { initialToday: string }) {
         </SettingRow>
       </SettingGroup>
 
-      {selectedDate ? (
-        <div className="grid gap-2 sm:grid-cols-3">
-          <UtilityResultRow>
-            <span>Formatted date</span>
-            <strong>{longDate(selectedDate)}</strong>
-          </UtilityResultRow>
-          <UtilityResultRow>
-            <span>ISO date</span>
-            <strong>{isoDate(selectedDate)}</strong>
-          </UtilityResultRow>
-          <UtilityResultRow>
-            <span>Type</span>
-            <strong>{weekend ? "Weekend" : "Weekday"}</strong>
-          </UtilityResultRow>
-        </div>
-      ) : null}
-
       <SecondaryActionRow>
         <Button variant="secondary" onClick={copyResult}>
           Copy result
@@ -827,6 +810,22 @@ function WeekdayTool({ initialToday }: { initialToday: string }) {
       </SecondaryActionRow>
 
       <CopyState state={copyState} />
+      {selectedDate ? (
+        <ResultDetails columns="3">
+          <UtilityResultRow>
+            <span>Formatted date</span>
+            <strong>{longDate(selectedDate)}</strong>
+          </UtilityResultRow>
+          <UtilityResultRow>
+            <span>ISO date</span>
+            <strong>{isoDate(selectedDate)}</strong>
+          </UtilityResultRow>
+          <UtilityResultRow>
+            <span>Type</span>
+            <strong>{weekend ? "Weekend" : "Weekday"}</strong>
+          </UtilityResultRow>
+        </ResultDetails>
+      ) : null}
       <ShortcutHint>
         Local calendar date lookup. It does not add holiday or official calendar rules.
       </ShortcutHint>
@@ -905,8 +904,21 @@ function WeekNumberTool({ initialToday }: { initialToday: string }) {
         </SettingRow>
       </SettingGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={() => setDateValue(todayInputValue())}>
+          Today
+        </Button>
+        <Button variant="secondary" onClick={() => setDateValue(initialToday)}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultDetails>
           <UtilityResultRow>
             <span>Weekday</span>
             <strong>{weekdayName(result.parts)}</strong>
@@ -923,22 +935,8 @@ function WeekNumberTool({ initialToday }: { initialToday: string }) {
             <span>Calendar year</span>
             <strong>{result.parts.year}</strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={() => setDateValue(todayInputValue())}>
-          Today
-        </Button>
-        <Button variant="secondary" onClick={() => setDateValue(initialToday)}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         ISO week-years can differ from calendar years near January 1.
       </ShortcutHint>
@@ -1053,8 +1051,21 @@ function MonthsBetweenDatesTool() {
         </SettingRow>
       </SettingGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={setBothToday}>
+          Today
+        </Button>
+        <Button variant="secondary" onClick={reset}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultDetails>
           <UtilityResultRow>
             <span>Total days</span>
             <strong>{result.totalDays}</strong>
@@ -1071,22 +1082,8 @@ function MonthsBetweenDatesTool() {
             <span>End weekday</span>
             <strong>{weekdayName(result.end)}</strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={setBothToday}>
-          Today
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         Month lengths vary, so completed months are separate from approximate months.
       </ShortcutHint>
@@ -1296,8 +1293,24 @@ function BirthdayCountdownTool({ initialToday }: { initialToday: string }) {
         </SettingRow>
       </SettingGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={shareResult}>
+          Share result
+        </Button>
+        <Button variant="secondary" onClick={setBirthdayToToday}>
+          Today
+        </Button>
+        <Button variant="secondary" onClick={setBirthdayToToday}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultDetails>
           <UtilityResultRow>
             <span>Next birthday date</span>
             <strong>{dateInputFromParts(result.nextBirthday)}</strong>
@@ -1320,25 +1333,8 @@ function BirthdayCountdownTool({ initialToday }: { initialToday: string }) {
             <span>Leap-day rule</span>
             <strong>{result.month === 2 && result.day === 29 ? "Next Feb 29" : "Annual"}</strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={shareResult}>
-          Share result
-        </Button>
-        <Button variant="secondary" onClick={setBirthdayToToday}>
-          Today
-        </Button>
-        <Button variant="secondary" onClick={setBirthdayToToday}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         Optional age context is date math only and does not verify eligibility.
       </ShortcutHint>
@@ -1482,8 +1478,21 @@ function HoursUntilTool({ initialNow }: { initialNow: string }) {
         <PresetChip onClick={setTomorrowAtNine}>Tomorrow 09:00</PresetChip>
       </PresetGroup>
 
+      <SecondaryActionRow>
+        <Button variant="secondary" onClick={copyResult}>
+          Copy result
+        </Button>
+        <Button variant="secondary" onClick={setNow}>
+          Now
+        </Button>
+        <Button variant="secondary" onClick={reset}>
+          Reset
+        </Button>
+      </SecondaryActionRow>
+
+      <CopyState state={copyState} />
       {result ? (
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultDetails>
           <UtilityResultRow>
             <span>Decimal hours</span>
             <strong>{result.decimalHours.toFixed(2)}</strong>
@@ -1500,22 +1509,8 @@ function HoursUntilTool({ initialNow }: { initialNow: string }) {
             <span>State</span>
             <strong>{result.state}</strong>
           </UtilityResultRow>
-        </div>
+        </ResultDetails>
       ) : null}
-
-      <SecondaryActionRow>
-        <Button variant="secondary" onClick={copyResult}>
-          Copy result
-        </Button>
-        <Button variant="secondary" onClick={setNow}>
-          Now
-        </Button>
-        <Button variant="secondary" onClick={reset}>
-          Reset
-        </Button>
-      </SecondaryActionRow>
-
-      <CopyState state={copyState} />
       <ShortcutHint>
         Local date/time math only. It does not apply deadline or contract rules.
       </ShortcutHint>

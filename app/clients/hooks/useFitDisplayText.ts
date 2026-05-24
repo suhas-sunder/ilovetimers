@@ -39,9 +39,22 @@ function initialDisplaySize({
     1,
     sampleText.length,
   );
-  const hasWideCharacters = /[A-Za-z\s]/.test(sampleText);
+  const hasAlphabeticCharacters = /[A-Za-z]/.test(sampleText);
+  const hasLowercaseCharacters = /[a-z]/.test(sampleText);
+  const hasDigits = /\d/.test(sampleText);
+  const hasClockPunctuation = /[:.]/.test(sampleText);
   const averageCharacterEm =
-    charCount <= 3 ? 0.68 : hasWideCharacters ? 0.72 : 0.65;
+    charCount <= 3
+      ? 0.68
+      : hasLowercaseCharacters
+        ? 0.48
+        : hasAlphabeticCharacters && (hasDigits || charCount <= 8)
+          ? 0.52
+          : hasAlphabeticCharacters
+            ? 0.72
+            : hasClockPunctuation && charCount >= 10
+              ? 0.54
+              : 0.65;
   const widthScale = charCount * averageCharacterEm;
   const preferredCqw =
     charCount === 1 ? 96 : Math.min(96, Math.max(8, 100 / widthScale));
@@ -98,6 +111,9 @@ export function useFitDisplayText({
     if (!container || !textElement) return;
 
     let raf: number | null = null;
+    let settledTimers: number[] = [];
+    let lastContainerWidth = 0;
+    let lastContainerHeight = 0;
 
     const compute = () => {
       const currentContainer = containerRef.current;
@@ -108,17 +124,35 @@ export function useFitDisplayText({
       const availableWidth = Math.max(0, rect.width - paddingAllowancePx);
       const availableHeight = Math.max(0, rect.height - paddingAllowancePx);
       if (availableWidth <= 0 || availableHeight <= 0) return;
+      lastContainerWidth = rect.width;
+      lastContainerHeight = rect.height;
 
       const originalFontSize = currentText.style.fontSize;
 
-      const fits = (px: number) => {
-        currentText.style.fontSize = `${px}px`;
+      const fits = (size: number | string) => {
+        currentText.style.fontSize =
+          typeof size === "number" ? `${size}px` : size;
         const textRect = currentText.getBoundingClientRect();
         return (
           textRect.width <= availableWidth &&
           (fitAxis === "width" || textRect.height <= availableHeight)
         );
       };
+
+      const estimatedFontSize = initialDisplaySize({
+        deps,
+        minPx,
+        maxPx,
+        paddingAllowancePx,
+        initialScale,
+        initialMobileScale,
+      });
+
+      if (fits(estimatedFontSize)) {
+        currentText.style.fontSize = originalFontSize;
+        setFontSize(estimatedFontSize);
+        return;
+      }
 
       const effectiveMaxPx = largeScreenMaxPx(maxPx, rect.width);
       let low = minPx;
@@ -151,18 +185,50 @@ export function useFitDisplayText({
       });
     };
 
-    const resizeObserver = new ResizeObserver(schedule);
+    const clearSettledTimers = () => {
+      settledTimers.forEach((timer) => window.clearTimeout(timer));
+      settledTimers = [];
+    };
+
+    const scheduleSettled = () => {
+      schedule();
+      clearSettledTimers();
+      settledTimers = [
+        window.setTimeout(compute, 80),
+        window.setTimeout(compute, 240),
+      ];
+    };
+
+    const checkContainerSize = () => {
+      const currentContainer = containerRef.current;
+      if (!currentContainer) return;
+
+      const rect = currentContainer.getBoundingClientRect();
+      if (
+        Math.abs(rect.width - lastContainerWidth) > 0.5 ||
+        Math.abs(rect.height - lastContainerHeight) > 0.5
+      ) {
+        compute();
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleSettled);
     resizeObserver.observe(container);
-    window.addEventListener("resize", schedule);
-    window.addEventListener("orientationchange", schedule);
+    window.addEventListener("resize", scheduleSettled);
+    window.addEventListener("orientationchange", scheduleSettled);
+    window.visualViewport?.addEventListener("resize", scheduleSettled);
 
     compute();
+    const sizePoll = window.setInterval(checkContainerSize, 500);
 
     return () => {
       if (raf) cancelAnimationFrame(raf);
+      clearSettledTimers();
+      window.clearInterval(sizePoll);
       resizeObserver.disconnect();
-      window.removeEventListener("resize", schedule);
-      window.removeEventListener("orientationchange", schedule);
+      window.removeEventListener("resize", scheduleSettled);
+      window.removeEventListener("orientationchange", scheduleSettled);
+      window.visualViewport?.removeEventListener("resize", scheduleSettled);
     };
     // Route migrations should pass primitive deps so this effect stays stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps

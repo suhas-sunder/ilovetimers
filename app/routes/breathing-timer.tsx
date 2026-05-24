@@ -547,43 +547,6 @@ function BreathingTimerCard() {
             </div>
           </div>
 
-          {false && (
-            <div className="mt-5 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-            <div className="ilt-surface-muted p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Presets
-              </div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {PRESETS.map((p) => (
-                  <Chip
-                    key={p.id}
-                    active={p.id === presetId}
-                    onClick={() => setPresetId(p.id)}
-                    disabled={running}
-                  >
-                    {p.labelShort}
-                  </Chip>
-                ))}
-              </div>
-              <div className="mt-2 text-xs text-slate-600">
-                Presets are locked while running.
-              </div>
-            </div>
-
-            <div className="ilt-surface-muted p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Shortcuts
-              </div>
-              <div className="mt-1 text-sm font-semibold text-slate-700">
-                Space start/pause · R reset · F fullscreen · S sound
-              </div>
-              <div className="mt-2 text-xs text-slate-600">
-                In fullscreen, tap the timer to start or pause.
-              </div>
-            </div>
-            </div>
-          )}
-
         </DisplayStage>
 
         {/* Controls and settings (normal only) */}

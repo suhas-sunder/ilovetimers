@@ -626,25 +626,6 @@ function RoundTimerCard() {
             </div>
           </div>
 
-          {/* Fullscreen helper overlay */}
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Round Timer
-                  </div>
-                  <div className="text-xs font-semibold text-slate-600">
-                    Tap time to start/pause / N = Next
-                  </div>
-                </div>
-
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Space = Start/Pause
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Presets + settings + controls (normal only) */}

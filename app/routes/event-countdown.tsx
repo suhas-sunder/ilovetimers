@@ -691,22 +691,8 @@ function EventCountdownCard({ initialNowISO }: { initialNowISO: string }) {
                   </div>
                 )}
 
-                <div className="hidden">
-                  Shortcuts: Space start/pause · R reset · F fullscreen
-                </div>
               </div>
             )}
-            <div className="hidden">
-              <Btn
-                kind="ghost"
-                onClick={() =>
-                  void fullscreen.toggle()
-                }
-                className="py-2"
-              >
-                Fullscreen
-              </Btn>
-            </div>
           </div>
         )}
 
@@ -759,98 +745,11 @@ function EventCountdownCard({ initialNowISO }: { initialNowISO: string }) {
             {shownShort}
           </div>
 
-          {/* Fullscreen overlays */}
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
-                    Status
-                  </div>
-                  <div className="ilt-helper-text font-semibold">
-                    {statusLabel}
-                    {targetDate && status !== "past" && status !== "done" ? (
-                      <span className="ml-2 text-[var(--ilt-text-secondary)]">
-                        Target: {readableTarget}
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
-
-                <div className="hidden sm:block ilt-inline-pill px-3 py-1 text-xs font-semibold text-[var(--ilt-text-secondary)] backdrop-blur">
-                  Space = Start/Pause
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Settings (normal only) */}
         {!isFs && (
-          <SettingGroup
-            title="Event setup"
-            description="Choose the saved event, target date, and countdown cues."
-            className="order-2 mt-5"
-          >
-            {/* Row 1: event selector + event actions */}
-            <SettingRow className="sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto]">
-              <div className="min-w-0 flex-1">
-                <Select
-                  label="Saved events"
-                  value={store.selectedId}
-                  onChange={(e) => selectEvent(e.target.value)}
-                >
-                  {sortedEvents.map((ev) => (
-                    <option key={ev.id} value={ev.id}>
-                      {ev.name || "Untitled Event"}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              <SecondaryActionRow className="timer-result-actions sm:justify-end">
-                <Btn kind="ghost" onClick={addNewEvent} className="px-3 py-2">
-                  New
-                </Btn>
-                <Btn
-                  kind="ghost"
-                  onClick={duplicateSelectedEvent}
-                  className="px-3 py-2"
-                >
-                  Duplicate
-                </Btn>
-                <Btn
-                  kind="ghost"
-                  onClick={deleteSelectedEvent}
-                  className="px-3 py-2"
-                  disabled={store.events.length <= 1}
-                >
-                  Delete
-                </Btn>
-              </SecondaryActionRow>
-            </SettingRow>
-
-            {/* Row 2: name + datetime */}
-            <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
-              <Field
-                label="Event name"
-                value={selectedEvent?.name ?? ""}
-                onChange={(e) =>
-                  updateSelectedEvent({ name: e.target.value })
-                }
-                placeholder="My Event"
-              />
-
-              <Field
-                label="Date & time (local)"
-                type="datetime-local"
-                value={selectedEvent?.targetValue ?? ""}
-                onChange={(e) =>
-                  updateSelectedEvent({ targetValue: e.target.value })
-                }
-              />
-            </SettingRow>
-
+          <>
             <ControlGroup>
               <Btn onClick={startPause} disabled={!canStart && !running}>
                 {running ? "Pause" : "Start"}
@@ -860,59 +759,122 @@ function EventCountdownCard({ initialNowISO }: { initialNowISO: string }) {
               </Btn>
             </ControlGroup>
 
-            <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
-              <Toggle
-                label="Sound"
-                checked={!!selectedEvent?.sound}
-                onCheckedChange={(checked) =>
-                  updateSelectedEvent({ sound: checked })
-                }
-              />
-
-              <Toggle
-                label="Final beeps"
-                checked={!!selectedEvent?.finalBeeps}
-                onCheckedChange={(checked) =>
-                  updateSelectedEvent({ finalBeeps: checked })
-                }
-                disabled={!selectedEvent?.sound}
-              />
-            </SettingRow>
-
-            <PresetGroup
-              title="Adjust target"
-              description="Move the selected event target without editing the date field."
+            <SettingGroup
+              title="Event setup"
+              description="Choose the saved event, target date, and countdown cues."
+              className="order-2 mt-5"
             >
-              <Chip onClick={() => adjustTargetHours(-1)} title="Subtract 1 hour">
-                -1h
-              </Chip>
-              <Chip onClick={() => adjustTargetHours(-2)} title="Subtract 2 hours">
-                -2h
-              </Chip>
-              <Chip onClick={() => adjustTargetHours(-24)} title="Subtract 24 hours">
-                -24h
-              </Chip>
-              <Chip onClick={() => adjustTargetHours(1)} title="Add 1 hour">
-                +1h
-              </Chip>
-              <Chip onClick={() => adjustTargetHours(2)} title="Add 2 hours">
-                +2h
-              </Chip>
-              <Chip onClick={() => adjustTargetHours(24)} title="Add 24 hours">
-                +24h
-              </Chip>
-            </PresetGroup>
+              <SettingRow className="sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto]">
+                <div className="min-w-0 flex-1">
+                  <Select
+                    label="Saved events"
+                    value={store.selectedId}
+                    onChange={(e) => selectEvent(e.target.value)}
+                  >
+                    {sortedEvents.map((ev) => (
+                      <option key={ev.id} value={ev.id}>
+                        {ev.name || "Untitled Event"}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
 
-            <SecondaryActionRow className="timer-result-actions">
-              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
-                Fullscreen
-              </Btn>
-            </SecondaryActionRow>
+                <SecondaryActionRow className="timer-result-actions sm:justify-end">
+                  <Btn kind="ghost" onClick={addNewEvent} className="px-3 py-2">
+                    New
+                  </Btn>
+                  <Btn
+                    kind="ghost"
+                    onClick={duplicateSelectedEvent}
+                    className="px-3 py-2"
+                  >
+                    Duplicate
+                  </Btn>
+                  <Btn
+                    kind="ghost"
+                    onClick={deleteSelectedEvent}
+                    className="px-3 py-2"
+                    disabled={store.events.length <= 1}
+                  >
+                    Delete
+                  </Btn>
+                </SecondaryActionRow>
+              </SettingRow>
 
-            <ShortcutHint>
-              Space start/pause / R reset / F fullscreen / saved in your browser
-            </ShortcutHint>
-          </SettingGroup>
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+                <Field
+                  label="Event name"
+                  value={selectedEvent?.name ?? ""}
+                  onChange={(e) =>
+                    updateSelectedEvent({ name: e.target.value })
+                  }
+                  placeholder="My Event"
+                />
+
+                <Field
+                  label="Date & time (local)"
+                  type="datetime-local"
+                  value={selectedEvent?.targetValue ?? ""}
+                  onChange={(e) =>
+                    updateSelectedEvent({ targetValue: e.target.value })
+                  }
+                />
+              </SettingRow>
+
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+                <Toggle
+                  label="Sound"
+                  checked={!!selectedEvent?.sound}
+                  onCheckedChange={(checked) =>
+                    updateSelectedEvent({ sound: checked })
+                  }
+                />
+
+                <Toggle
+                  label="Final beeps"
+                  checked={!!selectedEvent?.finalBeeps}
+                  onCheckedChange={(checked) =>
+                    updateSelectedEvent({ finalBeeps: checked })
+                  }
+                  disabled={!selectedEvent?.sound}
+                />
+              </SettingRow>
+
+              <PresetGroup
+                title="Adjust target"
+                description="Move the selected event target without editing the date field."
+              >
+                <Chip onClick={() => adjustTargetHours(-1)} title="Subtract 1 hour">
+                  -1h
+                </Chip>
+                <Chip onClick={() => adjustTargetHours(-2)} title="Subtract 2 hours">
+                  -2h
+                </Chip>
+                <Chip onClick={() => adjustTargetHours(-24)} title="Subtract 24 hours">
+                  -24h
+                </Chip>
+                <Chip onClick={() => adjustTargetHours(1)} title="Add 1 hour">
+                  +1h
+                </Chip>
+                <Chip onClick={() => adjustTargetHours(2)} title="Add 2 hours">
+                  +2h
+                </Chip>
+                <Chip onClick={() => adjustTargetHours(24)} title="Add 24 hours">
+                  +24h
+                </Chip>
+              </PresetGroup>
+
+              <SecondaryActionRow className="timer-result-actions">
+                <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                  Fullscreen
+                </Btn>
+              </SecondaryActionRow>
+
+              <ShortcutHint>
+                Space start/pause / R reset / F fullscreen / saved in your browser
+              </ShortcutHint>
+            </SettingGroup>
+          </>
         )}
 
         {/* Fullscreen bottom controls */}

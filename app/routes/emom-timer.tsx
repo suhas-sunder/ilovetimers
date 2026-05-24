@@ -551,35 +551,6 @@ function EmomTimerCard() {
             {mode === "done" ? "0:00" : shownTime}
           </span>
 
-          {/* Fullscreen compact overlay */}
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Status
-                  </div>
-                  <div className="text-xs font-semibold text-slate-700">
-                    {mode === "prep"
-                      ? `Prep ${prepSeconds}s`
-                      : mode === "emom"
-                        ? `Round ${currentMinute + 1} / ${rounds}`
-                        : mode === "done"
-                          ? "Complete"
-                          : `Rounds ${rounds} · Prep ${prepSeconds}s`}
-                  </div>
-                  <div className="text-[11px] font-semibold text-slate-600">
-                    Sound {sound ? "On" : "Off"}
-                    {sound ? ` · Final ${finalBeeps ? "On" : "Off"}` : ""}
-                  </div>
-                </div>
-
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  Space = Start/Pause
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Controls, presets, and settings (normal only) */}

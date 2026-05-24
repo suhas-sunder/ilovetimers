@@ -368,7 +368,7 @@ function ChessClockTool() {
               </Btn>
             </ControlGroup>
             <div className="text-xs text-[var(--ilt-text-muted)] sm:text-sm">
-              Tap either player clock after a move / No ads appear in fullscreen
+              Tap either player clock after a move / Space start-pause / T switch / R reset / F fullscreen
             </div>
           </div>
         </FullscreenBottomBar>

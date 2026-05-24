@@ -508,18 +508,6 @@ function AmrapTimerCard() {
             </div>
           </div>
 
-          {false && (
-            <div className="hidden">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Shortcuts
-              </div>
-              <div className="mt-1 text-sm font-semibold text-slate-700">
-                + / − reps · ↑ / ↓ rounds · Space start/pause · R reset all · F
-                fullscreen · S sound
-              </div>
-            </div>
-          )}
-
         </DisplayStage>
 
         {/* Controls and settings (normal only) */}

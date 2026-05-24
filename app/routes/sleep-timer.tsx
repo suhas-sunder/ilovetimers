@@ -383,48 +383,6 @@ function SleepTimerCard() {
             {shownTime}
           </span>
 
-          {isFs && (
-            <div
-              className={[
-                "pointer-events-none absolute left-3 right-3 top-3",
-                "sm:left-6 sm:right-6 sm:top-5",
-              ].join(" ")}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div
-                    className={[
-                      "text-[11px] font-extrabold uppercase tracking-widest",
-                      dimMode ? "text-white/60" : "text-slate-600",
-                    ].join(" ")}
-                  >
-                    Tips
-                  </div>
-                  <div
-                    className={[
-                      "rounded-lg border px-2 py-1 text-xs font-semibold backdrop-blur",
-                      dimMode
-                        ? "border-white/15 bg-white/10 text-white/80"
-                        : "border-slate-200 bg-white/85 text-slate-700",
-                    ].join(" ")}
-                  >
-                    Tap time to start/pause · D toggles dim
-                  </div>
-                </div>
-
-                <div
-                  className={[
-                    "hidden sm:block rounded-full border px-3 py-1 text-xs font-semibold backdrop-blur",
-                    dimMode
-                      ? "border-white/15 bg-white/10 text-white/80"
-                      : "border-slate-200 bg-white/85 text-slate-700",
-                  ].join(" ")}
-                >
-                  Space = Start/Pause
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Controls (normal only) */}
@@ -439,40 +397,40 @@ function SleepTimerCard() {
               </Btn>
             </ControlGroup>
 
-            <SettingGroup className="order-2">
-            <SettingRow className="sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
-              <Field
-                label="Minutes"
-                type="number"
-                inputMode="numeric"
-                min={1}
-                max={360}
-                value={minutes}
-                disabled={!canEditDuration}
-                onChange={(e) =>
-                  setMinutes(clamp(Number(e.target.value || 1), 1, 360))
-                }
-              />
-              <Toggle
-                checked={sound}
-                onCheckedChange={(v) => {
-                  setSound(v);
-                  if (!v) setSoftAlarm(true); // keep consistent default when re-enabled
-                }}
-                label="Sound"
-              />
-              <Toggle
-                checked={softAlarm}
-                onCheckedChange={setSoftAlarm}
-                label="Soft alarm"
-                disabled={!sound}
-              />
-              <Toggle
-                checked={dimMode}
-                onCheckedChange={setDimMode}
-                label="Dim mode"
-              />
-            </SettingRow>
+            <SettingGroup title="Quiet settings" className="order-2">
+              <SettingRow className="sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
+                <Field
+                  label="Minutes"
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  max={360}
+                  value={minutes}
+                  disabled={!canEditDuration}
+                  onChange={(e) =>
+                    setMinutes(clamp(Number(e.target.value || 1), 1, 360))
+                  }
+                />
+                <Toggle
+                  checked={sound}
+                  onCheckedChange={(v) => {
+                    setSound(v);
+                    if (!v) setSoftAlarm(true); // keep consistent default when re-enabled
+                  }}
+                  label="Sound"
+                />
+                <Toggle
+                  checked={softAlarm}
+                  onCheckedChange={setSoftAlarm}
+                  label="Soft alarm"
+                  disabled={!sound}
+                />
+                <Toggle
+                  checked={dimMode}
+                  onCheckedChange={setDimMode}
+                  label="Dim mode"
+                />
+              </SettingRow>
             </SettingGroup>
 
             <div className="order-1 flex flex-col gap-3">

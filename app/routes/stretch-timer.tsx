@@ -436,8 +436,8 @@ function StretchTimerCard() {
 
   const phaseChipClass =
     phase === "stretch"
-      ? "border-amber-200 bg-amber-50 text-slate-900"
-      : "border-slate-200 bg-slate-50 text-slate-900";
+      ? "bg-amber-50 text-slate-900"
+      : "bg-slate-50 text-slate-900";
 
   return (
     <Card
@@ -501,7 +501,7 @@ function StretchTimerCard() {
           <div className="flex items-center gap-2">
             <div
               className={[
-                "rounded-full border px-3 py-1 text-xs font-extrabold uppercase tracking-widest",
+                "ilt-inline-pill px-3 py-1 text-xs font-extrabold uppercase tracking-widest",
                 phaseChipClass,
               ].join(" ")}
             >
@@ -531,23 +531,6 @@ function StretchTimerCard() {
             {shownTime}
           </span>
 
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
-                    Settings
-                  </div>
-                  <div className="text-xs font-semibold text-slate-700">
-                    {stretchSec}s stretch · {restSec}s rest · {rounds} rounds
-                  </div>
-                </div>
-                <div className="hidden sm:block rounded-full border border-slate-200 bg-white/85 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur">
-                  N = Next
-                </div>
-              </div>
-            </div>
-          )}
         </DisplayStage>
 
         {/* Settings (normal only) */}

@@ -234,9 +234,7 @@ function BlockRow({
   };
 
   return (
-    <div
-      className={isActive ? "timer-list-row ilt-surface-accent p-4" : "timer-list-row ilt-surface-muted p-4"}
-    >
+    <div className={isActive ? "timer-list-row ilt-surface-accent p-4" : "timer-list-row p-4"}>
       <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-start">
         <div className="grid gap-3 sm:grid-cols-3">
           <Field
@@ -600,30 +598,11 @@ function TimeBlockingClockCard({ initialNowISO }: { initialNowISO: string }) {
             </div>
           )}
 
-          {/* Fullscreen hint chips */}
-          {isFs && (
-            <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <div className="ilt-content-label">
-                    Shortcuts
-                  </div>
-                  <div className="text-xs font-semibold text-[var(--ilt-text-secondary)]">
-                    F fullscreen | C copy | A add block
-                  </div>
-                </div>
-
-                <div className="ilt-inline-pill hidden px-3 py-1 text-xs font-semibold sm:block">
-                  {activeBlock ? "Active" : "No active"}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Blocks (normal only) */}
         {!isFs && (
-          <div className="timer-list-panel ilt-surface-muted order-2 mt-5 p-4">
+          <div className="timer-list-panel order-2 mt-5 p-4">
             <UtilityResultRow>
               <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
                 Today's blocks

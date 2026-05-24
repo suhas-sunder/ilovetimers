@@ -726,7 +726,7 @@ function PaceTimerCard() {
           </div>
 
           {/* Row 3: beeps */}
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field
               label="Beep every"
               type="number"
@@ -755,22 +755,19 @@ function PaceTimerCard() {
               disabled={!sound}
               aria-label="Volume"
             />
-
-            <div className="flex items-center gap-3">
-              <Btn
-                kind="ghost"
-                onClick={() => sound && beep(880, 120, clamp(volume, 0, 1))}
-                disabled={!sound}
-              >
-                Test beep
-              </Btn>
-            </div>
           </div>
 
         </div>
       </SettingGroup>
 
       <SecondaryActionRow>
+        <Btn
+          kind="ghost"
+          onClick={() => sound && beep(880, 120, clamp(volume, 0, 1))}
+          disabled={!sound}
+        >
+          Test beep
+        </Btn>
         <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
           Fullscreen
         </Btn>

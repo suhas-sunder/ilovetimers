@@ -219,7 +219,7 @@ function PaceTimerCard() {
   const [volume, setVolume] = useState(0.1);
 
   // Timer state
-  const [remaining, setRemaining] = useState(0);
+  const [remaining, setRemaining] = useState(() => 25 * 60_000);
   const [running, setRunning] = useState(false);
 
   const rafRef = useRef<number | null>(null);
@@ -455,6 +455,8 @@ function PaceTimerCard() {
     minPx: 64,
     maxPx: 520,
     paddingAllowancePx: 72,
+    initialScale: 1,
+    initialMobileScale: 0.83,
   });
 
   const fsSubtitle = useMemo(() => {

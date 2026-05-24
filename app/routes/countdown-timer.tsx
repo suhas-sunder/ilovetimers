@@ -286,7 +286,8 @@ function CountUpTimerCard() {
     minPx: 52,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 56 : 64,
-    initialScale: 0.92,
+    initialScale: 1.02,
+    initialMobileScale: 0.89,
   });
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {

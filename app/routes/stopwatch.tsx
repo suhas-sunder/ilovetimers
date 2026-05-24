@@ -246,6 +246,8 @@ function StopwatchCard() {
     minPx: 52,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 56 : 64,
+    initialScale: isFs ? 1 : 1.03,
+    initialMobileScale: isFs ? 1 : 1,
   });
 
   const statusLabel = running ? "Running" : elapsed > 0 ? "Paused" : "Ready";

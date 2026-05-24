@@ -436,6 +436,8 @@ function BreathingTimerCard() {
     minPx: 64,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 64 : 80,
+    initialScale: isFs ? 1 : 0.5,
+    initialMobileScale: isFs ? 1 : 1.24,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

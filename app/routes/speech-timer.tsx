@@ -182,6 +182,8 @@ function SpeechTimerTool() {
     minPx: 56,
     maxPx: isFs ? 560 : 520,
     paddingAllowancePx: isFs ? 64 : 72,
+    initialScale: isFs ? 1 : 1.03,
+    initialMobileScale: isFs ? 1 : 0.91,
   });
 
   function applyDuration(minutes: number) {

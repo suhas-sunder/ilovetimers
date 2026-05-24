@@ -576,6 +576,8 @@ function BinaryStopwatchTool() {
     maxPx: isFs ? 560 : 320,
     paddingAllowancePx: isFs ? 36 : 32,
     fitAxis: "box",
+    initialScale: isFs ? 1 : 0.36,
+    initialMobileScale: isFs ? 1 : 0.96,
   });
 
   const shellTone = fsDark

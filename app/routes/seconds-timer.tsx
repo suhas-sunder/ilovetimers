@@ -225,6 +225,7 @@ function SecondsTimerTool() {
     minPx: 58,
     maxPx: isFs ? 540 : 510,
     paddingAllowancePx: isFs ? 76 : 84,
+    initialMobileScale: isFs ? 1 : 0.92,
   });
 
   function applyDuration(seconds: number) {

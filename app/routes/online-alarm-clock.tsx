@@ -278,6 +278,8 @@ function OnlineAlarmClockTool({ initialNowISO }: { initialNowISO: string }) {
     minPx: 38,
     maxPx: isFs ? 520 : 500,
     paddingAllowancePx: isFs ? 84 : 92,
+    initialScale: isFs ? 1 : 1.34,
+    initialMobileScale: isFs ? 1 : 1.16,
   });
 
   const stopRinging = useCallback(

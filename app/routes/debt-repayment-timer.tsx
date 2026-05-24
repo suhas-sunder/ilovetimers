@@ -174,7 +174,6 @@ function DebtRepaymentTimerCard({ initialNowISO }: { initialNowISO: string }) {
 
   const [running, setRunning] = useState(false);
   const rafRef = useRef<number | null>(null);
-  const [remainingMs, setRemainingMs] = useState<number>(0);
   const [nowTs, setNowTs] = useState<number>(() => initialNowMs);
 
   const startTs = useMemo(() => {
@@ -192,6 +191,9 @@ function DebtRepaymentTimerCard({ initialNowISO }: { initialNowISO: string }) {
 
   const totalMs = Math.max(0, endTs - startTs);
   const invalidDates = endTs <= startTs;
+  const [remainingMs, setRemainingMs] = useState<number>(() =>
+    Math.max(0, endTs - initialNowMs),
+  );
 
   const principalToPay = Math.max(0, startingBalance - targetBalance);
 
@@ -292,6 +294,8 @@ function DebtRepaymentTimerCard({ initialNowISO }: { initialNowISO: string }) {
     minPx: isFs ? 52 : 34,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 56 : 24,
+    initialScale: isFs ? 1 : 1.13,
+    initialMobileScale: isFs ? 1 : 1.15,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

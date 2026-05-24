@@ -263,6 +263,8 @@ function MillisecondStopwatchTool() {
     minPx: 52,
     maxPx: isFs ? 560 : 520,
     paddingAllowancePx: isFs ? 64 : 72,
+    initialScale: isFs ? 1 : 1.02,
+    initialMobileScale: isFs ? 1 : 0.95,
   });
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {

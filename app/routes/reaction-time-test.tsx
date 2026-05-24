@@ -540,6 +540,7 @@ function ReactionTimeTestTool() {
     minPx: 56,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 72 : 84,
+    initialScale: isFs ? 1 : 0.54,
   });
 
   const handleStagePress = useCallback(

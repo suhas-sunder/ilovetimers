@@ -232,6 +232,8 @@ function MeetingAgendaTimerTool() {
     minPx: 54,
     maxPx: isFs ? 540 : 500,
     paddingAllowancePx: isFs ? 64 : 72,
+    initialScale: isFs ? 1 : 1.03,
+    initialMobileScale: isFs ? 1 : 0.91,
   });
 
   const startPause = useCallback(() => {

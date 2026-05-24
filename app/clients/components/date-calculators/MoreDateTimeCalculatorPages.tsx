@@ -1251,6 +1251,8 @@ function BirthdayCountdownTool({ initialToday }: { initialToday: string }) {
               : "Local calendar countdown"
             : "Check birthday"
         }
+        initialScale={1.31}
+        initialMobileScale={1.17}
       />
 
       <SettingGroup

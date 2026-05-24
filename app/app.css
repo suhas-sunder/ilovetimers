@@ -176,6 +176,7 @@
   }
 
   .ilt-display-stage {
+    container-type: inline-size;
     min-height: var(--ilt-display-stage-min) !important;
   }
 
@@ -268,6 +269,7 @@
     border-color: transparent !important;
     border-radius: 0 !important;
     box-shadow: none !important;
+    container-type: inline-size;
   }
 
   .timer-display-surface[data-display-stage],

@@ -166,6 +166,8 @@ function MillisecondTimerTool() {
     minPx: 48,
     maxPx: isFs ? 540 : 510,
     paddingAllowancePx: isFs ? 64 : 72,
+    initialScale: isFs ? 1 : 1.02,
+    initialMobileScale: isFs ? 1 : 0.87,
   });
 
   function applyDuration(ms: number) {

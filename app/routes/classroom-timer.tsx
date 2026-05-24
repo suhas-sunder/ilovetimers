@@ -324,6 +324,8 @@ function ClassroomTimerCard() {
     minPx: 56,
     maxPx: isFs ? 560 : 520,
     paddingAllowancePx: isFs ? 72 : 80,
+    initialScale: isFs ? 1 : 1.34,
+    initialMobileScale: isFs ? 1 : 1.34,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

@@ -637,7 +637,8 @@ function PresetDurationTimerTool({
     minPx: 58,
     maxPx: isFs ? 540 : 510,
     paddingAllowancePx: isFs ? 72 : 84,
-    initialScale: 0.9,
+    initialScale: isFs ? 1 : 1.21,
+    initialMobileScale: isFs ? 1 : 1.07,
   });
 
   function startPause() {

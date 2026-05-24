@@ -13,6 +13,7 @@ type FitDisplayTextOptions = {
   paddingAllowancePx?: number;
   fitAxis?: "width" | "box";
   initialScale?: number;
+  initialMobileScale?: number;
 };
 
 function initialDisplaySize({
@@ -21,26 +22,44 @@ function initialDisplaySize({
   maxPx,
   paddingAllowancePx,
   initialScale,
+  initialMobileScale,
 }: {
   deps: unknown[];
   minPx: number;
   maxPx: number;
   paddingAllowancePx: number;
   initialScale: number;
+  initialMobileScale: number;
 }) {
   const sample = deps.find(
     (dep) => typeof dep === "string" || typeof dep === "number",
   );
+  const sampleText = String(sample ?? "00:00").replace(/\s+/g, " ").trim();
   const charCount = Math.max(
     1,
-    String(sample ?? "00:00").replace(/\s+/g, " ").trim().length,
+    sampleText.length,
   );
-  const averageDigitEm = 0.65;
-  const widthScale = charCount * averageDigitEm;
-  const preferredVw = Math.min(52, Math.max(10, 100 / widthScale));
-  const preferredOffset = (paddingAllowancePx + 48) / widthScale;
-  const initialMaxPx = Math.round(maxPx * 1.28);
-  return `clamp(${minPx}px, calc(${(preferredVw * initialScale).toFixed(2)}vw - ${(preferredOffset * initialScale).toFixed(1)}px), ${initialMaxPx}px)`;
+  const hasWideCharacters = /[A-Za-z\s]/.test(sampleText);
+  const averageCharacterEm =
+    charCount <= 3 ? 0.68 : hasWideCharacters ? 0.72 : 0.65;
+  const widthScale = charCount * averageCharacterEm;
+  const preferredCqw =
+    charCount === 1 ? 96 : Math.min(96, Math.max(8, 100 / widthScale));
+  const preferredOffset =
+    charCount === 1 ? 0 : paddingAllowancePx / widthScale;
+  const initialMaxPx = Math.round(maxPx * 1.35);
+  const scale = initialScale;
+  const mobileContainerWidth = 358;
+  const mobileFloorPx = Math.min(
+    initialMaxPx,
+    Math.max(
+      minPx,
+      ((preferredCqw / 100) * mobileContainerWidth - preferredOffset) *
+        initialMobileScale,
+    ),
+  );
+
+  return `clamp(${minPx}px, max(calc(${(preferredCqw * scale).toFixed(4)}cqw - ${(preferredOffset * scale).toFixed(1)}px), ${mobileFloorPx.toFixed(1)}px), ${initialMaxPx}px)`;
 }
 
 function largeScreenMaxPx(maxPx: number, containerWidth: number) {
@@ -60,6 +79,7 @@ export function useFitDisplayText({
   paddingAllowancePx = 0,
   fitAxis = "width",
   initialScale = 1,
+  initialMobileScale = initialScale,
 }: FitDisplayTextOptions) {
   const [fontSize, setFontSize] = useState<number | string>(() =>
     initialDisplaySize({
@@ -68,6 +88,7 @@ export function useFitDisplayText({
       maxPx,
       paddingAllowancePx,
       initialScale,
+      initialMobileScale,
     }),
   );
 

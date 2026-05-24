@@ -210,6 +210,8 @@ function BpmTapperCard() {
     minPx: 84,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 140 : 96,
+    initialScale: isFs ? 1 : 1.03,
+    initialMobileScale: isFs ? 1 : 1.04,
   });
 
   const persistSettings = useCallback(

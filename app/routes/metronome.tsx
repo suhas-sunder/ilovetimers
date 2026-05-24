@@ -434,6 +434,8 @@ function MetronomeCard() {
     minPx: 72,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 64 : 72,
+    initialScale: isFs ? 1 : 1.01,
+    initialMobileScale: isFs ? 1 : 1.04,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

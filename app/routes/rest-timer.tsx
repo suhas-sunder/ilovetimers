@@ -330,6 +330,8 @@ function RestTimerCard() {
     minPx: 56,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 56 : 64,
+    initialScale: isFs ? 1 : 1.28,
+    initialMobileScale: isFs ? 1 : 1.25,
   });
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {

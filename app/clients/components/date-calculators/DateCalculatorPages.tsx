@@ -216,11 +216,15 @@ export function ResultDisplay({
   value,
   context,
   status,
+  initialScale = 0.9,
+  initialMobileScale = initialScale,
 }: {
   label: string;
   value: string;
   context: string;
   status?: string;
+  initialScale?: number;
+  initialMobileScale?: number;
 }) {
   const displayRef = useRef<HTMLElement | null>(null);
   const textRef = useRef<HTMLSpanElement | null>(null);
@@ -231,7 +235,8 @@ export function ResultDisplay({
     minPx: 28,
     maxPx: 420,
     paddingAllowancePx: 80,
-    initialScale: 0.9,
+    initialScale,
+    initialMobileScale,
   });
 
   return (

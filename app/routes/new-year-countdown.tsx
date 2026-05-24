@@ -165,9 +165,10 @@ function NewYearCountdownTool({ initialNowISO }: { initialNowISO: string }) {
     containerRef: displayBoxRef,
     textRef: timeTextRef,
     deps: [display, isFs, targetYear],
-    minPx: 48,
+    minPx: isFs ? 48 : 36,
     maxPx: isFs ? 540 : 500,
     paddingAllowancePx: isFs ? 64 : 76,
+    initialScale: isFs ? 1 : 1.13,
   });
 
   const copy = useCallback(async () => {

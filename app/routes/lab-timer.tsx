@@ -402,6 +402,8 @@ function LabTimerCard() {
     minPx: 52,
     maxPx: isCdFs ? 520 : 360,
     paddingAllowancePx: isCdFs ? 72 : 64,
+    initialScale: isCdFs ? 1 : 1,
+    initialMobileScale: isCdFs ? 1 : 0.9,
   });
 
   const swTimeTextRef = useRef<HTMLSpanElement>(null);
@@ -414,6 +416,8 @@ function LabTimerCard() {
     minPx: 44,
     maxPx: 220,
     paddingAllowancePx: 56,
+    initialScale: 1,
+    initialMobileScale: 0.75,
   });
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {

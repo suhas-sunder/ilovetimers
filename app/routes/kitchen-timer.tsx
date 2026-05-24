@@ -246,6 +246,8 @@ function KitchenTimerTool() {
     minPx: 56,
     maxPx: isFs ? 540 : 510,
     paddingAllowancePx: isFs ? 76 : 84,
+    initialScale: isFs ? 1 : 1.02,
+    initialMobileScale: isFs ? 1 : 0.9,
   });
 
   function applyDuration(seconds: number) {

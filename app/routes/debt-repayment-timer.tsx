@@ -362,7 +362,7 @@ function DebtRepaymentTimerCard({ initialNowISO }: { initialNowISO: string }) {
         {/* Mode + Inputs (normal only) */}
         {!isFs && (
           <>
-            <PresetGroup className="mt-5" title="Payoff mode">
+            <PresetGroup className="order-3 mt-5" title="Payoff mode">
               <Chip
                 active={mode === "payoff-date"}
                 onClick={() => setMode("payoff-date")}
@@ -382,7 +382,7 @@ function DebtRepaymentTimerCard({ initialNowISO }: { initialNowISO: string }) {
             <SettingGroup
               title="Debt estimate inputs"
               description="These estimates use the balances, dates, and currency you enter."
-              className="mt-4"
+              className="order-4 mt-4"
             >
             <SettingRow>
               <Select
@@ -480,7 +480,7 @@ function DebtRepaymentTimerCard({ initialNowISO }: { initialNowISO: string }) {
             </SettingGroup>
 
             {invalidDates ? (
-              <div className="mt-4 ilt-surface-accent p-4 text-sm font-semibold text-[var(--ilt-text-secondary)]">
+              <div className="order-5 mt-4 ilt-surface-accent p-4 text-sm font-semibold text-[var(--ilt-text-secondary)]">
                 End date must be after start date.
               </div>
             ) : null}
@@ -492,7 +492,7 @@ function DebtRepaymentTimerCard({ initialNowISO }: { initialNowISO: string }) {
           data-display-stage
           ref={displayBoxRef}
           className={[
-            "timer-display-surface mt-4 flex flex-col items-center justify-center font-mono font-extrabold",
+            "timer-display-surface order-1 mt-0 flex flex-col items-center justify-center font-mono font-extrabold",
             displayTone,
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",

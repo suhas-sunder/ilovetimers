@@ -394,9 +394,9 @@ function TimeCardCalculatorTool() {
       >
         <div className="grid gap-4">
           {rows.map((row, index) => (
-            <div
+            <SettingRow
               key={row.id}
-              className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,9rem)_minmax(0,9rem)_minmax(0,9rem)_auto]"
+              className="sm:grid-cols-[minmax(0,1fr)_minmax(0,9rem)_minmax(0,9rem)_minmax(0,9rem)_auto]"
             >
               <Field
                 label="Label"
@@ -458,7 +458,7 @@ function TimeCardCalculatorTool() {
               >
                 Remove {index + 1}
               </Button>
-            </div>
+            </SettingRow>
           ))}
         </div>
       </SettingGroup>

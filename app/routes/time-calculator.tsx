@@ -16,6 +16,8 @@ import {
   PresetChip as TabBtn,
   SecondaryActionRow,
   SeoBand,
+  SettingGroup,
+  SettingRow,
   ShortcutHint,
   StatusChip as MiniPill,
   Toggle,
@@ -304,7 +306,12 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
         </div>
       ) : null}
 
-      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+      <SettingGroup
+        className="mt-5"
+        title="Duration inputs"
+        description="Enter each duration in days, hours, minutes, and seconds."
+      >
+      <SettingRow className="lg:grid-cols-2">
         <div className="timer-result-panel ilt-surface-muted p-4">
           <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Time A</div>
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -356,7 +363,8 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
             ))}
           </div>
         </div>
-      </div>
+      </SettingRow>
+      </SettingGroup>
 
       <div className="mt-6 max-w-3xl">
         <h2 className="text-xl font-extrabold text-[var(--ilt-text-primary)]">
@@ -465,7 +473,7 @@ function DurationCard() {
       onKeyDown={onKeyDown}
       className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6 sm:pt-0"
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="hidden">
         <div className="min-w-0">
           <h2 className="text-xl font-extrabold text-[var(--ilt-text-primary)]">Duration</h2>
           <p className="mt-1 text-sm text-[var(--ilt-text-secondary)]">
@@ -522,6 +530,47 @@ function DurationCard() {
         }
       />
 
+      {res.ok ? (
+        <div className="mt-3 flex flex-wrap justify-center gap-2 text-sm font-semibold text-[var(--ilt-text-secondary)]">
+          <span className="ilt-inline-pill px-3 py-1">
+            {res.startNorm} - {res.endNorm}
+          </span>
+          {res.overnight ? (
+            <span className="ilt-inline-pill px-3 py-1">Overnight</span>
+          ) : null}
+        </div>
+      ) : null}
+
+      <SecondaryActionRow className="timer-result-actions mt-4">
+        <Toggle
+          label="Seconds"
+          checked={includeSeconds}
+          onCheckedChange={(on) => {
+            setIncludeSeconds(on);
+
+            if (!on) {
+              setStart((v) => v.slice(0, 5));
+              setEnd((v) => v.slice(0, 5));
+            } else {
+              setStart((v) => (v.length === 5 ? `${v}:00` : v));
+              setEnd((v) => (v.length === 5 ? `${v}:00` : v));
+            }
+          }}
+        />
+
+        <Btn kind="ghost" onClick={now} className="py-2">
+          Use now
+        </Btn>
+        <Btn
+          kind="ghost"
+          onClick={() => res.ok && copy(copyText)}
+          disabled={!res.ok}
+          className="py-2"
+        >
+          Copy
+        </Btn>
+      </SecondaryActionRow>
+
       {lastCopied ? (
         <div className="mt-3 ilt-helper-text font-semibold">
           <span className="ilt-inline-pill px-2 py-1">
@@ -530,7 +579,12 @@ function DurationCard() {
         </div>
       ) : null}
 
-      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+      <SettingGroup
+        className="mt-5"
+        title="Clock times"
+        description="End times earlier than start times are treated as next-day ranges."
+      >
+      <SettingRow className="lg:grid-cols-2">
         <Field
             label="Start time"
             value={start}
@@ -553,7 +607,8 @@ function DurationCard() {
             Shortcut: N now · C copy duration
           </div>
         </label>
-      </div>
+      </SettingRow>
+      </SettingGroup>
     </Card>
   );
 }

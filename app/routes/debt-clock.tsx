@@ -431,37 +431,28 @@ function DebtClockCard() {
             {formattedNow}
           </span>
 
-          <div className="timer-result-detail-grid mt-4 grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-            <div className="timer-result-panel rounded-lg bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
+          <div className="timer-result-detail-grid mt-4 grid w-full max-w-3xl gap-3">
+            <div className="timer-result-panel ilt-surface-muted p-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-[var(--ilt-text-muted)]">
                 Rate
               </div>
-              <div className="mt-1 text-sm font-semibold text-slate-700">
-                <span className="font-extrabold text-slate-950">
+              <div className="mt-1 text-sm font-semibold text-[var(--ilt-text-secondary)]">
+                <span className="font-extrabold text-[var(--ilt-text-primary)]">
                   {formattedYear}
                 </span>{" "}
                 / year ·{" "}
-                <span className="font-extrabold text-slate-950">
+                <span className="font-extrabold text-[var(--ilt-text-primary)]">
                   {formattedPerSecond}
                 </span>{" "}
                 / second ({signLabel})
               </div>
-              <div className="mt-1 text-xs text-slate-600">
+              <div className="mt-1 text-xs text-[var(--ilt-text-muted)]">
                 As of: <span className="font-semibold">{asOfLabel}</span> ·
                 Estimate
               </div>
             </div>
 
-            <div className="timer-result-panel rounded-lg bg-white p-4">
-              <div className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                Shortcuts
-              </div>
-              <div className="mt-1 text-sm font-semibold text-slate-700">
-                Space start/pause · R reset · F fullscreen · C copy
-              </div>
-            </div>
           </div>
-
         </div>
 
         {/* Settings (normal only) */}

@@ -504,9 +504,6 @@ function BillableHoursCalculatorCard() {
                 Shortcuts: S start now | E end now | C copy | P print | R reset
               </div>
             </div>
-            <StatusChip className="normal-case tracking-normal">
-              {statusLabel}
-            </StatusChip>
           </div>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">

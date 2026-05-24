@@ -322,7 +322,7 @@ function MillisecondsConverterCard() {
   return (
     <Card className="p-4 sm:p-6">
       <div className="timer-result-stack flex h-full flex-col">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="order-4 mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 
         <SecondaryActionRow className="timer-result-actions sm:justify-end">
           <Btn kind="ghost" onClick={reset} className="py-2">
@@ -339,7 +339,7 @@ function MillisecondsConverterCard() {
         </SecondaryActionRow>
       </div>
 
-      <PresetGroup className="mt-5" title="Conversion direction">
+      <PresetGroup className="order-2 mt-5" title="Conversion direction">
         <TabBtn active={tab === "ms2s"} onClick={() => setTab("ms2s")}>
           ms → seconds
         </TabBtn>
@@ -350,7 +350,7 @@ function MillisecondsConverterCard() {
         {lastCopied ? <MiniPill>{lastCopied}</MiniPill> : null}
       </PresetGroup>
 
-      <div data-display-stage className="timer-primary-surface mt-6 flex flex-col items-center justify-start gap-5">
+      <div data-display-stage className="timer-primary-surface order-1 mt-0 flex flex-col items-center justify-start gap-5">
         <div className="flex w-full max-w-5xl flex-col items-center justify-center text-center">
           <div className="timer-result-label ilt-content-label">
             {primaryLabel}
@@ -415,7 +415,7 @@ function MillisecondsConverterCard() {
       </div>
 
       {/* Quick examples */}
-      <SettingsPanel className="mt-6">
+      <SettingsPanel className="order-5 mt-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">

@@ -578,7 +578,7 @@ function MilitaryTimeConverterCard() {
 
       <div className={isFs ? "flex h-full flex-col" : "timer-result-stack flex h-full flex-col"}>
         {!isFs && (
-          <SecondaryActionRow className="timer-result-actions">
+          <SecondaryActionRow className="timer-result-actions order-5">
               <Btn
                 kind="ghost"
                 onClick={() => void fullscreen.toggle()}
@@ -590,7 +590,7 @@ function MilitaryTimeConverterCard() {
         )}
 
         {!isFs && (
-          <div className="mt-4 flex flex-col gap-3">
+          <div className="order-4 mt-4 flex flex-col gap-3">
             <SecondaryActionRow className="timer-result-actions">
               <Btn kind="ghost" onClick={fillNow}>
                 Use current time
@@ -615,7 +615,7 @@ function MilitaryTimeConverterCard() {
         )}
 
         {!isFs && (
-          <PresetGroup title="Examples">
+          <PresetGroup className="order-3 mt-4" title="Examples">
             {quick.map((q) => (
               <ChipBtn
                 key={q}
@@ -632,7 +632,7 @@ function MilitaryTimeConverterCard() {
         <div
           ref={displayBoxRef}
           className={[
-            "ilt-display-stage timer-display-surface relative mt-4 text-slate-950",
+            "ilt-display-stage timer-display-surface relative order-1 mt-0 text-slate-950",
             "border-slate-200 p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
@@ -689,7 +689,7 @@ function MilitaryTimeConverterCard() {
 
         {/* Inputs */}
         {!isFs && (
-        <div>
+        <div className="order-2">
           <SettingGroup className="mt-5">
           <div className="grid gap-4 lg:grid-cols-2">
             {/* Military -> Standard */}

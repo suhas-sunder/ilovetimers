@@ -12,9 +12,9 @@ import {
   SecondaryActionRow,
   Select,
   SeoBand,
-  SettingsPanel,
+  SettingGroup,
+  SettingRow,
   ShortcutHint,
-  StatusChip as MiniPill,
   ToolFrame as Card,
   ToolHero,
 } from "~/clients/components/ui/foundation";
@@ -352,7 +352,12 @@ function WorkHoursCalculatorCard() {
       </div>
 
       {/* Inputs */}
-      <SettingsPanel className="mt-4 grid gap-4 lg:grid-cols-3">
+      <SettingGroup
+        className="mt-4"
+        title="Shift inputs"
+        description="Enter a start time, end time, and break deduction for the worked-time total."
+      >
+      <SettingRow className="lg:grid-cols-3">
         <label className="block">
           <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
             Start time
@@ -417,12 +422,17 @@ function WorkHoursCalculatorCard() {
             ))}
           </PresetGroup>
         </div>
-      </SettingsPanel>
+      </SettingRow>
+      </SettingGroup>
 
       {/* Options */}
-      <SettingsPanel className="mt-4 grid gap-4 lg:grid-cols-2">
+      <SettingGroup
+        className="mt-4"
+        title="Calculation options"
+        description="Adjust decimal display and optional rounding without changing the entered shift times."
+      >
+      <SettingRow className="lg:grid-cols-2">
         <div className="timer-result-panel ilt-surface-muted p-4">
-          <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">Options</div>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <Select
@@ -504,7 +514,8 @@ function WorkHoursCalculatorCard() {
             </Btn>
           </SecondaryActionRow>
         </div>
-      </SettingsPanel>
+      </SettingRow>
+      </SettingGroup>
       </div>
     </Card>
   );

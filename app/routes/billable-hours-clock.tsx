@@ -736,7 +736,7 @@ function BillableHoursClockCard() {
   }, [activeTimer]);
 
   return (
-    <Card tabIndex={0} onKeyDown={onKeyDown} className="timer-list-dashboard flex flex-col">
+    <Card tabIndex={0} onKeyDown={onKeyDown} className="timer-list-dashboard timer-result-stack flex flex-col">
       <style
         dangerouslySetInnerHTML={{
           __html: `

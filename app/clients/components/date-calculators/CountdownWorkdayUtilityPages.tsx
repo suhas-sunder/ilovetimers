@@ -977,9 +977,9 @@ function WeeklyTimesheetCalculatorTool() {
       >
         <div className="grid gap-4">
           {rows.map((row) => (
-            <div
+            <SettingRow
               key={row.day}
-              className="grid gap-3 sm:grid-cols-[minmax(7rem,0.8fr)_minmax(0,9rem)_minmax(0,9rem)_minmax(0,9rem)]"
+              className="sm:grid-cols-[minmax(7rem,0.8fr)_minmax(0,9rem)_minmax(0,9rem)_minmax(0,9rem)]"
             >
               <div className="self-end pb-2 text-sm font-bold text-[var(--ilt-text-primary)]">
                 {row.day}
@@ -1029,7 +1029,7 @@ function WeeklyTimesheetCalculatorTool() {
                   )
                 }
               />
-            </div>
+            </SettingRow>
           ))}
         </div>
       </SettingGroup>

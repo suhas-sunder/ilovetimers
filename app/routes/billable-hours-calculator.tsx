@@ -411,7 +411,7 @@ function BillableHoursCalculatorCard() {
       >
         <div
           data-primary-display-value
-          className="timer-result-value font-mono text-[clamp(64px,12vw,156px)] font-extrabold leading-none text-[var(--ilt-text-primary)]"
+          className="timer-result-value max-w-full font-mono text-[clamp(56px,12vw,156px)] font-extrabold leading-none text-[var(--ilt-text-primary)]"
         >
           {totalMoney}
         </div>

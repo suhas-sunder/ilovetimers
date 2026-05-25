@@ -319,7 +319,7 @@ function NewYearCountdownTool({ initialNowISO }: { initialNowISO: string }) {
               Tap countdown to copy / C copy / S share / F fullscreen
             </div>
             <div className="text-xs font-semibold text-[var(--ilt-text-secondary)]">
-              Target: January 1, {targetYear} / no ads in fullscreen
+              Target: January 1, {targetYear}
             </div>
           </div>
         </FullscreenBottomBar>

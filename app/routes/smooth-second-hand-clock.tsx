@@ -217,7 +217,7 @@ function SmoothSecondHandClockTool({ initialNowISO }: { initialNowISO: string })
           <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
             {modeLabel}
           </div>
-          <div className="mt-4 aspect-square w-[min(82vw,28rem)] max-w-full text-[var(--ilt-text-primary)] sm:w-[min(58vw,34rem)]">
+          <div className="mt-4 aspect-square w-[min(82vw,28rem)] max-w-full text-[var(--ilt-text-primary)] sm:w-[min(64vw,42rem)]">
             <svg viewBox="-160 -160 320 320" role="img" aria-label="Analog clock with smooth second hand" className="h-full w-full">
               <circle cx="0" cy="0" r="150" fill="var(--ilt-bg-panel)" stroke="currentColor" strokeWidth="2" opacity="0.98" />
               <g>{marks}</g>

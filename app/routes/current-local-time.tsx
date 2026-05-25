@@ -507,7 +507,7 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
 
         {/* Quick compare (normal only) */}
         {!isFs && (
-          <div className="mt-4">
+          <div className="timer-clock-comparison mt-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm font-extrabold text-slate-900">
                 Quick compare

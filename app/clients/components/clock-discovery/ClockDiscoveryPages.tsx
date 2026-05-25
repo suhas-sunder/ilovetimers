@@ -1037,7 +1037,7 @@ function AnalogClockWithSecondHandTool({
           <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
             {modeText}
           </div>
-          <div className="mt-4 aspect-square w-[min(82vw,29rem)] max-w-full text-[var(--ilt-text-primary)] sm:w-[min(58vw,35rem)]">
+          <div className="mt-4 aspect-square w-[min(82vw,29rem)] max-w-full text-[var(--ilt-text-primary)] sm:w-[min(64vw,42rem)]">
             <svg
               viewBox="-160 -160 320 320"
               role="img"
@@ -1313,7 +1313,7 @@ function FullScreenAnalogClockTool({
           <div className="text-xs font-extrabold uppercase tracking-widest text-[var(--ilt-text-secondary)]">
             Fullscreen-ready analog face
           </div>
-          <div className="mt-4 aspect-square w-[min(86vw,36rem)] max-w-full text-[var(--ilt-text-primary)] sm:w-[min(68vw,44rem)]">
+          <div className="mt-4 aspect-square w-[min(86vw,36rem)] max-w-full text-[var(--ilt-text-primary)] sm:w-[min(72vw,48rem)]">
             <svg
               viewBox="-160 -160 320 320"
               role="img"

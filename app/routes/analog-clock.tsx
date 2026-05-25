@@ -268,7 +268,7 @@ function AnalogClockCard({ initialNowISO }: { initialNowISO: string }) {
           style={{ minHeight: 420 }}
         >
           <div className="flex w-full flex-col items-center justify-center gap-4">
-            <div className="w-full max-w-[560px]">
+            <div className="w-full max-w-[680px]">
               <ClockFaceSvg
                 hourDeg={hourDeg}
                 minDeg={minDeg}

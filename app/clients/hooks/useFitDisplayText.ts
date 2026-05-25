@@ -60,14 +60,19 @@ function initialDisplaySize({
     charCount === 1 ? 96 : Math.min(96, Math.max(8, 100 / widthScale));
   const preferredOffset =
     charCount === 1 ? 0 : paddingAllowancePx / widthScale;
+  const mobileContainerWidth = 358;
+  const mobilePreferredOffset =
+    charCount === 1
+      ? 0
+      : effectivePaddingAllowance(paddingAllowancePx, mobileContainerWidth) /
+        widthScale;
   const initialMaxPx = Math.round(maxPx * 1.35);
   const scale = initialScale;
-  const mobileContainerWidth = 358;
   const mobileFloorPx = Math.min(
     initialMaxPx,
     Math.max(
       minPx,
-      ((preferredCqw / 100) * mobileContainerWidth - preferredOffset) *
+      ((preferredCqw / 100) * mobileContainerWidth - mobilePreferredOffset) *
         initialMobileScale,
     ),
   );
@@ -81,6 +86,21 @@ function largeScreenMaxPx(maxPx: number, containerWidth: number) {
   const scale = containerWidth >= 1600 ? 1.35 : 1.22;
   const widthBound = containerWidth * 0.46;
   return Math.max(maxPx, Math.round(Math.min(maxPx * scale, widthBound)));
+}
+
+function effectivePaddingAllowance(
+  paddingAllowancePx: number,
+  containerWidth: number,
+) {
+  if (containerWidth <= 480) {
+    return Math.min(paddingAllowancePx, 32);
+  }
+
+  if (containerWidth <= 640) {
+    return Math.min(paddingAllowancePx, 40);
+  }
+
+  return paddingAllowancePx;
 }
 
 export function useFitDisplayText({
@@ -121,8 +141,12 @@ export function useFitDisplayText({
       if (!currentContainer || !currentText) return;
 
       const rect = currentContainer.getBoundingClientRect();
-      const availableWidth = Math.max(0, rect.width - paddingAllowancePx);
-      const availableHeight = Math.max(0, rect.height - paddingAllowancePx);
+      const effectivePaddingPx = effectivePaddingAllowance(
+        paddingAllowancePx,
+        rect.width,
+      );
+      const availableWidth = Math.max(0, rect.width - effectivePaddingPx);
+      const availableHeight = Math.max(0, rect.height - effectivePaddingPx);
       if (availableWidth <= 0 || availableHeight <= 0) return;
       lastContainerWidth = rect.width;
       lastContainerHeight = rect.height;
@@ -148,7 +172,7 @@ export function useFitDisplayText({
         initialMobileScale,
       });
 
-      if (fits(estimatedFontSize)) {
+      if (rect.width > 640 && fits(estimatedFontSize)) {
         currentText.style.fontSize = originalFontSize;
         setFontSize(estimatedFontSize);
         return;

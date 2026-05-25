@@ -593,6 +593,11 @@
     margin-right: auto !important;
   }
 
+  [data-tool-ad-slot-wrapper].timer-mobile-heading-ad {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
   .timer-countdown-stack {
     display: flex;
     flex-direction: column;

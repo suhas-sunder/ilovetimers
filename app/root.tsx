@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import RelatedSites from "./clients/components/navigation/RelatedSites";
 import { PHProvider } from "./provider";
 import Footer from "./clients/components/navigation/Footer";
+import { ToolAdSlot } from "./clients/components/ui/foundation";
 import {
   MoonIcon,
   SearchIcon,
@@ -1345,6 +1346,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)] antialiased">
         <PHProvider>
+          <ToolAdSlot slot="top-banner" className="hidden pt-2 pb-0 sm:block sm:pt-3" />
           <SiteHeader />
           {children}
 

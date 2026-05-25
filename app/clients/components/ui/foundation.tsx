@@ -33,7 +33,6 @@ export function PageShell({ className, children, ...props }: DivProps) {
       )}
       {...props}
     >
-      <ToolAdSlot slot="top-banner" className="pt-2 pb-0 sm:pt-3" />
       {children}
       <ToolAdSlot slot="bottom-banner" className="pt-8 pb-10 sm:pt-10 sm:pb-12" />
     </main>
@@ -78,6 +77,7 @@ export function ToolHero({
             ) : null}
           </div>
         ) : null}
+        <ToolAdSlot slot="top-banner" className="timer-mobile-heading-ad pt-3 pb-0 sm:hidden" />
       </div>
     </section>
   );
@@ -814,7 +814,7 @@ export function AdPlaceholder({
   );
 }
 
-function ToolAdSlot({
+export function ToolAdSlot({
   slot,
   className,
 }: {

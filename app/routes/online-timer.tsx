@@ -397,9 +397,11 @@ function OnlineTimerCard() {
               </Btn>
             </ControlGroup>
 
-            <ShortcutHint>
-              Shortcuts: Space start/pause / R reset / F fullscreen
-            </ShortcutHint>
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
           </div>
         )}
 
@@ -508,11 +510,9 @@ function OnlineTimerCard() {
                 </SettingRow>
               </SettingGroup>
 
-              <SecondaryActionRow>
-                <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
-                  Fullscreen
-                </Btn>
-              </SecondaryActionRow>
+              <ShortcutHint>
+                Shortcuts: Space start/pause / R reset / F fullscreen
+              </ShortcutHint>
           </div>
         )}
 

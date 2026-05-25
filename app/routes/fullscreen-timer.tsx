@@ -447,87 +447,83 @@ function FullscreenCountdownCard() {
         {/* Controls (normal only) */}
         {!isFs && (
           <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <ControlGroup>
-                <Btn onClick={onStartPause}>
-                  {status === "running"
-                    ? "Pause"
-                    : status === "done"
-                      ? "Restart"
-                      : "Start"}
-                </Btn>
-                <Btn kind="ghost" onClick={onReset}>
-                  Reset
-                </Btn>
-              </ControlGroup>
-
-              <ShortcutHint>
-                Shortcuts: Space start/pause / R reset / F fullscreen / Esc exit
-              </ShortcutHint>
-            </div>
-
-            <div className="mt-4 flex flex-col gap-3">
-              <PresetGroup
-                title="Fullscreen timer presets"
-                description="Pick a room-display duration or set a custom countdown below."
-              >
-                {presets.map((m) => (
-                  <Chip
-                    key={m}
-                    active={
-                      durationMs === m * 60 * 1000 && status !== "running"
-                    }
-                    onClick={() => onPreset(m)}
-                    disabled={status === "running"}
-                  >
-                    {m}m
-                  </Chip>
-                ))}
-              </PresetGroup>
-
-              <SettingGroup
-                title="Timer settings"
-                description="Set a custom duration, then choose optional sound and loop behavior."
-              >
-                <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(16rem,auto)]">
-                  <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
-                    <Field
-                      label="Custom time"
-                      inputMode="numeric"
-                      value={inputStr}
-                      onChange={(e) => {
-                        if (status === "running") setStatus("paused");
-                        setInputStr(e.target.value);
-                      }}
-                      onBlur={onSet}
-                      placeholder="mm:ss or ss"
-                    />
-                    <Btn kind="ghost" onClick={onSet}>
-                      Set
-                    </Btn>
-                  </div>
-
-                  <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
-                    <Toggle
-                      label="Sound"
-                      checked={sound}
-                      onCheckedChange={setSound}
-                    />
-                    <Toggle
-                      label="Loop"
-                      checked={loop}
-                      onCheckedChange={setLoop}
-                    />
-                  </div>
-                </SettingRow>
-              </SettingGroup>
-            </div>
+            <ControlGroup>
+              <Btn onClick={onStartPause}>
+                {status === "running"
+                  ? "Pause"
+                  : status === "done"
+                    ? "Restart"
+                    : "Start"}
+              </Btn>
+              <Btn kind="ghost" onClick={onReset}>
+                Reset
+              </Btn>
+            </ControlGroup>
 
             <SecondaryActionRow>
               <Btn kind="ghost" onClick={requestFs} className="py-2">
                 Fullscreen
               </Btn>
             </SecondaryActionRow>
+
+            <PresetGroup
+              title="Fullscreen timer presets"
+              description="Pick a room-display duration or set a custom countdown below."
+            >
+              {presets.map((m) => (
+                <Chip
+                  key={m}
+                  active={
+                    durationMs === m * 60 * 1000 && status !== "running"
+                  }
+                  onClick={() => onPreset(m)}
+                  disabled={status === "running"}
+                >
+                  {m}m
+                </Chip>
+              ))}
+            </PresetGroup>
+
+            <SettingGroup
+              title="Timer settings"
+              description="Set a custom duration, then choose optional sound and loop behavior."
+            >
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(16rem,auto)]">
+                <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+                  <Field
+                    label="Custom time"
+                    inputMode="numeric"
+                    value={inputStr}
+                    onChange={(e) => {
+                      if (status === "running") setStatus("paused");
+                      setInputStr(e.target.value);
+                    }}
+                    onBlur={onSet}
+                    placeholder="mm:ss or ss"
+                  />
+                  <Btn kind="ghost" onClick={onSet}>
+                    Set
+                  </Btn>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                  <Toggle
+                    label="Sound"
+                    checked={sound}
+                    onCheckedChange={setSound}
+                  />
+                  <Toggle
+                    label="Loop"
+                    checked={loop}
+                    onCheckedChange={setLoop}
+                  />
+                </div>
+              </SettingRow>
+            </SettingGroup>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause / R reset / F fullscreen / Esc exit
+            </ShortcutHint>
           </div>
         )}
 

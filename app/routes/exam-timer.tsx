@@ -369,7 +369,7 @@ function ExamTimerCard() {
       <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
         {/* Controls (normal only) */}
         {!isFs && (
-          <div className="order-2 mt-5 space-y-5">
+          <div className="order-2 mt-5 flex flex-col gap-5">
             <ControlGroup>
               <div className="flex flex-wrap items-center gap-3">
                 <Btn kind="solid" onClick={startPause}>

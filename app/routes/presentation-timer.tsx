@@ -330,7 +330,7 @@ function PresentationTimerCard() {
       <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
         {/* Controls (normal only) */}
         {!isFs && (
-          <div className="order-2 mt-4 space-y-5">
+          <div className="order-2 mt-4 flex flex-col gap-5">
             <ControlGroup>
               <Btn kind="solid" onClick={startPause}>
                 {running ? "Pause" : "Start"}

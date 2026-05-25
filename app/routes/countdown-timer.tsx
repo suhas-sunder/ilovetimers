@@ -346,27 +346,20 @@ function CountUpTimerCard() {
         {/* Controls bar (normal only) */}
         {!isFs && (
           <div className="order-2 mx-auto flex w-full max-w-5xl flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <ControlGroup>
-                <Button variant="primary" onClick={startPause}>
-                  {running ? "Pause" : remaining <= 0 ? "Restart" : "Start"}
-                </Button>
-                <Button variant="secondary" onClick={resetAll}>
-                  Reset
-                </Button>
-                <Button variant="secondary" onClick={() => addSeconds(60)}>
-                  +1:00
-                </Button>
-                <Button variant="secondary" onClick={() => addSeconds(-10)}>
-                  -0:10
-                </Button>
-              </ControlGroup>
-
-              <ShortcutHint>
-                Shortcuts: Space start/pause / R reset / A +1:00 / S -0:10 / F
-                fullscreen
-              </ShortcutHint>
-            </div>
+            <ControlGroup>
+              <Button variant="primary" onClick={startPause}>
+                {running ? "Pause" : remaining <= 0 ? "Restart" : "Start"}
+              </Button>
+              <Button variant="secondary" onClick={resetAll}>
+                Reset
+              </Button>
+              <Button variant="secondary" onClick={() => addSeconds(60)}>
+                +1:00
+              </Button>
+              <Button variant="secondary" onClick={() => addSeconds(-10)}>
+                -0:10
+              </Button>
+            </ControlGroup>
 
             <SettingGroup
               title="Set countdown"
@@ -412,6 +405,11 @@ function CountUpTimerCard() {
                 Fullscreen
               </Button>
             </SecondaryActionRow>
+
+            <ShortcutHint>
+              Shortcuts: Space start/pause / R reset / A +1:00 / S -0:10 / F
+              fullscreen
+            </ShortcutHint>
           </div>
         )}
 

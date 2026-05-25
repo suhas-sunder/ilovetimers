@@ -759,12 +759,60 @@ function EventCountdownCard({ initialNowISO }: { initialNowISO: string }) {
               </Btn>
             </ControlGroup>
 
+            <SecondaryActionRow className="timer-result-actions">
+              <Btn kind="ghost" onClick={addNewEvent} className="px-3 py-2">
+                New
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={duplicateSelectedEvent}
+                className="px-3 py-2"
+              >
+                Duplicate
+              </Btn>
+              <Btn
+                kind="ghost"
+                onClick={deleteSelectedEvent}
+                className="px-3 py-2"
+                disabled={store.events.length <= 1}
+              >
+                Delete
+              </Btn>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
+            <PresetGroup
+              title="Adjust target"
+              description="Move the selected event target without editing the date field."
+            >
+              <Chip onClick={() => adjustTargetHours(-1)} title="Subtract 1 hour">
+                -1h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(-2)} title="Subtract 2 hours">
+                -2h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(-24)} title="Subtract 24 hours">
+                -24h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(1)} title="Add 1 hour">
+                +1h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(2)} title="Add 2 hours">
+                +2h
+              </Chip>
+              <Chip onClick={() => adjustTargetHours(24)} title="Add 24 hours">
+                +24h
+              </Chip>
+            </PresetGroup>
+
             <SettingGroup
               title="Event setup"
               description="Choose the saved event, target date, and countdown cues."
               className="order-2 mt-5"
             >
-              <SettingRow className="sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto]">
+              <SettingRow>
                 <div className="min-w-0 flex-1">
                   <Select
                     label="Saved events"
@@ -778,27 +826,6 @@ function EventCountdownCard({ initialNowISO }: { initialNowISO: string }) {
                     ))}
                   </Select>
                 </div>
-
-                <SecondaryActionRow className="timer-result-actions sm:justify-end">
-                  <Btn kind="ghost" onClick={addNewEvent} className="px-3 py-2">
-                    New
-                  </Btn>
-                  <Btn
-                    kind="ghost"
-                    onClick={duplicateSelectedEvent}
-                    className="px-3 py-2"
-                  >
-                    Duplicate
-                  </Btn>
-                  <Btn
-                    kind="ghost"
-                    onClick={deleteSelectedEvent}
-                    className="px-3 py-2"
-                    disabled={store.events.length <= 1}
-                  >
-                    Delete
-                  </Btn>
-                </SecondaryActionRow>
               </SettingRow>
 
               <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
@@ -840,40 +867,11 @@ function EventCountdownCard({ initialNowISO }: { initialNowISO: string }) {
                 />
               </SettingRow>
 
-              <PresetGroup
-                title="Adjust target"
-                description="Move the selected event target without editing the date field."
-              >
-                <Chip onClick={() => adjustTargetHours(-1)} title="Subtract 1 hour">
-                  -1h
-                </Chip>
-                <Chip onClick={() => adjustTargetHours(-2)} title="Subtract 2 hours">
-                  -2h
-                </Chip>
-                <Chip onClick={() => adjustTargetHours(-24)} title="Subtract 24 hours">
-                  -24h
-                </Chip>
-                <Chip onClick={() => adjustTargetHours(1)} title="Add 1 hour">
-                  +1h
-                </Chip>
-                <Chip onClick={() => adjustTargetHours(2)} title="Add 2 hours">
-                  +2h
-                </Chip>
-                <Chip onClick={() => adjustTargetHours(24)} title="Add 24 hours">
-                  +24h
-                </Chip>
-              </PresetGroup>
-
-              <SecondaryActionRow className="timer-result-actions">
-                <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
-                  Fullscreen
-                </Btn>
-              </SecondaryActionRow>
-
-              <ShortcutHint>
-                Space start/pause / R reset / F fullscreen / saved in your browser
-              </ShortcutHint>
             </SettingGroup>
+
+            <ShortcutHint>
+              Space start/pause / R reset / F fullscreen / saved in your browser
+            </ShortcutHint>
           </>
         )}
 

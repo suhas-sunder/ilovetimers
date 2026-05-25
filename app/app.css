@@ -500,10 +500,91 @@
     margin-right: auto !important;
   }
 
-  .timer-first-stack > .timer-controls-row,
-  .timer-first-stack > .timer-control-stack,
-  .timer-first-stack > .timer-settings-panel {
+  :is(
+    .timer-first-stack,
+    .timer-countdown-stack,
+    .timer-session-stack,
+    .timer-interval-stack,
+    .timer-history-stack,
+    .timer-result-stack,
+    .timer-clock-stack,
+    .timer-list-stack,
+    .timer-specialty-clock-stack,
+    .timer-interaction-stack
+  ) .timer-controls-row,
+  :is(
+    .timer-first-stack,
+    .timer-countdown-stack,
+    .timer-session-stack,
+    .timer-interval-stack,
+    .timer-history-stack,
+    .timer-result-stack,
+    .timer-clock-stack,
+    .timer-list-stack,
+    .timer-specialty-clock-stack,
+    .timer-interaction-stack
+  ) .timer-control-stack {
     order: 2 !important;
+  }
+
+  :is(
+    .timer-first-stack,
+    .timer-countdown-stack,
+    .timer-session-stack,
+    .timer-interval-stack,
+    .timer-history-stack,
+    .timer-result-stack,
+    .timer-clock-stack,
+    .timer-list-stack,
+    .timer-specialty-clock-stack,
+    .timer-interaction-stack
+  ) .timer-secondary-actions {
+    order: 3 !important;
+  }
+
+  :is(
+    .timer-first-stack,
+    .timer-countdown-stack,
+    .timer-session-stack,
+    .timer-interval-stack,
+    .timer-history-stack,
+    .timer-result-stack,
+    .timer-clock-stack,
+    .timer-list-stack,
+    .timer-specialty-clock-stack,
+    .timer-interaction-stack
+  ) .timer-preset-group {
+    order: 4 !important;
+  }
+
+  :is(
+    .timer-first-stack,
+    .timer-countdown-stack,
+    .timer-session-stack,
+    .timer-interval-stack,
+    .timer-history-stack,
+    .timer-result-stack,
+    .timer-clock-stack,
+    .timer-list-stack,
+    .timer-specialty-clock-stack,
+    .timer-interaction-stack
+  ) .timer-settings-panel {
+    order: 5 !important;
+  }
+
+  :is(
+    .timer-first-stack,
+    .timer-countdown-stack,
+    .timer-session-stack,
+    .timer-interval-stack,
+    .timer-history-stack,
+    .timer-result-stack,
+    .timer-clock-stack,
+    .timer-list-stack,
+    .timer-specialty-clock-stack,
+    .timer-interaction-stack
+  ) .timer-shortcut-hint {
+    order: 6 !important;
   }
 
   .timer-settings-panel {

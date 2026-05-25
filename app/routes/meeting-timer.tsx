@@ -360,7 +360,7 @@ function MeetingTimerCard() {
 
         {/* Controls (normal only) */}
         {!isFs && (
-          <div className="order-2 space-y-5">
+          <div className="order-2 flex flex-col gap-5">
             <ControlGroup>
               <Btn onClick={startPause}>{running ? "Pause" : "Start"}</Btn>
               <Btn kind="ghost" onClick={reset}>

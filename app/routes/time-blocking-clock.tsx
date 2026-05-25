@@ -16,7 +16,6 @@ import {
   PageShell,
   SecondaryActionRow,
   SeoBand,
-  SettingGroup,
   Toggle,
   ToolFrame as Card,
   ToolHero,
@@ -503,12 +502,8 @@ function TimeBlockingClockCard({ initialNowISO }: { initialNowISO: string }) {
 
       <div className={isFs ? "flex h-full flex-col" : "timer-list-stack flex h-full flex-col"}>
         {!isFs && (
-          <SettingGroup
-            title="Schedule controls"
-            description="Keep the clock live, edit the block list, or copy the day plan."
-            className="order-2 mt-5"
-          >
-            <SecondaryActionRow className="timer-list-actions">
+          <>
+            <SecondaryActionRow className="timer-list-actions order-2 mt-5">
               <Toggle label="Live" checked={live} onCheckedChange={setLive} />
 
               <Btn kind="ghost" onClick={addBlock}>
@@ -533,10 +528,10 @@ function TimeBlockingClockCard({ initialNowISO }: { initialNowISO: string }) {
               </Btn>
             </SecondaryActionRow>
 
-            <ShortcutHint className="timer-list-shortcut">
+            <ShortcutHint className="timer-list-shortcut order-2">
               F fullscreen / C copy / A add block
             </ShortcutHint>
-          </SettingGroup>
+          </>
         )}
 
         {/* Display */}

@@ -474,37 +474,37 @@ function LabTimerCard() {
   return (
     <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="timer-list-stack flex h-full flex-col">
-      <SettingGroup
-        title="Lab timer settings"
-        description="Sound cues apply to the repeatable countdown. Stopwatch laps stay silent."
-        className="order-2 mt-5"
-      >
-        <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
-          <Toggle
-            label="Sound"
-            checked={sound}
-            onCheckedChange={setSound}
-          />
-          <Toggle
-            label="Final beeps"
-            checked={finalCountdownBeeps}
-            onCheckedChange={setFinalCountdownBeeps}
-            disabled={!sound}
-          />
-        </SettingRow>
-
-        <SecondaryActionRow className="timer-list-actions">
+        <SecondaryActionRow className="timer-list-actions order-2 mt-5">
           <Btn kind="ghost" onClick={() => void cdFullscreen.toggle()}>
             Fullscreen
           </Btn>
         </SecondaryActionRow>
 
-        <ShortcutHint>
+        <SettingGroup
+          title="Lab timer settings"
+          description="Sound cues apply to the repeatable countdown. Stopwatch laps stay silent."
+          className="order-2 mt-5"
+        >
+          <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+            <Toggle
+              label="Sound"
+              checked={sound}
+              onCheckedChange={setSound}
+            />
+            <Toggle
+              label="Final beeps"
+              checked={finalCountdownBeeps}
+              onCheckedChange={setFinalCountdownBeeps}
+              disabled={!sound}
+            />
+          </SettingRow>
+        </SettingGroup>
+
+        <ShortcutHint className="order-2">
           Space stopwatch / L lap / C countdown / R reset / T repeat / F fullscreen
         </ShortcutHint>
-      </SettingGroup>
 
-      <div className="order-1 timer-primary-surface timer-list-grid mt-5 grid gap-6 lg:grid-cols-2">
+        <div className="order-1 timer-primary-surface timer-list-grid mt-5 grid gap-6 lg:grid-cols-2">
         {/* STOPWATCH */}
         <div className="timer-list-panel flex min-w-0 flex-col ilt-surface-card p-4 sm:p-5">
           <div className="order-3 mt-4 flex items-baseline justify-between gap-3">

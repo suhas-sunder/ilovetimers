@@ -201,7 +201,7 @@ export function ControlGroup({ className, ...props }: DivProps) {
   return (
     <div
       className={cx(
-        "ilt-settings-width mx-auto flex w-full flex-wrap items-center justify-center gap-3",
+        "timer-controls-row ilt-settings-width mx-auto flex w-full flex-wrap items-center justify-center gap-3",
         className,
       )}
       {...props}
@@ -221,7 +221,7 @@ export function PresetGroup({
 }) {
   return (
     <div
-      className={cx("ilt-settings-width mx-auto w-full space-y-3", className)}
+      className={cx("timer-preset-group ilt-settings-width mx-auto w-full space-y-3", className)}
       {...props}
     >
       {title || description ? (
@@ -267,7 +267,7 @@ export function SettingGroup({
 }) {
   return (
     <SettingsPanel
-      className={cx("ilt-settings-width mx-auto w-full space-y-3", className)}
+      className={cx("timer-settings-panel ilt-settings-width mx-auto w-full space-y-3", className)}
       {...props}
     >
       {title || description ? (
@@ -303,7 +303,7 @@ export function SecondaryActionRow({ className, ...props }: DivProps) {
   return (
     <div
       className={cx(
-        "ilt-settings-width mx-auto flex w-full flex-wrap items-center justify-center gap-2 pt-1 sm:gap-3",
+        "timer-secondary-actions ilt-settings-width mx-auto flex w-full flex-wrap items-center justify-center gap-2 pt-1 sm:gap-3",
         className,
       )}
       {...props}
@@ -315,7 +315,7 @@ export function ShortcutHint({ className, ...props }: DivProps) {
   return (
     <div
       className={cx(
-        "ilt-helper-text ilt-settings-width mx-auto w-full pt-1 text-center text-xs leading-5",
+        "timer-shortcut-hint ilt-helper-text ilt-settings-width mx-auto w-full pt-1 text-center text-xs leading-5",
         className,
       )}
       {...props}

@@ -574,7 +574,7 @@ function ChristmasCountdownTool({ initialNowISO }: { initialNowISO: string }) {
         }
       />
 
-      <div className={isFullscreen ? "flex h-full flex-col" : "flex h-full flex-col"}>
+      <div className={isFullscreen ? "flex h-full flex-col" : "timer-countdown-stack timer-event-countdown-stack flex h-full flex-col"}>
         <CountdownDisplay
           label={`Countdown to Christmas ${christmas.targetParts.year}`}
           value={displayValue}

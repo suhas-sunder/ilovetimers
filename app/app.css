@@ -900,6 +900,29 @@
     order: 5 !important;
   }
 
+  .timer-event-countdown-stack > .timer-controls-row,
+  .timer-event-countdown-stack > .timer-secondary-actions {
+    order: 2 !important;
+  }
+
+  .timer-event-countdown-stack > .timer-event-status-row {
+    order: 3 !important;
+  }
+
+  .timer-event-countdown-stack > .timer-settings-panel,
+  .timer-event-countdown-stack > .timer-preset-group {
+    order: 4 !important;
+  }
+
+  .timer-event-countdown-stack
+    > :not(.timer-display-surface):not(.timer-primary-surface):not(.timer-controls-row):not(.timer-secondary-actions):not(.timer-event-status-row):not(.timer-settings-panel):not(.timer-preset-group):not(.timer-shortcut-hint) {
+    order: 5 !important;
+  }
+
+  .timer-event-countdown-stack > .timer-shortcut-hint {
+    order: 6 !important;
+  }
+
   .timer-result-actions {
     justify-content: center !important;
   }

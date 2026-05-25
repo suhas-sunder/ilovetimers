@@ -664,10 +664,10 @@ function EventCountdownCard({ initialNowISO }: { initialNowISO: string }) {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-result-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-result-stack timer-event-countdown-stack flex h-full flex-col"}>
         {/* Header (normal only) */}
         {!isFs && (
-          <div className="order-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="timer-event-status-row order-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {/* Status line (normal only) */}
             {!isFs && (
               <div className="ilt-surface-muted px-4 py-3 text-sm">

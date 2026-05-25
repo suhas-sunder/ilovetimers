@@ -234,7 +234,7 @@ function NewYearCountdownTool({ initialNowISO }: { initialNowISO: string }) {
         }
       />
 
-      <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack flex h-full flex-col"}>
+      <div className={isFs ? "flex h-full flex-col" : "timer-countdown-stack timer-event-countdown-stack flex h-full flex-col"}>
         <DisplayStage
           stageRef={displayBoxRef}
           isFullscreen={isFs}

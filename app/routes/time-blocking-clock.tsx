@@ -10,11 +10,11 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ControlGroup,
   Field,
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
-  SecondaryActionRow,
   SeoBand,
   Toggle,
   ToolFrame as Card,
@@ -503,7 +503,7 @@ function TimeBlockingClockCard({ initialNowISO }: { initialNowISO: string }) {
       <div className={isFs ? "flex h-full flex-col" : "timer-list-stack flex h-full flex-col"}>
         {!isFs && (
           <>
-            <SecondaryActionRow className="timer-list-actions order-2 mt-5">
+            <ControlGroup className="timer-list-actions">
               <Toggle label="Live" checked={live} onCheckedChange={setLive} />
 
               <Btn kind="ghost" onClick={addBlock}>
@@ -526,7 +526,7 @@ function TimeBlockingClockCard({ initialNowISO }: { initialNowISO: string }) {
               >
                 Fullscreen
               </Btn>
-            </SecondaryActionRow>
+            </ControlGroup>
 
             <ShortcutHint className="timer-list-shortcut order-2">
               F fullscreen / C copy / A add block

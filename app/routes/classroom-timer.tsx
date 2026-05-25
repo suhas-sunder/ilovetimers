@@ -451,6 +451,21 @@ function ClassroomTimerCard() {
               </Btn>
             </ControlGroup>
 
+            <SecondaryActionRow>
+              <Btn kind="ghost" onClick={() => addSeconds(-60)}>
+                -1 min
+              </Btn>
+              <Btn kind="ghost" onClick={() => addSeconds(60)}>
+                +1 min
+              </Btn>
+              <Btn kind="ghost" onClick={() => addSeconds(300)}>
+                +5 min
+              </Btn>
+              <Btn kind="ghost" onClick={fullscreen.enter}>
+                Fullscreen
+              </Btn>
+            </SecondaryActionRow>
+
             <PresetGroup title="Classroom presets">
               {presetsMin.map((m) => (
                 <Chip
@@ -511,29 +526,6 @@ function ClassroomTimerCard() {
                 />
               </SettingRow>
             </SettingGroup>
-
-            <div className="mx-auto w-full max-w-3xl">
-              <div className="ilt-content-label text-center sm:text-left">
-                Quick adjust
-              </div>
-              <div className="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                <Btn kind="ghost" onClick={() => addSeconds(-60)}>
-                  -1 min
-                </Btn>
-                <Btn kind="ghost" onClick={() => addSeconds(60)}>
-                  +1 min
-                </Btn>
-                <Btn kind="ghost" onClick={() => addSeconds(300)}>
-                  +5 min
-                </Btn>
-              </div>
-            </div>
-
-            <SecondaryActionRow>
-              <Btn kind="ghost" onClick={fullscreen.enter}>
-                Fullscreen
-              </Btn>
-            </SecondaryActionRow>
 
             <ShortcutHint>
               Space start/pause / R reset / F fullscreen / + add 1 min / - subtract 1 min

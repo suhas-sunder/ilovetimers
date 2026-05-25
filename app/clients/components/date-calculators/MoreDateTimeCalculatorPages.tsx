@@ -20,6 +20,7 @@ import {
   clampInt,
   CopyState,
   copyToClipboard,
+  DATE_CALCULATOR_FRAME_CLASS,
   dateInputFromParts,
   dayNumberFromParts,
   daysInMonth,
@@ -370,7 +371,7 @@ function TimeDurationTool() {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Elapsed time"
         value={result ? result.display : "Invalid time"}
@@ -526,7 +527,7 @@ function AgeCalculatorTool({ initialToday }: { initialToday: string }) {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Age"
         value={
@@ -661,7 +662,7 @@ function DaysUntilTool({ initialToday }: { initialToday: string }) {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Days until"
         value={displayValue}
@@ -773,7 +774,7 @@ function WeekdayTool({ initialToday }: { initialToday: string }) {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Weekday"
         value={selectedDate ? weekdayName(selectedDate) : "Invalid date"}
@@ -876,7 +877,7 @@ function WeekNumberTool({ initialToday }: { initialToday: string }) {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="ISO week"
         value={result ? `Week ${result.weekNumber}` : "Invalid date"}
@@ -1011,7 +1012,7 @@ function MonthsBetweenDatesTool() {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Full months + days"
         value={displayValue}
@@ -1230,7 +1231,7 @@ function BirthdayCountdownTool({ initialToday }: { initialToday: string }) {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Next birthday"
         value={displayValue}
@@ -1428,7 +1429,7 @@ function HoursUntilTool({ initialNow }: { initialNow: string }) {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Hours until"
         value={displayValue}

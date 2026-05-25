@@ -25,6 +25,7 @@ import {
   clampInt,
   CopyState,
   copyToClipboard,
+  DATE_CALCULATOR_FRAME_CLASS,
   dayNumberFromParts,
   JsonLd,
   longDate,
@@ -741,7 +742,7 @@ function WorkdaysCalculatorTool() {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Selected workdays"
         value={displayValue}

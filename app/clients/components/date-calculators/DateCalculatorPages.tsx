@@ -23,6 +23,8 @@ import { useFitDisplayText } from "~/clients/hooks/useFitDisplayText";
 const SITE_URL = "https://www.ilovetimers.com";
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 const MS_PER_DAY = 86_400_000;
+export const DATE_CALCULATOR_FRAME_CLASS =
+  "timer-result-stack timer-date-calculator-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6";
 const WEEKDAY_FORMATTER = new Intl.DateTimeFormat(undefined, {
   weekday: "long",
 });
@@ -452,7 +454,7 @@ function DateDurationTool() {
   const status = result?.reversed ? "End date is before start date" : "Local calendar dates";
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Elapsed days"
         value={displayValue}
@@ -581,7 +583,7 @@ function DateCalculatorTool() {
   ] as const;
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Calculated date"
         value={result ? resultInput : "Invalid date"}
@@ -746,7 +748,7 @@ function BusinessDaysTool() {
   const includeLabel = `${includeStart ? "Includes" : "Excludes"} start / ${includeEnd ? "includes" : "excludes"} end`;
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className={DATE_CALCULATOR_FRAME_CLASS}>
       <ResultDisplay
         label="Business days"
         value={displayValue}

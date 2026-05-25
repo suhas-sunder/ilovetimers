@@ -861,6 +861,23 @@
     margin-left: 0 !important;
   }
 
+  .timer-date-calculator-stack > .timer-settings-panel {
+    order: 2 !important;
+  }
+
+  .timer-date-calculator-stack > .timer-secondary-actions {
+    order: 3 !important;
+  }
+
+  .timer-date-calculator-stack
+    > :not(.timer-display-surface):not(.timer-primary-surface):not(.timer-settings-panel):not(.timer-secondary-actions):not(.timer-shortcut-hint) {
+    order: 4 !important;
+  }
+
+  .timer-date-calculator-stack > .timer-shortcut-hint {
+    order: 5 !important;
+  }
+
   .timer-result-actions {
     justify-content: center !important;
   }

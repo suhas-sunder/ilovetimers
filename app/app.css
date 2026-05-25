@@ -878,6 +878,28 @@
     order: 5 !important;
   }
 
+  .timer-work-calculator-stack > .timer-settings-panel {
+    order: 2 !important;
+  }
+
+  .timer-work-calculator-stack > .timer-preset-group {
+    order: 2 !important;
+  }
+
+  .timer-work-calculator-stack > .timer-secondary-actions,
+  .timer-work-calculator-stack > .timer-controls-row {
+    order: 3 !important;
+  }
+
+  .timer-work-calculator-stack
+    > :not(.timer-display-surface):not(.timer-primary-surface):not(.timer-settings-panel):not(.timer-preset-group):not(.timer-secondary-actions):not(.timer-controls-row):not(.timer-shortcut-hint) {
+    order: 4 !important;
+  }
+
+  .timer-work-calculator-stack > .timer-shortcut-hint {
+    order: 5 !important;
+  }
+
   .timer-result-actions {
     justify-content: center !important;
   }

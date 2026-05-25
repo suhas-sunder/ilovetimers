@@ -281,7 +281,7 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
   const resultText = `${big} (${words})`;
 
   return (
-    <Card className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6 sm:pt-0">
+    <Card className="timer-result-stack timer-work-calculator-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6 sm:pt-0">
       <BigResultDisplay
         label="Result"
         bigText={big}
@@ -471,7 +471,7 @@ function DurationCard() {
     <Card
       tabIndex={0}
       onKeyDown={onKeyDown}
-      className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6 sm:pt-0"
+      className="timer-result-stack timer-work-calculator-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6 sm:pt-0"
     >
       <div className="hidden">
         <div className="min-w-0">

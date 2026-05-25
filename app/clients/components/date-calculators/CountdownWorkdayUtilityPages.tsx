@@ -964,7 +964,7 @@ function WeeklyTimesheetCalculatorTool() {
   }
 
   return (
-    <ToolFrame className="timer-result-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
+    <ToolFrame className="timer-result-stack timer-work-calculator-stack px-4 pb-4 pt-0 sm:px-6 sm:pb-6">
       <ResultDisplay
         label="Weekly total"
         value={formatDurationMinutes(totalMinutes)}

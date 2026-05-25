@@ -1346,8 +1346,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)] antialiased">
         <PHProvider>
-          <ToolAdSlot slot="top-banner" className="hidden pt-2 pb-0 sm:block sm:pt-3" />
           <SiteHeader />
+          <ToolAdSlot slot="top-banner" className="hidden pt-2 pb-0 lg:block lg:pt-3" />
           {children}
 
           <RelatedSites />

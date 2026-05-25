@@ -62,6 +62,7 @@ export function ToolHero({
         {display}
         {controls ? <ControlRail>{controls}</ControlRail> : null}
         {settings ? <div className="ilt-settings-width mx-auto w-full">{settings}</div> : null}
+        <ToolAdSlot slot="top-banner" className="timer-mobile-heading-ad pt-3 pb-0 lg:hidden" />
         {title || description || meta ? (
           <div className="mx-auto w-full max-w-5xl pt-2">
             {meta ? <div className="mb-2 text-sm text-[var(--ilt-text-muted)]">{meta}</div> : null}
@@ -77,7 +78,6 @@ export function ToolHero({
             ) : null}
           </div>
         ) : null}
-        <ToolAdSlot slot="top-banner" className="timer-mobile-heading-ad pt-3 pb-0 sm:hidden" />
       </div>
     </section>
   );

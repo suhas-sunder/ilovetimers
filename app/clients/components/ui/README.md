@@ -19,8 +19,8 @@ Use `AdPlaceholder` only for quiet reserved ad areas. It is a visual placeholder
 The final monetized tool-page contract is:
 
 1. Site nav/header.
-2. Optional `top-banner` ad placeholder below nav with enough breathing room from navigation.
-3. Utility header: display first, primary controls below display, then presets, settings, and secondary actions. No SEO copy, duplicated page title, marketing text, or ad inside controls.
+2. Optional desktop `top-banner` ad placeholder below nav with enough breathing room from navigation.
+3. Utility header: display first, primary controls below display, then presets, settings, and secondary actions. On mobile-header viewports, the `top-banner` placeholder belongs after this utility/settings stack and before the page title, not above the timer display. No SEO copy, duplicated page title, marketing text, or ad inside controls.
 4. Page title section with one visible H1 and one short description.
 5. No banner placeholder directly after the page title/header section.
 6. SEO/content section with route-specific body content, related tools, FAQ, notes, or disclaimer. `in-content-square` may appear only inside this content area, after useful introductory content, with deliberate spacing from links and controls.

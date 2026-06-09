@@ -24,6 +24,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 import HowItWorks from "~/clients/components/cooking-timer/HowItWorks";
 import Disclaimer from "~/clients/components/cooking-timer/Disclaimer";
 import FAQ from "~/clients/components/cooking-timer/FAQ";
@@ -160,6 +161,7 @@ type Preset = { label: string; seconds: number };
 
 function CookingTimerCard() {
   const beep = useBeep();
+  const analyticsBase = { tool: "cooking_timer" };
 
   const eggPresets: Preset[] = useMemo(
     () => [
@@ -223,6 +225,7 @@ function CookingTimerCard() {
   }
 
   function resetTimer() {
+    trackEvent("timer_reset", analyticsBase);
     setRunning(false);
     setRemaining(seconds * 1000);
     endRef.current = null;
@@ -241,6 +244,10 @@ function CookingTimerCard() {
   }, []);
 
   function startNew() {
+    trackEvent("timer_start", {
+      ...analyticsBase,
+      duration_seconds: seconds,
+    });
     stopRaf();
     lastBeepSecondRef.current = null;
     hasStartedRef.current = true;
@@ -252,6 +259,7 @@ function CookingTimerCard() {
   }
 
   function resume() {
+    trackEvent("timer_resume", analyticsBase);
     stopRaf();
     lastBeepSecondRef.current = null;
     endRef.current = performance.now() + remaining;
@@ -260,6 +268,7 @@ function CookingTimerCard() {
 
   function startPause() {
     if (running) {
+      trackEvent("timer_pause", analyticsBase);
       setRunning(false);
       endRef.current = null;
       lastBeepSecondRef.current = null;
@@ -304,6 +313,7 @@ function CookingTimerCard() {
         lastBeepSecondRef.current = null;
 
         if (sound) beep(660, 180, 0.1);
+        trackEvent("timer_complete", analyticsBase);
 
         if (loopRef.current) {
           const next = seconds * 1000;
@@ -329,6 +339,14 @@ function CookingTimerCard() {
 
   function setPreset(sec: number) {
     setSeconds(sec);
+    trackEvent("preset_selected", {
+      ...analyticsBase,
+      duration_seconds: sec,
+    });
+    trackEvent("duration_changed", {
+      ...analyticsBase,
+      source: "preset",
+    });
   }
 
   const shownTime = msToClock(Math.ceil(remaining / 1000) * 1000);
@@ -366,9 +384,14 @@ function CookingTimerCard() {
     } else if (k === "r") {
       resetTimer();
     } else if (k === "f") {
+      if (!isFs) trackEvent("fullscreen_opened", analyticsBase);
       void fullscreen.toggle();
     } else if (k === "s") {
-      setSound((x) => !x);
+      setSound((x) => {
+        const next = !x;
+        if (next) trackEvent("sound_enabled", analyticsBase);
+        return next;
+      });
     } else if (k === "l") {
       setLoop((x) => !x);
     }
@@ -393,7 +416,10 @@ function CookingTimerCard() {
             <Toggle
               label="Sound (S)"
               checked={sound}
-              onCheckedChange={setSound}
+              onCheckedChange={(next) => {
+                setSound(next);
+                if (next) trackEvent("sound_enabled", analyticsBase);
+              }}
               className="py-1 text-sm"
             />
             <Toggle
@@ -433,7 +459,7 @@ function CookingTimerCard() {
           stageRef={displayBoxRef}
           isFullscreen={isFs}
           className={[
-            "order-1 timer-display-surface flex flex-col items-center justify-center font-mono font-extrabold",
+            "order-first timer-display-surface flex flex-col items-center justify-center font-mono font-extrabold",
             displayTone,
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
@@ -532,6 +558,12 @@ function CookingTimerCard() {
                     const m = clamp(Number(e.target.value || 0), 0, 999);
                     setSeconds(m * 60 + secs);
                   }}
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                 />
                 <Field
                   label="Seconds"
@@ -544,9 +576,22 @@ function CookingTimerCard() {
                     const s = clamp(Number(e.target.value || 0), 0, 59);
                     setSeconds(mins * 60 + s);
                   }}
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                 />
                 <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
-                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Sound"
+                    checked={sound}
+                    onCheckedChange={(next) => {
+                      setSound(next);
+                      if (next) trackEvent("sound_enabled", analyticsBase);
+                    }}
+                  />
                   <Toggle
                     label="Final beeps"
                     checked={finalBeeps}
@@ -559,7 +604,13 @@ function CookingTimerCard() {
             </SettingGroup>
 
             <SecondaryActionRow>
-              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+              <Btn
+                kind="ghost"
+                onClick={() => {
+                  trackEvent("fullscreen_opened", analyticsBase);
+                  void fullscreen.toggle();
+                }}
+              >
                 Fullscreen
               </Btn>
             </SecondaryActionRow>

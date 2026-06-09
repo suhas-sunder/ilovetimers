@@ -30,6 +30,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 import HowItWorks from "~/clients/components/hiit-timer/HowItWorks";
 import Disclaimer from "~/clients/components/hiit-timer/Disclaimer";
 import FAQ from "~/clients/components/hiit-timer/FAQ";
@@ -164,6 +165,7 @@ type Step = "warmup" | "work" | "rest" | "cooldown" | "done";
 
 function HIITCard() {
   const beep = useBeep();
+  const analyticsBase = useMemo(() => ({ tool: "hiit_timer" }), []);
 
   // Defaults
   const [warmSec, setWarmSec] = useState(30);
@@ -298,7 +300,8 @@ function HIITCard() {
     setRunning(true);
   }
 
-  function resetAll() {
+  function resetAll(track = true) {
+    if (track) trackEvent("timer_reset", analyticsBase);
     setRunning(false);
     setStep("warmup");
     setRoundIdx(0);
@@ -312,7 +315,8 @@ function HIITCard() {
     const s = stepRef.current;
 
     if (s === "done") {
-      resetAll();
+      trackEvent("timer_start", analyticsBase);
+      resetAll(false);
       setRunning(true);
       endRef.current = performance.now() + durFor("warmup");
       return;
@@ -323,6 +327,14 @@ function HIITCard() {
       return;
     }
 
+    trackEvent(
+      running
+        ? "timer_pause"
+        : remaining < durFor(s)
+          ? "timer_resume"
+          : "timer_start",
+      analyticsBase,
+    );
     setRunning((r) => !r);
     lastBeepSecondRef.current = null;
   }
@@ -369,6 +381,7 @@ function HIITCard() {
       setRunning(false);
       endRef.current = null;
       stopRaf();
+      trackEvent("timer_complete", analyticsBase);
       return;
     }
 
@@ -376,6 +389,7 @@ function HIITCard() {
   }
 
   function skipNext() {
+    trackEvent("timer_next", analyticsBase);
     setRunning(false);
     endRef.current = null;
     lastBeepSecondRef.current = null;
@@ -396,6 +410,7 @@ function HIITCard() {
     } else if (k === "n") {
       skipNext();
     } else if (k === "f" && cardRef.current) {
+      if (!isFs) trackEvent("fullscreen_opened", analyticsBase);
       void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
       void fullscreen.exit();
@@ -463,6 +478,14 @@ function HIITCard() {
     setRestSec(10);
     setRounds(8);
     setCoolSec(0);
+    trackEvent("preset_selected", {
+      ...analyticsBase,
+      preset: "tabata",
+    });
+    trackEvent("duration_changed", {
+      ...analyticsBase,
+      source: "preset",
+    });
   }
 
   function applyIntervals() {
@@ -471,6 +494,14 @@ function HIITCard() {
     setRestSec(20);
     setRounds(10);
     setCoolSec(30);
+    trackEvent("preset_selected", {
+      ...analyticsBase,
+      preset: "intervals_40_20",
+    });
+    trackEvent("duration_changed", {
+      ...analyticsBase,
+      source: "preset",
+    });
   }
 
   function applyBoxing() {
@@ -479,6 +510,14 @@ function HIITCard() {
     setRestSec(60);
     setRounds(6);
     setCoolSec(0);
+    trackEvent("preset_selected", {
+      ...analyticsBase,
+      preset: "boxing",
+    });
+    trackEvent("duration_changed", {
+      ...analyticsBase,
+      source: "preset",
+    });
   }
 
   return (
@@ -500,7 +539,7 @@ function HIITCard() {
             <Btn kind="ghost" onClick={skipNext} className="py-1 text-sm">
               Next
             </Btn>
-            <Btn kind="ghost" onClick={resetAll} className="py-1 text-sm">
+            <Btn kind="ghost" onClick={() => resetAll()} className="py-1 text-sm">
               Reset
             </Btn>
           </div>
@@ -573,7 +612,7 @@ function HIITCard() {
               <Btn onClick={startPause}>
                 {running ? "Pause" : step === "done" ? "Restart" : "Start"}
               </Btn>
-              <Btn kind="ghost" onClick={resetAll}>
+              <Btn kind="ghost" onClick={() => resetAll()}>
                 Reset
               </Btn>
               <Btn kind="ghost" onClick={skipNext}>
@@ -604,6 +643,12 @@ function HIITCard() {
                   onChange={(e) =>
                     setWarmSec(clamp(Number(e.target.value || 0), 0, 600))
                   }
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                   hint="0 = skip"
                 />
                 <Field
@@ -615,6 +660,12 @@ function HIITCard() {
                   onChange={(e) =>
                     setWorkSec(clamp(Number(e.target.value || 1), 1, 600))
                   }
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                 />
                 <Field
                   label="Rest seconds"
@@ -624,6 +675,12 @@ function HIITCard() {
                   value={restSec}
                   onChange={(e) =>
                     setRestSec(clamp(Number(e.target.value || 0), 0, 600))
+                  }
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
                   }
                   hint="0 = none"
                 />
@@ -636,6 +693,12 @@ function HIITCard() {
                   onChange={(e) =>
                     setRounds(clamp(Number(e.target.value || 1), 1, 50))
                   }
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                 />
                 <Field
                   label="Cool-down seconds"
@@ -646,12 +709,25 @@ function HIITCard() {
                   onChange={(e) =>
                     setCoolSec(clamp(Number(e.target.value || 0), 0, 600))
                   }
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                   hint="0 = skip"
                 />
               </SettingRow>
               <SettingRow className="justify-items-center lg:grid-cols-[auto]">
                 <div className="flex flex-wrap items-center justify-center gap-2">
-                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                  <Toggle
+                    label="Sound"
+                    checked={sound}
+                    onCheckedChange={(next) => {
+                      setSound(next);
+                      if (next) trackEvent("sound_enabled", analyticsBase);
+                    }}
+                  />
                   <Toggle
                     label="Final 3-2-1 beeps"
                     description="Work only"
@@ -664,7 +740,13 @@ function HIITCard() {
             </SettingGroup>
 
             <SecondaryActionRow>
-              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+              <Btn
+                kind="ghost"
+                onClick={() => {
+                  trackEvent("fullscreen_opened", analyticsBase);
+                  void fullscreen.toggle();
+                }}
+              >
                 Fullscreen
               </Btn>
             </SecondaryActionRow>

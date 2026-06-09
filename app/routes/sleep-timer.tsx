@@ -31,6 +31,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 
 /* =========================================================
    META
@@ -149,6 +150,7 @@ function useBeep() {
 ========================================================= */
 function SleepTimerCard() {
   const beep = useBeep();
+  const analyticsBase = useMemo(() => ({ tool: "sleep_timer" }), []);
 
   const presetsMin = useMemo(() => [5, 10, 15, 20, 30, 45, 60, 90, 120], []);
   const [minutes, setMinutes] = useState(30);
@@ -225,6 +227,7 @@ function SleepTimerCard() {
         } else if (sound) {
           beep(660, 220, 0.07);
         }
+        trackEvent("timer_complete", analyticsBase);
         return;
       }
 
@@ -233,13 +236,14 @@ function SleepTimerCard() {
 
     rafRef.current = requestAnimationFrame(tick);
     return () => stopRaf();
-  }, [running, sound, softAlarm, beep]);
+  }, [analyticsBase, running, sound, softAlarm, beep]);
 
   useEffect(() => {
     return () => stopRaf();
   }, []);
 
   function reset() {
+    trackEvent("timer_reset", analyticsBase);
     const next = minutes * 60 * 1000;
     setRunning(false);
     setRemaining(next);
@@ -249,6 +253,18 @@ function SleepTimerCard() {
   }
 
   function startPause() {
+    const durationMs = minutes * 60 * 1000;
+    trackEvent(
+      running
+        ? "timer_pause"
+        : remaining < durationMs && remaining > 0
+          ? "timer_resume"
+          : "timer_start",
+      {
+        ...analyticsBase,
+        duration_seconds: minutes * 60,
+      },
+    );
     setRunning((r) => {
       const next = !r;
       if (!next) {
@@ -264,6 +280,14 @@ function SleepTimerCard() {
 
   function setPreset(m: number) {
     setMinutes(m);
+    trackEvent("preset_selected", {
+      ...analyticsBase,
+      duration_seconds: m * 60,
+    });
+    trackEvent("duration_changed", {
+      ...analyticsBase,
+      source: "preset",
+    });
   }
 
   const durationMs = minutes * 60 * 1000;
@@ -288,6 +312,7 @@ function SleepTimerCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && cardRef.current) {
+      if (!isFs) trackEvent("fullscreen_opened", analyticsBase);
       void fullscreen.toggle();
     } else if (k === "d") {
       setDimMode((x) => !x);
@@ -410,11 +435,18 @@ function SleepTimerCard() {
                   onChange={(e) =>
                     setMinutes(clamp(Number(e.target.value || 1), 1, 360))
                   }
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                 />
                 <Toggle
                   checked={sound}
                   onCheckedChange={(v) => {
                     setSound(v);
+                    if (v) trackEvent("sound_enabled", analyticsBase);
                     if (!v) setSoftAlarm(true); // keep consistent default when re-enabled
                   }}
                   label="Sound"
@@ -449,7 +481,13 @@ function SleepTimerCard() {
             </div>
 
             <SecondaryActionRow className="order-3">
-              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+              <Btn
+                kind="ghost"
+                onClick={() => {
+                  trackEvent("fullscreen_opened", analyticsBase);
+                  void fullscreen.toggle();
+                }}
+              >
                 Fullscreen
               </Btn>
             </SecondaryActionRow>

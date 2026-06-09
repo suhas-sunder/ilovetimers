@@ -28,6 +28,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 import HowItWorks from "~/clients/components/pace-timer/HowItWorks";
 import Disclaimer from "~/clients/components/pace-timer/Disclaimer";
 import FAQ from "~/clients/components/pace-timer/FAQ";
@@ -203,6 +204,7 @@ type InputMode = "pace" | "finish";
 
 function PaceTimerCard() {
   const { prime, beep } = useBeep();
+  const analyticsBase = useMemo(() => ({ tool: "pace_timer" }), []);
 
   const [mode, setMode] = useState<Mode>("running");
   const [runUnit, setRunUnit] = useState<RunUnit>("km");
@@ -341,6 +343,7 @@ function PaceTimerCard() {
         setRunning(false);
         lastBeepIndexRef.current = -1;
         if (sound) beep(660, 220, clamp(volume, 0, 1));
+        trackEvent("timer_complete", analyticsBase);
         return;
       }
 
@@ -362,6 +365,7 @@ function PaceTimerCard() {
     runUnit,
     beepEvery,
     volume,
+    analyticsBase,
   ]);
 
   useEffect(() => {
@@ -372,6 +376,7 @@ function PaceTimerCard() {
   }, []);
 
   function reset() {
+    trackEvent("timer_reset", analyticsBase);
     setRunning(false);
     setRemaining(totalTargetMs);
     endRef.current = null;
@@ -380,6 +385,14 @@ function PaceTimerCard() {
 
   function startPause() {
     if (!running && sound) prime();
+    trackEvent(
+      running
+        ? "timer_pause"
+        : remaining < totalTargetMs
+          ? "timer_resume"
+          : "timer_start",
+      analyticsBase,
+    );
     setRunning((r) => !r);
   }
 
@@ -391,6 +404,14 @@ function PaceTimerCard() {
     setTargetPace("5:00");
     setFinishTime("25:00");
     setBeepEvery(1);
+    trackEvent("preset_selected", {
+      ...analyticsBase,
+      preset: "running_5k",
+    });
+    trackEvent("duration_changed", {
+      ...analyticsBase,
+      source: "preset",
+    });
   }
 
   function setRowingPreset() {
@@ -400,6 +421,14 @@ function PaceTimerCard() {
     setTargetPace("2:10");
     setFinishTime("8:40");
     setBeepEvery(1);
+    trackEvent("preset_selected", {
+      ...analyticsBase,
+      preset: "rowing_2000m",
+    });
+    trackEvent("duration_changed", {
+      ...analyticsBase,
+      source: "preset",
+    });
   }
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -413,6 +442,9 @@ function PaceTimerCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && displayWrapRef.current) {
+      if (!fullscreen.isFullscreen) {
+        trackEvent("fullscreen_opened", analyticsBase);
+      }
       void fullscreen.toggle();
     }
   };
@@ -651,13 +683,25 @@ function PaceTimerCard() {
                   </span>
                   <Chip
                     active={runUnit === "km"}
-                    onClick={() => setRunUnit("km")}
+                    onClick={() => {
+                      setRunUnit("km");
+                      trackEvent("duration_changed", {
+                        ...analyticsBase,
+                        source: "unit",
+                      });
+                    }}
                   >
                     km
                   </Chip>
                   <Chip
                     active={runUnit === "mi"}
-                    onClick={() => setRunUnit("mi")}
+                    onClick={() => {
+                      setRunUnit("mi");
+                      trackEvent("duration_changed", {
+                        ...analyticsBase,
+                        source: "unit",
+                      });
+                    }}
                   >
                     mi
                   </Chip>
@@ -669,19 +713,38 @@ function PaceTimerCard() {
               </span>
               <Chip
                 active={inputMode === "pace"}
-                onClick={() => setInputMode("pace")}
+                onClick={() => {
+                  setInputMode("pace");
+                  trackEvent("duration_changed", {
+                    ...analyticsBase,
+                    source: "input_mode",
+                  });
+                }}
               >
                 Target pace
               </Chip>
               <Chip
                 active={inputMode === "finish"}
-                onClick={() => setInputMode("finish")}
+                onClick={() => {
+                  setInputMode("finish");
+                  trackEvent("duration_changed", {
+                    ...analyticsBase,
+                    source: "input_mode",
+                  });
+                }}
               >
                 Finish time
               </Chip>
             </div>
 
-            <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+            <Toggle
+              label="Sound"
+              checked={sound}
+              onCheckedChange={(next) => {
+                setSound(next);
+                if (next) trackEvent("sound_enabled", analyticsBase);
+              }}
+            />
           </div>
 
           {/* Row 2: main inputs */}
@@ -704,6 +767,12 @@ function PaceTimerCard() {
                   ),
                 );
               }}
+              onBlur={() =>
+                trackEvent("duration_changed", {
+                  ...analyticsBase,
+                  source: "custom",
+                })
+              }
             />
 
             {inputMode === "pace" ? (
@@ -712,6 +781,12 @@ function PaceTimerCard() {
                 type="text"
                 value={targetPace}
                 onChange={(e) => setTargetPace(e.target.value)}
+                onBlur={() =>
+                  trackEvent("duration_changed", {
+                    ...analyticsBase,
+                    source: "custom",
+                  })
+                }
                 placeholder={mode === "rowing" ? "2:10" : "5:00"}
               />
             ) : (
@@ -720,6 +795,12 @@ function PaceTimerCard() {
                 type="text"
                 value={finishTime}
                 onChange={(e) => setFinishTime(e.target.value)}
+                onBlur={() =>
+                  trackEvent("duration_changed", {
+                    ...analyticsBase,
+                    source: "custom",
+                  })
+                }
                 placeholder={mode === "rowing" ? "8:40" : "25:00"}
               />
             )}
@@ -736,6 +817,12 @@ function PaceTimerCard() {
               value={beepEvery}
               onChange={(e) =>
                 setBeepEvery(clamp(Number(e.target.value || 1), 0.25, 1000))
+              }
+              onBlur={() =>
+                trackEvent("duration_changed", {
+                  ...analyticsBase,
+                  source: "beep_interval",
+                })
               }
               disabled={!sound}
               aria-label="Beep interval"
@@ -763,12 +850,22 @@ function PaceTimerCard() {
       <SecondaryActionRow>
         <Btn
           kind="ghost"
-          onClick={() => sound && beep(880, 120, clamp(volume, 0, 1))}
+          onClick={() => {
+            if (!sound) return;
+            beep(880, 120, clamp(volume, 0, 1));
+            trackEvent("alarm_tested", analyticsBase);
+          }}
           disabled={!sound}
         >
           Test beep
         </Btn>
-        <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+        <Btn
+          kind="ghost"
+          onClick={() => {
+            trackEvent("fullscreen_opened", analyticsBase);
+            void fullscreen.toggle();
+          }}
+        >
           Fullscreen
         </Btn>
       </SecondaryActionRow>

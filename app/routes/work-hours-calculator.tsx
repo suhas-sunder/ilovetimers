@@ -2,6 +2,7 @@
 import type { Route } from "./+types/work-hours-calculator";
 import { json } from "@remix-run/node";
 import { useCallback, useMemo, useState } from "react";
+import { trackEvent } from "~/clients/lib/analytics";
 import {
   Button as Btn,
   ContentSection,
@@ -184,6 +185,7 @@ function calcWorkedMinutes(
    CARD
 ========================================================= */
 function WorkHoursCalculatorCard() {
+  const analyticsBase = useMemo(() => ({ tool: "work_hours_calculator" }), []);
   const [start, setStart] = useState("09:00");
   const [end, setEnd] = useState("17:00");
   const [breakMin, setBreakMin] = useState(30);
@@ -220,21 +222,55 @@ function WorkHoursCalculatorCard() {
     setRoundTo(0);
   }, []);
 
+  const trackCommittedCalculation = useCallback(
+    (source: string) => {
+      trackEvent("input_changed", {
+        ...analyticsBase,
+        source,
+        result_status: result.ok ? "valid" : "invalid",
+      });
+
+      if (result.ok) {
+        trackEvent("calculation_completed", {
+          ...analyticsBase,
+          source,
+          overnight: result.overnight,
+          break_used: result.breakMin > 0,
+        });
+      }
+    },
+    [analyticsBase, result],
+  );
+
   const copy = useCallback(async (label: string, text: string) => {
     const ok = await copyToClipboard(text);
     setLastCopied(ok ? label : "Copy failed");
+    if (ok) {
+      trackEvent("copy_result", {
+        ...analyticsBase,
+        result_type: label.toLowerCase().replace(/\s+/g, "_"),
+      });
+    }
     window.setTimeout(() => setLastCopied(null), 900);
-  }, []);
+  }, [analyticsBase]);
 
   const setNowStart = useCallback(() => {
     const d = new Date();
     setStart(`${pad2(d.getHours())}:${pad2(d.getMinutes())}`);
-  }, []);
+    trackEvent("input_changed", {
+      ...analyticsBase,
+      source: "start_now",
+    });
+  }, [analyticsBase]);
 
   const setNowEnd = useCallback(() => {
     const d = new Date();
     setEnd(`${pad2(d.getHours())}:${pad2(d.getMinutes())}`);
-  }, []);
+    trackEvent("input_changed", {
+      ...analyticsBase,
+      source: "end_now",
+    });
+  }, [analyticsBase]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
@@ -367,6 +403,7 @@ function WorkHoursCalculatorCard() {
               type="time"
               value={start}
               onChange={(e) => setStart(e.target.value)}
+              onBlur={() => trackCommittedCalculation("start_time")}
               className="w-full ilt-input-control px-3 py-2 text-lg font-bold"
             />
             <Btn kind="ghost" onClick={setNowStart} className="px-3 py-2">
@@ -385,6 +422,7 @@ function WorkHoursCalculatorCard() {
               type="time"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
+              onBlur={() => trackCommittedCalculation("end_time")}
               className="w-full ilt-input-control px-3 py-2 text-lg font-bold"
             />
             <Btn kind="ghost" onClick={setNowEnd} className="px-3 py-2">
@@ -409,12 +447,14 @@ function WorkHoursCalculatorCard() {
               const next = raw === "" ? 0 : Number(raw);
               setBreakMin(clamp(Number.isFinite(next) ? next : 0, 0, 24 * 60));
             }}
+            onBlur={() => trackCommittedCalculation("break_minutes")}
           />
           <PresetGroup className="mt-2" title="Break presets">
             {[0, 15, 30, 45, 60].map((b) => (
               <Chip
                 key={b}
                 onClick={() => setBreakMin(b)}
+                onBlur={() => trackCommittedCalculation("break_preset")}
                 active={b === breakMin}
               >
                 {b}m
@@ -439,6 +479,7 @@ function WorkHoursCalculatorCard() {
                 label="Decimal places"
                 value={decimalPlaces}
                 onChange={(e) => setDecimalPlaces(Number(e.target.value))}
+                onBlur={() => trackCommittedCalculation("decimal_places")}
               >
                 {[0, 1, 2, 3, 4].map((d) => (
                   <option key={d} value={d}>
@@ -451,6 +492,7 @@ function WorkHoursCalculatorCard() {
                 label="Round paid time"
                 value={roundTo}
                 onChange={(e) => setRoundTo(Number(e.target.value) as any)}
+                onBlur={() => trackCommittedCalculation("rounding")}
               >
                 <option value={0}>No rounding</option>
                 <option value={5}>Nearest 5 min</option>

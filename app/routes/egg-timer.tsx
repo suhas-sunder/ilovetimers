@@ -24,6 +24,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 import HowItWorks from "~/clients/components/egg-timer/HowItWorks";
 import Disclaimer from "~/clients/components/egg-timer/Disclaimer";
 import FAQ from "~/clients/components/egg-timer/FAQ";
@@ -161,6 +162,7 @@ type EggPreset = {
 
 function EggTimerCard() {
   const beep = useBeep();
+  const analyticsBase = { tool: "egg_timer" };
 
   const presets = useMemo<EggPreset[]>(
     () => [
@@ -204,6 +206,7 @@ function EggTimerCard() {
   }
 
   function reset() {
+    trackEvent("timer_reset", analyticsBase);
     setRunning(false);
     setRemaining(totalMs);
     endRef.current = null;
@@ -248,6 +251,7 @@ function EggTimerCard() {
     if (totalMs <= 0) return;
 
     if (running) {
+      trackEvent("timer_pause", analyticsBase);
       setRunning(false);
       endRef.current = null;
       lastBeepSecondRef.current = null;
@@ -258,6 +262,10 @@ function EggTimerCard() {
     lastBeepSecondRef.current = null;
 
     if (!hasStartedRef.current || remaining <= 0) {
+      trackEvent("timer_start", {
+        ...analyticsBase,
+        duration_seconds: Math.round(totalMs / 1000),
+      });
       hasStartedRef.current = true;
       setRemaining(totalMs);
       endRef.current = performance.now() + totalMs;
@@ -265,6 +273,7 @@ function EggTimerCard() {
       return;
     }
 
+    trackEvent("timer_resume", analyticsBase);
     endRef.current = performance.now() + remaining;
     setRunning(true);
   }
@@ -303,6 +312,7 @@ function EggTimerCard() {
           window.setTimeout(() => beep(880, 200, 0.12), 220);
         }
 
+        trackEvent("timer_complete", analyticsBase);
         stopRaf();
         return;
       }
@@ -341,9 +351,14 @@ function EggTimerCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f") {
+      if (!isFs) trackEvent("fullscreen_opened", analyticsBase);
       void fullscreen.toggle();
     } else if (k === "s") {
-      setSound((v) => !v);
+      setSound((v) => {
+        const next = !v;
+        if (next) trackEvent("sound_enabled", analyticsBase);
+        return next;
+      });
     }
   };
 
@@ -363,7 +378,10 @@ function EggTimerCard() {
             <Toggle
               label="Sound"
               checked={sound}
-              onCheckedChange={setSound}
+              onCheckedChange={(next) => {
+                setSound(next);
+                if (next) trackEvent("sound_enabled", analyticsBase);
+              }}
               className="py-1 text-sm"
             />
             <Toggle
@@ -416,7 +434,18 @@ function EggTimerCard() {
                 <Chip
                   key={p.key}
                   active={p.key === presetKey}
-                  onClick={() => setPresetKey(p.key)}
+                  onClick={() => {
+                    setPresetKey(p.key);
+                    trackEvent("preset_selected", {
+                      ...analyticsBase,
+                      preset: p.key,
+                      duration_seconds: p.m * 60 + p.s,
+                    });
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "preset",
+                    });
+                  }}
                   disabled={running}
                 >
                   {p.label}
@@ -439,6 +468,12 @@ function EggTimerCard() {
                   onChange={(e) =>
                     setMinutes(clamp(Number(e.target.value || 0), 0, 60))
                   }
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                 />
 
                 <Field
@@ -451,13 +486,22 @@ function EggTimerCard() {
                   onChange={(e) =>
                     setSeconds(clamp(Number(e.target.value || 0), 0, 59))
                   }
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                 />
 
                 <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                   <Toggle
                     label="Sound"
                     checked={sound}
-                    onCheckedChange={setSound}
+                    onCheckedChange={(next) => {
+                      setSound(next);
+                      if (next) trackEvent("sound_enabled", analyticsBase);
+                    }}
                   />
 
                   <Toggle
@@ -473,7 +517,10 @@ function EggTimerCard() {
             <SecondaryActionRow>
               <Btn
                 kind="ghost"
-                onClick={() => void fullscreen.toggle()}
+                onClick={() => {
+                  trackEvent("fullscreen_opened", analyticsBase);
+                  void fullscreen.toggle();
+                }}
                 className="py-2"
               >
                 Fullscreen
@@ -487,7 +534,7 @@ function EggTimerCard() {
           stageRef={displayBoxRef}
           isFullscreen={isFs}
           className={[
-            "order-1 timer-display-surface flex items-center justify-center font-mono font-extrabold",
+            "order-first timer-display-surface flex items-center justify-center font-mono font-extrabold",
             displayTone,
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",

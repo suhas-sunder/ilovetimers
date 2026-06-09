@@ -30,6 +30,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 import HowItWorks from "~/clients/components/meeting-timer/HowItWorks";
 import Disclaimer from "~/clients/components/meeting-timer/Disclaimer";
 import FAQ from "~/clients/components/meeting-timer/FAQ";
@@ -151,6 +152,7 @@ function useBeep() {
 ========================================================= */
 function MeetingTimerCard() {
   const beep = useBeep();
+  const analyticsBase = useMemo(() => ({ tool: "meeting_timer" }), []);
 
   const presetsMin = useMemo(
     () => [1, 2, 3, 5, 7, 10, 12, 15, 20, 25, 30, 45, 60],
@@ -235,6 +237,7 @@ function MeetingTimerCard() {
         lastBeepSecondRef.current = null;
         setRunning(false);
         if (sound) beep(660, 220);
+        trackEvent("timer_complete", analyticsBase);
         stopRaf();
         return;
       }
@@ -244,13 +247,14 @@ function MeetingTimerCard() {
 
     rafRef.current = requestAnimationFrame(tick);
     return () => stopRaf();
-  }, [running, sound, finalCountdownBeeps, beep]);
+  }, [analyticsBase, running, sound, finalCountdownBeeps, beep]);
 
   useEffect(() => {
     return () => stopRaf();
   }, []);
 
   function reset() {
+    trackEvent("timer_reset", analyticsBase);
     const next = minutes * 60 * 1000;
     setRunning(false);
     setRemaining(next);
@@ -261,6 +265,10 @@ function MeetingTimerCard() {
   }
 
   function startPause() {
+    trackEvent(running ? "timer_pause" : remaining < initialMs ? "timer_resume" : "timer_start", {
+      ...analyticsBase,
+      duration_seconds: Math.round(initialMs / 1000),
+    });
     setRunning((r) => {
       const next = !r;
       if (next) {
@@ -277,6 +285,14 @@ function MeetingTimerCard() {
 
   function setPreset(m: number) {
     setMinutes(m);
+    trackEvent("preset_selected", {
+      ...analyticsBase,
+      duration_seconds: m * 60,
+    });
+    trackEvent("duration_changed", {
+      ...analyticsBase,
+      source: "preset",
+    });
   }
 
   const statusLabel = running
@@ -297,6 +313,7 @@ function MeetingTimerCard() {
     } else if (k === "r") {
       reset();
     } else if (k === "f" && cardRef.current) {
+      if (!isFs) trackEvent("fullscreen_opened", analyticsBase);
       void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
       void fullscreen.exit();
@@ -334,6 +351,7 @@ function MeetingTimerCard() {
               checked={sound}
               onCheckedChange={(next) => {
                 setSound(next);
+                if (next) trackEvent("sound_enabled", analyticsBase);
                 if (!next) setFinalCountdownBeeps(false);
               }}
             />
@@ -394,12 +412,19 @@ function MeetingTimerCard() {
                   onChange={(e) =>
                     setMinutes(clamp(Number(e.target.value || 1), 1, 180))
                   }
+                  onBlur={() =>
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      source: "custom",
+                    })
+                  }
                 />
                 <Toggle
                   label="Sound"
                   checked={sound}
                   onCheckedChange={(next) => {
                     setSound(next);
+                    if (next) trackEvent("sound_enabled", analyticsBase);
                     if (!next) setFinalCountdownBeeps(false);
                   }}
                 />
@@ -413,7 +438,13 @@ function MeetingTimerCard() {
             </SettingGroup>
 
             <SecondaryActionRow>
-              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+              <Btn
+                kind="ghost"
+                onClick={() => {
+                  trackEvent("fullscreen_opened", analyticsBase);
+                  void fullscreen.toggle();
+                }}
+              >
                 Fullscreen
               </Btn>
             </SecondaryActionRow>
@@ -429,7 +460,7 @@ function MeetingTimerCard() {
           data-display-stage
           ref={displayBoxRef}
           className={[
-            "order-1 timer-display-surface relative mt-4 flex flex-col items-center justify-center text-slate-950",
+            "order-first timer-display-surface relative mt-0 flex flex-col items-center justify-center text-slate-950",
             urgent ? "border-amber-300" : "border-slate-200",
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",

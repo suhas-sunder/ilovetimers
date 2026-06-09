@@ -26,6 +26,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 import Disclaimer from "~/clients/components/digital-clock/Disclaimer";
 import FAQ from "~/clients/components/digital-clock/FAQ";
 import KeyboardShortcuts from "~/clients/components/digital-clock/KeyboardShortcuts";
@@ -163,6 +164,7 @@ function formatLocalDateLine(d: Date) {
    DIGITAL CLOCK CARD
 ========================================================= */
 function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
+  const analyticsBase = useMemo(() => ({ tool: "digital_clock" }), []);
   const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [use24, setUse24] = useState(true);
   const [showSeconds, setShowSeconds] = useState(true);
@@ -213,6 +215,7 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
     try {
       await navigator.clipboard.writeText(copyText);
       setCopied(true);
+      trackEvent("copy_time", analyticsBase);
       window.setTimeout(() => setCopied(false), 1200);
     } catch {
       // ignore
@@ -241,14 +244,33 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
     const k = e.key.toLowerCase();
 
     if (k === "f") {
+      if (!isFs) trackEvent("fullscreen_opened", analyticsBase);
       void fullscreen.toggle();
     } else if (k === "c") {
       copy();
     } else if (k === "s") {
-      setShowSeconds((v) => !v);
+      setShowSeconds((v) => {
+        const next = !v;
+        trackEvent("format_changed", {
+          ...analyticsBase,
+          setting: "seconds",
+          enabled: next,
+        });
+        return next;
+      });
     } else if (e.key === "2") {
+      trackEvent("format_changed", {
+        ...analyticsBase,
+        setting: "hour_format",
+        format: "24",
+      });
       setUse24(true);
     } else if (e.key === "1") {
+      trackEvent("format_changed", {
+        ...analyticsBase,
+        setting: "hour_format",
+        format: "12",
+      });
       setUse24(false);
     } else if (e.key === "escape" && document.fullscreenElement) {
       void fullscreen.exit();
@@ -332,12 +354,26 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
                 <Toggle
                   label="Seconds"
                   checked={showSeconds}
-                  onCheckedChange={setShowSeconds}
+                  onCheckedChange={(next) => {
+                    setShowSeconds(next);
+                    trackEvent("format_changed", {
+                      ...analyticsBase,
+                      setting: "seconds",
+                      enabled: next,
+                    });
+                  }}
                 />
                 <Toggle
                   label="24-hour"
                   checked={use24}
-                  onCheckedChange={setUse24}
+                  onCheckedChange={(next) => {
+                    setUse24(next);
+                    trackEvent("format_changed", {
+                      ...analyticsBase,
+                      setting: "hour_format",
+                      format: next ? "24" : "12",
+                    });
+                  }}
                 />
               </SettingRow>
             </SettingGroup>
@@ -349,7 +385,10 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
 
               <Btn
                 kind="ghost"
-                onClick={() => void fullscreen.toggle()}
+                onClick={() => {
+                  trackEvent("fullscreen_opened", analyticsBase);
+                  void fullscreen.toggle();
+                }}
                 className="py-2"
               >
                 Fullscreen
@@ -368,12 +407,26 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
               <Toggle
                 label="Seconds"
                 checked={showSeconds}
-                onCheckedChange={setShowSeconds}
+                onCheckedChange={(next) => {
+                  setShowSeconds(next);
+                  trackEvent("format_changed", {
+                    ...analyticsBase,
+                    setting: "seconds",
+                    enabled: next,
+                  });
+                }}
               />
               <Toggle
                 label="24-hour"
                 checked={use24}
-                onCheckedChange={setUse24}
+                onCheckedChange={(next) => {
+                  setUse24(next);
+                  trackEvent("format_changed", {
+                    ...analyticsBase,
+                    setting: "hour_format",
+                    format: next ? "24" : "12",
+                  });
+                }}
               />
             </div>
 

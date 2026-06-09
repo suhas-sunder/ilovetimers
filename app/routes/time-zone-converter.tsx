@@ -23,6 +23,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 import HowItWorks from "~/clients/components/time-zone-converter/HowItWorks";
 import Disclaimer from "~/clients/components/time-zone-converter/Disclaimer";
 import FAQ from "~/clients/components/time-zone-converter/FAQ";
@@ -416,6 +417,7 @@ function deriveDefaultLocalStrings(nowISO: string) {
 }
 
 function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
+  const analyticsBase = useMemo(() => ({ tool: "time_zone_converter" }), []);
   const cardRef = useRef<HTMLDivElement>(null);
   const fullscreen = useFullscreen(cardRef);
   const isFs = fullscreen.isFullscreen;
@@ -584,6 +586,10 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
   const invalidInput = hydrated && (!parsed || !fromInstant);
 
   const swap = () => {
+    trackEvent("timezone_selected", {
+      ...analyticsBase,
+      source: "swap",
+    });
     setFromTz((curFrom) => {
       const curTo = toTzRef.current;
       setToTz(curFrom);
@@ -595,6 +601,11 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
     const d = deriveDefaultLocalStrings(new Date().toISOString());
     setDateStr(d.date);
     setTimeStr(showSeconds ? d.timeWithSec : d.timeNoSec);
+    trackEvent("conversion_completed", {
+      ...analyticsBase,
+      source: "now",
+      result_status: "valid",
+    });
   };
 
   const onCopy = async () => {
@@ -614,7 +625,18 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
     ].join("\n");
 
     const ok = await copyToClipboard(lines);
-    if (ok) setCopied("Copied");
+    if (ok) {
+      setCopied("Copied");
+      trackEvent("copy_result", {
+        ...analyticsBase,
+        result_type: "conversion",
+      });
+      trackEvent("conversion_completed", {
+        ...analyticsBase,
+        source: "copy",
+        result_status: "valid",
+      });
+    }
   };
 
   const shareUrl = useMemo(() => {
@@ -631,7 +653,13 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
   const onCopyLink = async () => {
     if (!shareUrl) return;
     const ok = await copyToClipboard(shareUrl);
-    if (ok) setCopied("Link copied");
+    if (ok) {
+      setCopied("Link copied");
+      trackEvent("copy_result", {
+        ...analyticsBase,
+        result_type: "share_link",
+      });
+    }
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -639,6 +667,7 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
 
     const k = e.key.toLowerCase();
     if (k === "f") {
+      if (!isFs) trackEvent("fullscreen_opened", analyticsBase);
       void fullscreen.toggle();
     } else if (k === "s") {
       swap();
@@ -691,6 +720,11 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                 onChange={(e) => {
                   const next = e.target.checked;
                   setShowSeconds(next);
+                  trackEvent("format_changed", {
+                    ...analyticsBase,
+                    setting: "seconds",
+                    enabled: next,
+                  });
                   setTimeStr((cur) => {
                     const ss = pad2(new Date().getSeconds());
                     if (next) {
@@ -752,6 +786,10 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                 onClick={() => {
                   setFromTz(p.a);
                   setToTz(p.b);
+                  trackEvent("timezone_selected", {
+                    ...analyticsBase,
+                    source: "preset_pair",
+                  });
                 }}
                 title={`${p.a} → ${p.b}`}
               >
@@ -770,6 +808,13 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                 type="date"
                 value={dateStr}
                 onChange={(e) => setDateStr(e.target.value)}
+                onBlur={() =>
+                  trackEvent("conversion_completed", {
+                    ...analyticsBase,
+                    source: "date",
+                    result_status: preview ? "valid" : "invalid",
+                  })
+                }
               />
 
               <Field
@@ -777,13 +822,26 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                 inputMode="numeric"
                 value={timeStr}
                 onChange={(e) => setTimeStr(e.target.value)}
+                onBlur={() =>
+                  trackEvent("conversion_completed", {
+                    ...analyticsBase,
+                    source: "time",
+                    result_status: preview ? "valid" : "invalid",
+                  })
+                }
                 placeholder={showSeconds ? "09:30:00" : "09:30"}
               />
 
               <Select
                 label="From time zone"
                 value={fromTz}
-                onChange={(e) => setFromTz(e.target.value)}
+                onChange={(e) => {
+                  setFromTz(e.target.value);
+                  trackEvent("timezone_selected", {
+                    ...analyticsBase,
+                    zone_role: "from",
+                  });
+                }}
               >
                   {tzGroups.map((g) => (
                     <optgroup key={g.region} label={g.region}>
@@ -799,7 +857,13 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
               <Select
                 label="To time zone"
                 value={toTz}
-                onChange={(e) => setToTz(e.target.value)}
+                onChange={(e) => {
+                  setToTz(e.target.value);
+                  trackEvent("timezone_selected", {
+                    ...analyticsBase,
+                    zone_role: "to",
+                  });
+                }}
               >
                   {tzGroups.map((g) => (
                     <optgroup key={g.region} label={g.region}>
@@ -823,6 +887,11 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
                 checked={showSeconds}
                 onCheckedChange={(next) => {
                   setShowSeconds(next);
+                  trackEvent("format_changed", {
+                    ...analyticsBase,
+                    setting: "seconds",
+                    enabled: next,
+                  });
                   setTimeStr((cur) => {
                     const ss = pad2(new Date().getSeconds());
                     if (next) {
@@ -862,7 +931,10 @@ function TimeZoneConverterCard({ nowISO }: { nowISO: string }) {
               </Btn>
               <Btn
                 kind="ghost"
-                onClick={() => void fullscreen.toggle()}
+                onClick={() => {
+                  trackEvent("fullscreen_opened", analyticsBase);
+                  void fullscreen.toggle();
+                }}
                 className="py-2"
                 title="Fullscreen (F)"
               >

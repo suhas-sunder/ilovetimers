@@ -29,6 +29,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 import HowItWorks from "~/clients/components/lab-timer/HowItWorks";
 import Disclaimer from "~/clients/components/lab-timer/Disclaimer";
 import FAQ from "~/clients/components/lab-timer/FAQ";
@@ -160,6 +161,7 @@ type Lap = { n: number; splitMs: number; atMs: number };
 
 function LabTimerCard() {
   const beep = useBeep();
+  const analyticsBase = useMemo(() => ({ tool: "lab_timer" }), []);
 
   const [sound, setSound] = useState(true);
   const [finalCountdownBeeps, setFinalCountdownBeeps] = useState(false);
@@ -212,6 +214,10 @@ function LabTimerCard() {
   }, []);
 
   function swStartPause() {
+    trackEvent(swRunning ? "timer_pause" : swElapsed > 0 ? "timer_resume" : "timer_start", {
+      ...analyticsBase,
+      mode: "stopwatch",
+    });
     setSwRunning((r) => {
       const next = !r;
       swBaseRef.current = swElapsedRef.current;
@@ -220,6 +226,10 @@ function LabTimerCard() {
   }
 
   function swReset() {
+    trackEvent("timer_reset", {
+      ...analyticsBase,
+      mode: "stopwatch",
+    });
     setSwRunning(false);
     setSwElapsed(0);
     swBaseRef.current = 0;
@@ -231,6 +241,10 @@ function LabTimerCard() {
 
   function swLap() {
     if (!swRunning) return;
+    trackEvent("lap_recorded", {
+      ...analyticsBase,
+      mode: "stopwatch",
+    });
 
     const nowElapsed = swElapsedRef.current;
     const split = Math.max(0, nowElapsed - lastLapAtRef.current);
@@ -337,6 +351,10 @@ function LabTimerCard() {
         cdLastBeepSecondRef.current = null;
 
         if (soundRef.current) beep(660, 240);
+        trackEvent("timer_complete", {
+          ...analyticsBase,
+          mode: "countdown",
+        });
 
         if (repeatRef.current) {
           const next = stepSecRef.current * 1000;
@@ -362,6 +380,10 @@ function LabTimerCard() {
   }, []);
 
   function cdStartPause() {
+    trackEvent(cdRunning ? "timer_pause" : cdRemaining < stepSecRef.current * 1000 ? "timer_resume" : "timer_start", {
+      ...analyticsBase,
+      mode: "countdown",
+    });
     setCdRunning((r) => {
       const next = !r;
       cdLastBeepSecondRef.current = null;
@@ -375,6 +397,10 @@ function LabTimerCard() {
   }
 
   function cdReset() {
+    trackEvent("timer_reset", {
+      ...analyticsBase,
+      mode: "countdown",
+    });
     setCdRunning(false);
     setCdRemaining(stepSecRef.current * 1000);
     cdEndRef.current = null;
@@ -443,6 +469,11 @@ function LabTimerCard() {
     }
     if (k === "t") {
       setRepeat((v) => !v);
+      trackEvent("duration_changed", {
+        ...analyticsBase,
+        mode: "countdown",
+        source: "repeat",
+      });
       return;
     }
 
@@ -455,6 +486,12 @@ function LabTimerCard() {
 
     // Fullscreen for countdown box
     if (k === "f" && cdBoxRef.current) {
+      if (!isCdFs) {
+        trackEvent("fullscreen_opened", {
+          ...analyticsBase,
+          mode: "countdown",
+        });
+      }
       void cdFullscreen.toggle();
       return;
     }
@@ -475,7 +512,16 @@ function LabTimerCard() {
     <Card tabIndex={0} onKeyDown={onKeyDown}>
       <div className="timer-list-stack flex h-full flex-col">
         <SecondaryActionRow className="timer-list-actions order-2 mt-5">
-          <Btn kind="ghost" onClick={() => void cdFullscreen.toggle()}>
+          <Btn
+            kind="ghost"
+            onClick={() => {
+              trackEvent("fullscreen_opened", {
+                ...analyticsBase,
+                mode: "countdown",
+              });
+              void cdFullscreen.toggle();
+            }}
+          >
             Fullscreen
           </Btn>
         </SecondaryActionRow>
@@ -489,7 +535,10 @@ function LabTimerCard() {
             <Toggle
               label="Sound"
               checked={sound}
-              onCheckedChange={setSound}
+              onCheckedChange={(next) => {
+                setSound(next);
+                if (next) trackEvent("sound_enabled", analyticsBase);
+              }}
             />
             <Toggle
               label="Final beeps"
@@ -622,7 +671,19 @@ function LabTimerCard() {
               {quickSteps.map((s) => (
                 <Chip
                   key={s}
-                  onClick={() => setStepSec(s)}
+                  onClick={() => {
+                    setStepSec(s);
+                    trackEvent("preset_selected", {
+                      ...analyticsBase,
+                      mode: "countdown",
+                      duration_seconds: s,
+                    });
+                    trackEvent("duration_changed", {
+                      ...analyticsBase,
+                      mode: "countdown",
+                      source: "preset",
+                    });
+                  }}
                   active={s === stepSec}
                 >
                   {s >= 60
@@ -645,6 +706,13 @@ function LabTimerCard() {
                     clamp(Number(e.target.value || 1), 1, 24 * 60 * 60),
                   )
                 }
+                onBlur={() =>
+                  trackEvent("duration_changed", {
+                    ...analyticsBase,
+                    mode: "countdown",
+                    source: "custom",
+                  })
+                }
               />
 
               <ControlGroup className="sm:justify-end">
@@ -660,7 +728,14 @@ function LabTimerCard() {
             <Toggle
               label="Repeat step"
               checked={repeat}
-              onCheckedChange={setRepeat}
+              onCheckedChange={(next) => {
+                setRepeat(next);
+                trackEvent("duration_changed", {
+                  ...analyticsBase,
+                  mode: "countdown",
+                  source: "repeat",
+                });
+              }}
             />
 
             <div className="ilt-helper-text font-semibold">
@@ -716,7 +791,14 @@ function LabTimerCard() {
                     <Btn
                       kind="ghost"
                       size="sm"
-                      onClick={() => setRepeat((v) => !v)}
+                      onClick={() => {
+                        setRepeat((v) => !v);
+                        trackEvent("duration_changed", {
+                          ...analyticsBase,
+                          mode: "countdown",
+                          source: "repeat",
+                        });
+                      }}
                     >
                       Repeat {repeat ? "On" : "Off"}
                     </Btn>

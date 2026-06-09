@@ -30,6 +30,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { trackEvent } from "~/clients/lib/analytics";
 import HowItWorks from "~/clients/components/online-timer/HowItWorks";
 import Disclaimer from "~/clients/components/online-timer/Disclaimer";
 import FAQ from "~/clients/components/online-timer/FAQ";
@@ -150,6 +151,7 @@ function useBeep() {
 ========================================================= */
 function OnlineTimerCard() {
   const beep = useBeep();
+  const analyticsBase = useMemo(() => ({ tool: "online_timer" }), []);
   const presets = useMemo(() => [1, 2, 3, 5, 10, 15, 20, 25, 30, 45, 60], []);
 
   const [durationMs, setDurationMs] = useState(5 * 60 * 1000);
@@ -233,17 +235,30 @@ function OnlineTimerCard() {
   const onSet = useCallback(() => {
     const ms = parseInputToMs(inputStr);
     safeReset(ms);
-  }, [inputStr, parseInputToMs, safeReset]);
+    trackEvent("duration_changed", {
+      ...analyticsBase,
+      source: "custom",
+    });
+  }, [analyticsBase, inputStr, parseInputToMs, safeReset]);
 
   const onPreset = useCallback(
     (m: number) => {
       safeReset(m * 60 * 1000);
+      trackEvent("preset_selected", {
+        ...analyticsBase,
+        duration_seconds: m * 60,
+      });
+      trackEvent("duration_changed", {
+        ...analyticsBase,
+        source: "preset",
+      });
     },
-    [safeReset],
+    [analyticsBase, safeReset],
   );
 
   const onStartPause = useCallback(() => {
     if (status === "running") {
+      trackEvent("timer_pause", analyticsBase);
       const now = performance.now();
       const rem = Math.max(0, (endTimeRef.current ?? now) - now);
       endTimeRef.current = null;
@@ -258,15 +273,20 @@ function OnlineTimerCard() {
       status === "done" ? durationMs : Math.max(0, remainingRef.current);
     const nextRemaining = base <= 0 ? durationMs : base;
 
+    trackEvent(status === "paused" ? "timer_resume" : "timer_start", {
+      ...analyticsBase,
+      duration_seconds: Math.round(durationMs / 1000),
+    });
     setRemainingMs(nextRemaining);
     remainingRef.current = nextRemaining;
     endTimeRef.current = performance.now() + nextRemaining;
     setStatus("running");
-  }, [durationMs, status, stopRaf]);
+  }, [analyticsBase, durationMs, status, stopRaf]);
 
   const onReset = useCallback(() => {
+    trackEvent("timer_reset", analyticsBase);
     safeReset();
-  }, [safeReset]);
+  }, [analyticsBase, safeReset]);
 
   useEffect(() => {
     if (status !== "running") return;
@@ -282,6 +302,7 @@ function OnlineTimerCard() {
 
       if (rem <= 0) {
         if (sound) beep();
+        trackEvent("timer_complete", analyticsBase);
 
         if (loop) {
           const nextEnd = performance.now() + durationMs;
@@ -306,7 +327,7 @@ function OnlineTimerCard() {
     return () => {
       stopRaf();
     };
-  }, [status, durationMs, loop, sound, beep, stopRaf]);
+  }, [analyticsBase, status, durationMs, loop, sound, beep, stopRaf]);
 
   useEffect(() => {
     return () => stopRaf();
@@ -346,6 +367,7 @@ function OnlineTimerCard() {
     } else if (k === "r") {
       onReset();
     } else if (k === "f") {
+      if (!isFs) trackEvent("fullscreen_opened", analyticsBase);
       void fullscreen.toggle();
     } else if (k === "escape" && isFs) {
       void fullscreen.exit();
@@ -398,7 +420,13 @@ function OnlineTimerCard() {
             </ControlGroup>
 
             <SecondaryActionRow>
-              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+              <Btn
+                kind="ghost"
+                onClick={() => {
+                  trackEvent("fullscreen_opened", analyticsBase);
+                  void fullscreen.toggle();
+                }}
+              >
                 Fullscreen
               </Btn>
             </SecondaryActionRow>
@@ -410,7 +438,7 @@ function OnlineTimerCard() {
           stageRef={displayBoxRef}
           isFullscreen={isFs}
           className={[
-            "order-1 timer-display-surface relative flex flex-col items-center justify-center text-slate-950",
+            "order-first timer-display-surface relative flex flex-col items-center justify-center text-slate-950",
             urgent ? "bg-amber-50" : "border-slate-200",
             "p-3 sm:p-6",
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
@@ -504,7 +532,14 @@ function OnlineTimerCard() {
                   </div>
 
                   <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
-                    <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
+                    <Toggle
+                      label="Sound"
+                      checked={sound}
+                      onCheckedChange={(next) => {
+                        setSound(next);
+                        if (next) trackEvent("sound_enabled", analyticsBase);
+                      }}
+                    />
                     <Toggle label="Loop" checked={loop} onCheckedChange={setLoop} />
                   </div>
                 </SettingRow>

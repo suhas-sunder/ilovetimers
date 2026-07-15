@@ -30,41 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to convert military time to AM/PM (and back) instantly",
-    description:
-      "Use the Military Time Converter to switch between 24-hour (military) time and standard AM/PM time. Paste times like 1730 or 17:30, or enter 5:30 PM, then copy the result. Includes presets, fullscreen mode, and keyboard shortcuts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Enter a time in either format",
-        text: "Type or paste a military time (e.g., 1730 or 17:30) or a standard time with AM/PM (e.g., 5:30 PM).",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Confirm the result updates",
-        text: "When the input is valid, the opposite side updates immediately and the big display shows the current result.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy the result",
-        text: "Click Copy to copy the current result. In fullscreen, tap/click the big result to copy quickly.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use presets or current time",
-        text: "Tap an example like 0000, 1200, 1730, or 2400, or press N to fill the current local time in both formats.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Optional: fullscreen + shortcuts",
-        text: "Press F for fullscreen (Esc exits). Use C to copy AM/PM, M to copy military, and R to clear.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -111,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}
@@ -140,7 +104,7 @@ export default function HowItWorks({
               <span className="font-semibold text-[var(--ilt-text-primary)]">12 AM</span>, or{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">9 PM</span> on the
               standard side. When your input is valid, the other side updates
-              instantly so you can copy the exact time format you need.
+              instantly so you can copy the time format you need.
             </p>
 
             <p className="mt-3 max-w-3xl leading-relaxed text-[var(--ilt-text-secondary)]">

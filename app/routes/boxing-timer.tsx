@@ -685,11 +685,11 @@ export default function BoxingTimerPage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Boxing Timer",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based boxing round timer with boxing-style presets, round/rest timing, prep time, sound cues, next phase, reset, and fullscreen support.",
       },

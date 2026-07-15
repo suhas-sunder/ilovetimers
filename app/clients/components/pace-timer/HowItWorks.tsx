@@ -27,45 +27,9 @@ export default function HowItWorks({
   const pageUrl = `${baseUrl}/pace-timer`;
 
   // Helpful, non-spam schema for the section itself (unique to this tool)
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use a pace timer for running and rowing",
-    description:
-      "Use Pace Timer to train at a steady pace. Set running pace (min/km or min/mi) or rowing split (/500m), or enter a finish time to calculate the pace. Includes interval beeps, fullscreen display, and keyboard shortcuts.",
-    url: pageUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Pick Running or Rowing and set distance",
-        text: "Choose Running (km or mi) or Rowing (meters), then enter your total distance for the session.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enter target pace or finish time",
-        text: "Use Target pace when you already know the pace you want. Use Finish time to enter a goal time and have the tool compute the needed pace for your distance.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start the countdown and follow the pacing cues",
-        text: "Press Start or Space. The display shows remaining time and a live “should be at” distance estimate based on your target pace.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enable interval beeps if desired",
-        text: "Turn Sound on, then set Beep every to get cues every X km/mi (running) or every X × 500m (rowing). Adjust Volume and use Test beep to verify audio.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a big display",
-        text: "Click Fullscreen or press F after focusing the card. Fullscreen shows large digits and a subtitle with target pace and total distance.",
-      },
-    ],
-  };
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <div>

@@ -30,36 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the HIIT Timer (warm-up, work/rest intervals, rounds, sound cues, fullscreen)",
-    description:
-      "Run interval sessions with warm-up, alternating work and rest rounds, and cool-down. Load presets like Tabata and Boxing, adjust seconds and rounds, use Start/Pause, Next, Reset, sound cues, and fullscreen with keyboard shortcuts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a setup",
-        text: "Load a preset (Tabata, Intervals, Boxing) or enter your own warm-up, work, rest, rounds, and cool-down values.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Confirm cues and controls",
-        text: "Turn Sound on or off, optionally enable final 3-2-1 beeps (work only), and use Start/Pause, Next, and Reset to control the session.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Run the intervals",
-        text: "Press Start to begin. The timer runs warm-up once, alternates work and rest for the selected number of rounds, then finishes with cool-down.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen and shortcuts",
-        text: "Press F to toggle fullscreen and Esc to exit. Space starts/pauses, N advances to the next phase, and R resets to the start.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -106,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

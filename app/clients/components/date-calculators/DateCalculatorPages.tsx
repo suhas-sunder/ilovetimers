@@ -324,11 +324,11 @@ export function JsonLd({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name,
         url: routeUrl,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description,
       },
       {

@@ -24,10 +24,12 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/breathing-timer/HowItWorks";
-import Disclaimer from "~/clients/components/breathing-timer/Disclaimer";
 import FAQ from "~/clients/components/breathing-timer/FAQ";
 import KeyboardShortcuts from "~/clients/components/breathing-timer/KeyboardShortcuts";
 import PopularUseCases from "~/clients/components/breathing-timer/PopularUseCases";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 /* =========================================================
    META
@@ -708,6 +710,7 @@ export default function BreathingTimerPage({
         "@type": "WebPage",
         name: "Breathing Timer",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "Breathing timer for box breathing, 4-7-8 breathing, and custom inhale/hold/exhale cycles with fullscreen mode.",
       },
@@ -746,10 +749,20 @@ export default function BreathingTimerPage({
 
       <SeoBand>
         <HowItWorks />
+        <ToolTrustNote reviewDate={REVIEW_DATE} heading="Health and timing limits">
+          <p>
+            This is a general timing and pacing tool. It is not medical advice,
+            diagnosis, treatment, or emergency guidance. Users who feel unwell
+            should stop and seek appropriate help.
+          </p>
+          <p>
+            Browser scheduling, background throttling, audio settings, and
+            device performance can affect the timing or sound of phase changes.
+          </p>
+        </ToolTrustNote>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

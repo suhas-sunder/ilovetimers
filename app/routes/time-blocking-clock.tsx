@@ -682,9 +682,8 @@ export default function TimeBlockingClockPage({
         "@type": "SoftwareApplication",
         name: "Time Blocking Clock",
         applicationCategory: "UtilitiesApplication",
-        operatingSystem: "Web",
+        operatingSystem: "Web browser",
         url,
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       },
     ],
   };

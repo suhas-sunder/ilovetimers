@@ -32,41 +32,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Event Countdown (count down to a date and time)",
-    description:
-      "Count down to a specific local date and time. Save multiple events in your browser, go fullscreen for a big display, start/pause/reset with shortcuts, and optionally use sound and final beeps.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Create or select an event",
-        text: "Pick a saved event from the list, or create a new one. You can duplicate an event to reuse its settings.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set the target date and time",
-        text: "Choose the exact local date and time for your event. The countdown will target that moment in your device timezone.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start and control the countdown",
-        text: "Press Start (or Space) to begin. Press Pause (or Space) to stop. Press Reset (or R) to refresh remaining time based on the current target.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a big display",
-        text: "Press Fullscreen (or F) for a large, readable countdown. In fullscreen, click/tap the time to start or pause. Press Esc to exit.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use sound options if you want an alert",
-        text: "Enable Sound to play a beep when the countdown reaches zero. Enable Final beeps to beep during the last 5 seconds.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -113,7 +78,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

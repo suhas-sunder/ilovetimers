@@ -12,10 +12,9 @@ import type { Route } from "./+types/root";
 import "./app.css";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import RelatedSites from "./clients/components/navigation/RelatedSites";
+import RelatedTools from "./clients/components/navigation/RelatedTools";
 import { PHProvider } from "./provider";
 import Footer from "./clients/components/navigation/Footer";
-import { ToolAdSlot } from "./clients/components/ui/foundation";
 import {
   MoonIcon,
   SearchIcon,
@@ -25,6 +24,8 @@ import {
   THEME_STORAGE_KEY,
   useThemeMode,
 } from "./clients/hooks/useThemeMode";
+import { SITE_IDENTITY_JSON_LD } from "./clients/lib/siteIdentity";
+import { getPermanentRedirect } from "./config/redirects.js";
 
 import logoPng from "./clients/assets/images/ilovetimers-icon.png";
 
@@ -59,9 +60,17 @@ function strip(pathname: string) {
 /* ---------- Loader does the canonical 301 ---------- */
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  if (needsStrip(url.pathname)) {
-    url.pathname = strip(url.pathname);
-    return redirect(url.pathname + url.search, { status: 301 });
+  const normalizedPath = needsStrip(url.pathname)
+    ? strip(url.pathname)
+    : url.pathname;
+  const permanentDestination = getPermanentRedirect(normalizedPath);
+
+  if (permanentDestination) {
+    return redirect(permanentDestination + url.search, { status: 301 });
+  }
+
+  if (normalizedPath !== url.pathname) {
+    return redirect(normalizedPath + url.search, { status: 301 });
   }
   return null;
 }
@@ -98,6 +107,55 @@ const PRIMARY_TIMER_HREFS = new Set([
 ]);
 
 const TIMER_DIRECTORY: TimerDirectoryItem[] = [
+  {
+    title: "Countdown Timer",
+    href: "/countdown-timer",
+    category: "Core",
+    description: "A general countdown with presets, custom durations, and fullscreen controls.",
+    keywords: "countdown timer duration alarm",
+  },
+  {
+    title: "Stopwatch",
+    href: "/stopwatch",
+    category: "Core",
+    description: "Measure elapsed time and record laps in the browser.",
+    keywords: "stopwatch elapsed time lap split",
+  },
+  {
+    title: "Pomodoro Timer",
+    href: "/pomodoro-timer",
+    category: "Focus",
+    description: "Run repeated focus and break cycles.",
+    keywords: "pomodoro focus work break cycle",
+  },
+  {
+    title: "HIIT Timer",
+    href: "/hiit-timer",
+    category: "Fitness",
+    description: "Alternate workout and rest intervals across multiple rounds.",
+    keywords: "hiit workout interval rest rounds",
+  },
+  {
+    title: "Sleep Timer",
+    href: "/sleep-timer",
+    category: "Health",
+    description: "Run a general browser countdown for a bedtime routine.",
+    keywords: "sleep bedtime countdown timer",
+  },
+  {
+    title: "Egg Timer",
+    href: "/egg-timer",
+    category: "Cooking",
+    description: "Choose a cooking duration for eggs and run a kitchen countdown.",
+    keywords: "egg cooking kitchen timer",
+  },
+  {
+    title: "Pizza Timer",
+    href: "/pizza-timer",
+    category: "Cooking",
+    description: "Set and follow a pizza cooking countdown.",
+    keywords: "pizza oven cooking kitchen timer",
+  },
   {
     title: "Free Online Timers",
     href: "/free-online-timers",
@@ -1343,14 +1401,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <Meta />
         <Links />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(SITE_IDENTITY_JSON_LD),
+          }}
+        />
       </head>
       <body className="bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)] antialiased">
         <PHProvider>
           <SiteHeader />
-          <ToolAdSlot slot="top-banner" className="hidden pt-2 pb-0 lg:block lg:pt-3" />
           {children}
 
-          <RelatedSites />
+          <RelatedTools />
           <ScrollRestoration />
           <Scripts />
           <Footer />

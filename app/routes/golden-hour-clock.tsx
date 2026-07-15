@@ -1072,9 +1072,8 @@ export default function GoldenHourClockPage({
         "@type": "SoftwareApplication",
         name: "Golden Hour Clock",
         applicationCategory: "UtilitiesApplication",
-        operatingSystem: "Web",
+        operatingSystem: "Web browser",
         url,
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       },
     ],
   };

@@ -29,41 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to calculate billable hours with breaks, rounding, and total pay",
-    description:
-      "Use this billable hours calculator to compute billable time and total pay from start and end times, break minutes, an hourly rate, and optional rounding increments.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Enter start and end times",
-        text: "Set the start time and end time for the session. Overnight sessions are supported when the end time is earlier than the start time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Subtract breaks",
-        text: "Enter break minutes that should not be billed. Breaks are deducted before any rounding is applied.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose rounding increment (optional)",
-        text: "Select a rounding increment like 6, 10, or 15 minutes. Rounding is applied by rounding billable minutes up to the next increment. Choose None for exact minutes.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enter hourly rate and currency",
-        text: "Enter the hourly rate and pick the currency for display. Currency selection formats results but does not convert exchange rates.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy or print your result",
-        text: "Use Copy for a one-line summary, or Print to save as a PDF for your records or to share with a client.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -88,7 +53,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

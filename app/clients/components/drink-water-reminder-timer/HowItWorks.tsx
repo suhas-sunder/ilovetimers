@@ -30,41 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Water Reminder Timer (repeating hydration reminders)",
-    description:
-      "Use the Water Reminder Timer to run repeating drink-water reminders at a set interval while the tab is open. Choose an interval, start/pause, toggle sound, use fullscreen for a clean display, and trigger an instant reminder with Remind now.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a reminder interval",
-        text: "Select a preset interval (15–120 minutes) or enter a custom number of minutes (5–360). Interval changes reset the current cycle and the reminders count to keep cycles consistent.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start the repeating countdown",
-        text: "Press Start to begin. When the countdown reaches zero, a reminder fires and the timer automatically restarts the next cycle.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Toggle sound and fullscreen",
-        text: "Turn sound on or off depending on your environment. Use fullscreen for a big, readable display and quick tap-to-start/pause control.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use Remind now when you need it",
-        text: "While running, Remind now triggers an immediate reminder and restarts a full interval from that moment.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use keyboard shortcuts for quick control",
-        text: "Space start/pause, N remind now, R reset all, F fullscreen, S sound toggle, Esc exit fullscreen. If shortcuts do nothing, click the timer card once to focus it.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -111,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

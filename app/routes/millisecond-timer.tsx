@@ -391,11 +391,11 @@ export default function MillisecondTimerPage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Millisecond Timer",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based countdown timer that displays milliseconds with custom minutes, seconds, milliseconds, presets, controls, and fullscreen support.",
       },

@@ -30,36 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Meditation Timer (fullscreen countdown, presets, optional sound, end chime, loop)",
-    description:
-      "Set a calm countdown for meditation, breathing exercises, or yoga. Choose a preset or set minutes and seconds, start or pause, use fullscreen for a large display, optionally enable sound, final 5-second beeps, end chime, and loop for repeated sessions.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a duration",
-        text: "Pick a meditation preset (like 10m or 20m), choose a breathing preset, or set custom minutes and extra seconds.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose your finish cues",
-        text: "Keep the timer silent or enable Sound. If Sound is on, you can enable Final beeps (last 5 seconds) and End chime (at 0:00).",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start the countdown",
-        text: "Press Start to begin. You can pause anytime and Reset to return to the full duration you set.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen and shortcuts",
-        text: "Press F to toggle fullscreen and Esc to exit. Space starts/pauses, R resets, S toggles sound, and L toggles loop.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -106,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

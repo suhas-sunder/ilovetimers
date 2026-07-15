@@ -25,10 +25,12 @@ import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayTe
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { trackEvent } from "~/clients/lib/analytics";
 import HowItWorks from "~/clients/components/time-zone-converter/HowItWorks";
-import Disclaimer from "~/clients/components/time-zone-converter/Disclaimer";
 import FAQ from "~/clients/components/time-zone-converter/FAQ";
 import KeyboardShortcuts from "~/clients/components/time-zone-converter/KeyboardShortcuts";
 import PopularUseCases from "~/clients/components/time-zone-converter/PopularUseCases";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 /* =========================================================
    META
@@ -1063,6 +1065,7 @@ export default function TimeZoneConverterPage({
         "@type": "WebPage",
         name: "Time Zone Converter",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "Convert time between time zones instantly with DST-aware results, copy-friendly output, share links, and fullscreen display.",
       },
@@ -1087,9 +1090,8 @@ export default function TimeZoneConverterPage({
         "@type": "SoftwareApplication",
         name: "Time Zone Converter",
         applicationCategory: "UtilitiesApplication",
-        operatingSystem: "Web",
+        operatingSystem: "Web browser",
         url,
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       },
     ],
   };
@@ -1119,10 +1121,23 @@ export default function TimeZoneConverterPage({
             for multi-zone work windows and candidate meeting times.
           </p>
         </ContentSection>
+        <ToolTrustNote reviewDate={REVIEW_DATE}>
+          <p>
+            Timezone conversion uses browser-supported IANA timezone data.
+            Daylight-saving transitions can create local times that occur twice
+            or do not occur at all. When an entered wall time is ambiguous,
+            verify important appointments against the participating locations.
+          </p>
+          <p>
+            The page formats the selected date and time using the timezone data
+            available to the browser. It does not guarantee that every DST
+            ambiguity is resolved the way a particular calendar service will
+            resolve it.
+          </p>
+        </ToolTrustNote>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />
-        <Disclaimer />
       </SeoBand>
 
     </PageShell>

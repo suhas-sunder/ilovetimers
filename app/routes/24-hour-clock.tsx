@@ -343,11 +343,11 @@ export default function TwentyFourHourClockPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "24 Hour Clock",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based live 24-hour clock with seconds, date, local or UTC mode, copy, and fullscreen display.",
       },

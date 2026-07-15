@@ -29,41 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Classroom Timer (fullscreen countdown for smartboards and projectors)",
-    description:
-      "Run a large, readable classroom countdown with quick presets, custom minutes, an optional label, optional sound cues (final beeps and end chime), quick time adjustments, fullscreen mode, and keyboard shortcuts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a duration",
-        text: "Pick a preset (like 5 minutes or 10 minutes) or enter a custom Minutes value (1–180).",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Add an optional label",
-        text: "Set a short label like “Cleanup”, “Quiz”, or “Stations” so students know what the countdown is for at a glance.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start and pause",
-        text: "Press Space or click Start to begin. Press Space again or click Pause to pause and resume from the exact remaining time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Adjust time if needed",
-        text: "Use -1 min, +1 min, and +5 min (or + / - on the keyboard) to change the current countdown without restarting.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use sound cues and fullscreen",
-        text: "Enable Sound, then optionally enable Final beeps and End chime. Toggle fullscreen with F and exit with Esc for a clean, front-of-room display.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -110,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

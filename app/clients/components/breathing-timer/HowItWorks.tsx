@@ -29,41 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Breathing Timer (box breathing, 4-7-8, and custom guided cycles)",
-    description:
-      "Use a guided breathing timer with timed inhale, hold, and exhale phases. Pick a preset (Box 4-4-4-4, 4-7-8, Calm 4-2-6) or set a custom pattern, choose a cycle count (or run continuously), optionally enable sound cues, and use fullscreen for a clean, readable display.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a preset or custom pattern",
-        text: "Pick Box 4-4-4-4, 4-7-8, Calm 4-2-6, or select Custom and set inhale/hold/exhale seconds. Holds set to 0 are skipped.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set cycles",
-        text: "Set Cycles to 0 to run continuously until you pause, or set a number to stop automatically after that many cycles.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start and pause",
-        text: "Press Space (or click Start) to begin. Press Space again to pause and resume later without losing remaining time in the current phase.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enable sound cues if you want phase prompts",
-        text: "Turn on Sound to hear gentle cues when phases change. If Sound is off, the timer stays silent.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a distraction-free view",
-        text: "Press F to toggle fullscreen and Esc to exit. In fullscreen, you can tap/click the timer display to start or pause.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -110,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

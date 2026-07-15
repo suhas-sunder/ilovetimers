@@ -17,10 +17,12 @@ import {
   ToolHero,
 } from "~/clients/components/ui/foundation";
 import HowItWorks from "~/clients/components/milliseconds-converter/HowItWorks";
-import Disclaimer from "~/clients/components/milliseconds-converter/Disclaimer";
 import FAQ from "~/clients/components/milliseconds-converter/FAQ";
 import KeyboardShortcuts from "~/clients/components/milliseconds-converter/KeyboardShortcuts";
 import PopularUseCases from "~/clients/components/milliseconds-converter/PopularUseCases";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 /* =========================================================
    META
@@ -462,6 +464,7 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
         "@type": "WebPage",
         name: "Milliseconds Converter",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "Convert milliseconds to seconds and seconds to milliseconds instantly.",
       },
@@ -523,10 +526,22 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
             .
           </p>
         </ContentSection>
+        <ToolTrustNote reviewDate={REVIEW_DATE} heading="Conversion scope and limitations">
+          <p>
+            A millisecond is one-thousandth of a second. This page performs a
+            mathematical conversion between milliseconds and seconds; it does
+            not measure elapsed time.
+          </p>
+          <p>
+            The implementation shifts the decimal value without floating-point
+            arithmetic, then normalizes insignificant leading or trailing
+            zeroes for display. The visible result therefore follows the
+            converter's accepted decimal text and display rules.
+          </p>
+        </ToolTrustNote>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

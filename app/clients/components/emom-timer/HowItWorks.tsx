@@ -31,41 +31,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the EMOM Timer (Every Minute On the Minute)",
-    description:
-      "Use the EMOM Timer to run a minute-by-minute workout block. Set total rounds (minutes), add an optional prep countdown, enable sound cues and optional final beeps, and use fullscreen for a gym-readable display with tap-to-start/pause.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Set rounds (total minutes)",
-        text: "Choose how many rounds you want. Each round is one minute, and the display counts down to the next minute mark.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Optional prep countdown",
-        text: "Add 0–60 seconds of prep time if you want a lead-in. When prep ends, the timer automatically starts the first EMOM minute.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, resume, and reset",
-        text: "Press Start to begin. Press Pause to stop and hold your place. Press Resume to continue. Press Reset to return to Ready with the same settings.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Sound cues and final beeps",
-        text: "Turn Sound on/off. Enable Final beeps to hear short beeps in the last 5 seconds of each minute (and during the last seconds of prep).",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Fullscreen and shortcuts",
-        text: "Use Fullscreen for a big display. In fullscreen, tap/click the time to start/pause/resume. Shortcuts: Space start/pause, R reset, F fullscreen, S sound, B final beeps, Esc exit fullscreen.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -112,7 +77,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

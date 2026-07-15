@@ -335,11 +335,11 @@ export default function NewYearCountdownPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "New Year Countdown",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based countdown to the next January 1 in the user's local timezone, with copy, share, and fullscreen support.",
       },

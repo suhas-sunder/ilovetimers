@@ -32,6 +32,9 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { trackEvent } from "~/clients/lib/analytics";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 /* =========================================================
    META
@@ -530,6 +533,7 @@ export default function SleepTimerPage({
         "@type": "WebPage",
         name: "Sleep Timer",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "Online sleep timer with countdown, dim mode, fullscreen, and optional soft alarm.",
       },
@@ -586,11 +590,19 @@ export default function SleepTimerPage({
               Keep sound off if a visual countdown is enough for the room.
             </li>
           </ul>
-          <p>
-            This is a browser countdown, not medical sleep advice, and it does
-            not make claims about sleep quality.
-          </p>
         </ContentSection>
+        <ToolTrustNote reviewDate={REVIEW_DATE} heading="What this timer can and cannot do">
+          <p>
+            This browser timer cannot guarantee that another application,
+            media player, browser tab, or device will stop or remain awake.
+            Background throttling, tab closure, permissions, and device sleep
+            can affect completion behavior.
+          </p>
+          <p>
+            It is a general timing tool, not medical or sleep-health advice. It
+            does not control external media or make claims about sleep quality.
+          </p>
+        </ToolTrustNote>
         <ContentSection title="Related quiet timers">
           <p>
             For no-sound countdowns, use the{" "}

@@ -14,7 +14,7 @@ Use the route-opt-in visual stack classes in `app.css` for family rhythm. `timer
 
 Use `SettingsPanel` and `SettingsDrawer` for compact setup areas, `SeoBand` for explanatory content below the tool experience, and `ContentPage`, `ContentSection`, or `ContentPanel` for non-tool informational pages. Content primitives should create readable rhythm without boxed sections by default.
 
-Use `AdPlaceholder` only for quiet reserved ad areas. It is a visual placeholder, not an ad integration, and it should stay out of active timer tool surfaces unless a dedicated ad-placement pass calls for it. It supports these slot names: `top-banner`, `in-content-square`, and `bottom-banner`. The label should stay policy-safe, normally `Advertisement`, with no fake calls to action or misleading surrounding headings.
+Use `AdPlaceholder` only for quiet homepage reserved ad areas. It is a visual placeholder, not an ad integration, and it should stay out of active timer tool surfaces unless a dedicated ad-placement pass calls for it. It supports these slot names: `top-banner`, `in-content-square`, and `bottom-banner`. The label should stay policy-safe as `Advertisements`, with no fake calls to action or misleading surrounding headings.
 
 The final monetized tool-page contract is:
 
@@ -26,7 +26,7 @@ The final monetized tool-page contract is:
 6. SEO/content section with route-specific body content, related tools, FAQ, notes, or disclaimer. `in-content-square` may appear only inside this content area, after useful introductory content, with deliberate spacing from links and controls.
 7. Optional `bottom-banner` after FAQ or related content.
 
-Content pages may use a lighter content-page ad pattern. `/free-online-timers` is `archive-limited`; preserve the archived four-timer layout. `/privacy`, `/terms`, and `/cookies` are `legal-limited`. `/sitemap` is `navigation-limited` because it is link-dense. Route-level eligibility lives in `app/clients/config/monetization.ts`; add future slots from that map instead of improvising in individual routes.
+Current placeholder policy is homepage-only. `/free-online-timers`, tool routes, trust pages, legal pages, and `/sitemap` are ad-free. Route-level placeholder policy lives in `app/clients/config/monetization.ts`; add future slots from that map instead of improvising in individual routes.
 
 The site supports light and dark mode. Light is the default, and the user's explicit choice is stored in localStorage. Theme compatibility comes from the semantic `--ilt-*` tokens in `app.css`. Use shared primitives or token-backed classes for page backgrounds, surfaces, text, controls, inputs, panels, fullscreen bars, SEO bands, and ad placeholders. Avoid route-level hard-coded surface and text colors unless the component is a unique visual renderer.
 

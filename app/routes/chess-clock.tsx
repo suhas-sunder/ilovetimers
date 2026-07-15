@@ -382,11 +382,11 @@ export default function ChessClockPage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Chess Clock",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based two-player chess clock for casual games and practice with presets, increment, switching, pause, reset, and fullscreen display.",
       },

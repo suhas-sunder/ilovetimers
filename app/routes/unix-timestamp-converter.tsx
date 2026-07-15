@@ -17,6 +17,7 @@ import {
   ToolFrame as Card,
   ToolHero,
 } from "~/clients/components/ui/foundation";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
 type TimestampUnit = "auto" | "seconds" | "milliseconds" | "microseconds";
 
@@ -24,6 +25,7 @@ const SITE_URL = "https://www.ilovetimers.com";
 const ROUTE_PATH = "/unix-timestamp-converter";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 export function meta({}: Route.MetaArgs) {
   const title = "Unix Timestamp Converter (Seconds, Milliseconds, UTC)";
@@ -352,11 +354,12 @@ export default function UnixTimestampConverterPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Unix Timestamp Converter",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
+        dateModified: REVIEW_DATE.iso,
         description:
           "Convert Unix timestamps between seconds, milliseconds, UTC, local time, and ISO date strings.",
       },
@@ -463,6 +466,20 @@ export default function UnixTimestampConverterPage({
             depend on the timezone data available to your device.
           </p>
         </ContentSection>
+
+        <ToolTrustNote reviewDate={REVIEW_DATE}>
+          <p>
+            Seconds, milliseconds, and microseconds are distinct units. In Auto
+            mode this converter detects the unit from the number of digits;
+            choose a unit directly when the source system documents one.
+          </p>
+          <p>
+            Results depend on the value entered. The current-time example is
+            seeded from the device's system clock, and the converter checks
+            whether a value can be converted by the browser, not whether an
+            arbitrary timestamp has real-world meaning for a particular event.
+          </p>
+        </ToolTrustNote>
 
         <ContentSection title="Unix timestamp converter FAQ">
           <h3>Is a Unix timestamp in seconds or milliseconds?</h3>

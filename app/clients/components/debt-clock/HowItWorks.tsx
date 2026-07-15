@@ -29,41 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Debt Clock (estimated debt counter)",
-    description:
-      "Use Debt Clock to display an estimated debt total that updates locally based on a starting amount and an average yearly change rate. Choose a preset or enter custom values, use fullscreen for a big display, pause/reset during demos, and copy a clean snapshot of the current estimate plus assumptions.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Pick a preset or switch to Custom",
-        text: "Choose a preset for a quick starting point or select Custom to enter your own currency, starting debt, yearly change, and “as of” label.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enter your starting debt and yearly change",
-        text: "Starting debt is the baseline. Yearly change is the average net change per year (positive or negative). The tool converts the yearly change into a per-second rate for the running counter.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use Start/Pause and Reset",
-        text: "Start/Pause controls the local updating. Reset snaps back to your starting debt and restarts the counter from there.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen for a big-number display",
-        text: "Toggle fullscreen to fill the screen with the estimated total. Exit with Esc. In fullscreen you can tap/click the number area to start or pause quickly.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy a snapshot you can paste anywhere",
-        text: "Copy outputs the current estimate plus the preset name, “as of” label, starting debt, yearly change, and per-second rate, along with a short disclosure that it is an estimate.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -110,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="space-y-4">
         {/* Header */}

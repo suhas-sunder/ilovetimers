@@ -352,11 +352,11 @@ export default function MilitaryTimeClockPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Military Time Clock",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "Show the current time as a live military-style 24-hour clock with local and UTC display options.",
       },

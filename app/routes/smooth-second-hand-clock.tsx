@@ -353,11 +353,11 @@ export default function SmoothSecondHandClockPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Smooth Second Hand Clock",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based analog clock with a smooth sweeping second hand, ticking mode, second-hand visibility, copy, and fullscreen support.",
       },

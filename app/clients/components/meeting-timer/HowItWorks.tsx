@@ -30,41 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Meeting Timer (agenda timeboxing, fullscreen, sound)",
-    description:
-      "Run a clear countdown for meeting agenda timeboxes. Choose presets or custom minutes, start and pause as needed, go fullscreen for a big room display, and optionally enable sound and final beeps for the last 5 seconds.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a timebox (preset or custom minutes)",
-        text: "Pick a preset like 5m, 10m, or 15m, or enter custom minutes (1–180). The timer sets the countdown duration and stays Ready until you start.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, and reset the countdown",
-        text: "Press Start (or Space) to begin. Press Pause to stop the countdown without losing remaining time. Press Reset (or R) to return to the selected minutes.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a large display everyone can read",
-        text: "Press Fullscreen (or F). In fullscreen, tap/click the time to start or pause. Exit with Esc or the Exit button.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Optional: enable sound cues",
-        text: "Turn on Sound for a completion beep at 0:00. Enable Final beeps (requires Sound) for beeps during the last 5 seconds.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Move to the next agenda item",
-        text: "When you switch topics, either change minutes (which resets automatically) or press Reset to rerun the same timebox. Presets make this fast.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -111,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

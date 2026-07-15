@@ -32,41 +32,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Morse Code Clock to read the current time as dots and dashes",
-    description:
-      "Use the Morse Code Clock to see your current local time encoded as Morse digits. Switch between block view and text view, toggle 12/24-hour time and seconds, go fullscreen for a room-readable display, and copy the time plus Morse output with one click.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Read the current time",
-        text: "Open the page to see your local time at the top and the Morse output below. The clock updates automatically.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose Blocks or Text view",
-        text: "Use View (or press V) to switch between block shapes (dots and dashes) and the raw Morse text strings.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set your preferred format",
-        text: "Toggle 24-hour (T) and Seconds (S). The Morse output matches what is shown in the time display.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen if needed",
-        text: "Click Fullscreen or press F after clicking the clock card once. Press Esc to exit fullscreen.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy the output",
-        text: "Click Copy (or press C) to copy both the time and the Morse representation to your clipboard.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -113,7 +78,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="space-y-4">
         {/* Header */}

@@ -30,41 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Lab Timer (stopwatch laps, repeatable step countdown, fullscreen, sound cues, shortcuts)",
-    description:
-      "Use a lab-focused timer with two browser tools: a stopwatch with laps for observations and repeated trials, and a repeatable step countdown for protocol steps. Optional sound cues, final beeps, fullscreen step view, and keyboard shortcuts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose the timing mode",
-        text: "Use the stopwatch for reaction timing and trials (with Lap splits), or use the step countdown for timed protocol steps that you may repeat.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Run and record laps (stopwatch)",
-        text: "Press Space to start/pause the stopwatch. Press L to record a lap split and the running total. Adjust Max laps if you want to cap the list.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set and run a step timer (countdown)",
-        text: "Pick a common step duration or enter a custom number of seconds. Press C or Start to begin. Turn on Repeat step to automatically restart at zero.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use sound and fullscreen for hands-busy workflows",
-        text: "Enable Sound for cues. Enable Final beeps to hear a beep in the last 5 seconds before zero. Press F to fullscreen the step timer and Esc to exit.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Reset between trials",
-        text: "Press R to reset both timers quickly between trials or protocol runs.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -111,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

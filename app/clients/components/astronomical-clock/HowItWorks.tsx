@@ -29,36 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use an online astronomical clock (sunrise, sunset, day or night, moon phase)",
-    description:
-      "Use this astronomical clock to view live local time for a chosen time zone, day or night status based on the sun’s position, sunrise and sunset for a specific location, and a moon phase readout. Use presets, set coordinates manually, and go fullscreen for an always-on display.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Pick the time zone you care about",
-        text: "Choose Device time, UTC, or a preset time zone. The live clock and sunrise or sunset are displayed in that selected time zone.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Add a location (optional but recommended)",
-        text: "Click “Use my location” or enter latitude and longitude to enable sunrise, sunset, and estimated day or twilight status for that spot.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use presets for quick checks",
-        text: "Tap a city preset to load coordinates and a matching time zone fast, useful for travel or remote coordination.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen for a wall display",
-        text: "Use Fullscreen or press F after focusing the clock display to keep sun and moon context visible across a room.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -83,7 +53,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="space-y-4">
         {/* Header */}

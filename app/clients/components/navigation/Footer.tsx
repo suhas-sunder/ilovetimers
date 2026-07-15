@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { AnalyticsPreferencesButton } from "~/clients/components/analytics/AnalyticsConsent";
 
 type TimerMenuLink = { to: string; label: string };
 type TimerMenuSection = {
@@ -6,15 +7,17 @@ type TimerMenuSection = {
   links: TimerMenuLink[];
 };
 
-const SITE_URL = "https://www.ilovetimers.com";
-
-const footerSections: TimerMenuSection[] = [
+export const footerSections: TimerMenuSection[] = [
   {
     title: "Site",
     links: [
       { to: "/", label: "Home" },
       { to: "/free-online-timers", label: "Free Online Timers" },
       { to: "/about", label: "About" },
+      { to: "/author/suhas-sunder", label: "Suhas Sunder" },
+      { to: "/contact", label: "Contact" },
+      { to: "/how-ilovetimers-is-made", label: "How iLoveTimers Is Made" },
+      { to: "/copyright", label: "Copyright" },
       { to: "/sitemap", label: "HTML Sitemap" },
       { to: "/privacy", label: "Privacy Policy" },
       { to: "/terms", label: "Terms of Service" },
@@ -257,26 +260,42 @@ const footerSections: TimerMenuSection[] = [
   },
 ];
 
-function buildFooterJsonLd(baseUrl = SITE_URL) {
-  return {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        name: "I Love Timers",
-        alternateName: "iLoveTimers",
-        url: `${baseUrl}/`,
-      },
-      {
-        "@type": "WebSite",
-        name: "I Love Timers",
-        alternateName: "iLoveTimers",
-        url: `${baseUrl}/`,
-        description:
-          "Free online timers, stopwatches, clocks, countdowns, interval timers, and time tools.",
-      },
-    ],
-  };
+const footerLinkClass =
+  "cursor-pointer text-sm text-slate-300 transition hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
+
+const footerMobileRowClass =
+  "cursor-pointer rounded-lg border border-slate-700/60 bg-slate-700/40 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
+
+const footerPillClass =
+  "cursor-pointer rounded-full border border-slate-700/60 bg-slate-700/40 px-3 py-1.5 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
+
+const sectionOrder = [
+  "Core Timers",
+  "Focus & Productivity",
+  "Health & Wellness",
+  "Fitness & Training",
+  "Cooking & Food",
+  "Clocks & Time",
+  "Events & Tracking",
+  "Finance, Work & Calculators",
+  "Preset Timers",
+  "Stopwatch Tools",
+  "Analog & Specialty Clocks",
+  "World Time & Time Zones",
+  "Calculators & Converters",
+  "Games, Rhythm & Interaction",
+];
+
+function orderedDirectorySections() {
+  const order = new Map(sectionOrder.map((title, index) => [title, index]));
+  return footerSections
+    .filter((section) => section.title !== "Site")
+    .slice()
+    .sort(
+      (a, b) =>
+        (order.get(a.title) ?? Number.MAX_SAFE_INTEGER) -
+        (order.get(b.title) ?? Number.MAX_SAFE_INTEGER),
+    );
 }
 
 function FooterSectionDesktop({ title, links }: TimerMenuSection) {
@@ -321,56 +340,12 @@ function FooterSectionMobile({ title, links }: TimerMenuSection) {
   );
 }
 
-const footerLinkClass =
-  "cursor-pointer text-sm text-slate-300 transition hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
-
-const footerMobileRowClass =
-  "cursor-pointer rounded-lg border border-slate-700/60 bg-slate-700/40 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
-
-const footerPillClass =
-  "cursor-pointer rounded-full border border-slate-700/60 bg-slate-700/40 px-3 py-1.5 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
-
-const sectionOrder = [
-  "Core Timers",
-  "Focus & Productivity",
-  "Health & Wellness",
-  "Fitness & Training",
-  "Cooking & Food",
-  "Clocks & Time",
-  "Events & Tracking",
-  "Finance, Work & Calculators",
-  "Preset Timers",
-  "Stopwatch Tools",
-  "Analog & Specialty Clocks",
-  "World Time & Time Zones",
-  "Calculators & Converters",
-  "Games, Rhythm & Interaction",
-];
-
-function orderedDirectorySections() {
-  const order = new Map(sectionOrder.map((title, index) => [title, index]));
-  return footerSections
-    .filter((section) => section.title !== "Site")
-    .slice()
-    .sort(
-      (a, b) =>
-        (order.get(a.title) ?? Number.MAX_SAFE_INTEGER) -
-        (order.get(b.title) ?? Number.MAX_SAFE_INTEGER),
-    );
-}
-
 export default function Footer() {
   const year = new Date().getFullYear();
-  const jsonLd = buildFooterJsonLd(SITE_URL);
   const directorySections = orderedDirectorySections();
 
   return (
     <footer className="bg-slate-800" data-nosnippet>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
       <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -379,7 +354,7 @@ export default function Footer() {
                 to="/"
                 className="cursor-pointer text-base font-semibold text-white transition hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
               >
-                i<span className="text-amber-500">💛</span>Timers
+                i<span className="text-amber-500">Love</span>Timers
               </Link>
               <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-400">
                 Free time tools
@@ -393,6 +368,13 @@ export default function Footer() {
               Free online timers, stopwatches, clocks, countdowns, interval
               timers, and time tools. Built for quick setup, fullscreen
               visibility, and clean keyboard control.
+            </p>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300">
+              Built and maintained by{" "}
+              <Link to="/author/suhas-sunder" className={footerLinkClass}>
+                Suhas Sunder
+              </Link>
+              , a software engineer.
             </p>
           </div>
 
@@ -412,6 +394,7 @@ export default function Footer() {
             <Link to="/pomodoro-timer" className={footerPillClass}>
               Pomodoro
             </Link>
+            <AnalyticsPreferencesButton className={footerPillClass} />
           </nav>
         </div>
 
@@ -444,31 +427,21 @@ export default function Footer() {
 
         <div className="mt-10 flex flex-col gap-2 border-t border-slate-700/60 pt-6 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            © {year} <span className="font-semibold text-white">i💛Timers</span>
+            © {year}{" "}
+            <span className="font-semibold text-white">iLoveTimers</span>
           </div>
 
           <nav
             aria-label="Legal and site links"
             className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium"
           >
-            <Link to="/free-online-timers" className={footerLinkClass}>
-              Free Online Timers
-            </Link>
-            <Link to="/about" className={footerLinkClass}>
-              About
-            </Link>
-            <Link to="/sitemap" className={footerLinkClass}>
-              Sitemap
-            </Link>
-            <Link to="/privacy" className={footerLinkClass}>
-              Privacy
-            </Link>
-            <Link to="/terms" className={footerLinkClass}>
-              Terms
-            </Link>
-            <Link to="/cookies" className={footerLinkClass}>
-              Cookies
-            </Link>
+            {footerSections
+              .find((section) => section.title === "Site")
+              ?.links.map((link) => (
+                <Link key={link.to} to={link.to} className={footerLinkClass}>
+                  {link.label.replace("HTML ", "").replace(" Policy", "").replace(" Service", "")}
+                </Link>
+              ))}
           </nav>
         </div>
       </div>

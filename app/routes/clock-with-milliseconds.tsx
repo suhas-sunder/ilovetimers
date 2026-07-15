@@ -26,11 +26,13 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
 const SITE_URL = "https://www.ilovetimers.com";
 const ROUTE_PATH = "/clock-with-milliseconds";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 export function meta({}: Route.MetaArgs) {
   const title = "Clock With Milliseconds (Live Time Display)";
@@ -350,11 +352,12 @@ export default function ClockWithMillisecondsPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Clock With Milliseconds",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
+        dateModified: REVIEW_DATE.iso,
         description:
           "A browser-based live clock with milliseconds, local and UTC display options, copy, and fullscreen support.",
       },
@@ -421,7 +424,7 @@ export default function ClockWithMillisecondsPage({
           </p>
         </ContentSection>
 
-        <ContentSection title="Local time, UTC, and limitations">
+        <ContentSection title="Local time and UTC">
           <p>
             Local mode follows your device timezone. UTC mode displays the same
             moment as Coordinated Universal Time. Both modes depend on the
@@ -444,6 +447,20 @@ export default function ClockWithMillisecondsPage({
             .
           </p>
         </ContentSection>
+
+        <ToolTrustNote reviewDate={REVIEW_DATE}>
+          <p>
+            The displayed time comes from your device's system clock.
+            Millisecond digits are refreshed by the browser, so display refresh
+            rate, rendering workload, browser scheduling, and device performance
+            can affect what appears on screen.
+          </p>
+          <p>
+            Visible millisecond digits do not create a certified precision
+            source. Display precision describes the digits shown; clock accuracy
+            depends on the device clock and is a different concept.
+          </p>
+        </ToolTrustNote>
 
         <ContentSection title="Clock with milliseconds FAQ">
           <h3>Is this exact atomic time?</h3>

@@ -29,41 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Current Local Time clock (fullscreen, copy, and quick compare)",
-    description:
-      "See your current local time in a big, readable clock. Toggle seconds and 12/24-hour time, go fullscreen for distance viewing, copy a clean timestamp, and quickly compare common time zones.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Open the clock and confirm your local zone",
-        text: "Open the page to view a large clock using your device’s local time and timezone settings.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose your display format",
-        text: "Toggle Seconds on/off and switch 12-hour or 24-hour time (use S, 1, and 2 as shortcuts).",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for distance viewing",
-        text: "Press F or click Fullscreen to fill the screen with large digits. Press Esc to exit. In fullscreen, tap/click the time to copy quickly.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy a timestamp",
-        text: "Press C or click Copy to place the current time, zone label, date, and ISO week number on your clipboard.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Quick compare another city",
-        text: "Switch the main display to a common city (Toronto, New York, London) and glance at tiles for additional cities.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -110,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

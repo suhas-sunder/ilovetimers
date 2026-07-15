@@ -30,41 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to convert milliseconds to seconds (and seconds to milliseconds) instantly",
-    description:
-      "Use the Milliseconds Converter to switch between milliseconds (ms) and seconds (s) with exact decimal behavior. Paste values like 16.67, 1000, or 0.01667, then copy a clean conversion line. Includes quick examples and reset.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a direction",
-        text: "Select ms → seconds or seconds → ms depending on what you have and what you need.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Paste a value",
-        text: "Type or paste a number (decimals supported). Commas in pasted values are ignored.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Read the exact result",
-        text: "The result updates instantly when the input is valid. The conversion is performed by shifting the decimal point (÷1000 or ×1000) to avoid floating-point rounding surprises.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy the conversion line",
-        text: "Click Copy to copy a full line like “1500 ms = 1.5 seconds” (or the reverse) for easy pasting into notes, tickets, docs, or spreadsheets.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use examples or reset",
-        text: "Tap a quick example to populate the tool, or click Reset to return to 1000 ms and 1 second.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -111,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

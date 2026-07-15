@@ -1715,9 +1715,8 @@ export default function BillableHoursClockPage({}: Route.ComponentProps) {
         "@type": "SoftwareApplication",
         name: "Billable Hours Clock",
         applicationCategory: "UtilitiesApplication",
-        operatingSystem: "Web",
+        operatingSystem: "Web browser",
         url,
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       },
     ],
   };

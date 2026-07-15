@@ -29,36 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Count Up Timer (elapsed time with laps and fullscreen)",
-    description:
-      "Track elapsed time from 0 upward. Start and pause, record laps (splits), reset to 0, and use fullscreen with big readable digits plus keyboard shortcuts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Start timing",
-        text: "Press Space or click Start to begin counting up from 0. Pause anytime and resume from the same elapsed time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Record laps (splits)",
-        text: "While running, click Lap (or press L) to record checkpoints. Each lap stores the total elapsed time and the split since the previous lap.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for visibility",
-        text: "Press F to toggle fullscreen for large digits. In fullscreen, tap/click the time display to start or pause. Press Esc to exit.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Reset when finished",
-        text: "Click Reset (or press R) to return to 0 and clear laps.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -105,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

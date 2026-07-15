@@ -31,41 +31,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Egg Timer (soft, jammy, medium, hard)",
-    description:
-      "Use the Egg Timer to run a clean, readable countdown with one-tap presets (soft, jammy, medium, hard, very hard) or a custom time. Toggle sound and optional final countdown beeps, and use fullscreen for a big display with tap-to-start/pause.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a preset or set a custom time",
-        text: "Pick Soft, Jammy, Medium, Hard, or Very hard to set the timer instantly, or enter your own minutes and seconds for a custom countdown.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, and reset the countdown",
-        text: "Press Start to begin. Press Pause to stop while keeping remaining time. Press Reset to return to the selected preset/custom time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Optional sound and final countdown beeps",
-        text: "Turn Sound on/off. Enable Final beeps to hear short beeps during the last few seconds before the timer ends.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a big kitchen display",
-        text: "Click Fullscreen (or press F) for a clean, readable display. In fullscreen, tap/click the time to start or pause. Press Esc to exit.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use keyboard shortcuts for quick control",
-        text: "Space start/pause, R reset, F fullscreen, S sound toggle, Esc exit fullscreen. If shortcuts do nothing, click the timer card once to focus it.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -112,7 +77,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

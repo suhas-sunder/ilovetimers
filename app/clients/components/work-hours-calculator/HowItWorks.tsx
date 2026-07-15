@@ -26,45 +26,9 @@ export default function HowItWorks({
 }) {
   const pageUrl = `${baseUrl}/work-hours-calculator`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to calculate work hours from start and end time (subtract breaks)",
-    description:
-      "Use the Work Hours Calculator to compute planned work time from a start and end time, subtract a break, support overnight shifts, optionally round paid time, and copy results for checking or timesheet prep.",
-    url: pageUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Enter start and end time",
-        text: "Set Start time and End time. If End is earlier than Start, the calculator treats it as an overnight shift into the next day.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Subtract break minutes",
-        text: "Enter break minutes (or tap a quick break chip). Breaks are subtracted from the total shift to produce paid time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose display options",
-        text: "Pick decimal places for hours and optionally round paid time to the nearest 5, 10, or 15 minutes if your workplace records time that way.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy the result",
-        text: "Copy paid time as HH:MM and decimal hours, or copy a full summary including shift length, break, and overnight note when applicable.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use shortcuts to move faster",
-        text: "Click the calculator card, then press S to set Start to now, E to set End to now, C to copy paid time, and R to reset.",
-      },
-    ],
-  };
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <div>

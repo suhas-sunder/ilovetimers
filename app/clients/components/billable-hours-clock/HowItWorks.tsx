@@ -28,41 +28,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to track billable time live with rounding and total pay",
-    description:
-      "Use the Billable Hours Clock to run live timers, apply rounding increments, and compute total pay per timer from an hourly rate. Copy or print summaries and keep timers saved in your browser.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Create a timer and set billing rules",
-        text: "Add a timer, set the hourly rate, currency, optional note, and rounding increment (None, 6, 10, or 15 minutes).",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, and resume while you work",
-        text: "Start the active timer, pause it during breaks, and resume when you return. Billable time updates automatically.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Review billable time and total pay",
-        text: "The page shows live elapsed time, rounded billable time, billable hours, and the total amount for the active timer.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Manage multiple clients or tasks",
-        text: "Add a timer per client or task and switch the active timer as you move through your day. Totals are shown per timer and by currency.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy or print a summary",
-        text: "Copy one timer or all timers for a compact text summary, or print a PDF-friendly view for records or invoicing.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -87,7 +52,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

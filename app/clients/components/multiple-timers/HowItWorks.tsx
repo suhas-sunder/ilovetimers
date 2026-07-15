@@ -26,45 +26,9 @@ export default function HowItWorks({
   const pageUrl = `${baseUrl}/multiple-timers`;
 
   // Helpful, non-spam schema for the section itself (unique to this tool)
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to run multiple timers online at the same time",
-    description:
-      "Use Multiple Timers to run two or more countdown timers at once, each with its own label, presets, custom minutes and seconds, fullscreen mode, and optional sound.",
-    url: pageUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Add the timers you need",
-        text: "Click Add timer to create as many parallel countdowns as you want, then rename each label so you can identify it at a glance.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set durations using presets or custom time",
-        text: "Use a preset (1m, 2m, 3m, 5m, 7m, 10m, 12m, 15m, 20m, 25m, 30m) or type exact Minutes and Seconds. Changing time resets that timer to the new duration and pauses it.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start one timer or start all",
-        text: "Start a single timer from its tile, or use Start all to run every timer at the same time. Use Pause all to freeze everything in place.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Handle alarms cleanly",
-        text: "When a timer hits 0 it enters an alarm state. Use Stop alarm on the tile to stop and reset it, or use Stop alarms to silence all alarms immediately.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for shared displays",
-        text: "Enter fullscreen for a room-readable layout with top controls and a bottom status strip. Press Esc to exit.",
-      },
-    ],
-  };
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <div>

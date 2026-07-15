@@ -29,41 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Chaos Timer (random interval timer and random countdowns)",
-    description:
-      "Run unpredictable countdowns inside a seconds range. Choose a single random timer or a random interval session, set min/max seconds and (optionally) an interval count, enable sound beeps if you want audible cues, and use fullscreen for a clean, readable display with tap-to-start.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Pick a mode",
-        text: "Choose Random timer (single) for one random countdown, or Random interval timer to run multiple random intervals back-to-back.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set your random range",
-        text: "Set Min seconds and Max seconds. Each countdown duration is randomly selected as a whole number of seconds between Min and Max (inclusive). If Min is greater than Max, the tool swaps them automatically.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set interval count (interval mode)",
-        text: "If you use Random interval timer, set Intervals to the number of random countdowns you want to run in sequence.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, and reset",
-        text: "Press Space (or click Start) to begin and pause. Press R (or click Reset) to re-roll from your current settings.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use sound and fullscreen when needed",
-        text: "Turn on Sound for beeps. Use Beep each interval for interval-end beeps and Final beeps for last-5-seconds warning beeps. Press F for fullscreen, Esc to exit, and tap/click the display in fullscreen to start or pause.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -110,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

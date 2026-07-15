@@ -26,45 +26,9 @@ export default function HowItWorks({
 }) {
   const pageUrl = `${baseUrl}/stopwatch`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use an online stopwatch with laps and millisecond display",
-    description:
-      "Use this online stopwatch to start and pause quickly, record laps (splits), copy lap results as CSV, and use fullscreen mode with keyboard shortcuts.",
-    url: pageUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Start the stopwatch",
-        text: "Press Start or hit Space to begin timing immediately.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Record laps and splits",
-        text: "Press Lap or hit L at key moments to capture split time (since last lap) and total time (since start).",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Pause, resume, or reset",
-        text: "Use Space to pause and resume. Use Reset or press R to clear the time and lap list.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy lap results",
-        text: "Press Copy or hit C to copy lap results as CSV for spreadsheets or notes.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen when you need a big display",
-        text: "Press Fullscreen or hit F. Press Esc to exit fullscreen. In fullscreen, you can click or tap the time to start or pause.",
-      },
-    ],
-  };
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <div>

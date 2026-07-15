@@ -609,11 +609,11 @@ export default function IntervalTimerPage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Interval Timer",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based custom interval timer with labeled steps, repeat rounds, presets, controls, and fullscreen display.",
       },

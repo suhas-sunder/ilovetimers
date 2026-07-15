@@ -29,36 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use an online analog clock (fullscreen, seconds hand, smooth motion)",
-    description:
-      "Use this online analog clock to display your local time on a clean clock face. Go fullscreen for a wall display, toggle the seconds hand, and enable smooth motion when you want a traditional wall-clock feel.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Open the clock and choose your display style",
-        text: "Decide whether you want the seconds hand visible. If you prefer a calmer display, hide it.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enable smooth motion when you want a fluid seconds hand",
-        text: "Turn on Smooth for continuous seconds hand motion. If the device is under load, turn Smooth off for lower CPU usage.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen for wall-display use",
-        text: "Use Fullscreen (or press F after focusing the card) to fill the screen with a large, readable clock face.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use shortcuts for quick control",
-        text: "Click the clock card once, then press F for fullscreen, S to toggle the seconds hand, and M to toggle smooth motion.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -83,7 +53,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

@@ -15,36 +15,6 @@ export default function HowItWorks({
 }: {
   canonicalUrl?: string;
 }) {
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Countdown Timer",
-    description:
-      "Set minutes and seconds, start the countdown, adjust time while it runs, reset when needed, and use fullscreen for a large display.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Set a duration",
-        text: "Enter minutes and seconds, or keep the default duration.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start the countdown",
-        text: "Press Start or Space. The display counts down toward zero.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Adjust or reset",
-        text: "Use +1:00, -0:10, Pause, or Reset while the timer is active.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen",
-        text: "Press F or the Fullscreen control for a large timer display.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -54,7 +24,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">

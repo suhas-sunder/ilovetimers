@@ -473,11 +473,11 @@ export default function KitchenTimerPage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Kitchen Timer",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based kitchen timer with common cooking presets, custom minutes and seconds, sound toggle, copy, and fullscreen support.",
       },

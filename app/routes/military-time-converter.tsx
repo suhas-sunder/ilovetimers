@@ -28,10 +28,12 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/military-time-converter/HowItWorks";
-import Disclaimer from "~/clients/components/military-time-converter/Disclaimer";
 import FAQ from "~/clients/components/military-time-converter/FAQ";
 import KeyboardShortcuts from "~/clients/components/military-time-converter/KeyboardShortcuts";
 import PopularUseCases from "~/clients/components/military-time-converter/PopularUseCases";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 /* =========================================================
    META
@@ -39,7 +41,7 @@ import PopularUseCases from "~/clients/components/military-time-converter/Popula
 export function meta({}: Route.MetaArgs) {
   const title = "Military Time Converter (24-Hour to AM/PM, Instant)";
   const description =
-    "Convert military time to standard AM/PM in seconds. Paste 1730, 0730, or 0000 and get the exact time instantly. Simple, fast, and accurate.";
+    "Convert military time to standard AM/PM and convert 12-hour time to 24-hour format with clear validation and copy-ready results.";
 
   const url = "https://www.ilovetimers.com/military-time-converter";
 
@@ -874,6 +876,7 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
         "@type": "WebPage",
         name: "Military Time Converter",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "Convert military time (24-hour time) to standard time (AM/PM) instantly, plus reverse conversion.",
       },
@@ -927,10 +930,20 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
             .
           </p>
         </ContentSection>
+        <ToolTrustNote reviewDate={REVIEW_DATE} heading="Conversion scope and limitations">
+          <p>
+            This converter applies standard 12-hour and 24-hour clock formatting
+            rules. It does not determine a timezone, date, or official schedule
+            unless that information is supplied separately.
+          </p>
+          <p>
+            The result is a format conversion of the entered value. It does not
+            certify the accuracy of a source schedule or add location context.
+          </p>
+        </ToolTrustNote>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

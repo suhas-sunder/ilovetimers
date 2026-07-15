@@ -32,36 +32,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Focus Session Timer (single work countdown)",
-    description:
-      "Run one clean focus session countdown. Choose a preset or custom minutes, start/pause/reset with keyboard shortcuts, use fullscreen for a big display, and optionally enable sound and final beeps.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a session length",
-        text: "Pick a preset (1 to 90 minutes) or enter custom minutes (1 to 240). Changing the session length resets the timer to the new duration.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set sound options (optional)",
-        text: "Turn Sound on to hear a finish beep. Enable Final beeps if you want short beeps in the last 5 seconds. Final beeps is disabled when Sound is off.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, and reset",
-        text: "Press Start (or Space) to begin. Press again to pause. Press Reset (or R) to return to the full selected session length.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a clean display",
-        text: "Press Fullscreen (or F) for a large, readable countdown. In fullscreen, click/tap the time to start or pause quickly. Press Esc to exit.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -108,7 +78,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

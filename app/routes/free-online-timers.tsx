@@ -1549,13 +1549,6 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebSite",
-        name: "I Love Timers",
-        url: "https://www.ilovetimers.com/free-online-timers",
-        description:
-          "The original I Love Timers page with a countdown, stopwatch with laps, Pomodoro, and HIIT interval timer.",
-      },
-      {
         "@type": "FAQPage",
         mainEntity: [
           {

@@ -26,45 +26,9 @@ export default function HowItWorks({
 }) {
   const pageUrl = `${baseUrl}/world-clock`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use a live world clock to compare cities",
-    description:
-      "Use World Clock to see the current time in multiple cities at once. Add or remove cities, search by city or time zone, toggle 12/24-hour time and seconds, copy a shareable list, and use fullscreen with keyboard shortcuts.",
-    url: pageUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Pick the cities you care about",
-        text: "Use the Popular list to select cities. Selected cities appear as cards with large live times.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use Search to find a city or region quickly",
-        text: "Type a city name or a region like America or Europe to filter the list, then click the chip to select it.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose your display format",
-        text: "Toggle 24-hour time and seconds depending on how you prefer to read times.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy or go fullscreen",
-        text: "Use Copy to paste a clean list into messages or notes, or use Fullscreen for a big, glanceable display.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use shortcuts to move faster",
-        text: "Press F for fullscreen, T for 24-hour, S for seconds, C for copy, R to reset, X to clear, and Esc to exit fullscreen.",
-      },
-    ],
-  };
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <div>

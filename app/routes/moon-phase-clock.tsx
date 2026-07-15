@@ -796,9 +796,8 @@ export default function MoonPhaseClockPage({
         "@type": "SoftwareApplication",
         name: "Moon Phase Clock",
         applicationCategory: "UtilitiesApplication",
-        operatingSystem: "Web",
+        operatingSystem: "Web browser",
         url,
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       },
     ],
   };

@@ -31,10 +31,12 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import HowItWorks from "~/clients/components/epoch-unix-time-clock/HowItWorks";
-import Disclaimer from "~/clients/components/epoch-unix-time-clock/Disclaimer";
 import FAQ from "~/clients/components/epoch-unix-time-clock/FAQ";
 import KeyboardShortcuts from "~/clients/components/epoch-unix-time-clock/KeyboardShortcuts";
 import PopularUseCases from "~/clients/components/epoch-unix-time-clock/PopularUseCases";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 /* =========================================================
    META
@@ -442,6 +444,7 @@ export default function EpochUnixTimeClockPage({
         "@type": "WebPage",
         name: "Unix Time Clock",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "Live Unix timestamp clock showing epoch time in seconds and milliseconds, plus local and UTC date-time.",
       },
@@ -466,9 +469,8 @@ export default function EpochUnixTimeClockPage({
         "@type": "SoftwareApplication",
         name: "Unix Time Clock",
         applicationCategory: "UtilitiesApplication",
-        operatingSystem: "Web",
+        operatingSystem: "Web browser",
         url,
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
       },
     ],
   };
@@ -499,10 +501,21 @@ export default function EpochUnixTimeClockPage({
             for seconds, milliseconds, UTC, local time, and ISO output.
           </p>
         </ContentSection>
+        <ToolTrustNote reviewDate={REVIEW_DATE}>
+          <p>
+            Current Unix and epoch values are generated from the device's
+            current system time. If the device clock is incorrect, the current
+            values shown here will inherit that offset.
+          </p>
+          <p>
+            Seconds and milliseconds represent different units and should not
+            be used interchangeably. The main display is labeled in seconds,
+            while the supporting value is labeled in milliseconds.
+          </p>
+        </ToolTrustNote>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />
-        <Disclaimer />
       </SeoBand>
 
     </PageShell>

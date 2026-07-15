@@ -29,36 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the online atomic-style clock (device time with milliseconds, freeze, fullscreen)",
-    description:
-      "Use this atomic-style online clock to view your current device time with optional milliseconds, freeze and resume the display, and go fullscreen for a large readable clock on any screen.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose your display mode",
-        text: "Turn milliseconds on for fine-grained readings, or turn them off for a steadier seconds-only display.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Freeze and resume when needed",
-        text: "Freeze holds the current displayed value for reference. Resume returns to live updates. Use Space as a shortcut.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a big clock",
-        text: "Enter fullscreen for a clean wall display. Fullscreen requires a user gesture. Press F to toggle and Esc to exit.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Troubleshoot smoothness and accuracy",
-        text: "If milliseconds look jumpy, keep the tab visible and disable low-power throttling. If the time looks off, your device clock is likely not synced.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -83,7 +53,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

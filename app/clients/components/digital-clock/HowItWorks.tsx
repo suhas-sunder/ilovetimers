@@ -29,36 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Digital Clock (big fullscreen clock with seconds)",
-    description:
-      "Use Digital Clock to display your current local time in large, readable digits. Toggle seconds and 12/24-hour time, go fullscreen for distance viewing, and copy a paste-ready timestamp that includes timezone, date, and ISO time.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose your display format",
-        text: "Toggle seconds on or off, and switch between 12-hour and 24-hour time depending on your needs.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen for a big display",
-        text: "Toggle fullscreen to fill the screen with the clock. Exit fullscreen with Esc.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy the current time",
-        text: "Use Copy (or press C) to copy the displayed time plus timezone, date, and ISO timestamp for pasting into notes, chat, or logs.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use keyboard shortcuts for quick control",
-        text: "Press F for fullscreen, S to toggle seconds, 1/2 for 12/24-hour, and C to copy. If shortcuts do nothing, click the clock card once to focus it.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -105,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

@@ -32,36 +32,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Hexadecimal Clock (hex time, copy block, fullscreen, hex color mode)",
-    description:
-      "View your current local time rendered as hexadecimal (HH:MM:SS), optionally include milliseconds, switch between 12-hour and 24-hour display, copy a complete timestamp block (hex, decimal, date, ISO), and use fullscreen. Includes hex color mode that maps time to #RRGGBB.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a mode",
-        text: "Pick Hex HH:MM:SS to view time in hexadecimal, or choose Hex color to map time to #RRGGBB.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set precision and format",
-        text: "Toggle seconds on/off, enable milliseconds when available, and switch between 12-hour and 24-hour display.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy a timestamp snapshot",
-        text: "Press Copy (or click the display in fullscreen) to copy hex output plus decimal time, date, time zone label, and ISO timestamp.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen when you need a clean display",
-        text: "Press F to toggle fullscreen and Esc to exit. Fullscreen is designed for demos and big-screen readability.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -108,7 +78,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="space-y-4">
         {/* Header */}

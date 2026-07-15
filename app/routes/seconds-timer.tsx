@@ -433,11 +433,11 @@ export default function SecondsTimerPage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Seconds Timer",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based seconds countdown timer with short presets, custom total seconds, sound toggle, copy, and fullscreen support.",
       },

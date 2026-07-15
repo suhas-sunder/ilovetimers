@@ -25,8 +25,10 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
 const SITE_URL = "https://www.ilovetimers.com";
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 type FaqItem = {
   question: string;
@@ -305,23 +307,26 @@ function JsonLd({
   routePath,
   description,
   faqItems,
+  dateModified,
 }: {
   name: string;
   routePath: string;
   description: string;
   faqItems: FaqItem[];
+  dateModified?: string;
 }) {
   const url = `${SITE_URL}${routePath}`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name,
         url,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description,
+        ...(dateModified ? { dateModified } : {}),
       },
       {
         "@type": "BreadcrumbList",
@@ -1842,6 +1847,7 @@ export function WorldClockWithMillisecondsPage({
         routePath="/world-clock-with-milliseconds"
         description="A browser-based world clock with live milliseconds for local time and a modest set of selected timezone rows."
         faqItems={WORLD_MILLISECONDS_FAQ}
+        dateModified={REVIEW_DATE.iso}
       />
 
       <ToolHero
@@ -1894,6 +1900,20 @@ export function WorldClockWithMillisecondsPage({
             .
           </p>
         </ContentSection>
+
+        <ToolTrustNote reviewDate={REVIEW_DATE}>
+          <p>
+            City and timezone displays are formatted using browser-supported
+            timezone data, while the current instant comes from the device's
+            system clock. Millisecond rendering is also affected by browser and
+            display performance.
+          </p>
+          <p>
+            The page formats one device-reported instant for each selected
+            timezone. It does not synchronize separately with the listed cities
+            or provide a certified time source.
+          </p>
+        </ToolTrustNote>
 
         <ContentSection title="Related precise-looking clocks">
           <p>

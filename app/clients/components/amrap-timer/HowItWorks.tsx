@@ -28,36 +28,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use an AMRAP timer (countdown + rounds and reps score)",
-    description:
-      "Use an AMRAP timer to run a time cap with optional prep countdown, then track rounds and reps with large tap buttons or keyboard shortcuts. Includes fullscreen mode for coaching and gym visibility.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose the AMRAP length and optional prep",
-        text: "Pick a preset minute cap (8, 10, 12, 15, 20, etc.) and set an optional prep countdown so you can get positioned before the work starts.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start the timer and keep it visible",
-        text: "Press Start (or Space). Use fullscreen for a large display that’s easy to see across the room. Keep the tab visible for the smoothest updates.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Track rounds and reps as you go",
-        text: "Use the tap controls or shortcuts (+/− reps and ↑/↓ rounds). Your score is displayed as rounds + reps.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Finish, reset, and run the next piece",
-        text: "When time hits zero, reset for the next heat or adjust the cap. You can also pause/resume mid-session if you need to stop the clock.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -82,7 +52,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

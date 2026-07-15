@@ -26,45 +26,9 @@ export default function HowItWorks({
 }) {
   const pageUrl = `${baseUrl}/time-zone-converter`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to convert a specific date and time between time zones",
-    description:
-      "Use Time Zone Converter to convert a planned date and time from one time zone to another with DST-aware results. Swap zones, set Now, copy a clean record, create a share link, and use fullscreen with keyboard shortcuts.",
-    url: pageUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Pick From and To time zones",
-        text: "Choose the time zone you are starting from and the time zone you want to convert to.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enter the date and time",
-        text: "Select the date and type the time (HH:MM, or HH:MM:SS if seconds are enabled).",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Read both results and the ISO timestamp",
-        text: "The tool shows the time in both zones for the same instant, plus an ISO timestamp for an unambiguous reference.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy or share your conversion",
-        text: "Use Copy to paste a clean record into a chat or ticket, or Share to copy a link that preserves your inputs.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use shortcuts to move faster",
-        text: "Press S to swap, N for now, C to copy, F for fullscreen, and Esc to exit fullscreen.",
-      },
-    ],
-  };
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <div>

@@ -14,40 +14,9 @@ export default function HowItWorks({
 }: {
   baseUrl?: string;
 }) {
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Pomodoro timer",
-    description:
-      "Set work minutes, break minutes, and cycles, then run automatic focus and break phases with optional sound, long break, fullscreen display, and keyboard shortcuts.",
-    url: `${baseUrl}/pomodoro-timer`,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Set work and break lengths",
-        text: "Choose the number of work minutes, short break minutes, and cycles for the session.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose automatic phase behavior",
-        text: "Leave Auto on for automatic work and break transitions, or turn it off when you want to advance phases manually.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start the focus cycle",
-        text: "Press Start or use Space after focusing the timer. The display shows the active phase, current cycle, and remaining time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use long break or fullscreen if useful",
-        text: "Enable a longer final break after the last work cycle, or enter fullscreen for a large distraction-light display.",
-      },
-    ],
-  };
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">

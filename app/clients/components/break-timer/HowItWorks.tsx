@@ -29,41 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use Break Timer (fullscreen countdown + quick presets)",
-    description:
-      "Run a simple break countdown with quick presets or custom minutes. Use fullscreen for a big display, optional sound and final beeps, loop mode for repeated breaks, and keyboard shortcuts to control the timer fast.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a break length",
-        text: "Pick a preset (1–20 minutes) or enter custom minutes. The timer will reset to the selected duration.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start and pause",
-        text: "Press Space (or click Start) to begin. Press Space again to pause and resume later without losing remaining time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use sound cues if you want to walk away",
-        text: "Enable Sound for an end chime. Enable Final beeps for a short beep once per second in the last 5 seconds.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen for a big display",
-        text: "Press F to toggle fullscreen and Esc to exit. In fullscreen, you can also tap/click the time display to start or pause.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Repeat breaks with Loop",
-        text: "Enable Loop to auto-restart the same break length when it hits zero.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -110,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

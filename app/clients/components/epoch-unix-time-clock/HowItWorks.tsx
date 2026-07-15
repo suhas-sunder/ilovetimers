@@ -31,41 +31,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Unix Time Clock (current epoch timestamp)",
-    description:
-      "Get the current Unix epoch timestamp in seconds and milliseconds. Copy instantly, freeze to hold a stable value, snap once while frozen, and use fullscreen for a clean seconds display with keyboard shortcuts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Read the current timestamp",
-        text: "The large number is Unix time in seconds. Milliseconds is shown below. Local time and UTC time are shown for human-readable verification.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Freeze for a stable value",
-        text: "Toggle Live off to freeze the clock so the number does not change while you copy or compare.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy seconds or milliseconds",
-        text: "Use Copy seconds or Copy milliseconds (or shortcuts C and M) to copy exactly what you need.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Snap once while frozen",
-        text: "When frozen, use Snap (or shortcut N) to update to the current time once without returning to continuous updates.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Fullscreen and shortcuts",
-        text: "Use Fullscreen (or shortcut F) for a large seconds display. Space toggles Live/Frozen, C copies seconds, M copies milliseconds, N snaps now, and Esc exits fullscreen.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -112,7 +77,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

@@ -27,45 +27,9 @@ export default function HowItWorks({
   const pageUrl = `${baseUrl}/online-timer`;
 
   // Helpful, non-spam schema for the section itself (unique to this tool)
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use an online countdown timer with fullscreen",
-    description:
-      "Use Online Timer to start a countdown instantly with presets or custom time entry, optional sound, loop mode, fullscreen display, and keyboard shortcuts.",
-    url: pageUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Pick a preset or enter a custom time",
-        text: "Choose a quick preset (1m to 60m) or type a time like 45, 05:00, or 1:02:30, then press Set to load the duration.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, or reset",
-        text: "Press Start to begin. Press Space to start or pause quickly. Use Reset (or R) to return to the set duration.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose sound and loop options",
-        text: "Enable Sound to hear a beep at 0. Enable Loop if you want the same countdown to restart automatically each time it finishes.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a big display",
-        text: "Click Fullscreen (or press F after focusing the timer card). In fullscreen, click or tap the timer area to start or pause without leaving the big display.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Exit cleanly",
-        text: "Press Esc to exit fullscreen. If the timer reaches 0, it shows Done. Press Restart to run it again from the same duration.",
-      },
-    ],
-  };
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <div>

@@ -29,36 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use Tap BPM (instant tempo tapper + BPM counter)",
-    description:
-      "Tap to estimate beats per minute (BPM) quickly. Adjust auto-reset and hold behavior, lock results, copy BPM with details, and use fullscreen and keyboard shortcuts for fast tempo checking.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Tap a steady beat",
-        text: "Tap/click anywhere on the tap area to register beats. Keep tapping for several beats to stabilize the BPM.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Let it settle, then lock or copy",
-        text: "When the BPM stops bouncing, lock to keep it visible or copy to save the BPM along with ms/beat and session details.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Tune reset and hold",
-        text: "Choose how quickly the tool resets after you pause, and how long it holds the last result on screen after the session ends.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen and shortcuts",
-        text: "Press F for fullscreen, R to reset, C to copy, and Esc to exit fullscreen. Optionally enable Space/Enter tapping.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -105,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

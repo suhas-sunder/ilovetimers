@@ -30,46 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Online Metronome (tap tempo, BPM, subdivisions, fullscreen)",
-    description:
-      "Practice with a clean online metronome. Set BPM, tap tempo, choose time signature and subdivisions, enable an accented downbeat, adjust volume and click sound, use fullscreen, and copy your setup.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Set BPM (or use Tap Tempo)",
-        text: "Choose a BPM with the slider, number input, or arrow keys. Or tap a steady beat using Tap Tempo (T) to set BPM automatically.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose time signature and subdivision",
-        text: "Pick beats per bar and a subdivision (quarter, eighth, triplet, sixteenth). The metronome ticks per subdivision and shows the current beat and sub count.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start and stop quickly",
-        text: "Press Start, or use Space/Enter to toggle start/stop. In fullscreen, click or tap the display to start/stop.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Optional: accent beat 1",
-        text: "Enable Accent beat 1 for a stronger downbeat tick and pulse at the start of each bar.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Adjust sound and volume",
-        text: "Switch between Click, Wood, and Beep, and set volume to match your room or headphones.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen and copy settings",
-        text: "Press F for fullscreen (Esc exits). Press C to copy your current setup (BPM, signature, subdivision, sound, volume, and link).",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -116,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

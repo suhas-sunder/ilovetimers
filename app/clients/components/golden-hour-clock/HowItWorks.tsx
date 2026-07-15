@@ -32,36 +32,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Golden Hour Clock (golden hour, sunrise, sunset + countdown)",
-    description:
-      "Find golden hour start and end times (morning and evening) for any date and location. Use GPS or enter coordinates, choose a golden hour definition, view sunrise and sunset, and follow a live countdown to the next lighting transition. Includes fullscreen mode and optional sound alerts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Set your location",
-        text: "Press Use GPS to fill your latitude and longitude, or type coordinates manually. Latitude must be between -90 and 90, longitude between -180 and 180.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Pick a date",
-        text: "Choose the date you care about (today by default). The page calculates sunrise, sunset, and golden hour windows for that date and location.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose a definition",
-        text: "Select Classic (60 minutes) for a predictable fixed window, or Solar-angle (0° to 6°) for a sun-height-based window that changes with latitude and season.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use the countdown and fullscreen",
-        text: "Watch the live countdown to the next transition (golden hour start/end, sunrise, or sunset). Press F for fullscreen, Esc to exit, and optionally enable sound/final beeps for boundary alerts.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -108,7 +78,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="space-y-4">
         {/* Header */}

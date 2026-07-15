@@ -14,35 +14,9 @@ export default function HowItWorks({
 }: {
   canonicalUrl?: string;
 }) {
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Debt Repayment Timer",
-    description:
-      "Set a payoff date or duration, enter starting and target balances, and use the timer as a simple payoff countdown with a time-based progress estimate.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose payoff date or duration",
-        text: "Use Payoff date for a fixed finish date, or Duration when you want a set number of days from the start date.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enter balances",
-        text: "Add a starting balance and target balance so the page can show a simple estimated paid and remaining amount.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start the countdown",
-        text: "Start, pause, reset, or switch to fullscreen. The countdown is based on the current device time and reconciles when the page updates.",
-      },
-    ],
-  };
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="space-y-6">
         <div>

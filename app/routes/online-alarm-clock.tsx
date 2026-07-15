@@ -510,11 +510,11 @@ export default function OnlineAlarmClockPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Online Alarm Clock",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based alarm clock for setting an alarm at a time of day, with next occurrence labels, sound toggle, test sound, stop, reset, and fullscreen support.",
       },

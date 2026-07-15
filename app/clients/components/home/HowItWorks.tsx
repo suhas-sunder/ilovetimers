@@ -17,40 +17,9 @@ export default function HowItWorks({
 }: {
   canonicalUrl?: string;
 }) {
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the online timers",
-    description:
-      "Use a countdown timer, stopwatch with laps, Pomodoro focus timer, or HIIT interval timer. Includes fullscreen mode and keyboard shortcuts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Pick a timer",
-        text: "Choose Countdown, Stopwatch, Pomodoro, or HIIT depending on what you are timing.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set the time or settings",
-        text: "Countdown accepts ss, mm:ss, or h:mm:ss (up to 24 hours). Pomodoro and HIIT let you adjust work/break/rounds and warm-up/cool-down.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, reset",
-        text: "Use Start/Pause and Reset buttons, or focus the timer display and press Space to start/pause and R to reset.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use optional controls",
-        text: "Toggle sound/loop for Countdown, record laps on the Stopwatch, and use Skip/Next to advance Pomodoro/HIIT phases. Fullscreen is available on each timer for distance readability.",
-      },
-    ],
-  };
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <h2 className="text-xl font-semibold text-[var(--ilt-text-primary)]">How it works</h2>

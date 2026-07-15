@@ -30,41 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Minimalist Clock in fullscreen with Zen mode",
-    description:
-      "Use the Minimalist Clock for a big, distraction-free local time display. Toggle seconds, date, and 12/24-hour time, go fullscreen for a wall-style clock, enable Zen mode to auto-hide UI, and copy a timestamp block (time, time zone label, ISO).",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose your display",
-        text: "Pick the format you want: 12-hour or 24-hour time, seconds on or off, and date on or off.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen",
-        text: "Click Fullscreen (or press F after clicking the clock once). Press Esc to exit fullscreen.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enable Zen mode",
-        text: "Turn on Zen to auto-hide controls after a short idle period. Move the mouse, tap, or press a key to reveal the UI again.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy a timestamp",
-        text: "Click Copy (or press C) to copy a clean timestamp block that includes the displayed time, time zone label, and an ISO timestamp.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use shortcuts for fast toggles",
-        text: "Use S for seconds, T for 12/24-hour, D for date, and Z for Zen. Shortcuts work after the clock is focused.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -111,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

@@ -29,41 +29,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Cooking Timer (kitchen countdown with egg and common presets)",
-    description:
-      "Run a clear cooking countdown with egg presets, common presets, custom minutes and seconds, fullscreen mode, optional sound and final beeps, loop mode, and keyboard shortcuts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a time",
-        text: "Pick an egg preset or a common preset, or set custom minutes and seconds for an exact duration.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, and reset",
-        text: "Press Space or click Start to begin. Press Space again or click Pause to stop temporarily and resume from the exact remaining time. Use Reset to return to the ready state for the current set time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Decide on sound cues",
-        text: "Enable Sound for an end beep. Optionally enable Final beeps to hear short beeps during the last 5 seconds.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for visibility",
-        text: "Toggle fullscreen with F for big readable digits. In fullscreen, tap/click the time display area to start or pause.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use Loop for repeated intervals",
-        text: "Enable Loop (L) if you want the same duration to restart automatically when the timer hits zero.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -110,7 +75,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

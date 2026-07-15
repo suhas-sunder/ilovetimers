@@ -1,6 +1,8 @@
 // app/routes/sitemap.tsx
 import type { Route } from "./+types/sitemap";
+import { SITEMAP_GROUPS } from "~/clients/config/siteDirectory.js";
 import { ContentPage } from "~/clients/components/ui/foundation";
+import { WEBSITE_ID } from "~/clients/lib/siteIdentity";
 
 const SITE_URL = "https://www.ilovetimers.com";
 
@@ -16,7 +18,7 @@ type SitemapSection = {
   links: SitemapLink[];
 };
 
-const SECTIONS: SitemapSection[] = [
+const LINK_CATALOG_SECTIONS: SitemapSection[] = [
   {
     title: "Main pages",
     description: "Core site pages and general information.",
@@ -32,12 +34,6 @@ const SECTIONS: SitemapSection[] = [
         href: "/free-online-timers",
         description:
           "Use the original four-tool timer page with countdown, stopwatch, Pomodoro, and HIIT timers.",
-      },
-      {
-        title: "About",
-        href: "/about",
-        description:
-          "Learn more about I Love Timers and the purpose of the site.",
       },
     ],
   },
@@ -794,13 +790,33 @@ const SECTIONS: SitemapSection[] = [
     ],
   },
   {
-    title: "Legal and policy pages",
-    description: "Sitemap, privacy, terms, and cookie information for the site.",
+    title: "Trust and site information",
+    description:
+      "Ownership, contact, methodology, sitemap, privacy, terms, cookies, and copyright information for the site.",
     links: [
       {
-        title: "HTML Sitemap",
-        href: "/sitemap",
-        description: "Browse every public page available on I Love Timers.",
+        title: "About",
+        href: "/about",
+        description:
+          "Learn what iLoveTimers is, who created and maintains it, and how the site is approached.",
+      },
+      {
+        title: "Suhas Sunder",
+        href: "/author/suhas-sunder",
+        description:
+          "Learn about Suhas Sunder, the software engineer who created and maintains iLoveTimers.",
+      },
+      {
+        title: "Contact",
+        href: "/contact",
+        description:
+          "Contact iLoveTimers about bugs, corrections, accessibility issues, privacy questions, copyright concerns, or feedback.",
+      },
+      {
+        title: "How iLoveTimers Is Made",
+        href: "/how-ilovetimers-is-made",
+        description:
+          "Read how iLoveTimers approaches browser timing tools, accuracy boundaries, documentation, and corrections.",
       },
       {
         title: "Privacy Policy",
@@ -819,9 +835,35 @@ const SECTIONS: SitemapSection[] = [
         description:
           "Read how cookies and similar browser technologies are handled.",
       },
+      {
+        title: "Copyright and Content Concerns",
+        href: "/copyright",
+        description:
+          "Learn how to report copyright or content concerns involving iLoveTimers.",
+      },
+      {
+        title: "HTML Sitemap",
+        href: "/sitemap",
+        description: "Browse every public page available on iLoveTimers.",
+      },
     ],
   },
 ];
+
+const catalogLinks = LINK_CATALOG_SECTIONS.flatMap((section) => section.links);
+const linkCatalog = new Map(catalogLinks.map((link) => [link.href, link]));
+
+const SECTIONS: SitemapSection[] = SITEMAP_GROUPS.map((section) => ({
+  title: section.title,
+  description: section.description,
+  links: section.routes.map((href) => {
+    const link = linkCatalog.get(href);
+    if (!link) {
+      throw new Error(`Missing HTML sitemap catalog entry for ${href}`);
+    }
+    return link;
+  }),
+}));
 
 const allLinks = SECTIONS.flatMap((section) => section.links);
 
@@ -855,18 +897,16 @@ export default function Sitemap() {
         "@type": "WebPage",
         name: "HTML Sitemap",
         url: `${SITE_URL}/sitemap`,
-        description: "Browse every public page available on I Love Timers.",
+        description: "Browse every public page available on iLoveTimers.",
         isPartOf: {
-          "@type": "WebSite",
-          name: "I Love Timers",
-          url: SITE_URL,
+          "@id": WEBSITE_ID,
         },
       },
       {
         "@type": "ItemList",
         name: "I Love Timers HTML Sitemap",
         numberOfItems: allLinks.length,
-        itemListElement: allLinks.map((link, index) => ({
+        itemListElement: catalogLinks.map((link, index) => ({
           "@type": "ListItem",
           position: index + 1,
           name: link.title,
@@ -879,8 +919,8 @@ export default function Sitemap() {
   return (
     <ContentPage
       title="HTML Sitemap"
-      description="Browse every public page on I Love Timers, including countdown timers, stopwatches, Pomodoro tools, workout timers, clocks, calculators, converters, and policy pages."
-      meta={`${allLinks.length} pages. Updated May 22, 2026`}
+      description="Browse every public page on iLoveTimers, including countdown timers, stopwatches, Pomodoro tools, workout timers, clocks, calculators, converters, and site information pages."
+      meta={`${allLinks.length} pages. Updated July 14, 2026`}
     >
       <script
         type="application/ld+json"

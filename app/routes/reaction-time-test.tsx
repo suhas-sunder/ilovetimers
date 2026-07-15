@@ -26,6 +26,9 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 /* =========================================================
    META
@@ -888,8 +891,8 @@ function ReactionTimeTestTool() {
               <span className="ilt-keycap">C</span> copy
             </ShortcutHint>
             <div className="ilt-helper-text text-center sm:text-right">
-              Accuracy note: measured with a high-resolution timer. Your device
-              input latency still matters.
+              Browser-based measurement: device, display, and input latency
+              affect the result.
             </div>
           </div>
         )}
@@ -911,6 +914,7 @@ export default function ReactionTimeTestPage({}: Route.ComponentProps) {
         "@type": "WebPage",
         name: "Reaction Time Test",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "Casual reaction time test. Tap to start, wait for the signal, then respond and review valid results, false starts, best, average, and median. Fullscreen supported.",
       },
@@ -993,13 +997,20 @@ export default function ReactionTimeTestPage({}: Route.ComponentProps) {
             results across completely different devices as if they were the same
             setup.
           </p>
-          <p>
-            Display latency, mouse latency, touch latency, keyboard latency,
-            browser scheduling, refresh rate, and background activity can affect
-            the number. This is a browser timing tool, not a medical,
-            neurological, driving, sports, or clinical assessment.
-          </p>
         </ContentSection>
+        <ToolTrustNote reviewDate={REVIEW_DATE} heading="How to interpret the measurement">
+          <p>
+            Results include more than human reaction time. Display latency,
+            browser scheduling, device performance, input hardware, touch
+            processing, and the chosen input method can all affect the measured
+            result.
+          </p>
+          <p>
+            Treat each result as a browser-based estimate for casual practice
+            and same-device comparison, not as a medical, driving, sports, or
+            safety-critical assessment.
+          </p>
+        </ToolTrustNote>
         <ContentSection title="Related rhythm and speed tools">
           <p>
             For tapping a rhythm into BPM, use the{" "}

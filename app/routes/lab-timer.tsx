@@ -42,7 +42,7 @@ import PopularUseCases from "~/clients/components/lab-timer/PopularUseCases";
 export function meta({}: Route.MetaArgs) {
   const title = "Lab Timer (Experiments + Reaction Time, Fullscreen)";
   const description =
-    "Online lab timer for experiments and reaction timing. Use a precise stopwatch with laps or run repeatable countdowns for timed lab steps in a clear, distraction-free display.";
+    "Browser-based lab timer for elapsed-time tracking, laps, and repeatable countdowns during classroom or informal experiment steps.";
 
   const url = "https://www.ilovetimers.com/lab-timer";
 

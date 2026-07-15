@@ -17,36 +17,6 @@ export default function HowItWorks({
 }) {
   const pageUrl = `${baseUrl}/pizza-timer`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Pizza Timer",
-    description:
-      "Use Pizza Timer to choose a pizza preset, set a custom time, enable an early check reminder, and run a large fullscreen countdown.",
-    url: pageUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a pizza preset or custom time",
-        text: "Pick a frozen oven, air fryer, reheat, or skillet preset, or enter your own minutes and seconds.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Set an optional check reminder",
-        text: "Use Check with X min left to get a reminder before the timer finishes, such as 2 minutes for oven pizza or 1 minute for skillet reheating.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start the countdown",
-        text: "Press Start or Space. Pause keeps the remaining time, and Reset returns to the selected preset or custom time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use sound and fullscreen when useful",
-        text: "Turn Sound on for reminders, enable Final beeps if desired, and use Fullscreen for a large kitchen display.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -56,7 +26,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-12">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-5">
         <div>

@@ -30,36 +30,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Meeting Count Up Timer (elapsed time, fullscreen, topic splits)",
-    description:
-      "Track elapsed meeting time with a clean count-up timer. Start and pause as needed, go fullscreen for a large display, and record Topic splits to measure time spent on each agenda item. Optionally cap the number of topics and customize the Topic label.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Start the timer when the meeting begins",
-        text: "Press Start (or Space) to begin counting up from 0:00. Pause any time and resume without losing elapsed time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Record agenda timing with Topic splits",
-        text: "Press Topic (or T) while running to record a split. Each split shows total elapsed time plus time since the previous Topic.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a large room-friendly display",
-        text: "Press Fullscreen (or F) for a big display. In fullscreen, tap/click the time to start or pause. Exit with Esc.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Optional: rename Topic and cap the number of agenda items",
-        text: "Change Button label to match your meeting flow and set “# of agenda topics” to limit how many splits you can record.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -106,7 +76,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

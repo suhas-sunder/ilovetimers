@@ -31,41 +31,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Moon Phase Clock to track phase, illumination, and the next major phase",
-    description:
-      "Use the Moon Phase Clock to see today’s moon phase, illumination estimate, and moon age, plus a big live countdown to the next major phase. Switch between Live and Manual, use fullscreen for a room display, and optionally enable sound and final beeps near the event.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Check the current phase",
-        text: "Open the page to see the current phase label, illumination percentage, and moon age in days.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Read the next major phase",
-        text: "Look at the “Next” line to see which major phase is coming and the estimated local time it occurs.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for readability",
-        text: "Click Fullscreen or press F (after clicking the card once). Press Esc to exit fullscreen.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Switch to Manual for a specific date and time",
-        text: "Edit Date, Hour, or Minute to switch to Manual. The page updates to show the phase for that moment. Click Now to return to Live.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enable Sound and Final beeps if needed",
-        text: "Turn Sound on to allow audio alerts. Enable Final beeps for short beeps close to the next major phase in Live mode. Click Now once after enabling sound to unlock audio on browsers that require interaction.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -112,7 +77,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="space-y-4">
         {/* Header */}

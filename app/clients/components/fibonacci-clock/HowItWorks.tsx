@@ -16,36 +16,6 @@ export default function HowItWorks({
   canonicalUrl?: string;
   baseUrl?: string;
 }) {
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Fibonacci Clock",
-    description:
-      "Read time through Fibonacci-sized squares, switch time zones, explore manual times, copy the tile breakdown, and use fullscreen.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Read the digital time first",
-        text: "The page shows the standard digital time and the Fibonacci HH:MM version. Minutes are represented in 5-minute steps.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use the Fibonacci tiles",
-        text: "Tiles sized 1, 1, 2, 3, and 5 combine to represent the hour and rounded minutes. The legend explains hour-only, minute-only, and shared tiles.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Switch Live or Explore mode",
-        text: "Live follows the selected time zone. Explore lets you type an hour and minute to see how that moment maps to the tiles.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy or go fullscreen",
-        text: "Copy outputs the Fibonacci time, standard digital time, rounding note, and tile sums. Fullscreen keeps the visual clock large.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -70,7 +40,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

@@ -19,36 +19,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Alarm Timer",
-    description:
-      "Set an online alarm timer with quick minute presets, optional sound, final countdown beeps, fullscreen display, and keyboard shortcuts.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose minutes",
-        text: "Pick a preset or enter a custom number of minutes. Changing the duration resets the countdown to that value.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose sound behavior",
-        text: "Leave Sound on for an audible alarm at zero, or turn it off for a visual-only timer. Final beeps can mark the last five seconds.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, reset, or stop the alarm",
-        text: "Start begins the countdown, Pause holds it, Reset returns to the selected minutes, and Stop alarm silences the ringing state.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen when visibility matters",
-        text: "Fullscreen keeps the countdown readable from across a room. Keyboard shortcuts include Space, R, F, S, and X.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -73,7 +43,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

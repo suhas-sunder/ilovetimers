@@ -3,11 +3,54 @@ import type { Properties } from "posthog-js";
 
 type AnalyticsValue = string | number | boolean | null | undefined;
 export type AnalyticsProperties = Record<string, AnalyticsValue>;
+export type AnalyticsConsent = "allowed" | "declined";
+
+export const ANALYTICS_CONSENT_STORAGE_KEY = "ilt-analytics-consent";
+export const ANALYTICS_CONSENT_CHANGED_EVENT = "ilt-analytics-consent-changed";
+export const ANALYTICS_PREFERENCES_REQUEST_EVENT =
+  "ilt-analytics-preferences-requested";
 
 let analyticsReady = false;
 
-function canUseBrowser() {
+const safeEventPropertyKeys = new Set([
+  "route_path",
+  "tool",
+  "source",
+  "result_status",
+  "result_type",
+  "status",
+  "mode",
+  "format",
+  "display_mode",
+  "phase",
+  "action",
+  "copy_type",
+  "sound",
+  "fullscreen",
+  "overnight",
+  "break_used",
+]);
+
+const privatePropertyPattern =
+  /(name|label|note|text|input|date|time|timezone|zone|start|end|break_|duration|seconds|minutes|hours|amount|rate|entry|row|value|url|query|fragment|share|link|email|phone|address)/i;
+
+export function canUseBrowser() {
   return typeof window !== "undefined";
+}
+
+export function isAnalyticsConfigured() {
+  return Boolean(import.meta.env.VITE_POSTHOG_KEY);
+}
+
+export function getPostHogKey() {
+  return import.meta.env.VITE_POSTHOG_KEY as string | undefined;
+}
+
+export function getPostHogHost() {
+  return (
+    (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ||
+    "https://us.i.posthog.com"
+  );
 }
 
 function cleanPathname(pathname: string) {
@@ -40,6 +83,59 @@ export function markAnalyticsReady() {
   analyticsReady = true;
 }
 
+export function markAnalyticsStopped() {
+  analyticsReady = false;
+}
+
+export function readStoredAnalyticsConsent(): AnalyticsConsent | null {
+  if (!canUseBrowser()) return null;
+
+  try {
+    const value = window.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY);
+    if (value === "allowed" || value === "declined") return value;
+    if (value !== null) {
+      window.localStorage.removeItem(ANALYTICS_CONSENT_STORAGE_KEY);
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+export function writeStoredAnalyticsConsent(consent: AnalyticsConsent) {
+  if (!canUseBrowser()) return;
+
+  try {
+    window.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, consent);
+  } catch {
+    // Restricted storage should never block the site or its tools.
+  }
+
+  window.dispatchEvent(
+    new CustomEvent(ANALYTICS_CONSENT_CHANGED_EVENT, {
+      detail: { consent },
+    }),
+  );
+}
+
+export function requestAnalyticsPreferences() {
+  if (!canUseBrowser()) return;
+  window.dispatchEvent(new Event(ANALYTICS_PREFERENCES_REQUEST_EVENT));
+}
+
+export function stopAnalyticsCapture() {
+  markAnalyticsStopped();
+  if (!canUseBrowser()) return;
+
+  try {
+    posthog.opt_out_capturing();
+    posthog.reset(true);
+  } catch {
+    // If PostHog was never initialized, declining analytics should remain inert.
+  }
+}
+
 export function sanitizeAnalyticsProperties(
   properties: Properties,
 ) {
@@ -53,6 +149,27 @@ export function sanitizeAnalyticsProperties(
     "$session_entry_url",
   ]) {
     if (key in next) next[key] = stripUrlToPath(next[key]);
+  }
+
+  return next;
+}
+
+function sanitizeManualEventProperties(
+  properties: AnalyticsProperties,
+): AnalyticsProperties {
+  const next: AnalyticsProperties = {};
+
+  for (const [key, value] of Object.entries(properties)) {
+    if (!safeEventPropertyKeys.has(key)) continue;
+    if (privatePropertyPattern.test(key)) continue;
+    if (
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "boolean" ||
+      value === null
+    ) {
+      next[key] = value;
+    }
   }
 
   return next;
@@ -78,6 +195,6 @@ export function trackEvent(
   const routePath = currentPathname();
   posthog.capture(eventName, {
     route_path: routePath,
-    ...properties,
+    ...sanitizeManualEventProperties(properties),
   });
 }

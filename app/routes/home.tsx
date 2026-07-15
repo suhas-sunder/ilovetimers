@@ -385,13 +385,6 @@ export default function Home() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebSite",
-        name: "I Love Timers",
-        url: `${SITE_URL}/`,
-        description:
-          "Simple online timers, stopwatches, clocks, calculators, converters, and timing tools.",
-      },
-      {
         "@type": "ItemList",
         name: "Popular I Love Timers tools",
         itemListElement: popularTimers.slice(0, 8).map((item, index) => ({

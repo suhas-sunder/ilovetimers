@@ -1,0 +1,329 @@
+/**
+ * Canonical, task-based discovery links used below selected tool pages.
+ * Keep this data free of redirect aliases, query strings, and fragments.
+ */
+
+export const FOOTER_TOOL_LINKS = Object.freeze([
+  { to: "/countdown-timer", label: "Countdown timer" },
+  { to: "/stopwatch", label: "Stopwatch" },
+  { to: "/online-alarm-clock", label: "Online alarm clock" },
+  { to: "/pomodoro-timer", label: "Pomodoro timer" },
+  { to: "/world-clock", label: "World clock" },
+  { to: "/time-zone-converter", label: "Time zone converter" },
+  { to: "/date-calculator", label: "Date calculator" },
+  { to: "/work-hours-calculator", label: "Work hours calculator" },
+  { to: "/military-time-converter", label: "Military time converter" },
+  { to: "/metronome", label: "Metronome" },
+]);
+
+export const PRIORITY_CONTEXTUAL_ROUTES = Object.freeze([
+  "/stopwatch",
+  "/stopwatch-with-milliseconds",
+  "/study-timer",
+  "/pomodoro-timer",
+  "/clock-with-milliseconds",
+  "/world-clock-with-milliseconds",
+  "/atomic-clock",
+  "/military-time-converter",
+  "/milliseconds-converter",
+  "/utc-clock",
+  "/epoch-unix-time-clock",
+  "/unix-timestamp-converter",
+  "/time-zone-converter",
+  "/time-zone-meeting-planner",
+  "/business-days-calculator",
+  "/work-hours-calculator",
+  "/time-card-calculator",
+  "/weekly-timesheet-calculator",
+  "/online-alarm-clock",
+  "/metronome",
+]);
+
+/**
+ * @param {string} heading
+ * @param {Array<{to: string, label: string}>} links
+ */
+const group = (heading, links) => Object.freeze({ heading, links: Object.freeze(links) });
+
+export const RELATED_TOOL_LINKS = Object.freeze({
+  "/stopwatch": group("More ways to measure elapsed time", [
+    { to: "/stopwatch-with-milliseconds", label: "Use a stopwatch with a millisecond display" },
+    { to: "/count-up-timer", label: "Run a count-up timer" },
+    { to: "/countdown-timer", label: "Count down to a finish" },
+  ]),
+  "/stopwatch-with-milliseconds": group("Related millisecond tools", [
+    { to: "/stopwatch", label: "Use the standard stopwatch" },
+    { to: "/millisecond-timer", label: "Set a millisecond countdown" },
+    { to: "/clock-with-milliseconds", label: "View local time with milliseconds" },
+  ]),
+  "/count-up-timer": group("Related elapsed-time tools", [
+    { to: "/stopwatch", label: "Measure laps with the stopwatch" },
+    { to: "/meeting-count-up-timer", label: "Track how long a meeting runs" },
+    { to: "/study-timer", label: "Use a fixed study countdown" },
+  ]),
+  "/speedcubing-timer": group("Other reaction and elapsed-time tools", [
+    { to: "/stopwatch-with-milliseconds", label: "Use a millisecond stopwatch" },
+    { to: "/reaction-time-test", label: "Estimate browser-based reaction time" },
+    { to: "/speedrun-timer", label: "Track a run with splits" },
+  ]),
+  "/speedrun-timer": group("Other timing tools for attempts", [
+    { to: "/stopwatch-with-milliseconds", label: "Measure elapsed time with milliseconds" },
+    { to: "/speedcubing-timer", label: "Time repeated solves" },
+    { to: "/count-up-timer", label: "Run a simple count-up timer" },
+  ]),
+  "/reaction-time-test": group("Related measurement tools", [
+    { to: "/stopwatch-with-milliseconds", label: "Use a browser stopwatch with milliseconds" },
+    { to: "/stopwatch", label: "Measure ordinary elapsed time" },
+    { to: "/speedcubing-timer", label: "Track repeated solve times" },
+  ]),
+
+  "/study-timer": group("Choose another focus format", [
+    { to: "/focus-session-timer", label: "Run one focused work block" },
+    { to: "/pomodoro-timer", label: "Alternate work and break cycles" },
+    { to: "/break-timer", label: "Set a short break countdown" },
+  ]),
+  "/focus-session-timer": group("Other ways to structure focus time", [
+    { to: "/study-timer", label: "Set a fixed study countdown" },
+    { to: "/pomodoro-timer", label: "Use repeated focus and break cycles" },
+    { to: "/productivity-timer", label: "Open the broader productivity timer" },
+  ]),
+  "/pomodoro-timer": group("Related study and break timers", [
+    { to: "/focus-session-timer", label: "Run a single focus session" },
+    { to: "/study-timer", label: "Set a straightforward study timer" },
+    { to: "/break-timer", label: "Time a short rest" },
+  ]),
+  "/productivity-timer": group("Other focus workflows", [
+    { to: "/focus-session-timer", label: "Run one focused session" },
+    { to: "/pomodoro-timer", label: "Use structured work and break cycles" },
+    { to: "/time-blocking-clock", label: "Follow time blocks on a clock" },
+  ]),
+  "/break-timer": group("Return to focused work", [
+    { to: "/study-timer", label: "Start a fixed study countdown" },
+    { to: "/pomodoro-timer", label: "Run a Pomodoro cycle" },
+    { to: "/focus-session-timer", label: "Begin one focused block" },
+  ]),
+  "/time-blocking-clock": group("Related planning and focus tools", [
+    { to: "/productivity-timer", label: "Use a broader productivity timer" },
+    { to: "/pomodoro-timer", label: "Work in focus and break cycles" },
+    { to: "/meeting-agenda-timer", label: "Run a timed agenda" },
+  ]),
+
+  "/clock-with-milliseconds": group("More precision-display tools", [
+    { to: "/world-clock-with-milliseconds", label: "View world times with millisecond digits" },
+    { to: "/utc-clock", label: "View current UTC time" },
+    { to: "/atomic-clock", label: "Open the device-based atomic-style clock" },
+    { to: "/milliseconds-converter", label: "Convert milliseconds to other units" },
+  ]),
+  "/world-clock-with-milliseconds": group("Related world and millisecond clocks", [
+    { to: "/clock-with-milliseconds", label: "View local time with milliseconds" },
+    { to: "/world-clock-with-seconds", label: "Use a calmer seconds display" },
+    { to: "/utc-clock", label: "Compare with current UTC time" },
+  ]),
+  "/atomic-clock": group("Compare device-based time displays", [
+    { to: "/clock-with-milliseconds", label: "View local time with millisecond digits" },
+    { to: "/utc-clock", label: "View the device-derived UTC time" },
+    { to: "/world-clock-with-milliseconds", label: "Compare world times with milliseconds" },
+  ]),
+  "/utc-clock": group("Related UTC and system-time tools", [
+    { to: "/epoch-unix-time-clock", label: "View current Unix and epoch values" },
+    { to: "/time-zone-converter", label: "Convert a time between zones" },
+    { to: "/clock-with-milliseconds", label: "View local time with milliseconds" },
+    { to: "/atomic-clock", label: "See the device-based atomic-style display" },
+  ]),
+  "/epoch-unix-time-clock": group("More Unix and unit tools", [
+    { to: "/unix-timestamp-converter", label: "Convert a Unix timestamp" },
+    { to: "/utc-clock", label: "View current UTC time" },
+    { to: "/milliseconds-converter", label: "Convert milliseconds and seconds" },
+  ]),
+  "/milliseconds-converter": group("Related millisecond tools", [
+    { to: "/millisecond-timer", label: "Set a countdown in milliseconds" },
+    { to: "/clock-with-milliseconds", label: "View a millisecond clock display" },
+    { to: "/unix-timestamp-converter", label: "Convert Unix timestamp units" },
+  ]),
+  "/millisecond-timer": group("More millisecond tools", [
+    { to: "/stopwatch-with-milliseconds", label: "Measure elapsed time with milliseconds" },
+    { to: "/milliseconds-converter", label: "Convert a millisecond value" },
+    { to: "/countdown-timer", label: "Use a standard countdown" },
+  ]),
+  "/unix-timestamp-converter": group("Related Unix and time displays", [
+    { to: "/epoch-unix-time-clock", label: "View the current Unix timestamp" },
+    { to: "/utc-clock", label: "View current UTC time" },
+    { to: "/milliseconds-converter", label: "Convert milliseconds and seconds" },
+  ]),
+
+  "/military-time-converter": group("More 12-hour and 24-hour tools", [
+    { to: "/military-time-clock", label: "View the current military-time clock" },
+    { to: "/24-hour-clock", label: "Open a current 24-hour clock" },
+    { to: "/12-hour-clock", label: "Compare with a 12-hour clock" },
+  ]),
+  "/military-time-clock": group("Related military-time tools", [
+    { to: "/military-time-converter", label: "Convert between military and standard time" },
+    { to: "/24-hour-clock", label: "View a 24-hour clock" },
+    { to: "/utc-clock", label: "View UTC separately" },
+  ]),
+  "/24-hour-clock": group("Compare clock formats", [
+    { to: "/12-hour-clock", label: "View the same style in 12-hour time" },
+    { to: "/military-time-converter", label: "Convert a specific military time" },
+    { to: "/utc-clock", label: "View current UTC time" },
+  ]),
+  "/12-hour-clock": group("Compare clock formats", [
+    { to: "/24-hour-clock", label: "Switch to a 24-hour display" },
+    { to: "/military-time-converter", label: "Convert 12-hour and military time" },
+    { to: "/clock-with-seconds", label: "View local time with seconds" },
+  ]),
+
+  "/world-clock": group("Plan and compare times", [
+    { to: "/time-zone-converter", label: "Convert a specific time between zones" },
+    { to: "/time-zone-meeting-planner", label: "Plan a meeting across time zones" },
+    { to: "/world-clock-with-seconds", label: "View world clocks with seconds" },
+  ]),
+  "/time-zone-converter": group("More timezone tools", [
+    { to: "/time-zone-meeting-planner", label: "Plan a meeting across time zones" },
+    { to: "/world-clock", label: "See several current local times" },
+    { to: "/utc-clock", label: "View current UTC time" },
+  ]),
+  "/time-zone-meeting-planner": group("Related meeting and timezone tools", [
+    { to: "/time-zone-converter", label: "Convert one time between zones" },
+    { to: "/world-clock", label: "Compare current times around the world" },
+    { to: "/meeting-timer", label: "Time an active meeting" },
+  ]),
+  "/world-clock-with-seconds": group("Other world-time displays", [
+    { to: "/world-clock", label: "Use the standard world clock" },
+    { to: "/world-clock-with-milliseconds", label: "Show world times with millisecond digits" },
+    { to: "/utc-clock", label: "View current UTC time" },
+  ]),
+  "/meeting-timer": group("Plan or run a meeting", [
+    { to: "/meeting-agenda-timer", label: "Run a timed meeting agenda" },
+    { to: "/time-zone-meeting-planner", label: "Find a time across zones" },
+    { to: "/meeting-count-up-timer", label: "Track how long the meeting runs" },
+  ]),
+  "/meeting-agenda-timer": group("Related meeting tools", [
+    { to: "/meeting-timer", label: "Run a general meeting timer" },
+    { to: "/time-zone-meeting-planner", label: "Plan a cross-zone meeting" },
+    { to: "/presentation-timer", label: "Time a presentation" },
+  ]),
+
+  "/date-calculator": group("Choose another date calculation", [
+    { to: "/date-duration-calculator", label: "Find the duration between dates" },
+    { to: "/business-days-calculator", label: "Calculate business days" },
+    { to: "/days-until-calculator", label: "Count down to a date" },
+  ]),
+  "/date-duration-calculator": group("Related date calculations", [
+    { to: "/date-calculator", label: "Add or subtract time from a date" },
+    { to: "/weeks-between-dates-calculator", label: "Count weeks between dates" },
+    { to: "/months-between-dates-calculator", label: "Count months between dates" },
+  ]),
+  "/days-until-calculator": group("More date and countdown tools", [
+    { to: "/event-countdown", label: "Run a live event countdown" },
+    { to: "/date-calculator", label: "Add or subtract a date interval" },
+    { to: "/date-duration-calculator", label: "Measure a date range" },
+  ]),
+  "/weeks-between-dates-calculator": group("Related date-range tools", [
+    { to: "/date-duration-calculator", label: "See a full date duration" },
+    { to: "/months-between-dates-calculator", label: "Count months between dates" },
+    { to: "/week-number-calculator", label: "Find a calendar week number" },
+  ]),
+  "/months-between-dates-calculator": group("Related date-range tools", [
+    { to: "/date-duration-calculator", label: "See a full date duration" },
+    { to: "/weeks-between-dates-calculator", label: "Count weeks between dates" },
+    { to: "/date-calculator", label: "Add or subtract a date interval" },
+  ]),
+  "/business-days-calculator": group("Related workday calculations", [
+    { to: "/workdays-calculator", label: "Calculate workdays with weekend settings" },
+    { to: "/date-duration-calculator", label: "Measure the full date span" },
+    { to: "/date-calculator", label: "Add or subtract calendar time" },
+  ]),
+  "/workdays-calculator": group("Related workday and date tools", [
+    { to: "/business-days-calculator", label: "Count business days between dates" },
+    { to: "/date-duration-calculator", label: "Compare the full date duration" },
+    { to: "/work-hours-calculator", label: "Calculate hours in one work period" },
+  ]),
+  "/week-number-calculator": group("Related calendar tools", [
+    { to: "/weekday-calculator", label: "Find the weekday for a date" },
+    { to: "/date-calculator", label: "Add or subtract a date interval" },
+    { to: "/weeks-between-dates-calculator", label: "Count weeks between dates" },
+  ]),
+  "/weekday-calculator": group("Related calendar tools", [
+    { to: "/week-number-calculator", label: "Find the calendar week number" },
+    { to: "/date-calculator", label: "Calculate a new date" },
+    { to: "/days-until-calculator", label: "Count days until a date" },
+  ]),
+
+  "/work-hours-calculator": group("Choose the right work-time tool", [
+    { to: "/time-card-calculator", label: "Enter daily clock-in and clock-out times" },
+    { to: "/weekly-timesheet-calculator", label: "Track a full workweek" },
+    { to: "/billable-hours-calculator", label: "Calculate billable time" },
+  ]),
+  "/time-card-calculator": group("Related work-time calculators", [
+    { to: "/work-hours-calculator", label: "Calculate one work period" },
+    { to: "/weekly-timesheet-calculator", label: "Total a full workweek" },
+    { to: "/billable-hours-calculator", label: "Calculate billable hours" },
+  ]),
+  "/weekly-timesheet-calculator": group("Other ways to track work time", [
+    { to: "/time-card-calculator", label: "Calculate daily time-card entries" },
+    { to: "/work-hours-calculator", label: "Calculate a single work period" },
+    { to: "/billable-hours-clock", label: "Run a live billable clock" },
+  ]),
+  "/billable-hours-calculator": group("Related billable-time tools", [
+    { to: "/billable-hours-clock", label: "Track billable time live" },
+    { to: "/work-hours-calculator", label: "Calculate one work period" },
+    { to: "/weekly-timesheet-calculator", label: "Total a full workweek" },
+  ]),
+  "/billable-hours-clock": group("Related work-time tools", [
+    { to: "/billable-hours-calculator", label: "Calculate existing billable entries" },
+    { to: "/work-hours-calculator", label: "Calculate one work period" },
+    { to: "/weekly-timesheet-calculator", label: "Total a workweek" },
+  ]),
+
+  "/online-alarm-clock": group("Other alarm and countdown tools", [
+    { to: "/alarm-timer", label: "Run a duration-based alarm timer" },
+    { to: "/countdown-timer", label: "Set a general countdown" },
+  ]),
+  "/alarm-timer": group("Related alarm tools", [
+    { to: "/online-alarm-clock", label: "Set an alarm for a clock time" },
+    { to: "/countdown-timer", label: "Use a simple countdown" },
+    { to: "/clock-with-seconds", label: "View current time with seconds" },
+  ]),
+  "/metronome": group("Related rhythm tool", [
+    { to: "/bpm-tapper", label: "Tap a tempo before opening the metronome" },
+  ]),
+  "/bpm-tapper": group("Continue with the measured tempo", [
+    { to: "/metronome", label: "Open the metronome at a steady beat" },
+  ]),
+
+  "/analog-clock": group("Other analog clock displays", [
+    { to: "/analog-clock-with-second-hand", label: "Add a visible second hand" },
+    { to: "/smooth-second-hand-clock", label: "Use a sweeping second hand" },
+    { to: "/full-screen-analog-clock", label: "Open an analog clock fullscreen" },
+  ]),
+  "/analog-clock-with-second-hand": group("Compare analog clock styles", [
+    { to: "/analog-clock", label: "Use the standard analog clock" },
+    { to: "/smooth-second-hand-clock", label: "Switch to a sweeping second hand" },
+    { to: "/full-screen-analog-clock", label: "Open an analog clock fullscreen" },
+  ]),
+  "/smooth-second-hand-clock": group("Related analog clocks", [
+    { to: "/analog-clock-with-second-hand", label: "Use a ticking second hand" },
+    { to: "/analog-clock", label: "Open the standard analog clock" },
+    { to: "/full-screen-analog-clock", label: "View an analog clock fullscreen" },
+  ]),
+  "/full-screen-analog-clock": group("Other analog displays", [
+    { to: "/analog-clock", label: "Return to the standard analog clock" },
+    { to: "/analog-clock-with-second-hand", label: "View a clock with a second hand" },
+    { to: "/smooth-second-hand-clock", label: "Use a sweeping second hand" },
+  ]),
+  "/digital-clock": group("Other digital clock displays", [
+    { to: "/full-screen-clock", label: "Open a digital clock fullscreen" },
+    { to: "/clock-with-seconds", label: "View a clock with seconds" },
+    { to: "/analog-clock", label: "Switch to an analog clock" },
+  ]),
+  "/full-screen-clock": group("Related digital clocks", [
+    { to: "/digital-clock", label: "Use the standard digital clock" },
+    { to: "/clock-with-seconds", label: "Show local time with seconds" },
+    { to: "/big-digital-clock", label: "Open a large digital display" },
+  ]),
+  "/clock-with-seconds": group("Other clock displays", [
+    { to: "/clock-with-milliseconds", label: "Show millisecond digits" },
+    { to: "/full-screen-clock", label: "Open the clock fullscreen" },
+    { to: "/digital-clock", label: "Use the standard digital clock" },
+  ]),
+});

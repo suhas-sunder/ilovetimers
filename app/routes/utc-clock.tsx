@@ -22,6 +22,9 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 const utcFaqs = [
   {
@@ -680,6 +683,7 @@ export default function UtcClockPage({
         "@type": "WebPage",
         name: "UTC Clock",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "See the current UTC time instantly. A clean, live UTC clock with a big, readable display for coordination, logging, and schedules.",
       },
@@ -803,21 +807,19 @@ export default function UtcClockPage({
           </ul>
         </ContentSection>
 
-        <ContentSection title="Accuracy and limitations">
+        <ToolTrustNote reviewDate={REVIEW_DATE}>
           <p>
-            This page formats UTC from your device and browser clock. It does
-            not contact an official time service and does not correct a
-            misconfigured device. If your operating system clock is slow, fast,
-            or set to the wrong date, the UTC display will reflect that same
-            problem.
+            UTC is calculated from the current time reported by the device. The
+            UTC conversion may be correct while the displayed instant is still
+            offset if the device's system clock is incorrect.
           </p>
           <p>
-            For everyday coordination, logs, and scheduling notes, that browser
-            behavior is usually enough. For official metrology or regulated
-            timekeeping, compare against the authoritative time source required
-            by your organization or workflow.
+            This page does not contact an official time service or correct a
+            misconfigured device. For official or regulated timekeeping, use the
+            authoritative source required by the relevant organization or
+            workflow.
           </p>
-        </ContentSection>
+        </ToolTrustNote>
 
         <ContentSection title="Related time tools">
           <p>

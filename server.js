@@ -2,6 +2,7 @@ import compression from "compression";
 import express from "express";
 import morgan from "morgan";
 import { Readable } from "node:stream";
+import { getPermanentRedirect } from "./app/config/redirects.js";
 
 // Short-circuit the type-checking of the built output.
 const BUILD_PATH = "./build/server/server.js";
@@ -13,6 +14,19 @@ const app = express();
 
 app.use(compression());
 app.disable("x-powered-by");
+
+app.use((req, res, next) => {
+  const url = new URL(req.originalUrl || req.url, "http://localhost");
+  const normalizedPath = url.pathname.replace(/\/+$/, "") || "/";
+  const destination = getPermanentRedirect(normalizedPath);
+
+  if (!destination) {
+    next();
+    return;
+  }
+
+  res.redirect(301, destination + url.search);
+});
 
 /**
  * @param {import("express").Request} req

@@ -13,6 +13,7 @@ This file is durable repo guidance for future Codex and agent passes. Keep it cu
 - Do not make the site feel like a blog, article hub, SaaS landing page, or ad farm.
 - Do not add features or claims that are not implemented.
 - Do not overclaim precision, official status, medical benefits, productivity outcomes, financial accuracy, or real-time data freshness.
+- iLoveTimers should remain useful for broad users while naturally prioritizing high-value western use cases where relevant, such as US, Canada, UK, and Australia classrooms, work, meetings, timesheets, business days, military time, study, productivity, and everyday timing.
 
 ## 2. Source-of-truth process
 
@@ -31,13 +32,29 @@ This file is durable repo guidance for future Codex and agent passes. Keep it cu
   - `app/clients/hooks/useFitDisplayText.ts`
   - `app/clients/components/navigation/Footer.tsx`
   - `app/clients/components/navigation/RelatedSites.tsx`
+
 - Approved migrated tool pages are better references than the current homepage if the homepage is still under review.
 - Do not treat a newly generated page as approved just because the build passes.
 - Visual QA must use rendered browser screenshots when the task is visual.
 - If a shared component change affects multiple pages, inspect the affected pages before reporting success.
 - If another page differs from the shared system, move that page toward the shared system. Do not fork a new visual system.
 
-## 3. Non-negotiable visual rules
+## 3. Git and worktree rules
+
+- Do not commit automatically.
+- Do not push automatically.
+- Related fixes may accumulate across multiple safe Codex passes.
+- Keep the worktree uncommitted while changes belong to the same major workstream.
+- Validate after each meaningful batch.
+- Commit only when the full major set is coherent, reviewed, and stable.
+- Push only after that milestone commit passes final validation.
+- Use smaller commits only when isolation is genuinely useful, such as a risky architecture change, rollback point, or unrelated workstream.
+- If a commit seems warranted, explain why and ask before committing.
+- Do not hide unrelated worktree changes.
+- Before editing, inspect the current diff and avoid overwriting user changes.
+- Report whether the worktree had pre-existing changes when the pass began.
+
+## 4. Non-negotiable visual rules
 
 These rules are intentional and should not be worked around.
 
@@ -72,7 +89,7 @@ Use these instead:
 
 Buttons, inputs, and focus states may still need affordance for accessibility. The no-border/no-outline rule is aimed at page layout, route-link groups, cards, panels, and decorative containers. `AdPlaceholder` is the only layout-related exception: it may use a very subtle token-backed border or outline solely to distinguish reserved ad space from normal content. Do not remove accessible focus-visible states.
 
-## 4. Color and theme profile
+## 5. Color and theme profile
 
 Use the existing palette only.
 
@@ -81,10 +98,12 @@ Use the existing palette only.
   - black
   - slate shades
   - amber accents
+
 - Dark theme:
   - near-black and deep slate backgrounds
   - off-white/slate foregrounds
   - restrained amber accents
+
 - Do not introduce blue, purple, green, rose, pink, cyan, teal, violet, or emerald as decorative UI colors.
 - Functional status colors may remain when they communicate behavior:
   - warning
@@ -95,13 +114,14 @@ Use the existing palette only.
   - active phase
   - reaction-test state
   - metronome accent/downbeat state
+
 - Keep functional colors local and purposeful.
 - Do not use functional colors as general decoration.
 - Prefer semantic CSS tokens and shared helper classes over hard-coded Tailwind color utilities in route files.
 - The dark compatibility layer may exist temporarily, but it is not an excuse for careless route-level styling.
 - When touching ordinary route surfaces, migrate them toward shared primitives or token-backed helper classes.
 
-## 5. Dark mode rules
+## 6. Dark mode rules
 
 - Light mode is the default.
 - Dark mode is user-selected only.
@@ -111,8 +131,10 @@ Use the existing palette only.
 - Theme mode only supports:
   - `light`
   - `dark`
+
 - Theme choice persists in localStorage using the current theme key:
   - `ilt-theme-mode`
+
 - Missing, invalid, or inaccessible localStorage must default to light.
 - The navbar theme control is a simple icon toggle.
 - The toggle must be accessible, keyboard usable, and visually minimal.
@@ -122,6 +144,7 @@ Use the existing palette only.
   - shared primitives
   - shared helper classes
   - root theme setup
+
 - Do not break timer, clock, fullscreen, audio, copy, export, or localStorage behavior when working on theme code.
 - After theme work, verify:
   - missing storage defaults to light
@@ -132,7 +155,7 @@ Use the existing palette only.
   - no `prefers-color-scheme` behavior exists
   - no hydration errors exist
 
-## 6. Utility-first page structure
+## 7. Utility-first page structure
 
 Tool pages must be utility-first.
 
@@ -162,6 +185,7 @@ Rules:
   - DisplayStage
   - SEO section
   - breadcrumbs
+
 - Functional labels may remain when they describe active state:
   - Work
   - Break
@@ -172,9 +196,10 @@ Rules:
   - Current split
   - Local time
   - Selected city
+
 - Fullscreen bar titles may remain because they identify the active fullscreen tool.
 
-## 7. Homepage rules
+## 8. Homepage rules
 
 The homepage must be a clean navigation and explanation page for the full site.
 
@@ -219,7 +244,7 @@ Homepage layout rules:
 - FAQ should be plain, readable, and not card-based.
 - The `/free-online-timers` route must preserve the archived four-timer homepage experience unless the user explicitly asks to change it.
 
-## 8. Ad and AdSense placeholder rules
+## 9. Ad and AdSense placeholder rules
 
 Do not add real ad code unless explicitly asked.
 
@@ -245,14 +270,17 @@ AdSense-conscious placement rules:
   - play/start controls
   - dense route-link lists
   - interactive tools
+
 - Ads must not look like navigation, timer links, recommendations, resource links, buttons, downloads, or feature content.
 - Ads must not be under misleading headings like:
   - Helpful links
   - Resources
   - Recommended
   - Start here
+
 - Use only the label:
   - `Advertisements`
+
 - Do not use:
   - Click here
   - Support us
@@ -261,6 +289,7 @@ AdSense-conscious placement rules:
   - Recommended
   - Partner
   - Ad placeholder, top banner
+
 - Do not use arrows, animation, attention-grabbing labels, or visual emphasis pointing to ads.
 - Do not encourage ad clicks.
 - Do not style ad placeholders as cards, panels, feature boxes, or callouts.
@@ -272,8 +301,10 @@ Ad placeholder sizing guidance:
   - desktop: approximately 728x90, or restrained responsive behavior up to about 970x90
   - tablet: approximately 468x60
   - mobile: approximately 320x50 or 320x100
+
 - Square/in-content:
   - approximately 300x250
+
 - Vertical:
   - only where layout naturally supports it
   - never forced into cramped mobile layouts
@@ -290,7 +321,7 @@ Ad placeholder styling:
 - reserve space without pretending to be content
 - work in light and dark mode
 
-## 9. Shared component rules
+## 10. Shared component rules
 
 Use shared components before creating route-local UI.
 
@@ -358,10 +389,13 @@ Route-local components are acceptable only when they encode unique product displ
 - astronomical/moon/sun calculations
 - debt calculation display
 - metronome beat visualization
+- combined timer-stopwatch behavior
+- study stopwatch session markers
+- clock-plus-timer combined display
 
 Shared components must stay generic. Do not bloat shared primitives with one-off route behavior.
 
-## 10. Token-backed helper classes
+## 11. Token-backed helper classes
 
 Prefer token-backed helper classes for repeated ordinary UI patterns.
 
@@ -383,7 +417,7 @@ Do not use them to recreate cards everywhere.
 
 Do not use helper classes to hide messy route architecture. If a route is repeating a full UI pattern, consolidate into shared components instead.
 
-## 11. Button and interaction rules
+## 12. Button and interaction rules
 
 - All interactive elements must have `cursor-pointer`.
 - Buttons must have readable default, hover, active, focus-visible, and disabled states.
@@ -400,7 +434,7 @@ Do not use helper classes to hide messy route architecture. If a route is repeat
 - Do not nest links.
 - Do not break keyboard interactions.
 
-## 12. Timer and clock behavior rules
+## 13. Timer and clock behavior rules
 
 Preserve tool behavior unless the task explicitly asks to change it.
 
@@ -440,7 +474,7 @@ Preserve:
 
 Do not rename state variables, calculation helpers, or exported route functions unless required to fix a real issue.
 
-## 13. SSR and hydration rules
+## 14. SSR and hydration rules
 
 - Do not render SSR-visible random output with `Math.random()`, `Date.now()`, or `crypto`.
 - Use deterministic initial render values.
@@ -453,13 +487,16 @@ Do not rename state variables, calculation helpers, or exported route functions 
 - Fix invalid HTML nesting instead of suppressing warnings.
 - After changes involving time, localStorage, theme, or browser APIs, check for hydration errors in the browser.
 
-## 14. SEO and content rules
+## 15. SEO and helpful-content rules
 
 - Tool pages are tools first, content second.
 - SEO/content belongs below the utility area.
-- Do not place long content above timers, clocks, or calculators.
+- Do not place long content above timers, clocks, stopwatches, or calculators.
 - Do not add filler copy.
 - Do not keyword-stuff.
+- Do not write pages primarily to target search engines.
+- Do not create pages only because a keyword exists.
+- Do not create scaled pages where only the keyword, number, city, country, or synonym changes.
 - Do not repeat the page title as the first SEO heading.
 - Use practical headings:
   - How this timer works
@@ -467,38 +504,370 @@ Do not rename state variables, calculation helpers, or exported route functions 
   - Tips for using this tool
   - Common uses
   - Frequently asked questions
-- Content should explain what the tool does, when to use it, and how to get a useful result.
+  - What this tool can and cannot do
+
+- Content should explain what the tool does, when to use it, how to get a useful result, and what limitations apply.
 - Keep content page-specific and useful.
+- Ask whether a real user would find the page genuinely helpful, not merely adequate.
+- Prefer original product knowledge over generic keyword content.
+- Add first-hand implementation notes where useful, such as browser timing behavior, device clock limitations, local time handling, timezone assumptions, audio limitations, and calculation assumptions.
 - Do not overclaim:
   - financial precision
+  - payroll correctness
   - health or sleep benefits
   - official timing standards
   - real-time data freshness
+  - atomic accuracy
   - productivity outcomes
+
 - If a route uses estimates, say it is an estimate.
+- If a route depends on browser or device behavior, disclose that where relevant.
 - FAQ visible content must match FAQ JSON-LD if FAQPage schema is present.
 - Do not create generic article layouts unless the page is actually an informational page.
 - About, privacy, terms, sitemap, and legal pages may use content layouts, but should still follow the visual rules.
 
-## 15. Navigation and routing rules
+## 16. Trust, E-E-A-T, and transparency architecture
+
+Trust signals should be useful to users, not spammy.
+
+Core principles:
+
+- Trust is more important than decorative expertise claims.
+- Show real ownership, maintenance, corrections, and limitations.
+- Do not add giant author cards on every page.
+- Do not add author boxes to pure utility pages where they feel like SEO clutter.
+- Do not fake “reviewed by” language.
+- Do not fake freshness with automatic dates.
+- Do not invent credentials, awards, employer history, school names, addresses, phone numbers, team size, or certifications.
+- Do not imply official status, government affiliation, medical authority, legal authority, financial authority, or scientific time-source authority.
+
+Required trust architecture when implemented:
+
+- `/about`
+  - identifies Suhas Sunder as creator and maintainer
+  - mentions software engineer
+  - mentions engineering graduate
+  - mentions master’s-degree holder
+  - explains that iLoveTimers is an independent browser-based time tools site
+  - explains maintenance, practical utility, browser limitations, and contact paths
+
+- `/author/suhas-sunder`
+  - canonical identity page for Suhas
+  - linked from About and selected high-trust pages
+  - concise bio, role, credentials, and site responsibilities
+  - no unnecessary personal details
+
+- `/contact`
+  - bug reports
+  - timer accuracy issues
+  - calculator result issues
+  - accessibility issues
+  - correction requests
+  - privacy/copyright/legal questions
+  - general feedback
+
+- `/how-ilovetimers-is-made` or `/editorial-guidelines`
+  - how tools are created and checked
+  - how calculator formulas are reviewed
+  - how browser, timezone, date, and audio limitations are disclosed
+  - how corrections are handled
+  - how review dates are used
+  - what the site does not claim to be
+
+- `/copyright` or `/dmca-copyright`
+  - copyright concern process
+  - original tools and original explanatory content
+  - contact path
+
+- Existing trust pages:
+  - `/privacy`
+  - `/terms`
+  - `/cookies`
+  - `/sitemap`
+
+Use compact maintainer/review snippets only where they help, especially:
+
+- `/atomic-clock`
+- `/clock-with-milliseconds`
+- `/world-clock-with-milliseconds`
+- `/utc-clock`
+- `/epoch-unix-time-clock`
+- `/unix-timestamp-converter`
+- `/time-zone-converter`
+- `/time-zone-meeting-planner`
+- `/military-time-converter`
+- `/milliseconds-converter`
+- `/time-calculator`
+- `/time-duration-calculator`
+- `/date-calculator`
+- `/date-duration-calculator`
+- `/business-days-calculator`
+- `/workdays-calculator`
+- `/work-hours-calculator`
+- `/time-card-calculator`
+- `/weekly-timesheet-calculator`
+- `/billable-hours-calculator`
+- `/reaction-time-test`
+- `/breathing-timer`
+- `/sleep-timer`
+
+Do not place bulky author modules on basic preset timer pages unless explicitly requested.
+
+## 17. Accuracy and limitation disclosure rules
+
+Use visible limitation notes where they help the user understand the tool.
+
+Add or preserve limitation notes for:
+
+- Atomic/exact clocks:
+  - disclose whether the page uses browser/device time or an external source
+  - do not claim official atomic precision unless actually implemented
+
+- Millisecond clocks and stopwatches:
+  - disclose browser, device performance, system clock, and rendering limitations
+
+- UTC, Unix, and epoch tools:
+  - disclose device/system time dependency where relevant
+  - clearly distinguish seconds and milliseconds
+
+- Timezone tools:
+  - disclose timezone data, selected-location, and daylight-saving assumptions where relevant
+
+- Date calculators:
+  - disclose inclusive/exclusive counting where relevant
+
+- Business/workday calculators:
+  - disclose weekend and holiday assumptions
+
+- Work hours, time card, weekly timesheet, and billable-hour tools:
+  - disclose break, rounding, overtime, payroll, accounting, and legal assumptions where relevant
+
+- Alarm pages:
+  - disclose browser audio, permissions, background tab, and device sleep limitations
+
+- Metronome/BPM pages:
+  - disclose browser audio scheduling limitations where relevant
+
+- Reaction time pages:
+  - disclose device, browser, input, and display latency
+
+- Breathing/sleep pages:
+  - general timing only
+  - no medical claims
+
+## 18. Structured data and schema rules
+
+Structured data must match visible content.
+
+Allowed schema types when accurate:
+
+- `WebSite`
+- `Organization` or site/brand entity
+- `Person`
+- `ProfilePage`
+- `SoftwareApplication`
+- `FAQPage`
+- `BreadcrumbList`
+- `Article` only for article-like guide/reference pages, not pure tool interfaces
+
+Rules:
+
+- `ProfilePage` and `Person` belong on `/author/suhas-sunder` when that page exists.
+- `Person` claims must be visible on the author or About page.
+- `Organization` claims must be visible and accurate.
+- `SoftwareApplication` may be used for real tool pages when the main content is the interactive tool.
+- `FAQPage` may be used only when the same FAQ is visibly rendered.
+- `BreadcrumbList` must reflect visible or valid navigational structure.
+- `dateModified` must match a visible manual date where used.
+- Do not add fake ratings.
+- Do not add fake reviews.
+- Do not add `aggregateRating` unless the site has a real visible review system.
+- Do not add fake pricing or availability claims.
+- Do not add hidden credential claims.
+- Do not add fake organization address or contact details.
+- Do not add schema that implies official, medical, legal, financial, payroll, or scientific authority.
+- JSON-LD must be deterministic between SSR and first client render.
+
+## 19. Date discipline rules
+
+Use dates carefully.
+
+- Prefer “Last reviewed” for tool pages.
+- Use “Last updated” only when that wording is accurate.
+- Do not automatically refresh dates.
+- Do not change dates for insignificant edits.
+- Update review dates only after meaningful content, tool behavior, examples, FAQs, assumptions, or limitation notes were reviewed.
+- If structured data uses `dateModified`, the visible date must match.
+- Do not show a date if it cannot be maintained honestly.
+- Do not add “reviewed by” unless there is a real separate reviewer.
+
+## 20. Navigation, routing, and canonical rules
 
 - Preserve all public route paths.
-- Do not add new public routes unless explicitly requested.
 - Do not remove `/free-online-timers`.
 - `/` is the main homepage.
 - `/free-online-timers` is the archived four-timer homepage experience.
 - Header/nav should stay clean and minimal.
 - Do not overload the top nav.
 - The More menu/directory should remain searchable and usable.
-- Internal links must point only to real routes.
+- The footer intentionally contains the full grouped route directory. Preserve the established footer layout, information density, mobile expansion behavior, trust links, ownership attribution, and analytics preferences unless the user explicitly asks to reduce it.
+- Do not redesign or compact the footer merely to make it more minimal. Future passes may fix broken, duplicate, redirected, inaccessible, or noncanonical footer links, but should keep all useful canonical routes discoverable and keep redirect aliases out of the footer.
+- Internal links must point only to real canonical routes.
+- Do not link internally to redirect aliases.
 - If adding/removing a public route, update:
   - route config
   - HTML sitemap
   - XML sitemap
   - nav/directory search data where appropriate
-- Do not create typo aliases unless explicitly requested.
+  - related links where appropriate
+  - metadata where appropriate
+  - tests/audits where appropriate
 
-## 16. Homepage and `/free-online-timers`
+- Do not create typo aliases unless explicitly requested.
+- Do not create many indexable keyword-variant pages.
+- Use redirects for useful synonyms only when they improve users and avoid duplicate content.
+- Redirect aliases must not be listed in XML sitemap.
+- XML sitemap should contain canonical indexable URLs only.
+- Do not include noindex pages, redirects, or temporary URLs in XML sitemap.
+- Canonical URLs should be stable and self-referential unless there is an intentional consolidation strategy.
+
+Approved route expansion direction for the current SEO/tool workstream:
+
+- `/timer-stopwatch`
+  - real combined countdown timer and stopwatch utility
+  - not a doorway page
+
+- `/study-stopwatch`
+  - real count-up study/focus stopwatch
+  - distinct from `/study-timer`, `/focus-session-timer`, and `/pomodoro-timer`
+
+- `/timer-clock`
+  - real clock plus countdown timer display
+  - useful for classrooms, meetings, exams, presentations, and workouts
+
+Possible later route:
+
+- `/us-time-zones-clock`
+  - only if implemented as a useful US timezone tool
+  - do not create many state/city/timezone doorway pages
+
+Use redirects or canonical handling instead of indexable duplicates for variants such as:
+
+- `/stopwatch-timer`
+- `/timer-and-stopwatch`
+- `/online-timer-stopwatch`
+- `/stopwatch-countdown`
+- `/countdown-stopwatch`
+- `/focus-stopwatch`
+- `/stopwatch-for-study`
+- `/study-timer-stopwatch`
+- `/clock-timer`
+- `/online-clock-timer`
+- `/military-time-calculator`
+- `/army-time-converter`
+- `/military-time-translator`
+- `/ms-to-seconds`
+- `/milliseconds-to-seconds`
+- `/utc-time-now`
+- `/current-unix-timestamp`
+
+Do not create indexable pages like:
+
+- `/2105-military-time`
+- `/1730-military-time`
+- `/1000ms-to-seconds`
+- `/60000ms-to-seconds`
+- `/ist-time-now`
+- `/india-time-now`
+
+## 21. Internal linking rules
+
+Internal links should help users choose the next useful tool.
+
+- Use contextual links, not exact-match spam.
+- Use descriptive anchors that explain the next page naturally.
+- Do not add giant repeated link blocks to every page.
+- Do not make every page link to every other page.
+- Do not hide important pages so they are reachable only from the sitemap.
+- Important pages should be linked from relevant hubs, sibling tools, footer where appropriate, and contextual sections.
+- Related tools should follow user journeys, not keyword clusters alone.
+- Link anchors should be concise and useful.
+- Avoid repetitive anchors across hundreds of pages.
+
+Important clusters:
+
+- Stopwatch cluster:
+  - `/stopwatch`
+  - `/stopwatch-with-milliseconds`
+  - `/timer-stopwatch`
+  - `/study-stopwatch`
+  - `/count-up-timer`
+
+- Study/focus cluster:
+  - `/study-timer`
+  - `/study-stopwatch`
+  - `/focus-session-timer`
+  - `/pomodoro-timer`
+  - `/break-timer`
+
+- Millisecond/exact-time cluster:
+  - `/clock-with-milliseconds`
+  - `/world-clock-with-milliseconds`
+  - `/atomic-clock`
+  - `/utc-clock`
+  - `/epoch-unix-time-clock`
+  - `/milliseconds-converter`
+  - `/millisecond-timer`
+
+- Military time cluster:
+  - `/military-time-converter`
+  - `/military-time-clock`
+  - `/24-hour-clock`
+  - `/12-hour-clock`
+
+- Timezone/meeting cluster:
+  - `/time-zone-converter`
+  - `/time-zone-meeting-planner`
+  - `/world-clock`
+  - `/utc-clock`
+
+- Date calculator cluster:
+  - `/date-calculator`
+  - `/date-duration-calculator`
+  - `/days-until-calculator`
+  - `/weeks-between-dates-calculator`
+  - `/months-between-dates-calculator`
+  - `/business-days-calculator`
+  - `/week-number-calculator`
+
+- Work/time tracking cluster:
+  - `/work-hours-calculator`
+  - `/time-card-calculator`
+  - `/weekly-timesheet-calculator`
+  - `/billable-hours-calculator`
+  - `/billable-hours-clock`
+
+- Alarm/audio cluster:
+  - `/online-alarm-clock`
+  - `/alarm-timer`
+  - `/metronome`
+  - `/bpm-tapper`
+
+HTML sitemap/category pages should group tools by user task, not just keyword:
+
+- Timers
+- Stopwatches
+- Clocks
+- World time and time zones
+- Date and time calculators
+- Work/time tracking
+- Fitness timers
+- Kitchen timers
+- Classroom, meeting, and presentation timers
+- Fun/experimental clocks
+- Trust and site information
+
+## 22. Homepage and `/free-online-timers`
 
 - `/` is the current main landing/navigation homepage.
 - `/free-online-timers` preserves the old four-timer homepage.
@@ -514,7 +883,7 @@ Do not rename state variables, calculation helpers, or exported route functions 
   - light mode
   - dark mode
 
-## 17. Accessibility rules
+## 23. Accessibility rules
 
 - Each page should have one visible H1.
 - Heading order should be sensible.
@@ -528,13 +897,14 @@ Do not rename state variables, calculation helpers, or exported route functions 
 - Theme toggle must have accurate accessible labels:
   - Switch to dark mode
   - Switch to light mode
+
 - `aria-pressed` or equivalent state should remain accurate where used.
 - Reaction/tap-heavy pages must preserve keyboard behavior where supported.
 - Do not rely only on color to communicate critical state if text/status labels already exist.
 - No black text on dark backgrounds.
 - No unreadable muted text in dark mode.
 
-## 18. Privacy and client-side behavior
+## 24. Privacy and client-side behavior
 
 - Do not send timer names, custom notes, user-entered labels, saved sessions, typed content, worksheet-style content, or route-specific user data to analytics unless explicitly implemented with privacy review.
 - Do not add third-party scripts without explicit user approval.
@@ -542,8 +912,11 @@ Do not rename state variables, calculation helpers, or exported route functions 
 - Do not encode user private content into share URLs unless the route intentionally supports it and the privacy implications are handled.
 - Be truthful about local browser behavior.
 - Preserve existing localStorage behavior and keys unless a task explicitly requires migration.
+- Cookie consent, if present, must not block tool usage.
+- Cookie consent, if present, must not cause large layout shift.
+- Privacy and cookie pages must match the actual scripts and storage behavior used on the site.
 
-## 19. Testing and validation expectations
+## 25. Testing and validation expectations
 
 For code changes, run:
 
@@ -614,7 +987,40 @@ Do not leave temporary files behind:
 
 If a test script is useful permanently, place it in an appropriate scripts/tests location and document it.
 
-## 20. Reporting expectations
+## 26. Automated SEO and quality audit expectations
+
+When adding durable scripts or checks, prefer lightweight repo-local audits that do not require internet access.
+
+Useful audits include:
+
+- duplicate title detection
+- duplicate meta description detection
+- missing title detection
+- missing meta description detection
+- missing canonical detection
+- sitemap canonical validation
+- redirects in sitemap detection
+- noindex URL in sitemap detection
+- broken internal link detection
+- orphan page detection
+- internal links pointing to redirect aliases
+- thin content detection
+- repeated intro detection
+- repeated FAQ detection
+- visible FAQ versus FAQPage schema validation
+- structured data hidden-claim detection where practical
+- fake rating/review schema detection
+- visible date versus `dateModified` validation where practical
+- route metadata completeness
+- trust page existence
+- author page existence
+- About page links to author/contact/methodology
+- selected high-trust pages have visible limitation notes
+- book/publication-style author checks are not relevant to iLoveTimers unless such content is later added
+
+These audits should help prevent future low-value, scaled-content, schema, and trust regressions.
+
+## 27. Reporting expectations
 
 Every Codex pass should report:
 
@@ -626,10 +1032,34 @@ Every Codex pass should report:
 - browser checks run
 - remaining risks
 - temporary files removed or intentionally kept
+- whether any pre-existing worktree changes were present
+- whether any recommended follow-up work remains
 
 Do not claim success from build/typecheck alone when the task involved rendered UI.
 
 For visual tasks, report actual browser/screenshot QA results.
+
+For SEO/content tasks, report:
+
+- routes changed
+- metadata changed
+- canonical changes
+- sitemap changes
+- schema changes
+- internal links changed
+- pages intentionally skipped
+- any risk of duplicate or thin content
+- whether visible content matches schema
+
+For trust/E-E-A-T tasks, report:
+
+- trust pages added or updated
+- author/maintainer signals added
+- where maintainer snippets were added and why
+- where they were intentionally not added and why
+- visible dates added or changed
+- limitation notes added
+- confirmation that no fake credentials, reviews, ratings, or hidden claims were added
 
 For AdSense/ad placeholder tasks, report:
 
@@ -649,7 +1079,7 @@ For dark mode tasks, report:
 - no system mode returned
 - no hydration errors
 
-## 21. Current strict priorities
+## 28. Current strict priorities
 
 When instructions conflict, prioritize in this order:
 
@@ -659,9 +1089,12 @@ When instructions conflict, prioritize in this order:
 4. Use shared primitives and tokens.
 5. Keep light mode default and dark mode simple.
 6. Keep ads AdSense-conscious and non-intrusive.
-7. Keep homepage minimal but intentionally designed.
-8. Keep SEO/content useful and below the utility.
-9. Keep routes, metadata, sitemap, and localStorage stable.
-10. Validate in the browser, not only by build output.
+7. Keep SEO/content useful, honest, and below the utility.
+8. Avoid scaled, duplicate, thin, or keyword-only pages.
+9. Preserve trust, transparency, and visible methodology.
+10. Keep homepage minimal but intentionally designed.
+11. Keep routes, metadata, sitemap, schema, canonicals, redirects, and localStorage stable.
+12. Validate in the browser, not only by build output.
+13. Do not commit or push without explicit approval.
 
 If a requested implementation would violate these rules, stop and choose the safer implementation that preserves the product direction.

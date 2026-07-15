@@ -8,8 +8,6 @@ import type {
   ReactNode,
   SelectHTMLAttributes,
 } from "react";
-import { useLocation } from "react-router";
-import { getRouteMonetization } from "~/clients/config/monetization";
 import { cx } from "./utils";
 
 type DivProps = ComponentPropsWithoutRef<"div">;
@@ -34,7 +32,6 @@ export function PageShell({ className, children, ...props }: DivProps) {
       {...props}
     >
       {children}
-      <ToolAdSlot slot="bottom-banner" className="pt-8 pb-10 sm:pt-10 sm:pb-12" />
     </main>
   );
 }
@@ -62,7 +59,6 @@ export function ToolHero({
         {display}
         {controls ? <ControlRail>{controls}</ControlRail> : null}
         {settings ? <div className="ilt-settings-width mx-auto w-full">{settings}</div> : null}
-        <ToolAdSlot slot="top-banner" className="timer-mobile-heading-ad pt-3 pb-0 lg:hidden" />
         {title || description || meta ? (
           <div className="mx-auto w-full max-w-5xl pt-2">
             {meta ? <div className="mb-2 text-sm text-[var(--ilt-text-muted)]">{meta}</div> : null}
@@ -386,7 +382,6 @@ export function SeoBand({
             {contentChildren.length > 0 ? (
               <>
                 {contentChildren[0]}
-                <ToolAdSlot slot="in-content-square" className="py-4 sm:py-6" />
                 {contentChildren.slice(1)}
               </>
             ) : null}
@@ -777,7 +772,7 @@ export function ContentPanel({ className, ...props }: DivProps) {
 export function AdPlaceholder({
   slot,
   variant,
-  label = "Advertisement",
+  label = "Advertisements",
   className,
 }: {
   slot?: AdSlotType;
@@ -800,7 +795,7 @@ export function AdPlaceholder({
 
   return (
     <aside
-      aria-label="Advertisement"
+      aria-label="Advertisements"
       data-ad-placeholder
       data-ad-slot={resolvedSlot}
       className={cx(
@@ -811,31 +806,5 @@ export function AdPlaceholder({
     >
       <span>{label}</span>
     </aside>
-  );
-}
-
-export function ToolAdSlot({
-  slot,
-  className,
-}: {
-  slot: AdSlotType;
-  className?: string;
-}) {
-  const location = useLocation();
-  const monetization = getRouteMonetization(location.pathname);
-  const isAllowed =
-    monetization?.eligibility === "eligible-tool-page" &&
-    monetization.allowedSlots.includes(slot);
-
-  if (!isAllowed) return null;
-
-  return (
-    <div
-      data-tool-ad-slot-wrapper
-      data-tool-ad-slot={slot}
-      className={cx("no-print w-full px-[var(--ilt-page-x)]", className)}
-    >
-      <AdPlaceholder slot={slot} />
-    </div>
   );
 }

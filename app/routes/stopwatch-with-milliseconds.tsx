@@ -27,11 +27,13 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
 const SITE_URL = "https://www.ilovetimers.com";
 const ROUTE_PATH = "/stopwatch-with-milliseconds";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 type Precision = "milliseconds" | "hundredths" | "seconds";
 type Lap = { n: number; totalMs: number; splitMs: number };
@@ -465,11 +467,12 @@ export default function StopwatchWithMillisecondsPage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Stopwatch With Milliseconds",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
+        dateModified: REVIEW_DATE.iso,
         description:
           "A browser-based stopwatch with milliseconds visible by default, precision options, laps, copy, and fullscreen support.",
       },
@@ -527,8 +530,7 @@ export default function StopwatchWithMillisecondsPage() {
           <p>
             Use it for practice timing, drills, classroom observations,
             speedcubing or speedrun practice, video and audio timing checks, and
-            quick elapsed-time measurement. It is a practical browser stopwatch,
-            not a calibrated measurement instrument.
+            quick elapsed-time measurement.
           </p>
           <p>
             For a countdown that starts from a millisecond duration, use the{" "}
@@ -558,9 +560,7 @@ export default function StopwatchWithMillisecondsPage() {
             controls.
           </p>
           <p>
-            Browser timing can be affected by inactive tabs, power-saving mode,
-            device performance, and display refresh rate. For reaction-style
-            practice, try the{" "}
+            For reaction-style practice, try the{" "}
             <a className="ilt-content-link" href="/reaction-time-test">
               reaction time test
             </a>{" "}
@@ -571,6 +571,19 @@ export default function StopwatchWithMillisecondsPage() {
             .
           </p>
         </ContentSection>
+
+        <ToolTrustNote reviewDate={REVIEW_DATE}>
+          <p>
+            This stopwatch is intended for practical browser-based timing.
+            Display refresh, browser scheduling, device performance, and the
+            delay between an event and the user's input can affect
+            millisecond-level readings.
+          </p>
+          <p>
+            It is not a replacement for certified sports, laboratory, or
+            competition timing equipment.
+          </p>
+        </ToolTrustNote>
 
         <ContentSection title="Stopwatch with milliseconds FAQ">
           {FAQ_ITEMS.map((item) => (

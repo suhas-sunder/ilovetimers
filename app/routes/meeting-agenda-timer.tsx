@@ -572,11 +572,11 @@ export default function MeetingAgendaTimerPage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Meeting Agenda Timer",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based meeting agenda timer with editable agenda items, item timing, total remaining time, and fullscreen display.",
       },

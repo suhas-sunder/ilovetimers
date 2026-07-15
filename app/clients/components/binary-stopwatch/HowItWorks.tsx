@@ -28,41 +28,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Binary Stopwatch (practice mode, countdown, fullscreen)",
-    description:
-      "Use the Binary Stopwatch as a stopwatch (count up) or a countdown timer (count down). Practice reading binary time with a bit-weight legend, presets, dim mode, fullscreen controls, and an optional soft alarm at zero.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose Stopwatch or Timer mode",
-        text: "Use Stopwatch to count up from zero, or Timer to count down from a preset or custom seconds.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, and reset quickly",
-        text: "Press Space (or use the Start button) to start/pause, and press R (or Reset) to restart the current mode from its base value.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use Practice mode to hide the answer",
-        text: "Turn on Practice mode to hide the decimal time. Decode the bits first, then Reveal to verify.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Turn on Weights to decode faster",
-        text: "Enable Weights to see the row values. Add the weights of lit bits to read Hours, Minutes, and Seconds.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen and adjust visibility",
-        text: "Use fullscreen for distance viewing and Dim mode for reduced glare. In fullscreen you can tap/click the display to start/pause.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -109,7 +74,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

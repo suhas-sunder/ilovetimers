@@ -32,36 +32,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Exam Timer (fullscreen countdown for timed practice)",
-    description:
-      "Run a distraction-free exam-style countdown. Choose a preset or custom minutes, start/pause/reset with keyboard shortcuts, use fullscreen for a big display, and optionally enable sound warnings and final beeps.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose the duration",
-        text: "Select a preset (5 to 180 minutes) or enter custom minutes (1 to 360). While the timer is running, duration controls are disabled to prevent accidental changes.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Configure sound and warnings (optional)",
-        text: "Turn Sound on if you want beeps. Enable Warnings for a 5-minute and/or 1-minute pacing beep. Enable Final beeps if you want short beeps in the last 5 seconds.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, and reset",
-        text: "Press Start (or Space) to begin. Press again to pause. Press Reset (or R) to return to the full selected duration.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen for a clean display",
-        text: "Press Fullscreen (or F) for a large, readable countdown. In fullscreen, click/tap the time to start or pause quickly. Press Esc to exit.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -108,7 +78,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

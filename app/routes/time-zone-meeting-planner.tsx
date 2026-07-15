@@ -16,6 +16,7 @@ import {
   ToolFrame as Card,
   ToolHero,
 } from "~/clients/components/ui/foundation";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
 type ZoneOption = {
   value: string;
@@ -42,6 +43,7 @@ const SITE_URL = "https://www.ilovetimers.com";
 const ROUTE_PATH = "/time-zone-meeting-planner";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 const TZ_OPTIONS: ZoneOption[] = [
   { value: "UTC", label: "UTC" },
@@ -353,11 +355,11 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
 
         <SettingGroup
           title="Meeting details"
-          description="Date matters because daylight saving rules can change across the year."
+          description="The selected date is the UTC reference date for the candidate hours. Local dates shown for each zone may differ."
         >
           <SettingRow className="sm:grid-cols-2">
             <Field
-              label="Meeting date"
+              label="UTC reference date"
               type="date"
               value={date}
               onChange={(event) => setDate(event.currentTarget.value || today)}
@@ -519,11 +521,12 @@ export default function TimeZoneMeetingPlannerPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Time Zone Meeting Planner",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
+        dateModified: REVIEW_DATE.iso,
         description:
           "A browser-based planner for comparing meeting times across multiple time zones with date, duration, work windows, candidate times, and copy or share summary.",
       },
@@ -615,21 +618,23 @@ export default function TimeZoneMeetingPlannerPage({
           </p>
         </ContentSection>
 
-        <ContentSection title="Accuracy and limitations">
+        <ToolTrustNote reviewDate={REVIEW_DATE}>
           <p>
-            Time zone results depend on the browser's time zone data, the date
-            you choose, and daylight saving rules for each location. For
-            critical deadlines, travel, or official scheduling, check the
-            final time with the relevant calendar or local source.
+            Timezone output uses browser-supported timezone data, and
+            daylight-saving rules can change offsets. The selected date is used
+            as the UTC reference date for the candidate hours, so the displayed
+            local calendar date can be earlier or later in another zone.
           </p>
           <p>
-            UTC is used as the shared comparison point. The{" "}
+            For critical deadlines, travel, or official scheduling, check the
+            final time with the relevant calendar or local source. UTC is used
+            as the shared comparison point; the{" "}
             <a className="ilt-content-link" href="/utc-clock">
               UTC clock
             </a>{" "}
             can help when a schedule is written directly in UTC.
           </p>
-        </ContentSection>
+        </ToolTrustNote>
 
         <ContentSection title="Time zone meeting planner FAQ">
           <h3>Does this account for daylight saving time?</h3>

@@ -28,41 +28,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to view the current time in binary (BCD or pure binary)",
-    description:
-      "Use the Binary Clock to display your current local time in binary. Switch between BCD and pure binary, toggle seconds, choose 12/24-hour time, copy a snapshot, and use fullscreen for a clean display.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Open the Binary Clock",
-        text: "The page shows your current local time immediately, along with a binary representation of the time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose a binary mode (BCD or pure)",
-        text: "Use BCD for digit-by-digit binary (each decimal digit becomes 4 bits) or pure binary to show hours, minutes, and seconds as binary numbers.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Adjust display options",
-        text: "Toggle seconds on/off and switch between 12-hour and 24-hour time.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Copy a snapshot",
-        text: "Use Copy to capture the formatted time, date, timezone label, binary output, and ISO timestamp.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Use fullscreen and shortcuts",
-        text: "Toggle fullscreen for a wall display and use keyboard shortcuts for fast control (F, C, S, B, 1, 2, Esc).",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -109,7 +74,6 @@ export default function HowItWorks({
 
   return (
     <section className="space-y-4">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

@@ -22,11 +22,13 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import Disclaimer from "~/clients/components/atomic-clock/Disclaimer";
 import FAQ from "~/clients/components/atomic-clock/FAQ";
 import HowItWorks from "~/clients/components/atomic-clock/HowItWorks";
 import KeyboardShortcuts from "~/clients/components/atomic-clock/KeyboardShortcuts";
 import PopularUseCases from "~/clients/components/atomic-clock/PopularUseCases";
+import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+
+const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
 
 /* =========================================================
    META
@@ -396,6 +398,7 @@ export default function AtomicClockPage({
         "@type": "WebPage",
         name: "Atomic Clock",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "Atomic clock style live time display with optional milliseconds and fullscreen mode.",
       },
@@ -445,10 +448,23 @@ export default function AtomicClockPage({
             .
           </p>
         </ContentSection>
+        <ToolTrustNote reviewDate={REVIEW_DATE}>
+          <p>
+            This page displays atomic-style time using the clock provided by
+            your device. It is not directly synchronized with an atomic clock,
+            NTP server, or certified time service. Any difference in the
+            device's system clock will also appear here.
+          </p>
+          <p>
+            Millisecond digits are refreshed by the browser. Display refresh,
+            browser scheduling, background throttling, and device performance
+            can affect how smoothly they appear without changing the page's
+            underlying device-clock time source.
+          </p>
+        </ToolTrustNote>
         <KeyboardShortcuts />
         <PopularUseCases />
         <FAQ />
-        <Disclaimer />
       </SeoBand>
 
     </PageShell>

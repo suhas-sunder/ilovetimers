@@ -33,36 +33,6 @@ export default function HowItWorks({
   const abs = (href: string) =>
     href.startsWith("http") ? href : `${baseUrl}${href}`;
 
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: "How to use the Fullscreen Timer (big projector-friendly countdown)",
-    description:
-      "Run a large, readable fullscreen countdown for classrooms, projectors, and smartboards. Choose a preset or set a custom time, start/pause/reset with keyboard shortcuts, enable optional sound, and use loop mode to repeat the same interval.",
-    url: canonicalUrl,
-    step: [
-      {
-        "@type": "HowToStep",
-        name: "Choose a duration",
-        text: "Pick a preset (1 to 60 minutes) or type a custom time (ss, mm:ss, or hh:mm:ss). Press Set or click out of the input to apply it.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Choose options (optional)",
-        text: "Turn Sound on for a finish beep. Turn Loop on if you want the timer to restart automatically at zero for repeating rounds or rotations.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Start, pause, and reset",
-        text: "Press Start (or Space) to begin. Press again to pause. Press Reset (or R) to return to the selected duration.",
-      },
-      {
-        "@type": "HowToStep",
-        name: "Go fullscreen for the big display",
-        text: "Press Fullscreen (or F) for a large, distraction-free view. In fullscreen you can click/tap the time display to start or pause. Press Esc to exit.",
-      },
-    ],
-  };
 
   const Kbd = ({ children }: { children: React.ReactNode }) => (
     <kbd className="ilt-keycap px-2 py-1 font-mono text-[11px] font-semibold text-[var(--ilt-text-primary)]">
@@ -109,7 +79,6 @@ export default function HowItWorks({
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-10">
-      <JsonLd data={howToLd} />
 
       <div className="ilt-surface-card p-6">
         {/* Header */}

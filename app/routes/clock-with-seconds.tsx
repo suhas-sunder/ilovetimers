@@ -367,11 +367,11 @@ export default function ClockWithSecondsPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "Clock With Seconds",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based live clock with seconds, 12 and 24-hour modes, date toggle, copy, and fullscreen support.",
       },

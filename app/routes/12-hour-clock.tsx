@@ -365,11 +365,11 @@ export default function TwelveHourClockPage({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         name: "12 Hour Clock",
         url: ROUTE_URL,
-        applicationCategory: "UtilityApplication",
-        operatingSystem: "Any",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web browser",
         description:
           "A browser-based live 12-hour AM/PM clock with seconds, date, 24-hour comparison, copy, and fullscreen support.",
       },

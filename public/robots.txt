@@ -1,5 +1,6 @@
 # robots.txt
 User-agent: *
 Allow: /
+Allow: /sitemap.xml
 
 Sitemap: https://www.ilovetimers.com/sitemap.xml

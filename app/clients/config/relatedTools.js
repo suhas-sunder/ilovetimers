@@ -17,6 +17,9 @@ export const FOOTER_TOOL_LINKS = Object.freeze([
 ]);
 
 export const PRIORITY_CONTEXTUAL_ROUTES = Object.freeze([
+  "/timer-stopwatch",
+  "/timer-clock",
+  "/study-stopwatch",
   "/stopwatch",
   "/stopwatch-with-milliseconds",
   "/study-timer",
@@ -46,20 +49,45 @@ export const PRIORITY_CONTEXTUAL_ROUTES = Object.freeze([
 const group = (heading, links) => Object.freeze({ heading, links: Object.freeze(links) });
 
 export const RELATED_TOOL_LINKS = Object.freeze({
+  "/countdown-timer": group("Related countdown and elapsed-time tools", [
+    { to: "/timer-stopwatch", label: "Switch between a countdown and stopwatch" },
+    { to: "/timer-clock", label: "Keep current local time beside the countdown" },
+    { to: "/online-timer", label: "Use presets, sound, and optional looping" },
+    { to: "/multiple-timers", label: "Run several independent countdowns" },
+    { to: "/stopwatch", label: "Measure open-ended elapsed time" },
+  ]),
+  "/timer-clock": group("Choose another clock or timer view", [
+    { to: "/countdown-timer", label: "Open the dedicated countdown timer" },
+    { to: "/digital-clock", label: "View a standard local digital clock" },
+    { to: "/clock-with-seconds", label: "Focus on current time with seconds" },
+    { to: "/timer-stopwatch", label: "Switch between countdown and stopwatch modes" },
+  ]),
+  "/timer-stopwatch": group("Choose another timing view", [
+    { to: "/countdown-timer", label: "Open the dedicated countdown timer" },
+    { to: "/stopwatch", label: "Use the general lap stopwatch" },
+    { to: "/stopwatch-with-milliseconds", label: "Focus on a millisecond stopwatch display" },
+    { to: "/study-stopwatch", label: "Track an open-ended study session" },
+  ]),
   "/stopwatch": group("More ways to measure elapsed time", [
+    { to: "/timer-stopwatch", label: "Use a countdown and stopwatch together" },
     { to: "/stopwatch-with-milliseconds", label: "Use a stopwatch with a millisecond display" },
     { to: "/count-up-timer", label: "Run a count-up timer" },
+    { to: "/study-stopwatch", label: "Track an open-ended study session" },
     { to: "/countdown-timer", label: "Count down to a finish" },
   ]),
   "/stopwatch-with-milliseconds": group("Related millisecond tools", [
     { to: "/stopwatch", label: "Use the standard stopwatch" },
+    { to: "/timer-stopwatch", label: "Combine a countdown and stopwatch" },
     { to: "/millisecond-timer", label: "Set a millisecond countdown" },
     { to: "/clock-with-milliseconds", label: "View local time with milliseconds" },
+    { to: "/milliseconds-converter", label: "Convert millisecond values" },
   ]),
   "/count-up-timer": group("Related elapsed-time tools", [
     { to: "/stopwatch", label: "Measure laps with the stopwatch" },
+    { to: "/timer-stopwatch", label: "Switch between counting down and up" },
+    { to: "/study-stopwatch", label: "Track an open-ended study session" },
     { to: "/meeting-count-up-timer", label: "Track how long a meeting runs" },
-    { to: "/study-timer", label: "Use a fixed study countdown" },
+    { to: "/countdown-timer", label: "Count down from a fixed duration" },
   ]),
   "/speedcubing-timer": group("Other reaction and elapsed-time tools", [
     { to: "/stopwatch-with-milliseconds", label: "Use a millisecond stopwatch" },
@@ -78,16 +106,26 @@ export const RELATED_TOOL_LINKS = Object.freeze({
   ]),
 
   "/study-timer": group("Choose another focus format", [
+    { to: "/study-stopwatch", label: "Track an open-ended study session" },
     { to: "/focus-session-timer", label: "Run one focused work block" },
     { to: "/pomodoro-timer", label: "Alternate work and break cycles" },
     { to: "/break-timer", label: "Set a short break countdown" },
   ]),
+  "/study-stopwatch": group("Choose another study timing method", [
+    { to: "/study-timer", label: "Set a fixed study countdown" },
+    { to: "/focus-session-timer", label: "Run one planned focus block" },
+    { to: "/pomodoro-timer", label: "Alternate repeated work and break cycles" },
+    { to: "/stopwatch", label: "Use the general lap stopwatch" },
+  ]),
   "/focus-session-timer": group("Other ways to structure focus time", [
+    { to: "/study-stopwatch", label: "Track study time without a fixed end" },
     { to: "/study-timer", label: "Set a fixed study countdown" },
     { to: "/pomodoro-timer", label: "Use repeated focus and break cycles" },
+    { to: "/break-timer", label: "Take a standalone timed break" },
     { to: "/productivity-timer", label: "Open the broader productivity timer" },
   ]),
   "/pomodoro-timer": group("Related study and break timers", [
+    { to: "/study-stopwatch", label: "Track one open-ended study session" },
     { to: "/focus-session-timer", label: "Run a single focus session" },
     { to: "/study-timer", label: "Set a straightforward study timer" },
     { to: "/break-timer", label: "Time a short rest" },
@@ -101,6 +139,15 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/study-timer", label: "Start a fixed study countdown" },
     { to: "/pomodoro-timer", label: "Run a Pomodoro cycle" },
     { to: "/focus-session-timer", label: "Begin one focused block" },
+    { to: "/countdown-timer", label: "Set a general-purpose countdown" },
+  ]),
+  "/online-timer": group("Choose another timer workflow", [
+    { to: "/countdown-timer", label: "Use the definitive general countdown" },
+    { to: "/timer-clock", label: "Keep current local time visible while counting down" },
+    { to: "/timer-stopwatch", label: "Combine countdown and stopwatch modes" },
+    { to: "/multiple-timers", label: "Run several countdowns at once" },
+    { to: "/study-timer", label: "Set a focused study countdown" },
+    { to: "/pomodoro-timer", label: "Run repeated work and break cycles" },
   ]),
   "/time-blocking-clock": group("Related planning and focus tools", [
     { to: "/productivity-timer", label: "Use a broader productivity timer" },
@@ -314,11 +361,13 @@ export const RELATED_TOOL_LINKS = Object.freeze({
   "/digital-clock": group("Other digital clock displays", [
     { to: "/full-screen-clock", label: "Open a digital clock fullscreen" },
     { to: "/clock-with-seconds", label: "View a clock with seconds" },
+    { to: "/timer-clock", label: "Add an independent countdown beside local time" },
     { to: "/analog-clock", label: "Switch to an analog clock" },
   ]),
   "/full-screen-clock": group("Related digital clocks", [
     { to: "/digital-clock", label: "Use the standard digital clock" },
     { to: "/clock-with-seconds", label: "Show local time with seconds" },
+    { to: "/timer-clock", label: "Show local time with a countdown" },
     { to: "/big-digital-clock", label: "Open a large digital display" },
   ]),
   "/clock-with-seconds": group("Other clock displays", [

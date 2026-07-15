@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   FullscreenBottomBar,
   FullscreenTopBar,
@@ -33,9 +34,9 @@ import PopularUseCases from "~/clients/components/count-up-timer/PopularUseCases
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Count Up Timer (Elapsed Time + Laps, Fullscreen)";
+  const title = "Count Up Timer Online | Track Elapsed Time";
   const description =
-    "Free count up timer to track elapsed time. Start, pause, record laps, reset, and go fullscreen for tasks, workouts, meetings, and experiments.";
+    "Track elapsed time from zero with a simple count-up timer. Start, pause, resume, reset, and use fullscreen for tasks, meetings, and long sessions.";
 
   const url = "https://www.ilovetimers.com/count-up-timer";
 
@@ -448,7 +449,7 @@ export default function CountUpTimerPage({
         name: "Count Up Timer",
         url,
         description:
-          "Count up timer for elapsed time and time-since tracking with fullscreen and lap splits.",
+          "A simple count-up timer for open-ended tasks, meetings, work sessions, and events with pause, reset, fullscreen, and optional lap checkpoints.",
       },
       {
         "@type": "BreadcrumbList",
@@ -479,11 +480,24 @@ export default function CountUpTimerPage({
 
       <ToolHero
         display={<CountUpTimerCard />}
-        title="Count Up Timer (Elapsed Time + Laps)"
-        description="Track elapsed time with start, pause, laps, reset, and a big fullscreen display."
+        title="Count Up Timer"
+        description="Track an open-ended task from zero with a simple whole-second display, pause and resume controls, optional checkpoints, and fullscreen."
       />
 
       <SeoBand>
+        <ContentSection title="A simple timer that counts upward">
+          <p>
+            This route keeps a readable whole-second count-up display for long
+            or open-ended tasks, meetings, work sessions, and events. It is not
+            tied to a study method or a planned finish time.
+          </p>
+          <p>
+            The existing Lap control can mark occasional checkpoints, but the
+            page remains centered on the running elapsed-time display. Use the
+            general stopwatch for detailed lap and split analysis, or the study
+            stopwatch for open-ended study sessions with session markers.
+          </p>
+        </ContentSection>
         <HowItWorks />
         <KeyboardShortcuts />
         <PopularUseCases />

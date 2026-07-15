@@ -17,6 +17,8 @@ import {
   FullscreenBottomBar,
   FullscreenTopBar,
   PageShell,
+  PresetChip,
+  PresetGroup,
   SeoBand,
   SecondaryActionRow,
   SettingGroup,
@@ -37,9 +39,9 @@ import PopularUseCases from "~/clients/components/countdown-timer/PopularUseCase
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Countdown Timer (Minutes + Seconds, Fullscreen)";
+  const title = "Countdown Timer Online | Start, Pause and Fullscreen";
   const description =
-    "Free countdown timer. Set minutes and seconds, start or pause, add time, reset, and go fullscreen for workouts, cooking, studying, meetings, and tasks.";
+    "Set a countdown timer with hours, minutes, and seconds. Start, pause, resume, reset, use quick presets, and open a clear fullscreen display.";
 
   const url = "https://www.ilovetimers.com/countdown-timer";
 
@@ -250,6 +252,18 @@ function CountUpTimerCard() {
     remainingRef.current = seed;
   }
 
+  function setPreset(minutes: number) {
+    const nextTotal = minutes * 60 * 1000;
+    setRunning(false);
+    stopRaf();
+    endRef.current = null;
+    setTotalMs(nextTotal);
+    totalMsRef.current = nextTotal;
+    setRemaining(nextTotal);
+    remainingRef.current = nextTotal;
+    syncInputsFromMs(nextTotal);
+  }
+
   function addSeconds(sec: number) {
     const deltaMs = sec * 1000;
 
@@ -360,6 +374,22 @@ function CountUpTimerCard() {
                 -0:10
               </Button>
             </ControlGroup>
+
+            <PresetGroup
+              title="Quick presets"
+              description="Choose a common duration or enter a custom value below."
+            >
+              {[1, 5, 10, 15, 30].map((minutes) => (
+                <PresetChip
+                  key={minutes}
+                  active={totalMs === minutes * 60 * 1000}
+                  onClick={() => setPreset(minutes)}
+                  disabled={running}
+                >
+                  {minutes}m
+                </PresetChip>
+              ))}
+            </PresetGroup>
 
             <SettingGroup
               title="Set countdown"
@@ -486,7 +516,7 @@ export default function CountDownTimerPage({
         name: "Countdown Timer",
         url,
         description:
-          "Countdown timer with minutes and seconds, start/pause, add time, reset, and fullscreen mode.",
+          "A general browser countdown with custom duration, start, pause, resume, reset, time adjustments, fullscreen, and keyboard shortcuts.",
       },
       {
         "@type": "BreadcrumbList",
@@ -517,11 +547,31 @@ export default function CountDownTimerPage({
 
       <ToolHero
         display={<CountUpTimerCard />}
-        title="Countdown Timer (Minutes + Seconds)"
-        description="Set a duration, start or pause, add time, reset, and use a big fullscreen display."
+        title="Countdown Timer"
+        description="Set a general countdown toward zero, then start, pause, resume, adjust, reset, or open the remaining time fullscreen."
       />
 
       <SeoBand>
+        <ContentSection title="A general countdown toward zero">
+          <p>
+            Choose a duration for cooking, work, study, meetings, exercise, or
+            an everyday task. Enter minutes and seconds directly; longer
+            durations can be entered as total minutes and are displayed with
+            hours when needed.
+          </p>
+          <p>
+            A <a className="ilt-content-link" href="/stopwatch">stopwatch</a>{" "}
+            counts upward, while this timer counts down. Use{" "}
+            <a className="ilt-content-link" href="/multiple-timers">Multiple Timers</a>{" "}
+            for independent simultaneous countdowns, the{" "}
+            <a className="ilt-content-link" href="/timer-stopwatch">Timer and Stopwatch</a>{" "}
+            for both modes in one tool, the{" "}
+            <a className="ilt-content-link" href="/timer-clock">Clock and Timer</a>{" "}
+            to keep current local time visible, or the{" "}
+            <a className="ilt-content-link" href="/online-timer">Online Timer</a>{" "}
+            for presets, looping, and flexible setup.
+          </p>
+        </ContentSection>
         <HowItWorks />
         <ContentSection>
           <p>

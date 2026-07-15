@@ -40,9 +40,9 @@ const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Sleep Timer (Countdown for Bedtime, Fullscreen)";
+  const title = "Sleep Timer Online | Quiet Bedtime Countdown";
   const description =
-    "Set a quiet bedtime countdown for reading, device-off reminders, music timing, or a short nap timer with dim mode and optional sound.";
+    "Run a quiet browser countdown for reading, wind-down reminders, or a short nap with presets, dim mode, optional sound, and fullscreen controls.";
 
   const url = "https://www.ilovetimers.com/sleep-timer";
 
@@ -580,6 +580,11 @@ export default function SleepTimerPage({
             time readable; soft alarm and sound can be left off when you want a
             quiet page.
           </p>
+          <p>
+            It controls only its own browser countdown and optional sound. It
+            does not stop external media, close another application, shut down
+            the device, or keep the device awake.
+          </p>
         </ContentSection>
         <ContentSection title="When to use it">
           <ul className="list-disc space-y-2 pl-5">
@@ -605,7 +610,11 @@ export default function SleepTimerPage({
         </ToolTrustNote>
         <ContentSection title="Related quiet timers">
           <p>
-            For no-sound countdowns, use the{" "}
+            For a general-purpose duration, use the{" "}
+            <a className="ilt-content-link" href="/countdown-timer">
+              countdown timer
+            </a>
+            . For no-sound countdowns, use the{" "}
             <a className="ilt-content-link" href="/silent-timer">
               silent timer
             </a>

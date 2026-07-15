@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -41,9 +42,9 @@ import PopularUseCases from "~/clients/components/online-timer/PopularUseCases";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Online Timer (Free Countdown, Fullscreen)";
+  const title = "Online Timer | Set a Custom Countdown";
   const description =
-    "Start a free online countdown timer instantly. Big, clear display with quick presets and fullscreen mode, perfect for classrooms, presentations, and everyday timing.";
+    "Set a custom online countdown with quick presets, clear start and pause controls, sound options, and fullscreen mode for everyday timing.";
 
   const url = "https://www.ilovetimers.com/online-timer";
 
@@ -584,7 +585,7 @@ export default function OnlineTimerPage({
         name: "Online Timer",
         url,
         description:
-          "Start a free online countdown timer instantly with presets, custom time, sound, loop, fullscreen, and keyboard shortcuts.",
+          "A flexible browser countdown with quick presets, custom time entry, optional sound and looping, fullscreen, and keyboard shortcuts.",
       },
       {
         "@type": "BreadcrumbList",
@@ -620,6 +621,26 @@ export default function OnlineTimerPage({
       />
 
       <SeoBand>
+        <ContentSection title="Choose the right timer">
+          <p>
+            Online Timer is a flexible everyday starting point with quick
+            presets, custom time entry, optional sound, looping, and fullscreen.
+            Use the <a className="ilt-content-link" href="/countdown-timer">Countdown Timer</a>{" "}
+            for the definitive general countdown, or the{" "}
+            <a className="ilt-content-link" href="/timer-stopwatch">Timer and Stopwatch</a>{" "}
+            when you also need elapsed-time mode.
+          </p>
+          <p>
+            Open <a className="ilt-content-link" href="/multiple-timers">Multiple Timers</a>{" "}
+            for simultaneous independent countdowns, the{" "}
+            <a className="ilt-content-link" href="/study-timer">Study Timer</a>{" "}
+            for a fixed study block, the{" "}
+            <a className="ilt-content-link" href="/pomodoro-timer">Pomodoro Timer</a>{" "}
+            for repeated work and breaks, or the{" "}
+            <a className="ilt-content-link" href="/timer-clock">Clock and Timer</a>{" "}
+            when current local time should remain visible.
+          </p>
+        </ContentSection>
         <HowItWorks />
         <KeyboardShortcuts />
         <PopularUseCases />

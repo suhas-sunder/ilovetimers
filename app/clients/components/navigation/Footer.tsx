@@ -28,6 +28,7 @@ export const footerSections: TimerMenuSection[] = [
     title: "Core Timers",
     links: [
       { to: "/countdown-timer", label: "Countdown Timer" },
+      { to: "/timer-clock", label: "Clock and Timer" },
       { to: "/count-up-timer", label: "Count Up Timer" },
       { to: "/stopwatch", label: "Stopwatch" },
       { to: "/pomodoro-timer", label: "Pomodoro Timer" },
@@ -56,6 +57,7 @@ export const footerSections: TimerMenuSection[] = [
   {
     title: "Stopwatch Tools",
     links: [
+      { to: "/timer-stopwatch", label: "Timer and Stopwatch" },
       {
         to: "/stopwatch-with-milliseconds",
         label: "Stopwatch With Milliseconds",
@@ -69,6 +71,7 @@ export const footerSections: TimerMenuSection[] = [
       { to: "/focus-session-timer", label: "Focus Session Timer" },
       { to: "/productivity-timer", label: "Productivity Timer" },
       { to: "/study-timer", label: "Study Timer" },
+      { to: "/study-stopwatch", label: "Study Stopwatch" },
       { to: "/break-timer", label: "Break Timer" },
       { to: "/meeting-timer", label: "Meeting Timer" },
       { to: "/meeting-count-up-timer", label: "Meeting Count Up Timer" },

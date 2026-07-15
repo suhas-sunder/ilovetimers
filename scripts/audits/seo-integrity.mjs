@@ -80,6 +80,25 @@ if (redirectObject) {
 }
 check(redirects.size > 0, "The permanent redirect map is empty.");
 
+const currentToolClusterRedirects = new Map([
+  ["/stopwatch-timer", "/timer-stopwatch"],
+  ["/timer-and-stopwatch", "/timer-stopwatch"],
+  ["/online-timer-stopwatch", "/timer-stopwatch"],
+  ["/stopwatch-countdown", "/timer-stopwatch"],
+  ["/countdown-stopwatch", "/timer-stopwatch"],
+  ["/focus-stopwatch", "/study-stopwatch"],
+  ["/stopwatch-for-study", "/study-stopwatch"],
+  ["/study-timer-stopwatch", "/study-stopwatch"],
+  ["/clock-timer", "/timer-clock"],
+  ["/online-clock-timer", "/timer-clock"],
+]);
+for (const [source, destination] of currentToolClusterRedirects) {
+  check(
+    redirects.get(source) === destination,
+    `Tool-cluster redirect is missing or incorrect: ${source} -> ${destination}`,
+  );
+}
+
 const xmlUrls = [...xmlSitemapSource.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
   (match) => decodeXml(match[1].trim()),
 );
@@ -179,6 +198,50 @@ const appSources = new Map(
   await Promise.all(appFiles.map(async (file) => [file, await read(file)])),
 );
 const schemaSource = [...appSources.values()].join("\n");
+
+const newToolRoutes = [
+  {
+    route: "/timer-stopwatch",
+    file: "app/routes/timer-stopwatch.tsx",
+    h1: "Timer and Stopwatch",
+  },
+  {
+    route: "/study-stopwatch",
+    file: "app/routes/study-stopwatch.tsx",
+    h1: "Study Stopwatch",
+  },
+  {
+    route: "/timer-clock",
+    file: "app/routes/timer-clock.tsx",
+    h1: "Clock and Timer",
+  },
+];
+
+for (const { route, file, h1 } of newToolRoutes) {
+  const source = appSources.get(file) ?? "";
+  check(configuredRoutes.has(route), `New tool route is not configured: ${route}`);
+  check(xmlPaths.has(route), `New tool route is missing from XML sitemap: ${route}`);
+  check(
+    source.includes(`title=\"${h1}\"`),
+    `New tool route does not expose the expected ToolHero H1: ${route}`,
+  );
+  check(
+    (source.match(/rel:\s*["']canonical["']/g) ?? []).length === 1,
+    `New tool route must declare one canonical in source: ${route}`,
+  );
+  check(
+    (source.match(/["']@type["']\s*:\s*["']FAQPage["']/g) ?? []).length === 1 &&
+      (source.match(/FAQ_ITEMS\.map/g) ?? []).length >= 2,
+    `FAQ schema and visible FAQ data are not paired on ${route}`,
+  );
+  check(
+    source.includes('dateModified: REVIEW_DATE.iso') &&
+      source.includes('<ToolTrustNote reviewDate={REVIEW_DATE}>') &&
+      source.includes('iso: "2026-07-15"') &&
+      source.includes('label: "July 15, 2026"'),
+    `Manual review date is not visibly paired with schema on ${route}`,
+  );
+}
 
 check(
   !/["']@type["']\s*:\s*["']HowTo["']/.test(schemaSource),

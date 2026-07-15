@@ -36,9 +36,9 @@ import PopularUseCases from "~/clients/components/stopwatch/PopularUseCases";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Online Stopwatch (Laps, Fullscreen Stopwatch)";
+  const title = "Online Stopwatch with Laps | Start, Pause and Reset";
   const description =
-    "Use an online stopwatch with laps and a millisecond display. Start instantly, track splits, and keep elapsed time with a clean fullscreen view.";
+    "Use a clear online stopwatch with lap and split tracking, keyboard controls, and fullscreen support for workouts, study, meetings, and everyday timing.";
 
   const url = "https://www.ilovetimers.com/stopwatch";
 
@@ -513,7 +513,7 @@ export default function StopwatchPage({
         name: "Stopwatch",
         url,
         description:
-          "Free online stopwatch with laps and a millisecond display. Fullscreen view, keyboard shortcuts, and copy for lap splits and totals.",
+          "An online stopwatch for general elapsed-time tracking with laps, split and total times, keyboard controls, CSV copy, and fullscreen support.",
       },
       {
         "@type": "BreadcrumbList",
@@ -544,11 +544,24 @@ export default function StopwatchPage({
 
       <ToolHero
         display={<StopwatchCard />}
-        title="Stopwatch (Milliseconds + Laps)"
-        description="Start, pause, record laps, reset, copy CSV, and use a big fullscreen display."
+        title="Online Stopwatch"
+        description="Track general elapsed time, pause and resume, record lap and split times, copy results, and use a clear fullscreen display."
       />
 
       <SeoBand>
+        <ContentSection title="Laps, splits, and everyday elapsed time">
+          <p>
+            Use this stopwatch for workouts, practice, study, meetings, and
+            everyday tasks that do not have a fixed end time. Pause holds the
+            elapsed value, and Resume continues from that same point.
+          </p>
+          <p>
+            Each lap records a total time since the stopwatch started and a
+            split time since the previous lap. If you know the desired finish
+            time in advance, a countdown is usually a better fit; the combined
+            timer and stopwatch page is useful when one session may need both.
+          </p>
+        </ContentSection>
         <HowItWorks />
         <ContentSection>
           <p>

@@ -48,9 +48,21 @@ const LINK_CATALOG_SECTIONS: SitemapSection[] = [
         description: "Set a simple countdown timer for any task or event.",
       },
       {
+        title: "Clock and Timer",
+        href: "/timer-clock",
+        description:
+          "View current local time and run an independent countdown together on one fullscreen-friendly display.",
+      },
+      {
         title: "Stopwatch",
         href: "/stopwatch",
         description: "Measure elapsed time with a fast online stopwatch.",
+      },
+      {
+        title: "Timer and Stopwatch",
+        href: "/timer-stopwatch",
+        description:
+          "Switch between a countdown timer and stopwatch with separate paused values, laps, and fullscreen controls.",
       },
       {
         title: "Stopwatch With Milliseconds",
@@ -181,6 +193,12 @@ const LINK_CATALOG_SECTIONS: SitemapSection[] = [
         href: "/study-timer",
         description:
           "Use structured timing for homework, exam prep, reading, and focus blocks.",
+      },
+      {
+        title: "Study Stopwatch",
+        href: "/study-stopwatch",
+        description:
+          "Track an open-ended study session with quiet elapsed time, session markers, and fullscreen controls.",
       },
       {
         title: "Focus Session Timer",
@@ -920,7 +938,7 @@ export default function Sitemap() {
     <ContentPage
       title="HTML Sitemap"
       description="Browse every public page on iLoveTimers, including countdown timers, stopwatches, Pomodoro tools, workout timers, clocks, calculators, converters, and site information pages."
-      meta={`${allLinks.length} pages. Updated July 14, 2026`}
+      meta={`${allLinks.length} pages. Updated July 15, 2026`}
     >
       <script
         type="application/ld+json"

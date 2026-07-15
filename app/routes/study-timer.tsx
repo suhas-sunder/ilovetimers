@@ -36,9 +36,9 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Study Timer (Focus & Homework, Fullscreen)";
+  const title = "Study Timer Online | Focus Countdown with Fullscreen";
   const description =
-    "Structure study blocks with a simple study timer, clear countdown, fullscreen display, optional sound, milestones, and end-time visibility.";
+    "Set a focused study countdown with clear controls, milestones, optional sound, and fullscreen mode. Use it for planned study blocks and homework sessions.";
 
   const url = "https://www.ilovetimers.com/study-timer";
 
@@ -628,35 +628,29 @@ export default function StudyTimerPage({
             </li>
           </ul>
         </ContentSection>
-        <ContentSection title="Related study timers">
+        <ContentSection title="Study Timer vs Study Stopwatch">
           <p>
-            For structured work and break cycles, use the{" "}
-            <a className="ilt-content-link" href="/pomodoro-timer">
-              Pomodoro timer
-            </a>
-            . For one focused countdown without study-specific labels, use the{" "}
-            <a className="ilt-content-link" href="/focus-session-timer">
-              focus session timer
-            </a>
-            . For fixed preset blocks, use the{" "}
-            <a className="ilt-content-link" href="/15-minute-timer">
-              15 minute timer
+            Study Timer counts down from a planned duration and provides a clear
+            stopping point, milestones, and an estimated finish time. The{" "}
+            <a className="ilt-content-link" href="/study-stopwatch">
+              Study Stopwatch
             </a>{" "}
-            or{" "}
-            <a className="ilt-content-link" href="/30-minute-timer">
-              30 minute timer
+            counts upward for an open-ended session when you do not know the
+            duration in advance.
+          </p>
+          <p>
+            For one intentional work block without study-specific milestones,
+            use the{" "}
+            <a className="ilt-content-link" href="/focus-session-timer">
+              Focus Session Timer
             </a>
-            . For a quiet room, use the{" "}
-            <a className="ilt-content-link" href="/silent-timer">
-              silent timer
+            . For repeated work and break cycles, use the{" "}
+            <a className="ilt-content-link" href="/pomodoro-timer">
+              Pomodoro Timer
             </a>
-            . For timed practice sections, use the{" "}
-            <a className="ilt-content-link" href="/exam-timer">
-              exam timer
-            </a>
-            . For a short pause after studying, use the{" "}
+            . For a standalone rest between sessions, use the{" "}
             <a className="ilt-content-link" href="/break-timer">
-              break timer
+              Break Timer
             </a>
             .
           </p>

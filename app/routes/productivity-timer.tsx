@@ -37,9 +37,9 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Productivity Timer (Focus & Deep Work, Fullscreen)";
+  const title = "Productivity Timer | Flexible Work and Break Sessions";
   const description =
-    "Structure work sessions, break blocks, and task batches with a clear productivity timer and fullscreen countdown.";
+    "Run configurable work, short-break, and long-break sessions with flexible presets, optional auto-advance, sound, cycle tracking, and fullscreen mode.";
 
   const url = "https://www.ilovetimers.com/productivity-timer";
 
@@ -750,11 +750,10 @@ export default function ProductivityTimerPage({
             form.
           </p>
           <p>
-            Use it when you want a flexible work timer rather than one fixed
-            method. It can structure task batching, admin work, writing blocks,
-            code review, planning, inbox cleanup, or light routines where the
-            selected session length matters more than following a strict
-            Pomodoro cycle.
+            Use it when you want configurable work, short-break, and long-break
+            phases with presets such as 25/5, 50/10, or 90/15. It can structure
+            task batching, admin work, writing blocks, code review, planning,
+            or inbox cleanup without promising a productivity outcome.
           </p>
         </ContentSection>
         <ContentSection title="Productivity timer, Pomodoro, and time blocking">
@@ -763,14 +762,17 @@ export default function ProductivityTimerPage({
             <a className="ilt-content-link" href="/pomodoro-timer">
               Pomodoro timer
             </a>{" "}
-            is best when you want repeatable work and break cycles. A{" "}
+            is the clearer choice when you want a defined number of repeated
+            work and break cycles. A{" "}
             <a className="ilt-content-link" href="/focus-session-timer">
               focus session timer
             </a>{" "}
             is simpler when you only need one focused countdown. This page sits
-            between them: it gives you work and break modes, presets, optional
-            auto-advance, and a large display without requiring a full daily
-            schedule.
+            alongside them: it provides flexible preset patterns, short and
+            long-break cadence, optional auto-advance, and completed-focus
+            session tracking without requiring a full daily schedule. Its
+            workflow overlaps Pomodoro, but is not limited to the standard
+            25-minute and 5-minute pattern.
           </p>
           <p>
             If you are planning a whole day by named blocks, the{" "}

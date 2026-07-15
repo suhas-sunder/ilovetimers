@@ -39,9 +39,9 @@ import PopularUseCases from "~/clients/components/pomodoro-timer/PopularUseCases
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Pomodoro Timer (25/5 Focus Cycles, Fullscreen)";
+  const title = "Pomodoro Timer Online | Custom Work and Break Cycles";
   const description =
-    "Run Pomodoro-style work and break cycles with adjustable timings, auto-advance, optional sound, long breaks, and a clear countdown.";
+    "Run repeated work and break cycles with a customizable Pomodoro timer, clear phase controls, cycle tracking, optional sound, and fullscreen mode.";
 
   const url = "https://www.ilovetimers.com/pomodoro-timer";
 
@@ -692,11 +692,26 @@ export default function PomodoroTimerPage({}: Route.ComponentProps) {
 
       <ToolHero
         display={<PomodoroCard />}
-        title="Pomodoro Timer (25/5 Focus Cycles)"
-        description="Work and break cycles with a clear countdown, reliable phase switching, fullscreen, and keyboard control."
+        title="Pomodoro Timer"
+        description="Run repeated work and break cycles, starting with the familiar 25-minute work and 5-minute break pattern or your own durations."
       />
 
       <SeoBand>
+        <ContentSection title="Repeated work and break cycles">
+          <p>
+            The standard starting pattern is 25 minutes of work followed by a
+            5-minute break. You can change work, break, long-break, and cycle
+            settings while keeping the current phase and cycle count visible.
+            The method structures time but does not guarantee productivity.
+          </p>
+          <p>
+            Use the <a className="ilt-content-link" href="/focus-session-timer">Focus Session Timer</a>{" "}
+            for one planned block, the <a className="ilt-content-link" href="/study-timer">Study Timer</a>{" "}
+            for a fixed study countdown, the <a className="ilt-content-link" href="/study-stopwatch">Study Stopwatch</a>{" "}
+            for open-ended tracking, or the <a className="ilt-content-link" href="/break-timer">Break Timer</a>{" "}
+            for a standalone rest.
+          </p>
+        </ContentSection>
         <HowItWorks />
         <ContentSection title="Related single-block timer">
           <p>

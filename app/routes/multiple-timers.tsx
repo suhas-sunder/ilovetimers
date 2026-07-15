@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   FullscreenBottomBar,
   FullscreenTopBar,
@@ -35,9 +36,9 @@ import PopularUseCases from "~/clients/components/multiple-timers/PopularUseCase
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Multiple Timers Online (Run Two or More at Once)";
+  const title = "Multiple Timers Online | Run Several Countdowns";
   const description =
-    "Run multiple timers at the same time. Start two or more countdowns side by side with big, clear digits. Ideal for cooking, workouts, classes, and labs.";
+    "Run several countdown timers at the same time with individual names, controls, and completion states for cooking, classrooms, workouts, and daily tasks.";
 
   const url = "https://www.ilovetimers.com/multiple-timers";
 
@@ -901,7 +902,7 @@ export default function MultipleTimersPage({
         name: "Multiple Timers",
         url,
         description:
-          "Multiple timers tool to run two timers at once (parallel timers). Each timer has its own countdown, controls, and alarm.",
+          "Run several independent browser countdowns at once, each with its own name, duration, controls, saved setup, and completion state.",
       },
       {
         "@type": "BreadcrumbList",
@@ -932,11 +933,36 @@ export default function MultipleTimersPage({
 
       <ToolHero
         display={<MultipleTimersCard />}
-        title="Multiple Timers (Run Two or More at Once)"
-        description="Run parallel countdowns with big digits, per-timer controls, and optional sound."
+        title="Multiple Timers"
+        description="Run several independent countdowns with individual names, durations, controls, completion states, and optional sound."
       />
 
       <SeoBand>
+        <ContentSection title="When several countdowns help">
+          <p>
+            Run separate timers for multiple dishes, classroom activity
+            stations, workout intervals, study tasks, meeting agenda segments,
+            or household jobs. Each timer can be started, paused, reset, named,
+            or silenced independently, while group controls handle the full
+            list.
+          </p>
+        </ContentSection>
+        <ContentSection title="Multiple timers vs other timing tools">
+          <p>
+            Use the <a className="ilt-content-link" href="/countdown-timer">Countdown Timer</a>{" "}
+            when only one duration matters. Use the{" "}
+            <a className="ilt-content-link" href="/timer-stopwatch">Timer and Stopwatch</a>{" "}
+            when you need one countdown and an elapsed-time mode, or an{" "}
+            <a className="ilt-content-link" href="/interval-timer">Interval Timer</a>{" "}
+            when one structured sequence should advance through planned intervals.
+          </p>
+          <p>
+            Timer names, durations, remaining values, and sound settings are
+            saved in local browser storage on this device. This route does not
+            add analytics capture for timer names or entered values, and it does
+            not use accounts or cloud synchronization.
+          </p>
+        </ContentSection>
         <HowItWorks />
         <KeyboardShortcuts />
         <PopularUseCases />

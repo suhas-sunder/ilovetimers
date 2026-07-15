@@ -29,9 +29,9 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Break Timer (Fullscreen Countdown + Quick Presets)";
+  const title = "Break Timer Online | Short Rest Countdown";
   const description =
-    "Free break timer for work or study. Start a big fullscreen countdown with quick presets, custom minutes, optional sound, and keyboard shortcuts.";
+    "Set a simple break countdown with clear start, pause, reset, sound, and fullscreen controls for study, work, meetings, and screen breaks.";
 
   const url = "https://www.ilovetimers.com/break-timer";
 
@@ -549,16 +549,27 @@ export default function BreakTimerPage({
         </ContentSection>
         <ContentSection title="When to use a break timer">
           <p>
-            Use it for desk breaks, screen breaks, Pomodoro breaks, eye-rest
-            pauses, between study sessions, short meeting breaks, coffee
-            refills, cleanup pauses, or a simple pause between tasks. It is a
-            timing tool, not medical or wellness advice.
+            Use it for desk breaks, screen breaks, pauses between study
+            sessions, short meeting breaks, coffee refills, cleanup pauses, or
+            a simple rest between tasks. It is a timing tool, not medical or
+            wellness advice.
           </p>
           <ul className="list-disc space-y-2 pl-5">
             <li>Start 2 minutes after a quick task batch.</li>
             <li>Use 5 minutes between study topics or focus blocks.</li>
             <li>Use 10 or 15 minutes for a longer pause between meetings.</li>
           </ul>
+        </ContentSection>
+        <ContentSection title="A standalone break countdown">
+          <p>
+            This page times one break by itself. It does not manage repeated
+            Pomodoro cycles or add the study milestones of the Study Timer.
+            Return to the <a className="ilt-content-link" href="/focus-session-timer">Focus Session Timer</a>{" "}
+            or <a className="ilt-content-link" href="/study-timer">Study Timer</a>{" "}
+            when the next work block needs structure, or use the{" "}
+            <a className="ilt-content-link" href="/countdown-timer">Countdown Timer</a>{" "}
+            for a general-purpose duration.
+          </p>
         </ContentSection>
         <ContentSection title="Quiet and related break tools">
           <p>

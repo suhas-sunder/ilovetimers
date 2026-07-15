@@ -10,6 +10,7 @@ export const SITEMAP_GROUPS = Object.freeze([
       "/",
       "/free-online-timers",
       "/countdown-timer",
+      "/timer-clock",
       "/online-timer",
       "/fullscreen-timer",
       "/silent-timer",
@@ -33,6 +34,7 @@ export const SITEMAP_GROUPS = Object.freeze([
     title: "Stopwatches",
     description: "Elapsed-time, count-up, reaction, solve, run, and game-clock tools.",
     routes: [
+      "/timer-stopwatch",
       "/stopwatch",
       "/stopwatch-with-milliseconds",
       "/count-up-timer",
@@ -50,6 +52,7 @@ export const SITEMAP_GROUPS = Object.freeze([
       "/pomodoro-timer",
       "/break-timer",
       "/study-timer",
+      "/study-stopwatch",
       "/productivity-timer",
       "/focus-session-timer",
       "/time-blocking-clock",

@@ -731,19 +731,24 @@ Use dates carefully.
 - Do not include noindex pages, redirects, or temporary URLs in XML sitemap.
 - Canonical URLs should be stable and self-referential unless there is an intentional consolidation strategy.
 
-Approved route expansion direction for the current SEO/tool workstream:
+Implemented canonical routes in the current SEO/tool workstream:
 
 - `/timer-stopwatch`
-  - real combined countdown timer and stopwatch utility
+  - implemented combined countdown timer and stopwatch utility
   - not a doorway page
+  - aliases `/stopwatch-timer`, `/timer-and-stopwatch`, `/online-timer-stopwatch`, `/stopwatch-countdown`, and `/countdown-stopwatch` permanently redirect here
 
 - `/study-stopwatch`
-  - real count-up study/focus stopwatch
+  - implemented count-up study/focus stopwatch with session markers
   - distinct from `/study-timer`, `/focus-session-timer`, and `/pomodoro-timer`
+  - aliases `/focus-stopwatch`, `/stopwatch-for-study`, and `/study-timer-stopwatch` permanently redirect here
 
 - `/timer-clock`
-  - real clock plus countdown timer display
+  - implemented local clock plus countdown timer display
   - useful for classrooms, meetings, exams, presentations, and workouts
+  - aliases `/clock-timer` and `/online-clock-timer` permanently redirect here
+
+Do not create indexable duplicates for the implemented route aliases above.
 
 Possible later route:
 

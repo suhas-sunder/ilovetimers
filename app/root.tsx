@@ -122,6 +122,20 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     keywords: "stopwatch elapsed time lap split",
   },
   {
+    title: "Timer and Stopwatch",
+    href: "/timer-stopwatch",
+    category: "Core",
+    description: "Switch between a countdown timer and lap stopwatch without losing paused values.",
+    keywords: "timer stopwatch countdown laps combined",
+  },
+  {
+    title: "Clock and Timer",
+    href: "/timer-clock",
+    category: "Core",
+    description: "View current local time beside an independently controlled countdown.",
+    keywords: "clock timer current local time countdown combined",
+  },
+  {
     title: "Pomodoro Timer",
     href: "/pomodoro-timer",
     category: "Focus",
@@ -308,6 +322,13 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
     href: "/study-timer",
     category: "Focus",
     description: "Structured timing for homework, reading, and study blocks.",
+  },
+  {
+    title: "Study Stopwatch",
+    href: "/study-stopwatch",
+    category: "Focus",
+    description: "Track an open-ended study session with quiet elapsed time and markers.",
+    keywords: "study stopwatch open ended session markers",
   },
   {
     title: "Focus Session Timer",

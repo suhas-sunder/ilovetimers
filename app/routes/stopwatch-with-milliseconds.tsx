@@ -57,9 +57,9 @@ const FAQ_ITEMS = [
 ];
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Stopwatch With Milliseconds (Online Millisecond Stopwatch)";
+  const title = "Stopwatch with Milliseconds | Laps and Fullscreen";
   const description =
-    "Use an online stopwatch with milliseconds visible by default. Start, pause, resume, reset, record laps, copy elapsed time, and use fullscreen.";
+    "Measure elapsed time with a millisecond display, lap records, pause and reset controls, and a clear fullscreen view. Browser and device limits apply.";
 
   return [
     { title },
@@ -521,8 +521,16 @@ export default function StopwatchWithMillisecondsPage() {
           </p>
           <p>
             The display can show milliseconds, hundredths, or whole seconds.
+            Tenths are the first decimal digit, hundredths are the first two,
+            and milliseconds use three digits after the decimal point.
             Milliseconds are helpful when seconds feel too coarse, while
             hundredths are easier to read for quick practice timing.
+          </p>
+          <p>
+            More displayed digits do not make a browser stopwatch a certified
+            measurement source. Display refresh and timing accuracy are
+            different: the clock can track elapsed time between frames even
+            when every intermediate millisecond cannot be drawn on screen.
           </p>
         </ContentSection>
 

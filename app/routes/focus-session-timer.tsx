@@ -34,9 +34,9 @@ import PopularUseCases from "~/clients/components/focus-session-timer/PopularUse
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Focus Session Timer (Single Deep Work Countdown, Fullscreen)";
+  const title = "Focus Session Timer | One Clear Work Countdown";
   const description =
-    "Free focus session timer for one work block. Choose one session length, start a clear countdown, use fullscreen mode, and get a short break suggestion when you finish.";
+    "Run one focused work session with a clear countdown, pause and reset controls, optional sound, and fullscreen mode without repeated Pomodoro cycles.";
 
   const url = "https://www.ilovetimers.com/focus-session-timer";
 
@@ -548,6 +548,22 @@ export default function FocusSessionTimerPage({
       />
 
       <SeoBand>
+        <ContentSection title="One planned focus block">
+          <p>
+            This timer runs one intentional countdown from the session length
+            you choose. It does not repeat Pomodoro cycles, count upward like
+            the <a className="ilt-content-link" href="/study-stopwatch">Study Stopwatch</a>,
+            or act as a productivity dashboard.
+          </p>
+          <p>
+            Use the <a className="ilt-content-link" href="/study-timer">Study Timer</a>{" "}
+            for a study-specific countdown with milestones, the{" "}
+            <a className="ilt-content-link" href="/pomodoro-timer">Pomodoro Timer</a>{" "}
+            for repeated work and break phases, or the{" "}
+            <a className="ilt-content-link" href="/break-timer">Break Timer</a>{" "}
+            for a standalone rest.
+          </p>
+        </ContentSection>
         <HowItWorks />
         <ContentSection title="Related preset focus blocks">
           <p>

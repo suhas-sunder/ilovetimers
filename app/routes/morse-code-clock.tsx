@@ -336,7 +336,7 @@ function MorseCodeClockCard({ initialNowISO }: { initialNowISO: string }) {
             userSelect: "none",
             overflow: isFs ? "hidden" : "visible",
           }}
-          aria-live="polite"
+          aria-live="off"
         >
           <div className="text-xs font-extrabold uppercase tracking-widest text-slate-700">
             Local time

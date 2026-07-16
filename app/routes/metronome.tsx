@@ -586,7 +586,7 @@ function MetronomeCard() {
                   max={400}
                   value={bpmInt}
                   onChange={(e) => setBpm(parseInt(e.target.value, 10))}
-                  className="w-full"
+                  className="min-h-11 w-full"
                   aria-label="BPM slider"
                 />
 
@@ -686,7 +686,7 @@ function MetronomeCard() {
                     onChange={(e) =>
                       setVolume(clamp(parseInt(e.target.value, 10) / 100, 0, 1))
                     }
-                    className="w-full"
+                    className="min-h-11 w-full"
                     aria-label="Volume slider"
                   />
                   <div className="min-w-[52px] text-right text-xs font-extrabold text-slate-900">

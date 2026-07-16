@@ -401,7 +401,7 @@ function DebtClockCard() {
             userSelect: "none",
             overflow: "hidden",
           }}
-          aria-live="polite"
+          aria-live="off"
           onClick={() => {
             if (isFs) startPause();
           }}

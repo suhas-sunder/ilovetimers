@@ -60,24 +60,28 @@ function initialDisplaySize({
     charCount === 1 ? 96 : Math.min(96, Math.max(8, 100 / widthScale));
   const preferredOffset =
     charCount === 1 ? 0 : paddingAllowancePx / widthScale;
-  const mobileContainerWidth = 358;
+  // Keep the deterministic SSR value safe for a 320px viewport after page
+  // and tool padding. Hydration can enlarge it after measuring the real box.
+  const mobileContainerWidth = 256;
   const mobilePreferredOffset =
     charCount === 1
       ? 0
       : effectivePaddingAllowance(paddingAllowancePx, mobileContainerWidth) /
         widthScale;
   const initialMaxPx = Math.round(maxPx * 1.35);
-  const scale = initialScale;
+  const scale = Math.min(1, initialScale);
+  const mobileScale = Math.min(1, initialMobileScale);
   const mobileFloorPx = Math.min(
     initialMaxPx,
     Math.max(
-      minPx,
+      16,
       ((preferredCqw / 100) * mobileContainerWidth - mobilePreferredOffset) *
-        initialMobileScale,
+        mobileScale *
+        0.95,
     ),
   );
 
-  return `clamp(${minPx}px, max(calc(${(preferredCqw * scale).toFixed(4)}cqw - ${(preferredOffset * scale).toFixed(1)}px), ${mobileFloorPx.toFixed(1)}px), ${initialMaxPx}px)`;
+  return `clamp(16px, max(calc(${(preferredCqw * scale).toFixed(4)}cqw - ${(preferredOffset * scale).toFixed(1)}px), ${mobileFloorPx.toFixed(1)}px), ${initialMaxPx}px)`;
 }
 
 function largeScreenMaxPx(maxPx: number, containerWidth: number) {
@@ -141,63 +145,64 @@ export function useFitDisplayText({
       if (!currentContainer || !currentText) return;
 
       const rect = currentContainer.getBoundingClientRect();
+      // Intrinsic text width can temporarily enlarge an unconstrained flex or
+      // grid ancestor. Do not treat that overflow-created width as usable
+      // display space or the measurement becomes self-reinforcing.
+      const viewportWidth = document.documentElement.clientWidth;
+      const containerWidth = Math.min(
+        rect.width,
+        Math.max(0, viewportWidth - Math.max(0, rect.left)),
+      );
       const effectivePaddingPx = effectivePaddingAllowance(
         paddingAllowancePx,
-        rect.width,
+        containerWidth,
       );
-      const availableWidth = Math.max(0, rect.width - effectivePaddingPx);
+      const availableWidth = Math.max(0, containerWidth - effectivePaddingPx);
       const availableHeight = Math.max(0, rect.height - effectivePaddingPx);
       if (availableWidth <= 0 || availableHeight <= 0) return;
       lastContainerWidth = rect.width;
       lastContainerHeight = rect.height;
 
-      const originalFontSize = currentText.style.fontSize;
+      const effectiveMaxPx = largeScreenMaxPx(maxPx, containerWidth);
+      const measuredFontPx =
+        Number.parseFloat(window.getComputedStyle(currentText).fontSize) ||
+        minPx;
+      const textRect = currentText.getBoundingClientRect();
+      const textRange = document.createRange();
+      textRange.selectNodeContents(currentText);
+      const rangeRect = textRange.getBoundingClientRect();
+      // A text node can be constrained to its parent while its glyphs still
+      // overflow. Include the range and intrinsic scroll measurements so the
+      // fitted size is based on the complete rendered value.
+      const renderedWidth = Math.max(
+        textRect.width,
+        rangeRect.width,
+        currentText.scrollWidth,
+      );
+      const renderedHeight = Math.max(
+        textRect.height,
+        rangeRect.height,
+        currentText.scrollHeight,
+      );
+      const widthScale = renderedWidth > 0 ? availableWidth / renderedWidth : 1;
+      const heightScale =
+        fitAxis === "box" && renderedHeight > 0
+          ? availableHeight / renderedHeight
+          : Number.POSITIVE_INFINITY;
+      // `minPx` is a preferred readable floor, not permission to overflow a
+      // genuinely narrow display. The 16px hard floor keeps text usable while
+      // the 2% allowance absorbs fractional glyph and scrollbar rounding.
+      const best = Math.max(
+        16,
+        Math.min(
+          effectiveMaxPx,
+          Math.floor(
+            measuredFontPx * Math.min(widthScale, heightScale) * 0.98,
+          ),
+        ),
+      );
 
-      const fits = (size: number | string) => {
-        currentText.style.fontSize =
-          typeof size === "number" ? `${size}px` : size;
-        const textRect = currentText.getBoundingClientRect();
-        return (
-          textRect.width <= availableWidth &&
-          (fitAxis === "width" || textRect.height <= availableHeight)
-        );
-      };
-
-      const estimatedFontSize = initialDisplaySize({
-        deps,
-        minPx,
-        maxPx,
-        paddingAllowancePx,
-        initialScale,
-        initialMobileScale,
-      });
-
-      if (rect.width > 640 && fits(estimatedFontSize)) {
-        currentText.style.fontSize = originalFontSize;
-        setFontSize(estimatedFontSize);
-        return;
-      }
-
-      const effectiveMaxPx = largeScreenMaxPx(maxPx, rect.width);
-      let low = minPx;
-      let high = effectiveMaxPx;
-      let best = minPx;
-
-      if (fits(effectiveMaxPx)) {
-        best = effectiveMaxPx;
-      } else {
-        for (let i = 0; i < 16; i++) {
-          const mid = Math.floor((low + high) / 2);
-          if (fits(mid)) {
-            best = mid;
-            low = mid + 1;
-          } else {
-            high = mid - 1;
-          }
-        }
-      }
-
-      currentText.style.fontSize = originalFontSize;
+      currentText.style.setProperty("font-size", `${best}px`);
       setFontSize(`${best}px`);
     };
 

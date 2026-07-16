@@ -607,7 +607,7 @@ function SunriseSunsetClockCard({ initialNowISO }: { initialNowISO: string }) {
             userSelect: "none",
             overflow: isFs ? "hidden" : "visible",
           }}
-          aria-live="polite"
+          aria-live="off"
           onClick={() => {
             if (isFs && cardRef.current) {
               // Tap to toggle seconds in fullscreen (keeps it useful without extra UI)

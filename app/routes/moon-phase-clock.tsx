@@ -472,7 +472,7 @@ function MoonPhaseClockCard({ initialNowISO }: { initialNowISO: string }) {
             userSelect: "none",
             overflow: isFs ? "hidden" : "visible",
           }}
-          aria-live="polite"
+          aria-live="off"
           onClick={() => {
             // click-to-focus behavior (helps keyboard shortcuts without breaking inputs)
             clockCardRef.current?.focus({ preventScroll: true });

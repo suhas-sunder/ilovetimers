@@ -550,7 +550,7 @@ function TimeBlockingClockCard({ initialNowISO }: { initialNowISO: string }) {
             userSelect: "none",
             overflow: isFs ? "hidden" : "visible",
           }}
-          aria-live="polite"
+          aria-live="off"
         >
           <div className="timer-list-label ilt-content-label">
             {statusLabel}

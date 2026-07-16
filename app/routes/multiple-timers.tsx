@@ -748,7 +748,7 @@ function MultipleTimersCard() {
                       <input
                         value={t.label}
                         onChange={(e) => updateLabel(t.id, e.target.value)}
-                        className="w-full ilt-input-control px-2 py-1 text-sm font-extrabold"
+                        className="min-h-11 w-full ilt-input-control px-2 py-1 text-sm font-extrabold"
                         aria-label={`Label for timer ${idx + 1}`}
                       />
                       <div className="mt-1 ilt-helper-text font-semibold">

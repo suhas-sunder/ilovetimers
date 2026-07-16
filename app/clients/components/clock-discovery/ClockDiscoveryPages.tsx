@@ -487,7 +487,7 @@ function FullScreenClockTool({ initialNowISO }: { initialNowISO: string }) {
             overflow: isFullscreen ? "hidden" : "visible",
             userSelect: "none",
           }}
-          aria-live="polite"
+          aria-live="off"
           onClick={() => {
             if (isFullscreen) void copy();
           }}
@@ -763,7 +763,7 @@ function WorldClockDiscoveryTool({
             marginTop: isFullscreen ? "3.6rem" : undefined,
             marginBottom: isFullscreen ? "3.6rem" : undefined,
           }}
-          aria-live="polite"
+          aria-live="off"
         >
           <div className="timer-list-grid grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             <div className="timer-list-row p-4">
@@ -1569,7 +1569,7 @@ function BigDigitalClockTool({ initialNowISO }: { initialNowISO: string }) {
             overflow: isFullscreen ? "hidden" : "visible",
             userSelect: "none",
           }}
-          aria-live="polite"
+          aria-live="off"
           onClick={() => {
             if (isFullscreen) void copy();
           }}

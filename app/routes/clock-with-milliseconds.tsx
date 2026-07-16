@@ -248,7 +248,7 @@ function ClockWithMillisecondsTool({ initialNowISO }: { initialNowISO: string })
             marginBottom: isFs ? "3.6rem" : undefined,
             overflow: isFs ? "hidden" : "visible",
           }}
-          aria-live="polite"
+          aria-live="off"
           onClick={() => {
             if (isFs) void copyTime();
           }}

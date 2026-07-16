@@ -385,7 +385,7 @@ function MinimalistClockCard({ initialNowISO }: { initialNowISO: string }) {
             userSelect: "none",
             overflow: isFs ? "hidden" : "visible",
           }}
-          aria-live="polite"
+          aria-live="off"
           onMouseMove={() => bumpIdle()}
           onTouchStart={() => bumpIdle()}
           onClick={() => {

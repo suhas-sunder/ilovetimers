@@ -439,7 +439,7 @@ function RomanNumeralClockCard({ initialNowISO }: { initialNowISO: string }) {
             userSelect: "none",
             overflow: isFs ? "hidden" : "visible",
           }}
-          aria-live="polite"
+          aria-live="off"
           onClick={() => {
             // ensure shortcuts work immediately after any click
             cardRef.current?.focus({ preventScroll: true });

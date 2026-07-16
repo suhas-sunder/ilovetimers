@@ -803,7 +803,7 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
             userSelect: "none",
             overflow: isFs ? "hidden" : "visible",
           }}
-          aria-live="polite"
+          aria-live="off"
           onClick={() => {
             if (isFs && cardRef.current) void fullscreen.toggle();
           }}

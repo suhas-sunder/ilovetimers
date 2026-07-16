@@ -1,4 +1,4 @@
-import { Children, cloneElement, isValidElement } from "react";
+import { Children, cloneElement, isValidElement, useId } from "react";
 import type {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
@@ -424,7 +424,7 @@ const buttonVariants: Record<ButtonVariant, string> = {
 };
 
 const buttonSizes: Record<ButtonSize, string> = {
-  sm: "min-h-9 px-3 text-sm",
+  sm: "min-h-11 px-3 text-sm",
   md: "min-h-11 px-4 text-sm",
   lg: "min-h-12 px-5 text-base",
 };
@@ -565,7 +565,7 @@ export function Toggle({
   return (
     <label
       className={cx(
-        "ilt-focus-ring inline-flex min-w-0 items-center gap-2 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] hover:bg-[var(--ilt-button-secondary-hover)]",
+        "ilt-focus-ring inline-flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] hover:bg-[var(--ilt-button-secondary-hover)]",
         disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
         className,
       )}
@@ -606,7 +606,7 @@ export function PresetChip({
     <button
       type="button"
       className={cx(
-        "ilt-focus-ring inline-flex items-center justify-center rounded-full px-3 py-1.5 text-sm font-semibold transition",
+        "ilt-focus-ring inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-3 py-1.5 text-sm font-semibold transition",
         isSelected
           ? "bg-[var(--ilt-selected-bg)] text-[var(--ilt-selected-text)]"
           : cx(
@@ -635,16 +635,35 @@ export function Field({
   hint?: ReactNode;
   error?: ReactNode;
 }) {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+  const hintId = `${inputId}-hint`;
+  const errorId = `${inputId}-error`;
+  const {
+    "aria-describedby": providedDescription,
+    "aria-invalid": providedInvalid,
+    ...inputProps
+  } = props;
+  const describedBy = [
+    providedDescription,
+    hint ? hintId : null,
+    error ? errorId : null,
+  ]
+    .filter(Boolean)
+    .join(" ") || undefined;
+
   return (
     <label className={cx("block min-w-0 text-sm font-semibold text-[var(--ilt-text-primary)]", className)}>
       <span>{label}</span>
       <input
-        id={id}
+        id={inputId}
+        aria-describedby={describedBy}
+        aria-invalid={error ? true : providedInvalid}
         className="ilt-focus-ring mt-1 min-h-11 w-full min-w-0 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-bg-input)] px-3 py-2 text-[var(--ilt-text-primary)] shadow-[inset_0_0_0_1px_var(--ilt-border-subtle)] transition hover:bg-[var(--ilt-bg-hover)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[var(--ilt-bg-input)]"
-        {...props}
+        {...inputProps}
       />
-      {hint ? <span className="mt-1 block text-xs font-normal text-[var(--ilt-text-muted)]">{hint}</span> : null}
-      {error ? <span className="mt-1 block text-xs font-semibold text-[var(--ilt-text-primary)]">{error}</span> : null}
+      {hint ? <span id={hintId} className="mt-1 block text-xs font-normal text-[var(--ilt-text-muted)]">{hint}</span> : null}
+      {error ? <span id={errorId} role="alert" className="mt-1 block text-xs font-semibold text-[var(--ilt-text-primary)]">{error}</span> : null}
     </label>
   );
 }

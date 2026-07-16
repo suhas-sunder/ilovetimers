@@ -14,7 +14,10 @@
     "test:calculators": "node scripts/tests/calculator-formulas.mjs",
     "audit:calculators": "node scripts/audits/calculators.mjs",
     "audit:specialty-tools": "node scripts/audits/specialty-tools.mjs",
-    "test:ui-regressions": "node scripts/tests/ui-regressions.mjs"
+    "audit:ui": "node scripts/audits/ui-integrity.mjs",
+    "audit:a11y": "node scripts/audits/accessibility.mjs",
+    "test:ui-regressions": "node scripts/tests/ui-regressions.mjs",
+    "test:sitewide-ui": "node scripts/tests/sitewide-ui.mjs"
   },
   "dependencies": {
     "@react-router/express": "^7.7.1",

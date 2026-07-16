@@ -191,7 +191,7 @@ const Chip = ({
   <button
     type="button"
     onClick={onClick}
-    className={`cursor-pointer rounded-full px-3 py-1 text-sm font-medium transition ${
+    className={`inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full px-3 py-1 text-sm font-medium transition ${
       active
         ? "bg-slate-900 text-white hover:bg-slate-800"
         : "bg-slate-100 text-slate-800 hover:bg-slate-200"
@@ -455,12 +455,12 @@ function CountdownTimer() {
 
       <div className={isFs ? "flex h-full flex-col" : ""}>
         {!isFs && (
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-lg font-semibold text-slate-950">
               Countdown Timer
             </h3>
 
-            <div className="flex items-center gap-3 text-sm text-slate-600">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
               <label className="inline-flex cursor-pointer items-center gap-1">
                 <input
                   type="checkbox"
@@ -538,6 +538,7 @@ function CountdownTimer() {
             <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto_auto]">
               <div className="flex items-center gap-2">
                 <input
+                  aria-label="Countdown duration"
                   inputMode="numeric"
                   value={inputStr}
                   onChange={(e) => {
@@ -592,6 +593,7 @@ function CountdownTimer() {
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex items-center gap-2">
                 <input
+                  aria-label="Countdown duration"
                   inputMode="numeric"
                   value={inputStr}
                   onChange={(e) => {

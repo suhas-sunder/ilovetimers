@@ -608,7 +608,7 @@ function LabTimerCard() {
                 onChange={(e) =>
                   setMaxLaps(clamp(Number(e.target.value || 60), 10, 300))
                 }
-                className="w-20 ilt-input-control px-2 py-1"
+                className="min-h-11 w-20 ilt-input-control px-2 py-1"
               />
             </label>
           </div>

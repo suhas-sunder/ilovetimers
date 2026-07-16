@@ -264,7 +264,7 @@ function ClockWithSecondsTool({ initialNowISO }: { initialNowISO: string }) {
             userSelect: "none",
             overflow: isFs ? "hidden" : "visible",
           }}
-          aria-live="polite"
+          aria-live="off"
           onClick={() => {
             if (isFs) void copy();
           }}

@@ -270,7 +270,7 @@ const footerMobileRowClass =
   "cursor-pointer rounded-lg border border-slate-700/60 bg-slate-700/40 px-3 py-2 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
 
 const footerPillClass =
-  "cursor-pointer rounded-full border border-slate-700/60 bg-slate-700/40 px-3 py-1.5 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
+  "inline-flex min-h-11 cursor-pointer items-center rounded-full border border-slate-700/60 bg-slate-700/40 px-3 py-1.5 text-sm font-medium text-slate-100 transition hover:border-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40";
 
 const sectionOrder = [
   "Core Timers",
@@ -324,7 +324,7 @@ function FooterSectionMobile({ title, links }: TimerMenuSection) {
   return (
     <details className="rounded-xl border border-slate-700/60 bg-slate-800 px-4 py-3">
       <summary className="cursor-pointer list-none">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex min-h-11 items-center justify-between gap-3">
           <span className="text-sm font-semibold text-sky-400">{title}</span>
           <span className="text-slate-400" aria-hidden="true">
             v

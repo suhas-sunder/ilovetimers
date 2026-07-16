@@ -990,6 +990,7 @@ function BillableHoursClockCard() {
                       Note
                     </div>
                     <input
+                      aria-label="Active timer note"
                       value={activeTimer.note}
                       onInput={(e) =>
                         updateTimer(activeTimer.id, { note: e.currentTarget.value })
@@ -1425,6 +1426,7 @@ function BillableHoursClockCard() {
                         Name
                       </div>
                       <input
+                        aria-label={`Name for ${t.name}`}
                         value={t.name}
                         onInput={(e) => renameTimerSafe(t.id, e.currentTarget.value)}
                         onChange={(e) => renameTimerSafe(t.id, e.target.value)}
@@ -1438,6 +1440,7 @@ function BillableHoursClockCard() {
                       </div>
                       <div className="mt-1 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
                         <input
+                          aria-label={`Hourly rate for ${t.name}`}
                           type="number"
                           value={t.hourlyRate}
                           min={0}
@@ -1484,6 +1487,7 @@ function BillableHoursClockCard() {
                         Note
                       </div>
                       <input
+                        aria-label={`Note for ${t.name}`}
                         value={t.note}
                         onInput={(e) =>
                           updateTimer(t.id, { note: e.currentTarget.value })

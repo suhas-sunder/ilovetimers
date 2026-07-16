@@ -808,7 +808,7 @@ function ReactionTimeTestTool() {
                         setTrialsTarget(parseInt(e.target.value, 10));
                         resetRun();
                       }}
-                      className="w-full cursor-pointer accent-[var(--ilt-accent)]"
+                      className="min-h-11 w-full cursor-pointer accent-[var(--ilt-accent)]"
                     />
                     <span className="min-w-[48px] text-right text-sm font-extrabold text-[var(--ilt-text-primary)]">
                       {trialsTarget}
@@ -834,7 +834,7 @@ function ReactionTimeTestTool() {
                         setMaxDelayMs((m) => Math.max(m, v + 100));
                         resetRun();
                       }}
-                      className="w-full cursor-pointer accent-[var(--ilt-accent)]"
+                      className="min-h-11 w-full cursor-pointer accent-[var(--ilt-accent)]"
                     />
                     <span className="min-w-[72px] text-right text-xs font-extrabold text-[var(--ilt-text-primary)]">
                       {minDelayMs} ms
@@ -855,7 +855,7 @@ function ReactionTimeTestTool() {
                         setMaxDelayMs(parseInt(e.target.value, 10));
                         resetRun();
                       }}
-                      className="w-full cursor-pointer accent-[var(--ilt-accent)]"
+                      className="min-h-11 w-full cursor-pointer accent-[var(--ilt-accent)]"
                     />
                     <span className="min-w-[72px] text-right text-xs font-extrabold text-[var(--ilt-text-primary)]">
                       {maxDelayMs} ms

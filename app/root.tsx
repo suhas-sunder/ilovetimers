@@ -970,7 +970,7 @@ function ThemeControl({ className = "" }: { className?: string }) {
       aria-pressed={isDark}
       title={label}
       onClick={toggleTheme}
-      className={`ilt-focus-ring inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-[var(--ilt-button-secondary-bg)] text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] transition hover:bg-[var(--ilt-button-secondary-hover)] ${className}`}
+      className={`ilt-focus-ring inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-[var(--ilt-button-secondary-bg)] text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] transition hover:bg-[var(--ilt-button-secondary-hover)] ${className}`}
     >
       <span className="sr-only">{label}</span>
       {isDark ? (
@@ -1173,9 +1173,46 @@ function SiteHeader() {
     };
   }, [directoryOpen, open]);
 
+  useEffect(() => {
+    if (!open) return;
+
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const selector =
+      'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    panel.querySelector<HTMLElement>(selector)?.focus();
+
+    function keepFocusInside(event: KeyboardEvent) {
+      if (event.key !== "Tab") return;
+      const items = Array.from(
+        panel!.querySelectorAll<HTMLElement>(selector),
+      ).filter((item) => item.offsetParent !== null);
+      if (items.length === 0) return;
+
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    window.addEventListener("keydown", keepFocusInside);
+    return () => window.removeEventListener("keydown", keepFocusInside);
+  }, [open]);
+
   function close() {
     setOpen(false);
     setDirectoryOpen(false);
+  }
+
+  function closeMobileMenu() {
+    setOpen(false);
+    window.requestAnimationFrame(() => btnRef.current?.focus());
   }
 
   const desktopLink =
@@ -1289,8 +1326,8 @@ function SiteHeader() {
               }}
               aria-expanded={open}
               aria-controls="mobile-nav"
-              aria-label="Open menu"
-              className="ilt-focus-ring cursor-pointer rounded-full bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] transition-colors hover:bg-[var(--ilt-button-secondary-hover)]"
+              aria-label={open ? "Close menu" : "Open menu"}
+              className="ilt-focus-ring inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] transition-colors hover:bg-[var(--ilt-button-secondary-hover)]"
             >
               <span className="relative block h-4 w-5" aria-hidden="true">
                 <span
@@ -1345,8 +1382,8 @@ function SiteHeader() {
               </a>
               <button
                 type="button"
-                onClick={close}
-                className="ilt-focus-ring cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] transition-colors hover:bg-[var(--ilt-bg-hover)]"
+                onClick={closeMobileMenu}
+                className="ilt-focus-ring inline-flex min-h-11 cursor-pointer items-center rounded-full px-4 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] transition-colors hover:bg-[var(--ilt-bg-hover)]"
                 aria-label="Close menu"
               >
                 Close

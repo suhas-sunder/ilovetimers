@@ -115,7 +115,7 @@ export function AnalyticsPreferencesButton({
       type="button"
       onClick={requestAnalyticsPreferences}
       className={cx(
-        "cursor-pointer text-sm underline-offset-4 transition hover:underline focus:outline-none focus:ring-2 focus:ring-amber-500/40",
+        "inline-flex min-h-11 cursor-pointer items-center text-sm underline-offset-4 transition hover:underline focus:outline-none focus:ring-2 focus:ring-amber-500/40",
         className,
       )}
     >

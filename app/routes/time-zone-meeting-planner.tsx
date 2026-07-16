@@ -445,7 +445,7 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
                 <span className="min-w-0 truncate">{zoneLabel(zone)}</span>
                 <button
                   type="button"
-                  className="ilt-focus-ring cursor-pointer rounded-[var(--ilt-radius-control)] px-2 py-1 text-xs text-[var(--ilt-text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
+                  className="ilt-focus-ring inline-flex min-h-11 cursor-pointer items-center rounded-[var(--ilt-radius-control)] px-2 py-1 text-xs text-[var(--ilt-text-primary)] disabled:cursor-not-allowed disabled:opacity-50"
                   onClick={() => removeZone(zone)}
                   disabled={zones.length <= 1}
                   aria-label={`Remove ${zoneLabel(zone)}`}

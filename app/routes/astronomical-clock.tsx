@@ -667,7 +667,7 @@ function AstronomicalClockCard({ initialNowISO }: { initialNowISO: string }) {
             marginTop: isFs ? "3.6rem" : undefined,
             userSelect: "none",
           }}
-          aria-live="polite"
+          aria-live="off"
         >
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-extrabold uppercase tracking-widest opacity-90">
             <span className="inline-flex items-center gap-2">

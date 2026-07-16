@@ -339,7 +339,7 @@ function WorldClockCard({ initialNowISO }: { initialNowISO: string }) {
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
           }}
-          aria-live="polite"
+          aria-live="off"
         >
           {/* Grid */}
           <div

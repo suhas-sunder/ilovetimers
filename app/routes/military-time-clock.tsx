@@ -37,9 +37,9 @@ const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Military Time Clock (Live 24-Hour Clock)";
+  const title = "Military Time Clock | Current 24-Hour Time";
   const description =
-    "See the current time as a live military-style 24-hour clock with seconds, local or UTC mode, copy, and fullscreen display.";
+    "View the current local time in military-style 24-hour format with hours, minutes, and supported second-level display options.";
 
   return [
     { title },

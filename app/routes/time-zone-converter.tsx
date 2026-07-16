@@ -30,15 +30,15 @@ import KeyboardShortcuts from "~/clients/components/time-zone-converter/Keyboard
 import PopularUseCases from "~/clients/components/time-zone-converter/PopularUseCases";
 import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Time Zone Converter (World Time, Instant Conversion)";
+  const title = "Time Zone Converter | Convert Times Between Cities";
   const description =
-    "Convert time between time zones instantly. Pick a date and time and see the matching local time in another zone with a clear, simple layout.";
+    "Convert a date and time between cities and IANA time zones with daylight-saving-aware offsets and clear source and destination results.";
 
   const url = "https://www.ilovetimers.com/time-zone-converter";
 
@@ -1067,7 +1067,7 @@ export default function TimeZoneConverterPage({
         url,
         dateModified: REVIEW_DATE.iso,
         description:
-          "Convert time between time zones instantly with DST-aware results, copy-friendly output, share links, and fullscreen display.",
+          "Convert a selected wall time between browser-supported IANA time zones with date-aware DST offsets, copy output, share links, and fullscreen display.",
       },
       {
         "@type": "BreadcrumbList",
@@ -1106,7 +1106,7 @@ export default function TimeZoneConverterPage({
       <ToolHero
         display={<TimeZoneConverterCard nowISO={nowISO} />}
         title="Time Zone Converter"
-        description="Convert a chosen date and time between time zones with DST-aware results, share links, copy output, and saved state."
+        description="Convert a chosen date and wall time between browser-supported IANA time zones with date-aware DST offsets, cross-date results, copy, and share links."
       />
 
       <SeoBand>

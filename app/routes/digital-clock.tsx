@@ -37,9 +37,9 @@ import HowItWorks from "~/clients/components/digital-clock/HowItWorks";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Digital Clock (Big Fullscreen Clock With Seconds)";
+  const title = "Digital Clock Online | Current Local Time";
   const description =
-    "Free digital clock showing your local time with big, readable digits. Toggle seconds and 12 or 24-hour time, go fullscreen, and copy the time for classrooms or offices.";
+    "View the current local time in a clear digital clock with readable display options and fullscreen support. Time comes from your device's system clock.";
 
   const url = "https://www.ilovetimers.com/digital-clock";
 
@@ -489,7 +489,7 @@ export default function DigitalClockPage({
 
       <ToolHero
         display={<DigitalClockCard initialNowISO={nowISO} />}
-        title="Digital Clock (Big Fullscreen Clock)"
+        title="Digital Clock"
         description="Big, readable local time. Toggle seconds and 12/24-hour, go fullscreen, and copy the current time."
       />
 

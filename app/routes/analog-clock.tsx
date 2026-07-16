@@ -28,9 +28,9 @@ import PopularUseCases from "~/clients/components/analog-clock/PopularUseCases";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Online Analog Clock (Fullscreen Clock Face + Seconds Hand)";
+  const title = "Analog Clock Online | Current Local Time";
   const description =
-    "Free online analog clock with a clean, readable face. Go fullscreen, toggle the seconds hand, and display a smooth wall clock for classrooms or offices.";
+    "View the current local time on a clear analog clock with hour, minute, and second hands and fullscreen-friendly display options.";
 
   const url = "https://www.ilovetimers.com/analog-clock";
 
@@ -634,7 +634,7 @@ export default function AnalogClockPage({
 
       <ToolHero
         display={<AnalogClockCard initialNowISO={nowISO} />}
-        title="Analog Clock (Fullscreen + Seconds Hand)"
+        title="Analog Clock"
         description="A clean live analog clock face with optional seconds hand, smooth motion, and fullscreen viewing."
       />
 

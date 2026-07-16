@@ -25,12 +25,12 @@ const SITE_URL = "https://www.ilovetimers.com";
 const ROUTE_PATH = "/unix-timestamp-converter";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Unix Timestamp Converter (Seconds, Milliseconds, UTC)";
+  const title = "Unix Timestamp Converter | Seconds, Milliseconds and Dates";
   const description =
-    "Convert Unix timestamps to UTC, local time, ISO strings, seconds, and milliseconds, or convert a UTC date back into Unix epoch values.";
+    "Convert Unix timestamps to readable dates, including seconds, milliseconds, and supported microseconds, or convert a UTC date back to epoch values.";
 
   return [
     { title },
@@ -361,7 +361,7 @@ export default function UnixTimestampConverterPage({
         operatingSystem: "Web browser",
         dateModified: REVIEW_DATE.iso,
         description:
-          "Convert Unix timestamps between seconds, milliseconds, UTC, local time, and ISO date strings.",
+          "Convert Unix timestamps supplied in seconds, milliseconds, or microseconds to UTC, local time, and ISO output, and convert UTC dates back to epoch values.",
       },
       {
         "@type": "BreadcrumbList",
@@ -393,7 +393,7 @@ export default function UnixTimestampConverterPage({
       <ToolHero
         display={<UnixTimestampConverterTool nowISO={nowISO} />}
         title="Unix Timestamp Converter"
-        description="Convert Unix timestamps to readable UTC and local dates, then convert UTC date inputs back into Unix seconds and milliseconds."
+        description="Convert Unix timestamps in seconds, milliseconds, or microseconds to readable UTC and local dates, then convert UTC date inputs back to epoch values."
       />
 
       <SeoBand>

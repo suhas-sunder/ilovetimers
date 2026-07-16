@@ -24,7 +24,7 @@ import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayTe
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
 
 const utcFaqs = [
   {
@@ -63,9 +63,9 @@ const utcFaqs = [
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Current UTC Time (Live Clock, Fullscreen)";
+  const title = "UTC Clock Online | Current Coordinated Universal Time";
   const description =
-    "See the current UTC time instantly. A clean, live UTC clock with a big, readable display for coordination, logging, and schedules.";
+    "View the current UTC time with a clear live display. The displayed instant is calculated from your device's system clock.";
 
   const url = "https://www.ilovetimers.com/utc-clock";
 
@@ -685,7 +685,7 @@ export default function UtcClockPage({
         url,
         dateModified: REVIEW_DATE.iso,
         description:
-          "See the current UTC time instantly. A clean, live UTC clock with a big, readable display for coordination, logging, and schedules.",
+          "Display current Coordinated Universal Time derived from the device system clock, with seconds, ISO timestamp, copy, and fullscreen controls.",
       },
       {
         "@type": "BreadcrumbList",

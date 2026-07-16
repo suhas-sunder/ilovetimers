@@ -6,9 +6,9 @@ const ROUTE_URL = "https://www.ilovetimers.com/full-screen-analog-clock";
 const OG_IMAGE = "https://www.ilovetimers.com/og-image.png";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Full Screen Analog Clock Online";
+  const title = "Fullscreen Analog Clock | Large Local Time Display";
   const description =
-    "Use a large online analog clock full screen with a visible second hand, smooth or ticking movement, copy, and fullscreen support.";
+    "Open a large fullscreen analog clock for classrooms, meetings, presentations, practice sessions, and shared displays.";
 
   return [
     { title },

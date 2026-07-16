@@ -54,9 +54,9 @@ const FAQ_ITEMS = [
 ];
 
 export function meta({}: Route.MetaArgs) {
-  const title = "24 Hour Clock Online (Current Time in 24-Hour Format)";
+  const title = "24-Hour Clock Online | Current Local Time";
   const description =
-    "View the current time in 24-hour format with a large live clock, seconds and date toggles, local or UTC mode, copy, and fullscreen support.";
+    "View the current local time in 24-hour format with a clear digital display and fullscreen support where available.";
 
   return [
     { title },

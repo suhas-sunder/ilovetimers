@@ -155,11 +155,11 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/meeting-agenda-timer", label: "Run a timed agenda" },
   ]),
 
-  "/clock-with-milliseconds": group("More precision-display tools", [
-    { to: "/world-clock-with-milliseconds", label: "View world times with millisecond digits" },
+  "/clock-with-milliseconds": group("More millisecond and time displays", [
+    { to: "/clock-with-seconds", label: "Use a calmer local clock with seconds" },
     { to: "/utc-clock", label: "View current UTC time" },
-    { to: "/atomic-clock", label: "Open the device-based atomic-style clock" },
     { to: "/milliseconds-converter", label: "Convert milliseconds to other units" },
+    { to: "/stopwatch-with-milliseconds", label: "Measure elapsed time with millisecond digits" },
   ]),
   "/world-clock-with-milliseconds": group("Related world and millisecond clocks", [
     { to: "/clock-with-milliseconds", label: "View local time with milliseconds" },
@@ -202,6 +202,7 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/military-time-clock", label: "View the current military-time clock" },
     { to: "/24-hour-clock", label: "Open a current 24-hour clock" },
     { to: "/12-hour-clock", label: "Compare with a 12-hour clock" },
+    { to: "/utc-clock", label: "View UTC as a separate time standard" },
   ]),
   "/military-time-clock": group("Related military-time tools", [
     { to: "/military-time-converter", label: "Convert between military and standard time" },
@@ -223,6 +224,7 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/time-zone-converter", label: "Convert a specific time between zones" },
     { to: "/time-zone-meeting-planner", label: "Plan a meeting across time zones" },
     { to: "/world-clock-with-seconds", label: "View world clocks with seconds" },
+    { to: "/world-clock-with-milliseconds", label: "Compare world times with millisecond digits" },
   ]),
   "/time-zone-converter": group("More timezone tools", [
     { to: "/time-zone-meeting-planner", label: "Plan a meeting across time zones" },
@@ -233,6 +235,7 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/time-zone-converter", label: "Convert one time between zones" },
     { to: "/world-clock", label: "Compare current times around the world" },
     { to: "/meeting-timer", label: "Time an active meeting" },
+    { to: "/meeting-agenda-timer", label: "Run a timed meeting agenda" },
   ]),
   "/world-clock-with-seconds": group("Other world-time displays", [
     { to: "/world-clock", label: "Use the standard world clock" },
@@ -357,6 +360,7 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/analog-clock", label: "Return to the standard analog clock" },
     { to: "/analog-clock-with-second-hand", label: "View a clock with a second hand" },
     { to: "/smooth-second-hand-clock", label: "Use a sweeping second hand" },
+    { to: "/full-screen-clock", label: "Switch to a fullscreen digital clock" },
   ]),
   "/digital-clock": group("Other digital clock displays", [
     { to: "/full-screen-clock", label: "Open a digital clock fullscreen" },
@@ -364,15 +368,31 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/timer-clock", label: "Add an independent countdown beside local time" },
     { to: "/analog-clock", label: "Switch to an analog clock" },
   ]),
+  "/current-local-time": group("Other local-time displays", [
+    { to: "/digital-clock", label: "Open the general digital clock" },
+    { to: "/clock-with-seconds", label: "Keep seconds visible" },
+    { to: "/full-screen-clock", label: "Use a fullscreen room display" },
+  ]),
+  "/big-digital-clock": group("Other large clock displays", [
+    { to: "/full-screen-clock", label: "Open the fullscreen digital clock" },
+    { to: "/digital-clock", label: "Use the standard digital clock" },
+    { to: "/clock-with-seconds", label: "Focus on a clock with seconds" },
+  ]),
+  "/minimalist-clock": group("Other simple clock displays", [
+    { to: "/digital-clock", label: "Use the general digital clock" },
+    { to: "/full-screen-clock", label: "Open a fullscreen time display" },
+    { to: "/analog-clock", label: "Switch to a standard analog face" },
+  ]),
   "/full-screen-clock": group("Related digital clocks", [
     { to: "/digital-clock", label: "Use the standard digital clock" },
     { to: "/clock-with-seconds", label: "Show local time with seconds" },
     { to: "/timer-clock", label: "Show local time with a countdown" },
-    { to: "/big-digital-clock", label: "Open a large digital display" },
+    { to: "/full-screen-analog-clock", label: "Switch to a fullscreen analog clock" },
   ]),
   "/clock-with-seconds": group("Other clock displays", [
     { to: "/clock-with-milliseconds", label: "Show millisecond digits" },
     { to: "/full-screen-clock", label: "Open the clock fullscreen" },
     { to: "/digital-clock", label: "Use the standard digital clock" },
+    { to: "/timer-clock", label: "Keep a countdown beside current time" },
   ]),
 });

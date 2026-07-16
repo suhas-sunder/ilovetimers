@@ -33,15 +33,15 @@ import KeyboardShortcuts from "~/clients/components/military-time-converter/Keyb
 import PopularUseCases from "~/clients/components/military-time-converter/PopularUseCases";
 import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Military Time Converter (24-Hour to AM/PM, Instant)";
+  const title = "Military Time Converter | 12-Hour and 24-Hour Time";
   const description =
-    "Convert military time to standard AM/PM and convert 12-hour time to 24-hour format with clear validation and copy-ready results.";
+    "Convert between military time and standard 12-hour time with clear AM and PM results, midnight handling, and common examples.";
 
   const url = "https://www.ilovetimers.com/military-time-converter";
 
@@ -878,7 +878,7 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
         url,
         dateModified: REVIEW_DATE.iso,
         description:
-          "Convert military time (24-hour time) to standard time (AM/PM) instantly, plus reverse conversion.",
+          "Convert supplied military-style 24-hour times to standard AM/PM time and convert AM/PM values back, including midnight and noon handling.",
       },
       {
         "@type": "BreadcrumbList",
@@ -910,7 +910,7 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
       <ToolHero
         display={<MilitaryTimeConverterCard />}
         title="Military Time Converter"
-        description="Convert 24-hour military time to AM/PM and convert AM/PM back to military time with validation, examples, copy, and fullscreen."
+        description="Convert supplied military-style 24-hour times to AM/PM and convert AM/PM back, with validation, midnight and noon examples, copy, and fullscreen."
       />
 
       <SeoBand>

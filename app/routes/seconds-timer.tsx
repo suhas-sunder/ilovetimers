@@ -29,49 +29,25 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { secondsTimerContent } from "~/clients/config/presetTimers";
 
 const SITE_URL = "https://www.ilovetimers.com";
-const ROUTE_PATH = "/seconds-timer";
+const ROUTE_PATH = secondsTimerContent.path;
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 const PRESETS = [5, 10, 15, 30, 45, 60, 90];
 
-const FAQ_ITEMS = [
-  {
-    question: "Can I set a timer for only a few seconds?",
-    answer:
-      "Yes. Choose a preset such as 5, 10, 15, or 30 seconds, or enter a custom total number of seconds.",
-  },
-  {
-    question: "How is this different from a millisecond timer?",
-    answer:
-      "This page is optimized for whole-second countdowns. The millisecond timer includes millisecond input and a millisecond display.",
-  },
-  {
-    question: "Does this guarantee exact timing?",
-    answer:
-      "No. It reconciles against the browser performance clock, but display refresh, inactive tabs, and device behavior can affect visible updates.",
-  },
-];
-
 export function meta({}: Route.MetaArgs) {
-  const title = "Seconds Timer Online (Short Timer With Seconds)";
-  const description =
-    "Set a simple online seconds timer with 5, 10, 15, 30, 45, 60, and 90 second presets, custom seconds, sound toggle, copy, and fullscreen.";
+  const title = secondsTimerContent.metaTitle;
+  const description = secondsTimerContent.metaDescription;
 
   return [
     { title },
     { name: "description", content: description },
     {
       name: "keywords",
-      content: [
-        "seconds timer",
-        "timer with seconds",
-        "online seconds timer",
-        "timer for seconds",
-        "short timer",
-      ].join(", "),
+      content: secondsTimerContent.keywords.join(", "),
     },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
@@ -155,9 +131,9 @@ function useBeep() {
 }
 
 function SecondsTimerTool() {
-  const [totalSeconds, setTotalSeconds] = useState(30);
-  const [secondsInput, setSecondsInput] = useState("30");
-  const [remainingMs, setRemainingMs] = useState(30_000);
+  const [totalSeconds, setTotalSeconds] = useState<number>(secondsTimerContent.defaultSeconds);
+  const [secondsInput, setSecondsInput] = useState(String(secondsTimerContent.defaultSeconds));
+  const [remainingMs, setRemainingMs] = useState(secondsTimerContent.defaultSeconds * 1000);
   const [running, setRunning] = useState(false);
   const [sound, setSound] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -434,23 +410,27 @@ export default function SecondsTimerPage() {
     "@graph": [
       {
         "@type": "SoftwareApplication",
-        name: "Seconds Timer",
+        name: secondsTimerContent.title,
         url: ROUTE_URL,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web browser",
-        description:
-          "A browser-based seconds countdown timer with short presets, custom total seconds, sound toggle, copy, and fullscreen support.",
+        description: secondsTimerContent.metaDescription,
       },
       {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
-          { "@type": "ListItem", position: 2, name: "Seconds Timer", item: ROUTE_URL },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: secondsTimerContent.title,
+            item: ROUTE_URL,
+          },
         ],
       },
       {
         "@type": "FAQPage",
-        mainEntity: FAQ_ITEMS.map((item) => ({
+        mainEntity: secondsTimerContent.faqItems.map((item) => ({
           "@type": "Question",
           name: item.question,
           acceptedAnswer: { "@type": "Answer", text: item.answer },
@@ -468,74 +448,50 @@ export default function SecondsTimerPage() {
 
       <ToolHero
         display={<SecondsTimerTool />}
-        title="Seconds Timer"
-        description="Start a short countdown in seconds with quick presets, custom total seconds, sound, copy, and fullscreen controls."
+        title={secondsTimerContent.h1}
+        description={secondsTimerContent.shortDescription}
       />
 
       <SeoBand>
-        <ContentSection title="How this seconds timer works">
-          <p>
-            This timer is focused on short whole-second countdowns. Pick a
-            preset such as 5, 10, 30, or 60 seconds, or enter a custom total
-            number of seconds and apply it before starting.
-          </p>
-          <p>
-            The running countdown reconciles against the browser performance
-            clock instead of simply subtracting one second at a time. Browser
-            scheduling, display refresh rate, and inactive tabs can still affect
-            visible updates.
-          </p>
+        <ContentSection title={secondsTimerContent.overviewTitle}>
+          {secondsTimerContent.overviewParagraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
         </ContentSection>
 
-        <ContentSection title="When to use a seconds timer">
-          <p>
-            A seconds-only timer is useful for short drills, quick reminders,
-            classroom countdowns, speaking pauses, exercise rests, games, and
-            practice intervals where a full minutes-and-hours timer feels too
-            heavy.
-          </p>
-          <p>
-            For a broader countdown, use the{" "}
-            <a className="ilt-content-link" href="/countdown-timer">
-              countdown timer
-            </a>
-            . For millisecond input and display, use the{" "}
-            <a className="ilt-content-link" href="/millisecond-timer">
-              millisecond timer
-            </a>
-            . For elapsed time, use the{" "}
-            <a className="ilt-content-link" href="/stopwatch">
-              stopwatch
-            </a>
-            .
-          </p>
+        <ContentSection title={secondsTimerContent.practicalTitle}>
+          <p>{secondsTimerContent.practicalIntro}</p>
+          <ul className="list-disc space-y-2 pl-5">
+            {secondsTimerContent.useCases.map((useCase) => (
+              <li key={useCase}>{useCase}</li>
+            ))}
+          </ul>
         </ContentSection>
 
-        <ContentSection title="Related tools">
+        <ContentSection title={secondsTimerContent.durationTitle}>
+          <p>{secondsTimerContent.durationParagraph}</p>
+        </ContentSection>
+
+        <ContentSection title="Browser timing note">
+          <p>{secondsTimerContent.limitationParagraph}</p>
+        </ContentSection>
+
+        <ContentSection title="Choose another timer">
+          <p>{secondsTimerContent.relatedIntro}</p>
           <p>
-            For direct preset countdowns, open the{" "}
-            <a className="ilt-content-link" href="/1-minute-timer">
-              1 minute timer
-            </a>{" "}
-            or{" "}
-            <a className="ilt-content-link" href="/5-minute-timer">
-              5 minute timer
-            </a>
-            .{" "}
-            Try the{" "}
-            <a className="ilt-content-link" href="/reaction-time-test">
-              reaction time test
-            </a>{" "}
-            for response practice or the{" "}
-            <a className="ilt-content-link" href="/interval-timer">
-              interval timer
-            </a>{" "}
-            for repeated work and rest blocks.
+            {secondsTimerContent.relatedLinks.map((link, index) => (
+              <span key={link.href}>
+                {index > 0 ? " / " : null}
+                <a className="ilt-content-link" href={link.href}>
+                  {link.label}
+                </a>
+              </span>
+            ))}
           </p>
         </ContentSection>
 
         <ContentSection title="Seconds timer FAQ">
-          {FAQ_ITEMS.map((item) => (
+          {secondsTimerContent.faqItems.map((item) => (
             <div key={item.question}>
               <h3>{item.question}</h3>
               <p>{item.answer}</p>

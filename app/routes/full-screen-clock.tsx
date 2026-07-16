@@ -6,9 +6,9 @@ const ROUTE_URL = "https://www.ilovetimers.com/full-screen-clock";
 const OG_IMAGE = "https://www.ilovetimers.com/og-image.png";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Full Screen Clock Online (Large Digital Clock)";
+  const title = "Fullscreen Digital Clock | Large Current Time Display";
   const description =
-    "Use a large online full screen clock with seconds, 12/24-hour mode, date display, copy, and fullscreen support.";
+    "Open a large fullscreen digital clock for classrooms, meetings, presentations, events, and shared displays. The time comes from your device.";
 
   return [
     { title },

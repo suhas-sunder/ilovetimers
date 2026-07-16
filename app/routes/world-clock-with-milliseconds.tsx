@@ -6,9 +6,9 @@ const ROUTE_URL = "https://www.ilovetimers.com/world-clock-with-milliseconds";
 const OG_IMAGE = "https://www.ilovetimers.com/og-image.png";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "World Clock With Milliseconds (Live Time Zones)";
+  const title = "World Clock with Milliseconds | Multiple Time Zones";
   const description =
-    "View local and selected world times with live milliseconds, add or remove time zones, copy a summary, and use fullscreen.";
+    "Compare current times across multiple time zones with millisecond displays. Device-clock accuracy and browser rendering affect the displayed values.";
 
   return [
     { title },

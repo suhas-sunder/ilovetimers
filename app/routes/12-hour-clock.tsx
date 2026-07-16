@@ -51,9 +51,9 @@ const FAQ_ITEMS = [
 ];
 
 export function meta({}: Route.MetaArgs) {
-  const title = "12 Hour Clock Online (Current AM PM Time)";
+  const title = "12-Hour Clock Online | Current Local Time";
   const description =
-    "View the current time in 12-hour AM/PM format with a large live clock, seconds and date toggles, 24-hour comparison, copy, and fullscreen support.";
+    "View the current local time in 12-hour format with AM and PM on a clear digital clock display.";
 
   return [
     { title },

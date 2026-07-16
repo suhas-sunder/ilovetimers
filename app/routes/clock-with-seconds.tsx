@@ -51,9 +51,9 @@ const FAQ_ITEMS = [
 ];
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Clock With Seconds Online (Live Fullscreen Clock)";
+  const title = "Clock with Seconds | Live Local Time Display";
   const description =
-    "View a live online clock with seconds shown by default. Toggle 12 or 24-hour time, date, seconds, copy the current time, and use fullscreen.";
+    "View the current local time with seconds in a clear browser clock. Use it for classrooms, meetings, presentations, and everyday time checks.";
 
   return [
     { title },

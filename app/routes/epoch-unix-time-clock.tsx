@@ -36,16 +36,15 @@ import KeyboardShortcuts from "~/clients/components/epoch-unix-time-clock/Keyboa
 import PopularUseCases from "~/clients/components/epoch-unix-time-clock/PopularUseCases";
 import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title =
-    "Unix Time Clock (Current Epoch Timestamp in Seconds & Milliseconds)";
+  const title = "Unix Timestamp Clock | Current Epoch Time";
   const description =
-    "Free Unix time clock showing the current epoch timestamp in seconds and milliseconds. Copy buttons, local and UTC display, and a clean fullscreen view.";
+    "View the current Unix timestamp in seconds and milliseconds with the matching UTC date and time.";
 
   const url = "https://www.ilovetimers.com/epoch-unix-time-clock";
 
@@ -446,7 +445,7 @@ export default function EpochUnixTimeClockPage({
         url,
         dateModified: REVIEW_DATE.iso,
         description:
-          "Live Unix timestamp clock showing epoch time in seconds and milliseconds, plus local and UTC date-time.",
+          "Show the device-derived current Unix timestamp in seconds and milliseconds with matching local and UTC date-time displays.",
       },
       {
         "@type": "BreadcrumbList",
@@ -486,7 +485,7 @@ export default function EpochUnixTimeClockPage({
       <ToolHero
         display={<EpochUnixTimeClockCard initialNowISO={nowISO} />}
         title="Unix Time Clock (Epoch Timestamp)"
-        description="Show the current Unix timestamp in seconds first, with milliseconds, local time, UTC time, copy, snap, freeze, and fullscreen controls."
+        description="Show the device-derived current Unix timestamp in seconds and milliseconds with matching UTC and local time, copy, freeze, and fullscreen controls."
       />
       <span className="sr-only">Build: {nowISO}</span>
 

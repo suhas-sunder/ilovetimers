@@ -39,9 +39,9 @@ import PopularUseCases from "~/clients/components/world-clock/PopularUseCases";
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "World Clock (Current Time in Cities, Live)";
+  const title = "World Clock Online | Current Time in Multiple Cities";
   const description =
-    "See the current time in cities around the world. Clean live world clock showing local times at a glance in a big, readable display.";
+    "Compare current times across selected cities and IANA time zones with search, seconds, 12- or 24-hour format, copy, and fullscreen.";
 
   const url = "https://www.ilovetimers.com/world-clock";
 

@@ -26,9 +26,9 @@ const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Smooth Second Hand Clock (Online Analog Clock)";
+  const title = "Smooth Second Hand Clock | Analog Time Display";
   const description =
-    "Use a large online analog clock with a smooth sweeping second hand, ticking mode, second-hand toggle, digital context, copy, and fullscreen support.";
+    "View local time on an analog clock with a smoothly moving second hand. Browser refresh rate and device performance affect visual smoothness.";
 
   return [
     { title },

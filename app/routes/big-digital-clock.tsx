@@ -6,9 +6,9 @@ const ROUTE_URL = "https://www.ilovetimers.com/big-digital-clock";
 const OG_IMAGE = "https://www.ilovetimers.com/og-image.png";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Big Digital Clock Online";
+  const title = "Big Digital Clock | Large Current Time Display";
   const description =
-    "Use a big online digital clock optimized for large room-readable time display with seconds, 12/24-hour mode, date, copy, and fullscreen support.";
+    "View current local time in a large digital display with seconds, date, 12- or 24-hour format, copy, and fullscreen controls.";
 
   return [
     { title },

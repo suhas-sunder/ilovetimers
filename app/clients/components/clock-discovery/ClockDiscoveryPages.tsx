@@ -28,7 +28,7 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
 const SITE_URL = "https://www.ilovetimers.com";
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
 
 type FaqItem = {
   question: string;

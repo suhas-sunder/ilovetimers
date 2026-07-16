@@ -41,9 +41,9 @@ import PopularUseCases from "~/clients/components/minimalist-clock/PopularUseCas
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Minimalist Online Clock (Big Fullscreen Display)";
+  const title = "Minimalist Clock | Clean Current Time Display";
   const description =
-    "A clean, distraction-free online clock with big digits. Use it fullscreen as a desk clock, wall display, or screensaver-style clock with a minimalist look.";
+    "View current local time in a clean, distraction-light clock with large digits and fullscreen support. Time comes from your device.";
 
   const url = "https://www.ilovetimers.com/minimalist-clock";
 

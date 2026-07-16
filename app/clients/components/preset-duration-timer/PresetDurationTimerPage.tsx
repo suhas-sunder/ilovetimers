@@ -27,6 +27,9 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { presetDurationTimerConfigs } from "~/clients/config/presetTimers";
+
+export { presetDurationTimerConfigs };
 
 const SITE_URL = "https://www.ilovetimers.com";
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -57,12 +60,13 @@ type PresetDurationTimerConfig = {
   statusLabel: string;
   soundLabel: string;
   fullscreenTitle: string;
-  howTitle: string;
-  howParagraphs: readonly string[];
-  usefulTitle: string;
-  usefulParagraph: string;
+  overviewTitle: string;
+  overviewParagraphs: readonly string[];
+  practicalTitle: string;
+  practicalIntro: string;
   useCases: readonly string[];
-  settingsParagraphs: readonly string[];
+  durationTitle: string;
+  durationParagraph: string;
   limitationParagraph: string;
   relatedIntro: string;
   relatedLinks: readonly RelatedLink[];
@@ -131,413 +135,6 @@ function useBeep() {
   }, []);
 }
 
-const oneMinuteFaq = [
-  {
-    question: "Does the 1 minute timer start automatically?",
-    answer:
-      "No. The timer opens ready at 1:00, but you choose when to press Start.",
-  },
-  {
-    question: "Is this the same as a stopwatch?",
-    answer:
-      "No. This page counts down from 60 seconds. A stopwatch counts up to measure elapsed time.",
-  },
-  {
-    question: "Can browser timing be perfectly exact?",
-    answer:
-      "No. The countdown reconciles with the browser performance clock, but tab state, refresh rate, and device behavior can affect visible updates.",
-  },
-];
-
-const fiveMinuteFaq = [
-  {
-    question: "What is the default time on this page?",
-    answer:
-      "The 5 minute timer opens ready at 5:00 and reset returns it to 5:00.",
-  },
-  {
-    question: "Can I use it for a break?",
-    answer:
-      "Yes. It is useful for a short break, quick tidy-up, classroom activity, or meeting warning.",
-  },
-  {
-    question: "Will the sound always play?",
-    answer:
-      "Not always. Browser audio can depend on user interaction, mute state, volume, and whether the tab or device is still active.",
-  },
-];
-
-const tenMinuteFaq = [
-  {
-    question: "What happens when I press reset?",
-    answer:
-      "Reset stops the countdown and returns the display to the 10:00 default for this route.",
-  },
-  {
-    question: "How is this different from the general countdown timer?",
-    answer:
-      "This page opens directly at 10 minutes for immediate use. The general countdown timer is better when you need any custom minutes and seconds.",
-  },
-  {
-    question: "Can I use this in fullscreen?",
-    answer:
-      "Yes. The fullscreen view keeps the timer and controls visible and does not include ad placeholders inside the fullscreen target.",
-  },
-];
-
-const fifteenMinuteFaq = [
-  {
-    question: "Is 15 minutes fixed on this page?",
-    answer:
-      "Yes. This page is built as an immediate 15 minute timer. Use the general countdown timer when you need a custom duration.",
-  },
-  {
-    question: "What is a 15 minute timer useful for?",
-    answer:
-      "It fits medium-short work blocks, classroom station work, review windows, household tasks, and rehearsal segments.",
-  },
-  {
-    question: "Does the timer keep running in the background?",
-    answer:
-      "The page continues reconciling against the browser clock, but background tabs and sleeping devices can delay visible updates or sound.",
-  },
-];
-
-const thirtyMinuteFaq = [
-  {
-    question: "What does this timer open to?",
-    answer:
-      "It opens ready at 30:00 and reset returns the timer to 30:00.",
-  },
-  {
-    question: "Is this a Pomodoro timer?",
-    answer:
-      "No. This is one simple 30 minute countdown. The Pomodoro timer runs work and break cycles.",
-  },
-  {
-    question: "Can I rely on it for official timing?",
-    answer:
-      "No. It is a browser utility for casual timing and depends on the device, tab, audio settings, and display refresh behavior.",
-  },
-];
-
-export const presetDurationTimerConfigs = {
-  oneMinute: {
-    key: "one-minute",
-    path: "/1-minute-timer",
-    title: "1 Minute Timer",
-    h1: "1 Minute Timer",
-    shortDescription:
-      "Start a simple 60-second countdown for short pauses, drills, transitions, and one-minute tasks.",
-    metaTitle: "1 Minute Timer Online (60 Second Countdown)",
-    metaDescription:
-      "Open a 1 minute timer ready at 1:00 with start, pause, reset, optional final sound, fullscreen mode, and practical one-minute timing notes.",
-    keywords: [
-      "1 minute timer",
-      "one minute timer",
-      "60 second timer",
-      "online 1 minute timer",
-      "one minute countdown",
-    ],
-    seconds: 60,
-    durationLabel: "one minute",
-    defaultDisplay: "1:00",
-    displayLabel: "60-second countdown",
-    statusLabel: "1 minute ready",
-    soundLabel: "Final beep",
-    fullscreenTitle: "1 Minute Timer",
-    howTitle: "How this 1 minute timer works",
-    howParagraphs: [
-      "This page opens with a 60-second countdown already set. Press Start when you are ready, pause if you need to hold the countdown, and reset to return to 1:00.",
-      "The timer does not autoplay. It is built for quick one-minute tasks where the correct duration should be ready immediately.",
-    ],
-    usefulTitle: "When one minute is useful",
-    usefulParagraph:
-      "A one-minute timer is short enough for a quick pause but long enough to make transitions visible. It works well when you want a clean stop point without setting a custom countdown.",
-    useCases: [
-      "One-minute pause",
-      "Classroom transition",
-      "Short speech practice",
-      "Quick stretch or checkpoint",
-      "Fast game round",
-      "One-minute writing or thinking sprint",
-    ],
-    settingsParagraphs: [
-      "The main controls are Start, Pause, Resume, and Reset. The optional sound toggle controls a simple browser beep at the end.",
-      "Use fullscreen when the 60-second countdown needs to be visible across a room or on a second screen.",
-    ],
-    limitationParagraph:
-      "The countdown reconciles against the browser performance clock, but display refresh rate, inactive tabs, sleeping devices, and browser audio rules can affect visible updates and sound.",
-    relatedIntro:
-      "For shorter whole-second presets or custom seconds, use the seconds timer. For elapsed timing instead of a countdown, use the stopwatch.",
-    relatedLinks: [
-      { href: "/seconds-timer", label: "Seconds Timer" },
-      { href: "/5-minute-timer", label: "5 Minute Timer" },
-      { href: "/countdown-timer", label: "Countdown Timer" },
-      { href: "/stopwatch", label: "Stopwatch" },
-      { href: "/speech-timer", label: "Speech Timer" },
-    ],
-    presetLinks: [
-      { href: "/5-minute-timer", label: "5 minutes" },
-      { href: "/10-minute-timer", label: "10 minutes" },
-      { href: "/seconds-timer", label: "Seconds timer" },
-      { href: "/countdown-timer", label: "Custom countdown" },
-    ],
-    faqItems: oneMinuteFaq,
-  },
-  fiveMinute: {
-    key: "five-minute",
-    path: "/5-minute-timer",
-    title: "5 Minute Timer",
-    h1: "5 Minute Timer",
-    shortDescription:
-      "Start a five-minute countdown for short breaks, quick tasks, warmups, and small work blocks.",
-    metaTitle: "5 Minute Timer Online (Five Minute Countdown)",
-    metaDescription:
-      "Open a 5 minute timer ready at 5:00 with start, pause, reset, optional final sound, fullscreen mode, and practical five-minute timing notes.",
-    keywords: [
-      "5 minute timer",
-      "five minute timer",
-      "online 5 minute timer",
-      "5 minute countdown",
-      "timer for 5 minutes",
-    ],
-    seconds: 300,
-    durationLabel: "five minutes",
-    defaultDisplay: "5:00",
-    displayLabel: "Five-minute countdown",
-    statusLabel: "5 minutes ready",
-    soundLabel: "Final beep",
-    fullscreenTitle: "5 Minute Timer",
-    howTitle: "How this 5 minute timer works",
-    howParagraphs: [
-      "This timer opens ready at 5:00. Start begins the countdown, pause holds the remaining time, resume continues from the paused point, and reset returns to exactly five minutes.",
-      "The page is meant for immediate five-minute timing, so it keeps custom setup out of the way and puts the large countdown first.",
-    ],
-    usefulTitle: "When five minutes is useful",
-    usefulParagraph:
-      "Five minutes is a good small block for tasks that need more than a moment but should not become a long session.",
-    useCases: [
-      "Five-minute break",
-      "Quick tidy-up",
-      "Short cooking check",
-      "Classroom activity",
-      "Meeting warning",
-      "Focus reset",
-    ],
-    settingsParagraphs: [
-      "Use the sound toggle if you want a simple final beep. If the device is muted or the browser blocks audio, the visual countdown still completes.",
-      "Fullscreen mode is useful for a group break, class activity, kitchen counter display, or meeting room warning.",
-    ],
-    limitationParagraph:
-      "Browser timers can be affected by tab throttling, sleep mode, display refresh, and audio permissions. Keep the page visible and the device awake when the ending matters.",
-    relatedIntro:
-      "For a shorter transition timer, use the one-minute page. For flexible break lengths and loops, use the break timer.",
-    relatedLinks: [
-      { href: "/1-minute-timer", label: "1 Minute Timer" },
-      { href: "/10-minute-timer", label: "10 Minute Timer" },
-      { href: "/break-timer", label: "Break Timer" },
-      { href: "/countdown-timer", label: "Countdown Timer" },
-      { href: "/cooking-timer", label: "Cooking Timer" },
-    ],
-    presetLinks: [
-      { href: "/1-minute-timer", label: "1 minute" },
-      { href: "/10-minute-timer", label: "10 minutes" },
-      { href: "/15-minute-timer", label: "15 minutes" },
-      { href: "/countdown-timer", label: "Custom countdown" },
-    ],
-    faqItems: fiveMinuteFaq,
-  },
-  tenMinute: {
-    key: "ten-minute",
-    path: "/10-minute-timer",
-    title: "10 Minute Timer",
-    h1: "10 Minute Timer",
-    shortDescription:
-      "Start a common ten-minute countdown for work sprints, cooking checks, breaks, or classroom timing.",
-    metaTitle: "10 Minute Timer Online (Ten Minute Countdown)",
-    metaDescription:
-      "Open a 10 minute timer ready at 10:00 with start, pause, reset, optional sound, fullscreen mode, and practical ten-minute timer guidance.",
-    keywords: [
-      "10 minute timer",
-      "ten minute timer",
-      "online 10 minute timer",
-      "10 minute countdown",
-      "timer for 10 minutes",
-    ],
-    seconds: 600,
-    durationLabel: "ten minutes",
-    defaultDisplay: "10:00",
-    displayLabel: "Ten-minute countdown",
-    statusLabel: "10 minutes ready",
-    soundLabel: "Final beep",
-    fullscreenTitle: "10 Minute Timer",
-    howTitle: "How this 10 minute timer works",
-    howParagraphs: [
-      "This page starts with a 10:00 countdown already selected. Start, pause, resume, and reset keep the flow simple, and reset always returns to ten minutes.",
-      "Ten minutes is common enough to deserve a direct page, while the general countdown timer remains available for custom durations.",
-    ],
-    usefulTitle: "When ten minutes is useful",
-    usefulParagraph:
-      "A ten-minute timer is long enough for a small work segment or group activity and short enough to keep the end clearly in view.",
-    useCases: [
-      "Ten-minute work sprint",
-      "Quick study block",
-      "Cooking reminder",
-      "Group activity",
-      "Short workout or rest window",
-      "Meeting segment",
-    ],
-    settingsParagraphs: [
-      "The optional sound toggle can play a short final beep after the countdown reaches zero. The visual timer remains the primary signal.",
-      "Use fullscreen for classroom timing, meeting segments, projected countdowns, or a second-screen timer.",
-    ],
-    limitationParagraph:
-      "This browser timer is designed for everyday use, not official or guaranteed timing. Inactive tabs, low-power states, and audio settings can affect what you see or hear.",
-    relatedIntro:
-      "For shorter preset timing, try five minutes. For study or meeting workflows, use the dedicated study and meeting timers.",
-    relatedLinks: [
-      { href: "/5-minute-timer", label: "5 Minute Timer" },
-      { href: "/15-minute-timer", label: "15 Minute Timer" },
-      { href: "/study-timer", label: "Study Timer" },
-      { href: "/meeting-timer", label: "Meeting Timer" },
-      { href: "/countdown-timer", label: "Countdown Timer" },
-    ],
-    presetLinks: [
-      { href: "/5-minute-timer", label: "5 minutes" },
-      { href: "/15-minute-timer", label: "15 minutes" },
-      { href: "/30-minute-timer", label: "30 minutes" },
-      { href: "/countdown-timer", label: "Custom countdown" },
-    ],
-    faqItems: tenMinuteFaq,
-  },
-  fifteenMinute: {
-    key: "fifteen-minute",
-    path: "/15-minute-timer",
-    title: "15 Minute Timer",
-    h1: "15 Minute Timer",
-    shortDescription:
-      "Start a medium-short countdown for focused work, study, presentations, cleaning, or meeting segments.",
-    metaTitle: "15 Minute Timer Online (Fifteen Minute Countdown)",
-    metaDescription:
-      "Open a 15 minute timer ready at 15:00 with start, pause, reset, optional final sound, fullscreen mode, and practical timing notes.",
-    keywords: [
-      "15 minute timer",
-      "fifteen minute timer",
-      "online 15 minute timer",
-      "15 minute countdown",
-      "timer for 15 minutes",
-    ],
-    seconds: 900,
-    durationLabel: "fifteen minutes",
-    defaultDisplay: "15:00",
-    displayLabel: "Fifteen-minute countdown",
-    statusLabel: "15 minutes ready",
-    soundLabel: "Final beep",
-    fullscreenTitle: "15 Minute Timer",
-    howTitle: "How this 15 minute timer works",
-    howParagraphs: [
-      "The timer opens at 15:00 and stays focused on that preset duration. Start begins the session, pause and resume preserve the remaining time, and reset returns to 15 minutes.",
-      "This route is for people who already know they want a fifteen-minute countdown and do not need to configure a generic timer first.",
-    ],
-    usefulTitle: "When fifteen minutes is useful",
-    usefulParagraph:
-      "Fifteen minutes gives enough room for a focused activity or review segment without becoming a long block.",
-    useCases: [
-      "15-minute focus block",
-      "Classroom station work",
-      "Presentation rehearsal segment",
-      "Study review",
-      "Break or rest interval",
-      "Household task",
-    ],
-    settingsParagraphs: [
-      "Use Start, Pause, Resume, and Reset for the active countdown. The sound toggle controls a short browser beep at the end.",
-      "Fullscreen mode keeps the 15:00 countdown readable for group timing, rehearsal, classroom station work, or a second-screen setup.",
-    ],
-    limitationParagraph:
-      "The timer reconciles with the browser performance clock, but the visible countdown and final beep can still be delayed by tab throttling, sleep mode, refresh rate, or audio permissions.",
-    relatedIntro:
-      "For a shorter block, use the ten-minute timer. For a longer focus or study window, use the thirty-minute timer or a dedicated focus route.",
-    relatedLinks: [
-      { href: "/10-minute-timer", label: "10 Minute Timer" },
-      { href: "/30-minute-timer", label: "30 Minute Timer" },
-      { href: "/focus-session-timer", label: "Focus Session Timer" },
-      { href: "/presentation-timer", label: "Presentation Timer" },
-      { href: "/countdown-timer", label: "Countdown Timer" },
-    ],
-    presetLinks: [
-      { href: "/10-minute-timer", label: "10 minutes" },
-      { href: "/30-minute-timer", label: "30 minutes" },
-      { href: "/5-minute-timer", label: "5 minutes" },
-      { href: "/countdown-timer", label: "Custom countdown" },
-    ],
-    faqItems: fifteenMinuteFaq,
-  },
-  thirtyMinute: {
-    key: "thirty-minute",
-    path: "/30-minute-timer",
-    title: "30 Minute Timer",
-    h1: "30 Minute Timer",
-    shortDescription:
-      "Start a half-hour countdown for study blocks, work sessions, workouts, meetings, cooking, and reminders.",
-    metaTitle: "30 Minute Timer Online (Half Hour Countdown)",
-    metaDescription:
-      "Open a 30 minute timer ready at 30:00 with start, pause, reset, optional final sound, fullscreen mode, and practical half-hour timing notes.",
-    keywords: [
-      "30 minute timer",
-      "thirty minute timer",
-      "online 30 minute timer",
-      "half hour timer",
-      "30 minute countdown",
-    ],
-    seconds: 1800,
-    durationLabel: "thirty minutes",
-    defaultDisplay: "30:00",
-    displayLabel: "Half-hour countdown",
-    statusLabel: "30 minutes ready",
-    soundLabel: "Final beep",
-    fullscreenTitle: "30 Minute Timer",
-    howTitle: "How this 30 minute timer works",
-    howParagraphs: [
-      "This timer opens ready at 30:00. Press Start to begin the half-hour countdown, pause and resume as needed, and reset to return to exactly thirty minutes.",
-      "It is intentionally a direct preset page, not a full custom timer. Use the general countdown timer when you need another duration.",
-    ],
-    usefulTitle: "When thirty minutes is useful",
-    usefulParagraph:
-      "Thirty minutes is a clear half-hour block for sessions that need more room than a short warning timer but still have a visible endpoint.",
-    useCases: [
-      "Half-hour focus session",
-      "Study block",
-      "Workout timer",
-      "Meeting timer",
-      "Cooking reminder",
-      "Break deadline",
-    ],
-    settingsParagraphs: [
-      "The sound toggle can play a short browser beep when time is up. Start, pause, resume, and reset remain available in both normal and fullscreen views.",
-      "Use fullscreen when a half-hour countdown needs to be readable from a couch, desk, classroom, kitchen, or meeting room.",
-    ],
-    limitationParagraph:
-      "This page is an everyday browser timer. Device sleep, background tab throttling, screen refresh, volume, mute state, and browser audio permissions can affect the visible or audible finish.",
-    relatedIntro:
-      "For a shorter medium block, use the fifteen-minute timer. For cycles or focus-specific workflows, use Pomodoro or focus session timers.",
-    relatedLinks: [
-      { href: "/15-minute-timer", label: "15 Minute Timer" },
-      { href: "/pomodoro-timer", label: "Pomodoro Timer" },
-      { href: "/focus-session-timer", label: "Focus Session Timer" },
-      { href: "/workout-timer", label: "Workout Timer" },
-      { href: "/countdown-timer", label: "Countdown Timer" },
-    ],
-    presetLinks: [
-      { href: "/15-minute-timer", label: "15 minutes" },
-      { href: "/10-minute-timer", label: "10 minutes" },
-      { href: "/5-minute-timer", label: "5 minutes" },
-      { href: "/countdown-timer", label: "Custom countdown" },
-    ],
-    faqItems: thirtyMinuteFaq,
-  },
-} as const satisfies Record<string, PresetDurationTimerConfig>;
 
 export function createPresetTimerMeta(config: PresetDurationTimerConfig) {
   const routeUrl = `${SITE_URL}${config.path}`;
@@ -864,14 +461,14 @@ export function PresetDurationTimerPage({
       />
 
       <SeoBand>
-        <ContentSection title={config.howTitle}>
-          {config.howParagraphs.map((paragraph) => (
+        <ContentSection title={config.overviewTitle}>
+          {config.overviewParagraphs.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
         </ContentSection>
 
-        <ContentSection title={config.usefulTitle}>
-          <p>{config.usefulParagraph}</p>
+        <ContentSection title={config.practicalTitle}>
+          <p>{config.practicalIntro}</p>
           <ul className="list-disc space-y-2 pl-5">
             {config.useCases.map((useCase) => (
               <li key={useCase}>{useCase}</li>
@@ -879,17 +476,15 @@ export function PresetDurationTimerPage({
           </ul>
         </ContentSection>
 
-        <ContentSection title="Settings and display options">
-          {config.settingsParagraphs.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
+        <ContentSection title={config.durationTitle}>
+          <p>{config.durationParagraph}</p>
         </ContentSection>
 
-        <ContentSection title="Accuracy and browser timing limits">
+        <ContentSection title="Browser timing note">
           <p>{config.limitationParagraph}</p>
         </ContentSection>
 
-        <ContentSection title="Related timers">
+        <ContentSection title="Choose another timer">
           <p>{config.relatedIntro}</p>
           <p>
             {config.relatedLinks.map((link, index) => (

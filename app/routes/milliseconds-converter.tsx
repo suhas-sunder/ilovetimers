@@ -22,15 +22,15 @@ import KeyboardShortcuts from "~/clients/components/milliseconds-converter/Keybo
 import PopularUseCases from "~/clients/components/milliseconds-converter/PopularUseCases";
 import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Milliseconds to Seconds Converter (Instant, Two-Way)";
+  const title = "Milliseconds Converter | Seconds, Minutes and Hours";
   const description =
-    "Convert milliseconds to seconds or seconds to milliseconds instantly. Paste a value and get an exact result with no clutter.";
+    "Convert milliseconds to seconds, minutes, hours, and days with clear decimal results, or convert seconds back to milliseconds.";
 
   const url = "https://www.ilovetimers.com/milliseconds-converter";
 
@@ -466,7 +466,7 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
         url,
         dateModified: REVIEW_DATE.iso,
         description:
-          "Convert milliseconds to seconds and seconds to milliseconds instantly.",
+          "Convert milliseconds to seconds, minutes, hours, and days, or convert seconds back to milliseconds using decimal-string arithmetic.",
       },
       {
         "@type": "BreadcrumbList",
@@ -498,7 +498,7 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
       <ToolHero
         display={<MillisecondsConverterCard />}
         title="Milliseconds Converter"
-        description="Convert milliseconds to seconds and seconds to milliseconds with exact decimal handling and copy-ready results."
+        description="Convert milliseconds to seconds, minutes, hours, and days, or convert seconds back to milliseconds with clear unit labels and decimal results."
       />
 
       <SeoBand>

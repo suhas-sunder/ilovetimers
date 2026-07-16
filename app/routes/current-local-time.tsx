@@ -32,9 +32,9 @@ import PopularUseCases from "~/clients/components/current-local-time/PopularUseC
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Current Local Time (Big Fullscreen Clock + Copy Time)";
+  const title = "Current Local Time | Device Clock with Fullscreen";
   const description =
-    "See your local time now in a big, readable display. Toggle seconds and 12 or 24-hour time, go fullscreen, and copy the time for classrooms, meetings, and streaming overlays.";
+    "View the current local time from your device clock with seconds, 12- or 24-hour formatting, copy, and fullscreen options.";
 
   const url = "https://www.ilovetimers.com/current-local-time";
 

@@ -6,9 +6,9 @@ const ROUTE_URL = "https://www.ilovetimers.com/world-clock-with-seconds";
 const OG_IMAGE = "https://www.ilovetimers.com/og-image.png";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "World Clock With Seconds (Live Global Time)";
+  const title = "World Clock with Seconds | Multiple Time Zones";
   const description =
-    "Compare live world times with seconds visible by default. Add or remove cities, reset defaults, copy a summary, and use fullscreen.";
+    "Compare current city times with second-level displays, dates, and timezone information using browser-supported timezone data.";
 
   return [
     { title },

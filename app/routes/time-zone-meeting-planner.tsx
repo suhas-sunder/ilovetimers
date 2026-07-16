@@ -43,7 +43,7 @@ const SITE_URL = "https://www.ilovetimers.com";
 const ROUTE_PATH = "/time-zone-meeting-planner";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
 
 const TZ_OPTIONS: ZoneOption[] = [
   { value: "UTC", label: "UTC" },
@@ -67,9 +67,9 @@ const TZ_OPTIONS: ZoneOption[] = [
 const DEFAULT_ZONES = ["UTC", "America/New_York", "Europe/London"];
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Time Zone Meeting Planner";
+  const title = "Time Zone Meeting Planner | Compare Working Hours";
   const description =
-    "Compare meeting times across multiple time zones with date, duration, work-hour windows, candidate times, and copy or share summary.";
+    "Compare local times across selected cities to find practical meeting windows, date differences, and daylight-saving-aware offsets.";
 
   return [
     { title },
@@ -528,7 +528,7 @@ export default function TimeZoneMeetingPlannerPage({
         operatingSystem: "Web browser",
         dateModified: REVIEW_DATE.iso,
         description:
-          "A browser-based planner for comparing meeting times across multiple time zones with date, duration, work windows, candidate times, and copy or share summary.",
+          "A browser-based planner for comparing local work windows across time zones using a UTC reference date, duration, candidate times, and copy or share summary.",
       },
       {
         "@type": "BreadcrumbList",
@@ -560,7 +560,7 @@ export default function TimeZoneMeetingPlannerPage({
       <ToolHero
         display={<TimeZoneMeetingPlannerTool today={today} />}
         title="Time Zone Meeting Planner"
-        description="Compare possible meeting times across multiple time zones with a date, duration, local work-hour window, candidate times, and copy or share summary."
+        description="Compare local working hours across multiple time zones using a UTC reference date, duration, candidate times, and a copyable or shareable summary."
       />
 
       <SeoBand>

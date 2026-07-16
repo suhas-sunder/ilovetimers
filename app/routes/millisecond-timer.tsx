@@ -38,9 +38,9 @@ const PRESETS = [
 ];
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Millisecond Timer (Countdown With Milliseconds)";
+  const title = "Millisecond Timer Online | Short Precision-Display Countdown";
   const description =
-    "Run an online countdown timer with milliseconds, custom minutes, seconds, milliseconds, presets, start, pause, reset, copy, and fullscreen support.";
+    "Run a countdown with minute, second, and millisecond input plus a millisecond display, presets, pause, reset, copy, and fullscreen. Browser scheduling limits apply.";
 
   return [
     { title },

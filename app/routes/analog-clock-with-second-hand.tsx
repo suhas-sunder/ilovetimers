@@ -6,9 +6,9 @@ const ROUTE_URL = "https://www.ilovetimers.com/analog-clock-with-second-hand";
 const OG_IMAGE = "https://www.ilovetimers.com/og-image.png";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Analog Clock With Second Hand Online";
+  const title = "Analog Clock with Second Hand | Live Local Time";
   const description =
-    "Use a live online analog clock with the second hand visible by default. Switch smooth or ticking movement, copy the time, and use fullscreen.";
+    "View a clear analog clock with a visible second hand for classrooms, practice, presentations, and everyday time checks.";
 
   return [
     { title },

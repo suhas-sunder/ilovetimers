@@ -1547,48 +1547,8 @@ function LabeledNumber({
    PAGE
 ========================================================= */
 export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "FAQPage",
-        mainEntity: [
-          {
-            "@type": "Question",
-            name: "Are these timers accurate?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Timers use absolute time (performance.now) to avoid drift, including across pauses and most background situations.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Do timers keep working if I switch tabs or lock my phone?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "They keep tracking time and update when the browser resumes. For presentations or workouts, fullscreen mode keeps the display readable from a distance.",
-            },
-          },
-          {
-            "@type": "Question",
-            name: "Are there keyboard shortcuts?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Yes. Focus any card then use Space to start/pause, R to reset, F to fullscreen, L for lap (stopwatch), and N for next/skip (Pomodoro/HIIT).",
-            },
-          },
-        ],
-      },
-    ],
-  };
-
   return (
     <main className="bg-slate-50 text-slate-900">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
       {/* Minimal header (no tall banner) */}
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-5">

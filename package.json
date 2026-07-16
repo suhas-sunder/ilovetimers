@@ -16,6 +16,7 @@
     "audit:specialty-tools": "node scripts/audits/specialty-tools.mjs",
     "audit:ui": "node scripts/audits/ui-integrity.mjs",
     "audit:a11y": "node scripts/audits/accessibility.mjs",
+    "audit:release": "node scripts/audits/release-readiness.mjs",
     "test:ui-regressions": "node scripts/tests/ui-regressions.mjs",
     "test:sitewide-ui": "node scripts/tests/sitewide-ui.mjs"
   },

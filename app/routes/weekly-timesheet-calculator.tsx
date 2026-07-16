@@ -7,17 +7,10 @@ import { WeeklyTimesheetCalculatorPage } from "~/clients/components/date-calcula
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Weekly Timesheet Calculator",
+    title: "Weekly Timesheet Calculator | Daily and Weekly Hours",
     description:
       "Calculate weekly hours from fixed daily start, end, and break rows with per-day totals, decimal hours, copy, and reset.",
     path: "/weekly-timesheet-calculator",
-    keywords: [
-      "weekly timesheet calculator",
-      "weekly time card calculator",
-      "weekly hours calculator",
-      "timesheet hours calculator",
-      "weekly work hours calculator",
-    ],
   });
 }
 

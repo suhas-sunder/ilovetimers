@@ -7,17 +7,10 @@ import { WeeksBetweenDatesCalculatorPage } from "~/clients/components/date-calcu
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Weeks Between Dates Calculator",
+    title: "Weeks Between Dates Calculator | Weeks and Days",
     description:
-      "Calculate full weeks and remaining days between two dates with total days, inclusive count, copy, and reset.",
+      "Calculate the weeks between two dates, including total days, whole weeks, remaining days, and decimal-week results.",
     path: "/weeks-between-dates-calculator",
-    keywords: [
-      "weeks between dates calculator",
-      "calculate weeks between two dates",
-      "weeks and days between dates",
-      "weeks between dates",
-      "date weeks calculator",
-    ],
   });
 }
 

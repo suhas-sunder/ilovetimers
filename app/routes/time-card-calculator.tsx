@@ -7,17 +7,10 @@ import { TimeCardCalculatorPage } from "~/clients/components/date-calculators/Da
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Time Card Calculator",
+    title: "Time Card Calculator with Breaks | Work Hours Total",
     description:
-      "Add multiple clock-in and clock-out rows with break minutes to total time-card hours, decimal hours, and per-row totals.",
+      "Total multiple clock-in and clock-out rows, subtract unpaid breaks, and review each row in hours and minutes plus decimal hours.",
     path: "/time-card-calculator",
-    keywords: [
-      "time card calculator",
-      "time clock calculator",
-      "time card hours calculator",
-      "clock in clock out calculator",
-      "timesheet hours calculator",
-    ],
   });
 }
 

@@ -13,17 +13,10 @@ export function loader() {
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Days Until Calculator (Days Until Date)",
+    title: "Days Until Calculator | Count Days to a Date",
     description:
-      "Calculate how many days remain until a target date from today or another start date, with weeks plus days, target weekday, presets, and copy.",
+      "Count elapsed calendar days from today or another start date to a target date, with clear future, today, and past-date results.",
     path: "/days-until-calculator",
-    keywords: [
-      "days until calculator",
-      "days until date",
-      "how many days until",
-      "days remaining",
-      "days until target date",
-    ],
   });
 }
 

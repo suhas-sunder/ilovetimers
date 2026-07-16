@@ -1,13 +1,67 @@
 import { JsonLd } from "./HowItWorks";
 
-/* =========================================================
-   5) FAQ (SEO + UX)
-   Schema: FAQPage (use on homepage or tool pages)
-========================================================= */
 export type FaqItem = {
   question: string;
   answer: string;
 };
+
+const DEFAULT_FAQS: FaqItem[] = [
+  {
+    question: "What does the billable hours clock do?",
+    answer:
+      "It tracks elapsed browser time for multiple named timers, applies an optional upward rounding increment, and shows a rate-based subtotal for each timer.",
+  },
+  {
+    question: "How is the subtotal calculated?",
+    answer:
+      "The subtotal is billable time in hours multiplied by the entered hourly rate. It is arithmetic only and does not add taxes, fees, retainers, or invoice adjustments.",
+  },
+  {
+    question: "How does rounding work?",
+    answer:
+      "Choose None, 6 minutes, 10 minutes, or 15 minutes. When enabled, elapsed time is rounded up to the next selected increment.",
+  },
+  {
+    question: "How are breaks handled?",
+    answer:
+      "There is no separate break deduction. Pause the active timer to exclude a break, or use the visible adjustment controls when you need to correct elapsed time.",
+  },
+  {
+    question: "Can I run multiple timers?",
+    answer:
+      "Yes. Each timer can have its own name, note, rate, currency label, rounding setting, and elapsed time. The page does not detect overlapping work across timers.",
+  },
+  {
+    question: "How do totals work across currencies?",
+    answer:
+      "Totals are grouped by currency label. No exchange-rate conversion is performed, so amounts in different currencies are not combined into one converted value.",
+  },
+  {
+    question: "Are my timers saved?",
+    answer:
+      "Yes. Timers are saved in this browser on this device. Clearing site data or switching browsers or devices removes that continuity.",
+  },
+  {
+    question: "What happens if the page becomes hidden?",
+    answer:
+      "A running timer is paused when the page becomes hidden. Return to the page and resume it when you are ready to keep tracking.",
+  },
+  {
+    question: "Can I copy or print timers?",
+    answer:
+      "Yes. Copy exports a text summary that may include the entered name and note. Print uses the browser print dialog. Review private text before copying, printing, or sharing it.",
+  },
+  {
+    question: "What keyboard shortcuts are supported?",
+    answer:
+      "After focusing the tool: Space starts or pauses the active timer, R resets it, C copies it, A adds a timer, F toggles fullscreen, and P prints the active timer.",
+  },
+  {
+    question: "Is this a payroll, accounting, or legal timekeeping system?",
+    answer:
+      "No. It does not determine payroll, overtime, taxes, accounting treatment, invoicing requirements, employment-law compliance, or official recordkeeping.",
+  },
+];
 
 export default function FAQ({
   items,
@@ -18,103 +72,31 @@ export default function FAQ({
   id?: string;
   title?: string;
 }) {
-  // Billable-hours-clock defaults (multi timers + rounding + totals + copy/print + local save)
-  const defaults: FaqItem[] = [
-    {
-      question: "What does the Billable Hours Clock do?",
-      answer:
-        "It tracks billable time live with start/pause controls. You can run multiple timers, apply rounding increments, and see billable hours and total pay per timer based on an hourly rate.",
-    },
-    {
-      question: "How is billable time calculated?",
-      answer:
-        "Each timer tracks elapsed time while running. If rounding is enabled, the billable time is the elapsed time rounded up to the next selected increment. If rounding is set to None, billable time equals elapsed time.",
-    },
-    {
-      question: "How is the total amount calculated?",
-      answer:
-        "Total = (billable time in hours) × hourly rate. Billable time in hours is computed from the rounded billable time for that timer.",
-    },
-    {
-      question: "What rounding options are available?",
-      answer:
-        "You can choose None, 6 minutes (0.1 hr), 10 minutes, or 15 minutes (0.25 hr). Rounding always goes up to the next increment.",
-    },
-    {
-      question: "Does this support breaks?",
-      answer:
-        "This page is a live timer and does not have a separate break field. If you want to exclude time, you can pause the timer during a break, or manually adjust time using the +5m and -5m controls on the active timer.",
-    },
-    {
-      question: "Can I track multiple clients or matters at once?",
-      answer:
-        "Yes. Add a timer per client, matter, or task. Each timer can have its own note, rate, currency, and rounding settings, and you can switch the active timer at any time.",
-    },
-    {
-      question: "How do totals work across currencies?",
-      answer:
-        "Totals are grouped by currency. If you bill in multiple currencies, the page shows separate totals per currency and a combined total billable hours value. No currency conversion is performed.",
-    },
-    {
-      question: "Are my timers saved?",
-      answer:
-        "Yes. Timers are saved to your browser’s local storage on this device. If you clear site data or switch browsers/devices, saved timers will not carry over.",
-    },
-    {
-      question: "What happens if I switch tabs or my screen locks?",
-      answer:
-        "If the page becomes hidden, running timers are paused to avoid drift. When you return, you can resume.",
-    },
-    {
-      question: "Can I copy or print my timers?",
-      answer:
-        "Yes. Copy exports a compact text summary (elapsed, billable, hours, rate, total, and optional note). Print is optimized for saving as a PDF and supports printing the active timer or all timers.",
-    },
-    {
-      question: "What keyboard shortcuts are supported?",
-      answer:
-        "After clicking the tool card once: Space starts/pauses the active timer, R resets it, C copies it, A adds a timer, F toggles fullscreen, and P prints the active timer.",
-    },
-    {
-      question: "Does this handle taxes, fees, retainers, or invoices?",
-      answer:
-        "No. It tracks time and computes an hourly total only. It does not apply taxes or fees, manage retainers, enforce trust accounting rules, or generate invoices.",
-    },
-    {
-      question: "Does selecting a currency convert amounts?",
-      answer:
-        "No. Currency selection formats the displayed rate and totals only. It does not perform exchange-rate conversion.",
-    },
-  ];
-
-  const faqs = items?.length ? items : defaults;
-
+  const faqs = items?.length ? items : DEFAULT_FAQS;
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
+    mainEntity: faqs.map((faq) => ({
       "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
     })),
   };
 
   return (
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
-
-      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
-
-      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)] ilt-surface-card">
-        {faqs.map((f) => (
-          <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
-              {f.question}
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">
+        {title}
+      </h2>
+      <div className="mt-4 space-y-4">
+        {faqs.map((faq) => (
+          <details key={faq.question}>
+            <summary className="cursor-pointer py-2 font-medium text-[var(--ilt-text-primary)] underline-offset-4 hover:underline focus-visible:underline">
+              {faq.question}
             </summary>
-            <div className="px-5 pb-4 text-[var(--ilt-text-secondary)] leading-relaxed">
-              {/* Keep answers as plain text for schema consistency.
-                  If you later want clickable links, pass custom items via props. */}
-              {f.answer}
+            <div className="pb-2 leading-relaxed text-[var(--ilt-text-secondary)]">
+              {faq.answer}
             </div>
           </details>
         ))}

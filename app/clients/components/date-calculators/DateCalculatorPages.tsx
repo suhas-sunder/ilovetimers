@@ -19,6 +19,16 @@ import {
   UtilityResultRow,
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText } from "~/clients/hooks/useFitDisplayText";
+import {
+  adjustCalendarDate,
+  calendarDateDifference,
+  calendarDateFromDayNumber,
+  calendarDayNumber,
+  countBusinessDays,
+  daysInCalendarMonth,
+  formatCalendarDate,
+  parseCalendarDate,
+} from "~/clients/lib/calculatorMath";
 
 const SITE_URL = "https://www.ilovetimers.com";
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -108,14 +118,16 @@ export function createDateToolMeta({
   title: string;
   description: string;
   path: string;
-  keywords: string[];
+  keywords?: string[];
 }) {
   const routeUrl = `${SITE_URL}${path}`;
 
   return [
     { title },
     { name: "description", content: description },
-    { name: "keywords", content: keywords.join(", ") },
+    ...(keywords?.length
+      ? [{ name: "keywords", content: keywords.join(", ") }]
+      : []),
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -135,32 +147,19 @@ export function createDateToolLinks(path: string) {
 }
 
 export function parseDateInput(value: string): LocalDateParts | null {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-  if (!match) return null;
-  const year = Number(match[1]);
-  const month = Number(match[2]);
-  const day = Number(match[3]);
-  if (month < 1 || month > 12) return null;
-  const maxDay = daysInMonth(year, month);
-  if (day < 1 || day > maxDay) return null;
-  return { year, month, day };
+  return parseCalendarDate(value);
 }
 
 export function dateInputFromParts(parts: LocalDateParts) {
-  return `${parts.year}-${String(parts.month).padStart(2, "0")}-${String(parts.day).padStart(2, "0")}`;
+  return formatCalendarDate(parts);
 }
 
 export function dayNumberFromParts(parts: LocalDateParts) {
-  return Math.floor(Date.UTC(parts.year, parts.month - 1, parts.day) / MS_PER_DAY);
+  return calendarDayNumber(parts);
 }
 
 export function partsFromDayNumber(dayNumber: number): LocalDateParts {
-  const date = new Date(dayNumber * MS_PER_DAY);
-  return {
-    year: date.getUTCFullYear(),
-    month: date.getUTCMonth() + 1,
-    day: date.getUTCDate(),
-  };
+  return calendarDateFromDayNumber(dayNumber);
 }
 
 export function localDateObject(parts: LocalDateParts) {
@@ -176,7 +175,7 @@ export function longDate(parts: LocalDateParts) {
 }
 
 export function daysInMonth(year: number, month: number) {
-  return new Date(year, month, 0).getDate();
+  return daysInCalendarMonth(year, month);
 }
 
 export function todayInputValue() {
@@ -357,23 +356,12 @@ export function JsonLd({
   );
 }
 
-function addMonthsClamped(parts: LocalDateParts, monthDelta: number) {
-  const monthIndex = parts.year * 12 + (parts.month - 1) + monthDelta;
-  const year = Math.floor(monthIndex / 12);
-  const month = ((monthIndex % 12) + 12) % 12 + 1;
-  const day = Math.min(parts.day, daysInMonth(year, month));
-  return { year, month, day };
-}
-
 function addDateParts(
   start: LocalDateParts,
   amount: { years: number; months: number; weeks: number; days: number },
   direction: 1 | -1,
 ) {
-  const monthTotal = direction * (amount.years * 12 + amount.months);
-  const afterMonths = addMonthsClamped(start, monthTotal);
-  const dayDelta = direction * (amount.weeks * 7 + amount.days);
-  return partsFromDayNumber(dayNumberFromParts(afterMonths) + dayDelta);
+  return adjustCalendarDate(start, amount, direction);
 }
 
 function operationSummary(
@@ -391,17 +379,9 @@ function operationSummary(
 }
 
 function dateDurationResult(startValue: string, endValue: string) {
-  const start = parseDateInput(startValue);
-  const end = parseDateInput(endValue);
-  if (!start || !end) return null;
-  const startDay = dayNumberFromParts(start);
-  const endDay = dayNumberFromParts(end);
-  const elapsedDays = endDay - startDay;
-  const absoluteDays = Math.abs(elapsedDays);
-  const weeks = Math.floor(absoluteDays / 7);
-  const remainingDays = absoluteDays % 7;
-  const inclusiveDays =
-    elapsedDays >= 0 ? elapsedDays + 1 : -(absoluteDays + 1);
+  const difference = calendarDateDifference(startValue, endValue);
+  if (!difference) return null;
+  const { start, end, elapsedDays, absoluteDays, inclusiveDays } = difference;
   const approximateMonths = absoluteDays / 30.4375;
 
   return {
@@ -409,8 +389,8 @@ function dateDurationResult(startValue: string, endValue: string) {
     end,
     elapsedDays,
     absoluteDays,
-    weeks,
-    remainingDays,
+    weeks: difference.wholeWeeks,
+    remainingDays: difference.remainingDays,
     inclusiveDays,
     approximateMonths,
     reversed: elapsedDays < 0,
@@ -471,6 +451,7 @@ function DateDurationTool() {
             label="Start date"
             type="date"
             value={startDate}
+            onInput={(event) => setStartDate(event.currentTarget.value)}
             onChange={(event) => setStartDate(event.currentTarget.value)}
             onBlur={(event) => setStartDate(event.currentTarget.value)}
           />
@@ -478,6 +459,7 @@ function DateDurationTool() {
             label="End date"
             type="date"
             value={endDate}
+            onInput={(event) => setEndDate(event.currentTarget.value)}
             onChange={(event) => setEndDate(event.currentTarget.value)}
             onBlur={(event) => setEndDate(event.currentTarget.value)}
           />
@@ -600,6 +582,7 @@ function DateCalculatorTool() {
             label="Start date"
             type="date"
             value={startDate}
+            onInput={(event) => setStartDate(event.currentTarget.value)}
             onChange={(event) => setStartDate(event.currentTarget.value)}
             onBlur={(event) => setStartDate(event.currentTarget.value)}
           />
@@ -623,6 +606,7 @@ function DateCalculatorTool() {
               max={max}
               inputMode="numeric"
               value={value}
+              onInput={(event) => setter(clampInt(Number(event.currentTarget.value || 0), 0, max))}
               onChange={(event) => setter(clampInt(Number(event.currentTarget.value || 0), 0, max))}
               onBlur={(event) => setter(clampInt(Number(event.currentTarget.value || 0), 0, max))}
             />
@@ -674,38 +658,19 @@ function businessDayStats(
   includeStart: boolean,
   includeEnd: boolean,
 ) {
-  const start = parseDateInput(startValue);
-  const end = parseDateInput(endValue);
-  if (!start || !end) return null;
-  const startDay = dayNumberFromParts(start);
-  const endDay = dayNumberFromParts(end);
-  const minDay = Math.min(startDay, endDay);
-  const maxDay = Math.max(startDay, endDay);
-  const sign = startDay <= endDay ? 1 : -1;
-  let businessDays = 0;
-  let weekendDays = 0;
-  let calendarDays = 0;
-
-  for (let day = minDay; day <= maxDay; day += 1) {
-    if (day === startDay && !includeStart) continue;
-    if (day === endDay && !includeEnd) continue;
-    calendarDays += 1;
-    const parts = partsFromDayNumber(day);
-    const weekday = localDateObject(parts).getDay();
-    if (weekday === 0 || weekday === 6) weekendDays += 1;
-    else businessDays += 1;
-  }
+  const result = countBusinessDays(startValue, endValue, includeStart, includeEnd);
+  if (!result) return null;
 
   return {
-    start,
-    end,
-    sign,
-    businessDays: businessDays * sign,
-    absoluteBusinessDays: businessDays,
-    weekendDays,
-    calendarDays,
-    elapsedCalendarDays: endDay - startDay,
-    reversed: sign < 0,
+    start: result.start,
+    end: result.end,
+    sign: result.direction,
+    businessDays: result.selectedDays,
+    absoluteBusinessDays: result.absoluteSelectedDays,
+    weekendDays: result.excludedDays,
+    calendarDays: result.includedDays,
+    elapsedCalendarDays: result.elapsedDays,
+    reversed: result.reversed,
   };
 }
 
@@ -765,6 +730,7 @@ function BusinessDaysTool() {
             label="Start date"
             type="date"
             value={startDate}
+            onInput={(event) => setStartDate(event.currentTarget.value)}
             onChange={(event) => setStartDate(event.currentTarget.value)}
             onBlur={(event) => setStartDate(event.currentTarget.value)}
           />
@@ -772,6 +738,7 @@ function BusinessDaysTool() {
             label="End date"
             type="date"
             value={endDate}
+            onInput={(event) => setEndDate(event.currentTarget.value)}
             onChange={(event) => setEndDate(event.currentTarget.value)}
             onBlur={(event) => setEndDate(event.currentTarget.value)}
           />
@@ -826,7 +793,7 @@ function BusinessDaysTool() {
         </ResultDetails>
       ) : null}
       <ShortcutHint>
-        Weekend-only estimate. Holidays and organization-specific calendars are not included.
+        This calculator uses a fixed Monday-through-Friday workweek. It does not automatically exclude public holidays.
       </ShortcutHint>
     </ToolFrame>
   );
@@ -971,6 +938,11 @@ export function DateCalculatorPage() {
             calculator clamps that result to the last valid day of the target
             month and shows the final date clearly.
           </p>
+          <p>
+            The same rule applies to leap years: adding one year to February
+            29 clamps to February 28 when the result year is not a leap year.
+            Days and weeks are applied after calendar months and years.
+          </p>
         </ContentSection>
 
         <ContentSection title="Common uses and related calculators">
@@ -1058,7 +1030,8 @@ export function BusinessDaysCalculatorPage() {
 
         <ContentSection title="Weekend exclusion and limits">
           <p>
-            This calculator does not apply holiday calendars. It is useful for
+            This calculator uses a fixed Monday-through-Friday workweek and
+            does not automatically exclude public holidays. It is useful for
             simple project timelines, counting workdays until a date, checking
             weekday ranges, and scheduling estimates, but it is not a payroll,
             HR, legal, tax, contract, or compliance tool.

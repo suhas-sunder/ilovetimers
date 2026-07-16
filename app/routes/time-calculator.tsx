@@ -25,14 +25,18 @@ import {
   ToolHero,
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
+import {
+  durationBetweenClockTimes,
+  parseClockTime,
+} from "~/clients/lib/calculatorMath";
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Time Calculator (Add & Subtract Time, Instant Results)";
+  const title = "Time Calculator | Add and Subtract Durations";
   const description =
-    "Add or subtract time in seconds. Calculate durations between two times with a simple time calculator for planning and checking intervals.";
+    "Add or subtract durations in days, hours, minutes, and seconds, or compare two unzoned clock times with overnight rollover.";
 
   const url = "https://www.ilovetimers.com/time-calculator";
 
@@ -145,17 +149,7 @@ function formatWords(sign: 1 | -1, v: HMSD) {
 }
 
 function parseTimeValueHHMMSS(v: string) {
-  const s = (v || "").trim();
-  // Accept "HH:MM" or "HH:MM:SS"
-  const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(s);
-  if (!m) return null;
-  const hh = Number(m[1]);
-  const mm = Number(m[2]);
-  const ss = m[3] ? Number(m[3]) : 0;
-  if (hh < 0 || hh > 23) return null;
-  if (mm < 0 || mm > 59) return null;
-  if (ss < 0 || ss > 59) return null;
-  return hh * 3600 + mm * 60 + ss;
+  return parseClockTime(v);
 }
 
 function formatClockFromSeconds(secSinceMidnight: number) {
@@ -331,6 +325,7 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
                   min={0}
                   max={k === "d" ? 9999 : k === "h" ? 23 : 59}
                   value={a[k]}
+                  onInput={(e) => setField("a", k)(e.currentTarget.value)}
                   onChange={(e) => setField("a", k)(e.target.value)}
                   inputMode="numeric"
                 />
@@ -357,6 +352,7 @@ function AddSubtractCard({ mode }: { mode: "add" | "subtract" }) {
                   min={0}
                   max={k === "d" ? 9999 : k === "h" ? 23 : 59}
                   value={b[k]}
+                  onInput={(e) => setField("b", k)(e.currentTarget.value)}
                   onChange={(e) => setField("b", k)(e.target.value)}
                   inputMode="numeric"
                 />
@@ -398,7 +394,10 @@ function DurationCard() {
       return { ok: false as const, error: "Enter a valid end time." };
 
     const overnight = endSec < startSec;
-    const diff = overnight ? endSec + 86400 - startSec : endSec - startSec;
+    const duration = durationBetweenClockTimes(start, end, overnight);
+    if (!duration)
+      return { ok: false as const, error: "Enter valid start and end times." };
+    const diff = duration.totalSeconds;
 
     const out = fromSeconds(diff);
 
@@ -588,6 +587,7 @@ function DurationCard() {
         <Field
             label="Start time"
             value={start}
+            onInput={(e) => setStart(e.currentTarget.value)}
             onChange={(e) => setStart(e.target.value)}
             placeholder={includeSeconds ? "09:00:00" : "09:00"}
             inputMode="numeric"
@@ -598,6 +598,7 @@ function DurationCard() {
           <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">End time</div>
           <input
             value={end}
+            onInput={(e) => setEnd(e.currentTarget.value)}
             onChange={(e) => setEnd(e.target.value)}
             placeholder={includeSeconds ? "17:00:00" : "17:00"}
             className="mt-1 w-full ilt-input-control px-3 py-2 text-lg font-bold"
@@ -755,11 +756,11 @@ export default function TimeCalculatorPage({}: Route.ComponentProps) {
         </ul>
         <h3>Add, subtract, and duration modes</h3>
         <p>
-          Add mode answers questions like "what time is it 2 hours and 15
-          minutes from now?" Subtract mode works the other direction. Duration
-          mode compares two clock times and can handle a range that crosses
-          midnight, which is common for late shifts, travel, events, and
-          overnight tasks.
+          Add mode combines two durations; it does not apply a duration to a
+          dated clock instant. Subtract mode removes one duration from another
+          and can produce a negative result. Duration mode compares two unzoned
+          24-hour clock times and treats an earlier end time as the following
+          day. It does not apply timezone or daylight-saving rules.
         </p>
         <h3>Notes and limitations</h3>
         <p>

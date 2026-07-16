@@ -7,17 +7,10 @@ import {
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Business Days Calculator (Workdays Between Dates)",
+    title: "Business Days Calculator | Count Weekdays Between Dates",
     description:
-      "Calculate business days or workdays between two dates, excluding Saturdays and Sundays by default with calendar-day and weekend-day breakdowns.",
+      "Count Monday-through-Friday business days between two dates with configurable endpoint inclusion and a clear no-holidays policy.",
     path: "/business-days-calculator",
-    keywords: [
-      "business days calculator",
-      "workdays calculator",
-      "calculate workdays",
-      "weekdays between dates",
-      "business days between dates",
-    ],
   });
 }
 

@@ -37,6 +37,14 @@ import {
   type LocalDateParts,
   weekdayName,
 } from "./DateCalculatorPages";
+import {
+  ageBetweenDates,
+  calendarMonthsBetweenDates,
+  durationBetweenClockTimes,
+  hoursBetweenLocalDateTimes,
+  isoWeekForDate,
+  parseClockTime,
+} from "~/clients/lib/calculatorMath";
 
 const MINUTES_PER_DAY = 1_440;
 const SECONDS_PER_MINUTE = 60;
@@ -68,7 +76,7 @@ const AGE_FAQ: FaqItem[] = [
   {
     question: "How are leap-day birthdays handled?",
     answer:
-      "The calculator keeps February 29 as the birth date. For non-leap-year birthday countdowns, it uses the last valid day of February.",
+      "February 29 remains the birth date. When an age anniversary falls in a non-leap year, the completed-year calculation clamps it to February 28.",
   },
   {
     question: "Can this verify legal age or eligibility?",
@@ -81,7 +89,7 @@ const DAYS_UNTIL_FAQ: FaqItem[] = [
   {
     question: "Does this count from today?",
     answer:
-      "The start date defaults to today. You can change it to count days until a target date from another date.",
+      "The start date defaults to today. The result is elapsed calendar days, so it excludes the start date and reaches the target date; equal dates return zero.",
   },
   {
     question: "What happens if the target date is in the past?",
@@ -143,6 +151,11 @@ const MONTHS_BETWEEN_FAQ: FaqItem[] = [
       "Calendar months range from 28 to 31 days, so completed months can differ from a simple total-days divided by 30 estimate.",
   },
   {
+    question: "How are end-of-month dates handled?",
+    answer:
+      "The completed-month anchor clamps to the last valid day when the target month is shorter, so January 31 to February 28 is one completed calendar month.",
+  },
+  {
     question: "Can I use this for billing, leases, or contracts?",
     answer:
       "No. It is a date-math helper for planning and comparison, not a billing, rental, legal, contract, or deadline system.",
@@ -177,6 +190,11 @@ const HOURS_UNTIL_FAQ: FaqItem[] = [
     question: "What happens when the target is in the past?",
     answer:
       "The result switches to an hours-since state so a past target is clear instead of being shown as a misleading zero.",
+  },
+  {
+    question: "Can daylight-saving time change the result?",
+    answer:
+      "Yes. Inputs are interpreted in the browser's local timezone and the result uses absolute elapsed time, so a DST transition can make a local day span 23 or 25 hours.",
   },
   {
     question: "Is this an official deadline calculator?",
@@ -236,12 +254,8 @@ function nextHolidayFromStart(
 }
 
 function parseTimeInput(value: string) {
-  const match = /^(\d{2}):(\d{2})$/.exec(value);
-  if (!match) return null;
-  const hours = Number(match[1]);
-  const minutes = Number(match[2]);
-  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return null;
-  return hours * 60 + minutes;
+  const seconds = parseClockTime(value);
+  return seconds === null ? null : seconds / 60;
 }
 
 function formatDurationMinutes(minutes: number) {
@@ -321,13 +335,11 @@ function formatDecimalHoursFromMinutes(minutes: number) {
 }
 
 function timeDurationResult(startTime: string, endTime: string, overnight: boolean) {
-  const start = parseTimeInput(startTime);
-  const end = parseTimeInput(endTime);
-  if (start === null || end === null) return null;
-  let totalMinutes = end - start;
+  const result = durationBetweenClockTimes(startTime, endTime, overnight);
+  if (!result) return null;
+  const totalMinutes = result.totalMinutes;
   let status = "Same-day duration";
-  if (overnight && totalMinutes <= 0) {
-    totalMinutes += MINUTES_PER_DAY;
+  if (result.overnight) {
     status = totalMinutes === MINUTES_PER_DAY ? "Full-day overnight span" : "Overnight duration";
   } else if (totalMinutes < 0) {
     status = "End time is before start time";
@@ -392,6 +404,7 @@ function TimeDurationTool() {
             label="Start time"
             type="time"
             value={startTime}
+            onInput={(event) => setStartTime(event.currentTarget.value)}
             onChange={(event) => setStartTime(event.currentTarget.value)}
             onBlur={(event) => setStartTime(event.currentTarget.value)}
           />
@@ -399,6 +412,7 @@ function TimeDurationTool() {
             label="End time"
             type="time"
             value={endTime}
+            onInput={(event) => setEndTime(event.currentTarget.value)}
             onChange={(event) => setEndTime(event.currentTarget.value)}
             onBlur={(event) => setEndTime(event.currentTarget.value)}
           />
@@ -454,30 +468,13 @@ function birthdayForYear(birth: LocalDateParts, year: number) {
 }
 
 function ageResult(birthValue: string, ageOnValue: string) {
-  const birth = parseDateInput(birthValue);
-  const ageOn = parseDateInput(ageOnValue);
-  if (!birth || !ageOn) return null;
-  const birthDay = dayNumberFromParts(birth);
+  const result = ageBetweenDates(birthValue, ageOnValue);
+  if (!result) return null;
+  const birth = result.birth;
+  const ageOn = result.asOf;
+  if (result.future) return { birth, ageOn, future: true as const };
+  const { years, months, days, totalDays, completedMonths } = result;
   const ageOnDay = dayNumberFromParts(ageOn);
-  if (birthDay > ageOnDay) {
-    return { birth, ageOn, future: true as const };
-  }
-
-  let years = ageOn.year - birth.year;
-  let months = ageOn.month - birth.month;
-  let days = ageOn.day - birth.day;
-
-  if (days < 0) {
-    months -= 1;
-    const previousMonth = ageOn.month === 1 ? 12 : ageOn.month - 1;
-    const previousMonthYear = ageOn.month === 1 ? ageOn.year - 1 : ageOn.year;
-    days += daysInMonth(previousMonthYear, previousMonth);
-  }
-
-  if (months < 0) {
-    years -= 1;
-    months += 12;
-  }
 
   let nextBirthday = birthdayForYear(birth, ageOn.year);
   if (dayNumberFromParts(nextBirthday) < ageOnDay) {
@@ -491,8 +488,8 @@ function ageResult(birthValue: string, ageOnValue: string) {
     years,
     months,
     days,
-    totalDays: ageOnDay - birthDay,
-    completedMonths: years * 12 + months,
+    totalDays,
+    completedMonths,
     nextBirthday,
     daysUntilBirthday: dayNumberFromParts(nextBirthday) - ageOnDay,
     birthWeekday: weekdayName(birth),
@@ -556,6 +553,7 @@ function AgeCalculatorTool({ initialToday }: { initialToday: string }) {
             label="Birth date"
             type="date"
             value={birthDate}
+            onInput={(event) => setBirthDate(event.currentTarget.value)}
             onChange={(event) => setBirthDate(event.currentTarget.value)}
             onBlur={(event) => setBirthDate(event.currentTarget.value)}
           />
@@ -563,6 +561,7 @@ function AgeCalculatorTool({ initialToday }: { initialToday: string }) {
             label="Age on date"
             type="date"
             value={ageOnDate}
+            onInput={(event) => setAgeOnDate(event.currentTarget.value)}
             onChange={(event) => setAgeOnDate(event.currentTarget.value)}
             onBlur={(event) => setAgeOnDate(event.currentTarget.value)}
           />
@@ -689,6 +688,7 @@ function DaysUntilTool({ initialToday }: { initialToday: string }) {
             label="Start date"
             type="date"
             value={startDate}
+            onInput={(event) => setStartDate(event.currentTarget.value)}
             onChange={(event) => setStartDate(event.currentTarget.value)}
             onBlur={(event) => setStartDate(event.currentTarget.value)}
           />
@@ -696,6 +696,7 @@ function DaysUntilTool({ initialToday }: { initialToday: string }) {
             label="Target date"
             type="date"
             value={targetDate}
+            onInput={(event) => setTargetDate(event.currentTarget.value)}
             onChange={(event) => setTargetDate(event.currentTarget.value)}
             onBlur={(event) => setTargetDate(event.currentTarget.value)}
           />
@@ -835,28 +836,7 @@ function WeekdayTool({ initialToday }: { initialToday: string }) {
 }
 
 function isoWeekInfo(value: string) {
-  const parts = parseDateInput(value);
-  if (!parts) return null;
-  const dayNumber = dayNumberFromParts(parts);
-  const jsDay = localDateObject(parts).getDay();
-  const isoDay = jsDay === 0 ? 7 : jsDay;
-  const thursday = partsFromDayNumber(dayNumber + (4 - isoDay));
-  const weekYear = thursday.year;
-  const jan4 = { year: weekYear, month: 1, day: 4 };
-  const jan4IsoDay = localDateObject(jan4).getDay() || 7;
-  const weekOneMonday = dayNumberFromParts(jan4) - (jan4IsoDay - 1);
-  const weekNumber = Math.floor((dayNumber - weekOneMonday) / 7) + 1;
-  const weekStart = partsFromDayNumber(dayNumber - (isoDay - 1));
-  const weekEnd = partsFromDayNumber(dayNumber + (7 - isoDay));
-
-  return {
-    parts,
-    weekNumber,
-    weekYear,
-    isoDay,
-    weekStart,
-    weekEnd,
-  };
+  return isoWeekForDate(value);
 }
 
 function WeekNumberTool({ initialToday }: { initialToday: string }) {
@@ -946,35 +926,12 @@ function WeekNumberTool({ initialToday }: { initialToday: string }) {
 }
 
 function monthsBetweenResult(startValue: string, endValue: string) {
-  const start = parseDateInput(startValue);
-  const end = parseDateInput(endValue);
-  if (!start || !end) return null;
-
-  const startDay = dayNumberFromParts(start);
-  const endDay = dayNumberFromParts(end);
-  const reversed = endDay < startDay;
-  const from = reversed ? end : start;
-  const to = reversed ? start : end;
-  const toDay = dayNumberFromParts(to);
-
-  let fullMonths = (to.year - from.year) * 12 + (to.month - from.month);
-  let anchor = addMonthsClamped(from, fullMonths);
-  if (dayNumberFromParts(anchor) > toDay) {
-    fullMonths -= 1;
-    anchor = addMonthsClamped(from, fullMonths);
-  }
-
-  const remainingDays = toDay - dayNumberFromParts(anchor);
-  const totalDays = Math.abs(endDay - startDay);
-  const approximateMonths = totalDays / 30.4375;
+  const result = calendarMonthsBetweenDates(startValue, endValue);
+  if (!result) return null;
+  const approximateMonths = result.totalDays / 30.4375;
 
   return {
-    start,
-    end,
-    reversed,
-    fullMonths,
-    remainingDays,
-    totalDays,
+    ...result,
     approximateMonths,
   };
 }
@@ -1344,14 +1301,9 @@ function BirthdayCountdownTool({ initialToday }: { initialToday: string }) {
 }
 
 function hoursUntilResult(startValue: string, targetValue: string) {
-  const start = parseDateTimeInput(startValue);
-  const target = parseDateTimeInput(targetValue);
-  if (!start || !target) return null;
-
-  const totalMinutes = Math.round(
-    (target.date.getTime() - start.date.getTime()) /
-      (SECONDS_PER_MINUTE * 1000),
-  );
+  const result = hoursBetweenLocalDateTimes(startValue, targetValue);
+  if (!result) return null;
+  const { start, target, totalMinutes } = result;
   const absoluteMinutes = Math.abs(totalMinutes);
   const days = Math.floor(absoluteMinutes / MINUTES_PER_DAY);
   const hours = Math.floor((absoluteMinutes % MINUTES_PER_DAY) / 60);
@@ -1362,11 +1314,11 @@ function hoursUntilResult(startValue: string, targetValue: string) {
     target,
     totalMinutes,
     absoluteMinutes,
-    decimalHours: totalMinutes / 60,
+    decimalHours: result.decimalHours,
     days,
     hours,
     minutes,
-    state: totalMinutes > 0 ? "future" : totalMinutes < 0 ? "past" : "same",
+    state: result.state,
   };
 }
 
@@ -1640,6 +1592,12 @@ export function AgeCalculatorPage({ initialToday }: { initialToday: string }) {
             forms where you need to know an age. This page does not verify legal
             age or eligibility.
           </p>
+          <p>
+            A February 29 birth date remains February 29. For completed-age
+            arithmetic in a non-leap year, its anniversary is clamped to
+            February 28; the same month-end rule is used for the remaining
+            month and day breakdown.
+          </p>
         </ContentSection>
 
         <ContentSection title="Related date calculators">
@@ -1705,9 +1663,18 @@ export function DaysUntilCalculatorPage({ initialToday }: { initialToday: string
             the past.
           </p>
           <p>
+            The starting date is excluded from the elapsed-day count and the
+            target date is the point reached. Equal dates therefore return zero.
+          </p>
+          <p>
             Presets can jump to New Year, Christmas, seven days ahead, or
             thirty days ahead while keeping the page focused on simple
             date-to-date counting.
+          </p>
+          <p>
+            The count is the elapsed local-calendar difference: the starting
+            date is excluded and the target date is reached. Equal dates show
+            zero, and reversing the dates produces a days-since result.
           </p>
         </ContentSection>
 
@@ -1950,6 +1917,12 @@ export function MonthsBetweenDatesCalculatorPage() {
             separate from the completed-month count. End-before-start ranges are
             labelled clearly instead of being hidden as zero.
           </p>
+          <p>
+            The month anchor uses the last valid date when a target month is
+            shorter. For example, January 31 to February 28 is one completed
+            calendar month. The approximate figure divides elapsed days by the
+            average Gregorian month length and is labelled separately.
+          </p>
         </ContentSection>
 
         <ContentSection title="When months and days are useful">
@@ -2109,6 +2082,12 @@ export function HoursUntilCalculatorPage({ initialNow }: { initialNow: string })
             If the target is before the start, the display changes to an
             hours-since state. That keeps past targets clear instead of showing
             a misleading zero.
+          </p>
+          <p>
+            Both values use the browser's local timezone. The total is absolute
+            elapsed time, so a daylight-saving transition can make the span
+            between matching clock times on adjacent dates 23 or 25 hours.
+            Nonexistent local times are rejected by the browser-date parser.
           </p>
         </ContentSection>
 

@@ -19,19 +19,16 @@ import {
   ToolFrame as Card,
   ToolHero,
 } from "~/clients/components/ui/foundation";
-import HowItWorks from "~/clients/components/work-hours-calculator/HowItWorks";
-import Disclaimer from "~/clients/components/work-hours-calculator/Disclaimer";
 import FAQ from "~/clients/components/work-hours-calculator/FAQ";
-import KeyboardShortcuts from "~/clients/components/work-hours-calculator/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/work-hours-calculator/PopularUseCases";
+import { calculateShift, parseClockTime } from "~/clients/lib/calculatorMath";
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Work Hours Calculator (Time Worked, Breaks Subtracted)";
+  const title = "Work Hours Calculator | Shift Time with Breaks";
   const description =
-    "Calculate hours worked from start and end times. Subtract breaks and get total work hours instantly with a simple planning calculator.";
+    "Calculate one work shift from start and end times, subtract an unpaid break, and show hours and minutes plus decimal hours.";
 
   const url = "https://www.ilovetimers.com/work-hours-calculator";
 
@@ -113,14 +110,8 @@ function minutesToDecimalHours(totalMin: number, decimals: number) {
  * returns minutes since midnight or null
  */
 function parseTimeValue(v: string) {
-  const s = (v || "").trim();
-  const m = /^(\d{1,2}):(\d{2})$/.exec(s);
-  if (!m) return null;
-  const hh = Number(m[1]);
-  const mm = Number(m[2]);
-  if (hh < 0 || hh > 23) return null;
-  if (mm < 0 || mm > 59) return null;
-  return hh * 60 + mm;
+  const seconds = parseClockTime(v);
+  return seconds === null ? null : seconds / 60;
 }
 
 function formatTimeLabel(minutesSinceMidnight: number) {
@@ -150,34 +141,14 @@ function calcWorkedMinutes(
   endMin: number | null,
   breakMin: number,
 ): CalcResult {
-  if (startMin == null) return { ok: false, error: "Enter a Start Time." };
-  if (endMin == null) return { ok: false, error: "Enter an End Time." };
-
-  const b = clamp(Math.floor(breakMin || 0), 0, 24 * 60);
-
-  // If end < start, assume overnight shift to next day
-  const overnight = endMin < startMin;
-  const rawShift = overnight ? endMin + 24 * 60 - startMin : endMin - startMin;
-
-  if (rawShift <= 0) {
-    return { ok: false, error: "End Time must be after Start Time." };
-  }
-
-  if (b > rawShift) {
-    return {
-      ok: false,
-      error: "Break time cannot be longer than the total shift.",
-    };
-  }
-
-  const paid = rawShift - b;
-
+  const result = calculateShift(startMin, endMin, breakMin);
+  if (!result.ok) return { ok: false, error: result.error };
   return {
     ok: true,
-    shiftMin: rawShift,
-    breakMin: b,
-    paidMin: paid,
-    overnight,
+    shiftMin: result.grossMinutes,
+    breakMin: result.breakMinutes,
+    paidMin: result.netMinutes,
+    overnight: result.overnight,
   };
 }
 
@@ -402,6 +373,7 @@ function WorkHoursCalculatorCard() {
             <input
               type="time"
               value={start}
+              onInput={(e) => setStart(e.currentTarget.value)}
               onChange={(e) => setStart(e.target.value)}
               onBlur={() => trackCommittedCalculation("start_time")}
               className="w-full ilt-input-control px-3 py-2 text-lg font-bold"
@@ -421,6 +393,7 @@ function WorkHoursCalculatorCard() {
             <input
               type="time"
               value={end}
+              onInput={(e) => setEnd(e.currentTarget.value)}
               onChange={(e) => setEnd(e.target.value)}
               onBlur={() => trackCommittedCalculation("end_time")}
               className="w-full ilt-input-control px-3 py-2 text-lg font-bold"
@@ -442,6 +415,11 @@ function WorkHoursCalculatorCard() {
             min={0}
             max={24 * 60}
             value={breakMin}
+            onInput={(e) => {
+              const raw = e.currentTarget.value;
+              const next = raw === "" ? 0 : Number(raw);
+              setBreakMin(clamp(next, 0, 24 * 60));
+            }}
             onChange={(e) => {
               const raw = e.target.value;
               const next = raw === "" ? 0 : Number(raw);
@@ -613,7 +591,26 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
       />
 
       <SeoBand>
-        <HowItWorks />
+        <ContentSection title="How work hours are calculated">
+          <p>
+            The calculator measures the time from start to end, treats an
+            earlier end time as the following day, subtracts the unpaid break,
+            and then applies the selected nearest-minute rounding increment.
+          </p>
+          <p>
+            For example, 9:00 AM to 5:00 PM with a 30-minute break is 7 hours
+            30 minutes, or 7.50 decimal hours, when rounding is set to none.
+          </p>
+        </ContentSection>
+        <ContentSection title="Calculation boundaries">
+          <p>
+            Results are practical time calculations based on the entered shift,
+            break, and optional rounding rule. The page supports an overnight
+            end time and nearest-increment rounding when selected, but it does
+            not calculate overtime. It is not payroll, tax, employment-law, or
+            recordkeeping advice.
+          </p>
+        </ContentSection>
         <ContentSection title="Related workday calculator">
           <p>
             If you need to count weekdays between two calendar dates instead of
@@ -634,10 +631,7 @@ export default function WorkHoursCalculatorPage({}: Route.ComponentProps) {
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
         <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

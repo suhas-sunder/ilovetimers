@@ -7,17 +7,10 @@ import {
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Date Duration Calculator (Days Between Dates)",
+    title: "Date Duration Calculator | Time Between Two Dates",
     description:
-      "Calculate elapsed days between two calendar dates, with inclusive days, weeks plus days, weekday names, copy, reset, and today shortcuts.",
+      "Calculate elapsed calendar days between two dates, with inclusive days and a weeks-plus-days result shown as separate representations.",
     path: "/date-duration-calculator",
-    keywords: [
-      "date duration calculator",
-      "date to date calculator",
-      "days between dates",
-      "calculate duration between two dates",
-      "elapsed days calculator",
-    ],
   });
 }
 

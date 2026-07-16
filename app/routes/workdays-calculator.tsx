@@ -7,17 +7,10 @@ import { WorkdaysCalculatorPage } from "~/clients/components/date-calculators/Co
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Workdays Calculator (Custom Workweek)",
+    title: "Workdays Calculator | Count a Custom Workweek",
     description:
       "Calculate selected workdays between two dates using a configurable workweek, included dates, non-working days, copy, and reset.",
     path: "/workdays-calculator",
-    keywords: [
-      "workdays calculator",
-      "work days between dates",
-      "calculate workdays",
-      "workday counter",
-      "custom workweek calculator",
-    ],
   });
 }
 

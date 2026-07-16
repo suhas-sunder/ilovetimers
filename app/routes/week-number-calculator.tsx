@@ -13,17 +13,10 @@ export function loader() {
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Week Number Calculator (ISO Week of Year)",
+    title: "ISO Week Number Calculator | Week of Year",
     description:
       "Find the ISO week number, ISO week-year, weekday, and Monday-to-Sunday week range for a selected date.",
     path: "/week-number-calculator",
-    keywords: [
-      "week number calculator",
-      "what week number is this",
-      "ISO week calculator",
-      "week of year calculator",
-      "week number for date",
-    ],
   });
 }
 

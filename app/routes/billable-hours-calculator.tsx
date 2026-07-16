@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   Field,
   PageShell,
   PresetGroup,
@@ -16,34 +17,19 @@ import {
   ToolHero,
   UtilityResultRow,
 } from "~/clients/components/ui/foundation";
-import Disclaimer from "~/clients/components/billable-hours-calculator/Disclaimer";
 import FAQ from "~/clients/components/billable-hours-calculator/FAQ";
-import KeyboardShortcuts from "~/clients/components/billable-hours-calculator/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/billable-hours-calculator/PopularUseCases";
-import HowItWorks from "~/clients/components/billable-hours-calculator/HowItWorks";
+import { calculateBillable, parseClockTime } from "~/clients/lib/calculatorMath";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Billable Hours Calculator (Time, Rounding + Total Pay)";
+  const title = "Billable Hours Calculator | Time, Rate, and Rounding";
   const description =
-    "Free billable hours calculator for freelancers and lawyers. Enter start and end times, breaks, and hourly rate to calculate billable time and total pay with common rounding increments.";
+    "Enter a start time, end time, break, hourly rate, and optional rounding increment to estimate billable time and a currency subtotal.";
 
   const url = "https://www.ilovetimers.com/billable-hours-calculator";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "billable hours calculator",
-        "calculate billable hours",
-        "hourly rate calculator",
-        "lawyer billable hours",
-        "freelance billing calculator",
-        "billing increment calculator",
-        "round billable time",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
 
     { property: "og:title", content: title },
@@ -109,14 +95,8 @@ function minutesToDecimalHours(totalMin: number, decimals: number) {
 }
 
 function parseTimeValue(v: string) {
-  const s = (v || "").trim();
-  const m = /^(\d{1,2}):(\d{2})$/.exec(s);
-  if (!m) return null;
-  const hh = Number(m[1]);
-  const mm = Number(m[2]);
-  if (hh < 0 || hh > 23) return null;
-  if (mm < 0 || mm > 59) return null;
-  return hh * 60 + mm;
+  const seconds = parseClockTime(v);
+  return seconds === null ? null : seconds / 60;
 }
 
 function formatTimeLabel(minutesSinceMidnight: number) {
@@ -168,41 +148,18 @@ function calcBillable(
   rate: number,
   roundingMin: number,
 ): CalcResult {
-  if (startMin == null) return { ok: false, error: "Enter a Start Time." };
-  if (endMin == null) return { ok: false, error: "Enter an End Time." };
-
-  const b = clamp(Math.floor(breakMin || 0), 0, 24 * 60);
-  const r = clamp(Number.isFinite(rate) ? rate : 0, 0, 1_000_000);
-  const round = clamp(Math.floor(roundingMin || 0), 0, 60);
-
-  const overnight = endMin < startMin;
-  const shift = overnight ? endMin + 24 * 60 - startMin : endMin - startMin;
-
-  if (shift <= 0)
-    return { ok: false, error: "End Time must be after Start Time." };
-  if (b > shift)
-    return { ok: false, error: "Break cannot exceed the total shift." };
-
-  const billableRaw = shift - b;
-
-  let billable = billableRaw;
-  if (round > 0) {
-    billable = Math.ceil(billableRaw / round) * round;
-  }
-
-  const hours = billable / 60;
-  const total = hours * r;
-
+  const result = calculateBillable(startMin, endMin, breakMin, rate, roundingMin);
+  if (!result.ok) return { ok: false, error: result.error };
   return {
     ok: true,
-    shiftMin: shift,
-    breakMin: b,
-    billableMinRaw: billableRaw,
-    billableMin: billable,
-    roundingMin: round,
-    overnight,
-    rate: r,
-    total,
+    shiftMin: result.grossMinutes,
+    breakMin: result.breakMinutes,
+    billableMinRaw: result.billableMinutesRaw,
+    billableMin: result.billableMinutes,
+    roundingMin: result.roundingMinutes,
+    overnight: result.overnight,
+    rate: result.rate,
+    total: result.subtotal,
   };
 }
 
@@ -514,6 +471,7 @@ function BillableHoursCalculatorCard() {
                   hint="Uses your local time on this device."
                   type="time"
                   value={start}
+                  onInput={(e) => setStart(e.currentTarget.value)}
                   onChange={(e) => setStart(e.target.value)}
                 />
                 <Btn
@@ -534,6 +492,7 @@ function BillableHoursCalculatorCard() {
                   hint="Overnight is supported."
                   type="time"
                   value={end}
+                  onInput={(e) => setEnd(e.currentTarget.value)}
                   onChange={(e) => setEnd(e.target.value)}
                 />
                 <Btn
@@ -554,6 +513,9 @@ function BillableHoursCalculatorCard() {
                 min={0}
                 max={24 * 60}
                 value={breakMin}
+                onInput={(e) =>
+                  setBreakMin(clamp(Number(e.currentTarget.value || 0), 0, 24 * 60))
+                }
                 onChange={(e) =>
                   setBreakMin(clamp(Number(e.target.value || 0), 0, 24 * 60))
                 }
@@ -580,6 +542,9 @@ function BillableHoursCalculatorCard() {
                   min={0}
                   step={0.01}
                   value={rate}
+                  onInput={(e) =>
+                    setRate(clamp(Number(e.currentTarget.value || 0), 0, 1_000_000))
+                  }
                   onChange={(e) =>
                     setRate(clamp(Number(e.target.value || 0), 0, 1_000_000))
                   }
@@ -867,16 +832,34 @@ export default function BillableHoursCalculatorPage({}: Route.ComponentProps) {
         <ToolHero
           display={<BillableHoursCalculatorCard />}
           title="Billable Hours Calculator"
-          description="Enter start and end times, subtract breaks, choose rounding, and calculate billable time plus total pay."
+          description="Enter start and end times, subtract a break, choose optional upward rounding, and estimate billable time plus a rate-based subtotal."
         />
       </div>
 
       <SeoBand className="no-print">
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
+        <ContentSection title="How the billable subtotal is calculated">
+          <p>
+            The calculator finds one shift, subtracts the break, and rounds the
+            remaining minutes up only when an increment is selected. It divides
+            those billable minutes by 60 and multiplies the result by the hourly
+            rate.
+          </p>
+          <p>
+            For example, 61 billable minutes at $120 per hour is a $122.00
+            subtotal with no rounding. With 15-minute rounding, it becomes 75
+            minutes and a $150.00 subtotal.
+          </p>
+        </ContentSection>
+        <ContentSection title="Calculation boundaries">
+          <p>
+            This calculator subtracts the entered break, then rounds billable
+            minutes up only when an increment is selected. Currency controls
+            display formatting only; no exchange-rate conversion occurs. The
+            subtotal is practical arithmetic, not an invoice, payroll, tax,
+            accounting, employment-law, or recordkeeping determination.
+          </p>
+        </ContentSection>
         <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

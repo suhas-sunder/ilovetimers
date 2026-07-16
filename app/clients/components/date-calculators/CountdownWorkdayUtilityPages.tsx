@@ -39,6 +39,11 @@ import {
   type LocalDateParts,
   weekdayName,
 } from "./DateCalculatorPages";
+import {
+  calculateShift,
+  countSelectedWeekdays,
+  parseClockTime,
+} from "~/clients/lib/calculatorMath";
 
 const SITE_URL = "https://www.ilovetimers.com";
 const SECONDS_PER_DAY = 86_400;
@@ -124,6 +129,11 @@ const WORKDAYS_FAQ: FaqItem[] = [
       "No. This first version counts selected weekdays only. It does not apply country, regional, company, or custom holiday calendars.",
   },
   {
+    question: "Are the start and end dates included?",
+    answer:
+      "Both endpoints are included by default. Separate toggles let you exclude the start date, the end date, or both.",
+  },
+  {
     question: "Can I use this for payroll or HR decisions?",
     answer:
       "No. It is for simple planning and date checking, not payroll, HR, legal, tax, contract, or official workday decisions.",
@@ -140,6 +150,11 @@ const WEEKLY_TIMESHEET_FAQ: FaqItem[] = [
     question: "How are breaks handled?",
     answer:
       "Break minutes are subtracted from each completed day row. Empty rows count as zero and rows with one missing time are flagged.",
+  },
+  {
+    question: "Does this apply overtime or rounding?",
+    answer:
+      "No. It sums entered minutes without overtime thresholds or rounding increments and shows both hours-and-minutes and decimal-hour totals.",
   },
   {
     question: "Can I use this for payroll?",
@@ -640,38 +655,24 @@ function workdayResult(
   includeStart: boolean,
   includeEnd: boolean,
 ) {
-  const start = parseDateInput(startValue);
-  const end = parseDateInput(endValue);
-  if (!start || !end) return null;
-
-  const startDay = dayNumberFromParts(start);
-  const endDay = dayNumberFromParts(end);
-  const reversed = endDay < startDay;
-  const low = Math.min(startDay, endDay);
-  const high = Math.max(startDay, endDay);
-  let includedDays = 0;
-  let workdays = 0;
-
-  for (let day = low; day <= high; day += 1) {
-    if (day === startDay && !includeStart) continue;
-    if (day === endDay && !includeEnd) continue;
-    includedDays += 1;
-    const parts = partsFromDayNumber(day);
-    const weekdayIndex = new Date(parts.year, parts.month - 1, parts.day, 12, 0, 0, 0).getDay();
-    if (selectedWeekdays.has(weekdayIndex)) {
-      workdays += 1;
-    }
-  }
+  const result = countSelectedWeekdays(
+    startValue,
+    endValue,
+    selectedWeekdays,
+    includeStart,
+    includeEnd,
+  );
+  if (!result) return null;
 
   return {
-    start,
-    end,
-    reversed,
-    sign: reversed ? -1 : 1,
-    includedDays,
-    workdays,
-    nonWorkingDays: includedDays - workdays,
-    calendarDays: Math.abs(endDay - startDay) + 1,
+    start: result.start,
+    end: result.end,
+    reversed: result.reversed,
+    sign: result.direction,
+    includedDays: result.includedDays,
+    workdays: result.absoluteSelectedDays,
+    nonWorkingDays: result.excludedDays,
+    calendarDays: Math.abs(result.elapsedDays) + 1,
   };
 }
 
@@ -887,26 +888,23 @@ function weeklyRowResult(row: WeeklyTimesheetRow) {
   const hasStart = row.start.trim().length > 0;
   const hasEnd = row.end.trim().length > 0;
   if (!hasStart && !hasEnd) {
-    return { state: "empty" as const, netMinutes: 0, overnight: false, breakTooLong: false };
+    return { state: "empty" as const, netMinutes: 0, overnight: false, error: "" };
   }
-  const start = parseTimeInput(row.start);
-  const end = parseTimeInput(row.end);
-  if (start === null || end === null) {
-    return { state: "invalid" as const, netMinutes: 0, overnight: false, breakTooLong: false };
+  const startSeconds = parseClockTime(row.start);
+  const endSeconds = parseClockTime(row.end);
+  const result = calculateShift(
+    startSeconds === null ? null : startSeconds / 60,
+    endSeconds === null ? null : endSeconds / 60,
+    row.breakMinutes,
+  );
+  if (!result.ok) {
+    return { state: "invalid" as const, netMinutes: 0, overnight: false, error: result.error };
   }
-  let grossMinutes = end - start;
-  let overnight = false;
-  if (grossMinutes < 0) {
-    grossMinutes += MINUTES_PER_DAY;
-    overnight = true;
-  }
-  const breakMinutes = clampInt(Number(row.breakMinutes || 0), 0, 1_440);
-  const breakTooLong = breakMinutes > grossMinutes;
   return {
     state: "complete" as const,
-    netMinutes: Math.max(0, grossMinutes - breakMinutes),
-    overnight,
-    breakTooLong,
+    netMinutes: result.netMinutes,
+    overnight: result.overnight,
+    error: "",
   };
 }
 
@@ -925,13 +923,10 @@ function WeeklyTimesheetCalculatorTool() {
   const completeRows = rowResults.filter((item) => item.result.state === "complete").length;
   const invalidRows = rowResults.filter((item) => item.result.state === "invalid").length;
   const overnightRows = rowResults.filter((item) => item.result.overnight).length;
-  const breakWarnings = rowResults.filter((item) => item.result.breakTooLong).length;
   const status =
     invalidRows > 0
       ? `${invalidRows} day ${invalidRows === 1 ? "needs" : "need"} valid start/end times`
-      : breakWarnings > 0
-        ? "Break exceeds one or more day spans"
-        : overnightRows > 0
+      : overnightRows > 0
           ? "Overnight days included"
           : `${completeRows} completed ${completeRows === 1 ? "day" : "days"}`;
   const copyText = [
@@ -940,7 +935,7 @@ function WeeklyTimesheetCalculatorTool() {
       item.result.state === "complete"
         ? `${item.row.day}: ${item.row.start} to ${item.row.end}, break ${item.row.breakMinutes} min, total ${formatDurationMinutes(item.result.netMinutes)}${item.result.overnight ? " overnight" : ""}.`
         : item.result.state === "invalid"
-          ? `${item.row.day}: missing or invalid time.`
+          ? `${item.row.day}: ${item.result.error}`
           : `${item.row.day}: empty.`,
     ),
   ].join("\n");
@@ -977,11 +972,9 @@ function WeeklyTimesheetCalculatorTool() {
         description="Enter start time, end time, and break minutes for each day. Empty days count as zero."
       >
         <div className="grid gap-4">
-          {rows.map((row) => (
-            <SettingRow
-              key={row.day}
-              className="sm:grid-cols-[minmax(7rem,0.8fr)_minmax(0,9rem)_minmax(0,9rem)_minmax(0,9rem)]"
-            >
+          {rows.map((row, index) => (
+            <div key={row.day} className="grid gap-1">
+              <SettingRow className="sm:grid-cols-[minmax(7rem,0.8fr)_minmax(0,9rem)_minmax(0,9rem)_minmax(0,9rem)]">
               <div className="self-end pb-2 text-sm font-bold text-[var(--ilt-text-primary)]">
                 {row.day}
               </div>
@@ -1030,7 +1023,16 @@ function WeeklyTimesheetCalculatorTool() {
                   )
                 }
               />
-            </SettingRow>
+              </SettingRow>
+              <p
+                className="min-h-5 text-sm text-[var(--ilt-text-secondary)]"
+                aria-live="polite"
+              >
+                {rowResults[index]?.result.state === "invalid"
+                  ? rowResults[index]?.result.error
+                  : ""}
+              </p>
+            </div>
           ))}
         </div>
       </SettingGroup>
@@ -1046,7 +1048,7 @@ function WeeklyTimesheetCalculatorTool() {
               {item.result.state === "complete"
                 ? `${formatDurationMinutes(item.result.netMinutes)} / ${formatDecimalHours(item.result.netMinutes)}`
                 : item.result.state === "invalid"
-                  ? "Missing time"
+                  ? item.result.error
                   : "0h 00m"}
             </strong>
           </UtilityResultRow>
@@ -1257,6 +1259,8 @@ export function WorkdaysCalculatorPage() {
           <p>
             The calculator shows selected workdays first, then supporting
             calendar-day, included-date, non-working-day, and weekday context.
+            Both endpoints are included by default and can be excluded with the
+            separate toggles.
           </p>
         </ContentSection>
 
@@ -1274,6 +1278,10 @@ export function WorkdaysCalculatorPage() {
             It does not include holiday calendars or official work rules. Use it
             for simple project timelines, personal workweek counting,
             non-standard schedules, and planning estimates.
+          </p>
+          <p>
+            This calculator counts workdays using the selected weekend policy.
+            It does not automatically exclude public holidays.
           </p>
         </ContentSection>
 
@@ -1355,7 +1363,8 @@ export function WeeklyTimesheetCalculatorPage() {
           <p>
             It is for personal tracking, project logs, and simple weekly hour
             checks. It does not calculate wages, overtime, payroll, HR, tax, or
-            legal totals.
+            legal totals. No rounding increment is applied; each row is summed
+            to the entered minute.
           </p>
         </ContentSection>
 

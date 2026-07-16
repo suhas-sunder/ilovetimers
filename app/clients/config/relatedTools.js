@@ -264,19 +264,19 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/months-between-dates-calculator", label: "Count months between dates" },
   ]),
   "/days-until-calculator": group("More date and countdown tools", [
-    { to: "/event-countdown", label: "Run a live event countdown" },
     { to: "/date-calculator", label: "Add or subtract a date interval" },
-    { to: "/date-duration-calculator", label: "Measure a date range" },
+    { to: "/hours-until-calculator", label: "Count hours to a date and time" },
+    { to: "/event-countdown", label: "Run a live event countdown" },
   ]),
   "/weeks-between-dates-calculator": group("Related date-range tools", [
     { to: "/date-duration-calculator", label: "See a full date duration" },
     { to: "/months-between-dates-calculator", label: "Count months between dates" },
-    { to: "/week-number-calculator", label: "Find a calendar week number" },
+    { to: "/days-until-calculator", label: "Count days to a target date" },
   ]),
   "/months-between-dates-calculator": group("Related date-range tools", [
     { to: "/date-duration-calculator", label: "See a full date duration" },
     { to: "/weeks-between-dates-calculator", label: "Count weeks between dates" },
-    { to: "/date-calculator", label: "Add or subtract a date interval" },
+    { to: "/age-calculator", label: "Calculate age on a selected date" },
   ]),
   "/business-days-calculator": group("Related workday calculations", [
     { to: "/workdays-calculator", label: "Calculate workdays with weekend settings" },
@@ -285,8 +285,8 @@ export const RELATED_TOOL_LINKS = Object.freeze({
   ]),
   "/workdays-calculator": group("Related workday and date tools", [
     { to: "/business-days-calculator", label: "Count business days between dates" },
+    { to: "/date-calculator", label: "Add or subtract calendar time" },
     { to: "/date-duration-calculator", label: "Compare the full date duration" },
-    { to: "/work-hours-calculator", label: "Calculate hours in one work period" },
   ]),
   "/week-number-calculator": group("Related calendar tools", [
     { to: "/weekday-calculator", label: "Find the weekday for a date" },
@@ -297,6 +297,26 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/week-number-calculator", label: "Find the calendar week number" },
     { to: "/date-calculator", label: "Calculate a new date" },
     { to: "/days-until-calculator", label: "Count days until a date" },
+  ]),
+  "/age-calculator": group("Related age and date tools", [
+    { to: "/date-duration-calculator", label: "Measure the full span between dates" },
+    { to: "/months-between-dates-calculator", label: "Compare calendar months and days" },
+    { to: "/date-calculator", label: "Add or subtract a date interval" },
+  ]),
+  "/hours-until-calculator": group("Related time-remaining tools", [
+    { to: "/days-until-calculator", label: "Count calendar days to a date" },
+    { to: "/time-duration-calculator", label: "Compare two clock times" },
+    { to: "/countdown-to-date", label: "Run a live countdown to a date" },
+  ]),
+  "/time-calculator": group("Related time calculations", [
+    { to: "/time-duration-calculator", label: "Find hours and minutes between times" },
+    { to: "/hours-until-calculator", label: "Count hours to a date and time" },
+    { to: "/work-hours-calculator", label: "Calculate one work shift" },
+  ]),
+  "/time-duration-calculator": group("Related elapsed-time tools", [
+    { to: "/time-calculator", label: "Add or subtract durations" },
+    { to: "/work-hours-calculator", label: "Subtract a break from one shift" },
+    { to: "/hours-until-calculator", label: "Count hours to a dated target" },
   ]),
 
   "/work-hours-calculator": group("Choose the right work-time tool", [

@@ -1,13 +1,52 @@
 import { JsonLd } from "./HowItWorks";
 
-/* =========================================================
-   5) FAQ (SEO + UX)
-   Schema: FAQPage (use on homepage or tool pages)
-========================================================= */
 export type FaqItem = {
   question: string;
   answer: string;
 };
+
+const DEFAULT_FAQS: FaqItem[] = [
+  {
+    question: "What does this billable hours calculator do?",
+    answer:
+      "It subtracts break minutes from one start-to-end time span, optionally rounds the billable minutes up, and multiplies the result by the entered hourly rate.",
+  },
+  {
+    question: "How is the subtotal calculated?",
+    answer:
+      "The subtotal is billable minutes divided by 60, multiplied by the hourly rate. It is arithmetic only and does not add taxes, fees, retainers, or invoice adjustments.",
+  },
+  {
+    question: "Does this support an overnight shift?",
+    answer:
+      "Yes. An end time earlier than the start time is treated as occurring on the next day. Equal start and end times do not represent a full-day shift.",
+  },
+  {
+    question: "How does rounding work?",
+    answer:
+      "Rounding is applied after breaks are subtracted. A selected increment rounds billable minutes up to the next increment; choose None to keep the entered-minute total.",
+  },
+  {
+    question: "What happens when an input is incomplete or invalid?",
+    answer:
+      "The result shows a specific input error. A break longer than the shift is invalid, and missing start or end times cannot be totalled.",
+  },
+  {
+    question: "Does selecting a currency convert the amount?",
+    answer:
+      "No. The currency choice only formats the displayed rate and subtotal. No exchange-rate conversion occurs.",
+  },
+  {
+    question: "Is this a payroll, accounting, or legal calculator?",
+    answer:
+      "No. It does not determine payroll, overtime, taxes, accounting treatment, invoicing requirements, employment-law compliance, or recordkeeping obligations.",
+  },
+  {
+    question: "Can I copy or print the result?",
+    answer:
+      "Yes. Copy creates a concise summary and Print opens the browser print dialog. Review the values before using the result elsewhere.",
+  },
+];
 
 export default function FAQ({
   items,
@@ -18,88 +57,31 @@ export default function FAQ({
   id?: string;
   title?: string;
 }) {
-  // Billable-hours-calculator defaults (start/end + breaks + rounding + total)
-  const defaults: FaqItem[] = [
-    {
-      question: "What does this billable hours calculator do?",
-      answer:
-        "It calculates billable time and a total amount based on a start time, end time, break minutes, and an hourly rate. You can also apply a common billing rounding increment.",
-    },
-    {
-      question: "How is the total amount calculated?",
-      answer:
-        "Total = (billable minutes ÷ 60) × hourly rate. Billable minutes are the shift duration minus breaks, and may be rounded up if a rounding increment is selected.",
-    },
-    {
-      question: "Does this support overnight shifts?",
-      answer:
-        "Yes. If the end time is earlier than the start time, the calculator treats it as crossing midnight and computes the duration accordingly.",
-    },
-    {
-      question: "How does rounding work?",
-      answer:
-        "Rounding is applied after breaks are subtracted. If a rounding increment is selected, billable minutes are rounded up to the next increment (for example, rounding to 10 minutes). Select “None” to disable rounding.",
-    },
-    {
-      question: "What does “Before rounding” mean?",
-      answer:
-        "It shows billable time after breaks are deducted, but before any rounding increment is applied. This helps you verify what rounding changed.",
-    },
-    {
-      question: "Do decimal places affect the total?",
-      answer:
-        "No. Decimal places only control how billable hours are displayed. The total amount is always calculated from billable minutes (after rounding).",
-    },
-    {
-      question: "Does the calculator handle taxes, fees, or retainers?",
-      answer:
-        "No. It computes time and an hourly total only. It does not add taxes, apply fees, handle retainers, or generate invoices.",
-    },
-    {
-      question: "Does selecting a currency convert amounts?",
-      answer:
-        "No. Currency selection formats the displayed rate and totals. It does not perform exchange-rate conversion.",
-    },
-    {
-      question: "Can I copy or print the result?",
-      answer:
-        "Yes. Use Copy to copy a one-line summary including billable time, rate, and total. Use Print to open your browser’s print dialog for saving as a PDF.",
-    },
-    {
-      question: "Why does it say “Fix inputs”?",
-      answer:
-        "This appears when required inputs are missing or inconsistent, such as a missing time, an end time that doesn’t create a valid duration, or break minutes that exceed the shift length.",
-    },
-  ];
-
-  const faqs = items?.length ? items : defaults;
-
+  const faqs = items?.length ? items : DEFAULT_FAQS;
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
+    mainEntity: faqs.map((faq) => ({
       "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
     })),
   };
 
   return (
     <section id={id} className="mx-auto max-w-7xl px-4 pb-6">
       <JsonLd data={faqLd} />
-
-      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">{title}</h2>
-
-      <div className="mt-4 divide-y divide-[var(--ilt-border-subtle)] ilt-surface-card">
-        {faqs.map((f) => (
-          <details key={f.question}>
-            <summary className="cursor-pointer px-5 py-4 font-medium text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
-              {f.question}
+      <h2 className="text-2xl font-semibold text-[var(--ilt-text-primary)]">
+        {title}
+      </h2>
+      <div className="mt-4 space-y-4">
+        {faqs.map((faq) => (
+          <details key={faq.question}>
+            <summary className="cursor-pointer py-2 font-medium text-[var(--ilt-text-primary)] underline-offset-4 hover:underline focus-visible:underline">
+              {faq.question}
             </summary>
-            <div className="px-5 pb-4 text-[var(--ilt-text-secondary)] leading-relaxed">
-              {/* Keep answers as plain text for schema consistency.
-                  If you later want clickable links, pass custom items via props. */}
-              {f.answer}
+            <div className="pb-2 leading-relaxed text-[var(--ilt-text-secondary)]">
+              {faq.answer}
             </div>
           </details>
         ))}

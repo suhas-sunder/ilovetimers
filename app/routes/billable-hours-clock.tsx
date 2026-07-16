@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   Field,
   PageShell,
@@ -16,38 +17,21 @@ import {
   ToolHero,
 } from "~/clients/components/ui/foundation";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import Disclaimer from "~/clients/components/billable-hours-clock/Disclaimer";
 import FAQ from "~/clients/components/billable-hours-clock/FAQ";
-import HowItWorks from "~/clients/components/billable-hours-clock/HowItWorks";
-import KeyboardShortcuts from "~/clients/components/billable-hours-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/billable-hours-clock/PopularUseCases";
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Billable Hours Clock (Live Timer + Rounding, Total Pay)";
+  const title = "Billable Hours Clock | Live Time and Cost Tracker";
   const description =
-    "Free billable hours clock for freelancers and lawyers. Track time live, apply rounding increments, and calculate total pay with start/stop controls and breaks.";
+    "Track billable time live with start, pause, break, rounding, hourly-rate, copy, fullscreen, and print controls in the browser.";
 
   const url = "https://www.ilovetimers.com/billable-hours-clock";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "billable hours clock",
-        "billable timer",
-        "billable hours calculator",
-        "hourly rate calculator",
-        "lawyer billable hours",
-        "freelance billing timer",
-        "billing increment timer",
-        "round billable time",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
 
     { property: "og:title", content: title },
@@ -917,6 +901,15 @@ function BillableHoursClockCard() {
                         value={activeTimer.hourlyRate}
                         min={0}
                         step={0.01}
+                        onInput={(e) =>
+                          updateTimer(activeTimer.id, {
+                            hourlyRate: clamp(
+                              Number(e.currentTarget.value || 0),
+                              0,
+                              1_000_000,
+                            ),
+                          })
+                        }
                         onChange={(e) =>
                           updateTimer(activeTimer.id, {
                             hourlyRate: clamp(
@@ -998,6 +991,9 @@ function BillableHoursClockCard() {
                     </div>
                     <input
                       value={activeTimer.note}
+                      onInput={(e) =>
+                        updateTimer(activeTimer.id, { note: e.currentTarget.value })
+                      }
                       onChange={(e) =>
                         updateTimer(activeTimer.id, { note: e.target.value })
                       }
@@ -1430,6 +1426,7 @@ function BillableHoursClockCard() {
                       </div>
                       <input
                         value={t.name}
+                        onInput={(e) => renameTimerSafe(t.id, e.currentTarget.value)}
                         onChange={(e) => renameTimerSafe(t.id, e.target.value)}
                         className="mt-1 w-full ilt-input-control px-3 py-2"
                       />
@@ -1445,6 +1442,15 @@ function BillableHoursClockCard() {
                           value={t.hourlyRate}
                           min={0}
                           step={0.01}
+                          onInput={(e) =>
+                            updateTimer(t.id, {
+                              hourlyRate: clamp(
+                                Number(e.currentTarget.value || 0),
+                                0,
+                                1_000_000,
+                              ),
+                            })
+                          }
                           onChange={(e) =>
                             updateTimer(t.id, {
                               hourlyRate: clamp(
@@ -1479,6 +1485,9 @@ function BillableHoursClockCard() {
                       </div>
                       <input
                         value={t.note}
+                        onInput={(e) =>
+                          updateTimer(t.id, { note: e.currentTarget.value })
+                        }
                         onChange={(e) =>
                           updateTimer(t.id, { note: e.target.value })
                         }
@@ -1735,11 +1744,28 @@ export default function BillableHoursClockPage({}: Route.ComponentProps) {
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
+        <ContentSection title="How live billable tracking works">
+          <p>
+            Start one timer for the active task and pause it whenever time should
+            not count. Each timer keeps its own name, optional note, rate,
+            currency label, and rounding rule in this browser.
+          </p>
+          <p>
+            Billable time matches elapsed time when rounding is set to none.
+            Otherwise, the display rounds elapsed time up to the selected 6,
+            10, or 15-minute increment before calculating the subtotal.
+          </p>
+        </ContentSection>
+        <ContentSection title="Live tracking boundaries">
+          <p>
+            This page tracks elapsed time in the browser and rounds each timer
+            up only when an increment is selected. Pausing is the break policy;
+            there is no separate break deduction, overtime rule, currency
+            conversion, payroll, tax, accounting, employment-law, or
+            recordkeeping determination.
+          </p>
+        </ContentSection>
         <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

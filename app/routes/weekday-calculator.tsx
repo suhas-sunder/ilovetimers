@@ -13,17 +13,10 @@ export function loader() {
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Weekday Calculator (Day of Week for a Date)",
+    title: "Weekday Calculator | Find the Day of the Week",
     description:
       "Find the day of the week for a selected date with formatted date, ISO date, weekday or weekend status, today shortcut, and copy.",
     path: "/weekday-calculator",
-    keywords: [
-      "weekday calculator",
-      "what day of the week was",
-      "day of week calculator",
-      "find weekday for date",
-      "weekday for date",
-    ],
   });
 }
 

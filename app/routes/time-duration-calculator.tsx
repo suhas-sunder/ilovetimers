@@ -7,17 +7,10 @@ import { TimeDurationCalculatorPage } from "~/clients/components/date-calculator
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Time Duration Calculator (Hours Between Times)",
+    title: "Time Duration Calculator | Hours and Minutes Between Times",
     description:
       "Calculate elapsed time between two times, including overnight spans, decimal hours, total minutes, total seconds, copy, and reset.",
     path: "/time-duration-calculator",
-    keywords: [
-      "time duration calculator",
-      "duration between times",
-      "hours between times",
-      "time difference calculator",
-      "calculate elapsed time",
-    ],
   });
 }
 

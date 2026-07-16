@@ -30,6 +30,11 @@ import {
   type FaqItem,
   weekdayName,
 } from "./DateCalculatorPages";
+import {
+  calculateShift,
+  parseClockTime,
+  weeksBetweenDates,
+} from "~/clients/lib/calculatorMath";
 
 const MINUTES_PER_DAY = 1_440;
 
@@ -43,19 +48,24 @@ type TimeCardRow = {
 
 const WEEKS_BETWEEN_FAQ: FaqItem[] = [
   {
-    question: "Does this show weeks and days or total days?",
+    question: "Are the start and end dates included?",
     answer:
-      "The main result shows full weeks plus remaining days. Total days are shown separately so the two views stay clear.",
+      "Elapsed mode excludes the starting date and reaches the ending date. Inclusive mode counts both selected dates.",
   },
   {
-    question: "Can I include both the start and end date?",
+    question: "How are partial weeks shown?",
     answer:
-      "Yes. Turn on inclusive count when you want both selected calendar dates included in the week and day result.",
+      "The result separates completed seven-day weeks from the remaining days and also shows total days.",
   },
   {
-    question: "Can I use this for official deadlines or medical timing?",
+    question: "Is a decimal week the same as a calendar week?",
     answer:
-      "No. It is a simple calendar planning calculator. Check official, legal, medical, contract, or deadline rules separately.",
+      "No. Decimal weeks divide the selected total-day count by seven; they do not describe numbered calendar weeks.",
+  },
+  {
+    question: "What happens if I reverse the dates?",
+    answer:
+      "The result keeps the entered order and uses a negative sign when the end date is before the start date.",
   },
 ];
 
@@ -69,6 +79,11 @@ const TIME_CARD_FAQ: FaqItem[] = [
     question: "Does it support overnight rows?",
     answer:
       "Yes. If the end time is earlier than the start time, the row is treated as ending on the next day and is labelled as overnight.",
+  },
+  {
+    question: "What happens to incomplete rows and decimal hours?",
+    answer:
+      "A row with a missing or invalid time is excluded from the total and shows a specific error. Valid minutes are also divided by 60 for the decimal-hours view; no rounding increment or overtime rule is applied.",
   },
   {
     question: "Is this a payroll or tax calculator?",
@@ -95,25 +110,7 @@ function weeksBetweenResult(
   endValue: string,
   inclusive: boolean,
 ) {
-  const start = parseDateInput(startValue);
-  const end = parseDateInput(endValue);
-  if (!start || !end) return null;
-
-  const elapsedDays = dayNumberFromParts(end) - dayNumberFromParts(start);
-  const totalDays = inclusive
-    ? elapsedDays >= 0
-      ? elapsedDays + 1
-      : -(Math.abs(elapsedDays) + 1)
-    : elapsedDays;
-
-  return {
-    start,
-    end,
-    elapsedDays,
-    totalDays,
-    absoluteDays: Math.abs(totalDays),
-    reversed: elapsedDays < 0,
-  };
+  return weeksBetweenDates(startValue, endValue, inclusive);
 }
 
 function WeeksBetweenDatesTool() {
@@ -217,16 +214,16 @@ function WeeksBetweenDatesTool() {
             <strong>{signedDaysText(result.totalDays)}</strong>
           </UtilityResultRow>
           <UtilityResultRow>
-            <span>Elapsed days</span>
-            <strong>{signedDaysText(result.elapsedDays)}</strong>
+            <span>Whole weeks</span>
+            <strong>{result.wholeWeeks}</strong>
           </UtilityResultRow>
           <UtilityResultRow>
-            <span>Start weekday</span>
-            <strong>{weekdayName(result.start)}</strong>
+            <span>Remaining days</span>
+            <strong>{result.remainingDays}</strong>
           </UtilityResultRow>
           <UtilityResultRow>
-            <span>End weekday</span>
-            <strong>{weekdayName(result.end)}</strong>
+            <span>Decimal weeks</span>
+            <strong>{result.decimalWeeks.toFixed(4)}</strong>
           </UtilityResultRow>
         </ResultDetails>
       ) : null}
@@ -238,12 +235,8 @@ function WeeksBetweenDatesTool() {
 }
 
 function parseTimeInput(value: string) {
-  const match = /^(\d{2}):(\d{2})$/.exec(value);
-  if (!match) return null;
-  const hours = Number(match[1]);
-  const minutes = Number(match[2]);
-  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return null;
-  return hours * 60 + minutes;
+  const seconds = parseClockTime(value);
+  return seconds === null ? null : seconds / 60;
 }
 
 function formatDurationMinutes(minutes: number) {
@@ -262,26 +255,8 @@ function formatDecimalHours(minutes: number) {
 function timeCardRowResult(row: TimeCardRow) {
   const start = parseTimeInput(row.start);
   const end = parseTimeInput(row.end);
-  if (start === null || end === null) return null;
-
-  let grossMinutes = end - start;
-  let overnight = false;
-  if (grossMinutes < 0) {
-    grossMinutes += MINUTES_PER_DAY;
-    overnight = true;
-  }
-
-  const breakMinutes = clampInt(Number(row.breakMinutes || 0), 0, 1_440);
-  const netMinutes = Math.max(0, grossMinutes - breakMinutes);
-  const breakTooLong = breakMinutes > grossMinutes;
-
-  return {
-    grossMinutes,
-    breakMinutes,
-    netMinutes,
-    overnight,
-    breakTooLong,
-  };
+  const result = calculateShift(start, end, row.breakMinutes);
+  return result.ok ? result : { ...result, overnight: false };
 }
 
 function TimeCardCalculatorTool() {
@@ -306,18 +281,17 @@ function TimeCardCalculatorTool() {
     [rows],
   );
   const totalMinutes = rowResults.reduce(
-    (sum, item) => sum + (item.result?.netMinutes ?? 0),
+    (sum, item) => sum + (item.result.ok ? item.result.netMinutes : 0),
     0,
   );
-  const invalidRows = rowResults.filter((item) => !item.result).length;
-  const overnightRows = rowResults.filter((item) => item.result?.overnight).length;
-  const longBreakRows = rowResults.filter((item) => item.result?.breakTooLong).length;
+  const invalidRows = rowResults.filter((item) => !item.result.ok).length;
+  const overnightRows = rowResults.filter((item) => item.result.ok && item.result.overnight).length;
   const copyText = [
     `Time card total: ${formatDurationMinutes(totalMinutes)} (${formatDecimalHours(totalMinutes)}).`,
     ...rowResults.map((item) =>
-      item.result
+      item.result.ok
         ? `${item.row.label}: ${item.row.start} to ${item.row.end}, break ${item.result.breakMinutes} min, total ${formatDurationMinutes(item.result.netMinutes)}${item.result.overnight ? " overnight" : ""}.`
-        : `${item.row.label}: invalid time input.`,
+        : `${item.row.label}: ${item.result.error}`,
     ),
   ].join("\n");
 
@@ -373,10 +347,8 @@ function TimeCardCalculatorTool() {
 
   const status =
     invalidRows > 0
-      ? `${invalidRows} row ${invalidRows === 1 ? "needs" : "need"} valid times`
-      : longBreakRows > 0
-        ? "Break exceeds one or more rows"
-        : overnightRows > 0
+      ? `${invalidRows} row ${invalidRows === 1 ? "needs" : "need"} attention`
+      : overnightRows > 0
           ? "Overnight rows included"
           : "Simple time-card total";
 
@@ -395,10 +367,8 @@ function TimeCardCalculatorTool() {
       >
         <div className="grid gap-4">
           {rows.map((row, index) => (
-            <SettingRow
-              key={row.id}
-              className="sm:grid-cols-[minmax(0,1fr)_minmax(0,9rem)_minmax(0,9rem)_minmax(0,9rem)_auto]"
-            >
+            <div key={row.id} className="grid gap-1">
+              <SettingRow className="sm:grid-cols-[minmax(0,1fr)_minmax(0,9rem)_minmax(0,9rem)_minmax(0,9rem)_auto]">
               <Field
                 label="Label"
                 value={row.label}
@@ -459,7 +429,16 @@ function TimeCardCalculatorTool() {
               >
                 Remove {index + 1}
               </Button>
-            </SettingRow>
+              </SettingRow>
+              <p
+                className="min-h-5 text-sm text-[var(--ilt-text-secondary)]"
+                aria-live="polite"
+              >
+                {rowResults[index]?.result.ok
+                  ? ""
+                  : rowResults[index]?.result.error}
+              </p>
+            </div>
           ))}
         </div>
       </SettingGroup>
@@ -469,12 +448,12 @@ function TimeCardCalculatorTool() {
           <UtilityResultRow key={item.row.id}>
             <span>
               {item.row.label || "Untitled row"}
-              {item.result?.overnight ? " (overnight)" : ""}
+              {item.result.ok && item.result.overnight ? " (overnight)" : ""}
             </span>
             <strong>
-              {item.result
+              {item.result.ok
                 ? `${formatDurationMinutes(item.result.netMinutes)} / ${formatDecimalHours(item.result.netMinutes)}`
-                : "Invalid"}
+                : item.result.error}
             </strong>
           </UtilityResultRow>
         ))}
@@ -546,6 +525,12 @@ export function WeeksBetweenDatesCalculatorPage() {
             The default mode counts elapsed days from the start date up to the
             end date. If you turn on inclusive count, both selected dates are
             included in the weeks and days result.
+          </p>
+          <p>
+            Whole weeks are complete seven-day periods. Remaining days are the
+            remainder after those periods, while decimal weeks divide the same
+            signed total-day count by seven; decimal weeks are not ISO or other
+            numbered calendar weeks.
           </p>
         </ContentSection>
 
@@ -622,7 +607,11 @@ export function TimeCardCalculatorPage() {
           <p>
             If an end time is earlier than the start time, the row is treated as
             ending on the next day and labelled as overnight. Break minutes are
-            subtracted from the row total.
+            subtracted from the row total. Incomplete or invalid rows stay
+            visible with a specific error and do not contribute to the total.
+            Minutes are summed exactly as entered; this page applies no rounding
+            increment or overtime threshold. Rows are totalled independently;
+            the calculator does not detect or remove overlapping time entries.
           </p>
         </ContentSection>
 

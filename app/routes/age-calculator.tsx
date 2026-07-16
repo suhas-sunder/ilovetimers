@@ -13,17 +13,10 @@ export function loader() {
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Age Calculator (Years, Months, Days)",
+    title: "Age Calculator | Years, Months, and Days",
     description:
       "Calculate age from a birth date to today or another date with years, months, days, total days, birthday context, copy, and today shortcut.",
     path: "/age-calculator",
-    keywords: [
-      "age calculator",
-      "calculate age",
-      "how old am I",
-      "age on date",
-      "years months days age calculator",
-    ],
   });
 }
 

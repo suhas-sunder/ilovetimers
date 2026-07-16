@@ -7,17 +7,10 @@ import { MonthsBetweenDatesCalculatorPage } from "~/clients/components/date-calc
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Months Between Dates Calculator",
+    title: "Months Between Dates Calculator | Calendar Months and Days",
     description:
-      "Calculate full months and remaining days between two dates with total days, approximate months, and weekday context.",
+      "Calculate completed calendar months and remaining days between two dates using real month lengths and month-end clamping.",
     path: "/months-between-dates-calculator",
-    keywords: [
-      "months between dates calculator",
-      "calculate months between dates",
-      "months and days between dates",
-      "full months between dates",
-      "date months calculator",
-    ],
   });
 }
 

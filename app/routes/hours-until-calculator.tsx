@@ -15,17 +15,10 @@ export function loader() {
 
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
-    title: "Hours Until Calculator",
+    title: "Hours Until Calculator | Time Remaining to a Date",
     description:
-      "Calculate how many hours remain until a target date and time with days, hours, minutes, total minutes, presets, and copy.",
+      "Calculate elapsed hours from a local start date and time to a target, with past results and daylight-saving effects reflected in the total.",
     path: "/hours-until-calculator",
-    keywords: [
-      "hours until calculator",
-      "hours until a time",
-      "how many hours until",
-      "hours remaining calculator",
-      "hours until date time",
-    ],
   });
 }
 

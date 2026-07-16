@@ -24,7 +24,6 @@ import {
   ToolFrame as Card,
   ToolHero,
 } from "~/clients/components/ui/foundation";
-import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
@@ -190,9 +189,6 @@ function ReactionTimeTestTool() {
   const isFs = fullscreen.isFullscreen;
 
   const stageRef = useRef<HTMLDivElement>(null);
-  const bigBoxRef = useRef<HTMLDivElement>(null);
-  const bigTextRef = useRef<HTMLSpanElement>(null);
-
   // Timing refs
   const waitTimerRef = useRef<number | null>(null);
   const goAtRef = useRef<number | null>(null);
@@ -528,24 +524,6 @@ function ReactionTimeTestTool() {
         : "ms";
   const showStageStatus = bigValue !== statusLabel.toUpperCase();
 
-  const fitFontPx = useFitText({
-    containerRef: bigBoxRef,
-    textRef: bigTextRef,
-    deps: [
-      bigValue,
-      bigSuffix,
-      isFs,
-      phase,
-      trialsDone,
-      trialsTarget,
-      softHidden,
-    ],
-    minPx: 56,
-    maxPx: isFs ? 520 : 520,
-    paddingAllowancePx: isFs ? 72 : 84,
-    initialScale: isFs ? 1 : 0.54,
-  });
-
   const handleStagePress = useCallback(
     (target: EventTarget | null) => {
       const stageEl = stageRef.current;
@@ -586,6 +564,7 @@ function ReactionTimeTestTool() {
           ].join(" ")}
           style={{
             minHeight: isFs ? 0 : 460,
+            height: isFs ? undefined : "clamp(45rem, 64vw, 47.5rem)",
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
             touchAction: "manipulation",
@@ -608,23 +587,30 @@ function ReactionTimeTestTool() {
           }}
           role="button"
           aria-label="Reaction time stage. Tap/click or press Spacebar to respond."
+          data-reaction-state={phase}
+          data-reaction-display-region
         >
           <div className="flex h-full w-full flex-col items-center justify-center p-3 sm:p-6">
             <div className="w-full max-w-4xl p-4 sm:p-6">
               <div className="p-3 sm:p-5">
                 <div className="flex flex-col items-center justify-center gap-2">
                   <div
-                    ref={bigBoxRef}
-                    className="w-full p-3 sm:p-6"
-                    style={{ overflow: "hidden" }}
+                    className="flex w-full items-center justify-center overflow-hidden p-3 sm:p-6"
+                    style={{
+                      height: isFs
+                        ? "min(42vh, 28rem)"
+                        : "clamp(11rem, 24vw, 18rem)",
+                    }}
                     aria-live="polite"
+                    data-reaction-value-region
                   >
                     <div className="flex flex-col items-center justify-center">
                       <span
-                        ref={bigTextRef}
-                        className="timer-interaction-stage-value inline-block text-center font-mono font-extrabold tracking-widest text-slate-900"
+                        className="timer-interaction-stage-value inline-block max-w-full whitespace-nowrap text-center font-mono font-extrabold tabular-nums tracking-widest text-slate-900"
                         style={{
-                          fontSize: fitFontPx,
+                          fontSize: isFs
+                            ? "clamp(6rem, 28vw, 32rem)"
+                            : "clamp(5rem, 18vw, 13.8rem)",
                           lineHeight: "1",
                           transform: "translateZ(0)",
                         }}
@@ -632,23 +618,19 @@ function ReactionTimeTestTool() {
                         {bigValue}
                       </span>
 
-                      {bigSuffix ? (
-                        <div className="mt-2 text-xs font-extrabold uppercase tracking-widest text-slate-600">
-                          {bigSuffix}
-                        </div>
-                      ) : null}
+                      <div className="mt-2 min-h-4 text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                        {bigSuffix || "\u00a0"}
+                      </div>
                     </div>
                   </div>
 
-                  {showStageStatus ? (
-                    <div className="timer-interaction-status text-xs font-extrabold uppercase tracking-widest text-slate-600">
-                      {statusLabel}
-                    </div>
-                  ) : null}
+                  <div className="timer-interaction-status min-h-4 text-xs font-extrabold uppercase tracking-widest text-slate-600">
+                    {showStageStatus ? statusLabel : "\u00a0"}
+                  </div>
 
                   <div
                     className={[
-                      "timer-interaction-context text-sm font-semibold text-slate-700",
+                      "timer-interaction-context flex h-16 max-w-3xl items-center justify-center text-center text-sm font-semibold text-slate-700 sm:h-12",
                       softHidden ? "opacity-0" : "opacity-100",
                     ].join(" ")}
                     style={{ transition: "opacity 220ms ease" }}
@@ -669,8 +651,9 @@ function ReactionTimeTestTool() {
                         if (phaseRef.current === "done") return;
                         registerResponse();
                       }}
-                      className="px-6 py-3 text-lg"
+                      className="min-w-28 px-6 py-3 text-lg"
                       disabled={phase === "done"}
+                      data-reaction-primary-control
                     >
                       {phase === "waiting"
                         ? "Wait"
@@ -700,7 +683,7 @@ function ReactionTimeTestTool() {
 
               </div>
 
-              <div className="timer-interaction-meta-grid grid gap-3 md:grid-cols-4">
+              <div className="timer-interaction-meta-grid grid grid-cols-2 gap-3 md:grid-cols-4">
                 <StatPill
                   label="Last"
                   value={lastMs == null ? "--" : fmtMs(lastMs)}
@@ -725,14 +708,16 @@ function ReactionTimeTestTool() {
                 />
               </div>
 
-              {times.length ? (
-                <div
-                  className={[
-                    "timer-interaction-results p-4",
-                    softHidden ? "opacity-0" : "opacity-100",
-                  ].join(" ")}
-                  style={{ transition: "opacity 220ms ease" }}
-                >
+              <div
+                className={[
+                  "timer-interaction-results overflow-auto p-4",
+                  softHidden || !times.length ? "opacity-0" : "opacity-100",
+                ].join(" ")}
+                style={{ height: 92, transition: "opacity 220ms ease" }}
+                aria-hidden={!times.length}
+              >
+                {times.length ? (
+                  <>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="text-xs font-extrabold uppercase tracking-widest text-slate-600">
                       Trial results
@@ -753,8 +738,9 @@ function ReactionTimeTestTool() {
                       </span>
                     ))}
                   </div>
-                </div>
-              ) : null}
+                  </>
+                ) : null}
+              </div>
             </div>
           </div>
 
@@ -769,7 +755,7 @@ function ReactionTimeTestTool() {
         </div>
 
         {!isFs && (
-          <div className="timer-control-stack mt-4">
+          <div className="timer-control-stack mt-4" data-reaction-following-content>
             <SecondaryActionRow className="timer-interaction-actions">
               <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-[var(--ilt-text-primary)]">
                 <input

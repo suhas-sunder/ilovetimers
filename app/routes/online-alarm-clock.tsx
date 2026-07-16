@@ -28,6 +28,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { nextAlarmOccurrence } from "~/clients/lib/specialtyMath.js";
 
 const SITE_URL = "https://www.ilovetimers.com";
 const ROUTE_PATH = "/online-alarm-clock";
@@ -53,23 +54,13 @@ const FAQ_ITEMS = [
 ];
 
 export function meta({}: Route.MetaArgs) {
-  const title = "Online Alarm Clock (Set an Alarm Time Online)";
+  const title = "Online Alarm Clock | Set an Alarm in Your Browser";
   const description =
-    "Set an online alarm clock for a time of day with current time, next occurrence, optional sound, test sound, stop, reset, and fullscreen support.";
+    "Set an online alarm for a specific local time, test the sound, and keep a clear browser clock visible. Browser permissions, tabs, and device sleep can affect alarms.";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "online alarm clock",
-        "alarm clock online",
-        "set alarm online",
-        "web alarm clock",
-        "alarm for time of day",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -143,23 +134,6 @@ function formatDateTime(date: Date) {
 function formatTimeInput(date: Date) {
   const next = new Date(date.getTime() + 5 * 60 * 1000);
   return `${String(next.getHours()).padStart(2, "0")}:${String(next.getMinutes()).padStart(2, "0")}`;
-}
-
-function nextAlarmOccurrence(now: Date, alarmTime: string) {
-  const [hoursRaw, minutesRaw] = alarmTime.split(":");
-  const hours = Number(hoursRaw);
-  const minutes = Number(minutesRaw);
-  const target = new Date(now);
-  target.setHours(
-    Number.isFinite(hours) ? hours : now.getHours(),
-    Number.isFinite(minutes) ? minutes : now.getMinutes(),
-    0,
-    0,
-  );
-  if (target.getTime() <= now.getTime()) {
-    target.setDate(target.getDate() + 1);
-  }
-  return target;
 }
 
 function formatDuration(ms: number) {
@@ -236,6 +210,7 @@ function OnlineAlarmClockTool({ initialNowISO }: { initialNowISO: string }) {
   const [ringing, setRinging] = useState(false);
   const [sound, setSound] = useState(true);
   const [tested, setTested] = useState(false);
+  const [error, setError] = useState("");
   const timeZone = useMemo(() => safeTimeZone(), []);
   const beep = useBeep();
   const alarmIntervalRef = useRef<number | null>(null);
@@ -255,8 +230,11 @@ function OnlineAlarmClockTool({ initialNowISO }: { initialNowISO: string }) {
     [now, alarmTime],
   );
   const activeTarget = useMemo(
-    () => (targetMs ? new Date(targetMs) : plannedTarget),
-    [plannedTarget, targetMs],
+    () =>
+      targetMs
+        ? new Date(targetMs)
+        : plannedTarget ?? new Date(now.getTime() + 5 * 60 * 1000),
+    [now, plannedTarget, targetMs],
   );
   const targetLabel = isTomorrow(now, activeTarget) ? "Tomorrow" : "Today";
   const remainingMs = Math.max(0, activeTarget.getTime() - now.getTime());
@@ -321,6 +299,11 @@ function OnlineAlarmClockTool({ initialNowISO }: { initialNowISO: string }) {
 
   function enableAlarm() {
     const target = nextAlarmOccurrence(now, alarmTime);
+    if (!target) {
+      setError("Enter a valid alarm time.");
+      return;
+    }
+    setError("");
     setTargetMs(target.getTime());
     setEnabled(true);
     setRinging(false);
@@ -339,6 +322,7 @@ function OnlineAlarmClockTool({ initialNowISO }: { initialNowISO: string }) {
     setTargetMs(null);
     stopRinging(true);
     setAlarmTime(formatTimeInput(new Date()));
+    setError("");
   }
 
   function testSound() {
@@ -399,10 +383,11 @@ function OnlineAlarmClockTool({ initialNowISO }: { initialNowISO: string }) {
           className="timer-display-surface mt-4 flex flex-col items-center justify-center p-4 font-mono sm:p-6"
           style={{
             minHeight: isFs ? 0 : "clamp(320px, 38vw, 430px)",
+            height: isFs ? undefined : "clamp(320px, 38vw, 430px)",
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
             userSelect: "none",
-            overflow: isFs ? "hidden" : "visible",
+            overflow: "hidden",
           }}
           aria-live="polite"
           onClick={() => {
@@ -455,7 +440,10 @@ function OnlineAlarmClockTool({ initialNowISO }: { initialNowISO: string }) {
                   type="time"
                   value={alarmTime}
                   disabled={enabled || ringing}
-                  onChange={(event) => setAlarmTime(event.currentTarget.value)}
+                  onChange={(event) => {
+                    setAlarmTime(event.currentTarget.value);
+                    setError("");
+                  }}
                 />
                 <Toggle
                   label="Sound"
@@ -468,8 +456,16 @@ function OnlineAlarmClockTool({ initialNowISO }: { initialNowISO: string }) {
               </SettingRow>
             </SettingGroup>
 
+            <div
+              className="ilt-helper-text min-h-5 text-center"
+              role={error ? "alert" : undefined}
+              aria-live="polite"
+            >
+              {error || "\u00a0"}
+            </div>
+
             <SecondaryActionRow>
-              <Btn kind="ghost" onClick={testSound} disabled={!sound}>
+              <Btn kind="ghost" className="min-w-28" onClick={testSound} disabled={!sound}>
                 {tested ? "Sound tested" : "Test sound"}
               </Btn>
               <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>

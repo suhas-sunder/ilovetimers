@@ -481,6 +481,8 @@
   }
 
   .timer-controls-row {
+    position: relative;
+    z-index: 1;
     display: flex;
     width: min(100%, var(--ilt-settings-max));
     flex-wrap: wrap;

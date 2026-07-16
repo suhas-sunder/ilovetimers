@@ -193,7 +193,7 @@ check(Object.keys(PERMANENT_REDIRECTS).length === 17, "Expected 17 permanent red
 check(xmlPaths.length === 133, `Expected 133 XML sitemap URLs; found ${xmlPaths.length}.`);
 check(moreRoutes.length === 126, `Expected 126 More-directory tools; found ${moreRoutes.length}.`);
 check(footerRoutes.length === 136, `Expected 136 footer routes; found ${footerRoutes.length}.`);
-check(Object.keys(RELATED_TOOL_LINKS).length === 67, `Expected 67 related-tool groups; found ${Object.keys(RELATED_TOOL_LINKS).length}.`);
+check(Object.keys(RELATED_TOOL_LINKS).length === 81, `Expected 81 related-tool groups; found ${Object.keys(RELATED_TOOL_LINKS).length}.`);
 
 if (failures.length) {
   console.error("Calculator integrity audit failed:");

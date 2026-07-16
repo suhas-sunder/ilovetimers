@@ -246,11 +246,13 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/meeting-agenda-timer", label: "Run a timed meeting agenda" },
     { to: "/time-zone-meeting-planner", label: "Find a time across zones" },
     { to: "/meeting-count-up-timer", label: "Track how long the meeting runs" },
+    { to: "/timer-clock", label: "Show local time beside a countdown" },
   ]),
   "/meeting-agenda-timer": group("Related meeting tools", [
     { to: "/meeting-timer", label: "Run a general meeting timer" },
     { to: "/time-zone-meeting-planner", label: "Plan a cross-zone meeting" },
     { to: "/presentation-timer", label: "Time a presentation" },
+    { to: "/timer-clock", label: "Show local time beside a countdown" },
   ]),
 
   "/date-calculator": group("Choose another date calculation", [
@@ -347,18 +349,92 @@ export const RELATED_TOOL_LINKS = Object.freeze({
 
   "/online-alarm-clock": group("Other alarm and countdown tools", [
     { to: "/alarm-timer", label: "Run a duration-based alarm timer" },
+    { to: "/silent-timer", label: "Use a countdown with no sound" },
     { to: "/countdown-timer", label: "Set a general countdown" },
   ]),
   "/alarm-timer": group("Related alarm tools", [
     { to: "/online-alarm-clock", label: "Set an alarm for a clock time" },
     { to: "/countdown-timer", label: "Use a simple countdown" },
-    { to: "/clock-with-seconds", label: "View current time with seconds" },
+    { to: "/timer-clock", label: "Keep local time beside a countdown" },
+  ]),
+  "/silent-timer": group("Other visual countdowns", [
+    { to: "/countdown-timer", label: "Use a general countdown" },
+    { to: "/presentation-timer", label: "Time a presentation quietly" },
+    { to: "/classroom-timer", label: "Run a classroom countdown" },
   ]),
   "/metronome": group("Related rhythm tool", [
     { to: "/bpm-tapper", label: "Tap a tempo before opening the metronome" },
   ]),
   "/bpm-tapper": group("Continue with the measured tempo", [
     { to: "/metronome", label: "Open the metronome at a steady beat" },
+  ]),
+
+  "/pizza-timer": group("Other kitchen countdowns", [
+    { to: "/kitchen-timer", label: "Use a general kitchen timer" },
+    { to: "/cooking-timer", label: "Run a cooking countdown" },
+    { to: "/countdown-timer", label: "Set a custom countdown" },
+  ]),
+  "/egg-timer": group("Other kitchen timers", [
+    { to: "/kitchen-timer", label: "Use a general kitchen timer" },
+    { to: "/tea-timer", label: "Choose a tea steeping timer" },
+    { to: "/countdown-timer", label: "Set a custom countdown" },
+  ]),
+  "/tea-timer": group("Other kitchen countdowns", [
+    { to: "/kitchen-timer", label: "Use a general kitchen timer" },
+    { to: "/egg-timer", label: "Choose an egg timer" },
+    { to: "/countdown-timer", label: "Set a custom countdown" },
+  ]),
+  "/kitchen-timer": group("More kitchen timing tools", [
+    { to: "/cooking-timer", label: "Run a general cooking timer" },
+    { to: "/pizza-timer", label: "Use pizza timing presets" },
+    { to: "/egg-timer", label: "Choose an egg timer" },
+  ]),
+  "/cooking-timer": group("More cooking timers", [
+    { to: "/kitchen-timer", label: "Open the kitchen timer" },
+    { to: "/pizza-timer", label: "Use pizza timing presets" },
+    { to: "/tea-timer", label: "Choose a tea steeping timer" },
+  ]),
+
+  "/presentation-timer": group("Other speaking and meeting timers", [
+    { to: "/speech-timer", label: "Time a speech with speaking cues" },
+    { to: "/timer-clock", label: "Show local time beside a countdown" },
+    { to: "/meeting-timer", label: "Time an active meeting" },
+  ]),
+  "/speech-timer": group("Other presentation tools", [
+    { to: "/presentation-timer", label: "Run a presentation countdown" },
+    { to: "/timer-clock", label: "Show local time beside a countdown" },
+    { to: "/meeting-agenda-timer", label: "Time several agenda sections" },
+  ]),
+
+  "/interval-timer": group("Other workout interval tools", [
+    { to: "/hiit-timer", label: "Run alternating HIIT intervals" },
+    { to: "/amrap-timer", label: "Run a fixed AMRAP window" },
+    { to: "/workout-timer", label: "Use a general workout timer" },
+  ]),
+  "/hiit-timer": group("Other interval workouts", [
+    { to: "/interval-timer", label: "Configure general intervals" },
+    { to: "/amrap-timer", label: "Run a fixed AMRAP window" },
+    { to: "/boxing-timer", label: "Time rounds and rest periods" },
+  ]),
+  "/amrap-timer": group("Related workout timers", [
+    { to: "/interval-timer", label: "Configure repeating intervals" },
+    { to: "/workout-timer", label: "Use a general workout timer" },
+    { to: "/boxing-timer", label: "Time rounds and rest periods" },
+  ]),
+  "/boxing-timer": group("Other round and rhythm tools", [
+    { to: "/interval-timer", label: "Configure repeating intervals" },
+    { to: "/workout-timer", label: "Use a general workout timer" },
+    { to: "/metronome", label: "Generate a steady practice beat" },
+  ]),
+  "/workout-timer": group("Other workout timing tools", [
+    { to: "/interval-timer", label: "Configure repeating intervals" },
+    { to: "/hiit-timer", label: "Run alternating HIIT intervals" },
+    { to: "/pace-timer", label: "Use a repeating pace cue" },
+  ]),
+  "/pace-timer": group("Related pace and rhythm tools", [
+    { to: "/workout-timer", label: "Use a general workout timer" },
+    { to: "/interval-timer", label: "Configure repeating intervals" },
+    { to: "/metronome", label: "Generate a steady audible beat" },
   ]),
 
   "/analog-clock": group("Other analog clock displays", [

@@ -24,36 +24,43 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import Disclaimer from "~/clients/components/alarm-timer/Disclaimer";
-import FAQ from "~/clients/components/alarm-timer/FAQ";
-import HowItWorks from "~/clients/components/alarm-timer/HowItWorks";
-import KeyboardShortcuts from "~/clients/components/alarm-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/alarm-timer/PopularUseCases";
+
+const FAQ_ITEMS = [
+  {
+    question: "How is Alarm Timer different from Online Alarm Clock?",
+    answer:
+      "Alarm Timer counts down a duration such as 10 minutes. Online Alarm Clock schedules a browser alarm for a local clock time such as 3:30 PM.",
+  },
+  {
+    question: "Will the countdown stay aligned in another tab?",
+    answer:
+      "The countdown reconciles against elapsed time while the page remains open, but a background tab may repaint less often and catch up when you return.",
+  },
+  {
+    question: "What can prevent the alarm sound?",
+    answer:
+      "Browser audio rules, device mute or volume, tab closure, browser suspension, and device sleep can prevent or delay sound. Use a device alarm for critical alerts.",
+  },
+  {
+    question: "How do I stop a completed alarm?",
+    answer:
+      "Use Stop alarm when the timer reaches zero. Reset also stops the sound and restores the selected duration.",
+  },
+] as const;
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Online Alarm Timer (Fullscreen Countdown + Sound Presets)";
+  const title = "Alarm Timer Online | Countdown with Sound";
   const description =
-    "Start a free online alarm timer with fullscreen countdown, quick presets, custom minutes, and optional sound. Runs instantly in your browser.";
+    "Set an alarm after a chosen duration with presets, pause and resume controls, optional final beeps, fullscreen, and a clear stop-alarm action at zero.";
 
   const url = "https://www.ilovetimers.com/alarm-timer";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "alarm timer",
-        "alarm timer online",
-        "timer with alarm",
-        "countdown alarm",
-        "fullscreen timer",
-        "online timer with sound",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
 
     { property: "og:title", content: title },
@@ -531,7 +538,7 @@ function AlarmTimerCard() {
    PAGE
 ========================================================= */
 export default function AlarmTimerPage({
-  loaderData: { nowISO },
+  loaderData: { nowISO: _nowISO },
 }: Route.ComponentProps) {
   const url = "https://www.ilovetimers.com/alarm-timer";
 
@@ -557,6 +564,14 @@ export default function AlarmTimerPage({
           { "@type": "ListItem", position: 2, name: "Alarm Timer", item: url },
         ],
       },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
+      },
     ],
   };
 
@@ -574,22 +589,49 @@ export default function AlarmTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
-        <ContentSection>
+        <ContentSection title="How this duration alarm works">
           <p>
-            Need an alarm for a clock time instead of a countdown duration? Use
-            the{" "}
+            Choose a preset or enter 1 to 180 minutes, then start the countdown.
+            Pause and resume preserve the remaining duration, and Reset restores
+            the selected starting time. At zero, the alarm state stays visible
+            and Stop alarm is available when sound is enabled.
+          </p>
+          <p>
+            Alarm Timer is relative: it answers “alert me after 10 minutes.” For
+            an alarm at a time of day, use the{" "}
             <a className="ilt-content-link" href="/online-alarm-clock">
               online alarm clock
             </a>
-            . This alarm timer stays focused on counting down from a chosen
-            number of minutes.
+            . For a general countdown where the alarm-specific controls are not
+            needed, use the{" "}
+            <a className="ilt-content-link" href="/countdown-timer">
+              countdown timer
+            </a>
+            .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <ContentSection title="Sound and browser limits">
+          <p>
+            Sound and final beeps are optional. Browsers may require a click or
+            tap before audio can play, and background throttling can make the
+            display update less often even though elapsed time is reconciled.
+            Keep the page open and the device awake when the alert matters.
+          </p>
+          <p>
+            This is not a device-level alarm. Closing the tab, browser
+            suspension, device sleep, mute settings, or a disconnected output
+            device can prevent sound. Use a phone or system alarm for wake-ups,
+            safety checks, or other critical reminders.
+          </p>
+        </ContentSection>
+        <ContentSection title="Alarm timer FAQ">
+          {FAQ_ITEMS.map((item) => (
+            <div key={item.question}>
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </div>
+          ))}
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

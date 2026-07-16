@@ -12,7 +12,9 @@
     "audit:presets": "node scripts/audits/preset-timers.mjs",
     "audit:time-tools": "node scripts/audits/time-tools.mjs",
     "test:calculators": "node scripts/tests/calculator-formulas.mjs",
-    "audit:calculators": "node scripts/audits/calculators.mjs"
+    "audit:calculators": "node scripts/audits/calculators.mjs",
+    "audit:specialty-tools": "node scripts/audits/specialty-tools.mjs",
+    "test:ui-regressions": "node scripts/tests/ui-regressions.mjs"
   },
   "dependencies": {
     "@react-router/express": "^7.7.1",

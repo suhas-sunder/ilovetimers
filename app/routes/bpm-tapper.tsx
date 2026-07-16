@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
+  ContentSection,
   DisplayStage,
   FullscreenBottomBar,
   FullscreenTopBar,
@@ -20,36 +21,44 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/bpm-tapper/HowItWorks";
-import Disclaimer from "~/clients/components/bpm-tapper/Disclaimer";
-import FAQ from "~/clients/components/bpm-tapper/FAQ";
-import KeyboardShortcuts from "~/clients/components/bpm-tapper/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/bpm-tapper/PopularUseCases";
+import { calculateTapTempo } from "~/clients/lib/specialtyMath.js";
+
+const FAQ_ITEMS = [
+  {
+    question: "How many taps are needed for a BPM result?",
+    answer:
+      "The tool needs at least three taps that produce two valid intervals. More steady taps usually make the median-based estimate more representative.",
+  },
+  {
+    question: "How are accidental taps handled?",
+    answer:
+      "Gaps shorter than 120 milliseconds or longer than 2 seconds are excluded. The BPM uses the median of the remaining intervals so one irregular tap has less influence.",
+  },
+  {
+    question: "When does a tap session reset?",
+    answer:
+      "The default reset pause is 6 seconds. The last result is then held for 12 seconds, and both timings can be changed in settings.",
+  },
+  {
+    question: "How is this different from the metronome?",
+    answer:
+      "BPM Tapper estimates the rhythm you enter with mouse, touch, or keyboard taps. The metronome generates a steady beat at a BPM you select.",
+  },
+] as const;
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Tap BPM (Instant BPM Counter + Tempo Tapper)";
+  const title = "BPM Tapper Online | Tap Tempo Counter";
   const description =
-    "Tap to find BPM instantly. Simple tempo tapper and BPM counter that measures beats per minute as you tap. Auto-resets after pauses and lets you copy the BPM.";
+    "Tap a rhythm with mouse, touch, Space, or Enter to estimate BPM from recent intervals. Review stability, copy the result, or use it in the metronome.";
 
   const url = "https://www.ilovetimers.com/bpm-tapper";
 
   return [
     { title },
     { name: "description", content: description },
-    {
-      name: "keywords",
-      content: [
-        "tap bpm",
-        "bpm counter",
-        "tap tempo",
-        "tempo tapper",
-        "tempo finder",
-        "beats per minute",
-      ].join(", "),
-    },
     { name: "robots", content: "index,follow,max-image-preview:large" },
 
     { property: "og:title", content: title },
@@ -95,13 +104,6 @@ function isTypingTarget(target: EventTarget | null) {
     el.isContentEditable
   );
 }
-function median(nums: number[]) {
-  if (!nums.length) return 0;
-  const a = [...nums].sort((x, y) => x - y);
-  const m = Math.floor(a.length / 2);
-  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
-}
-
 /* =========================================================
    BPM TAPPER CARD
 ========================================================= */
@@ -123,6 +125,7 @@ function BpmTapperCard() {
   const HOLD_PRESETS_MS = useMemo(() => [0, 6000, 12000, 20000, 30000], []);
 
   const tapsRef = useRef<number[]>([]);
+  const activeRef = useRef(false);
   const idleTimerRef = useRef<number | null>(null);
   const holdTimerRef = useRef<number | null>(null);
   const skipInitialSettingsPersistRef = useRef(true);
@@ -157,41 +160,21 @@ function BpmTapperCard() {
   }, []);
 
   const computeIntervals = useCallback((tapTimes: number[]) => {
-    if (tapTimes.length < 2) return [];
-    const out: number[] = [];
-    for (let i = 1; i < tapTimes.length; i++) {
-      const d = tapTimes[i] - tapTimes[i - 1];
-      if (d >= MIN_TAP_MS && d <= MAX_TAP_MS) out.push(d);
-    }
-    return out;
+    return calculateTapTempo(tapTimes, {
+      minIntervalMs: MIN_TAP_MS,
+      maxIntervalMs: MAX_TAP_MS,
+    }).intervals;
   }, []);
 
-  const intervals = useMemo(
-    () => computeIntervals(taps),
-    [taps, computeIntervals],
+  const tapTempo = useMemo(
+    () =>
+      calculateTapTempo(taps, {
+        minIntervalMs: MIN_TAP_MS,
+        maxIntervalMs: MAX_TAP_MS,
+      }),
+    [taps],
   );
-
-  const bpm = useMemo(() => {
-    if (intervals.length < 2) return null;
-    const ms = median(intervals);
-    if (!ms) return null;
-    const val = 60000 / ms;
-    if (!Number.isFinite(val)) return null;
-    return clamp(Math.round(val), 1, 999);
-  }, [intervals]);
-
-  const stability = useMemo(() => {
-    if (intervals.length < 3) return null;
-    const a = intervals.reduce((s, x) => s + x, 0) / intervals.length;
-    const v =
-      intervals.reduce((acc, x) => acc + (x - a) * (x - a), 0) /
-      (intervals.length - 1);
-    const sd = Math.sqrt(v);
-    if (sd < 18) return "Very steady";
-    if (sd < 35) return "Steady";
-    if (sd < 60) return "A bit wobbly";
-    return "Wobbly";
-  }, [intervals]);
+  const { intervals, bpm, stability } = tapTempo;
 
   const msPerBeat = useMemo(() => {
     if (!bpm) return null;
@@ -288,6 +271,7 @@ function BpmTapperCard() {
 
   const hardReset = useCallback(() => {
     tapsRef.current = [];
+    activeRef.current = false;
     setTaps([]);
     setActive(false);
     setTick(0);
@@ -321,6 +305,7 @@ function BpmTapperCard() {
 
     idleTimerRef.current = window.setTimeout(() => {
       // stop “active” session, but hold last result for holdMs (then clear)
+      activeRef.current = false;
       setActive(false);
       scheduleFinalClear();
     }, resetMs);
@@ -334,15 +319,16 @@ function BpmTapperCard() {
     const now = performance.now();
 
     // If we were idle (session ended), start clean.
-    const base = active ? tapsRef.current : [];
+    const base = activeRef.current ? tapsRef.current : [];
     const next = [...base, now].slice(-MAX_TAPS);
 
     tapsRef.current = next;
+    activeRef.current = true;
     setTaps(next);
     setTick((t) => t + 1);
     setActive(true);
     armIdle();
-  }, [active, armIdle, locked, clearHold]);
+  }, [armIdle, locked, clearHold]);
 
   const copy = useCallback(async () => {
     if (!bpm) return;
@@ -433,6 +419,7 @@ function BpmTapperCard() {
       if (next) {
         clearIdle();
         clearHold();
+        activeRef.current = false;
         setActive(false);
       } else {
         // unlocking resumes normal behavior; next tap will continue the current series
@@ -497,6 +484,7 @@ function BpmTapperCard() {
             onClick={() => {
               // restore result (as a held session) so user can copy/lock it
               tapsRef.current = []; // restore as display-only
+              activeRef.current = false;
               setTaps([]);
               setActive(false);
               setTick((t) => t + 1);
@@ -850,6 +838,14 @@ export default function BpmTapperPage({
           { "@type": "ListItem", position: 2, name: "Tap BPM", item: url },
         ],
       },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
+      },
     ],
   };
 
@@ -862,16 +858,51 @@ export default function BpmTapperPage({
 
       <ToolHero
         display={<BpmTapperCard />}
-        title="Tap BPM (Tempo Tapper)"
-        description="Tap anywhere to calculate BPM, copy results, lock a reading, and keep compact timing stats below the main BPM."
+        title="BPM Tapper"
+        description="Tap a rhythm to estimate its BPM, review the intervals and stability, then copy or lock the result."
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <ContentSection title="How tap tempo is calculated">
+          <p>
+            Tap at least three times with the mouse, touch screen, Space, or
+            Enter. The page keeps up to 24 recent taps, excludes intervals under
+            120 milliseconds or over 2 seconds, and converts the median valid
+            interval into a whole-number BPM estimate.
+          </p>
+          <p>
+            The default session resets after a 6-second pause and holds the last
+            result for 12 seconds. Those timings can be changed, and recent
+            results are stored in this browser until cleared.
+          </p>
+        </ContentSection>
+        <ContentSection title="BPM Tapper or Metronome?">
+          <p>
+            BPM Tapper measures the rhythm you provide. The{" "}
+            <a className="ilt-content-link" href="/metronome">
+              online metronome
+            </a>{" "}
+            produces a steady audio and visual beat at a selected BPM, time
+            signature, and subdivision. Use the tapper to find a tempo, then set
+            that number in the metronome.
+          </p>
+        </ContentSection>
+        <ContentSection title="Measurement limits">
+          <p>
+            The estimate includes browser scheduling and mouse, touch, or
+            keyboard input latency. Tap several steady beats and treat the
+            result as a practical tempo estimate rather than certified musical
+            measurement.
+          </p>
+        </ContentSection>
+        <ContentSection title="BPM tapper FAQ">
+          {FAQ_ITEMS.map((item) => (
+            <div key={item.question}>
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </div>
+          ))}
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

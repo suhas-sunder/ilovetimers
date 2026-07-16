@@ -32,13 +32,31 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
+const FAQ_ITEMS = [
+  {
+    question: "Does this timer make sound?",
+    answer:
+      "No. It creates no completion beep or ticking sound. At zero, the display changes to a visible Done state.",
+  },
+  {
+    question: "Can I use the silent timer in fullscreen?",
+    answer:
+      "Yes. Fullscreen keeps the countdown and its visual completion state large without adding audio.",
+  },
+  {
+    question: "What happens if the browser or device sleeps?",
+    answer:
+      "The timer reconciles elapsed time when the page resumes, but the visible completion cue cannot be seen while the display is asleep or the tab is closed.",
+  },
+] as const;
+
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Silent Timer (No Sound Countdown, Fullscreen)";
+  const title = "Silent Timer Online | Countdown with No Sound";
   const description =
-    "Use a quiet visual countdown timer that starts with sound off. Ideal for classrooms, exams, libraries, meetings, and focus rooms where no-sound timing matters.";
+    "Run a silent countdown with clear visual completion, pause, reset, and fullscreen controls for libraries, meetings, classrooms, and quiet spaces.";
 
   const url = "https://www.ilovetimers.com/silent-timer";
 
@@ -101,46 +119,6 @@ function isTypingTarget(target: EventTarget | null) {
   );
 }
 
-// WebAudio beep (kept lightweight, only used when Sound is enabled)
-function useBeep() {
-  const ctxRef = useRef<AudioContext | null>(null);
-
-  useEffect(() => {
-    return () => {
-      ctxRef.current?.close().catch(() => {});
-    };
-  }, []);
-
-  return useCallback((freq = 880, duration = 160) => {
-    try {
-      const Ctx = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = (ctxRef.current ??= new Ctx());
-
-      if (ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
-
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = freq;
-      g.gain.value = 0.1;
-
-      o.connect(g);
-      g.connect(ctx.destination);
-
-      o.start();
-      window.setTimeout(() => {
-        o.stop();
-        o.disconnect();
-        g.disconnect();
-      }, duration);
-    } catch {
-      // ignore
-    }
-  }, []);
-}
-
 /* =========================================================
    SILENT TIMER CARD
 ========================================================= */
@@ -180,10 +158,8 @@ function parseInputToMs(str: string) {
 }
 
 function SilentTimerCard() {
-  const beep = useBeep();
   const presets = useMemo(() => [1, 2, 3, 5, 10, 15, 20, 25, 30, 45, 60], []);
 
-  const [sound, setSound] = useState(false);
   const [loop, setLoop] = useState(false);
 
   const [status, setStatus] = useState<"idle" | "running" | "paused" | "done">(
@@ -198,7 +174,6 @@ function SilentTimerCard() {
   const remainingRef = useRef<number>(durationMs);
   const durationRef = useRef<number>(durationMs);
   const statusRef = useRef<typeof status>(status);
-  const soundRef = useRef<boolean>(sound);
   const loopRef = useRef<boolean>(loop);
 
   useEffect(() => {
@@ -211,10 +186,6 @@ function SilentTimerCard() {
   useEffect(() => {
     statusRef.current = status;
   }, [status]);
-
-  useEffect(() => {
-    soundRef.current = sound;
-  }, [sound]);
 
   useEffect(() => {
     loopRef.current = loop;
@@ -340,7 +311,6 @@ function SilentTimerCard() {
 
       if (rem <= 0) {
         // Finish
-        if (soundRef.current) beep();
         if (loopRef.current) {
           remainingRef.current = durationRef.current;
           endTimeRef.current = performance.now() + durationRef.current;
@@ -361,7 +331,7 @@ function SilentTimerCard() {
 
     rafRef.current = requestAnimationFrame(tick);
     return () => stopRaf();
-  }, [status, beep]);
+  }, [status]);
 
   useEffect(() => {
     return () => stopRaf();
@@ -521,7 +491,7 @@ function SilentTimerCard() {
 
             <SettingGroup
               title="Silent timer settings"
-              description="Sound stays off by default for quiet timing."
+              description="This timer never creates completion or ticking audio."
             >
               <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(16rem,auto)]">
                 <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
@@ -541,7 +511,6 @@ function SilentTimerCard() {
                   </Btn>
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
-                  <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                   <Toggle label="Loop" checked={loop} onCheckedChange={setLoop} />
                 </div>
 
@@ -578,7 +547,7 @@ function SilentTimerCard() {
    PAGE
 ========================================================= */
 export default function SilentTimerPage({
-  loaderData: { nowISO },
+  loaderData: { nowISO: _nowISO },
 }: Route.ComponentProps) {
   const url = "https://www.ilovetimers.com/silent-timer";
 
@@ -590,7 +559,7 @@ export default function SilentTimerPage({
         name: "Silent Timer",
         url,
         description:
-          "Silent countdown timer with optional sound, loop, fullscreen, presets, custom time input, and keyboard shortcuts.",
+          "Silent countdown timer with visual completion, loop, fullscreen, presets, custom time input, and keyboard shortcuts. The tool creates no completion or ticking audio.",
       },
       {
         "@type": "BreadcrumbList",
@@ -608,6 +577,14 @@ export default function SilentTimerPage({
             item: url,
           },
         ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
       },
     ],
   };
@@ -628,17 +605,16 @@ export default function SilentTimerPage({
       <SeoBand>
         <ContentSection title="How this silent timer works">
           <p>
-            Silent Timer is for a quiet countdown first. Sound starts off, the
-            timer stays visual, and the main display shows the remaining time in
-            large digits. Pick a preset, type a custom time, press Start, and
-            use the screen itself as the cue when time is up.
+            Silent Timer is a no-sound countdown. The main display shows the
+            remaining time in large digits, then changes to a visible Done state
+            at zero. Pick a preset, type a custom time, press Start, and use the
+            screen itself as the completion cue.
           </p>
           <p>
-            The page still includes an optional Sound toggle for cases where you
-            decide a short beep is appropriate, but the quiet use case is the
-            default. Leave Sound off for libraries, classrooms, shared offices,
-            naps, meditation sessions, meetings, exams, and focus work where an
-            audible alert would be distracting.
+            This route does not create a completion beep, ticking sound,
+            vibration, or notification. It remains distinct from ordinary
+            countdown and alarm pages for libraries, classrooms, shared offices,
+            meetings, exams, and other quiet spaces.
           </p>
         </ContentSection>
 
@@ -676,8 +652,8 @@ export default function SilentTimerPage({
             A silent browser timer is not a safety alarm, proctoring system, or
             official time source. Keep the page open and visible if the visual
             finish state matters. If the device sleeps, the display updates when
-            the browser resumes, and audio only plays if you explicitly turn
-            Sound on and the browser allows playback after interaction.
+            the browser resumes. Because this page intentionally has no audible
+            alert, do not rely on it when you cannot watch the display.
           </p>
         </ContentSection>
 
@@ -708,22 +684,12 @@ export default function SilentTimerPage({
         </ContentSection>
 
         <ContentSection title="Silent timer FAQ">
-          <h3>Does this timer make sound?</h3>
-          <p>
-            Sound is off by default. If you leave Sound off, the timer ends with
-            a visual state instead of an audible beep. If you turn Sound on, the
-            browser may play a short beep at the end after user interaction.
-          </p>
-          <h3>Can I use it in fullscreen?</h3>
-          <p>
-            Yes. Fullscreen keeps the countdown large and simple, and the active
-            fullscreen view does not include ad placements.
-          </p>
-          <h3>Is this the same as timezone conversion?</h3>
-          <p>
-            No. This page counts down a duration. It does not convert time zones
-            or calculate clock times.
-          </p>
+          {FAQ_ITEMS.map((item) => (
+            <div key={item.question}>
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </div>
+          ))}
         </ContentSection>
       </SeoBand>
     </PageShell>

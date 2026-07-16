@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   Button as Btn,
+  ContentSection,
   ControlGroup,
   DisplayStage,
   Field,
@@ -28,19 +29,37 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/metronome/HowItWorks";
-import Disclaimer from "~/clients/components/metronome/Disclaimer";
-import FAQ from "~/clients/components/metronome/FAQ";
-import KeyboardShortcuts from "~/clients/components/metronome/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/metronome/PopularUseCases";
+
+const FAQ_ITEMS = [
+  {
+    question: "What BPM range does this metronome support?",
+    answer:
+      "The BPM control supports 20 to 400 beats per minute. Arrow keys change BPM by one, or by five while Shift is held.",
+  },
+  {
+    question: "Which time signatures and subdivisions are available?",
+    answer:
+      "The tool includes 2/4, 3/4, 4/4, 5/4, six-beat 6/8, and seven-beat 7/8 patterns, with quarter, eighth, triplet, and sixteenth subdivisions.",
+  },
+  {
+    question: "How is the BPM Tapper different?",
+    answer:
+      "The metronome generates a steady beat at a selected BPM. The BPM Tapper estimates the tempo of the rhythm you tap.",
+  },
+  {
+    question: "Can background tabs affect the beat?",
+    answer:
+      "Audio is scheduled slightly ahead with the Web Audio API, but browser suspension, device load, power-saving behavior, and audio output latency can still affect playback.",
+  },
+] as const;
 
 /* =========================================================
    META
 ========================================================= */
 export function meta({}: Route.MetaArgs) {
-  const title = "Online Metronome (Tap Tempo + BPM)";
+  const title = "Online Metronome | BPM, Time Signature and Subdivisions";
   const description =
-    "Practice with a clean online metronome. Set BPM, tap your tempo, and keep time with a clear visual and audio pulse.";
+    "Set 20–400 BPM, choose a time signature and subdivision, accent the first beat, tap a tempo, and follow a clear audio and visual pulse.";
 
   const url = "https://www.ilovetimers.com/metronome";
 
@@ -289,68 +308,60 @@ function MetronomeCard() {
   }, [stopScheduler]);
 
   const start = useCallback(async () => {
-    if (isRunning) return;
-
-    const ctx = await ensureAudio();
-    try {
-      if (ctx.state === "suspended") await ctx.resume();
-    } catch {
-      // ignore
-    }
-
-    tickIndexRef.current = 0;
-    nextTimeRef.current = ctx.currentTime + 0.06;
+    if (runningRef.current) return;
     runningRef.current = true;
-    setIsRunning(true);
 
-    const lookAheadSec = 0.12;
-    const intervalMs = 25;
-
-    timerRef.current = window.setInterval(() => {
+    try {
+      const ctx = await ensureAudio();
+      if (ctx.state === "suspended") await ctx.resume();
       if (!runningRef.current) return;
-      if (!audioRef.current) return;
 
-      const s = settingsRef.current;
+      tickIndexRef.current = 0;
+      nextTimeRef.current = ctx.currentTime + 0.06;
+      setIsRunning(true);
 
-      const bpmSafe = clamp(s.bpm, 20, 400);
-      const beatsSafe = Math.max(1, Math.round(s.beatsPerBar));
-      const subSafe = clamp(s.subdivision, 1, 4) as Subdivision;
+      const lookAheadSec = 0.12;
+      const intervalMs = 25;
 
-      const secPerBeat = 60 / bpmSafe;
-      const secPerSub = secPerBeat / subSafe;
+      timerRef.current = window.setInterval(() => {
+        if (!runningRef.current || !audioRef.current) return;
 
-      const now = audioRef.current.currentTime;
+        const s = settingsRef.current;
+        const bpmSafe = clamp(s.bpm, 20, 400);
+        const beatsSafe = Math.max(1, Math.round(s.beatsPerBar));
+        const subSafe = clamp(s.subdivision, 1, 4) as Subdivision;
+        const secPerSub = 60 / bpmSafe / subSafe;
+        const now = audioRef.current.currentTime;
 
-      while (nextTimeRef.current < now + lookAheadSec) {
-        const tick = tickIndexRef.current;
+        while (nextTimeRef.current < now + lookAheadSec) {
+          const tick = tickIndexRef.current;
+          const subIndex = tick % subSafe;
+          const beatIndex = Math.floor(tick / subSafe) % beatsSafe;
+          const isBarDownbeat = subIndex === 0 && beatIndex === 0;
+          const accent = Boolean(s.accentDownbeat && isBarDownbeat);
 
-        const subIndex = tick % subSafe; // 0..sub-1
-        const beatIndex = Math.floor(tick / subSafe) % beatsSafe; // 0..beats-1
-
-        const isSubDownbeat = subIndex === 0;
-        const isBarDownbeat = isSubDownbeat && beatIndex === 0;
-        const accent = Boolean(s.accentDownbeat && isBarDownbeat);
-
-        playTick({
-          ctx: audioRef.current,
-          when: nextTimeRef.current,
-          mode: s.mode,
-          accent,
-          volume: s.volume,
-        });
-
-        setPulse((p) => ({
-          n: p.n + 1,
-          beat: beatIndex + 1,
-          sub: subIndex + 1,
-          accent,
-        }));
-
-        tickIndexRef.current += 1;
-        nextTimeRef.current += secPerSub;
-      }
-    }, intervalMs);
-  }, [ensureAudio, isRunning]);
+          playTick({
+            ctx: audioRef.current,
+            when: nextTimeRef.current,
+            mode: s.mode,
+            accent,
+            volume: s.volume,
+          });
+          setPulse((pulseState) => ({
+            n: pulseState.n + 1,
+            beat: beatIndex + 1,
+            sub: subIndex + 1,
+            accent,
+          }));
+          tickIndexRef.current += 1;
+          nextTimeRef.current += secPerSub;
+        }
+      }, intervalMs);
+    } catch {
+      runningRef.current = false;
+      setIsRunning(false);
+    }
+  }, [ensureAudio]);
 
   // Clean up
   useEffect(() => {
@@ -837,7 +848,7 @@ function MetronomeCard() {
    PAGE
 ========================================================= */
 export default function MetronomePage({
-  loaderData: { nowISO },
+  loaderData: { nowISO: _nowISO },
 }: Route.ComponentProps) {
   const url = "https://www.ilovetimers.com/metronome";
 
@@ -863,6 +874,14 @@ export default function MetronomePage({
           { "@type": "ListItem", position: 2, name: "Metronome", item: url },
         ],
       },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
+      },
     ],
   };
 
@@ -880,11 +899,46 @@ export default function MetronomePage({
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <ContentSection title="Set a steady beat">
+          <p>
+            Set a tempo from 20 to 400 BPM, choose the meter and subdivision,
+            then start the metronome. Quarter, eighth, triplet, and sixteenth
+            subdivisions change how many clicks occur within each beat. The
+            accent option emphasizes the first beat of each bar.
+          </p>
+          <p>
+            The page uses Web Audio look-ahead scheduling so upcoming clicks
+            are queued shortly before playback. BPM, time-signature,
+            subdivision, accent, sound, and volume changes apply while it runs.
+          </p>
+        </ContentSection>
+        <ContentSection title="Metronome or BPM Tapper?">
+          <p>
+            Use this metronome when you already know the tempo and want a steady
+            generated pulse. If you have a rhythm but do not know its tempo, tap
+            it into the{" "}
+            <a className="ilt-content-link" href="/bpm-tapper">
+              BPM Tapper
+            </a>{" "}
+            first, then set the resulting BPM here.
+          </p>
+        </ContentSection>
+        <ContentSection title="Browser audio limitations">
+          <p>
+            A click or tap may be required before the browser allows audio.
+            Browser suspension, high device load, wireless audio latency, and
+            power-saving behavior can affect what you hear. This is a practical
+            browser metronome, not certified timing equipment.
+          </p>
+        </ContentSection>
+        <ContentSection title="Online metronome FAQ">
+          {FAQ_ITEMS.map((item) => (
+            <div key={item.question}>
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </div>
+          ))}
+        </ContentSection>
       </SeoBand>
     </PageShell>
   );

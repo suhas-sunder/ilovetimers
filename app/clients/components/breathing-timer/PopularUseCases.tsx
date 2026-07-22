@@ -60,7 +60,7 @@ export default function PopularUseCases({
       links: [
         { label: "Breathing Timer", href: "/breathing-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {
@@ -73,7 +73,7 @@ export default function PopularUseCases({
         "If you want a general-purpose fullscreen countdown without phase labels. Use Fullscreen Timer instead.",
       links: [
         { label: "Breathing Timer", href: "/breathing-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Visual Timer", href: "/visual-timer" },
       ],
     },

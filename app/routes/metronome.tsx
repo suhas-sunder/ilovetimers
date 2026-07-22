@@ -1,6 +1,6 @@
 // app/routes/metronome.tsx
 import type { Route } from "./+types/metronome";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -29,6 +29,11 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
+import { TechnicalMethod } from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
+import { metronomeSubdivisionIntervalSeconds } from "~/clients/lib/technicalTimeMath.js";
+
+const REVIEW_DATE = { iso: "2026-07-18", label: "July 18, 2026" } as const;
 
 const FAQ_ITEMS = [
   {
@@ -120,7 +125,7 @@ function safeTimeZone() {
 }
 
 /* =========================================================
-   AUDIO CLICK (distinct sounds + accurate scheduling)
+   AUDIO CLICK
 ========================================================= */
 type ClickMode = "click" | "wood" | "beep";
 
@@ -330,7 +335,9 @@ function MetronomeCard() {
         const bpmSafe = clamp(s.bpm, 20, 400);
         const beatsSafe = Math.max(1, Math.round(s.beatsPerBar));
         const subSafe = clamp(s.subdivision, 1, 4) as Subdivision;
-        const secPerSub = 60 / bpmSafe / subSafe;
+        const secPerSub =
+          metronomeSubdivisionIntervalSeconds(bpmSafe, subSafe) ??
+          60 / bpmSafe / subSafe;
         const now = audioRef.current.currentTime;
 
         while (nextTimeRef.current < now + lookAheadSec) {
@@ -410,6 +417,9 @@ function MetronomeCard() {
 
   const bpmInt = clamp(Math.round(bpm), 20, 400);
   const bpmBigText = `${bpmInt}`;
+  const timeSignatureLabel =
+    TS_OPTIONS.find((option) => option.beats === beatsPerBar)?.label ??
+    `${beatsPerBar} beats`;
 
   const statusLabel = isRunning ? "Running" : "Stopped";
 
@@ -418,7 +428,7 @@ function MetronomeCard() {
     const lines: string[] = [];
     lines.push("Online Metronome");
     lines.push(`BPM: ${bpmInt}`);
-    lines.push(`Time signature: ${beatsPerBar}/4`);
+    lines.push(`Time signature: ${timeSignatureLabel}`);
     lines.push(`Subdivision: ${subLabel(subdivision)}`);
     lines.push(`Accent downbeat: ${accentDownbeat ? "On" : "Off"}`);
     lines.push(`Sound: ${mode}`);
@@ -426,7 +436,15 @@ function MetronomeCard() {
     lines.push(`Time zone: ${tz}`);
     lines.push("https://www.ilovetimers.com/metronome");
     return lines.join("\n");
-  }, [accentDownbeat, beatsPerBar, bpmInt, mode, subdivision, tz, volume]);
+  }, [
+    accentDownbeat,
+    bpmInt,
+    mode,
+    subdivision,
+    timeSignatureLabel,
+    tz,
+    volume,
+  ]);
 
   const copy = useCallback(async () => {
     try {
@@ -859,6 +877,7 @@ export default function MetronomePage({
         "@type": "WebPage",
         name: "Online Metronome",
         url,
+        dateModified: REVIEW_DATE.iso,
         description:
           "Online metronome and tempo timer with BPM control, tap tempo, time signatures, accents, subdivisions, audio scheduling, and fullscreen.",
       },
@@ -912,6 +931,58 @@ export default function MetronomePage({
             subdivision, accent, sound, and volume changes apply while it runs.
           </p>
         </ContentSection>
+        <TechnicalMethod
+          heading="Beat interval and audio scheduling"
+          sources={[TECHNICAL_SOURCES.webAudio]}
+        >
+          <p>
+            One beat interval in seconds is <strong>60 divided by BPM</strong>.
+            At 120 BPM, one beat lasts 0.5 seconds. Subdivision divides that
+            interval again. Eighth notes at 120 BPM produce a click every 0.25
+            seconds, and sixteenth notes produce one every 0.125 seconds.
+          </p>
+          <p>
+            Start creates or resumes a Web Audio context after your input. A
+            JavaScript scheduler runs every 25 milliseconds and queues audio up
+            to 120 milliseconds ahead on the audio context clock. The first
+            click is queued about 60 milliseconds after Start. The first
+            subdivision of the first beat in each bar is accented when Accent is
+            on.
+          </p>
+          <p>
+            BPM is limited to 20 through 400. Meter choices are 2/4, 3/4, 4/4,
+            5/4, six counted beats for 6/8, and seven counted beats for 7/8.
+            Subdivision choices are 1, 2, 3, or 4 clicks per beat. Settings can
+            change while playback runs, but clicks already queued in the
+            look-ahead window keep their old settings. A queued click may also
+            sound just after Stop.
+          </p>
+          <p>
+            Tap tempo keeps up to eight taps. After at least four taps, it
+            averages intervals from 180 to 2,000 milliseconds and rounds the
+            resulting 60,000 divided by average interval to a whole BPM. A gap
+            longer than two seconds starts a new tap set.
+          </p>
+          <p>
+            Web Audio scheduling reduces ordinary JavaScript timer jitter, but
+            it does not make this page studio-grade, sample-accurate, or
+            drift-free equipment. Audio output latency, wireless devices,
+            browser suspension, background throttling, heavy load, and device
+            sleep can interrupt or delay playback. The visual pulse updates when
+            a click is scheduled, so it can appear slightly before the sound.
+          </p>
+          <p>
+            The guide to{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/how-browser-timers-measure-time"
+            >
+              browser timing and delayed callbacks
+            </a>{" "}
+            explains why the audio clock and JavaScript look-ahead loop have
+            separate roles.
+          </p>
+        </TechnicalMethod>
         <ContentSection title="Metronome or BPM Tapper?">
           <p>
             Use this metronome when you already know the tempo and want a steady
@@ -929,6 +1000,17 @@ export default function MetronomePage({
             Browser suspension, high device load, wireless audio latency, and
             power-saving behavior can affect what you hear. This is a practical
             browser metronome, not certified timing equipment.
+          </p>
+          <p>
+            For a step-by-step check of autoplay policy, suspended audio, mute
+            controls, and output routing, read{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/browser-timer-alarm-silent"
+            >
+              why browser audio may stay silent
+            </a>
+            .
           </p>
         </ContentSection>
         <ContentSection title="Online metronome FAQ">

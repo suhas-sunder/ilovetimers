@@ -46,7 +46,7 @@ export default function PopularUseCases({
       links: [
         { label: "Binary Stopwatch", href: "/binary-stopwatch" },
         { label: "Stopwatch", href: "/stopwatch" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {
@@ -87,7 +87,7 @@ export default function PopularUseCases({
         "If you want a generic fullscreen countdown with simpler UI. Use Fullscreen Timer.",
       links: [
         { label: "Binary Stopwatch", href: "/binary-stopwatch" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Presentation Timer", href: "/presentation-timer" },
       ],
     },

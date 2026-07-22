@@ -84,7 +84,7 @@ export default function PopularUseCases({
       notFor:
         "You want a presentation-focused clock or speaker timing tools. Use Presentation Timer for stage and talk timing.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Presentation Timer", href: "/presentation-timer" },
       ],
     },

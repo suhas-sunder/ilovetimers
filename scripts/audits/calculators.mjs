@@ -4,6 +4,10 @@ import { fileURLToPath } from "node:url";
 import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
 import { RELATED_TOOL_LINKS } from "../../app/clients/config/relatedTools.js";
 import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
+import {
+  STAGE3_NOINDEX_ROUTE_SET,
+  STAGE3_REDIRECT_SOURCE_SET,
+} from "../../app/config/routeArchitecture.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SITE_URL = "https://www.ilovetimers.com";
@@ -81,9 +85,18 @@ const [routesSource, sitemapSource, rootSource, footerSource] = await Promise.al
 const configuredRoutes = configuredRoutesFrom(routesSource);
 const redirectSources = new Set(Object.keys(PERMANENT_REDIRECTS));
 const xmlPaths = xmlPathsFrom(sitemapSource);
-const moreRoutes = moreDirectoryRoutesFrom(rootSource);
+const moreRoutes = moreDirectoryRoutesFrom(rootSource).filter(
+  (route) =>
+    !STAGE3_NOINDEX_ROUTE_SET.has(route) &&
+    !STAGE3_REDIRECT_SOURCE_SET.has(route),
+);
 const footerRoutes = footerRoutesFrom(footerSource);
 const htmlRoutes = SITEMAP_GROUPS.flatMap((group) => group.routes);
+const guideArticleRoutes = new Set(
+  (SITEMAP_GROUPS.find((group) => group.title === "Guides")?.routes ?? []).filter(
+    (route) => route !== "/guides",
+  ),
+);
 const titles = [];
 const descriptions = [];
 const scopedSources = new Map();
@@ -171,9 +184,9 @@ for (const [label, source, terms] of [
 }
 
 for (const [source, names] of [
-  [datePages, ["DATE_DURATION_FAQ", "DATE_CALCULATOR_FAQ", "BUSINESS_DAYS_FAQ"]],
+  [datePages, ["DATE_DURATION_FAQ", "BUSINESS_DAYS_FAQ"]],
   [extras, ["WEEKS_BETWEEN_FAQ", "TIME_CARD_FAQ"]],
-  [morePages, ["TIME_DURATION_FAQ", "AGE_FAQ", "DAYS_UNTIL_FAQ", "WEEKDAY_FAQ", "WEEK_NUMBER_FAQ", "MONTHS_BETWEEN_FAQ", "HOURS_UNTIL_FAQ"]],
+  [morePages, ["TIME_DURATION_FAQ", "DAYS_UNTIL_FAQ", "WEEKDAY_FAQ", "WEEK_NUMBER_FAQ", "MONTHS_BETWEEN_FAQ", "HOURS_UNTIL_FAQ"]],
   [workdayPages, ["WORKDAYS_FAQ", "WEEKLY_TIMESHEET_FAQ"]],
 ]) {
   for (const name of names) {
@@ -188,12 +201,13 @@ for (const schemaType of ["HowTo", "Organization", "Review", "AggregateRating", 
 }
 check(!/["'](?:aggregateRating|reviewRating|offers)["']\s*:/.test(combinedSource), "Calculator source contains rating, review, or offer properties.");
 
-check(configuredRoutes.size === 136, `Expected 136 configured routes; found ${configuredRoutes.size}.`);
-check(Object.keys(PERMANENT_REDIRECTS).length === 17, "Expected 17 permanent redirects.");
-check(xmlPaths.length === 133, `Expected 133 XML sitemap URLs; found ${xmlPaths.length}.`);
-check(moreRoutes.length === 126, `Expected 126 More-directory tools; found ${moreRoutes.length}.`);
-check(footerRoutes.length === 136, `Expected 136 footer routes; found ${footerRoutes.length}.`);
-check(Object.keys(RELATED_TOOL_LINKS).length === 81, `Expected 81 related-tool groups; found ${Object.keys(RELATED_TOOL_LINKS).length}.`);
+check(configuredRoutes.size === htmlRoutes.length, `Configured and HTML-directory route counts differ (${configuredRoutes.size} vs ${htmlRoutes.length}).`);
+check(Object.keys(PERMANENT_REDIRECTS).length === STAGE3_REDIRECT_SOURCE_SET.size + 17, "Permanent redirect count does not match the retained aliases plus Stage 3 decisions.");
+check(xmlPaths.length === configuredRoutes.size - STAGE3_NOINDEX_ROUTE_SET.size, `XML sitemap count does not match indexable canonical routes; found ${xmlPaths.length}.`);
+check(footerRoutes.includes("/guides"), "Footer must contain the Guides index.");
+check([...guideArticleRoutes].every((route) => !footerRoutes.includes(route)), "Guide articles must stay out of the global footer.");
+check(footerRoutes.length === configuredRoutes.size - guideArticleRoutes.size, `Footer must contain every canonical route except guide articles; found ${footerRoutes.length}.`);
+check(Object.keys(RELATED_TOOL_LINKS).length === moreRoutes.length, `Related-tool and discoverable-tool counts differ (${Object.keys(RELATED_TOOL_LINKS).length} vs ${moreRoutes.length}).`);
 
 if (failures.length) {
   console.error("Calculator integrity audit failed:");

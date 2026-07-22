@@ -429,7 +429,7 @@ export default function HowItWorks({
               If you want a minimal countdown with fewer settings, use{" "}
               <Link
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                to="/fullscreen-timer"
+                to="/online-timer"
               >
                 Fullscreen Timer
               </Link>
@@ -482,7 +482,7 @@ export default function HowItWorks({
             <PillLink to="/amrap-timer">AMRAP Timer</PillLink>
             <PillLink to="/round-timer">Round Timer</PillLink>
             <PillLink to="/workout-timer">Workout Timer</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>
           </div>
         </div>

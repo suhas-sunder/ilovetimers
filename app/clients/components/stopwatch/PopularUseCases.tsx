@@ -60,7 +60,7 @@ export default function PopularUseCases({
         "You need a countdown timer for a fixed duration. Use Countdown Timer instead.",
       links: [
         { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Presentation Timer", href: "/presentation-timer" },
       ],
     },
@@ -75,7 +75,7 @@ export default function PopularUseCases({
       links: [
         { label: "Time Calculator", href: "/time-calculator" },
         { label: "Milliseconds Converter", href: "/milliseconds-converter" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {
@@ -89,7 +89,7 @@ export default function PopularUseCases({
       links: [
         { label: "Lab Timer", href: "/lab-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {
@@ -101,7 +101,7 @@ export default function PopularUseCases({
       notFor:
         "You only need a single elapsed time with no laps. Use Count Up Timer for a simpler view.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Work Hours Calculator", href: "/work-hours-calculator" },
         {
           label: "Billable Hours Calculator",

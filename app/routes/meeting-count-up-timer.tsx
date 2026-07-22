@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/meeting-count-up-timer.tsx
 import type { Route } from "./+types/meeting-count-up-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useRef,
@@ -26,12 +27,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/meeting-count-up-timer/HowItWorks";
-import Disclaimer from "~/clients/components/meeting-count-up-timer/Disclaimer";
-import FAQ from "~/clients/components/meeting-count-up-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/meeting-count-up-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/meeting-count-up-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -556,7 +551,7 @@ export default function MeetingCountupTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/meeting-count-up-timer" />
         <ContentSection>
           <p>
             If the meeting needs planned topic durations instead of elapsed
@@ -567,10 +562,6 @@ export default function MeetingCountupTimerPage({
             for item-by-item countdowns and agenda overrun visibility.
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

@@ -1,6 +1,6 @@
 // app/routes/video-game-challenge-timer.tsx
 import type { Route } from "./+types/video-game-challenge-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,

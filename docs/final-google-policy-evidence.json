@@ -1,0 +1,113 @@
+{
+  "reviewedAt": "2026-07-21",
+  "scope": "Current official Google requirements relevant to a future iLoveTimers AdSense application. This is a repository-readiness assessment, not legal advice or an approval prediction.",
+  "sources": [
+    {
+      "sourceUrl": "https://support.google.com/adsense/answer/48182?hl=en",
+      "pageTitle": "AdSense Program policies",
+      "retrievalDate": "2026-07-21",
+      "requirementSupported": "Publishers must avoid invalid clicks or impressions, prohibited click encouragement, deceptive ad formatting, and inappropriate placements.",
+      "repositoryEvidence": [
+        "app/clients/config/monetization.ts permits quiet placeholders only on the homepage and declares all other reviewed route classes ad-free.",
+        "app/clients/components/ui/foundation.tsx labels placeholders only as Advertisements.",
+        "No Google ad script or live ad-unit implementation exists in application source."
+      ],
+      "result": "pass for the current advertising-disabled repository state",
+      "actionTaken": "Kept live advertising disabled and included placement and prohibited-language checks in the final gate.",
+      "ownerOrExternalDependency": "A future production ad configuration must be reviewed again after the owner selects units or Auto ads."
+    },
+    {
+      "sourceUrl": "https://support.google.com/adsense/answer/1346295?hl=en",
+      "pageTitle": "Ad placement policies",
+      "retrievalDate": "2026-07-21",
+      "requirementSupported": "Ads must not invite accidental clicks, receive unnatural attention, resemble navigation or content, or use misleading labels; Advertisements and Sponsored Links are permitted labels.",
+      "repositoryEvidence": [
+        "The two homepage placeholders are separated from navigation and active tool controls.",
+        "No placeholder is sticky, animated, adjacent to Start/Stop/Reset, or present on tool routes.",
+        "The visible label is Advertisements."
+      ],
+      "result": "pass for placeholders; future live placements are not approved by this evidence",
+      "actionTaken": "Preserved the restrained homepage-only layout and added placement assertions to automated release checks.",
+      "ownerOrExternalDependency": "Recheck rendered mobile and desktop placement after any live ad code is proposed."
+    },
+    {
+      "sourceUrl": "https://support.google.com/adsense/answer/1282097?hl=en",
+      "pageTitle": "Best practices for ad placement",
+      "retrievalDate": "2026-07-21",
+      "requirementSupported": "Advertising should not obstruct the user's task, should remain distinguishable as advertising, and should preserve clean navigation and content access.",
+      "repositoryEvidence": [
+        "Tool pages remain ad-free and utility-first.",
+        "The homepage remains usable if placeholders never load live content.",
+        "Placeholder dimensions are responsive and reserve layout space."
+      ],
+      "result": "pass for current disabled mode",
+      "actionTaken": "Measured homepage layout shift and responsive behavior in the final browser suite.",
+      "ownerOrExternalDependency": "Real ad creative behavior cannot be validated before account and unit configuration exist."
+    },
+    {
+      "sourceUrl": "https://support.google.com/publisherpolicies/answer/10502938?hl=en",
+      "pageTitle": "Google Publisher Policies",
+      "retrievalDate": "2026-07-21",
+      "requirementSupported": "Monetized content must comply with Google's content, behavioral, privacy, and other publisher requirements.",
+      "repositoryEvidence": [
+        "The final route, content, trust, structured-data, privacy, link, and safety-claim reviews cover the complete canonical route set.",
+        "No fake reviews, ratings, organization details, medical authority, or official time-source claims are present in the validated output."
+      ],
+      "result": "repository review passed within documented automation and manual-sampling limits",
+      "actionTaken": "Re-ran route-family content and policy-sensitive claim audits rather than relying only on prior reports.",
+      "ownerOrExternalDependency": "Google performs the final site review and may apply policies or restrictions not reproducible locally."
+    },
+    {
+      "sourceUrl": "https://support.google.com/publisherpolicies/answer/10437794?hl=en",
+      "pageTitle": "Privacy disclosures",
+      "retrievalDate": "2026-07-21",
+      "requirementSupported": "When Google publisher products are used, the privacy policy must disclose relevant third-party data collection, sharing, identifiers, cookies, web beacons, and IP-address use.",
+      "repositoryEvidence": [
+        "The current Privacy and Cookie pages accurately say live advertising and advertising cookies are absent.",
+        "They separately disclose consent-gated PostHog behavior, local storage, share URLs, coordinates, and the Sunrise-Sunset API."
+      ],
+      "result": "pass for current behavior; future-advertising disclosure remains an external gate",
+      "actionTaken": "Did not add speculative Google-advertising claims while advertising is disabled.",
+      "ownerOrExternalDependency": "Update disclosures and provide required choices only after the owner selects and configures the actual advertising and consent setup."
+    },
+    {
+      "sourceUrl": "https://support.google.com/adsense/answer/13554020?hl=en",
+      "pageTitle": "Google consent management requirements for serving ads in the EEA, the UK, and Switzerland (for CMPs)",
+      "retrievalDate": "2026-07-21",
+      "requirementSupported": "Serving personalized ads in the EEA, UK, or Switzerland requires a Google-certified CMP integrated with the IAB TCF; publisher consent responsibilities remain applicable.",
+      "repositoryEvidence": [
+        "No live ad request is made and no CMP is installed or claimed.",
+        "Analytics remains independently opt-in and unavailable when no VITE_POSTHOG_KEY is configured."
+      ],
+      "result": "not applicable while advertising is disabled; required future external gate",
+      "actionTaken": "Left CMP selection and configuration untouched as requested.",
+      "ownerOrExternalDependency": "Owner choice plus AdSense/CMP account access, regional configuration, and production verification."
+    },
+    {
+      "sourceUrl": "https://support.google.com/adsense/answer/12171612?hl=en",
+      "pageTitle": "Ads.txt guide",
+      "retrievalDate": "2026-07-21",
+      "requirementSupported": "The root ads.txt record should use the authorized seller format and the publisher ID associated with the AdSense account; deployed status must be checked from the account.",
+      "repositoryEvidence": [
+        "public/ads.txt contains one syntactically valid DIRECT record: google.com, pub-4810616735714570, DIRECT, f08c47fec0942fa0.",
+        "The production build copies the file to /ads.txt as text/plain-compatible static content."
+      ],
+      "result": "format passes; account ownership and deployed authorization are unverified",
+      "actionTaken": "Did not replace, invent, or remove the existing publisher ID.",
+      "ownerOrExternalDependency": "Owner must confirm pub-4810616735714570 belongs to the intended AdSense account; after deployment verify https://www.ilovetimers.com/ads.txt and the AdSense ads.txt status."
+    },
+    {
+      "sourceUrl": "https://support.google.com/adsense/answer/12131223?hl=en",
+      "pageTitle": "AdSense site management",
+      "retrievalDate": "2026-07-21",
+      "requirementSupported": "Google verifies site ownership and reviews a site; ads may be served only after the site has passed review and has Ready status.",
+      "repositoryEvidence": [
+        "The repository identifies the production origin consistently and includes a real-looking ads.txt record, but it contains no verifiable AdSense account state.",
+        "No site-verification meta tag or live AdSense script was invented."
+      ],
+      "result": "external account gate",
+      "actionTaken": "Recorded the gate without presenting repository readiness as Google approval.",
+      "ownerOrExternalDependency": "AdSense account access, site ownership verification, application submission, and Google's review."
+    }
+  ]
+}

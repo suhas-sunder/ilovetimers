@@ -425,11 +425,11 @@ export default function HowItWorks({
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            <PillLink href={abs("/cooking-timer")}>Cooking Timer</PillLink>
+            <PillLink href={abs("/kitchen-timer")}>Cooking Timer</PillLink>
             <PillLink href={abs("/tea-timer")}>Tea Timer</PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
             <PillLink href={abs("/silent-timer")}>Silent Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/multiple-timers")}>Multiple Timers</PillLink>

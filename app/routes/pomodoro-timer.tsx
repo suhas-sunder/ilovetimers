@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/pomodoro-timer.tsx
 import type { Route } from "./+types/pomodoro-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -29,12 +30,11 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/pomodoro-timer/HowItWorks";
-import Disclaimer from "~/clients/components/pomodoro-timer/Disclaimer";
-import FAQ from "~/clients/components/pomodoro-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/pomodoro-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/pomodoro-timer/PopularUseCases";
-
+import { SharePresetPanel } from "~/clients/components/share/SharePresetPanel";
+import {
+  pomodoroShareSchema,
+  type PomodoroShareConfig,
+} from "~/clients/lib/shareConfigurations";
 /* =========================================================
    META
 ========================================================= */
@@ -223,6 +223,39 @@ function PomodoroCard() {
     lastBeepSecondRef.current = null;
     stopRaf();
   }
+
+  function applyReusableSetup(config: PomodoroShareConfig) {
+    setWorkMin(config.workMinutes);
+    setShortBreakMin(config.breakMinutes);
+    setCycles(config.cycles);
+    setUseLongBreak(config.longBreakEnabled);
+    setLongBreakMin(config.longBreakMinutes);
+    setAutoAdvance(config.autoAdvance);
+    setSound(config.sound);
+    setFinalCountdownBeeps(config.finalCountdownBeeps);
+    setRunning(false);
+    setPhase("work");
+    setCycleIdx(0);
+    setRemaining(config.workMinutes * 60 * 1000);
+    remainingRef.current = config.workMinutes * 60 * 1000;
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+    stopRaf();
+  }
+
+  const reusableConfig = useMemo<PomodoroShareConfig>(
+    () => ({
+      workMinutes: workMin,
+      breakMinutes: shortBreakMin,
+      cycles,
+      longBreakEnabled: useLongBreak,
+      longBreakMinutes: longBreakMin,
+      autoAdvance,
+      sound,
+      finalCountdownBeeps,
+    }),
+    [autoAdvance, cycles, finalCountdownBeeps, longBreakMin, shortBreakMin, sound, useLongBreak, workMin],
+  );
 
   useEffect(() => {
     applyDurationsReset();
@@ -586,6 +619,13 @@ function PomodoroCard() {
               </SettingRow>
             </SettingGroup>
 
+            <SharePresetPanel
+              schema={pomodoroShareSchema}
+              currentConfig={reusableConfig}
+              onApply={applyReusableSetup}
+              loadDisabled={running}
+            />
+
             <SecondaryActionRow>
               <Btn
                 kind="ghost"
@@ -712,7 +752,7 @@ export default function PomodoroTimerPage({}: Route.ComponentProps) {
             for a standalone rest.
           </p>
         </ContentSection>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/pomodoro-timer" />
         <ContentSection title="Related single-block timer">
           <p>
             If you want one half-hour countdown without Pomodoro cycles, use
@@ -724,10 +764,6 @@ export default function PomodoroTimerPage({}: Route.ComponentProps) {
             phases.
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

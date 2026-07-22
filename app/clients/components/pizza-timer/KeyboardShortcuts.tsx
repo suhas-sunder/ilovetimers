@@ -205,7 +205,7 @@ export function AccuracyAndPrivacySection() {
           kitchen timer?{" "}
           <span className="whitespace-nowrap">
             <Link
-              to="/cooking-timer"
+              to="/kitchen-timer"
               className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
             >
               Cooking Timer
@@ -223,7 +223,7 @@ export function AccuracyAndPrivacySection() {
           . Need a big screen?{" "}
           <span className="whitespace-nowrap">
             <Link
-              to="/fullscreen-timer"
+              to="/online-timer"
               className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
             >
               Fullscreen Timer

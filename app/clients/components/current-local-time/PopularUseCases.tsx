@@ -31,7 +31,7 @@ export default function PopularUseCases({
         "If you need an elapsed timer or a countdown. Use Stopwatch, Count Up Timer, or Countdown Timer instead.",
       links: [
         { label: "Current Local Time", href: "/current-local-time" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Stopwatch", href: "/stopwatch" },
         { label: "Countdown Timer", href: "/countdown-timer" },
       ],
@@ -88,7 +88,7 @@ export default function PopularUseCases({
         "If you need a purpose-built countdown or interval timer during the stream. Use Fullscreen Timer, Countdown Timer, or Pomodoro Timer instead.",
       links: [
         { label: "Current Local Time", href: "/current-local-time" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
         { label: "Pomodoro Timer", href: "/pomodoro-timer" },
       ],

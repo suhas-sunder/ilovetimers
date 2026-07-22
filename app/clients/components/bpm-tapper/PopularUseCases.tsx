@@ -73,7 +73,7 @@ export default function PopularUseCases({
         "If you need a big countdown clock for an event. Use Fullscreen Timer instead.",
       links: [
         { label: "Tap BPM", href: "/bpm-tapper" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Presentation Timer", href: "/presentation-timer" },
       ],
     },
@@ -88,7 +88,7 @@ export default function PopularUseCases({
       links: [
         { label: "Tap BPM", href: "/bpm-tapper" },
         { label: "Multiple Timers", href: "/multiple-timers" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {

@@ -1,5 +1,4 @@
-import posthog from "posthog-js";
-import type { Properties } from "posthog-js";
+import type { PostHog, Properties } from "posthog-js";
 
 type AnalyticsValue = string | number | boolean | null | undefined;
 export type AnalyticsProperties = Record<string, AnalyticsValue>;
@@ -11,6 +10,7 @@ export const ANALYTICS_PREFERENCES_REQUEST_EVENT =
   "ilt-analytics-preferences-requested";
 
 let analyticsReady = false;
+let analyticsClient: PostHog | null = null;
 
 const safeEventPropertyKeys = new Set([
   "route_path",
@@ -83,6 +83,10 @@ export function markAnalyticsReady() {
   analyticsReady = true;
 }
 
+export function setAnalyticsClient(client: PostHog) {
+  analyticsClient = client;
+}
+
 export function markAnalyticsStopped() {
   analyticsReady = false;
 }
@@ -129,8 +133,8 @@ export function stopAnalyticsCapture() {
   if (!canUseBrowser()) return;
 
   try {
-    posthog.opt_out_capturing();
-    posthog.reset(true);
+    analyticsClient?.opt_out_capturing();
+    analyticsClient?.reset(true);
   } catch {
     // If PostHog was never initialized, declining analytics should remain inert.
   }
@@ -179,7 +183,7 @@ export function trackPageview(pathname = currentPathname()) {
   if (!analyticsReady || !canUseBrowser()) return;
 
   const routePath = cleanPathname(pathname);
-  posthog.capture("$pageview", {
+  analyticsClient?.capture("$pageview", {
     $current_url: canonicalUrlForPath(routePath),
     $pathname: routePath,
     route_path: routePath,
@@ -193,7 +197,7 @@ export function trackEvent(
   if (!analyticsReady || !canUseBrowser()) return;
 
   const routePath = currentPathname();
-  posthog.capture(eventName, {
+  analyticsClient?.capture(eventName, {
     route_path: routePath,
     ...sanitizeManualEventProperties(properties),
   });

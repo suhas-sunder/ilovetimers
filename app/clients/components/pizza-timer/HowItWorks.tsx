@@ -100,7 +100,7 @@ export default function HowItWorks({
         <div className="mt-5 text-sm text-[var(--ilt-text-secondary)]">
           Need a broader kitchen timer?{" "}
           <Link
-            to="/cooking-timer"
+            to="/kitchen-timer"
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Cooking Timer

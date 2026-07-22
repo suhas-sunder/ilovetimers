@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/digital-clock.tsx
 import type { Route } from "./+types/digital-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import React, {
   useCallback,
   useEffect,
@@ -27,12 +28,6 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { trackEvent } from "~/clients/lib/analytics";
-import Disclaimer from "~/clients/components/digital-clock/Disclaimer";
-import FAQ from "~/clients/components/digital-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/digital-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/digital-clock/PopularUseCases";
-import HowItWorks from "~/clients/components/digital-clock/HowItWorks";
-
 /* =========================================================
    META
 ========================================================= */
@@ -168,6 +163,8 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
   const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [use24, setUse24] = useState(true);
   const [showSeconds, setShowSeconds] = useState(true);
+  const [showDate, setShowDate] = useState(true);
+  const [minimal, setMinimal] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const tz = useMemo(() => safeTimeZone(), []);
@@ -208,8 +205,8 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
 
   const copyText = useMemo(() => {
     const iso = now.toISOString();
-    return `${timeText} (${tz}) - ${dateText} (ISO: ${iso})`;
-  }, [timeText, tz, dateText, now]);
+    return `${timeText} (${tz})${showDate ? ` - ${dateText}` : ""} (ISO: ${iso})`;
+  }, [timeText, tz, dateText, now, showDate]);
 
   const copy = useCallback(async () => {
     try {
@@ -232,7 +229,7 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
   const fitFontPx = useFitText({
     containerRef: displayBoxRef,
     textRef: timeTextRef,
-    deps: [timeText, isFs, use24, showSeconds],
+    deps: [timeText, isFs, use24, showSeconds, showDate, minimal],
     minPx: 64,
     maxPx: isFs ? 560 : 520,
     paddingAllowancePx: isFs ? 92 : 92,
@@ -258,6 +255,10 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
         });
         return next;
       });
+    } else if (k === "d") {
+      setShowDate((value) => !value);
+    } else if (k === "m") {
+      setMinimal((value) => !value);
     } else if (e.key === "2") {
       trackEvent("format_changed", {
         ...analyticsBase,
@@ -337,20 +338,26 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
             {timeText}
           </span>
 
-          <div className="timer-clock-label mt-4 text-xs font-extrabold uppercase tracking-widest text-slate-700 text-center">
-            Local time · {tz}
-          </div>
+          {!minimal ? (
+            <>
+              <div className="timer-clock-label mt-4 text-xs font-extrabold uppercase tracking-widest text-slate-700 text-center">
+                Local time · {tz}
+              </div>
 
-          <div className="timer-clock-context mt-4 text-sm font-semibold text-slate-700 text-center">
-            {dateText}
-          </div>
+              {showDate ? (
+                <div className="timer-clock-context mt-4 text-sm font-semibold text-slate-700 text-center">
+                  {dateText}
+                </div>
+              ) : null}
+            </>
+          ) : null}
 
         </DisplayStage>
 
         {!isFs && (
           <>
             <SettingGroup title="Clock settings">
-              <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-4">
                 <Toggle
                   label="Seconds"
                   checked={showSeconds}
@@ -375,6 +382,16 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
                     });
                   }}
                 />
+                <Toggle
+                  label="Date"
+                  checked={showDate}
+                  onCheckedChange={setShowDate}
+                />
+                <Toggle
+                  label="Minimal"
+                  checked={minimal}
+                  onCheckedChange={setMinimal}
+                />
               </SettingRow>
             </SettingGroup>
 
@@ -396,7 +413,7 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
             </SecondaryActionRow>
 
             <ShortcutHint className="timer-clock-shortcut">
-              Shortcuts: F fullscreen, C copy, S seconds, 1 12-hour, 2 24-hour
+              Shortcuts: F fullscreen, C copy, S seconds, D date, M minimal, 1 12-hour, 2 24-hour
             </ShortcutHint>
           </>
         )}
@@ -428,11 +445,21 @@ function DigitalClockCard({ initialNowISO }: { initialNowISO: string }) {
                   });
                 }}
               />
+              <Toggle
+                label="Date"
+                checked={showDate}
+                onCheckedChange={setShowDate}
+              />
+              <Toggle
+                label="Minimal"
+                checked={minimal}
+                onCheckedChange={setMinimal}
+              />
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <div className="text-xs text-slate-600 sm:text-sm">
-                Tap time to copy · F fullscreen · S seconds · 1/2 12/24-hour
+                Tap time to copy · F fullscreen · S seconds · D date · M minimal · 1/2 12/24-hour
               </div>
             </div>
           </div>
@@ -494,19 +521,19 @@ export default function DigitalClockPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/digital-clock" />
         <ContentSection>
           <p>
             Need milliseconds as the main focus? Open the{" "}
             <a className="ilt-content-link" href="/clock-with-milliseconds">
               clock with milliseconds
             </a>
-            . Need a page optimized for room display? Use the{" "}
-            <a className="ilt-content-link" href="/full-screen-clock">
+            . Need a page focused on a room display? Use the{" "}
+            <a className="ilt-content-link" href="/digital-clock">
               full screen clock
             </a>
             . Need the biggest room-readable digits? Open the{" "}
-            <a className="ilt-content-link" href="/big-digital-clock">
+            <a className="ilt-content-link" href="/digital-clock">
               big digital clock
             </a>
             . Need a dedicated 24-hour display? Use the{" "}
@@ -518,20 +545,16 @@ export default function DigitalClockPage({
               12 hour clock
             </a>
             . Need seconds called out directly? Open the{" "}
-            <a className="ilt-content-link" href="/clock-with-seconds">
+            <a className="ilt-content-link" href="/digital-clock">
               clock with seconds
             </a>
             . Prefer an analog face with continuous motion? Try the{" "}
-            <a className="ilt-content-link" href="/smooth-second-hand-clock">
+            <a className="ilt-content-link" href="/analog-clock">
               smooth second hand clock
             </a>
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

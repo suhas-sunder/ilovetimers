@@ -392,7 +392,7 @@ export default function HowItWorks({
 
             <ExampleBlock
               title="Scenario 4: You want a sound heads-up near the phase change"
-              subtitle="Audio can help when the page is open in the background."
+              subtitle="Audio depends on the browser keeping the page active."
               lines={[
                 "Mode: Live",
                 "Sound: On",

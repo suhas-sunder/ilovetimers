@@ -1,5 +1,5 @@
 import type { Route } from "./+types/world-clock-with-milliseconds";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { WorldClockWithMillisecondsPage } from "~/clients/components/clock-discovery/ClockDiscoveryPages";
 
 const ROUTE_URL = "https://www.ilovetimers.com/world-clock-with-milliseconds";

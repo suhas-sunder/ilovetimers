@@ -129,7 +129,7 @@ export default function Disclaimer() {
                 <div className="ilt-surface-muted p-3">
                   Want a general kitchen countdown?{" "}
                   <a
-                    href="/cooking-timer"
+                    href="/kitchen-timer"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Cooking Timer
@@ -173,7 +173,7 @@ export default function Disclaimer() {
                 <div className="ilt-surface-muted p-3">
                   Need a big wall-style display?{" "}
                   <a
-                    href="/fullscreen-timer"
+                    href="/online-timer"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Fullscreen Timer

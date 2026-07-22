@@ -31,7 +31,7 @@ export default function PopularUseCases({
         "Precise payoff math. This tool does not calculate interest, fees, minimum payments, or lender schedules.",
       links: [
         { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {
@@ -68,7 +68,7 @@ export default function PopularUseCases({
         "Second-monitor setups, shared rooms, or anywhere you want the countdown visible from a distance.",
       notFor: "Hands-off unattended displays where you need zero interaction.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Online Timer", href: "/online-timer" },
       ],
     },

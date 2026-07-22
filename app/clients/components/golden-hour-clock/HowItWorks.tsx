@@ -456,7 +456,7 @@ export default function HowItWorks({
             <PillLink to="/world-clock">World Clock</PillLink>
             <PillLink to="/astronomical-clock">Astronomical Clock</PillLink>
             <PillLink to="/moon-phase-clock">Moon Phase Clock</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
           </div>
         </div>
 
@@ -502,11 +502,11 @@ export default function HowItWorks({
             </div>
 
             <div className="ilt-surface-card p-4 text-sm text-[var(--ilt-text-secondary)]">
-              <div className="font-semibold text-[var(--ilt-text-primary)]">GPS location accuracy</div>
+              <div className="font-semibold text-[var(--ilt-text-primary)]">GPS coordinate limits</div>
               <p className="mt-1 leading-relaxed">
                 GPS coordinates come from your browser’s geolocation API and can
                 vary depending on device and signal. If GPS is blocked or
-                inaccurate, manual coordinates are the reliable fallback.
+                inaccurate, you can enter manual coordinates instead.
               </p>
             </div>
 

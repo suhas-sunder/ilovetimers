@@ -1,6 +1,6 @@
 // app/routes/silent-timer.tsx
 import type { Route } from "./+types/silent-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -63,7 +63,7 @@ export function meta({}: Route.MetaArgs) {
   return [
     { title },
     { name: "description", content: description },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -664,7 +664,7 @@ export default function SilentTimerPage({
               visual timer
             </a>
             . For the largest projected display, use the{" "}
-            <a className="ilt-content-link" href="/fullscreen-timer">
+            <a className="ilt-content-link" href="/online-timer">
               fullscreen timer
             </a>
             . For a standard countdown with more general wording, use the{" "}

@@ -70,7 +70,7 @@ export default function PopularUseCases({
       notFor:
         "You want fullscreen for a general countdown page with fewer lab-specific controls. Use Fullscreen Timer.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
       ],
     },

@@ -1,12 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 import type { Route } from "./+types/free-online-timers";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Disclaimer from "~/clients/components/home/Disclaimer";
-import FAQ from "~/clients/components/home/FAQ";
-import HowItWorks from "~/clients/components/home/HowItWorks";
-import KeyboardShortcuts from "~/clients/components/home/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/home/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -1646,11 +1641,7 @@ export default function Home({ loaderData: { nowISO } }: Route.ComponentProps) {
         </div>
       </section>
 
-      <HowItWorks />
-      <KeyboardShortcuts />
-      <PopularUseCases />
-      <FAQ />
-      <Disclaimer />
+      <Stage4RouteContent routePath="/free-online-timers" />
     </main>
   );
 }

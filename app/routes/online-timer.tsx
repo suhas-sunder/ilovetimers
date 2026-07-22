@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/online-timer.tsx
 import type { Route } from "./+types/online-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -32,12 +33,6 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { trackEvent } from "~/clients/lib/analytics";
-import HowItWorks from "~/clients/components/online-timer/HowItWorks";
-import Disclaimer from "~/clients/components/online-timer/Disclaimer";
-import FAQ from "~/clients/components/online-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/online-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/online-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -641,11 +636,7 @@ export default function OnlineTimerPage({
             when current local time should remain visible.
           </p>
         </ContentSection>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <Stage4RouteContent routePath="/online-timer" />
       </SeoBand>
     </PageShell>
   );

@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/analog-clock.tsx
 import type { Route } from "./+types/analog-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import {
   Button,
@@ -18,12 +19,6 @@ import {
   Toggle,
 } from "~/clients/components/ui/foundation";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import Disclaimer from "~/clients/components/analog-clock/Disclaimer";
-import FAQ from "~/clients/components/analog-clock/FAQ";
-import HowItWorks from "~/clients/components/analog-clock/HowItWorks";
-import KeyboardShortcuts from "~/clients/components/analog-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/analog-clock/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -119,6 +114,8 @@ function AnalogClockCard({ initialNowISO }: { initialNowISO: string }) {
   const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [showSecondsHand, setShowSecondsHand] = useState(true);
   const [smoothSeconds, setSmoothSeconds] = useState(true);
+  const [showDigital, setShowDigital] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const tz = useMemo(() => safeTimeZone(), []);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -151,6 +148,29 @@ function AnalogClockCard({ initialNowISO }: { initialNowISO: string }) {
     [now, showSecondsHand, smoothSeconds],
   );
 
+  const digitalTime = useMemo(
+    () =>
+      new Intl.DateTimeFormat(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+        .format(now)
+        .replace(/\u200e/g, "")
+        .trim(),
+    [now],
+  );
+
+  const copyTime = async () => {
+    try {
+      await navigator.clipboard.writeText(`${digitalTime} - ${tz}`);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (isTypingTarget(e.target)) return;
 
@@ -162,6 +182,10 @@ function AnalogClockCard({ initialNowISO }: { initialNowISO: string }) {
       setShowSecondsHand((v) => !v);
     } else if (k === "m") {
       setSmoothSeconds((v) => !v);
+    } else if (k === "d") {
+      setShowDigital((v) => !v);
+    } else if (k === "c") {
+      void copyTime();
     } else if (k === "escape" && isFs) {
       void fullscreen.exit();
     }
@@ -282,6 +306,12 @@ function AnalogClockCard({ initialNowISO }: { initialNowISO: string }) {
               Local analog clock - {tz}
             </div>
 
+            {showDigital ? (
+              <div className="font-mono text-2xl font-extrabold text-slate-900">
+                {digitalTime}
+              </div>
+            ) : null}
+
           </div>
         </div>
 
@@ -317,7 +347,7 @@ function AnalogClockCard({ initialNowISO }: { initialNowISO: string }) {
       {!isFs ? (
         <>
           <SettingGroup title="Clock settings">
-            <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+            <SettingRow className="sm:grid-cols-3">
               <Toggle
                 label="Seconds hand"
                 checked={showSecondsHand}
@@ -329,17 +359,25 @@ function AnalogClockCard({ initialNowISO }: { initialNowISO: string }) {
                 onCheckedChange={setSmoothSeconds}
                 disabled={!showSecondsHand}
               />
+              <Toggle
+                label="Digital readout"
+                checked={showDigital}
+                onCheckedChange={setShowDigital}
+              />
             </SettingRow>
           </SettingGroup>
 
           <SecondaryActionRow>
+            <Button variant="secondary" onClick={() => void copyTime()}>
+              {copied ? "Copied" : "Copy current time"}
+            </Button>
             <Button variant="secondary" onClick={() => void fullscreen.toggle()}>
               Fullscreen
             </Button>
           </SecondaryActionRow>
 
           <ShortcutHint>
-            Shortcuts: F fullscreen, S seconds hand, M smooth
+            Shortcuts: F fullscreen, S seconds hand, M smooth, D digital, C copy
           </ShortcutHint>
         </>
       ) : null}
@@ -639,30 +677,26 @@ export default function AnalogClockPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/analog-clock" />
         <ContentSection>
           <p>
             Want a route focused on continuous second-hand motion? The{" "}
-            <a className="ilt-content-link" href="/smooth-second-hand-clock">
+            <a className="ilt-content-link" href="/analog-clock">
               smooth second hand clock
             </a>{" "}
             defaults to a sweeping second hand and also lets you switch back to
             ticking mode. Need a direct page where the second hand is the main
             promise? Open the{" "}
-            <a className="ilt-content-link" href="/analog-clock-with-second-hand">
+            <a className="ilt-content-link" href="/analog-clock">
               analog clock with second hand
             </a>
             . For a room-display version, use the{" "}
-            <a className="ilt-content-link" href="/full-screen-analog-clock">
+            <a className="ilt-content-link" href="/analog-clock">
               full screen analog clock
             </a>
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

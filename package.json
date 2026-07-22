@@ -2,6 +2,9 @@
   "name": "ilovetimers",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20 <26"
+  },
   "scripts": {
     "build": "react-router build",
     "dev": "cross-env NODE_ENV=development node server.js",
@@ -11,6 +14,16 @@
     "audit:links": "node scripts/audits/internal-links.mjs",
     "audit:presets": "node scripts/audits/preset-timers.mjs",
     "audit:time-tools": "node scripts/audits/time-tools.mjs",
+    "test:technical-time": "node scripts/tests/technical-time.mjs",
+    "audit:stage2-accuracy": "node scripts/audits/stage2-accuracy.mjs",
+    "audit:route-architecture": "node scripts/audits/route-architecture.mjs",
+    "audit:stage4-content": "node scripts/audits/stage4-content-quality.mjs",
+    "audit:stage5-guides": "node scripts/audits/stage5-guides.mjs --check-citations",
+    "test:stage6-share-presets": "node scripts/tests/stage6-share-presets.mjs",
+    "test:stage6-browser": "node scripts/tests/stage6-browser.mjs",
+    "test:final-browser": "node scripts/tests/final-browser-validation.mjs",
+    "test:final-lighthouse": "node scripts/tests/final-lighthouse.mjs",
+    "audit:stage6-share-presets": "node scripts/audits/stage6-share-presets.mjs",
     "test:calculators": "node scripts/tests/calculator-formulas.mjs",
     "audit:calculators": "node scripts/audits/calculators.mjs",
     "audit:specialty-tools": "node scripts/audits/specialty-tools.mjs",
@@ -18,7 +31,8 @@
     "audit:a11y": "node scripts/audits/accessibility.mjs",
     "audit:release": "node scripts/audits/release-readiness.mjs",
     "test:ui-regressions": "node scripts/tests/ui-regressions.mjs",
-    "test:sitewide-ui": "node scripts/tests/sitewide-ui.mjs"
+    "test:sitewide-ui": "node scripts/tests/sitewide-ui.mjs",
+    "audit:final-release": "node scripts/audits/final-release-gate.mjs"
   },
   "dependencies": {
     "@react-router/express": "^7.7.1",
@@ -35,7 +49,6 @@
   "devDependencies": {
     "@netlify/vite-plugin-react-router": "^1.0.1",
     "@react-router/dev": "^7.7.1",
-    "@remix-run/netlify": "^1.19.3",
     "@tailwindcss/vite": "^4.1.4",
     "@types/compression": "^1.7.5",
     "@types/express": "^5.0.1",

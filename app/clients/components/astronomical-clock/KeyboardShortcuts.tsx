@@ -133,13 +133,14 @@ export function AccuracyAndPrivacySection() {
 
           <div className="ilt-surface-muted p-4 md:col-span-2">
             <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-              Privacy: location stays on your device
+              Location storage
             </div>
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               If you choose “Use my location,” your browser provides coordinates
               to compute sunrise, sunset, and daylight or twilight status. The
-              calculation runs in your browser. You can clear coordinates any
-              time with “Clear location.”
+              calculation runs in your browser. Latitude, longitude, and the
+              selected time zone are stored in localStorage so they can return
+              after a refresh. Clear location removes the stored coordinates.
             </p>
           </div>
         </div>

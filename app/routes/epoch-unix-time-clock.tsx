@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/epoch-unix-time-clock.tsx
 import type { Route } from "./+types/epoch-unix-time-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useLayoutEffect,
@@ -30,13 +31,13 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/epoch-unix-time-clock/HowItWorks";
-import FAQ from "~/clients/components/epoch-unix-time-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/epoch-unix-time-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/epoch-unix-time-clock/PopularUseCases";
-import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+import {
+  TechnicalMethod,
+  ToolTrustNote,
+} from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
 
-const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-18", label: "July 18, 2026" } as const;
 
 /* =========================================================
    META
@@ -490,7 +491,38 @@ export default function EpochUnixTimeClockPage({
       <span className="sr-only">Build: {nowISO}</span>
 
       <SeoBand>
-        <HowItWorks />
+        <TechnicalMethod
+          heading="How the live epoch values are produced"
+          sources={[
+            TECHNICAL_SOURCES.openGroupEpoch,
+            TECHNICAL_SOURCES.ecmaDate,
+          ]}
+        >
+          <p>
+            Unix time counts elapsed seconds from 1970-01-01 00:00:00 UTC. This
+            route reads the device clock through a browser Date object. The
+            millisecond value is Date.getTime. The seconds value truncates that
+            millisecond value after dividing by 1,000. The page refreshes its
+            device-clock reading every 50 milliseconds while Live is on.
+          </p>
+          <p>
+            Example: a browser Date value of{" "}
+            <strong>1,700,000,000,000 milliseconds</strong> produces{" "}
+            <strong>1,700,000,000 seconds</strong> and the UTC instant{" "}
+            <strong>2023-11-14 22:13:20 UTC</strong>. The Local row formats the
+            same instant in the device's time zone. A Unix value does not
+            contain that local time zone.
+          </p>
+          <p>
+            Freeze keeps the current values on screen. Snap now reads the device
+            clock again. The route accepts no pasted input and performs no unit
+            detection; use the Unix Timestamp Converter for that job. This page
+            does not contact an official time server. Device-clock error,
+            rendering delay, background throttling, and sleep can affect what
+            you see.
+          </p>
+        </TechnicalMethod>
+        <Stage4RouteContent routePath="/epoch-unix-time-clock" />
         <ContentSection>
           <p>
             Need to convert a pasted epoch value into a readable date? Use the{" "}
@@ -498,6 +530,17 @@ export default function EpochUnixTimeClockPage({
               Unix timestamp converter
             </a>{" "}
             for seconds, milliseconds, UTC, local time, and ISO output.
+          </p>
+          <p>
+            The{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/unix-timestamps-seconds-milliseconds-microseconds"
+            >
+              Unix timestamp units guide
+            </a>{" "}
+            explains the scale difference and why more digits do not prove a
+            more accurate device clock.
           </p>
         </ContentSection>
         <ToolTrustNote reviewDate={REVIEW_DATE}>
@@ -512,9 +555,6 @@ export default function EpochUnixTimeClockPage({
             while the supporting value is labeled in milliseconds.
           </p>
         </ToolTrustNote>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
       </SeoBand>
 
     </PageShell>

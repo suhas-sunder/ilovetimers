@@ -1,6 +1,6 @@
 // app/routes/unix-timestamp-converter.tsx
 import type { Route } from "./+types/unix-timestamp-converter";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useMemo, useState } from "react";
 import {
   Button as Btn,
@@ -17,7 +17,15 @@ import {
   ToolFrame as Card,
   ToolHero,
 } from "~/clients/components/ui/foundation";
-import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+import {
+  TechnicalMethod,
+  ToolTrustNote,
+} from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
+import {
+  parseUnixTimestamp,
+  parseUtcDateTime,
+} from "~/clients/lib/technicalTimeMath.js";
 
 type TimestampUnit = "auto" | "seconds" | "milliseconds" | "microseconds";
 
@@ -25,7 +33,7 @@ const SITE_URL = "https://www.ilovetimers.com";
 const ROUTE_PATH = "/unix-timestamp-converter";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
-const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-18", label: "July 18, 2026" } as const;
 
 export function meta({}: Route.MetaArgs) {
   const title = "Unix Timestamp Converter | Seconds, Milliseconds and Dates";
@@ -87,57 +95,6 @@ function formatReadableLocal(date: Date) {
   }).format(date);
 }
 
-function detectUnit(raw: string): Exclude<TimestampUnit, "auto"> {
-  const digits = raw.replace(/^[+-]/, "").replace(/\D/g, "");
-  if (digits.length >= 15) return "microseconds";
-  if (digits.length >= 12) return "milliseconds";
-  return "seconds";
-}
-
-function parseTimestamp(rawValue: string, mode: TimestampUnit) {
-  const trimmed = rawValue.trim().replace(/,/g, "").replace(/_/g, "");
-  if (!trimmed) return { error: "Enter a Unix timestamp to convert." };
-
-  const numericValue = Number(trimmed);
-  if (!Number.isFinite(numericValue)) {
-    return { error: "That timestamp is not a valid number." };
-  }
-
-  const unit = mode === "auto" ? detectUnit(trimmed) : mode;
-  const milliseconds =
-    unit === "seconds"
-      ? numericValue * 1000
-      : unit === "microseconds"
-        ? numericValue / 1000
-        : numericValue;
-
-  const date = new Date(milliseconds);
-  if (!Number.isFinite(date.getTime())) {
-    return { error: "That timestamp is outside the range this browser can display." };
-  }
-
-  return { date, milliseconds: date.getTime(), unit };
-}
-
-function parseUtcDateTime(value: string) {
-  const match = value.match(
-    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/,
-  );
-  if (!match) return null;
-
-  const [, year, month, day, hour, minute, second = "0"] = match;
-  const milliseconds = Date.UTC(
-    Number(year),
-    Number(month) - 1,
-    Number(day),
-    Number(hour),
-    Number(minute),
-    Number(second),
-  );
-  const date = new Date(milliseconds);
-  return Number.isFinite(date.getTime()) ? date : null;
-}
-
 function timestampSummary(date: Date) {
   const milliseconds = date.getTime();
   return {
@@ -180,18 +137,18 @@ function UnixTimestampConverterTool({
   const { copied, copy } = useCopyFeedback();
 
   const timestampResult = useMemo(
-    () => parseTimestamp(timestampInput, unitMode),
+    () => parseUnixTimestamp(timestampInput, unitMode),
     [timestampInput, unitMode],
   );
   const utcDateResult = useMemo(() => parseUtcDateTime(dateInput), [dateInput]);
   const activeSummary =
-    "date" in timestampResult && timestampResult.date
+    timestampResult.ok && timestampResult.date instanceof Date
       ? timestampSummary(timestampResult.date)
       : null;
   const dateSummary = utcDateResult ? timestampSummary(utcDateResult) : null;
 
   const unitLabel =
-    "unit" in timestampResult && timestampResult.unit
+    timestampResult.ok
       ? timestampResult.unit
       : unitMode === "auto"
         ? "auto"
@@ -239,8 +196,12 @@ function UnixTimestampConverterTool({
             value={timestampInput}
             inputMode="decimal"
             onChange={(event) => setTimestampInput(event.currentTarget.value)}
-            error={"error" in timestampResult ? timestampResult.error : undefined}
-            hint="Auto mode treats 10 digits as seconds and 13 digits as milliseconds."
+            error={!timestampResult.ok ? timestampResult.error : undefined}
+            hint={
+              timestampResult.ok && timestampResult.truncated
+                ? "Sub-millisecond digits were truncated for the browser Date result."
+                : "Auto mode uses the integer digit count. The selected interpretation is shown beside this field."
+            }
           />
           <Select
             label="Timestamp unit"
@@ -405,26 +366,55 @@ export default function UnixTimestampConverterPage({
             milliseconds.
           </p>
           <p>
-            Auto-detect mode treats short 10-digit values as seconds and common
-            13-digit values as milliseconds. You can also choose seconds,
-            milliseconds, or microseconds directly when a log or API tells you
-            which unit it uses.
+            Auto-detect mode uses the number of digits before the decimal point.
+            It treats 0 to 11 digits as seconds, 12 to 14 digits as
+            milliseconds, and 15 or more digits as microseconds. A leading sign
+            does not count. The unit selector always shows the interpretation,
+            and you can override it.
+          </p>
+          <p>
+            For equivalent examples, unit-error symptoms, and the limits of
+            digit-count inference, read the guide to{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/unix-timestamps-seconds-milliseconds-microseconds"
+            >
+              Unix timestamps in seconds, milliseconds, and microseconds
+            </a>
+            .
           </p>
         </ContentSection>
 
-        <ContentSection title="Seconds, milliseconds, and JavaScript dates">
+        <TechnicalMethod
+          heading="Conversion method and worked examples"
+          sources={[
+            TECHNICAL_SOURCES.openGroupEpoch,
+            TECHNICAL_SOURCES.ecmaDate,
+          ]}
+        >
           <p>
-            Unix timestamps are commonly stored in seconds, while JavaScript
-            Date values use milliseconds. That difference matters: 0 seconds is
-            1970-01-01 00:00:00 UTC, and 1000 milliseconds is one second after
-            the epoch.
+            Unix time counts seconds from 1970-01-01 00:00:00 UTC. The
+            converter normalizes each input to milliseconds because the
+            browser's Date object uses milliseconds. Seconds are multiplied by
+            1,000. Microseconds are divided by 1,000. Any fraction smaller than
+            one millisecond is truncated. Negative values represent instants
+            before the epoch.
           </p>
           <p>
-            Current Unix seconds often appear as 10 digits. Current Unix
-            milliseconds often appear as 13 digits. If a date looks thousands
-            of years away, the unit is usually the first thing to check.
+            Example: <strong>1,700,000,000 seconds</strong> becomes{" "}
+            <strong>1,700,000,000,000 milliseconds</strong>, which is{" "}
+            <strong>2023-11-14 22:13:20 UTC</strong>. The same instant is shown
+            in your device's local time below the UTC result. As another
+            boundary example, auto mode reads <strong>99999999999</strong> as
+            seconds and <strong>100000000000</strong> as milliseconds.
           </p>
-        </ContentSection>
+          <p>
+            The UTC date field accepts a real calendar date with hours, minutes,
+            and optional seconds. It rejects impossible dates such as February
+            31. The browser limits the supported range, so values outside the
+            Date range return an error.
+          </p>
+        </TechnicalMethod>
 
         <ContentSection title="When to use it">
           <p>
@@ -469,9 +459,11 @@ export default function UnixTimestampConverterPage({
 
         <ToolTrustNote reviewDate={REVIEW_DATE}>
           <p>
-            Seconds, milliseconds, and microseconds are distinct units. In Auto
-            mode this converter detects the unit from the number of digits;
-            choose a unit directly when the source system documents one.
+            A timestamp identifies an instant. It does not contain a timezone.
+            UTC and local output are two displays of that same instant. Choose
+            a unit directly when the source system documents one because digit
+            detection can be ambiguous for old, future, or unusually scaled
+            values.
           </p>
           <p>
             Results depend on the value entered. The current-time example is

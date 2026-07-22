@@ -1,0 +1,160 @@
+{
+  "createdAt": "2026-07-21",
+  "productionOrigin": "https://www.ilovetimers.com",
+  "instructions": "Run after an owner-approved production deployment in a fresh browser profile. Record the deployed Git revision and Netlify deploy ID before testing. Stop rollout or restore the prior published deploy when a blocking expectation fails.",
+  "tests": [
+    {
+      "name": "Homepage",
+      "url": "https://www.ilovetimers.com/",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "Homepage navigation, two restrained Advertisements placeholders, no live ad creative, and no horizontal overflow.",
+      "failureAction": "Rollback for missing content, wrong canonical, live ads, or broken layout; otherwise investigate CDN/header propagation before accepting the deploy."
+    },
+    {
+      "name": "Robots",
+      "url": "https://www.ilovetimers.com/robots.txt",
+      "expectedStatus": 200,
+      "expectedCanonical": null,
+      "expectedRobots": null,
+      "expectedVisibleBehavior": "Allows public crawling and names https://www.ilovetimers.com/sitemap.xml without blocking JavaScript, CSS, tools, or guides.",
+      "failureAction": "Treat an incorrect origin or broad disallow as blocking and rollback or correct the published static file."
+    },
+    {
+      "name": "XML sitemap",
+      "url": "https://www.ilovetimers.com/sitemap.xml",
+      "expectedStatus": 200,
+      "expectedCanonical": null,
+      "expectedRobots": null,
+      "expectedVisibleBehavior": "Valid XML with 109 unique production-origin indexable canonical URLs and no aliases, noindex routes, or query strings.",
+      "failureAction": "Treat a stale, malformed, or development-origin sitemap as blocking."
+    },
+    {
+      "name": "Indexable timer",
+      "url": "https://www.ilovetimers.com/countdown-timer",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/countdown-timer",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "Stopped countdown with labeled inputs; Apply, Start, Reset, Share setup, and preset controls work without console errors.",
+      "failureAction": "Rollback if the tool cannot start/pause/reset or metadata is wrong."
+    },
+    {
+      "name": "Noindex utility",
+      "url": "https://www.ilovetimers.com/1-minute-timer",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/1-minute-timer",
+      "expectedRobots": "noindex,follow",
+      "expectedVisibleBehavior": "Ready one-minute countdown starts only after activation and remains absent from the XML sitemap.",
+      "failureAction": "Rollback for missing noindex, wrong canonical, or broken timer behavior."
+    },
+    {
+      "name": "Redirect alias",
+      "url": "https://www.ilovetimers.com/fullscreen-timer",
+      "expectedStatus": 301,
+      "expectedCanonical": "https://www.ilovetimers.com/online-timer",
+      "expectedRobots": null,
+      "expectedVisibleBehavior": "One direct permanent redirect to /online-timer with no intermediate hop.",
+      "failureAction": "Treat a chain, loop, temporary redirect, or alias-rendered page as blocking."
+    },
+    {
+      "name": "Guide",
+      "url": "https://www.ilovetimers.com/guides/how-browser-timers-measure-time",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/guides/how-browser-timers-measure-time",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "Published guide content, visible sources, guide navigation, and valid Article/Breadcrumb structured data.",
+      "failureAction": "Rollback for missing article content, invalid metadata, or broken high-value sources."
+    },
+    {
+      "name": "Calculator",
+      "url": "https://www.ilovetimers.com/time-calculator",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/time-calculator",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "Labeled inputs accept valid and invalid values, result updates correctly, and assumptions remain visible.",
+      "failureAction": "Rollback for incorrect deterministic results or unusable controls."
+    },
+    {
+      "name": "Timezone tool",
+      "url": "https://www.ilovetimers.com/time-zone-converter",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/time-zone-converter",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "DST-sensitive conversion controls work, limitations are visible, and no permission prompt occurs.",
+      "failureAction": "Rollback for incorrect boundary conversion, broken timezone choices, or metadata drift."
+    },
+    {
+      "name": "Share URL",
+      "url": "https://www.ilovetimers.com/countdown-timer?v=1&duration=61",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/countdown-timer",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "Loads a stopped 1:01 setup, reports the restored setup, creates no preset, and keeps canonical, Open Graph, and structured-data URLs query-free.",
+      "failureAction": "Rollback if state autostarts, leaks query metadata, or writes a preset."
+    },
+    {
+      "name": "Preset save and reload",
+      "url": "https://www.ilovetimers.com/countdown-timer",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/countdown-timer",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "A named preset saves locally, reloads, loads, renames, deletes, and clears without entering the URL or another tool's storage.",
+      "failureAction": "Rollback for data corruption, cross-tool deletion, URL leakage, or a route crash."
+    },
+    {
+      "name": "Privacy page",
+      "url": "https://www.ilovetimers.com/privacy",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/privacy",
+      "expectedRobots": "noindex,follow",
+      "expectedVisibleBehavior": "Current disclosures cover local storage, presets, share links, coordinates, Sunrise-Sunset API, consent-gated PostHog, and disabled advertising.",
+      "failureAction": "Treat behavior/disclosure contradiction as blocking and correct before continuing rollout."
+    },
+    {
+      "name": "404",
+      "url": "https://www.ilovetimers.com/post-deployment-missing-route",
+      "expectedStatus": 404,
+      "expectedCanonical": null,
+      "expectedRobots": "noindex,follow",
+      "expectedVisibleBehavior": "Branded error page offers a path back without a fatal stack trace.",
+      "failureAction": "Rollback if the platform converts this to 200, leaks a stack, or renders a blank page."
+    },
+    {
+      "name": "Advertising disabled",
+      "url": "https://www.ilovetimers.com/",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "No request to googlesyndication.com or doubleclick.net; placeholders do not behave as links and no tool route contains one.",
+      "failureAction": "Disable the unexpected script or rollback immediately."
+    },
+    {
+      "name": "Analytics consent",
+      "url": "https://www.ilovetimers.com/countdown-timer",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/countdown-timer",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "Before consent there is no PostHog request. Decline keeps tools working. If a production key is intentionally configured, Allow produces only privacy-limited route/action events and the choice can be changed.",
+      "failureAction": "Rollback or remove the analytics environment key if capture starts before consent or includes query/input data."
+    },
+    {
+      "name": "Ads.txt",
+      "url": "https://www.ilovetimers.com/ads.txt",
+      "expectedStatus": 200,
+      "expectedCanonical": null,
+      "expectedRobots": null,
+      "expectedVisibleBehavior": "Plain-text root response contains exactly the owner-confirmed authorized seller record and no placeholder publisher ID.",
+      "failureAction": "Do not enable advertising; correct the file only after confirming the intended AdSense publisher ID."
+    },
+    {
+      "name": "Structured data and mobile console",
+      "url": "https://www.ilovetimers.com/countdown-timer",
+      "expectedStatus": 200,
+      "expectedCanonical": "https://www.ilovetimers.com/countdown-timer",
+      "expectedRobots": "index,follow,max-image-preview:large",
+      "expectedVisibleBehavior": "At 390px light and dark, valid JSON-LD uses production canonical URLs, controls do not overlap, and the browser console has no hydration or runtime error.",
+      "failureAction": "Rollback for invalid schema, query/local URLs, horizontal overflow, clipped primary controls, or runtime errors."
+    }
+  ]
+}

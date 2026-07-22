@@ -68,7 +68,7 @@ export default function PopularUseCases({
         "You want a timer running continuously. Use Stopwatch or Count Up Timer instead.",
       links: [
         { label: "Stopwatch", href: "/stopwatch" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         {
           label: "Meeting Count Up Timer",
           href: "/meeting-count-up-timer",

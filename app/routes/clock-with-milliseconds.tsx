@@ -1,6 +1,6 @@
 // app/routes/clock-with-milliseconds.tsx
 import type { Route } from "./+types/clock-with-milliseconds";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,
@@ -409,7 +409,7 @@ export default function ClockWithMillisecondsPage({
               digital clock
             </a>
             . For a seconds-first live display without milliseconds, use the{" "}
-            <a className="ilt-content-link" href="/clock-with-seconds">
+            <a className="ilt-content-link" href="/digital-clock">
               clock with seconds
             </a>
             . For an atomic-style page with freeze controls, use the{" "}

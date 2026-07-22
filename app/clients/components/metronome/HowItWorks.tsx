@@ -507,7 +507,7 @@ export default function HowItWorks({
               . Big display:{" "}
               <Link
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                to="/fullscreen-timer"
+                to="/online-timer"
               >
                 Fullscreen Timer
               </Link>
@@ -538,7 +538,7 @@ export default function HowItWorks({
             <PillLink to="/pace-timer">Pace Timer</PillLink>
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
             <PillLink to="/stopwatch">Stopwatch</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
             <PillLink to="/hiit-timer">HIIT Timer</PillLink>
           </div>
         </div>

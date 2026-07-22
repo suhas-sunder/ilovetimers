@@ -25,7 +25,7 @@ export default function PopularUseCases({
       notFor:
         "General kitchen timing for pasta, baking, or several foods at once.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
       ],
     },
@@ -38,7 +38,7 @@ export default function PopularUseCases({
         "Changing time mid-run. Presets and inputs are intentionally disabled while the countdown is running.",
       links: [
         { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
       ],
     },
     {
@@ -49,7 +49,7 @@ export default function PopularUseCases({
       notFor: "A device-level alarm after the browser is closed.",
       links: [
         { label: "Silent Timer", href: "/silent-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {
@@ -71,7 +71,7 @@ export default function PopularUseCases({
       notFor:
         "Running several dishes at once. Multiple Timers is a better fit for that.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
       ],
     },
@@ -84,7 +84,7 @@ export default function PopularUseCases({
       links: [
         { label: "Multiple Timers", href: "/multiple-timers" },
         { label: "Tea Timer", href: "/tea-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
       ],
     },
   ];

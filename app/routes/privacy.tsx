@@ -45,7 +45,7 @@ export default function PrivacyPolicy() {
   return (
     <ContentPage
       title="Privacy Policy"
-      description="Last reviewed July 14, 2026"
+      description="Last reviewed July 21, 2026"
       className="ilt-legal-doc"
     >
       <ContentSection title="Overview">
@@ -86,6 +86,62 @@ export default function PrivacyPolicy() {
         </p>
       </ContentSection>
 
+      <ContentSection title="Share links and named presets">
+        <p>
+          Selected tools can create a versioned setup link. The chosen timer
+          duration, timing options, date, time zones, or work window are written
+          into that link so another browser can reproduce the setup. Anyone who
+          receives the link, and services involved in transporting or requesting
+          it, can read those URL settings. Setup links do not include preset
+          names, notes, history, elapsed or remaining time, running state, alarm
+          state, or account information.
+        </p>
+        <p>
+          The Countdown Timer, Pomodoro Timer, HIIT Timer, and Time Zone Meeting
+          Planner can save up to 20 named presets per tool in localStorage. A
+          preset contains its name and that tool's validated setup fields. These
+          presets stay in the current browser profile, are not synchronized to an
+          iLoveTimers account or cloud service, and can be renamed or deleted on
+          the tool page. Clearing this site's browser data also removes them.
+        </p>
+        <p>
+          Opening a shared setup does not create a named preset. The Time Zone
+          Converter also avoids replacing its saved preferences merely because a
+          shared link was opened. iLoveTimers does not intentionally include
+          setup URL parameters, preset names, or preset values in analytics
+          events.
+        </p>
+      </ContentSection>
+
+      <ContentSection title="Astronomy location data">
+        <p>
+          The Astronomical Clock can store a latitude, longitude, and selected
+          IANA time zone in the localStorage entry named astroClockPrefs. It
+          uses those values to restore your chosen location after a refresh.
+          The route's solar and lunar
+          calculations run in the page, and its code does not send the stored
+          coordinates to an astronomy service, place them in the URL, or add
+          them to analytics events. Press Clear location on that route to remove
+          the saved latitude and longitude. The time zone remains as a display
+          preference. Clearing this site's browser data removes all three.
+        </p>
+        <p>
+          The Sunrise &amp; Sunset Clock works differently. It does not save
+          coordinates in localStorage. It sends the selected latitude,
+          longitude, and calendar date to{" "}
+          <a
+            href="https://api.sunrise-sunset.org/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            api.sunrise-sunset.org
+          </a>{" "}
+          to retrieve calculated sunrise and sunset timestamps. If you choose
+          Device location, the browser asks for permission before supplying the
+          coordinates. You can use manual coordinates instead.
+        </p>
+      </ContentSection>
+
       <ContentSection title="PostHog analytics">
         <p>
           iLoveTimers uses PostHog analytics only after the applicable analytics
@@ -121,7 +177,7 @@ export default function PrivacyPolicy() {
 
       <ContentSection title="Advertising">
         <p>
-          iLoveTimers does not currently install live AdSense code or
+          iLoveTimers does not currently install live advertising code or
           third-party advertising scripts. The homepage may show quiet
           "Advertisements" placeholders to reserve possible future ad space, but
           those placeholders are not live ads and do not set advertising cookies.

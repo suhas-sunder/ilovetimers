@@ -25,9 +25,17 @@ import {
   ToolHero,
 } from "~/clients/components/ui/foundation";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+import {
+  TechnicalMethod,
+  ToolTrustNote,
+} from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
+import {
+  reactionPressAction,
+  summarizeReactionTimes,
+} from "~/clients/lib/technicalTimeMath.js";
 
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-18", label: "July 18, 2026" } as const;
 
 /* =========================================================
    META
@@ -107,33 +115,10 @@ function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
 }
 
-function mean(nums: number[]) {
-  if (!nums.length) return 0;
-  return nums.reduce((a, b) => a + b, 0) / nums.length;
-}
-
-function median(nums: number[]) {
-  if (!nums.length) return 0;
-  const a = [...nums].sort((x, y) => x - y);
-  const mid = Math.floor(a.length / 2);
-  return a.length % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
-}
-
 function fmtMs(ms: number | null) {
   if (ms == null || !Number.isFinite(ms)) return "--";
   return `${Math.round(ms)} ms`;
 }
-
-function bucketLabel(ms: number) {
-  if (!Number.isFinite(ms)) return "";
-  if (ms < 150) return "Lightning fast";
-  if (ms < 200) return "Very fast";
-  if (ms < 250) return "Fast";
-  if (ms < 300) return "Average";
-  if (ms < 350) return "A bit slow";
-  return "Slow";
-}
-
 
 /* =========================================================
    SUPPORTING DISPLAY
@@ -219,28 +204,11 @@ function ReactionTimeTestTool() {
     setPhase("done");
   }, [done]);
 
-  const best = useMemo(() => {
-    if (!times.length) return null;
-    return Math.min(...times);
-  }, [times]);
-
-  const avg = useMemo(() => {
-    if (!times.length) return null;
-    return mean(times);
-  }, [times]);
-
-  const med = useMemo(() => {
-    if (!times.length) return null;
-    return median(times);
-  }, [times]);
-
-  const consistency = useMemo(() => {
-    if (times.length < 2) return null;
-    const a = mean(times);
-    const v =
-      times.reduce((acc, x) => acc + (x - a) * (x - a), 0) / (times.length - 1);
-    return Math.sqrt(v);
-  }, [times]);
+  const summary = useMemo(() => summarizeReactionTimes(times), [times]);
+  const best = summary.best;
+  const avg = summary.mean;
+  const med = summary.median;
+  const consistency = summary.sampleDeviation;
 
   const clearWaitTimer = useCallback(() => {
     if (waitTimerRef.current) window.clearTimeout(waitTimerRef.current);
@@ -311,8 +279,9 @@ function ReactionTimeTestTool() {
 
   const registerResponse = useCallback(() => {
     const p = phaseRef.current;
+    const action = reactionPressAction(p);
 
-    if (p === "waiting") {
+    if (action === "false-start") {
       clearWaitTimer();
       goAtRef.current = null;
       setFalseStarts((n) => n + 1);
@@ -320,7 +289,7 @@ function ReactionTimeTestTool() {
       return;
     }
 
-    if (p === "go") {
+    if (action === "record") {
       const goAt = goAtRef.current;
       if (!goAt) return;
       const now = performance.now();
@@ -345,12 +314,7 @@ function ReactionTimeTestTool() {
       return;
     }
 
-    if (p === "falseStart") {
-      startTrial();
-      return;
-    }
-
-    if (p === "done") return;
+    if (action === "ignore") return;
 
     startTrial();
   }, [clearWaitTimer, startTrial]);
@@ -687,7 +651,7 @@ function ReactionTimeTestTool() {
                 <StatPill
                   label="Last"
                   value={lastMs == null ? "--" : fmtMs(lastMs)}
-                  hint={lastMs == null ? "Run a trial" : bucketLabel(lastMs)}
+                  hint={lastMs == null ? "Run a trial" : "Rounded to 1 ms"}
                 />
                 <StatPill
                   label="Best"
@@ -984,6 +948,42 @@ export default function ReactionTimeTestPage({}: Route.ComponentProps) {
             setup.
           </p>
         </ContentSection>
+        <TechnicalMethod
+          heading="What the measurement includes"
+          sources={[TECHNICAL_SOURCES.highResolutionTime]}
+        >
+          <p>
+            Starting a trial chooses a random whole-millisecond delay from the
+            selected minimum up to, but not including, the selected maximum.
+            When that browser timeout runs, the page records a monotonic
+            performance.now value and changes the stage to GO. A pointer press,
+            Space, or Enter records a second performance.now value. The result
+            is the difference, clamped from 0 to 60,000 milliseconds and
+            displayed to the nearest millisecond.
+          </p>
+          <p>
+            A response during WAIT cancels the pending signal, increases False
+            starts by one, and adds no valid result. Press again to begin a new
+            random wait. Reset cancels a pending wait and clears valid results,
+            false starts, and summary values.
+          </p>
+          <p>
+            For valid trials, Best is the smallest value. Average is the
+            arithmetic mean. Median is the middle sorted value, or the mean of
+            the two middle values. Consistency uses the sample standard
+            deviation, so it appears after at least two valid trials. Example:
+            results of 200, 240, and 280 ms have a 200 ms best, a 240 ms average,
+            a 240 ms median, and a 40 ms sample standard deviation.
+          </p>
+          <p>
+            The number includes human response time plus display latency, input
+            hardware latency, browser event scheduling, operating-system
+            scheduling, device load, and rounding. Background tabs and device
+            sleep can delay the signal or input handling. The test provides no
+            population ranking and is not a clinical, neurological,
+            diagnostic, laboratory, driving, sports, or safety measurement.
+          </p>
+        </TechnicalMethod>
         <ToolTrustNote reviewDate={REVIEW_DATE} heading="How to interpret the measurement">
           <p>
             Results include more than human reaction time. Display latency,

@@ -1,16 +1,13 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/astronomical-clock.tsx
 import type { Route } from "./+types/astronomical-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Disclaimer from "~/clients/components/astronomical-clock/Disclaimer";
-import FAQ from "~/clients/components/astronomical-clock/FAQ";
-import HowItWorks from "~/clients/components/astronomical-clock/HowItWorks";
-import KeyboardShortcuts from "~/clients/components/astronomical-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/astronomical-clock/PopularUseCases";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
 import {
   Button as Btn,
+  ContentSection,
   Field,
   PresetChip as Chip,
   PresetGroup,
@@ -25,6 +22,13 @@ import {
   ToolHero,
   ToolFrame as Card,
 } from "~/clients/components/ui/foundation";
+import { TechnicalMethod } from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
+import {
+  estimateMoonCycle,
+  estimateSunEventsUtc,
+  parseAstronomicalPreferences,
+} from "~/clients/lib/technicalTimeMath.js";
 
 /* =========================================================
    META
@@ -50,7 +54,7 @@ export function meta({}: Route.MetaArgs) {
         "astronomy clock",
       ].join(", "),
     },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -100,45 +104,6 @@ function isTypingTarget(target: EventTarget | null) {
 
 
 
-function degToRad(d: number) {
-  return (d * Math.PI) / 180;
-}
-function radToDeg(r: number) {
-  return (r * 180) / Math.PI;
-}
-
-/**
- * Get timezone offset minutes for a given instant in a given IANA timeZone.
- * Returns minutes like Date.getTimezoneOffset(): minutes behind UTC (positive in the Americas).
- */
-function getTimeZoneOffsetMinutes(date: Date, timeZone: string) {
-  const dtf = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    hour12: false,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-
-  const parts = dtf.formatToParts(date);
-  const get = (type: string) =>
-    Number(parts.find((p) => p.type === type)?.value ?? "0");
-
-  const y = get("year");
-  const m = get("month");
-  const d = get("day");
-  const hh = get("hour");
-  const mm = get("minute");
-  const ss = get("second");
-
-  // Interpret the "local in timeZone" components as if they were UTC
-  const asUTC = Date.UTC(y, m - 1, d, hh, mm, ss);
-  return (date.getTime() - asUTC) / 60000;
-}
-
 function getZonedParts(date: Date, timeZone: string) {
   const dtf = new Intl.DateTimeFormat("en-US", {
     timeZone,
@@ -165,8 +130,16 @@ function getZonedParts(date: Date, timeZone: string) {
   };
 }
 
+function degToRad(degrees: number) {
+  return (degrees * Math.PI) / 180;
+}
+
+function radToDeg(radians: number) {
+  return (radians * 180) / Math.PI;
+}
+
 function fmtTimeInTZ(d: Date | null, timeZone: string) {
-  if (!d) return "—";
+  if (!d) return "Unavailable";
   return new Intl.DateTimeFormat(undefined, {
     timeZone,
     hour: "2-digit",
@@ -182,80 +155,6 @@ function fmtDateLongInTZ(now: Date, timeZone: string) {
     month: "long",
     day: "numeric",
   }).format(now);
-}
-
-/**
- * Sunrise/Sunset using a compact NOAA-style approximation.
- * dateYMD should be the "local date" for the selected timezone.
- * tzOffsetMin should be offset minutes for that timezone at that date.
- */
-function computeSunriseSunsetForLocalDate(
-  year: number,
-  monthIndex0: number,
-  day: number,
-  lat: number,
-  lon: number,
-  tzOffsetMin: number,
-): { sunrise: Date | null; sunset: Date | null } {
-  const zenith = 90.833; // degrees
-  const n = Math.floor(
-    (Date.UTC(year, monthIndex0, day) - Date.UTC(year, 0, 0)) / 86400000,
-  ); // 1..366
-  const lngHour = lon / 15;
-
-  const calc = (isSunrise: boolean) => {
-    const t = n + ((isSunrise ? 6 : 18) - lngHour) / 24;
-
-    const M = 0.9856 * t - 3.289;
-
-    let L =
-      M +
-      1.916 * Math.sin(degToRad(M)) +
-      0.02 * Math.sin(degToRad(2 * M)) +
-      282.634;
-    L = (L + 360) % 360;
-
-    let RA = radToDeg(Math.atan(0.91764 * Math.tan(degToRad(L))));
-    RA = (RA + 360) % 360;
-
-    const Lquadrant = Math.floor(L / 90) * 90;
-    const RAquadrant = Math.floor(RA / 90) * 90;
-    RA = RA + (Lquadrant - RAquadrant);
-    RA = RA / 15;
-
-    const sinDec = 0.39782 * Math.sin(degToRad(L));
-    const cosDec = Math.cos(Math.asin(sinDec));
-
-    const cosH =
-      (Math.cos(degToRad(zenith)) - sinDec * Math.sin(degToRad(lat))) /
-      (cosDec * Math.cos(degToRad(lat)));
-
-    if (cosH > 1) return null;
-    if (cosH < -1) return null;
-
-    let H = isSunrise
-      ? 360 - radToDeg(Math.acos(cosH))
-      : radToDeg(Math.acos(cosH));
-    H = H / 15;
-
-    const T = H + RA - 0.06571 * t - 6.622;
-
-    let UT = T - lngHour;
-    UT = (UT + 24) % 24;
-
-    const utcMillis =
-      Date.UTC(year, monthIndex0, day, 0, 0, 0, 0) + UT * 3600000;
-
-    // Convert UTC to "local time in target timezone" by applying that timezone offset
-    // This yields a Date instance we later format using timeZone for display.
-    const localMillis = utcMillis - tzOffsetMin * 60000;
-    return new Date(localMillis);
-  };
-
-  const sunrise = calc(true);
-  const sunset = calc(false);
-  if (!sunrise || !sunset) return { sunrise: null, sunset: null };
-  return { sunrise, sunset };
 }
 
 /**
@@ -297,11 +196,7 @@ function computeSolarAltitudeDeg(now: Date, lat: number, lon: number) {
  * 0 new, 0.5 full
  */
 function computeMoonPhaseFraction(date: Date) {
-  const synodicDays = 29.530588853;
-  const epoch = Date.UTC(2000, 0, 6, 18, 14, 0, 0);
-  const days = (date.getTime() - epoch) / 86400000;
-  const phase = ((days % synodicDays) + synodicDays) % synodicDays;
-  return phase / synodicDays;
+  return estimateMoonCycle(date)?.phaseFraction ?? 0;
 }
 
 function moonPhaseLabel(phase: number) {
@@ -409,24 +304,26 @@ function AstronomicalClockCard({ initialNowISO }: { initialNowISO: string }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem("astroClockPrefs");
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as {
-        lat?: number;
-        lon?: number;
-        tz?: string;
-      } | null;
-      if (!parsed) return;
-
-      if (typeof parsed.lat === "number" && typeof parsed.lon === "number") {
-        setLat(clamp(parsed.lat, -90, 90));
-        setLon(clamp(parsed.lon, -180, 180));
+      const loaded = parseAstronomicalPreferences(raw);
+      if (loaded.corrupt) {
+        localStorage.removeItem("astroClockPrefs");
+        return;
+      }
+      const { preferences } = loaded;
+      if (preferences.lat !== null && preferences.lon !== null) {
+        setLat(preferences.lat);
+        setLon(preferences.lon);
         setLocStatus("ready");
       }
-      if (typeof parsed.tz === "string" && parsed.tz.trim()) {
-        setTimeZone(parsed.tz);
+      if (preferences.tz) {
+        setTimeZone(preferences.tz);
       }
     } catch {
-      // ignore
+      try {
+        localStorage.removeItem("astroClockPrefs");
+      } catch {
+        // Storage can be unavailable in privacy-restricted browser contexts.
+      }
     }
   }, []);
 
@@ -517,24 +414,19 @@ function AstronomicalClockCard({ initialNowISO }: { initialNowISO: string }) {
 
   const hasCoords = typeof lat === "number" && typeof lon === "number";
 
-  const tzOffsetMin = useMemo(() => {
-    // Use the timezone offset for "now" to anchor calculations and display
-    return getTimeZoneOffsetMinutes(now, timeZone);
-  }, [now, timeZone]);
-
   const sunEvents = useMemo(() => {
     if (!hasCoords)
       return { sunrise: null as Date | null, sunset: null as Date | null };
     // Use the selected timezone's local date (Y-M-D) for sunrise/sunset
-    return computeSunriseSunsetForLocalDate(
-      zoned.year,
-      zoned.month - 1,
-      zoned.day,
-      lat as number,
-      lon as number,
-      tzOffsetMin,
-    );
-  }, [hasCoords, lat, lon, tzOffsetMin, zoned.day, zoned.month, zoned.year]);
+    return estimateSunEventsUtc({
+      year: zoned.year,
+      month: zoned.month,
+      day: zoned.day,
+      latitude: lat as number,
+      longitude: lon as number,
+      timeZone,
+    });
+  }, [hasCoords, lat, lon, timeZone, zoned.day, zoned.month, zoned.year]);
 
   const solarAlt = useMemo(() => {
     if (!hasCoords) return null;
@@ -732,14 +624,17 @@ function AstronomicalClockCard({ initialNowISO }: { initialNowISO: string }) {
                 <div className="mt-1 flex items-center justify-between gap-3">
                   <span className="opacity-80">Illumination</span>
                   <span className="font-extrabold">
-                    {Math.round((1 - Math.abs(0.5 - phase) * 2) * 100)}%
+                    {Math.round(
+                      (estimateMoonCycle(now)?.illuminationFraction ?? 0) * 100,
+                    )}
+                    %
                   </span>
                 </div>
                 {hasCoords && solarAlt !== null && (
                   <div className="mt-2 flex items-center justify-between gap-3 text-xs">
                     <span className="opacity-80">Sun altitude</span>
                     <span className="font-extrabold">
-                      {solarAlt.toFixed(1)}°
+                      {Math.round(solarAlt)}°
                     </span>
                   </div>
                 )}
@@ -982,12 +877,73 @@ export default function AstronomicalClockPage({
 
       <SeoBand>
 
-          <HowItWorks />
-          <KeyboardShortcuts />
-          <PopularUseCases />
-          <FAQ />
-          <Disclaimer />
-
+          <ContentSection title="Location storage and privacy">
+            <p>
+              This route stores the selected latitude, longitude, and IANA time
+              zone in the localStorage entry named astroClockPrefs. The values
+              stay there until you press Clear location or clear this site's
+              browser data. They are saved so the same location can be restored
+              after a refresh.
+            </p>
+            <p>
+              The sun and moon calculations on this route run in the page. The
+              route does not send the coordinates to an astronomy service,
+              include them in the URL, or add them to structured data. Press
+              <strong> Clear location</strong> to remove the saved latitude and
+              longitude. The time zone remains as a display preference.
+              Unavailable, denied, malformed, and out-of-range location data is
+              ignored.
+            </p>
+            <p>
+              The{" "}
+              <a className="ilt-content-link" href="/guides/browser-storage">
+                iLoveTimers browser storage guide
+              </a>{" "}
+              places this location preference in the full production inventory
+              and explains how browser site-data clearing affects it.
+            </p>
+          </ContentSection>
+          <TechnicalMethod
+            heading="Solar and lunar calculation method"
+            sources={[
+              TECHNICAL_SOURCES.noaaSolar,
+              TECHNICAL_SOURCES.usnoMoonPhases,
+              TECHNICAL_SOURCES.ianaTimeZones,
+            ]}
+          >
+            <p>
+              Sunrise and sunset use a compact NOAA-style solar approximation
+              with a 90.833 degree zenith. Inputs are the selected local
+              calendar date, latitude, and longitude. The chosen time zone
+              controls that calendar date and formats the calculated UTC event
+              instants. The sun-altitude label uses a simpler day-of-year,
+              declination, and equation-of-time estimate. Results are calculated
+              locally, not retrieved.
+            </p>
+            <p>
+              The moon display uses a mean synodic month of 29.530588853 days
+              from a reference new moon at 2000-01-06 18:14 UTC. Illumination is
+              estimated with a cosine phase model and rounded to a whole
+              percent. It does not calculate moonrise, moonset, libration, or
+              the observer's apparent lunar position.
+            </p>
+            <p>
+              Example: choose the New York preset. The page uses latitude{" "}
+              <strong>40.7128</strong>, longitude{" "}
+              <strong>-74.0060</strong>, the local date in{" "}
+              <strong>America/New_York</strong>, then formats each calculated
+              UTC instant in that zone. Clear location removes those
+              coordinates from storage.
+            </p>
+            <p>
+              These estimates are intended for general display near the present
+              date. Atmospheric refraction, elevation, terrain, weather, and
+              the visible horizon are not modeled. Do not use them for
+              observation planning that needs an almanac, navigation, or
+              safety-critical decisions.
+            </p>
+          </TechnicalMethod>
+          <Stage4RouteContent routePath="/astronomical-clock" />
       </SeoBand>
     </PageShell>
   );

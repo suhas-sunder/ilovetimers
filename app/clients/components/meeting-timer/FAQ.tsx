@@ -29,12 +29,12 @@ export default function FAQ({
     {
       question: "How do I use this for an agenda with multiple topics?",
       answer:
-        "Use it as a repeatable timebox: set minutes for the current topic, Start, and when you switch to the next agenda item either change minutes (which resets automatically) or press Reset to rerun the same timebox. Presets make it fast to jump between common topic lengths.",
+        "Set the minutes for the current topic and press Start. To use a different duration for the next topic, pause first and choose a preset or edit Custom minutes. Reset reruns the currently selected duration.",
     },
     {
       question: "What happens when I change the minutes?",
       answer:
-        "Changing minutes fully resets the timer to the new duration and stops it if it was running. This is useful when you move to a new agenda item with a different timebox.",
+        "The duration controls are disabled while the timer runs. Pause first, then choose a preset or edit Custom minutes. The timer resets to the new duration and returns to Ready.",
     },
     {
       question: "How does fullscreen work on this timer?",

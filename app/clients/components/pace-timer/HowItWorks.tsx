@@ -372,7 +372,7 @@ export default function HowItWorks({
               <div className="mt-3 ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
                 Want the biggest digits possible? Use{" "}
                 <Link
-                  to="/fullscreen-timer"
+                  to="/online-timer"
                   className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                 >
                   Fullscreen Timer
@@ -512,7 +512,7 @@ export default function HowItWorks({
           </Link>
           . For a pure big clock use{" "}
           <Link
-            to="/fullscreen-timer"
+            to="/online-timer"
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
           >
             Fullscreen Timer

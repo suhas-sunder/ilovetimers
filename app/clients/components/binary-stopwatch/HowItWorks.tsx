@@ -419,9 +419,9 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink href={abs("/stopwatch")}>Stopwatch</PillLink>
-            <PillLink href={abs("/count-up-timer")}>Count Up Timer</PillLink>
+            <PillLink href={abs("/stopwatch")}>Count Up Timer</PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/silent-timer")}>Silent Timer</PillLink>

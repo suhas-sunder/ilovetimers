@@ -1,11 +1,11 @@
 # Publisher-value and AdSense-readiness review
 
-Reviewed July 16, 2026. This internal report covers all 136 configured canonical routes. It evaluates working utility, distinct purpose, visible publisher contribution, trust and limitation disclosure, usability, overlap, template risk, indexability, and ad suitability. It does **not** use a word-count threshold and does not guarantee AdSense approval.
+Reviewed July 16, 2026; Stage 5 guide coverage reviewed July 21, 2026. This internal report covers all 132 configured canonical routes. It evaluates working utility, distinct purpose, visible publisher contribution, trust and limitation disclosure, usability, overlap, template risk, indexability, and ad suitability. It does **not** use a word-count threshold and does not guarantee AdSense approval.
 
 ## Evidence and method
 
 - Repository architecture, content, metadata, schema, consent, monetization, sitemap, navigation, related links, audits, and tests were reviewed.
-- All 136 canonical routes were rendered from the production build at 390px in dark mode and checked for status, title, description, H1, canonical, robots state, primary content, duplicate IDs, horizontal overflow, fatal states, ad policy, consent obstruction, and JSON-LD types.
+- All 132 canonical routes were rendered from the production build and checked for status, title, description, H1, canonical, robots state, primary content, duplicate IDs, horizontal overflow, fatal states, ad policy, consent obstruction, and JSON-LD types. Stage 5 also completed a 132-route Chromium sweep and a 72-screenshot desktop/mobile, light/dark matrix for the guide and contextually linked tool routes.
 - Major families and priority routes received additional responsive, theme, first-time-user, and interaction checks described in the release report.
 - The supplied 120-page performance table, 1,000-query GSC export, and separate 1,597-row keyword report were used as complementary evidence; their totals were not combined.
 - No complete Query + Page join was supplied, so overlap is described as suspected rather than confirmed cannibalization.
@@ -14,9 +14,9 @@ Reviewed July 16, 2026. This internal report covers all 136 configured canonical
 
 No Critical or High functional, indexing, privacy, trust, schema, ad-placement, or low-value-content blocker remained after the review. Every canonical route returns useful SSR-visible content and a functioning tool or substantive trust page; titles and descriptions are unique; tool and trust pages are ad-free; the two homepage placeholders are clearly labeled and separated from controls/navigation; PostHog is consent-gated and defensively configured; and the full validation suite passes.
 
-This classification does not predict or guarantee Google approval. Six routes remain product-review decisions, but each currently provides a real, working, distinct-enough experience and none represents a serious sitewide low-value cluster. Joined GSC Query + Page monitoring and field Core Web Vitals remain external follow-up work.
+This classification does not predict or guarantee Google approval. Four routes remain product-review decisions, but each currently provides a real, working, distinct-enough experience and none represents a serious sitewide low-value cluster. Joined GSC Query + Page monitoring and field Core Web Vitals remain external follow-up work.
 
-Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PROJECT**, **0 NEEDS FUTURE IMPROVEMENT**, **6 USER DECISION REQUIRED**, and **0 BLOCKS ADSENSE REAPPLICATION**.
+Classification totals: **36 STRONG**, **23 ADEQUATE**, **69 IMPROVED IN THIS PROJECT**, **0 NEEDS FUTURE IMPROVEMENT**, **4 USER DECISION REQUIRED**, and **0 BLOCKS ADSENSE REAPPLICATION**.
 
 ## Ad and privacy findings
 
@@ -30,19 +30,18 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 ## Trust, indexing, and schema findings
 
 - About, Author, Contact, Methodology, Copyright, Privacy, Cookies, and Terms are accessible and mutually consistent. Suhas Sunder’s verified role, education wording, profile image dimensions, portfolio, LinkedIn, contact email, and responsibilities match visible content.
-- All 136 canonicals return 200 with one absolute HTTPS `www.ilovetimers.com` canonical, one title, one description, one H1, and SSR-visible content. Only Privacy, Terms, and Cookies are intentionally `noindex,follow` and excluded from XML sitemap.
-- All 17 aliases are permanent, one-hop, query-preserving redirects and are absent from navigation, metadata, schema, and sitemaps.
+- All 132 canonicals return 200 with one absolute HTTPS `www.ilovetimers.com` canonical, one title, one description, one H1, and SSR-visible content. The 23 intentional `noindex,follow` routes are excluded from the XML sitemap.
+- All 28 aliases are permanent, one-hop, query-preserving redirects and are absent from navigation, metadata, schema, and sitemaps.
 - Each route renders one root `WebSite` entity. The author route owns the single full `Person` and `ProfilePage`; About uses `AboutPage`. No `Organization`, `HowTo`, rating, review, aggregate rating, or offer schema is present.
 - The release crawl found and removed one redundant FAQPage object on `/free-online-timers`; its remaining FAQ schema is generated from the same six items rendered visibly on the page.
 
 ## Route-value decisions to revisit
 
-- **Cooking Timer versus Kitchen Timer:** `/cooking-timer` emphasizes a single configurable cooking countdown and completion workflow; `/kitchen-timer` offers kitchen-oriented presets/workflow. Both work and have separate visible purposes, but overlap is moderate and search evidence is limited. Keep both for now; review joined Query + Page data and user engagement before any consolidation.
 - **Debt Clock:** `/debt-clock` visualizes an entered balance changing over time, whereas `/debt-repayment-timer` models a repayment plan. The visualization is distinct but niche and search evidence is weak. Keep indexable for now; consider noindex only after product/traffic review, not as a release prerequisite.
 - **Event Countdown versus Countdown to Date:** `/event-countdown` supports event naming/presentation, while `/countdown-to-date` focuses on a target date/time calculation and display. The purpose is distinct enough to retain; review query ownership after recrawl.
-- **Round Timer versus Boxing Timer:** `/round-timer` is sport-neutral interval rounds; `/boxing-timer` uses boxing-specific round/rest workflow. Keep both unless engagement shows the specialized route adds no value.
+- **Round Timer:** `/round-timer` remains the canonical sport-neutral interval-round tool. Review product engagement before changing its current indexability.
 
-## Complete 136-route review
+## Complete 132-route review
 
 “Pass” in usability means the route passed rendered status/H1/canonical/content/ID/overflow/ad checks; it does not replace the detailed interaction matrix. “Ad-free” describes current implementation, not a recommendation to add advertising.
 
@@ -55,7 +54,6 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 | `/countdown-timer` | Timers | Custom hours/minutes/seconds countdown | General configurable countdown | Controls, presets, FAQs, related choices | Browser/audio/fullscreen limits | Pass | Low | Low | Index | Ad-free | STRONG | Keep as custom-duration owner. |
 | `/timer-clock` | Timers | Local clock beside countdown | Combined clock-and-timer workflow | Use cases, FAQs, limitations, related tools | Device clock and browser timing disclosed | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Monitor new-route queries. |
 | `/online-timer` | Timers | General countdown workflow | Alternate timer workflow with current controls | Route-specific guidance and FAQs | Browser completion limits | Pass | Moderate | Moderate | Index | Ad-free | ADEQUATE | Monitor against countdown timer. |
-| `/fullscreen-timer` | Timers | Large fullscreen countdown | Shared-screen countdown intent | Fullscreen instructions and use cases | Browser/fullscreen limits | Pass | Low | Low | Index | Ad-free | ADEQUATE | Retain. |
 | `/silent-timer` | Timers | Visual countdown without sound | Quiet-environment completion | Quiet-use guidance and FAQs | Tab/device completion limits | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Retain and monitor. |
 | `/visual-timer` | Timers | Visual progress countdown | Visual remaining-time cue | Use cases and control guidance | Rendering/background limits | Pass | Low | Low | Index | Ad-free | ADEQUATE | Retain. |
 | `/multiple-timers` | Timers | Several independent named timers | Concurrent multi-timer workflow | Naming, controls, persistence guidance | Browser/audio limits | Pass | Low | Low | Index | Ad-free | STRONG | Retain. |
@@ -79,7 +77,6 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 | `/timer-stopwatch` | Stopwatch | Countdown and lap stopwatch together | Combined timing modes | Mode guidance, FAQs, limitations | Browser timing limits | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Monitor new-route queries. |
 | `/stopwatch` | Stopwatch | Elapsed time with laps | General stopwatch owner | Controls, lap guidance, shortcuts | Browser/input latency | Pass | Low | Low | Index | Ad-free | STRONG | Retain. |
 | `/stopwatch-with-milliseconds` | Stopwatch | Millisecond display and laps | Fine-grained elapsed display | Specific use cases and limitation note | Rendering/device/input latency disclosed | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Retain. |
-| `/count-up-timer` | Stopwatch | Count upward from zero | Simple count-up display | Use cases and related choices | Browser timing limits | Pass | Moderate | Low | Index | Ad-free | ADEQUATE | Retain distinction from lap stopwatch. |
 | `/binary-stopwatch` | Specialty stopwatch | Elapsed time encoded in binary | Educational/novel display | Encoding explanation and controls | Browser timing limits | Pass | Low | Low | Index | Ad-free | ADEQUATE | Retain. |
 | `/speedcubing-timer` | Specialty stopwatch | Solve timing and history | Cubing-specific workflow | Solve controls and session guidance | Input/device latency | Pass | Low | Low | Index | Ad-free | STRONG | Retain. |
 | `/speedrun-timer` | Specialty stopwatch | Splits for runs | Speedrun split workflow | Split controls and run guidance | Browser/input timing limits | Pass | Low | Low | Index | Ad-free | STRONG | Protect asset. |
@@ -114,14 +111,12 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 | `/emom-timer` | Fitness | Every-minute rounds | EMOM-specific workflow | Round behavior and controls | General timing boundary | Pass | Low | Low | Index | Ad-free | STRONG | Retain. |
 | `/amrap-timer` | Fitness | Fixed AMRAP window | AMRAP-specific workflow | Session guidance | No training outcome claim | Pass | Low | Low | Index | Ad-free | STRONG | Retain. |
 | `/round-timer` | Fitness | Sport-neutral round/rest cycles | Generic rounds | Round controls and guidance | General timing boundary | Pass | Moderate | Low | Index | Ad-free pending decision | USER DECISION REQUIRED | Keep; compare engagement with boxing timer. |
-| `/boxing-timer` | Fitness | Boxing-oriented round/rest cycles | Boxing-specific defaults/workflow | Boxing use guidance | General timing, not coaching | Pass | Moderate | Low | Index | Ad-free pending decision | USER DECISION REQUIRED | Keep; validate specialist value with users/data. |
 | `/pace-timer` | Fitness | Repeating pace cues | Pace-oriented intervals | Setup guidance and use cases | No performance guarantee | Pass | Low | Low | Index | Ad-free | ADEQUATE | Retain. |
 
 ### Kitchen timers
 
 | Route | Family | Functional value | Distinct purpose | Visible supporting value | Trust / limitations | Usability | Overlap risk | Template risk | Indexability | Ad suitability | Classification | Required action |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `/cooking-timer` | Kitchen | Configurable cooking countdown | Single cooking-step timing | Cooking use guidance | No food-safety guarantee | Pass | Moderate | Low | Index | Ad-free pending decision | USER DECISION REQUIRED | Keep; review against kitchen workflow with joined data. |
 | `/kitchen-timer` | Kitchen | Kitchen-oriented presets/workflow | Broader kitchen timer | Preset and workflow guidance | No food-safety guarantee | Pass | Moderate | Low | Index | Ad-free | STRONG | Retain as broader kitchen owner. |
 | `/tea-timer` | Kitchen | Tea steep countdown | Tea-specific presets | Steeping guidance without quality claims | Preferences vary | Pass | Low | Low | Index | Ad-free | ADEQUATE | Retain. |
 | `/egg-timer` | Kitchen | Egg timing presets | Egg-specific workflow | Doneness/use guidance | Results vary; no safety claim | Pass | Low | Low | Index | Ad-free | STRONG | Retain. |
@@ -155,8 +150,6 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `/current-local-time` | Local clock | Current local date/time details | Explicit current-local-time reference | Device-time explanation | Device clock dependency | Pass | Moderate | Low | Index | Ad-free | ADEQUATE | Monitor against digital clock. |
 | `/digital-clock` | Local clock | Standard digital current time | General digital display | Display guidance | Device clock dependency | Pass | Moderate | Low | Index | Ad-free | ADEQUATE | Retain. |
-| `/big-digital-clock` | Local clock | Extra-large digital display | Distance-readable clock | Shared-display uses | Device clock dependency | Pass | Low | Low | Index | Ad-free | ADEQUATE | Retain. |
-| `/clock-with-seconds` | Local clock | Current time with seconds | Second-level display owner | Use cases and related variants | Device clock/rendering limits | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Retain. |
 | `/minimalist-clock` | Local clock | Reduced-distraction time display | Minimal presentation | Purpose and display guidance | Device clock dependency | Pass | Low | Low | Index | Ad-free | ADEQUATE | Retain. |
 
 ### Analog and fullscreen clocks
@@ -164,10 +157,6 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 | Route | Family | Functional value | Distinct purpose | Visible supporting value | Trust / limitations | Usability | Overlap risk | Template risk | Indexability | Ad suitability | Classification | Required action |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `/analog-clock` | Analog clock | Standard analog local time | Generic analog owner | Controls, use cases, related variants | Device clock dependency | Pass | Low | Low | Index | Ad-free | STRONG | Protect high-performing asset. |
-| `/analog-clock-with-second-hand` | Analog clock | Explicit ticking second hand | Visible-second-hand intent | Explanation and alternatives | Device/rendering limits | Pass | Moderate | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Monitor versus smooth hand. |
-| `/full-screen-analog-clock` | Analog clock | Large fullscreen analog display | Fullscreen analog intent | Fullscreen use guidance and links | Device clock/fullscreen limits | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Retain. |
-| `/smooth-second-hand-clock` | Analog clock | Sweeping second-hand animation | Smooth-motion intent | Rendering explanation | Refresh/device performance disclosed | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Retain. |
-| `/full-screen-clock` | Digital clock | Large fullscreen digital display | Fullscreen digital intent | Shared-display guidance | Device clock/fullscreen limits | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Retain. |
 
 ### Millisecond, UTC, Unix, and exact-style displays
 
@@ -187,7 +176,6 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 | Route | Family | Functional value | Distinct purpose | Visible supporting value | Trust / limitations | Usability | Overlap risk | Template risk | Indexability | Ad suitability | Classification | Required action |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `/world-clock` | World time | Search/compare selected cities and zones | General multi-zone owner | Controls, IANA guidance, FAQs | Device clock and DST | Pass | Moderate | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Monitor variants. |
-| `/world-clock-with-seconds` | World time | Multi-zone second-level display | Seconds modifier | Display and timezone guidance | Device clock/IANA data | Pass | Moderate | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Retain. |
 | `/time-zone-converter` | Timezone | Convert selected wall time between zones | Two-zone conversion | DST ambiguity and input guidance | IANA data/date-boundary limitations | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Retain. |
 | `/time-zone-meeting-planner` | Timezone | Compare working-hour windows | Multi-zone meeting planning | Date-reference and DST guidance | IANA data/date boundaries | Pass | Low | Low | Index | Ad-free | IMPROVED IN THIS PROJECT | Monitor high-impression intent. |
 
@@ -248,6 +236,18 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 | `/roman-numeral-clock` | Novelty clock | Time rendered in Roman numerals | Roman display | Notation guidance | Device clock dependency | Pass | Low | Low | Index | Ad-free | STRONG | Retain. |
 | `/retro-flip-clock` | Novelty clock | Flip-style animated time | Retro presentation | Display controls and use guidance | Device clock/rendering limits | Pass | Low | Low | Index | Ad-free | STRONG | Retain. |
 
+### Guides
+
+| Route | Family | Functional value | Distinct purpose | Visible supporting value | Trust / limitations | Usability | Overlap risk | Template risk | Indexability | Ad suitability | Classification | Required action |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `/guides` | Guides | Question-led technical guide directory | Entry point for browser timing, timezone, timestamp, and storage explanations | Six scoped guide summaries, direct questions, authorship, review date, and methodology link | Scope and browser-test limits disclosed | Pass; responsive | Low | Low | Index | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain as the guide hub. |
+| `/guides/browser-timers-background-tabs` | Guides | Explains hidden, frozen, discarded, locked, and closed page states | Browser lifecycle and countdown reconciliation | Production countdown evidence, state table, practical checks, and authoritative browser sources | Does not promise operation after tab closure or device sleep | Pass; responsive table | Low | Low | Index | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain and review when browser lifecycle policy changes. |
+| `/guides/browser-timer-alarm-silent` | Guides | Troubleshoots timer and alarm audio | Autoplay, suspended audio, mute, volume, background, and sleep distinctions | Production alarm/metronome evidence, ordered checks, and Web Audio sources | Does not guarantee audible delivery | Pass; responsive | Low | Low | Index | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain and keep audio limits current. |
+| `/guides/how-browser-timers-measure-time` | Guides | Explains elapsed-time measurement and delayed callbacks | Target-time reconciliation and monotonic elapsed timing | Production timer/stopwatch methods, worked delay example, and standards citations | Distinguishes calculation accuracy from render/input latency | Pass; responsive | Low | Low | Index | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain as timing-method reference. |
+| `/guides/unix-timestamps-seconds-milliseconds-microseconds` | Guides | Resolves Unix unit ambiguity | Seconds, milliseconds, microseconds, digit inference, and precision | Worked equivalent timestamps, production converter policy, and standards citations | Auto-detection documented as a heuristic | Pass; responsive table | Low | Low | Index | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain with converter behavior. |
+| `/guides/daylight-saving-time-zone-conversions` | Guides | Explains DST gaps and repeated local times | Wall-time ambiguity, IANA zones, and earlier-occurrence policy | Production converter examples, practical checklist, and IANA/ECMA sources | Runtime timezone-data dependency disclosed | Pass; responsive | Low | Low | Index | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain and review with timezone-policy changes. |
+| `/guides/browser-storage` | Guides | Documents actual browser-persistence behavior | Production localStorage inventory versus session-only state | Storage-key table, failure handling, clearing guidance, and standards citations | Local data is not described as an account or cloud backup | Pass; responsive table | Low | Low | Index | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain and update with storage-key changes. |
+
 ### Trust and site information
 
 | Route | Family | Functional value | Distinct purpose | Visible supporting value | Trust / limitations | Usability | Overlap risk | Template risk | Indexability | Ad suitability | Classification | Required action |
@@ -260,7 +260,7 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 | `/privacy` | Legal | Current data-handling disclosure | Privacy policy | Consent, PostHog, storage, contact | Matches implementation | Pass | Low | Legal boilerplate only | Noindex, follow | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain noindex. |
 | `/terms` | Legal | Tool-use terms and limitations | Terms of use | Current browser-tool conditions | No nonexistent accounts/payments | Pass | Low | Legal boilerplate only | Noindex, follow | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain noindex. |
 | `/cookies` | Legal | Browser storage/analytics disclosure | Cookie and storage policy | Consent controls and actual categories | Matches implementation | Pass | Low | Legal boilerplate only | Noindex, follow | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain noindex. |
-| `/sitemap` | Navigation | Complete human route directory | Task-grouped discovery | All 136 canonicals once | Manual update date | Pass | Low | Low | Index | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain full directory. |
+| `/sitemap` | Navigation | Complete human route directory | Task-grouped discovery | All 132 canonicals once | Manual update date | Pass | Low | Low | Index | Ad-free; keep | IMPROVED IN THIS PROJECT | Retain full directory. |
 
 ## Low-value and duplication conclusion
 
@@ -268,7 +268,7 @@ Classification totals: **36 STRONG**, **26 ADEQUATE**, **68 IMPROVED IN THIS PRO
 - Exact titles, descriptions, and H1s are unique. Shared engines do not by themselves create duplicate value: preset pages have duration-specific content, clock variants have different displays/controls, calculators have tested policies, and alarm/rhythm/combined tools have separate workflows.
 - Repeated factual browser limitations are justified where the same platform boundary applies. They do not replace route-specific content.
 - Military conversion and milliseconds conversion now provide value beyond direct-answer snippets through flexible input, bidirectional or multi-unit output, examples, formulas/policies, clear results, and related workflows.
-- The six user-decision routes are not release blockers because their current tools and purposes are real. No route is classified `BLOCKS ADSENSE REAPPLICATION`.
+- The four user-decision routes are not release blockers because their current tools and purposes are real. No route is classified `BLOCKS ADSENSE REAPPLICATION`.
 
 ## What this review cannot prove
 

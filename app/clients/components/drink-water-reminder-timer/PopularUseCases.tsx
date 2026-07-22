@@ -31,7 +31,7 @@ export default function PopularUseCases({
         "Reminders that continue after you close the tab or lock your device (use device/app notifications for that).",
       links: [
         { label: "Silent Timer", href: "/silent-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {
@@ -69,7 +69,7 @@ export default function PopularUseCases({
       notFor:
         "Complex workout structures or rounds-based routines (use a workout timer).",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Workout Timer", href: "/workout-timer" },
       ],
     },

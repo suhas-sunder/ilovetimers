@@ -228,7 +228,7 @@ export function AccuracyAndPrivacySection() {
           . Want a simpler count up tool?{" "}
           <span className="whitespace-nowrap">
             <Link
-              to="/count-up-timer"
+              to="/stopwatch"
               className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
             >
               Count Up Timer

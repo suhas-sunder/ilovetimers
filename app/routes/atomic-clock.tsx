@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/atomic-clock.tsx
 import type { Route } from "./+types/atomic-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -22,13 +23,13 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import FAQ from "~/clients/components/atomic-clock/FAQ";
-import HowItWorks from "~/clients/components/atomic-clock/HowItWorks";
-import KeyboardShortcuts from "~/clients/components/atomic-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/atomic-clock/PopularUseCases";
-import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+import {
+  TechnicalMethod,
+  ToolTrustNote,
+} from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
 
-const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-18", label: "July 18, 2026" } as const;
 
 /* =========================================================
    META
@@ -56,7 +57,7 @@ export function meta({}: Route.MetaArgs) {
         "atomic style clock",
       ].join(", "),
     },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -400,7 +401,7 @@ export default function AtomicClockPage({
         url,
         dateModified: REVIEW_DATE.iso,
         description:
-          "Atomic clock style live time display with optional milliseconds and fullscreen mode.",
+          "Atomic-style display of the browser device clock with optional milliseconds and fullscreen mode. It does not connect to an atomic clock or official time server.",
       },
       {
         "@type": "BreadcrumbList",
@@ -427,12 +428,41 @@ export default function AtomicClockPage({
 
       <ToolHero
         display={<AtomicClockCard initialNowISO={nowISO} />}
-        title="Online Atomic Clock (Milliseconds + Fullscreen)"
-        description="An atomic-style device-clock display with optional milliseconds, live or frozen state, and fullscreen controls."
+        title="Atomic Clock (Device Time Display)"
+        description="This atomic-style display reads your device clock. It does not connect to an atomic clock, NTP server, or official time service."
       />
 
       <SeoBand>
-        <HowItWorks />
+        <TechnicalMethod
+          heading="Time source and display method"
+          sources={[
+            TECHNICAL_SOURCES.ecmaDate,
+            TECHNICAL_SOURCES.nistTime,
+          ]}
+        >
+          <p>
+            The page creates a browser Date value from your device's system
+            clock. It does not make a network request for time. If the device
+            clock is early or late, this display is early or late by the same
+            amount. NIST's time service is an example of an external official
+            reference that this page does not use.
+          </p>
+          <p>
+            With milliseconds on, the page reads a new Date value during each
+            animation frame and displays the millisecond field from 000 to 999.
+            Those digits show the device-clock value at the moment the browser
+            rendered the frame. They do not prove atomic accuracy or
+            sub-millisecond measurement. With milliseconds off, updates align
+            near second boundaries.
+          </p>
+          <p>
+            Freeze stops the visible updates and Resume returns to current
+            device time. Rendering can pause or update less often in a
+            background tab, during heavy device load, or while the device
+            sleeps. The displayed time catches up when browser updates resume.
+          </p>
+        </TechnicalMethod>
+        <Stage4RouteContent routePath="/atomic-clock" />
         <ContentSection>
           <p>
             Need a page focused directly on large millisecond digits? The{" "}
@@ -462,9 +492,6 @@ export default function AtomicClockPage({
             underlying device-clock time source.
           </p>
         </ToolTrustNote>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
       </SeoBand>
 
     </PageShell>

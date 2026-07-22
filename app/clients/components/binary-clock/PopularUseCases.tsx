@@ -87,7 +87,7 @@ export default function PopularUseCases({
         "If you want a generic fullscreen timer with duration controls. Use Fullscreen Timer.",
       links: [
         { label: "Binary Clock", href: "/binary-clock" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Presentation Timer", href: "/presentation-timer" },
       ],
     },

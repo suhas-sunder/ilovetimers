@@ -71,8 +71,8 @@ export function AccuracyAndPrivacySection() {
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
               This clock reads time from your browser/device. If your system
               clock is a few seconds fast or slow, the display will be too. The
-              milliseconds are as precise as your device clock and browser
-              timing allow.
+              millisecond digits depend on your device clock and the moment
+              each browser frame is rendered.
             </p>
           </div>
 

@@ -82,7 +82,7 @@ export default function PopularUseCases({
       notFor:
         "You want a big generic timer display. Use Fullscreen Timer instead.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Online Timer", href: "/online-timer" },
       ],
     },

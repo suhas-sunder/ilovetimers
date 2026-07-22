@@ -1,6 +1,6 @@
 // app/routes/round-timer.tsx
 import type { Route } from "./+types/round-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -161,6 +161,20 @@ function RoundTimerCard() {
       {
         label: "Boxing 3×3 (1m rest)",
         rounds: 3,
+        workSec: 180,
+        restSec: 60,
+        warmupSec: 10,
+      },
+      {
+        label: "Boxing 3×2 (1m rest)",
+        rounds: 3,
+        workSec: 120,
+        restSec: 60,
+        warmupSec: 10,
+      },
+      {
+        label: "Boxing 5×3 (1m rest)",
+        rounds: 5,
         workSec: 180,
         restSec: 60,
         warmupSec: 10,
@@ -885,7 +899,7 @@ export default function RoundTimerPage({
               interval timer
             </a>
             . For boxing-specific presets and terminology, use the{" "}
-            <a className="ilt-content-link" href="/boxing-timer">
+            <a className="ilt-content-link" href="/round-timer">
               boxing timer
             </a>
             . For two-player turn timing, use the{" "}

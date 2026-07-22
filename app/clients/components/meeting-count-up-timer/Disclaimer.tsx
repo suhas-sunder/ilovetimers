@@ -186,7 +186,7 @@ export default function Disclaimer() {
                 <div className="ilt-surface-muted p-3">
                   Want a simpler count up without topic splits?{" "}
                   <Link
-                    to="/count-up-timer"
+                    to="/stopwatch"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Count Up Timer

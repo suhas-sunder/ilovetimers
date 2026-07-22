@@ -60,7 +60,7 @@ export default function PopularUseCases({
       links: [
         { label: "Countdown Timer", href: "/countdown-timer" },
         { label: "Online Timer", href: "/online-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {
@@ -85,7 +85,7 @@ export default function PopularUseCases({
       notFor:
         "You want multiple timers running side-by-side for stations. Use Multiple Timers instead.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
         { label: "Workout Timer", href: "/workout-timer" },
       ],
@@ -99,7 +99,7 @@ export default function PopularUseCases({
         "You only want count-up timing. Use Stopwatch or Count Up Timer instead.",
       links: [
         { label: "Stopwatch", href: "/stopwatch" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Meeting Count Up Timer", href: "/meeting-count-up-timer" },
       ],
     },

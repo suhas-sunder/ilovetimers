@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/world-clock.tsx
 import type { Route } from "./+types/world-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,
@@ -29,12 +30,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/world-clock/HowItWorks";
-import Disclaimer from "~/clients/components/world-clock/Disclaimer";
-import FAQ from "~/clients/components/world-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/world-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/world-clock/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -546,7 +541,7 @@ export default function WorldClockPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/world-clock" />
         <ContentSection>
           <p>
             If current times are not enough and you need to choose a future
@@ -559,7 +554,7 @@ export default function WorldClockPage({
           <p>
             Need seconds or milliseconds visible on every selected city row?
             Try the{" "}
-            <a className="ilt-content-link" href="/world-clock-with-seconds">
+            <a className="ilt-content-link" href="/world-clock">
               world clock with seconds
             </a>{" "}
             or the{" "}
@@ -569,10 +564,6 @@ export default function WorldClockPage({
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
 
     </PageShell>

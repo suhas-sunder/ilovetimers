@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const failures = [];
@@ -33,7 +34,8 @@ const touchTargetSources = await Promise.all(
 );
 
 const configuredRoutes = ["/", ...[...routes.matchAll(/\broute\(\s*["']([^"']+)["']/g)].map((match) => `/${match[1]}`)];
-check(configuredRoutes.length === 136, `Expected 136 configured routes, found ${configuredRoutes.length}.`);
+const declaredDirectoryRoutes = SITEMAP_GROUPS.flatMap(({ routes }) => routes);
+check(configuredRoutes.length === declaredDirectoryRoutes.length, `Configured and declared route counts differ (${configuredRoutes.length} vs ${declaredDirectoryRoutes.length}).`);
 check(new Set(configuredRoutes).size === configuredRoutes.length, "Configured routes contain duplicates.");
 
 check(/sm:\s*["'][^"']*min-h-11/.test(foundation), "Small shared buttons no longer guarantee a 44px minimum height.");

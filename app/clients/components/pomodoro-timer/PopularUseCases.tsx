@@ -51,7 +51,7 @@ export default function PopularUseCases({
       notFor:
         "Open-ended elapsed time. Use Count Up Timer or Stopwatch instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
@@ -65,7 +65,7 @@ export default function PopularUseCases({
       links: [
         { label: "Focus Session Timer", href: "/focus-session-timer" },
         { label: "Time Blocking Clock", href: "/time-blocking-clock" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Silent Timer", href: "/silent-timer" },
       ],
     },

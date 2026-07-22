@@ -30,7 +30,7 @@ export default function PopularUseCases({
       notFor:
         "If you need a countdown to a hard stop. Use Countdown Timer or Presentation Timer instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Meeting Count Up Timer", href: "/meeting-count-up-timer" },
         { label: "Presentation Timer", href: "/presentation-timer" },
       ],
@@ -44,7 +44,7 @@ export default function PopularUseCases({
       notFor:
         "If you want structured work/rest cycles. Use Pomodoro Timer or Focus Session Timer instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Pomodoro Timer", href: "/pomodoro-timer" },
         { label: "Focus Session Timer", href: "/focus-session-timer" },
       ],
@@ -58,7 +58,7 @@ export default function PopularUseCases({
       notFor:
         "If you need programmed intervals (work/rest/rounds). Use HIIT Timer, Tabata Timer, or EMOM Timer instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "HIIT Timer", href: "/hiit-timer" },
         { label: "EMOM Timer", href: "/emom-timer" },
       ],
@@ -72,7 +72,7 @@ export default function PopularUseCases({
       notFor:
         "If you want a dedicated page tailored for speedruns. Use Speedrun Timer instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Speedrun Timer", href: "/speedrun-timer" },
         { label: "Stopwatch", href: "/stopwatch" },
       ],
@@ -86,7 +86,7 @@ export default function PopularUseCases({
       notFor:
         "If you need a countdown for incubation or reaction time. Use Lab Timer or Countdown Timer instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Lab Timer", href: "/lab-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
       ],
@@ -99,8 +99,8 @@ export default function PopularUseCases({
         "Shared displays, classroom/projector use, or timing across the room where readability matters most.",
       notFor: "If you only want a big countdown. Use Fullscreen Timer instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Online Timer", href: "/online-timer" },
       ],
     },

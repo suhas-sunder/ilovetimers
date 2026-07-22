@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useLocation } from "react-router";
-import posthog from "posthog-js";
-import { PostHogProvider } from "posthog-js/react";
+import type { PostHog } from "posthog-js";
 import {
   ANALYTICS_CONSENT_CHANGED_EVENT,
   getPostHogHost,
@@ -11,16 +10,20 @@ import {
   markAnalyticsStopped,
   readStoredAnalyticsConsent,
   sanitizeAnalyticsProperties,
+  setAnalyticsClient,
   stopAnalyticsCapture,
   trackPageview,
 } from "./clients/lib/analytics";
 import { AnalyticsConsentBanner } from "./clients/components/analytics/AnalyticsConsent";
 
-let posthogInitialized = false;
+let posthogClient: PostHog | null = null;
 
-function initializePostHog() {
+async function initializePostHog() {
   const key = getPostHogKey();
-  if (!key || posthogInitialized) return posthogInitialized;
+  if (!key) return null;
+  if (posthogClient) return posthogClient;
+
+  const { default: posthog } = await import("posthog-js");
 
   posthog.init(key, {
     api_host: getPostHogHost(),
@@ -62,8 +65,9 @@ function initializePostHog() {
     consent_persistence_name: "ilt-posthog-capture-consent",
     respect_dnt: true,
   });
-  posthogInitialized = true;
-  return true;
+  posthogClient = posthog;
+  setAnalyticsClient(posthog);
+  return posthog;
 }
 
 function AnalyticsRouteTracker({ enabled }: { enabled: boolean }) {
@@ -85,7 +89,11 @@ export function PHProvider({ children }: { children: ReactNode }) {
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
 
   useEffect(() => {
-    function applyConsent() {
+    let disposed = false;
+    let applicationVersion = 0;
+
+    async function applyConsent() {
+      const version = ++applicationVersion;
       if (!isAnalyticsConfigured()) {
         markAnalyticsStopped();
         setAnalyticsEnabled(false);
@@ -100,7 +108,9 @@ export function PHProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (!initializePostHog()) {
+      const posthog = await initializePostHog();
+      if (disposed || version !== applicationVersion) return;
+      if (!posthog || readStoredAnalyticsConsent() !== "allowed") {
         markAnalyticsStopped();
         setAnalyticsEnabled(false);
         return;
@@ -111,19 +121,21 @@ export function PHProvider({ children }: { children: ReactNode }) {
       setAnalyticsEnabled(true);
     }
 
-    applyConsent();
-    window.addEventListener(ANALYTICS_CONSENT_CHANGED_EVENT, applyConsent);
+    void applyConsent();
+    const onConsentChanged = () => void applyConsent();
+    window.addEventListener(ANALYTICS_CONSENT_CHANGED_EVENT, onConsentChanged);
 
     return () => {
-      window.removeEventListener(ANALYTICS_CONSENT_CHANGED_EVENT, applyConsent);
+      disposed = true;
+      window.removeEventListener(ANALYTICS_CONSENT_CHANGED_EVENT, onConsentChanged);
     };
   }, []);
 
   return (
-    <PostHogProvider client={posthog}>
+    <>
       <AnalyticsRouteTracker enabled={analyticsEnabled} />
       {children}
       <AnalyticsConsentBanner />
-    </PostHogProvider>
+    </>
   );
 }

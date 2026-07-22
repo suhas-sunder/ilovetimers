@@ -5,6 +5,11 @@ import { fileURLToPath } from "node:url";
 import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
 import { RELATED_TOOL_LINKS } from "../../app/clients/config/relatedTools.js";
 import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
+import {
+  STAGE3_NEW_REDIRECTS,
+  STAGE3_NOINDEX_ROUTE_SET,
+  STAGE3_REDIRECT_SOURCE_SET,
+} from "../../app/config/routeArchitecture.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const PORT = 3015;
@@ -151,25 +156,39 @@ const routes = parseConfiguredRoutes(routeSource);
 const routeSet = new Set(routes);
 const aliases = Object.keys(PERMANENT_REDIRECTS);
 const xmlPaths = parseXmlPaths(sitemapSource);
-const moreRoutes = parseMoreDirectoryRoutes(rootSource);
+const moreRoutes = parseMoreDirectoryRoutes(rootSource).filter(
+  (route) =>
+    !STAGE3_NOINDEX_ROUTE_SET.has(route) &&
+    !STAGE3_REDIRECT_SOURCE_SET.has(route),
+);
 const footerRoutes = parseFooterRoutes(footerSource);
 const sitemapDirectoryRoutes = SITEMAP_GROUPS.flatMap((group) => group.routes);
+const guideArticleRoutes = new Set(
+  (SITEMAP_GROUPS.find((group) => group.title === "Guides")?.routes ?? []).filter(
+    (route) => route !== "/guides",
+  ),
+);
 const relatedGroups = Object.keys(RELATED_TOOL_LINKS);
 
-check(routes.length === 136, `Expected 136 canonical routes; found ${routes.length}.`);
 check(new Set(routes).size === routes.length, "Configured canonical routes are not unique.");
-check(aliases.length === 17, `Expected 17 redirect aliases; found ${aliases.length}.`);
-check(xmlPaths.length === 133, `Expected 133 XML sitemap URLs; found ${xmlPaths.length}.`);
+check(aliases.length === STAGE3_REDIRECT_SOURCE_SET.size + 17, `Expected retained aliases plus Stage 3 redirects; found ${aliases.length}.`);
+check(xmlPaths.length === routes.length - STAGE3_NOINDEX_ROUTE_SET.size, `XML sitemap count does not match indexable canonical routes; found ${xmlPaths.length}.`);
 check(new Set(xmlPaths).size === xmlPaths.length, "XML sitemap URLs are not unique.");
-check(moreRoutes.length === 126, `Expected 126 More-directory tools; found ${moreRoutes.length}.`);
-check(footerRoutes.length === 136, `Expected 136 footer destinations; found ${footerRoutes.length}.`);
-check(relatedGroups.length === 81, `Expected 81 related-tool groups; found ${relatedGroups.length}.`);
-check(sitemapDirectoryRoutes.length === 136, `Expected 136 HTML sitemap entries; found ${sitemapDirectoryRoutes.length}.`);
+check(footerRoutes.includes("/guides"), "Footer must contain the Guides index.");
+check([...guideArticleRoutes].every((route) => !footerRoutes.includes(route)), "Guide articles must stay out of the global footer.");
+check(footerRoutes.length === routes.length - guideArticleRoutes.size, `Footer must contain every canonical route except guide articles; found ${footerRoutes.length}.`);
+check(relatedGroups.length === moreRoutes.length, `Related-tool and discoverable-tool counts differ (${relatedGroups.length} vs ${moreRoutes.length}).`);
+check(sitemapDirectoryRoutes.length === routes.length, `HTML sitemap must contain every canonical route; found ${sitemapDirectoryRoutes.length}.`);
 check(new Set(sitemapDirectoryRoutes).size === sitemapDirectoryRoutes.length, "HTML sitemap routes are not unique.");
 
 for (const route of routes) {
   check(sitemapDirectoryRoutes.includes(route), `Canonical route is missing from HTML sitemap data: ${route}`);
-  check(footerRoutes.includes(route), `Canonical route is missing from the full footer: ${route}`);
+  check(
+    footerRoutes.includes(route) === !guideArticleRoutes.has(route),
+    guideArticleRoutes.has(route)
+      ? `Guide article must stay out of the full footer: ${route}`
+      : `Canonical route is missing from the full footer: ${route}`,
+  );
 }
 for (const alias of aliases) {
   check(!routeSet.has(alias), `Redirect alias is also a live canonical route: ${alias}`);
@@ -181,7 +200,6 @@ for (const alias of aliases) {
 }
 
 const readinessRoutes = parseReportRoutes(readinessReport);
-check(readinessRoutes.length === 136, `Readiness report must contain 136 route rows; found ${readinessRoutes.length}.`);
 check(new Set(readinessRoutes).size === readinessRoutes.length, "Readiness report contains duplicate route rows.");
 for (const route of routes) {
   check(readinessRoutes.includes(route), `Readiness report is missing ${route}.`);
@@ -363,7 +381,7 @@ try {
     const faqPages = schemaNodes.filter((node) => node["@type"] === "FAQPage");
     const mainText = textContent(main);
     const expectedCanonical = route === "/" ? "https://www.ilovetimers.com" : `https://www.ilovetimers.com${route}`;
-    const shouldNoindex = ["/privacy", "/terms", "/cookies"].includes(route);
+    const shouldNoindex = STAGE3_NOINDEX_ROUTE_SET.has(route);
 
     check(response.status === 200, `${route} returned ${response.status}.`);
     check(titles.length === 1 && titles[0], `${route} must render one nonempty title.`);
@@ -400,7 +418,10 @@ try {
   for (const [source, destination] of Object.entries(PERMANENT_REDIRECTS)) {
     const response = await fetch(`${BASE}${source}?release=1`, { redirect: "manual" });
     check(response.status === 301, `${source} returned ${response.status}, expected 301.`);
-    check(response.headers.get("location") === `${destination}?release=1`, `${source} is not a one-hop, query-preserving redirect.`);
+    const expectedLocation = Object.hasOwn(STAGE3_NEW_REDIRECTS, source)
+      ? destination
+      : `${destination}?release=1`;
+    check(response.headers.get("location") === expectedLocation, `${source} is not a one-hop redirect with the declared parameter policy.`);
   }
 
   const unknown = await fetch(`${BASE}/release-readiness-unknown-route`, { redirect: "manual" });
@@ -443,6 +464,7 @@ const existingAuditFiles = [
   "specialty-tools.mjs",
   "ui-integrity.mjs",
   "accessibility.mjs",
+  "route-architecture.mjs",
 ];
 for (const auditFile of existingAuditFiles) {
   const result = spawnSync(process.execPath, [path.join(ROOT, "scripts/audits", auditFile)], {

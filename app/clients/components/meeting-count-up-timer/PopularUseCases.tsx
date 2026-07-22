@@ -32,7 +32,7 @@ export default function PopularUseCases({
         "You need time remaining with a hard end time. Use Meeting Timer for a countdown-based meeting.",
       links: [
         { label: "Meeting Timer", href: "/meeting-timer" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {
@@ -58,7 +58,7 @@ export default function PopularUseCases({
         "You want presenter-focused tools. Use Presentation Timer for talk and stage timing.",
       links: [
         { label: "Presentation Timer", href: "/presentation-timer" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {
@@ -70,7 +70,7 @@ export default function PopularUseCases({
       notFor:
         "You want a no-frills fullscreen countdown. Use Fullscreen Timer for a minimal large display.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Online Timer", href: "/online-timer" },
       ],
     },

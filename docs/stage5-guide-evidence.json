@@ -1,0 +1,1074 @@
+{
+  "generatedAt": "2026-07-22T00:28:41.295Z",
+  "stage": 5,
+  "repositoryRoot": "E:/PROJECTS-and-WORK/work-projects/all_projects/ilovetimers",
+  "scope": {
+    "guideIndex": "/guides",
+    "guideArticles": [
+      {
+        "path": "/guides/browser-timers-background-tabs",
+        "title": "Browser Timers in Background Tabs, Locked Phones, and Closed Tabs",
+        "directQuestion": "Will a browser timer keep working in a background tab, on a locked phone, or after I close the tab?",
+        "topic": "page lifecycle and background timing"
+      },
+      {
+        "path": "/guides/browser-timer-alarm-silent",
+        "title": "Why a Browser Timer or Alarm May Stay Silent",
+        "directQuestion": "Why did my browser timer finish without making a sound?",
+        "topic": "browser audio and silent alarms"
+      },
+      {
+        "path": "/guides/how-browser-timers-measure-time",
+        "title": "How Browser Timers Measure Elapsed Time and Handle Delays",
+        "directQuestion": "How can a browser timer stay accurate when animation frames and timer callbacks are delayed?",
+        "topic": "elapsed-time and target-time reconciliation"
+      },
+      {
+        "path": "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+        "title": "Unix Timestamps in Seconds, Milliseconds, and Microseconds",
+        "directQuestion": "Is this Unix timestamp in seconds, milliseconds, or microseconds?",
+        "topic": "Unix timestamp units"
+      },
+      {
+        "path": "/guides/daylight-saving-time-zone-conversions",
+        "title": "Daylight-Saving Gaps, Repeated Times, and Timezone Conversions",
+        "directQuestion": "Why can a local time be nonexistent or occur twice during a timezone conversion?",
+        "topic": "DST wall-time resolution"
+      },
+      {
+        "path": "/guides/browser-storage",
+        "title": "What iLoveTimers Stores in Your Browser",
+        "directQuestion": "What does iLoveTimers save in my browser, and what is not saved?",
+        "topic": "local browser storage"
+      }
+    ],
+    "canonicalRouteCount": 132,
+    "xmlSitemapUrlCount": 109
+  },
+  "guides": [
+    {
+      "path": "/guides/browser-timers-background-tabs",
+      "title": "Browser Timers in Background Tabs, Locked Phones, and Closed Tabs",
+      "slug": "browser-timers-background-tabs",
+      "primaryQuestion": "Will a browser timer keep working in a background tab, on a locked phone, or after I close the tab?",
+      "publicationDate": "2026-07-21",
+      "modificationDate": "2026-07-21",
+      "author": "Suhas Sunder",
+      "wordCount": 1004,
+      "implementationEvidence": [
+        {
+          "topic": "countdowns and stopwatches",
+          "claim": "Elapsed and remaining values are reconciled from monotonic performance readings rather than callback counts.",
+          "evidence": [
+            {
+              "file": "app/routes/countdown-timer.tsx",
+              "needle": "endRef.current = now + currentRemaining",
+              "line": 174
+            },
+            {
+              "file": "app/routes/stopwatch.tsx",
+              "needle": "const delta = now - (startRef.current ?? now)",
+              "line": 169
+            },
+            {
+              "file": "app/clients/hooks/useElapsedStopwatch.ts",
+              "needle": "performance.now() - startedAtRef.current",
+              "line": 29
+            }
+          ]
+        },
+        {
+          "topic": "visibility reconciliation",
+          "claim": "The shared elapsed stopwatch reconciles immediately when a running page becomes visible.",
+          "evidence": [
+            {
+              "file": "app/clients/hooks/useElapsedStopwatch.ts",
+              "needle": "visibilitychange",
+              "line": 61
+            }
+          ]
+        }
+      ],
+      "testEvidence": [
+        "scripts/tests/technical-time.mjs",
+        "scripts/audits/stage2-accuracy.mjs",
+        "Recorded Chromium three-second countdown reconciliation check"
+      ],
+      "browserApis": [
+        "performance.now",
+        "requestAnimationFrame",
+        "setTimeout",
+        "Page Visibility API"
+      ],
+      "externalServices": [],
+      "sourceLinks": [
+        "https://developer.chrome.com/docs/web-platform/page-lifecycle-api",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API"
+      ],
+      "verifiedClaims": [
+        "The production countdown computes remaining time from a target performance timestamp.",
+        "The shared elapsed-stopwatch hook reconciles when the page becomes visible.",
+        "Closing the page removes the JavaScript execution context used by these tools."
+      ],
+      "qualifiedClaims": [
+        "Hidden-page throttling, freezing, discard, device lock, and wake behavior vary by browser and operating system.",
+        "The recorded Chromium tab test did not simulate a physically locked mobile device."
+      ],
+      "claimsExcluded": [
+        "Guaranteed alarm delivery while a device sleeps",
+        "Continued execution after the tab or browser is closed",
+        "Identical lifecycle behavior in Chromium, Firefox, and Safari"
+      ],
+      "relatedTools": [
+        "/countdown-timer",
+        "/stopwatch",
+        "/online-alarm-clock",
+        "/interval-timer",
+        "/pomodoro-timer"
+      ],
+      "manualTests": [
+        "Ran a three-second countdown, opened a second tab, waited 4.3 seconds, and observed 0:00 with the Finished state."
+      ],
+      "browserTests": [
+        "Ran a three-second countdown, opened a second tab, waited 4.3 seconds, and observed 0:00 with the Finished state."
+      ],
+      "internalLinksIn": [
+        "/guides",
+        "/countdown-timer",
+        "/online-alarm-clock"
+      ],
+      "internalLinksOut": [
+        "/guides",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/browser-timer-alarm-silent",
+        "/countdown-timer",
+        "/stopwatch",
+        "/online-alarm-clock",
+        "/interval-timer",
+        "/pomodoro-timer"
+      ],
+      "structuredDataStatus": "passed",
+      "manualReviewStatus": "passed",
+      "remainingLimitations": [
+        "Hidden-page throttling, freezing, discard, device lock, and wake behavior vary by browser and operating system.",
+        "The recorded Chromium tab test did not simulate a physically locked mobile device."
+      ],
+      "evidenceDate": "2026-07-21"
+    },
+    {
+      "path": "/guides/browser-timer-alarm-silent",
+      "title": "Why a Browser Timer or Alarm May Stay Silent",
+      "slug": "browser-timer-alarm-silent",
+      "primaryQuestion": "Why did my browser timer finish without making a sound?",
+      "publicationDate": "2026-07-21",
+      "modificationDate": "2026-07-21",
+      "author": "Suhas Sunder",
+      "wordCount": 1002,
+      "implementationEvidence": [
+        {
+          "topic": "browser audio",
+          "claim": "Alarm audio creates or reuses Web Audio contexts and requests resume when suspended; the metronome schedules ahead on AudioContext.currentTime.",
+          "evidence": [
+            {
+              "file": "app/routes/online-alarm-clock.tsx",
+              "needle": "ctx.state === \"suspended\"",
+              "line": 182
+            },
+            {
+              "file": "app/routes/metronome.tsx",
+              "needle": "nextTimeRef.current = ctx.currentTime + 0.06",
+              "line": 325
+            }
+          ]
+        }
+      ],
+      "testEvidence": [
+        "scripts/tests/ui-regressions.mjs",
+        "scripts/audits/stage2-accuracy.mjs",
+        "Recorded Chromium Online Alarm Clock Test sound interaction"
+      ],
+      "browserApis": [
+        "AudioContext",
+        "OscillatorNode",
+        "GainNode",
+        "AudioContext.resume"
+      ],
+      "externalServices": [],
+      "sourceLinks": [
+        "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay",
+        "https://webaudio.github.io/web-audio-api/",
+        "https://developer.chrome.com/docs/web-platform/page-lifecycle-api"
+      ],
+      "verifiedClaims": [
+        "The alarm creates or reuses a Web Audio context and requests resume when it is suspended.",
+        "The metronome schedules tones from AudioContext.currentTime.",
+        "A user can run the alarm sound test before relying on a scheduled cue."
+      ],
+      "qualifiedClaims": [
+        "Audibility also depends on autoplay policy, volume, mute or silent mode, output routing, background policy, and device sleep.",
+        "Automation confirmed control execution and an empty warning/error log, not sound heard by a person."
+      ],
+      "claimsExcluded": [
+        "Bypassing browser or operating-system audio policy",
+        "Equivalence to an operating-system alarm",
+        "Guaranteed audible output"
+      ],
+      "relatedTools": [
+        "/online-alarm-clock",
+        "/alarm-timer",
+        "/countdown-timer",
+        "/interval-timer",
+        "/metronome"
+      ],
+      "manualTests": [
+        "Clicked Test sound from a user gesture in Chromium and observed no browser warning or error logs."
+      ],
+      "browserTests": [
+        "Clicked Test sound from a user gesture in Chromium and observed no browser warning or error logs."
+      ],
+      "internalLinksIn": [
+        "/guides",
+        "/online-alarm-clock",
+        "/metronome"
+      ],
+      "internalLinksOut": [
+        "/guides",
+        "/guides/browser-timers-background-tabs",
+        "/guides/how-browser-timers-measure-time",
+        "/online-alarm-clock",
+        "/alarm-timer",
+        "/countdown-timer",
+        "/interval-timer",
+        "/metronome"
+      ],
+      "structuredDataStatus": "passed",
+      "manualReviewStatus": "passed",
+      "remainingLimitations": [
+        "Audibility also depends on autoplay policy, volume, mute or silent mode, output routing, background policy, and device sleep.",
+        "Automation confirmed control execution and an empty warning/error log, not sound heard by a person."
+      ],
+      "evidenceDate": "2026-07-21"
+    },
+    {
+      "path": "/guides/how-browser-timers-measure-time",
+      "title": "How Browser Timers Measure Elapsed Time and Handle Delays",
+      "slug": "how-browser-timers-measure-time",
+      "primaryQuestion": "How can a browser timer stay accurate when animation frames and timer callbacks are delayed?",
+      "publicationDate": "2026-07-21",
+      "modificationDate": "2026-07-21",
+      "author": "Suhas Sunder",
+      "wordCount": 1000,
+      "implementationEvidence": [
+        {
+          "topic": "countdowns and stopwatches",
+          "claim": "Elapsed and remaining values are reconciled from monotonic performance readings rather than callback counts.",
+          "evidence": [
+            {
+              "file": "app/routes/countdown-timer.tsx",
+              "needle": "endRef.current = now + currentRemaining",
+              "line": 174
+            },
+            {
+              "file": "app/routes/stopwatch.tsx",
+              "needle": "const delta = now - (startRef.current ?? now)",
+              "line": 169
+            },
+            {
+              "file": "app/clients/hooks/useElapsedStopwatch.ts",
+              "needle": "performance.now() - startedAtRef.current",
+              "line": 29
+            }
+          ]
+        },
+        {
+          "topic": "visibility reconciliation",
+          "claim": "The shared elapsed stopwatch reconciles immediately when a running page becomes visible.",
+          "evidence": [
+            {
+              "file": "app/clients/hooks/useElapsedStopwatch.ts",
+              "needle": "visibilitychange",
+              "line": 61
+            }
+          ]
+        },
+        {
+          "topic": "browser audio",
+          "claim": "Alarm audio creates or reuses Web Audio contexts and requests resume when suspended; the metronome schedules ahead on AudioContext.currentTime.",
+          "evidence": [
+            {
+              "file": "app/routes/online-alarm-clock.tsx",
+              "needle": "ctx.state === \"suspended\"",
+              "line": 182
+            },
+            {
+              "file": "app/routes/metronome.tsx",
+              "needle": "nextTimeRef.current = ctx.currentTime + 0.06",
+              "line": 325
+            }
+          ]
+        }
+      ],
+      "testEvidence": [
+        "scripts/tests/technical-time.mjs",
+        "scripts/audits/stage2-accuracy.mjs",
+        "Recorded Chromium countdown reconciliation check"
+      ],
+      "browserApis": [
+        "performance.now",
+        "Date.now",
+        "requestAnimationFrame",
+        "setTimeout",
+        "AudioContext.currentTime"
+      ],
+      "externalServices": [],
+      "sourceLinks": [
+        "https://www.w3.org/TR/hr-time-3/",
+        "https://html.spec.whatwg.org/multipage/timers.html",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout"
+      ],
+      "verifiedClaims": [
+        "Countdown and stopwatch paths reconcile from a target or elapsed reference instead of counting callbacks.",
+        "Reaction timing uses a monotonic performance reading.",
+        "Metronome scheduling uses the audio context clock while live clock displays derive from wall-clock time."
+      ],
+      "qualifiedClaims": [
+        "Different tool families use different timing references and cannot share one universal precision claim.",
+        "Displayed milliseconds remain subject to input, rendering, display, browser, and device latency."
+      ],
+      "claimsExcluded": [
+        "Universal drift correction across every route",
+        "Millisecond-certified accuracy",
+        "Immunity to system-clock changes for wall-clock tools"
+      ],
+      "relatedTools": [
+        "/countdown-timer",
+        "/stopwatch",
+        "/reaction-time-test",
+        "/metronome",
+        "/clock-with-milliseconds"
+      ],
+      "manualTests": [
+        "Observed the production countdown reach the expected target after a delayed inspection interval."
+      ],
+      "browserTests": [
+        "Observed the production countdown reach the expected target after a delayed inspection interval."
+      ],
+      "internalLinksIn": [
+        "/guides",
+        "/countdown-timer",
+        "/stopwatch",
+        "/metronome"
+      ],
+      "internalLinksOut": [
+        "/guides",
+        "/guides/browser-timers-background-tabs",
+        "/guides/browser-timer-alarm-silent",
+        "/countdown-timer",
+        "/stopwatch",
+        "/reaction-time-test",
+        "/metronome",
+        "/clock-with-milliseconds"
+      ],
+      "structuredDataStatus": "passed",
+      "manualReviewStatus": "passed",
+      "remainingLimitations": [
+        "Different tool families use different timing references and cannot share one universal precision claim.",
+        "Displayed milliseconds remain subject to input, rendering, display, browser, and device latency."
+      ],
+      "evidenceDate": "2026-07-21"
+    },
+    {
+      "path": "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "title": "Unix Timestamps in Seconds, Milliseconds, and Microseconds",
+      "slug": "unix-timestamps-seconds-milliseconds-microseconds",
+      "primaryQuestion": "Is this Unix timestamp in seconds, milliseconds, or microseconds?",
+      "publicationDate": "2026-07-21",
+      "modificationDate": "2026-07-21",
+      "author": "Suhas Sunder",
+      "wordCount": 884,
+      "implementationEvidence": [
+        {
+          "topic": "Unix units",
+          "claim": "Auto mode uses explicit digit thresholds, normalizes seconds and microseconds to milliseconds, and truncates sub-millisecond Date input.",
+          "evidence": [
+            {
+              "file": "app/clients/lib/technicalTimeMath.js",
+              "needle": "if (integerPart.length >= 15) return \"microseconds\"",
+              "line": 64
+            },
+            {
+              "file": "app/clients/lib/technicalTimeMath.js",
+              "needle": "const milliseconds = Math.trunc(rawMilliseconds)",
+              "line": 97
+            }
+          ]
+        }
+      ],
+      "testEvidence": [
+        "scripts/tests/technical-time.mjs",
+        "scripts/audits/stage2-accuracy.mjs",
+        "Recorded Chromium Unix unit auto-detection checks"
+      ],
+      "browserApis": [
+        "Date",
+        "Intl.DateTimeFormat"
+      ],
+      "externalServices": [],
+      "sourceLinks": [
+        "https://www.w3.org/TR/hr-time-3/",
+        "https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-objects",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime"
+      ],
+      "verifiedClaims": [
+        "Auto mode treats 0 to 11 integer digits as seconds, 12 to 14 as milliseconds, and 15 or more as microseconds.",
+        "The converter normalizes seconds and microseconds to milliseconds for Date and truncates sub-millisecond input.",
+        "Equivalent example inputs in all three units resolve to the same UTC instant."
+      ],
+      "qualifiedClaims": [
+        "Digit-count detection is a convenience heuristic and explicit units remain safer for unusual ranges.",
+        "Readable local output applies the viewer's timezone after the timestamp instant is resolved."
+      ],
+      "claimsExcluded": [
+        "A Unix timestamp contains a timezone",
+        "Arbitrary-precision microsecond preservation in JavaScript Date",
+        "Support beyond the browser Date range"
+      ],
+      "relatedTools": [
+        "/unix-timestamp-converter",
+        "/epoch-unix-time-clock",
+        "/utc-clock",
+        "/milliseconds-converter"
+      ],
+      "manualTests": [
+        "Entered 1700000000, 1700000000000, and 1700000000000000 in auto mode; each resolved to 2023-11-14T22:13:20.000Z with the expected unit label."
+      ],
+      "browserTests": [
+        "Entered 1700000000, 1700000000000, and 1700000000000000 in auto mode; each resolved to 2023-11-14T22:13:20.000Z with the expected unit label."
+      ],
+      "internalLinksIn": [
+        "/guides",
+        "/unix-timestamp-converter",
+        "/epoch-unix-time-clock"
+      ],
+      "internalLinksOut": [
+        "/guides",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/unix-timestamp-converter",
+        "/epoch-unix-time-clock",
+        "/utc-clock",
+        "/milliseconds-converter"
+      ],
+      "structuredDataStatus": "passed",
+      "manualReviewStatus": "passed",
+      "remainingLimitations": [
+        "Digit-count detection is a convenience heuristic and explicit units remain safer for unusual ranges.",
+        "Readable local output applies the viewer's timezone after the timestamp instant is resolved."
+      ],
+      "evidenceDate": "2026-07-21"
+    },
+    {
+      "path": "/guides/daylight-saving-time-zone-conversions",
+      "title": "Daylight-Saving Gaps, Repeated Times, and Timezone Conversions",
+      "slug": "daylight-saving-time-zone-conversions",
+      "primaryQuestion": "Why can a local time be nonexistent or occur twice during a timezone conversion?",
+      "publicationDate": "2026-07-21",
+      "modificationDate": "2026-07-21",
+      "author": "Suhas Sunder",
+      "wordCount": 967,
+      "implementationEvidence": [
+        {
+          "topic": "DST wall-time resolution",
+          "claim": "The resolver finds zero, one, or multiple exact IANA-zone wall-time matches and sorts repeated-time matches chronologically.",
+          "evidence": [
+            {
+              "file": "app/clients/lib/technicalTimeMath.js",
+              "needle": "if (!matches.length) return { status: \"nonexistent\"",
+              "line": 415
+            },
+            {
+              "file": "app/clients/lib/technicalTimeMath.js",
+              "needle": "status: matches.length > 1 ? \"ambiguous\" : \"valid\"",
+              "line": 417
+            }
+          ]
+        }
+      ],
+      "testEvidence": [
+        "scripts/tests/technical-time.mjs",
+        "scripts/audits/stage2-accuracy.mjs",
+        "Recorded Chromium DST gap and repeated-time checks"
+      ],
+      "browserApis": [
+        "Intl.DateTimeFormat",
+        "browser-provided IANA timezone data"
+      ],
+      "externalServices": [],
+      "sourceLinks": [
+        "https://tc39.es/ecma402/#sec-iana-time-zone-database",
+        "https://www.iana.org/time-zones",
+        "https://tc39.es/proposal-temporal/docs/timezone.html"
+      ],
+      "verifiedClaims": [
+        "The production resolver classifies a wall time as nonexistent, valid, or ambiguous by matching IANA-zone parts.",
+        "America/New_York 2026-03-08 02:30 is rejected as nonexistent.",
+        "America/New_York 2026-11-01 01:30 is labeled ambiguous and resolves to the earlier occurrence, 2026-11-01T05:30:00.000Z."
+      ],
+      "qualifiedClaims": [
+        "Results depend on timezone rules available in the browser and operating system.",
+        "Historical rules and future political changes can differ from a fixed offset assumption."
+      ],
+      "claimsExcluded": [
+        "Ambiguous abbreviation-only conversion",
+        "A fixed offset is equivalent to a named timezone",
+        "The browser owns an independently updated authoritative timezone service"
+      ],
+      "relatedTools": [
+        "/time-zone-converter",
+        "/time-zone-meeting-planner",
+        "/world-clock",
+        "/utc-clock"
+      ],
+      "manualTests": [
+        "Verified the documented 2026 New York spring gap and fall repeat in the production converter using deterministic URL inputs."
+      ],
+      "browserTests": [
+        "Verified the documented 2026 New York spring gap and fall repeat in the production converter using deterministic URL inputs."
+      ],
+      "internalLinksIn": [
+        "/guides",
+        "/time-zone-converter",
+        "/time-zone-meeting-planner"
+      ],
+      "internalLinksOut": [
+        "/guides",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+        "/guides/how-browser-timers-measure-time",
+        "/time-zone-converter",
+        "/time-zone-meeting-planner",
+        "/world-clock",
+        "/utc-clock"
+      ],
+      "structuredDataStatus": "passed",
+      "manualReviewStatus": "passed",
+      "remainingLimitations": [
+        "Results depend on timezone rules available in the browser and operating system.",
+        "Historical rules and future political changes can differ from a fixed offset assumption."
+      ],
+      "evidenceDate": "2026-07-21"
+    },
+    {
+      "path": "/guides/browser-storage",
+      "title": "What iLoveTimers Stores in Your Browser",
+      "slug": "browser-storage",
+      "primaryQuestion": "What does iLoveTimers save in my browser, and what is not saved?",
+      "publicationDate": "2026-07-21",
+      "modificationDate": "2026-07-21",
+      "author": "Suhas Sunder",
+      "wordCount": 1271,
+      "implementationEvidence": [
+        {
+          "topic": "storage failure handling",
+          "claim": "Theme and route-local persistence fall back safely when storage is missing, invalid, or unavailable.",
+          "evidence": [
+            {
+              "file": "app/clients/hooks/useThemeMode.ts",
+              "needle": "return value === \"dark\" ? \"dark\" : \"light\"",
+              "line": 9
+            },
+            {
+              "file": "app/routes/astronomical-clock.tsx",
+              "needle": "if (loaded.corrupt)",
+              "line": 308
+            },
+            {
+              "file": "app/routes/multiple-timers.tsx",
+              "needle": "return safeParseJSON<StoredState>",
+              "line": 172
+            }
+          ]
+        }
+      ],
+      "testEvidence": [
+        "scripts/tests/sitewide-ui.mjs",
+        "scripts/audits/stage5-guides.mjs storage-key checks",
+        "Recorded Chromium speedcubing persistence and session-loss check"
+      ],
+      "browserApis": [
+        "localStorage",
+        "in-memory React state"
+      ],
+      "externalServices": [
+        "PostHog can receive consented, path-only analytics when configured; user-entered tool values are not intentionally captured."
+      ],
+      "sourceLinks": [
+        "https://html.spec.whatwg.org/multipage/webstorage.html",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage",
+        "https://storage.spec.whatwg.org/"
+      ],
+      "verifiedClaims": [
+        "The evidence inventory records eleven production storage categories and their exact keys.",
+        "Speedcubing preferences persist in localStorage while solve results remain page-session memory.",
+        "Theme and route-local readers catch unavailable or corrupt storage and fall back safely."
+      ],
+      "qualifiedClaims": [
+        "Private browsing, storage partitioning, browser policy, storage pressure, and user clearing can change persistence behavior.",
+        "Locally stored data is not a cloud backup or account record."
+      ],
+      "claimsExcluded": [
+        "All browser profiles retain localStorage indefinitely",
+        "Stored values are synchronized across devices",
+        "No external service ever receives site usage data after consent"
+      ],
+      "relatedTools": [
+        "/speedcubing-timer",
+        "/multiple-timers",
+        "/astronomical-clock",
+        "/bpm-tapper",
+        "/privacy"
+      ],
+      "manualTests": [
+        "Set Speedcubing Timer to Instant toggle with a 12-solve limit, recorded a result, reloaded, and confirmed preferences persisted while the result cleared."
+      ],
+      "browserTests": [
+        "Set Speedcubing Timer to Instant toggle with a 12-solve limit, recorded a result, reloaded, and confirmed preferences persisted while the result cleared."
+      ],
+      "internalLinksIn": [
+        "/guides",
+        "/countdown-timer",
+        "/pomodoro-timer",
+        "/hiit-timer",
+        "/time-zone-converter",
+        "/time-zone-meeting-planner",
+        "/speedcubing-timer",
+        "/multiple-timers",
+        "/astronomical-clock"
+      ],
+      "internalLinksOut": [
+        "/guides",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/speedcubing-timer",
+        "/multiple-timers",
+        "/astronomical-clock",
+        "/bpm-tapper",
+        "/privacy"
+      ],
+      "structuredDataStatus": "passed",
+      "manualReviewStatus": "passed",
+      "remainingLimitations": [
+        "Private browsing, storage partitioning, browser policy, storage pressure, and user clearing can change persistence behavior.",
+        "Locally stored data is not a cloud backup or account record."
+      ],
+      "evidenceDate": "2026-07-21"
+    }
+  ],
+  "implementationEvidence": [
+    {
+      "topic": "countdowns and stopwatches",
+      "claim": "Elapsed and remaining values are reconciled from monotonic performance readings rather than callback counts.",
+      "evidence": [
+        {
+          "file": "app/routes/countdown-timer.tsx",
+          "needle": "endRef.current = now + currentRemaining",
+          "line": 174
+        },
+        {
+          "file": "app/routes/stopwatch.tsx",
+          "needle": "const delta = now - (startRef.current ?? now)",
+          "line": 169
+        },
+        {
+          "file": "app/clients/hooks/useElapsedStopwatch.ts",
+          "needle": "performance.now() - startedAtRef.current",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "topic": "visibility reconciliation",
+      "claim": "The shared elapsed stopwatch reconciles immediately when a running page becomes visible.",
+      "evidence": [
+        {
+          "file": "app/clients/hooks/useElapsedStopwatch.ts",
+          "needle": "visibilitychange",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "topic": "browser audio",
+      "claim": "Alarm audio creates or reuses Web Audio contexts and requests resume when suspended; the metronome schedules ahead on AudioContext.currentTime.",
+      "evidence": [
+        {
+          "file": "app/routes/online-alarm-clock.tsx",
+          "needle": "ctx.state === \"suspended\"",
+          "line": 182
+        },
+        {
+          "file": "app/routes/metronome.tsx",
+          "needle": "nextTimeRef.current = ctx.currentTime + 0.06",
+          "line": 325
+        }
+      ]
+    },
+    {
+      "topic": "Unix units",
+      "claim": "Auto mode uses explicit digit thresholds, normalizes seconds and microseconds to milliseconds, and truncates sub-millisecond Date input.",
+      "evidence": [
+        {
+          "file": "app/clients/lib/technicalTimeMath.js",
+          "needle": "if (integerPart.length >= 15) return \"microseconds\"",
+          "line": 64
+        },
+        {
+          "file": "app/clients/lib/technicalTimeMath.js",
+          "needle": "const milliseconds = Math.trunc(rawMilliseconds)",
+          "line": 97
+        }
+      ]
+    },
+    {
+      "topic": "DST wall-time resolution",
+      "claim": "The resolver finds zero, one, or multiple exact IANA-zone wall-time matches and sorts repeated-time matches chronologically.",
+      "evidence": [
+        {
+          "file": "app/clients/lib/technicalTimeMath.js",
+          "needle": "if (!matches.length) return { status: \"nonexistent\"",
+          "line": 415
+        },
+        {
+          "file": "app/clients/lib/technicalTimeMath.js",
+          "needle": "status: matches.length > 1 ? \"ambiguous\" : \"valid\"",
+          "line": 417
+        }
+      ]
+    },
+    {
+      "topic": "storage failure handling",
+      "claim": "Theme and route-local persistence fall back safely when storage is missing, invalid, or unavailable.",
+      "evidence": [
+        {
+          "file": "app/clients/hooks/useThemeMode.ts",
+          "needle": "return value === \"dark\" ? \"dark\" : \"light\"",
+          "line": 9
+        },
+        {
+          "file": "app/routes/astronomical-clock.tsx",
+          "needle": "if (loaded.corrupt)",
+          "line": 308
+        },
+        {
+          "file": "app/routes/multiple-timers.tsx",
+          "needle": "return safeParseJSON<StoredState>",
+          "line": 172
+        }
+      ]
+    }
+  ],
+  "storageInventory": [
+    {
+      "feature": "theme",
+      "keys": [
+        "ilt-theme-mode"
+      ],
+      "evidence": "app/clients/hooks/useThemeMode.ts"
+    },
+    {
+      "feature": "analytics consent",
+      "keys": [
+        "ilt-analytics-consent"
+      ],
+      "evidence": "app/clients/lib/analytics.ts"
+    },
+    {
+      "feature": "astronomical clock preferences",
+      "keys": [
+        "astroClockPrefs"
+      ],
+      "evidence": "app/routes/astronomical-clock.tsx"
+    },
+    {
+      "feature": "BPM tapper settings and history",
+      "keys": [
+        "bpmTapper.settings.v1",
+        "bpmTapper.history.v1"
+      ],
+      "evidence": "app/routes/bpm-tapper.tsx"
+    },
+    {
+      "feature": "billable-hours clock",
+      "keys": [
+        "ilovetimers:billable-hours-clock:v1"
+      ],
+      "evidence": "app/routes/billable-hours-clock.tsx"
+    },
+    {
+      "feature": "event countdown",
+      "keys": [
+        "ilovetimers:event-countdown:v1"
+      ],
+      "evidence": "app/routes/event-countdown.tsx"
+    },
+    {
+      "feature": "meeting agenda",
+      "keys": [
+        "ilt-meeting-agenda-timer-items"
+      ],
+      "evidence": "app/routes/meeting-agenda-timer.tsx"
+    },
+    {
+      "feature": "multiple timers",
+      "keys": [
+        "ilovetimers:multiple-timers:v2"
+      ],
+      "evidence": "app/routes/multiple-timers.tsx"
+    },
+    {
+      "feature": "time blocking",
+      "keys": [
+        "ilovetimers:time-blocking-clock:v2"
+      ],
+      "evidence": "app/routes/time-blocking-clock.tsx"
+    },
+    {
+      "feature": "timezone converter",
+      "keys": [
+        "ilovetimers:time-zone-converter:v1"
+      ],
+      "evidence": "app/routes/time-zone-converter.tsx"
+    },
+    {
+      "feature": "speedcubing settings",
+      "keys": [
+        "sc_start_mode",
+        "sc_auto_save",
+        "sc_max_solves"
+      ],
+      "evidence": "app/routes/speedcubing-timer.tsx"
+    },
+    {
+      "feature": "named tool presets",
+      "keys": [
+        "ilovetimers:presets:countdown-timer:v1",
+        "ilovetimers:presets:pomodoro-timer:v1",
+        "ilovetimers:presets:hiit-timer:v1",
+        "ilovetimers:presets:time-zone-meeting-planner:v1"
+      ],
+      "evidence": "app/clients/lib/shareConfigurations.ts"
+    }
+  ],
+  "toolGuideLinks": {
+    "/countdown-timer": [
+      "/guides/how-browser-timers-measure-time",
+      "/guides/browser-timers-background-tabs",
+      "/guides/browser-storage"
+    ],
+    "/pomodoro-timer": [
+      "/guides/browser-storage"
+    ],
+    "/hiit-timer": [
+      "/guides/browser-storage"
+    ],
+    "/stopwatch": [
+      "/guides/how-browser-timers-measure-time"
+    ],
+    "/online-alarm-clock": [
+      "/guides/browser-timer-alarm-silent",
+      "/guides/browser-timers-background-tabs"
+    ],
+    "/metronome": [
+      "/guides/how-browser-timers-measure-time",
+      "/guides/browser-timer-alarm-silent"
+    ],
+    "/unix-timestamp-converter": [
+      "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+    ],
+    "/epoch-unix-time-clock": [
+      "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+    ],
+    "/time-zone-converter": [
+      "/guides/daylight-saving-time-zone-conversions",
+      "/guides/browser-storage"
+    ],
+    "/time-zone-meeting-planner": [
+      "/guides/daylight-saving-time-zone-conversions",
+      "/guides/browser-storage"
+    ],
+    "/speedcubing-timer": [
+      "/guides/browser-storage"
+    ],
+    "/multiple-timers": [
+      "/guides/browser-storage"
+    ],
+    "/astronomical-clock": [
+      "/guides/browser-storage"
+    ]
+  },
+  "authoritativeSources": [
+    "https://developer.chrome.com/docs/web-platform/page-lifecycle-api",
+    "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout",
+    "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API",
+    "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay",
+    "https://webaudio.github.io/web-audio-api/",
+    "https://www.w3.org/TR/hr-time-3/",
+    "https://html.spec.whatwg.org/multipage/timers.html",
+    "https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-objects",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime",
+    "https://tc39.es/ecma402/#sec-iana-time-zone-database",
+    "https://www.iana.org/time-zones",
+    "https://tc39.es/proposal-temporal/docs/timezone.html",
+    "https://html.spec.whatwg.org/multipage/webstorage.html",
+    "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage",
+    "https://storage.spec.whatwg.org/"
+  ],
+  "browserValidation": {
+    "status": "passed",
+    "testedAt": "2026-07-21",
+    "environment": "Codex Desktop 26.715.7063 on Windows using the in-app Chromium browser against the local React Router production build at 127.0.0.1:3030; the automation API did not expose the exact Chromium runtime version. Desktop viewports were 1440x1000 and 1365x900; the mobile viewport was 390x844.",
+    "scenarios": [
+      "Rendered the guides index, all six guide articles, and all eleven contextually linked tool routes in desktop light, desktop dark, mobile light, and mobile dark modes: 72 screenshots, 72 single-H1 checks, and zero document-level horizontal-overflow failures.",
+      "Verified all three guide tables remain inside horizontal-scroll wrappers at 390px rather than widening the document.",
+      "Rendered all 132 canonical non-redirect routes in Chromium: 132 paths matched, 132 single-H1 checks passed, canonical link metadata was present on every route, and no document-level horizontal overflow or hydration-error text was found.",
+      "Ran a three-second countdown, opened a second browser tab, waited 4.3 seconds, and confirmed the countdown reconciled to 0:00 with the Finished state. The automation environment continued to report the countdown page as visible, so this does not simulate operating-system freezing or a physically locked device.",
+      "Activated the Online Alarm Clock Test sound control from a user-gesture click and observed no browser warning or error logs.",
+      "Changed Speedcubing Timer preferences to Instant toggle and 12 maximum session solves, recorded a solve, reloaded, and confirmed the preferences persisted while the session result cleared.",
+      "Entered America/New_York 2026-03-08 02:30 and confirmed the converter rejected the nonexistent spring-forward time; entered 2026-11-01 01:30 and confirmed the earlier-occurrence ambiguity warning plus 2026-11-01T05:30:00.000Z.",
+      "Entered 1700000000 seconds, 1700000000000 milliseconds, and 1700000000000000 microseconds in auto-detect mode; all three resolved to 2023-11-14T22:13:20.000Z with the expected unit labels.",
+      "Collected warning and error logs after the representative interaction tests and the 132-route sweep; no warnings or errors were reported."
+    ],
+    "screenshots": [
+      "Guide and changed-tool matrix: 18 routes x desktop/mobile x light/dark = 72 captured viewport screenshots.",
+      "Representative visual inspection: guides index in desktop light and dark.",
+      "Representative visual inspection: browser-storage guide in desktop dark and 390px mobile light.",
+      "Representative visual inspection: Unix-units guide in 390px mobile dark and DST guide in desktop light."
+    ],
+    "manualTestRecords": [
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/countdown-timer",
+        "setup": "Production build, three-second countdown, second browser tab available.",
+        "steps": [
+          "Entered 0 minutes and 3 seconds, applied the value, and started the countdown.",
+          "Opened the background-timer guide in a second tab and waited 4.3 seconds.",
+          "Read the countdown route state after the wait."
+        ],
+        "observedResult": "The countdown displayed 0:00 and the Finished state.",
+        "limitations": "The automation environment continued to report the countdown page as visible, so this did not reproduce operating-system page freezing, device sleep, or a physically locked phone."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/online-alarm-clock",
+        "setup": "Production build with Sound enabled.",
+        "steps": [
+          "Located the Test sound control from the rendered accessibility tree.",
+          "Clicked Test sound as a user gesture.",
+          "Collected browser warning and error logs."
+        ],
+        "observedResult": "The control executed and no warning or error logs were reported.",
+        "limitations": "Automation cannot confirm that a person heard audio through the speakers or reproduce every mute, silent-mode, output-routing, or background policy."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/speedcubing-timer",
+        "setup": "Production build with an empty session.",
+        "steps": [
+          "Selected Instant toggle and set the maximum session solves to 12.",
+          "Started and stopped a solve to create a session result.",
+          "Reloaded the route."
+        ],
+        "observedResult": "Instant toggle and the 12-solve preference persisted; the session result cleared and the empty-session message returned.",
+        "limitations": "This proves the tested preference/session distinction in one Chromium profile; it does not prove indefinite retention in private browsing or after site-data clearing."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/time-zone-converter",
+        "setup": "Production build with America/New_York as the source zone and Europe/London as the destination.",
+        "steps": [
+          "Loaded 2026-03-08 02:30 through deterministic route parameters.",
+          "Loaded 2026-11-01 01:30 through deterministic route parameters.",
+          "Read the rendered status and ISO output after client hydration."
+        ],
+        "observedResult": "The spring time was rejected as nonexistent; the fall time was labeled as occurring twice, selected the earlier occurrence, and produced 2026-11-01T05:30:00.000Z.",
+        "limitations": "Results use the IANA timezone data supplied by this runtime and do not prove every browser or future timezone-rule update."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/unix-timestamp-converter",
+        "setup": "Production build with Auto-detect selected.",
+        "steps": [
+          "Entered 1700000000.",
+          "Entered 1700000000000.",
+          "Entered 1700000000000000 and compared the rendered unit labels and ISO values."
+        ],
+        "observedResult": "The inputs were labeled seconds, milliseconds, and microseconds respectively; all three resolved to 2023-11-14T22:13:20.000Z.",
+        "limitations": "The test covers the production thresholds and example range, not every negative, fractional, or out-of-Date-range value."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/guides and seventeen changed routes",
+        "setup": "Production build at desktop 1440x1000 and mobile 390x844 in light and dark modes.",
+        "steps": [
+          "Rendered the guide index, six guide articles, and eleven changed tool pages in each viewport and theme combination.",
+          "Captured 72 viewport screenshots and checked H1 count and document width.",
+          "Inspected the three mobile guide tables for scroll containment."
+        ],
+        "observedResult": "All 72 renders had one H1 and no document-level horizontal overflow; all three tables stayed inside horizontal-scroll wrappers.",
+        "limitations": "This visual matrix covers the recorded Chromium environment, not Safari, Firefox, physical phones, or assistive-technology combinations."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "All 132 canonical routes",
+        "setup": "Production build at 1365x900.",
+        "steps": [
+          "Loaded every non-redirect canonical path from the route architecture manifest.",
+          "Checked final path, one H1, canonical link presence, document overflow, and hydration-error text.",
+          "Collected warning and error logs after the sweep."
+        ],
+        "observedResult": "132 of 132 paths matched with one H1, canonical metadata, no document overflow, no hydration-error text, and no warning or error logs.",
+        "limitations": "The sweep verifies the local production build in one Chromium runtime and does not replace deployed monitoring or cross-browser testing."
+      }
+    ],
+    "limitations": [
+      "The automation environment cannot reproduce physical device lock, operating-system sleep, browser process discard, or every background-throttling policy.",
+      "The sound control executed without console errors, but automation cannot confirm that a human heard audio through the machine's speakers.",
+      "The automation API did not expose the exact Chromium runtime version; the host Codex Desktop build is recorded instead.",
+      "This pass used the in-app Chromium browser; Firefox, Safari, mobile browser shells, and assistive-technology combinations were not independently exercised.",
+      "Corrupt or inaccessible localStorage fallback is covered by source review and automated safeguards rather than by mutating browser storage during this visual pass."
+    ]
+  },
+  "claimBoundaries": [
+    "Browser tests cover Chromium on the recorded Windows environment, not every browser or mobile operating system.",
+    "Audible output is not machine-verified; the test records control response and console state, while a person must confirm what speakers produce.",
+    "No guide claims guaranteed background execution, official time synchronization, certified precision, or durable cloud storage."
+  ],
+  "stage6StorageUpdate": {
+    "status": "reviewed",
+    "reviewedAt": "2026-07-21",
+    "shareRoutes": 5,
+    "presetRoutes": 4,
+    "evidence": "docs/stage6-share-preset-evidence.json"
+  }
+}

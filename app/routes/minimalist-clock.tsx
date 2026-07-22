@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/minimalist-clock.tsx
 import type { Route } from "./+types/minimalist-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -31,12 +32,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/minimalist-clock/HowItWorks";
-import Disclaimer from "~/clients/components/minimalist-clock/Disclaimer";
-import FAQ from "~/clients/components/minimalist-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/minimalist-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/minimalist-clock/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -50,7 +45,7 @@ export function meta({}: Route.MetaArgs) {
   return [
     { title },
     { name: "description", content: description },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -561,27 +556,23 @@ export default function MinimalistClockPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/minimalist-clock" />
         <ContentSection>
           <p>
             Need a clock page centered on immediate room or second-monitor
             display? The{" "}
-            <a className="ilt-content-link" href="/full-screen-clock">
+            <a className="ilt-content-link" href="/digital-clock">
               full screen clock
             </a>{" "}
             keeps the large live time display first and makes fullscreen the
             primary action below the clock. For maximum distance readability,
             use the{" "}
-            <a className="ilt-content-link" href="/big-digital-clock">
+            <a className="ilt-content-link" href="/digital-clock">
               big digital clock
             </a>
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
 
     </PageShell>

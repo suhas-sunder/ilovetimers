@@ -1,5 +1,5 @@
 import type { Route } from "./+types/24-hour-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,

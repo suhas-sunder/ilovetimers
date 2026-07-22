@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/binary-clock.tsx
 import type { Route } from "./+types/binary-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -21,12 +22,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import Disclaimer from "~/clients/components/binary-clock/Disclaimer";
-import FAQ from "~/clients/components/binary-clock/FAQ";
-import HowItWorks from "~/clients/components/binary-clock/HowItWorks";
-import KeyboardShortcuts from "~/clients/components/binary-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/binary-clock/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -809,11 +804,7 @@ export default function BinaryClockPage({
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <Stage4RouteContent routePath="/binary-clock" />
       </SeoBand>
 
     </PageShell>

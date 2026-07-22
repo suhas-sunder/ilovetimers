@@ -115,7 +115,7 @@ export default function Disclaimer() {
                 </li>
                 <li className="ilt-surface-muted p-3">
                   <strong className="text-[var(--ilt-text-primary)]">Travel + scouting</strong>:
-                  use GPS to get accurate times for a viewpoint, trail, or
+                  use GPS to set coordinates for a viewpoint, trail, or
                   neighborhood.
                 </li>
                 <li className="ilt-surface-muted p-3">

@@ -12,7 +12,6 @@ export const SITEMAP_GROUPS = Object.freeze([
       "/countdown-timer",
       "/timer-clock",
       "/online-timer",
-      "/fullscreen-timer",
       "/silent-timer",
       "/visual-timer",
       "/multiple-timers",
@@ -37,7 +36,6 @@ export const SITEMAP_GROUPS = Object.freeze([
       "/timer-stopwatch",
       "/stopwatch",
       "/stopwatch-with-milliseconds",
-      "/count-up-timer",
       "/binary-stopwatch",
       "/speedcubing-timer",
       "/speedrun-timer",
@@ -74,20 +72,13 @@ export const SITEMAP_GROUPS = Object.freeze([
       "/emom-timer",
       "/amrap-timer",
       "/round-timer",
-      "/boxing-timer",
       "/pace-timer",
     ],
   },
   {
     title: "Kitchen timers",
     description: "General cooking timers and focused timers for tea, eggs, and pizza.",
-    routes: [
-      "/cooking-timer",
-      "/kitchen-timer",
-      "/tea-timer",
-      "/egg-timer",
-      "/pizza-timer",
-    ],
+    routes: ["/kitchen-timer", "/tea-timer", "/egg-timer", "/pizza-timer"],
   },
   {
     title: "Classroom, meeting, presentation, and lab",
@@ -116,24 +107,12 @@ export const SITEMAP_GROUPS = Object.freeze([
   {
     title: "Digital and local clocks",
     description: "Readable local-time displays from minimal clocks to large digital views.",
-    routes: [
-      "/current-local-time",
-      "/digital-clock",
-      "/big-digital-clock",
-      "/clock-with-seconds",
-      "/minimalist-clock",
-    ],
+    routes: ["/current-local-time", "/digital-clock", "/minimalist-clock"],
   },
   {
     title: "Analog and fullscreen clocks",
     description: "Analog clock styles and fullscreen displays for rooms, screens, and presentations.",
-    routes: [
-      "/analog-clock",
-      "/analog-clock-with-second-hand",
-      "/full-screen-analog-clock",
-      "/smooth-second-hand-clock",
-      "/full-screen-clock",
-    ],
+    routes: ["/analog-clock"],
   },
   {
     title: "Millisecond, UTC, Unix, and exact-style displays",
@@ -154,7 +133,6 @@ export const SITEMAP_GROUPS = Object.freeze([
     description: "Compare current times, convert a specific time, or plan a meeting across zones.",
     routes: [
       "/world-clock",
-      "/world-clock-with-seconds",
       "/time-zone-converter",
       "/time-zone-meeting-planner",
     ],
@@ -218,6 +196,19 @@ export const SITEMAP_GROUPS = Object.freeze([
       "/hexadecimal-clock",
       "/roman-numeral-clock",
       "/retro-flip-clock",
+    ],
+  },
+  {
+    title: "Guides",
+    description: "Implementation-backed explanations of browser timing, audio, timestamps, timezones, and local data.",
+    routes: [
+      "/guides",
+      "/guides/browser-timers-background-tabs",
+      "/guides/browser-timer-alarm-silent",
+      "/guides/how-browser-timers-measure-time",
+      "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "/guides/daylight-saving-time-zone-conversions",
+      "/guides/browser-storage",
     ],
   },
   {

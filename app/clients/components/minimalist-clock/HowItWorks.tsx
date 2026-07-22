@@ -232,7 +232,7 @@ export default function HowItWorks({
                 If you need a countdown, use{" "}
                 <Link
                   className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                  to="/fullscreen-timer"
+                  to="/online-timer"
                 >
                   Fullscreen Timer
                 </Link>
@@ -437,7 +437,7 @@ export default function HowItWorks({
               . Timers:{" "}
               <Link
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                to="/fullscreen-timer"
+                to="/online-timer"
               >
                 Fullscreen Timer
               </Link>{" "}
@@ -478,7 +478,7 @@ export default function HowItWorks({
             <PillLink to="/world-clock">World Clock</PillLink>
             <PillLink to="/utc-clock">UTC Clock</PillLink>
             <PillLink to="/time-zone-converter">Time Zone Converter</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
           </div>
         </div>
@@ -596,7 +596,7 @@ export default function HowItWorks({
             <strong className="text-[var(--ilt-text-primary)]">Need a timer?</strong> Use{" "}
             <Link
               className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-              to="/fullscreen-timer"
+              to="/online-timer"
             >
               Fullscreen Timer
             </Link>{" "}

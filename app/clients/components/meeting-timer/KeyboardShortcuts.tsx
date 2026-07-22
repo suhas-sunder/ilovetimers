@@ -105,12 +105,12 @@ export function AccuracyAndPrivacySection() {
 
           <div className="ilt-surface-muted p-4">
             <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-              Changing minutes resets the timer
+              Pause before changing minutes
             </div>
             <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
-              Switching presets or editing Custom minutes stops the timer and
-              resets the countdown to the new duration. This makes it easy to
-              move to the next agenda timebox.
+              Presets and Custom minutes are disabled while the timer runs.
+              Pause first, then choose a duration. The countdown resets to that
+              duration and returns to Ready.
             </p>
           </div>
 
@@ -164,9 +164,9 @@ export function AccuracyAndPrivacySection() {
             <div className="ilt-surface-muted p-3 text-sm text-[var(--ilt-text-secondary)]">
               <div className="font-semibold text-[var(--ilt-text-primary)]">Minute changes</div>
               <p className="mt-1 leading-relaxed">
-                Changing presets or Custom minutes fully resets the timer state:
-                it stops running, clears any pending end time, and sets the new
-                duration as the remaining time.
+                After you pause, changing a preset or Custom minutes fully
+                resets the timer state. It clears the elapsed portion and sets
+                the new duration as the remaining time.
               </p>
             </div>
 

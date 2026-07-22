@@ -1,6 +1,6 @@
 // app/routes/visual-timer.tsx
 import type { Route } from "./+types/visual-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -704,13 +704,13 @@ export default function VisualTimerPage({
       <ToolHero
         display={<VisualTimerCard />}
         title="Visual Timer"
-        description="Show time with a shrinking bar or ring so the remaining time is easy to understand at a glance."
+        description="Show remaining time with a shrinking bar or ring beside the numeric countdown."
       />
 
       <SeoBand title="How this timer works">
         <p>
           Visual Timer pairs a large countdown with a simple bar or ring
-          indicator so time passing can be understood at a glance. The display
+          indicator so the changing proportion remains visible. The display
           stays first, while duration presets, custom time, mode controls,
           show-time settings, fullscreen, and optional sound remain below it.
         </p>
@@ -756,7 +756,7 @@ export default function VisualTimerPage({
             silent timer
           </a>
           . For a large projected countdown, try the{" "}
-          <a className="ilt-content-link" href="/fullscreen-timer">
+          <a className="ilt-content-link" href="/online-timer">
             fullscreen timer
           </a>
           . For a standard countdown with more timing options, use the{" "}

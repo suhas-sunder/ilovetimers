@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/focus-session-timer.tsx
 import type { Route } from "./+types/focus-session-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -24,12 +25,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/focus-session-timer/HowItWorks";
-import Disclaimer from "~/clients/components/focus-session-timer/Disclaimer";
-import FAQ from "~/clients/components/focus-session-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/focus-session-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/focus-session-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -55,7 +50,7 @@ export function meta({}: Route.MetaArgs) {
         "fullscreen focus timer",
       ].join(", "),
     },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -564,7 +559,7 @@ export default function FocusSessionTimerPage({
             for a standalone rest.
           </p>
         </ContentSection>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/focus-session-timer" />
         <ContentSection title="Related preset focus blocks">
           <p>
             For a fixed countdown without focus-session settings, open the{" "}
@@ -579,10 +574,6 @@ export default function FocusSessionTimerPage({
             sound options, and completion guidance.
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

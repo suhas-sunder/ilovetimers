@@ -1,6 +1,6 @@
 // app/routes/military-time-clock.tsx
 import type { Route } from "./+types/military-time-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,

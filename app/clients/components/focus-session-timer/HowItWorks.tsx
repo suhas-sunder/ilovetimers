@@ -457,7 +457,7 @@ export default function HowItWorks({
             <PillLink to="/pomodoro-timer">Pomodoro Timer</PillLink>
             <PillLink to="/break-timer">Break Timer</PillLink>
             <PillLink to="/silent-timer">Silent Timer</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
             <PillLink to="/study-timer">Study Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>

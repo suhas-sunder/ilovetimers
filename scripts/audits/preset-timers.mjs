@@ -8,6 +8,10 @@ import {
 } from "../../app/clients/config/presetTimers.js";
 import { RELATED_TOOL_LINKS } from "../../app/clients/config/relatedTools.js";
 import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
+import {
+  STAGE3_NOINDEX_ROUTE_SET,
+  STAGE3_REDIRECT_SOURCE_SET,
+} from "../../app/config/routeArchitecture.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const failures = [];
@@ -95,9 +99,18 @@ const [
 
 const configuredRoutes = configuredRoutesFrom(routeSource);
 const xmlPaths = xmlPathsFrom(xmlSitemapSource);
-const moreDirectoryRoutes = moreDirectoryRoutesFrom(rootSource);
+const moreDirectoryRoutes = moreDirectoryRoutesFrom(rootSource).filter(
+  (route) =>
+    !STAGE3_NOINDEX_ROUTE_SET.has(route) &&
+    !STAGE3_REDIRECT_SOURCE_SET.has(route),
+);
 const footerRoutes = footerRoutesFrom(footerSource);
 const htmlSitemapRoutes = SITEMAP_GROUPS.flatMap((group) => group.routes);
+const guideArticleRoutes = new Set(
+  (SITEMAP_GROUPS.find((group) => group.title === "Guides")?.routes ?? []).filter(
+    (route) => route !== "/guides",
+  ),
+);
 const redirects = new Set(Object.keys(PERMANENT_REDIRECTS));
 
 const fixedConfigs = Object.values(presetDurationTimerConfigs);
@@ -190,9 +203,15 @@ for (const config of fixedConfigs) {
 
 for (const config of family) {
   check(configuredRoutes.has(config.path), `${config.path} is not configured.`);
-  check(xmlPaths.includes(config.path), `${config.path} is missing from the XML sitemap.`);
+  check(
+    xmlPaths.includes(config.path) === !STAGE3_NOINDEX_ROUTE_SET.has(config.path),
+    `${config.path} has incorrect XML sitemap indexability.`,
+  );
   check(htmlSitemapRoutes.includes(config.path), `${config.path} is missing from the HTML sitemap.`);
-  check(moreDirectoryRoutes.includes(config.path), `${config.path} is missing from the More directory.`);
+  check(
+    moreDirectoryRoutes.includes(config.path) === !STAGE3_NOINDEX_ROUTE_SET.has(config.path),
+    `${config.path} has incorrect More-directory prominence.`,
+  );
   check(footerRoutes.includes(config.path), `${config.path} is missing from the footer.`);
 
   for (const link of config.relatedLinks) {
@@ -248,12 +267,19 @@ check(
   "Seconds timer application schema is not tied to its content configuration.",
 );
 
-check(configuredRoutes.size === 136, `Expected 136 configured routes; found ${configuredRoutes.size}.`);
-check(Object.keys(PERMANENT_REDIRECTS).length === 17, "Expected 17 permanent redirects.");
-check(xmlPaths.length === 133, `Expected 133 XML sitemap URLs; found ${xmlPaths.length}.`);
-check(moreDirectoryRoutes.length === 126, `Expected 126 More-directory tools; found ${moreDirectoryRoutes.length}.`);
-check(footerRoutes.length === 136, `Expected 136 footer routes; found ${footerRoutes.length}.`);
-check(Object.keys(RELATED_TOOL_LINKS).length === 81, "Expected 81 centralized related-tool groups.");
+check(configuredRoutes.size === htmlSitemapRoutes.length, `Configured and HTML-directory route counts differ (${configuredRoutes.size} vs ${htmlSitemapRoutes.length}).`);
+check(Object.keys(PERMANENT_REDIRECTS).length === STAGE3_REDIRECT_SOURCE_SET.size + 17, "Permanent redirect count does not match the retained aliases plus Stage 3 decisions.");
+check(xmlPaths.length === configuredRoutes.size - STAGE3_NOINDEX_ROUTE_SET.size, `XML sitemap count does not match indexable canonical routes; found ${xmlPaths.length}.`);
+check(footerRoutes.includes("/guides"), "Footer must contain the Guides index.");
+check(
+  [...guideArticleRoutes].every((route) => !footerRoutes.includes(route)),
+  "Guide articles must stay out of the global footer.",
+);
+check(
+  footerRoutes.length === configuredRoutes.size - guideArticleRoutes.size,
+  `Footer must contain every canonical route except guide articles; found ${footerRoutes.length}.`,
+);
+check(Object.keys(RELATED_TOOL_LINKS).length === moreDirectoryRoutes.length, "Contextual-link groups must cover every discoverable indexable tool.");
 
 if (failures.length > 0) {
   console.error("Preset timer audit failed:");

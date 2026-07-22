@@ -105,7 +105,8 @@ export default function HowItWorks({
               This page is not a meeting guide. It does not try to teach
               facilitation or sell a framework. It is a tool page with a simple
               workflow: set the timebox for the current agenda item, run it,
-              then move to the next item by changing minutes or pressing Reset.
+              then pause before choosing a new duration for the next item. Press
+              Reset when you want to repeat the same duration.
               Fullscreen is included because most real meetings need a
               room-friendly display that works on a TV, projector, or shared
               screen.
@@ -197,9 +198,9 @@ export default function HowItWorks({
                 What changes minutes means on this page
               </div>
               <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
-                Changing minutes is a deliberate reset. If you are running a
-                10-minute timebox and switch to 5 minutes for the next topic,
-                the timer stops and updates the display to{" "}
+                Duration controls are disabled while the timer runs. If you are
+                running a 10-minute timebox, pause it before choosing 5 minutes
+                for the next topic. The display then resets to{" "}
                 <span className="font-semibold text-[var(--ilt-text-primary)]">5:00</span>. This
                 is useful for agendas because it prevents accidental carryover
                 and makes each item clean and repeatable.
@@ -263,8 +264,8 @@ export default function HowItWorks({
             A meeting timebox only works if it is visible and easy to restart.
             This timer is designed around that reality. The display is large,
             the workflow is repeatable, and the “next agenda item” action is
-            fast: you either change minutes (for a new timebox) or press Reset
-            (to rerun the same timebox). That sounds small, but it matters in
+            fast: pause and change minutes for a new timebox, or press Reset to
+            rerun the same timebox. That sounds small, but it matters in
             real meetings. People do not want to manage settings, create a
             schedule, or juggle multiple timers. They want a single page they
             can keep open and run all meeting long.
@@ -371,7 +372,7 @@ export default function HowItWorks({
 
             <ExampleBlock
               title="Scenario 5: Workshop segments (switch durations as you go)"
-              subtitle="Minute changes are a clean “next topic” action."
+              subtitle="Pause before setting the next segment."
               lines={[
                 "Agenda:",
                 "- 12m intro",
@@ -381,8 +382,8 @@ export default function HowItWorks({
                 "",
                 "Run:",
                 "- Type 12 in Custom minutes → display is 12:00 (Ready). Start.",
-                "- When done, type 25 → timer stops and display becomes 25:00.",
-                "- Start for group work; then switch to 7:00 and 5:00.",
+                "- Pause, type 25, and confirm the display changes to 25:00.",
+                "- Start for group work. Pause before selecting 7:00 or 5:00.",
                 "",
                 "What you see:",
                 "- Each agenda item begins with a fresh countdown.",
@@ -475,7 +476,7 @@ export default function HowItWorks({
             <PillLink to="/event-countdown">Event Countdown</PillLink>
             <PillLink to="/time-blocking-clock">Time Blocking Clock</PillLink>
             <PillLink to="/silent-timer">Silent Timer</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>
           </div>
         </div>

@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import { Readable } from "node:stream";
 import { getPermanentRedirect } from "./app/config/redirects.js";
+import { STAGE3_REDIRECT_SOURCE_SET } from "./app/config/routeArchitecture.js";
 
 // Short-circuit the type-checking of the built output.
 const BUILD_PATH = "./build/server/server.js";
@@ -14,6 +15,16 @@ const app = express();
 
 app.use(compression());
 app.disable("x-powered-by");
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(self), fullscreen=(self)",
+  );
+  next();
+});
 
 app.use((req, res, next) => {
   const url = new URL(req.originalUrl || req.url, "http://localhost");
@@ -25,7 +36,10 @@ app.use((req, res, next) => {
     return;
   }
 
-  res.redirect(301, destination + url.search);
+  const preservedSearch = STAGE3_REDIRECT_SOURCE_SET.has(normalizedPath)
+    ? ""
+    : url.search;
+  res.redirect(301, destination + preservedSearch);
 });
 
 /**

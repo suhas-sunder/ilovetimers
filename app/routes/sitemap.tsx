@@ -808,6 +808,55 @@ const LINK_CATALOG_SECTIONS: SitemapSection[] = [
     ],
   },
   {
+    title: "Guides",
+    description:
+      "Implementation-backed guides to browser timer behavior, audio, timestamp units, timezone transitions, and local storage.",
+    links: [
+      {
+        title: "iLoveTimers Guides",
+        href: "/guides",
+        description:
+          "Browse focused guides to browser timing, audio, Unix timestamps, timezone behavior, and local data.",
+      },
+      {
+        title: "Browser Timers in Background Tabs",
+        href: "/guides/browser-timers-background-tabs",
+        description:
+          "Learn what hidden, frozen, discarded, locked, and closed page states mean for a browser timer.",
+      },
+      {
+        title: "Why a Browser Alarm May Stay Silent",
+        href: "/guides/browser-timer-alarm-silent",
+        description:
+          "Troubleshoot autoplay policy, muted output, suspended audio, background pages, and device sleep.",
+      },
+      {
+        title: "How Browser Timers Measure Time",
+        href: "/guides/how-browser-timers-measure-time",
+        description:
+          "See how monotonic elapsed-time and target-time reconciliation prevent ordinary callback drift.",
+      },
+      {
+        title: "Unix Timestamp Units",
+        href: "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+        description:
+          "Distinguish Unix seconds, milliseconds, and microseconds and avoid 1,000-times unit errors.",
+      },
+      {
+        title: "DST and Timezone Conversions",
+        href: "/guides/daylight-saving-time-zone-conversions",
+        description:
+          "Understand skipped spring-forward times, repeated fall-back times, and date-specific offsets.",
+      },
+      {
+        title: "What iLoveTimers Stores in Your Browser",
+        href: "/guides/browser-storage",
+        description:
+          "Review the production local-storage inventory and which tool state remains session-only.",
+      },
+    ],
+  },
+  {
     title: "Trust and site information",
     description:
       "Ownership, contact, methodology, sitemap, privacy, terms, cookies, and copyright information for the site.",
@@ -888,7 +937,7 @@ const allLinks = SECTIONS.flatMap((section) => section.links);
 export function meta({}: Route.MetaArgs) {
   const title = "HTML Sitemap | I Love Timers";
   const description =
-    "Browse every timer, stopwatch, clock, calculator, converter, and policy page on I Love Timers.";
+    "Browse every timer, stopwatch, clock, calculator, converter, guide, and policy page on I Love Timers.";
 
   return [
     { title },
@@ -924,7 +973,7 @@ export default function Sitemap() {
         "@type": "ItemList",
         name: "I Love Timers HTML Sitemap",
         numberOfItems: allLinks.length,
-        itemListElement: catalogLinks.map((link, index) => ({
+        itemListElement: allLinks.map((link, index) => ({
           "@type": "ListItem",
           position: index + 1,
           name: link.title,

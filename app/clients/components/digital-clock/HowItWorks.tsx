@@ -442,7 +442,7 @@ export default function HowItWorks({
               Current Local Time
             </PillLink>
             <PillLink href={abs("/analog-clock")}>Analog Clock</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
           </div>

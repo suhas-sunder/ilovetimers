@@ -1,15 +1,11 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/debt-clock.tsx
 import type { Route } from "./+types/debt-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import HowItWorks from "~/clients/components/debt-clock/HowItWorks";
-import Disclaimer from "~/clients/components/debt-clock/Disclaimer";
-import FAQ from "~/clients/components/debt-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/debt-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/debt-clock/PopularUseCases";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-
+import { TechnicalMethod } from "~/clients/components/trust/ToolTrust";
 
 import {
   Button as Btn,
@@ -55,7 +51,7 @@ export function meta({}: Route.MetaArgs) {
         "estimated debt clock",
       ].join(", "),
     },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -648,13 +644,29 @@ export default function DebtClockPage({
       />
 
       <SeoBand>
+          <TechnicalMethod heading="How the estimate is calculated">
+            <p>
+              The counter divides the yearly change by 31,557,600 seconds,
+              which is 365.25 days. It then uses: starting debt + per-second
+              change × elapsed running seconds. The counter uses the browser's
+              monotonic performance timer during the open page session. It
+              does not fetch a debt total or update the inputs from an external
+              source.
+            </p>
+            <p>
+              For example, a starting value of $1,000,000 and a yearly change
+              of $31,557,600 produces a rate of $1 per second. After 90 running
+              seconds, the display is $1,000,090 before currency formatting.
+              Pause freezes the estimate. Reset returns to the entered
+              starting value. A refresh starts again from the selected preset,
+              and no values are saved in browser storage. A background tab may
+              repaint less often and catch up when it becomes active. The page
+              cannot keep the device awake, and behavior across device sleep
+              depends on the browser and operating system.
+            </p>
+          </TechnicalMethod>
 
-          <HowItWorks />
-          <KeyboardShortcuts />
-          <PopularUseCases />
-          <FAQ />
-          <Disclaimer />
-
+          <Stage4RouteContent routePath="/debt-clock" />
       </SeoBand>
     </PageShell>
   );

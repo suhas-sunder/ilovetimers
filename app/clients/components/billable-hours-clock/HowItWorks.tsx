@@ -386,9 +386,9 @@ export default function HowItWorks({
             </PillLink>
             <PillLink href={abs("/time-calculator")}>Time Calculator</PillLink>
             <PillLink href={abs("/stopwatch")}>Stopwatch</PillLink>
-            <PillLink href={abs("/count-up-timer")}>Count Up Timer</PillLink>
+            <PillLink href={abs("/stopwatch")}>Count Up Timer</PillLink>
             <PillLink href={abs("/multiple-timers")}>Multiple Timers</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
           </div>
@@ -472,7 +472,7 @@ export default function HowItWorks({
             or{" "}
             <a
               className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-              href={abs("/count-up-timer")}
+              href={abs("/stopwatch")}
             >
               Count Up Timer
             </a>

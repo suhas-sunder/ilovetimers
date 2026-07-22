@@ -1,6 +1,6 @@
 // app/routes/time-calculator.tsx
 import type { Route } from "./+types/time-calculator";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,

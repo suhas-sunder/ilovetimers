@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/egg-timer.tsx
 import type { Route } from "./+types/egg-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -25,12 +26,6 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { trackEvent } from "~/clients/lib/analytics";
-import HowItWorks from "~/clients/components/egg-timer/HowItWorks";
-import Disclaimer from "~/clients/components/egg-timer/Disclaimer";
-import FAQ from "~/clients/components/egg-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/egg-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/egg-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -649,7 +644,7 @@ export default function EggTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/egg-timer" />
         <ContentSection>
           <p>
             Need a general kitchen countdown instead of an egg-specific preset?
@@ -660,10 +655,6 @@ export default function EggTimerPage({
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

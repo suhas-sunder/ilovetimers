@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/debt-repayment-timer.tsx
 import type { Route } from "./+types/debt-repayment-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -22,11 +23,7 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/debt-repayment-timer/HowItWorks";
-import Disclaimer from "~/clients/components/debt-repayment-timer/Disclaimer";
-import FAQ from "~/clients/components/debt-repayment-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/debt-repayment-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/debt-repayment-timer/PopularUseCases";
+import { TechnicalMethod } from "~/clients/components/trust/ToolTrust";
 
 /* =========================================================
    META
@@ -53,7 +50,7 @@ export function meta({}: Route.MetaArgs) {
         "debt free countdown",
       ].join(", "),
     },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -294,8 +291,8 @@ function DebtRepaymentTimerCard({ initialNowISO }: { initialNowISO: string }) {
     minPx: isFs ? 52 : 34,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 56 : 24,
-    initialScale: isFs ? 1 : 1.13,
-    initialMobileScale: isFs ? 1 : 1.15,
+    initialScale: isFs ? 1 : 0.82,
+    initialMobileScale: isFs ? 1 : 0.82,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -683,11 +680,29 @@ export default function DebtRepaymentTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <TechnicalMethod heading="How the time-based estimate works">
+          <p>
+            The page treats the selected start and end dates as local
+            midnights. Time progress is elapsed milliseconds divided by total
+            milliseconds, clamped from 0 to 1. Estimated paid is (starting
+            balance − target balance) × time progress. Estimated remaining is
+            that balance difference minus estimated paid. Displayed money is
+            rounded to whole currency units.
+          </p>
+          <p>
+            For example, use a $6,000 starting balance, a $0 target, January 1
+            as the start, and July 2 as the end. At exactly halfway through the
+            elapsed local time, progress is 50%, estimated paid is $3,000, and
+            estimated remaining is $3,000. The tool does not read payments. It
+            does not model interest, fees, compounding, minimum payments, or a
+            lender's payoff amount. Daylight-saving changes can make a local
+            date span differ from a whole multiple of 24 hours. A background
+            tab may repaint less often and catch up when it becomes active. The
+            page cannot keep the device awake, and behavior across device sleep
+            depends on the browser and operating system.
+          </p>
+        </TechnicalMethod>
+        <Stage4RouteContent routePath="/debt-repayment-timer" />
       </SeoBand>
     </PageShell>
   );

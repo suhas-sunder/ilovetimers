@@ -1,6 +1,6 @@
 // app/routes/time-zone-meeting-planner.tsx
 import type { Route } from "./+types/time-zone-meeting-planner";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   Button as Btn,
@@ -16,7 +16,17 @@ import {
   ToolFrame as Card,
   ToolHero,
 } from "~/clients/components/ui/foundation";
-import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+import {
+  TechnicalMethod,
+  ToolTrustNote,
+} from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
+import { isValidCalendarDate } from "~/clients/lib/technicalTimeMath.js";
+import { SharePresetPanel } from "~/clients/components/share/SharePresetPanel";
+import {
+  timeZoneMeetingPlannerShareSchema,
+  type TimeZoneMeetingPlannerShareConfig,
+} from "~/clients/lib/shareConfigurations";
 
 type ZoneOption = {
   value: string;
@@ -43,7 +53,7 @@ const SITE_URL = "https://www.ilovetimers.com";
 const ROUTE_PATH = "/time-zone-meeting-planner";
 const ROUTE_URL = `${SITE_URL}${ROUTE_PATH}`;
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
-const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-21", label: "July 21, 2026" } as const;
 
 const TZ_OPTIONS: ZoneOption[] = [
   { value: "UTC", label: "UTC" },
@@ -139,7 +149,7 @@ function parseDateInput(date: string) {
   if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
     return null;
   }
-  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+  if (!isValidCalendarDate(year, month, day)) return null;
   return { year, month, day };
 }
 
@@ -226,7 +236,6 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
   const [zoneToAdd, setZoneToAdd] = useState("America/Los_Angeles");
   const [localZone, setLocalZone] = useState("UTC");
   const [copied, setCopied] = useState(false);
-  const [shared, setShared] = useState(false);
 
   useEffect(() => {
     setLocalZone(tryGuessUserTimeZone());
@@ -287,27 +296,17 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
     }
   }
 
-  async function shareSummary() {
-    const text = summaryText();
-    const nav = navigator as Navigator & {
-      share?: (data: { title?: string; text?: string; url?: string }) => Promise<void>;
-    };
-    try {
-      if (typeof nav.share === "function") {
-        await nav.share({
-          title: "Time zone meeting plan",
-          text,
-        });
-        setShared(true);
-        window.setTimeout(() => setShared(false), 1400);
-      } else {
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), 1400);
-      }
-    } catch {
-      setShared(false);
-    }
+  const reusableConfig = useMemo<TimeZoneMeetingPlannerShareConfig>(
+    () => ({ date, durationMinutes, workStartHour, workEndHour, zones }),
+    [date, durationMinutes, workEndHour, workStartHour, zones],
+  );
+
+  function applyReusableSetup(config: TimeZoneMeetingPlannerShareConfig) {
+    setDate(config.date);
+    setDurationMinutes(config.durationMinutes);
+    setWorkStartHour(config.workStartHour);
+    setWorkEndHour(config.workEndHour);
+    setZones(config.zones);
   }
 
   return (
@@ -489,12 +488,16 @@ function TimeZoneMeetingPlannerTool({ today }: { today: string }) {
           </div>
         </SettingGroup>
 
+        <SharePresetPanel
+          schema={timeZoneMeetingPlannerShareSchema}
+          currentConfig={reusableConfig}
+          onApply={applyReusableSetup}
+          sharedFallback={{ date: today }}
+        />
+
         <SecondaryActionRow>
           <Btn kind="ghost" onClick={() => void copySummary()}>
             {copied ? "Copied" : "Copy meeting summary"}
-          </Btn>
-          <Btn kind="ghost" onClick={() => void shareSummary()}>
-            {shared ? "Shared" : "Share summary"}
           </Btn>
           <Btn
             kind="ghost"
@@ -528,7 +531,7 @@ export default function TimeZoneMeetingPlannerPage({
         operatingSystem: "Web browser",
         dateModified: REVIEW_DATE.iso,
         description:
-          "A browser-based planner for comparing local work windows across time zones using a UTC reference date, duration, candidate times, and copy or share summary.",
+          "A browser-based planner for comparing local work windows across time zones using a UTC reference date, duration, candidate times, a copyable summary, and a shareable setup.",
       },
       {
         "@type": "BreadcrumbList",
@@ -576,7 +579,53 @@ export default function TimeZoneMeetingPlannerPage({
             relationship between locations. A meeting time that works in March
             may not map the same way in November.
           </p>
+          <p>
+            The guide to{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/daylight-saving-time-zone-conversions"
+            >
+              DST gaps, repeated times, and date-specific offsets
+            </a>{" "}
+            explains why a named zone and date matter for future planning.
+          </p>
         </ContentSection>
+        <TechnicalMethod
+          heading="Candidate and work-window method"
+          sources={[
+            TECHNICAL_SOURCES.ianaTimeZones,
+            TECHNICAL_SOURCES.ecmaTimeZones,
+          ]}
+        >
+          <p>
+            The selected date is a UTC reference date. The planner creates 24
+            candidates, one at each whole UTC hour from 00:00 through 23:00.
+            For each candidate, the browser formats the same instant in every
+            selected IANA time zone. The browser's time zone data supplies the
+            date-specific offset and daylight-saving rule.
+          </p>
+          <p>
+            One local work window is applied to every selected zone. A candidate
+            fits a zone when its local start is at or after the window start and
+            its local end, including the meeting duration, is at or before the
+            window end. The window cannot cross midnight. Durations are clamped
+            from 15 minutes to 12 hours. The planner does not check calendars,
+            holidays, weekends, availability, or travel time.
+          </p>
+          <p>
+            Example: use <strong>2026-01-15</strong>, a 60-minute meeting, a
+            09:00 to 17:00 window, and UTC, New York, and London. The 15:00 UTC
+            candidate displays 15:00 in UTC and London and 10:00 in New York.
+            All three local end times remain within the work window, so the row
+            is marked as fitting all zones.
+          </p>
+          <p>
+            Impossible dates are rejected. Historical and future results depend
+            on the time zone data available in the browser and operating
+            system. The labels use full IANA identifiers internally, so a short
+            abbreviation is not treated as a globally unique time zone.
+          </p>
+        </TechnicalMethod>
 
         <ContentSection title="When to use it">
           <p>
@@ -587,7 +636,9 @@ export default function TimeZoneMeetingPlannerPage({
           <p>
             This planner is not a calendar app and does not send invitations.
             It helps compare local times so you can choose a meeting slot and
-            copy or share a plain summary.
+            copy a plain summary. A setup link includes the selected date,
+            duration, work window, and time zones. Named presets stay in this
+            browser and are not calendar invitations.
           </p>
         </ContentSection>
 

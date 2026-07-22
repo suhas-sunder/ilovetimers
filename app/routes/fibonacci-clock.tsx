@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/fibonacci-clock.tsx
 import type { Route } from "./+types/fibonacci-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -9,11 +10,6 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import HowItWorks from "~/clients/components/fibonacci-clock/HowItWorks";
-import Disclaimer from "~/clients/components/fibonacci-clock/Disclaimer";
-import FAQ from "~/clients/components/fibonacci-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/fibonacci-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/fibonacci-clock/PopularUseCases";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
@@ -1010,12 +1006,7 @@ export default function FibonacciClockPage({
 
       <SeoBand>
 
-          <HowItWorks />
-          <KeyboardShortcuts />
-          <PopularUseCases />
-          <FAQ />
-          <Disclaimer />
-
+          <Stage4RouteContent routePath="/fibonacci-clock" />
       </SeoBand>
     </PageShell>
   );

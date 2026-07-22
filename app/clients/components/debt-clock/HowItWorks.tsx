@@ -483,14 +483,14 @@ export default function HowItWorks({
             <PillLink href={abs("/debt-repayment-timer")}>
               Debt Repayment Timer
             </PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/presentation-timer")}>
               Presentation Timer
             </PillLink>
             <PillLink href={abs("/meeting-timer")}>Meeting Timer</PillLink>
-            <PillLink href={abs("/count-up-timer")}>Count Up Timer</PillLink>
+            <PillLink href={abs("/stopwatch")}>Count Up Timer</PillLink>
           </div>
         </div>
 

@@ -72,7 +72,7 @@ export default function PopularUseCases({
         "If you need remote shared control or participant tracking.",
       links: [
         { label: "AMRAP timer", href: "/amrap-timer" },
-        { label: "Fullscreen timer", href: "/fullscreen-timer" },
+        { label: "Online timer", href: "/online-timer" },
         { label: "Workout timer", href: "/workout-timer" },
       ],
     },

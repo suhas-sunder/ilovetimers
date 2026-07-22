@@ -1,6 +1,6 @@
 // app/routes/workout-timer.tsx
 import type { Route } from "./+types/workout-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -45,7 +45,7 @@ export function meta({}: Route.MetaArgs) {
   return [
     { title },
     { name: "description", content: description },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -731,7 +731,7 @@ export default function WorkoutTimerPage({
               round timer
             </a>
             . For boxing-style presets, use the{" "}
-            <a className="ilt-content-link" href="/boxing-timer">
+            <a className="ilt-content-link" href="/round-timer">
               boxing timer
             </a>
             . For a plain rest countdown between sets, use the{" "}

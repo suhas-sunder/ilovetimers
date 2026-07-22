@@ -146,7 +146,7 @@ export default function Disclaimer() {
                 <div className="ilt-surface-muted p-3">
                   Prefer a big, simple countdown (no randomness)?{" "}
                   <a
-                    href="/fullscreen-timer"
+                    href="/online-timer"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Fullscreen Timer
@@ -186,7 +186,7 @@ export default function Disclaimer() {
                 <div className="ilt-surface-muted p-3">
                   Want to track open-ended time instead?{" "}
                   <a
-                    href="/count-up-timer"
+                    href="/stopwatch"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Count Up Timer

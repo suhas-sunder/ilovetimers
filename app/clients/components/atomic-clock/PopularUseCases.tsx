@@ -46,7 +46,7 @@ export default function PopularUseCases({
       links: [
         { label: "Atomic clock", href: "/atomic-clock" },
         { label: "Stopwatch", href: "/stopwatch" },
-        { label: "Count up timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {
@@ -60,7 +60,7 @@ export default function PopularUseCases({
       links: [
         { label: "Atomic clock", href: "/atomic-clock" },
         { label: "Minimalist clock", href: "/minimalist-clock" },
-        { label: "Fullscreen timer", href: "/fullscreen-timer" },
+        { label: "Online timer", href: "/online-timer" },
       ],
     },
     {

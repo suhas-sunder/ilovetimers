@@ -444,7 +444,7 @@ export default function HowItWorks({
               . Simple count up:{" "}
               <Link
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                to="/count-up-timer"
+                to="/stopwatch"
               >
                 Count Up Timer
               </Link>
@@ -486,12 +486,12 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/meeting-timer">Meeting Timer</PillLink>
-            <PillLink to="/count-up-timer">Count Up Timer</PillLink>
+            <PillLink to="/stopwatch">Stopwatch</PillLink>
             <PillLink to="/presentation-timer">Presentation Timer</PillLink>
             <PillLink to="/stopwatch">Stopwatch</PillLink>
             <PillLink to="/time-blocking-clock">Time Blocking Clock</PillLink>
             <PillLink to="/time-calculator">Time Calculator</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
           </div>
         </div>
 

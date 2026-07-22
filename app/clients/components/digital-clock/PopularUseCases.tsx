@@ -30,7 +30,7 @@ export default function PopularUseCases({
       notFor:
         "Alarm-style alerts or notifications when time hits a threshold (use an alarm tool if you need alerts).",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Alarm Timer", href: "/alarm-timer" },
       ],
     },

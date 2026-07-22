@@ -439,7 +439,7 @@ export default function HowItWorks({
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/study-timer">Study Timer</PillLink>
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
             <PillLink to="/silent-timer">Silent Timer</PillLink>
             <PillLink to="/pomodoro-timer">Pomodoro Timer</PillLink>
             <PillLink to="/classroom-timer">Classroom Timer</PillLink>

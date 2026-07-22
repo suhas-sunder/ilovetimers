@@ -406,7 +406,7 @@ export default function HowItWorks({
               Focus Session Timer
             </PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>Fullscreen Timer</PillLink>
+            <PillLink href={abs("/online-timer")}>Fullscreen Timer</PillLink>
             <PillLink href={abs("/multiple-timers")}>Multiple Timers</PillLink>
             <PillLink href={abs("/silent-timer")}>Silent Timer</PillLink>
           </div>

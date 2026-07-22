@@ -672,7 +672,7 @@ export default function IntervalTimerPage() {
             any repeated sequence where the labels matter.
           </p>
           <p>
-            This page is intentionally broader than a workout timer. If your
+            This page supports custom named steps beyond a workout sequence. If your
             session needs specialized fitness-oriented phases, the{" "}
             <a className="ilt-content-link" href="/hiit-timer">
               HIIT timer
@@ -691,7 +691,7 @@ export default function IntervalTimerPage() {
             </a>{" "}
             may be a better fit. For boxing-style round and rest presets, use
             the{" "}
-            <a className="ilt-content-link" href="/boxing-timer">
+            <a className="ilt-content-link" href="/round-timer">
               boxing timer
             </a>
             .

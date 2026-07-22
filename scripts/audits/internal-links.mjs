@@ -7,6 +7,10 @@ import {
   RELATED_TOOL_LINKS,
 } from "../../app/clients/config/relatedTools.js";
 import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
+import {
+  STAGE3_NOINDEX_ROUTE_SET,
+  STAGE3_REDIRECT_SOURCE_SET,
+} from "../../app/config/routeArchitecture.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const failures = [];
@@ -87,6 +91,12 @@ const [routeSource, rootSource, footerSource, sitemapRouteSource] =
 const configuredRoutes = parseConfiguredRoutes(routeSource);
 const redirectSources = new Set(Object.keys(PERMANENT_REDIRECTS));
 const redirectDestinations = new Set(Object.values(PERMANENT_REDIRECTS));
+const guideRoutes = new Set(
+  SITEMAP_GROUPS.find((section) => section.title === "Guides")?.routes ?? [],
+);
+const guideArticleRoutes = new Set(
+  [...guideRoutes].filter((route) => route !== "/guides"),
+);
 
 for (const [source, destination] of Object.entries(PERMANENT_REDIRECTS)) {
   check(source !== destination, `Redirect source equals destination: ${source}`);
@@ -97,7 +107,7 @@ for (const [source, destination] of Object.entries(PERMANENT_REDIRECTS)) {
 const relatedIncoming = new Map();
 for (const [source, group] of Object.entries(RELATED_TOOL_LINKS)) {
   check(configuredRoutes.has(source), `Related-tool source is not configured: ${source}`);
-  check(group.links.length > 0 && group.links.length <= 6, `${source} has an invalid related-tool count.`);
+  check(group.links.length >= 3 && group.links.length <= 5, `${source} has an invalid related-tool count.`);
 
   const destinations = group.links.map((link) => link.to);
   check(new Set(destinations).size === destinations.length, `${source} has duplicate related-tool destinations.`);
@@ -108,6 +118,7 @@ for (const [source, group] of Object.entries(RELATED_TOOL_LINKS)) {
     check(link.to === "/" || !link.to.endsWith("/"), `${source} has a trailing-slash related link: ${link.to}`);
     check(configuredRoutes.has(link.to), `${source} links to a missing related tool: ${link.to}`);
     check(!redirectSources.has(link.to), `${source} links to a redirect alias: ${link.to}`);
+    check(!STAGE3_NOINDEX_ROUTE_SET.has(link.to), `${source} prominently links to a noindex utility: ${link.to}`);
     relatedIncoming.set(link.to, (relatedIncoming.get(link.to) ?? 0) + 1);
   }
 }
@@ -134,7 +145,9 @@ for (const section of footerSections) {
   }
 }
 for (const route of configuredRoutes) {
-  check(footerRoutes.includes(route), `Configured route is missing from the footer directory: ${route}`);
+  if (!guideArticleRoutes.has(route)) {
+    check(footerRoutes.includes(route), `Configured route is missing from the footer directory: ${route}`);
+  }
 }
 for (const route of [
   "/about",
@@ -182,11 +195,20 @@ const siteInformationRoutes = new Set([
   "/terms",
   "/cookies",
   "/sitemap",
+  ...guideRoutes,
 ]);
 const intendedToolRoutes = new Set(
-  [...configuredRoutes].filter((route) => !siteInformationRoutes.has(route)),
+  [...configuredRoutes].filter(
+    (route) =>
+      !siteInformationRoutes.has(route) &&
+      !STAGE3_NOINDEX_ROUTE_SET.has(route),
+  ),
 );
-const moreDirectoryRoutes = parseDirectoryRoutes(rootSource);
+const moreDirectoryRoutes = parseDirectoryRoutes(rootSource).filter(
+  (route) =>
+    !STAGE3_NOINDEX_ROUTE_SET.has(route) &&
+    !STAGE3_REDIRECT_SOURCE_SET.has(route),
+);
 check(
   new Set(moreDirectoryRoutes).size === moreDirectoryRoutes.length,
   "Root More-directory data contains duplicate routes.",
@@ -207,7 +229,13 @@ check(rootSource.includes("<RelatedTools"), "The route-aware related-tools compo
 check(footerSource.includes("footerSections"), "Footer is not using the full grouped directory.");
 
 const appFiles = await listSourceFiles("app");
-const excludedLinkOwners = new Set(["app/config/redirects.js"]);
+const excludedLinkOwners = new Set([
+  "app/config/redirects.js",
+  "app/config/routeArchitecture.js",
+  "app/root.tsx",
+  "app/routes/sitemap.tsx",
+  "app/clients/config/relatedTools.js",
+]);
 for (const file of appFiles) {
   if (excludedLinkOwners.has(file)) continue;
   const source = await read(file);

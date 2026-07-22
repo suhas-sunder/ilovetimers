@@ -1,6 +1,6 @@
 // app/routes/work-hours-calculator.tsx
 import type { Route } from "./+types/work-hours-calculator";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useMemo, useState } from "react";
 import { trackEvent } from "~/clients/lib/analytics";
 import {

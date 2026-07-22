@@ -180,7 +180,7 @@ export default function Disclaimer() {
                 <div className="ilt-surface-muted p-3">
                   Prefer counting up for open-ended sessions?{" "}
                   <a
-                    href="/count-up-timer"
+                    href="/stopwatch"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Count Up Timer

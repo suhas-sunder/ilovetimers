@@ -3,6 +3,13 @@
  * Keep this data free of redirect aliases, query strings, and fragments.
  */
 
+import { SITEMAP_GROUPS } from "./siteDirectory.js";
+import {
+  STAGE3_NEW_REDIRECTS,
+  STAGE3_NOINDEX_ROUTE_SET,
+  STAGE3_REDIRECT_SOURCE_SET,
+} from "../../config/routeArchitecture.js";
+
 export const FOOTER_TOOL_LINKS = Object.freeze([
   { to: "/countdown-timer", label: "Countdown timer" },
   { to: "/stopwatch", label: "Stopwatch" },
@@ -16,7 +23,7 @@ export const FOOTER_TOOL_LINKS = Object.freeze([
   { to: "/metronome", label: "Metronome" },
 ]);
 
-export const PRIORITY_CONTEXTUAL_ROUTES = Object.freeze([
+const PRIORITY_CONTEXTUAL_ROUTE_SEEDS = Object.freeze([
   "/timer-stopwatch",
   "/timer-clock",
   "/study-stopwatch",
@@ -48,7 +55,7 @@ export const PRIORITY_CONTEXTUAL_ROUTES = Object.freeze([
  */
 const group = (heading, links) => Object.freeze({ heading, links: Object.freeze(links) });
 
-export const RELATED_TOOL_LINKS = Object.freeze({
+const RAW_RELATED_TOOL_LINKS = Object.freeze({
   "/countdown-timer": group("Related countdown and elapsed-time tools", [
     { to: "/timer-stopwatch", label: "Switch between a countdown and stopwatch" },
     { to: "/timer-clock", label: "Keep current local time beside the countdown" },
@@ -492,3 +499,123 @@ export const RELATED_TOOL_LINKS = Object.freeze({
     { to: "/timer-clock", label: "Keep a countdown beside current time" },
   ]),
 });
+
+const TOOL_GROUPS = SITEMAP_GROUPS.filter(
+  ({ title }) => title !== "Trust and site information" && title !== "Guides",
+);
+
+const INDEXABLE_TOOL_ROUTES = Object.freeze(
+  TOOL_GROUPS.flatMap(({ routes }) => routes).filter(
+    (routePath, index, routes) =>
+      routePath !== "/" &&
+      !STAGE3_NOINDEX_ROUTE_SET.has(routePath) &&
+      !STAGE3_REDIRECT_SOURCE_SET.has(routePath) &&
+      routes.indexOf(routePath) === index,
+  ),
+);
+
+const INDEXABLE_TOOL_ROUTE_SET = new Set(INDEXABLE_TOOL_ROUTES);
+
+/** @type {Readonly<Record<string, readonly string[]>>} */
+const LOCAL_CLOCK_FALLBACKS = Object.freeze({
+  "/analog-clock": [
+    "/digital-clock",
+    "/12-hour-clock",
+    "/clock-with-milliseconds",
+  ],
+  "/digital-clock": [
+    "/analog-clock",
+    "/12-hour-clock",
+    "/clock-with-milliseconds",
+  ],
+});
+
+/** @param {string} routePath */
+function routeLabel(routePath) {
+  return routePath
+    .split("/")
+    .filter(Boolean)
+    .map((part) =>
+      part
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
+    )
+    .join(" — ");
+}
+
+/** @param {string} routePath */
+function siblingRoutes(routePath) {
+  const currentGroup = TOOL_GROUPS.find(({ routes }) =>
+    routes.includes(routePath),
+  );
+  return currentGroup?.routes ?? [];
+}
+
+const RAW_RELATED_TOOL_LINK_MAP = /** @type {Readonly<Record<string, {heading: string, links: readonly {to: string, label: string}[]}>>} */ (
+  RAW_RELATED_TOOL_LINKS
+);
+
+/** @param {string} routePath */
+function canonicalRelatedLinks(routePath) {
+  const explicit = RAW_RELATED_TOOL_LINK_MAP[routePath];
+  /** @type {{to: string, label: string}[]} */
+  const links = [];
+  /** @type {Set<string>} */
+  const destinations = new Set();
+
+  /**
+   * @param {{to: string, label: string}} candidate
+   * @param {boolean} [fallback]
+   */
+  const add = (candidate, fallback = false) => {
+    const destination =
+      /** @type {Readonly<Record<string, string>>} */ (
+        STAGE3_NEW_REDIRECTS
+      )[candidate.to] ?? candidate.to;
+    if (
+      destination === routePath ||
+      destinations.has(destination) ||
+      !INDEXABLE_TOOL_ROUTE_SET.has(destination)
+    ) {
+      return;
+    }
+    destinations.add(destination);
+    links.push({
+      to: destination,
+      label: fallback
+        ? `Explore ${routeLabel(destination)}`
+        : candidate.label,
+    });
+  };
+
+  explicit?.links.forEach((candidate) => add(candidate));
+
+  const fallbackRoutes = [
+    ...(LOCAL_CLOCK_FALLBACKS[routePath] ?? []),
+    ...siblingRoutes(routePath),
+  ];
+  fallbackRoutes.forEach((destination) =>
+    add({ to: destination, label: "" }, true),
+  );
+
+  return group(
+    explicit?.heading ?? "Related tools for this task",
+    links.slice(0, 5),
+  );
+}
+
+export const RELATED_TOOL_LINKS = Object.freeze(
+  Object.fromEntries(
+    INDEXABLE_TOOL_ROUTES.map((routePath) => [
+      routePath,
+      canonicalRelatedLinks(routePath),
+    ]),
+  ),
+);
+
+export const PRIORITY_CONTEXTUAL_ROUTES = Object.freeze(
+  INDEXABLE_TOOL_ROUTES.filter((routePath) =>
+    PRIORITY_CONTEXTUAL_ROUTE_SEEDS.includes(routePath),
+  ),
+);

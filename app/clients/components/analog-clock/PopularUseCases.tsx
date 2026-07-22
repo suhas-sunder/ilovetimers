@@ -32,7 +32,7 @@ export default function PopularUseCases({
       links: [
         { label: "Analog clock", href: "/analog-clock" },
         { label: "Digital clock", href: "/digital-clock" },
-        { label: "Fullscreen timer", href: "/fullscreen-timer" },
+        { label: "Online timer", href: "/online-timer" },
       ],
     },
     {

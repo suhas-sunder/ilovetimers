@@ -302,8 +302,8 @@ function CountdownDisplay({
     minPx: isFullscreen ? 44 : 36,
     maxPx: isFullscreen ? 520 : 430,
     paddingAllowancePx: isFullscreen ? 64 : 80,
-    initialScale: isFullscreen ? 1 : 1.15,
-    initialMobileScale: isFullscreen ? 1 : 1.02,
+    initialScale: isFullscreen ? 1 : 0.88,
+    initialMobileScale: isFullscreen ? 1 : 0.84,
   });
 
   return (

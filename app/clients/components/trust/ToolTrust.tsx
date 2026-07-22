@@ -9,6 +9,51 @@ export type ManualReviewDate = {
   label: string;
 };
 
+export type TechnicalSource = {
+  href: string;
+  label: string;
+};
+
+export function TechnicalMethod({
+  heading,
+  children,
+  sources = [],
+}: {
+  heading: ReactNode;
+  children: ReactNode;
+  sources?: TechnicalSource[];
+}) {
+  return (
+    <section className="space-y-3 py-2" data-methodology-note>
+      <h2 className="text-xl font-bold tracking-tight text-[var(--ilt-text-primary)] sm:text-2xl">
+        {heading}
+      </h2>
+      <div className="space-y-3 leading-7 text-[var(--ilt-text-secondary)]">
+        {children}
+        {sources.length ? (
+          <p className="text-sm leading-6 text-[var(--ilt-text-muted)]">
+            Sources:{" "}
+            {sources.map((source, index) => (
+              <span key={source.href}>
+                {index ? "; " : ""}
+                <a
+                  className={trustLinkClass}
+                  href={source.href}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {source.label}
+                </a>
+              </span>
+            ))}
+            .
+          </p>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
 export function MaintainerLine({
   role,
   showMethodologyLink = true,

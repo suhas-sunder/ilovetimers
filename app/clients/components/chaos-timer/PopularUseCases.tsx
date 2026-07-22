@@ -75,7 +75,7 @@ export default function PopularUseCases({
         "If you want a simple big countdown without randomness. Use Fullscreen Timer instead.",
       links: [
         { label: "Chaos Timer", href: "/chaos-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Visual Timer", href: "/visual-timer" },
       ],
     },

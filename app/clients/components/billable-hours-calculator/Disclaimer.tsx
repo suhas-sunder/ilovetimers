@@ -96,7 +96,7 @@ export default function Disclaimer() {
               </a>{" "}
               or{" "}
               <a
-                href="/count-up-timer"
+                href="/stopwatch"
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
               >
                 Count Up Timer

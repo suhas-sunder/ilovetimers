@@ -1,6 +1,6 @@
 // app/routes/speedrun-timer.tsx
 import type { Route } from "./+types/speedrun-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,
@@ -638,7 +638,7 @@ export default function SpeedrunTimerPage({
               stopwatch
             </a>
             . For a plain count-up display without split rows, try the{" "}
-            <a className="ilt-content-link" href="/count-up-timer">
+            <a className="ilt-content-link" href="/stopwatch">
               count-up timer
             </a>
             . For solve practice, use the{" "}

@@ -561,7 +561,7 @@ export default function StopwatchWithMillisecondsPage() {
               countdown timer
             </a>{" "}
             starts from a set duration and counts down. A{" "}
-            <a className="ilt-content-link" href="/count-up-timer">
+            <a className="ilt-content-link" href="/stopwatch">
               count up timer
             </a>{" "}
             is useful when you want a simpler elapsed-time display without lap

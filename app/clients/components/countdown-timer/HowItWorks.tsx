@@ -83,7 +83,7 @@ export default function HowItWorks({
             Online Timer
           </Link>
           . For a room display, use{" "}
-          <Link className="ilt-content-link" to="/fullscreen-timer">
+          <Link className="ilt-content-link" to="/online-timer">
             Fullscreen Timer
           </Link>
           . For quiet rooms, use{" "}
@@ -99,7 +99,7 @@ export default function HowItWorks({
             Break Timer
           </Link>{" "}
           or{" "}
-          <Link className="ilt-content-link" to="/cooking-timer">
+          <Link className="ilt-content-link" to="/kitchen-timer">
             Cooking Timer
           </Link>
           .

@@ -1,3 +1,5 @@
+import { STAGE3_NEW_REDIRECTS } from "./routeArchitecture.js";
+
 /** @type {Readonly<Record<string, string>>} */
 export const PERMANENT_REDIRECTS = Object.freeze({
   "/stopwatch-timer": "/timer-stopwatch",
@@ -17,6 +19,7 @@ export const PERMANENT_REDIRECTS = Object.freeze({
   "/milliseconds-to-seconds": "/milliseconds-converter",
   "/utc-time-now": "/utc-clock",
   "/current-unix-timestamp": "/epoch-unix-time-clock",
+  ...STAGE3_NEW_REDIRECTS,
 });
 
 /**

@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/pizza-timer.tsx
 import type { Route } from "./+types/pizza-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -31,12 +32,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/pizza-timer/HowItWorks";
-import Disclaimer from "~/clients/components/pizza-timer/Disclaimer";
-import FAQ from "~/clients/components/pizza-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/pizza-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/pizza-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -788,7 +783,7 @@ export default function PizzaTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/pizza-timer" />
         <ContentSection>
           <p>
             Need a general kitchen countdown for oven checks, simmering, or
@@ -799,10 +794,6 @@ export default function PizzaTimerPage({
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

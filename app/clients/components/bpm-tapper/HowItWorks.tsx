@@ -417,7 +417,7 @@ export default function HowItWorks({
             <PillLink href={abs("/stopwatch")}>Stopwatch</PillLink>
             <PillLink href={abs("/pace-timer")}>Pace Timer</PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/reaction-time-test")}>

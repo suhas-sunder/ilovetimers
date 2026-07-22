@@ -422,7 +422,7 @@ export default function HowItWorks({
             </PillLink>
             <PillLink href={abs("/rest-timer")}>Rest Timer</PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/multiple-timers")}>Multiple Timers</PillLink>

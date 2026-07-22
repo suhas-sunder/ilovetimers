@@ -24,7 +24,7 @@ export function JsonLd({ data }: { data: any }) {
    - Aim: ~800–1200 words of unique, intent-matching content.
 ========================================================= */
 export default function HowItWorks({
-  canonicalUrl = "https://www.ilovetimers.com/fullscreen-timer",
+  canonicalUrl = "https://www.ilovetimers.com/online-timer",
   baseUrl = "https://www.ilovetimers.com",
 }: {
   canonicalUrl?: string;
@@ -448,7 +448,7 @@ export default function HowItWorks({
             <PillLink to="/silent-timer">Silent Timer</PillLink>
             <PillLink to="/visual-timer">Visual Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>
-            <PillLink to="/count-up-timer">Count Up Timer</PillLink>
+            <PillLink to="/stopwatch">Stopwatch</PillLink>
           </div>
         </div>
 

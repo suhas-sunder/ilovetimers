@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/multiple-timers.tsx
 import type { Route } from "./+types/multiple-timers";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -26,12 +27,6 @@ import {
   Toggle,
 } from "~/clients/components/ui/foundation";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/multiple-timers/HowItWorks";
-import Disclaimer from "~/clients/components/multiple-timers/Disclaimer";
-import FAQ from "~/clients/components/multiple-timers/FAQ";
-import KeyboardShortcuts from "~/clients/components/multiple-timers/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/multiple-timers/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -173,7 +168,11 @@ function safeParseJSON<T>(s: string | null): T | null {
 
 function loadStoredState(): StoredState | null {
   if (typeof window === "undefined") return null;
-  return safeParseJSON<StoredState>(window.localStorage.getItem(STORAGE_KEY));
+  try {
+    return safeParseJSON<StoredState>(window.localStorage.getItem(STORAGE_KEY));
+  } catch {
+    return null;
+  }
 }
 
 function saveStoredState(state: StoredState) {
@@ -962,12 +961,16 @@ export default function MultipleTimersPage({
             add analytics capture for timer names or entered values, and it does
             not use accounts or cloud synchronization.
           </p>
+          <p>
+            The{" "}
+            <a className="ilt-content-link" href="/guides/browser-storage">
+              browser storage guide
+            </a>{" "}
+            lists this route's exact key and explains why restored timers are
+            paused rather than treated as continuously running.
+          </p>
         </ContentSection>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <Stage4RouteContent routePath="/multiple-timers" />
       </SeoBand>
     </PageShell>
   );

@@ -1,6 +1,6 @@
 // app/routes/speedcubing-timer.tsx
 import type { Route } from "./+types/speedcubing-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,
@@ -37,7 +37,7 @@ import { useFullscreen } from "~/clients/hooks/useFullscreen";
 export function meta({}: Route.MetaArgs) {
   const title = "Speedcubing Timer (Cube Stopwatch, Fullscreen)";
   const description =
-    "Practice speedcubing with a fast, clean cube timer. Start and stop instantly, track splits, and focus on your solves with a big, readable display.";
+    "Practice cube solves with instant or hold-to-start timing, a large display, and session-only solve results.";
 
   const url = "https://www.ilovetimers.com/speedcubing-timer";
 
@@ -106,7 +106,7 @@ function isTypingTarget(target: EventTarget | null) {
    SPEEDCUBING TIMER CARD
    - Instant mode: Space/Start toggles start-stop
    - Hold-to-start mode: hold Space to arm, release to start (stop still instant)
-   - Auto-save: when stopping, save solve into history
+   - Auto-add: when stopping, add the solve to this page session
 ========================================================= */
 type Solve = { n: number; ms: number; atISO: string };
 
@@ -633,14 +633,14 @@ function SpeedcubingTimerTool() {
 
                 <div className="flex items-end">
                   <Toggle
-                    label="Auto-save on stop"
+                    label="Add result on stop"
                     checked={autoSave}
                     onCheckedChange={setAutoSave}
                   />
                 </div>
 
                 <Field
-                  label="Max saved solves"
+                  label="Max session solves"
                   type="number"
                   min={5}
                   max={200}
@@ -659,18 +659,18 @@ function SpeedcubingTimerTool() {
           <div className="timer-history-panel mx-auto mt-5 space-y-3">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm font-extrabold text-[var(--ilt-text-primary)]">
-                Solve history
+                Session results
               </div>
               <div className="ilt-helper-text font-semibold">
                 {solves.length
-                  ? `${solves.length} saved · Best ${best != null ? msToStopwatch(best) : "-"} · Avg ${avg != null ? msToStopwatch(avg) : "-"}`
-                  : "No solves saved yet"}
+                  ? `${solves.length} in session · Best ${best != null ? msToStopwatch(best) : "-"} · Avg ${avg != null ? msToStopwatch(avg) : "-"}`
+                  : "No session results yet"}
               </div>
             </div>
 
             {solves.length === 0 ? (
               <div className="mt-3 text-sm text-[var(--ilt-text-secondary)]">
-                Stop the timer to save a solve.
+                Stop the timer to add a result.
               </div>
             ) : (
               <div className="mt-3 space-y-2">
@@ -789,7 +789,7 @@ export default function SpeedcubingTimerPage({
         name: "Speedcubing Timer",
         url,
         description:
-          "Speedcubing timer with a cubing stopwatch format (mm:ss.cc), fullscreen display, and solve history.",
+          "Speedcubing practice timer with a mm:ss.cc display, fullscreen mode, and session-only solve results.",
       },
       {
         "@type": "BreadcrumbList",
@@ -821,58 +821,72 @@ export default function SpeedcubingTimerPage({
       <ToolHero
         display={<SpeedcubingTimerTool />}
         title="Speedcubing Timer"
-        description="Practice solves with instant or hold-to-start timing, autosave, solve history, averages, keyboard shortcuts, and fullscreen."
+        description="Practice solves with instant or hold-to-start timing, session results, a simple average, keyboard controls, and fullscreen."
       />
       <SeoBand>
-        <ContentSection title="How this speedcubing timer works">
+        <ContentSection title="How timing starts and stops">
           <p>
-            This page is for repeated solve practice. Choose instant start or
-            hold-to-start, run a solve, stop the timer, then keep or remove the
-            result from your local solve history. The active stopwatch remains
-            the first thing you read, with history and averages below the tool.
+            Instant mode uses Space as a start and stop toggle. Hold-to-start
+            mode arms after you hold Space for 250 milliseconds, then starts
+            when you release it. Space stops an active solve immediately. The
+            on-screen Start button begins timing without the hold step.
           </p>
           <p>
-            If inspection is enabled, it gives you a short pre-solve rhythm
-            before timing begins. Penalty controls and solve removal help keep
-            your practice history useful when a solve is mistimed, started by
-            mistake, or should not be included in your local summary.
+            In fullscreen, tapping the display starts and stops only in Instant
+            mode. In Hold-to-start mode, a tap can stop a running solve, while a
+            keyboard is required to arm and start. Reset clears the current
+            elapsed time. Remove deletes one result, and Clear history removes
+            all results from the current session.
           </p>
         </ContentSection>
-        <ContentSection title="Practice examples and settings">
+        <ContentSection title="Session results and saved preferences">
           <p>
-            Use instant start for quick casual solves, hold-to-start when you
-            want a more deliberate start, and inspection when you want a
-            consistent setup before the solve. For a warmup session, keep every
-            solve. For focused practice, remove obvious misfires so your recent
-            averages reflect the attempts you meant to track.
+            Add result on stop is enabled by default. When it is off, press Save
+            or S after stopping. The page keeps up to the selected session limit,
+            from 5 to 200 results. Best is the lowest current result. Avg is the
+            arithmetic mean of every current result. Times display to
+            centiseconds by truncating milliseconds.
           </p>
-          <ul className="list-disc space-y-2 pl-5">
-            <li>
-              Practice session: solve several times, review best and average
-              rows, then reset history when you want a fresh block.
-            </li>
-            <li>
-              Warmups: keep the display simple and use history only as a rough
-              personal trend.
-            </li>
-            <li>
-              Mistimed attempts: apply penalties or remove solves based on how
-              you want your local practice log to read.
-            </li>
-          </ul>
+          <p>
+            Results and averages exist only in memory for the current page
+            session. Refreshing the page, closing the tab, or reopening the site
+            clears them. The browser stores only your start mode, Add result on
+            stop choice, and maximum session-result setting in localStorage.
+            Clear history does not remove those three preferences. You can clear
+            them through your browser's site-data controls.
+          </p>
+          <p>
+            See the complete distinction between saved preferences and
+            session-only tool state in{" "}
+            <a className="ilt-content-link" href="/guides/browser-storage">
+              What iLoveTimers Stores in Your Browser
+            </a>
+            .
+          </p>
         </ContentSection>
-        <ContentSection title="Averages, history, and limitations">
+        <ContentSection title="Reproducible practice example">
           <p>
-            Averages and best-time rows are practice summaries from the solves
-            stored in this browser. They are helpful for comparing your own
-            recent attempts, but they are not a certified competition record.
-            Device input latency, keyboard behavior, touch timing, browser
-            focus, and display refresh rate can affect measured times.
+            Leave Hold-to-start and Add result on stop selected. Focus the timer
+            frame, hold Space for at least a quarter second, then release it.
+            Press Space again after the solve. A new row appears in Session
+            results. Run a second solve and Avg becomes the sum of both elapsed
+            times divided by two. Refresh the page and both rows disappear while
+            your three settings remain.
+          </p>
+        </ContentSection>
+        <ContentSection title="Timing limits">
+          <p>
+            This is a browser practice timer. It has no scramble generator,
+            inspection countdown, penalty controls, rolling averages such as
+            Ao5, or official competition mode. Follow the equipment and rules
+            required by an event when you need official timing.
           </p>
           <p>
-            If you are practicing for an event, use this page as a local
-            training aid and follow the timing rules required by that event or
-            organization.
+            Elapsed time uses the browser's monotonic high-resolution clock.
+            Keyboard, touch, display, browser, and operating-system latency can
+            affect a result. A background tab can repaint less often. Device
+            sleep or browser suspension can interrupt interaction, so keep the
+            page visible during a solve.
           </p>
         </ContentSection>
         <ContentSection title="Related solving and speed tools">
@@ -882,7 +896,7 @@ export default function SpeedcubingTimerPage({
               stopwatch
             </a>
             . For timing an activity upward from zero, try the{" "}
-            <a className="ilt-content-link" href="/count-up-timer">
+            <a className="ilt-content-link" href="/stopwatch">
               count-up timer
             </a>
             . For start-response practice, use the{" "}
@@ -905,8 +919,8 @@ export default function SpeedcubingTimerPage({
           </p>
           <h3>What should I do with accidental solves?</h3>
           <p>
-            Remove the solve or apply the available penalty controls so your
-            local history matches how you want to review the session.
+            Remove the result from the current session. This page does not
+            provide penalty controls.
           </p>
           <h3>Why do times vary by device?</h3>
           <p>

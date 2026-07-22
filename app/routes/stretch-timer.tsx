@@ -1,6 +1,6 @@
 // app/routes/stretch-timer.tsx
 import type { Route } from "./+types/stretch-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,

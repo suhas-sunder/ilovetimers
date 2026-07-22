@@ -56,7 +56,7 @@ export default function PopularUseCases({
       notFor:
         "Multiple separate stations each needing their own timer (use multiple timers).",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
       ],
     },

@@ -30,9 +30,9 @@ export default function PopularUseCases({
       notFor:
         "If you want egg-only presets and nothing else. Use Egg Timer instead.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Egg Timer", href: "/egg-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {
@@ -44,7 +44,7 @@ export default function PopularUseCases({
       notFor:
         "If you need to run multiple independent timers at once. Use Multiple Timers instead.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
         { label: "Countdown Timer", href: "/countdown-timer" },
       ],
@@ -58,8 +58,8 @@ export default function PopularUseCases({
       notFor:
         "If you want a simpler big countdown with fewer presets. Use Fullscreen Timer instead.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Online Timer", href: "/online-timer" },
       ],
     },
@@ -72,7 +72,7 @@ export default function PopularUseCases({
       notFor:
         "If your environment must be fully silent. Use Silent Timer instead.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Silent Timer", href: "/silent-timer" },
         { label: "Tea Timer", href: "/tea-timer" },
       ],
@@ -86,7 +86,7 @@ export default function PopularUseCases({
       notFor:
         "If you want several different timers running at the same time. Use Multiple Timers instead.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
         { label: "Round Timer", href: "/round-timer" },
       ],
@@ -100,7 +100,7 @@ export default function PopularUseCases({
       notFor:
         "If you’re timing a specific niche workflow. Try a specialized page like Tea Timer or Pizza Timer.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Tea Timer", href: "/tea-timer" },
         { label: "Pizza Timer", href: "/pizza-timer" },
       ],

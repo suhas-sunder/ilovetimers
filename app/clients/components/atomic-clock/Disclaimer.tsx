@@ -70,8 +70,9 @@ export default function Disclaimer() {
               <strong className="text-[var(--ilt-text-primary)]">
                 Milliseconds can be toggled.
               </strong>{" "}
-              Turn milliseconds on when you need precision, or off for a
-              steadier seconds-only readout. Shortcut:{" "}
+              Turn milliseconds on when you want the device clock's
+              millisecond field, or turn them off for a steadier seconds-only
+              readout. Shortcut:{" "}
               <span className="font-semibold text-[var(--ilt-text-primary)]">M</span>. If you
               need conversions, use{" "}
               <a
@@ -136,7 +137,7 @@ export default function Disclaimer() {
               </strong>{" "}
               For timing tasks (not just viewing time), try{" "}
               <a
-                href="/fullscreen-timer"
+                href="/online-timer"
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
               >
                 Fullscreen Timer

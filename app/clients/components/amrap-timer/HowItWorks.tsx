@@ -207,7 +207,7 @@ export default function HowItWorks({
             <PillLink href={abs("/hiit-timer")}>HIIT Timer</PillLink>
             <PillLink href={abs("/tabata-timer")}>Tabata Timer</PillLink>
             <PillLink href={abs("/workout-timer")}>Workout Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
           </div>
@@ -552,7 +552,7 @@ export default function HowItWorks({
             use{" "}
             <a
               className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-              href={abs("/fullscreen-timer")}
+              href={abs("/online-timer")}
             >
               Fullscreen Timer
             </a>{" "}

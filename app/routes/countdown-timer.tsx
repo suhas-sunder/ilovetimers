@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/countdown-timer.tsx
 import type { Route } from "./+types/countdown-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useRef,
@@ -29,12 +30,11 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/countdown-timer/HowItWorks";
-import Disclaimer from "~/clients/components/countdown-timer/Disclaimer";
-import FAQ from "~/clients/components/countdown-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/countdown-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/countdown-timer/PopularUseCases";
-
+import { SharePresetPanel } from "~/clients/components/share/SharePresetPanel";
+import {
+  countdownShareSchema,
+  type CountdownShareConfig,
+} from "~/clients/lib/shareConfigurations";
 /* =========================================================
    META
 ========================================================= */
@@ -252,6 +252,23 @@ function CountUpTimerCard() {
     remainingRef.current = seed;
   }
 
+  function applyReusableSetup(config: CountdownShareConfig) {
+    const nextTotal = config.durationSeconds * 1000;
+    setRunning(false);
+    stopRaf();
+    endRef.current = null;
+    setTotalMs(nextTotal);
+    setRemaining(nextTotal);
+    remainingRef.current = nextTotal;
+    totalMsRef.current = nextTotal;
+    syncInputsFromMs(nextTotal);
+  }
+
+  const reusableConfig = useMemo<CountdownShareConfig>(
+    () => ({ durationSeconds: Math.floor(totalMs / 1000) }),
+    [totalMs],
+  );
+
   function setPreset(minutes: number) {
     const nextTotal = minutes * 60 * 1000;
     setRunning(false);
@@ -427,6 +444,13 @@ function CountUpTimerCard() {
               </SettingRow>
             </SettingGroup>
 
+            <SharePresetPanel
+              schema={countdownShareSchema}
+              currentConfig={reusableConfig}
+              onApply={applyReusableSetup}
+              loadDisabled={running}
+            />
+
             <SecondaryActionRow>
               <Button
                 variant="secondary"
@@ -571,8 +595,26 @@ export default function CountDownTimerPage({
             <a className="ilt-content-link" href="/online-timer">Online Timer</a>{" "}
             for presets, looping, and flexible setup.
           </p>
+          <p>
+            For the implementation details behind delayed callbacks and hidden
+            pages, read how{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/how-browser-timers-measure-time"
+            >
+              browser timers measure elapsed time
+            </a>{" "}
+            and what changes in{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/browser-timers-background-tabs"
+            >
+              background tabs or on locked devices
+            </a>
+            .
+          </p>
         </ContentSection>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/countdown-timer" />
         <ContentSection>
           <p>
             Need a countdown with visible milliseconds and millisecond input?
@@ -618,10 +660,6 @@ export default function CountDownTimerPage({
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

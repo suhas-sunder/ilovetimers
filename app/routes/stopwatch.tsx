@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/stopwatch.tsx
 import type { Route } from "./+types/stopwatch";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,
@@ -26,12 +27,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/stopwatch/HowItWorks";
-import Disclaimer from "~/clients/components/stopwatch/Disclaimer";
-import FAQ from "~/clients/components/stopwatch/FAQ";
-import KeyboardShortcuts from "~/clients/components/stopwatch/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/stopwatch/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -561,8 +556,19 @@ export default function StopwatchPage({
             time in advance, a countdown is usually a better fit; the combined
             timer and stopwatch page is useful when one session may need both.
           </p>
+          <p>
+            Read{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/how-browser-timers-measure-time"
+            >
+              how browser timers measure elapsed time and handle delays
+            </a>{" "}
+            for the monotonic-clock and callback-reconciliation method used by
+            this kind of stopwatch.
+          </p>
         </ContentSection>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/stopwatch" />
         <ContentSection>
           <p>
             Need a countdown that starts from a set duration and shows
@@ -579,10 +585,6 @@ export default function StopwatchPage({
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

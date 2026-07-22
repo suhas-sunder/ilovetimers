@@ -25,7 +25,7 @@ export default function PopularUseCases({
     {
       title: "Agenda timeboxing (one timer per topic)",
       description:
-        "Pick a preset (like 5m, 10m, or 15m) for the current agenda item, press Start, and switch to fullscreen so everyone can see the time remaining. When you move to the next topic, change minutes to reset instantly.",
+        "Pick a preset such as 5, 10, or 15 minutes for the current agenda item, press Start, and use fullscreen if the room needs a larger display. Pause before choosing a new duration for the next topic.",
       forWho:
         "Meetings with a clear agenda where you want a visible countdown and quick resets between topics.",
       notFor:
@@ -44,7 +44,7 @@ export default function PopularUseCases({
       notFor:
         "You need a flexible stopwatch-style view. Use Count Up Timer or Stopwatch.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
@@ -70,7 +70,7 @@ export default function PopularUseCases({
       notFor:
         "You want a minimal fullscreen-only countdown with fewer controls. Use Fullscreen Timer.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Online Timer", href: "/online-timer" },
       ],
     },

@@ -222,7 +222,7 @@ export default function HowItWorks({
               Current Local Time
             </PillLink>
             <PillLink href={abs("/world-clock")}>World Clock</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/time-zone-converter")}>

@@ -32,7 +32,7 @@ export default function PopularUseCases({
         "You need a duration-only timer (for example, “25 minutes from now”). Use a duration countdown instead.",
       links: [
         { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {

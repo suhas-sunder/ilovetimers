@@ -1,6 +1,6 @@
 // app/routes/roman-numeral-clock.tsx
 import type { Route } from "./+types/roman-numeral-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,

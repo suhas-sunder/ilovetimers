@@ -85,7 +85,7 @@ export default function HowItWorks({
               or{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                href={abs("/count-up-timer")}
+                href={abs("/stopwatch")}
               >
                 Count Up Timer
               </a>
@@ -389,7 +389,7 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink href={abs("/stopwatch")}>Stopwatch</PillLink>
-            <PillLink href={abs("/count-up-timer")}>Count Up Timer</PillLink>
+            <PillLink href={abs("/stopwatch")}>Count Up Timer</PillLink>
             <PillLink href={abs("/time-calculator")}>Time Calculator</PillLink>
             <PillLink href={abs("/work-hours-calculator")}>
               Work Hours Calculator

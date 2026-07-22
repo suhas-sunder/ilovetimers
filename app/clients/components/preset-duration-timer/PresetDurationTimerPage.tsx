@@ -143,7 +143,7 @@ export function createPresetTimerMeta(config: PresetDurationTimerConfig) {
     { title: config.metaTitle },
     { name: "description", content: config.metaDescription },
     { name: "keywords", content: config.keywords.join(", ") },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
     { property: "og:title", content: config.metaTitle },
     { property: "og:description", content: config.metaDescription },
     { property: "og:type", content: "website" },

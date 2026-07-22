@@ -88,16 +88,18 @@ export default function HowItWorks({
             <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
               One important truth up front: this clock shows{" "}
               <strong>your device time</strong>. If your laptop or phone clock
-              is wrong, the display will be wrong. This page is perfect for
-              readability and workflow, but it does not “fix” system time. If
-              you suspect drift, compare against{" "}
+              is wrong, the display will be wrong. This page provides a large
+              readable view, but it does not fix system time. If you suspect
+              drift, compare the device with an external time service such as{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                href={abs("/utc-clock")}
+                href="https://www.nist.gov/pml/time-and-frequency-division/about-timegov"
+                target="_blank"
+                rel="noreferrer"
               >
-                UTC Clock
+                NIST time.gov
               </a>{" "}
-              and then correct time sync in your operating system settings.
+              and check the time-sync settings in your operating system.
             </p>
 
             <p className="mt-3 max-w-3xl text-[var(--ilt-text-secondary)] leading-relaxed">
@@ -163,7 +165,7 @@ export default function HowItWorks({
               </div>
               <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 This tool is optimized for a readable time display and quick
-                “what time is it exactly right now” checks. If your goal is
+                checking the time reported by this device. If your goal is
                 timing an activity, you will usually get a better workflow from{" "}
                 <a
                   className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
@@ -261,7 +263,7 @@ export default function HowItWorks({
             Real scenarios with example readings
           </h3>
           <p className="mt-2 text-[var(--ilt-text-secondary)] leading-relaxed">
-            These examples show what the page feels like in real use. The exact
+            These examples show what the page does in real use. The specific
             numbers depend on when you look, but the interaction pattern stays
             the same: pick milliseconds based on your needs, optionally freeze
             for reference, and use fullscreen when readability matters.
@@ -273,7 +275,7 @@ export default function HowItWorks({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-base font-semibold text-[var(--ilt-text-primary)]">
-                    Recording a tutorial, “call out the exact start time”
+                    Recording a tutorial, “call out the displayed start time”
                   </div>
                   <div className="mt-1 text-sm text-[var(--ilt-text-muted)]">
                     Use milliseconds and fullscreen for a clean shot
@@ -356,21 +358,24 @@ export default function HowItWorks({
               <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
                 A common situation: your phone and laptop disagree. You open
                 this page on your laptop and see <strong>18:22:07.120</strong>,
-                but your phone shows <strong>18:22:13</strong>. That is a real
-                signal that one device is drifting or not syncing time.
+                while your phone shows <strong>18:22:13</strong>. This shows
+                that the devices disagree. It does not identify which clock is
+                wrong.
               </p>
 
               <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
-                Use{" "}
+                Compare each device with an external reference such as{" "}
                 <a
                   className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                  href={abs("/utc-clock")}
+                  href="https://www.nist.gov/pml/time-and-frequency-division/about-timegov"
+                  target="_blank"
+                  rel="noreferrer"
                 >
-                  UTC Clock
+                  NIST time.gov
                 </a>{" "}
-                as a quick reference view, then correct the device clock in
-                system settings. This page will immediately reflect the updated
-                system time once your OS is synced.
+                and then correct the device clock in system settings. This page
+                reflects the updated device time after the operating system
+                applies it.
               </p>
             </div>
 
@@ -422,9 +427,10 @@ export default function HowItWorks({
               looks smooth while the tab is active, then looks “jumpy” after you
               switch away and come back. That is normal browser behavior. Modern
               browsers reduce animation frequency in background tabs, and some
-              devices reduce it further in low-power modes. The clock stays
-              correct, but the visual update cadence changes. For the smoothest
-              appearance, keep the tab visible or use seconds-only mode.
+              devices reduce it further in low-power modes. When rendering
+              resumes, the display reads the current device-clock value again.
+              This does not correct a device clock that is early or late. Keep
+              the tab visible or use seconds-only mode for steadier rendering.
             </p>
 
             <p className="mt-3 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
@@ -469,12 +475,12 @@ export default function HowItWorks({
 
             <div className="ilt-surface-card p-4">
               <div className="text-sm font-semibold text-[var(--ilt-text-primary)]">
-                Preferences may persist on your device
+                Settings reset on refresh
               </div>
               <p className="mt-2 text-sm leading-relaxed text-[var(--ilt-text-secondary)]">
-                Depending on how you integrated the page, it may remember simple
-                preferences (like whether milliseconds were on) using browser
-                storage so the page feels consistent on your next visit.
+                This route does not save its milliseconds or freeze settings in
+                localStorage. Refreshing the page restores the default live
+                display with milliseconds shown.
               </p>
             </div>
           </div>

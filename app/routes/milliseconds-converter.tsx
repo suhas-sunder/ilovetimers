@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/milliseconds-converter.tsx
 import type { Route } from "./+types/milliseconds-converter";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -16,10 +17,6 @@ import {
   ToolFrame as Card,
   ToolHero,
 } from "~/clients/components/ui/foundation";
-import HowItWorks from "~/clients/components/milliseconds-converter/HowItWorks";
-import FAQ from "~/clients/components/milliseconds-converter/FAQ";
-import KeyboardShortcuts from "~/clients/components/milliseconds-converter/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/milliseconds-converter/PopularUseCases";
 import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
 const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
@@ -502,7 +499,7 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/milliseconds-converter" />
         <ContentSection>
           <p>
             Working with epoch values from logs or APIs? The{" "}
@@ -539,9 +536,6 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
             converter's accepted decimal text and display rules.
           </p>
         </ToolTrustNote>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
       </SeoBand>
     </PageShell>
   );

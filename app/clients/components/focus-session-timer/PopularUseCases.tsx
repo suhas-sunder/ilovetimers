@@ -45,7 +45,7 @@ export default function PopularUseCases({
       notFor:
         "You want multiple timers on screen at once. Use Multiple Timers instead.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
       ],
     },
@@ -98,7 +98,7 @@ export default function PopularUseCases({
       notFor:
         "You need a fixed end time and a finish prompt. Use this focus session countdown instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Stopwatch", href: "/stopwatch" },
       ],
     },

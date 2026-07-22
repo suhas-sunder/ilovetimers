@@ -1675,7 +1675,7 @@ export function FullScreenClockPage({
     <PageShell>
       <JsonLd
         name="Full Screen Clock"
-        routePath="/full-screen-clock"
+        routePath="/digital-clock"
         description="A browser-based full screen clock with large live digits, seconds, 12 and 24-hour modes, date display, copy, and fullscreen support."
         faqItems={FULL_SCREEN_CLOCK_FAQ}
       />
@@ -1711,7 +1711,7 @@ export function FullScreenClockPage({
           </p>
           <p>
             For a display tuned for the largest possible digits, use the{" "}
-            <a className="ilt-content-link" href="/big-digital-clock">
+            <a className="ilt-content-link" href="/digital-clock">
               big digital clock
             </a>
             . For a general digital clock, use the{" "}
@@ -1723,7 +1723,7 @@ export function FullScreenClockPage({
               minimalist clock
             </a>
             . For seconds-first display, open the{" "}
-            <a className="ilt-content-link" href="/clock-with-seconds">
+            <a className="ilt-content-link" href="/digital-clock">
               clock with seconds
             </a>
             .
@@ -1759,7 +1759,7 @@ export function WorldClockWithSecondsPage({
     <PageShell>
       <JsonLd
         name="World Clock With Seconds"
-        routePath="/world-clock-with-seconds"
+        routePath="/world-clock"
         description="A browser-based world clock with live seconds visible for local time and selected city or timezone rows."
         faqItems={WORLD_SECONDS_FAQ}
       />
@@ -1819,7 +1819,7 @@ export function WorldClockWithSecondsPage({
               UTC clock
             </a>{" "}
             for a dedicated UTC display, or the{" "}
-            <a className="ilt-content-link" href="/clock-with-seconds">
+            <a className="ilt-content-link" href="/digital-clock">
               clock with seconds
             </a>{" "}
             for one large local seconds clock.
@@ -1947,7 +1947,7 @@ export function AnalogClockWithSecondHandPage({
     <PageShell>
       <JsonLd
         name="Analog Clock With Second Hand"
-        routePath="/analog-clock-with-second-hand"
+        routePath="/analog-clock"
         description="A browser-based analog clock face with a second hand visible by default, ticking or smooth movement, copy, and fullscreen support."
         faqItems={ANALOG_SECOND_HAND_FAQ}
       />
@@ -1983,11 +1983,11 @@ export function AnalogClockWithSecondHandPage({
               analog clock
             </a>
             . For smooth sweeping motion as the main focus, use the{" "}
-            <a className="ilt-content-link" href="/smooth-second-hand-clock">
+            <a className="ilt-content-link" href="/analog-clock">
               smooth second hand clock
             </a>
             . For a room display, use the{" "}
-            <a className="ilt-content-link" href="/full-screen-analog-clock">
+            <a className="ilt-content-link" href="/analog-clock">
               full screen analog clock
             </a>
             .
@@ -1997,7 +1997,7 @@ export function AnalogClockWithSecondHandPage({
         <ContentSection title="Related clocks">
           <p>
             Try the{" "}
-            <a className="ilt-content-link" href="/clock-with-seconds">
+            <a className="ilt-content-link" href="/digital-clock">
               clock with seconds
             </a>{" "}
             for a digital seconds display, the{" "}
@@ -2005,7 +2005,7 @@ export function AnalogClockWithSecondHandPage({
               digital clock
             </a>{" "}
             for large digits, or the{" "}
-            <a className="ilt-content-link" href="/full-screen-clock">
+            <a className="ilt-content-link" href="/digital-clock">
               full screen clock
             </a>{" "}
             for an immediate room-display clock.
@@ -2030,7 +2030,7 @@ export function FullScreenAnalogClockPage({
     <PageShell>
       <JsonLd
         name="Full Screen Analog Clock"
-        routePath="/full-screen-analog-clock"
+        routePath="/analog-clock"
         description="A browser-based full screen analog clock with a large clock face, visible second hand, ticking or smooth movement, copy, and fullscreen support."
         faqItems={FULL_SCREEN_ANALOG_FAQ}
       />
@@ -2068,11 +2068,11 @@ export function FullScreenAnalogClockPage({
               analog clock
             </a>
             . For a second-hand-first face, open the{" "}
-            <a className="ilt-content-link" href="/analog-clock-with-second-hand">
+            <a className="ilt-content-link" href="/analog-clock">
               analog clock with second hand
             </a>
             . For smooth motion as the main focus, try the{" "}
-            <a className="ilt-content-link" href="/smooth-second-hand-clock">
+            <a className="ilt-content-link" href="/analog-clock">
               smooth second hand clock
             </a>
             .
@@ -2082,7 +2082,7 @@ export function FullScreenAnalogClockPage({
         <ContentSection title="Related clocks">
           <p>
             Use the{" "}
-            <a className="ilt-content-link" href="/full-screen-clock">
+            <a className="ilt-content-link" href="/digital-clock">
               full screen clock
             </a>{" "}
             for a digital room clock, or the{" "}
@@ -2111,7 +2111,7 @@ export function BigDigitalClockPage({
     <PageShell>
       <JsonLd
         name="Big Digital Clock"
-        routePath="/big-digital-clock"
+        routePath="/digital-clock"
         description="A browser-based big digital clock optimized for large, room-readable current time display with seconds, 12/24-hour mode, date, copy, and fullscreen support."
         faqItems={BIG_DIGITAL_CLOCK_FAQ}
       />
@@ -2150,7 +2150,7 @@ export function BigDigitalClockPage({
               digital clock
             </a>
             . For fullscreen-first display, use the{" "}
-            <a className="ilt-content-link" href="/full-screen-clock">
+            <a className="ilt-content-link" href="/digital-clock">
               full screen clock
             </a>
             . For a quieter face, try the{" "}
@@ -2164,7 +2164,7 @@ export function BigDigitalClockPage({
         <ContentSection title="Related digital clocks">
           <p>
             Open the{" "}
-            <a className="ilt-content-link" href="/clock-with-seconds">
+            <a className="ilt-content-link" href="/digital-clock">
               clock with seconds
             </a>{" "}
             when seconds are the main detail, or the{" "}

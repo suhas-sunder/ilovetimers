@@ -73,7 +73,7 @@ export default function PopularUseCases({
         "If you only need a giant timer for activities or transitions. Use Fullscreen Timer.",
       links: [
         { label: "Astronomical clock", href: "/astronomical-clock" },
-        { label: "Fullscreen timer", href: "/fullscreen-timer" },
+        { label: "Online timer", href: "/online-timer" },
         { label: "Minimalist clock", href: "/minimalist-clock" },
       ],
     },

@@ -1,6 +1,6 @@
 // app/routes/retro-flip-clock.tsx
 import type { Route } from "./+types/retro-flip-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -981,7 +981,7 @@ export default function RetroFlipClockPage({
             analog clock
           </a>
           . For a large countdown display rather than a live clock, use the{" "}
-          <a className="ilt-content-link" href="/fullscreen-timer">
+          <a className="ilt-content-link" href="/online-timer">
             fullscreen timer
           </a>
           .

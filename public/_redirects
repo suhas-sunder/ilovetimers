@@ -32,5 +32,4 @@
 /utc-time-now/  /utc-clock  301
 /current-unix-timestamp  /epoch-unix-time-clock  301
 /current-unix-timestamp/  /epoch-unix-time-clock  301
-
 /*  /index.html  200

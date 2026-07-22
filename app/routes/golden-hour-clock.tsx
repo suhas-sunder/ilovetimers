@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/golden-hour-clock.tsx
 import type { Route } from "./+types/golden-hour-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -9,11 +10,6 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import HowItWorks from "~/clients/components/golden-hour-clock/HowItWorks";
-import Disclaimer from "~/clients/components/golden-hour-clock/Disclaimer";
-import FAQ from "~/clients/components/golden-hour-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/golden-hour-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/golden-hour-clock/PopularUseCases";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
@@ -34,6 +30,8 @@ import {
   ToolFrame as Card,
   Toggle,
 } from "~/clients/components/ui/foundation";
+import { TechnicalMethod } from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
 
 /* =========================================================
    META
@@ -61,7 +59,7 @@ export function meta({}: Route.MetaArgs) {
         "golden hour sunrise sunset",
       ].join(", "),
     },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -302,6 +300,26 @@ function getSolarTimes(
   lon: number,
   method: GoldenMethod,
 ): SolarTimes {
+  if (
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lon) ||
+    lat < -90 ||
+    lat > 90 ||
+    lon < -180 ||
+    lon > 180 ||
+    Number.isNaN(dateLocal.getTime())
+  ) {
+    return {
+      solarNoon: null,
+      sunrise: null,
+      sunset: null,
+      goldenMorningStart: null,
+      goldenMorningEnd: null,
+      goldenEveningStart: null,
+      goldenEveningEnd: null,
+      note: "Enter a real date, latitude from -90 to 90, and longitude from -180 to 180.",
+    };
+  }
   const dNoon = new Date(dateLocal);
   dNoon.setHours(12, 0, 0, 0);
 
@@ -318,8 +336,9 @@ function getSolarTimes(
   const Jnoon = solarTransitJ(ds, M, L);
 
   const h0 = rad * -0.833;
-  const Jrise = getSetJ(h0, lw, phi, dec, n, M, L);
-  const Jset = Jnoon * 2 - Jrise;
+  // getSetJ returns the evening crossing; mirror it around solar noon for dawn.
+  const Jset = getSetJ(h0, lw, phi, dec, n, M, L);
+  const Jrise = Jnoon * 2 - Jset;
 
   const solarNoon = fromJulian(Jnoon);
   const sunrise = fromJulian(Jrise);
@@ -464,14 +483,14 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
 
   const latNum = useMemo(() => {
     const n = safeParseNum(latStr);
-    if (n == null) return 40.7128;
-    return clamp(n, -90, 90);
+    if (n == null || n < -90 || n > 90) return Number.NaN;
+    return n;
   }, [latStr]);
 
   const lonNum = useMemo(() => {
     const n = safeParseNum(lonStr);
-    if (n == null) return -74.006;
-    return clamp(n, -180, 180);
+    if (n == null || n < -180 || n > 180) return Number.NaN;
+    return n;
   }, [lonStr]);
 
   const times = useMemo(() => {
@@ -570,8 +589,8 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const la = Number(pos.coords.latitude.toFixed(6));
-        const lo = Number(pos.coords.longitude.toFixed(6));
+        const la = Number(pos.coords.latitude.toFixed(4));
+        const lo = Number(pos.coords.longitude.toFixed(4));
         setLatStr(String(la));
         setLonStr(String(lo));
       },
@@ -872,7 +891,7 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
           </div>
 
           {/* Compact golden windows overlay */}
-          <div className="pointer-events-none absolute left-3 right-3 top-3 sm:left-6 sm:right-6 sm:top-5">
+          <div className="pointer-events-none relative mt-4 w-full sm:absolute sm:left-6 sm:right-6 sm:top-5 sm:mt-0 sm:w-auto">
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 flex-col gap-1">
                 <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
@@ -1093,12 +1112,42 @@ export default function GoldenHourClockPage({
 
       <SeoBand>
 
-          <HowItWorks />
-          <KeyboardShortcuts />
-          <PopularUseCases />
-          <FAQ />
-          <Disclaimer />
-
+          <TechnicalMethod
+            heading="How the golden-hour windows are calculated"
+            sources={[TECHNICAL_SOURCES.noaaSolar]}
+          >
+            <p>
+              This route uses local JavaScript formulas based on common
+              Julian-date and solar-position calculations. It does not use a
+              package or request an astronomy API. Inputs are the selected date,
+              latitude, longitude, and the device's current time zone. Latitude
+              must be from -90 to 90 and longitude from -180 to 180. Invalid
+              values produce no event times.
+            </p>
+            <p>
+              The Classic method defines morning golden hour as the first 60
+              minutes after calculated sunrise and evening golden hour as the
+              final 60 minutes before calculated sunset. The Solar-angle method
+              uses the period from the modeled horizon to 6 degrees above it. If
+              that angle window is invalid at the chosen latitude and date, the
+              page falls back to the 60-minute method and labels the fallback.
+            </p>
+            <p>
+              Worked example for the Classic method: if the calculated sunrise
+              is 06:20, the morning window is 06:20 to 07:20. If sunset is
+              18:45, the evening window is 17:45 to 18:45. The countdown
+              subtracts the device-clock time from the next calculated boundary.
+            </p>
+            <p>
+              Times are rounded to the minute. The model does not include
+              terrain, elevation, buildings, weather, camera exposure, or the
+              visible horizon. GPS coordinates are used in memory and are not
+              stored by this route or sent to an astronomy service. Sound can be
+              delayed or blocked by browser audio rules, background suspension,
+              or device sleep.
+            </p>
+          </TechnicalMethod>
+          <Stage4RouteContent routePath="/golden-hour-clock" />
       </SeoBand>
     </PageShell>
   );

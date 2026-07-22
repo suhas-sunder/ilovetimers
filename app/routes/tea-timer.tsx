@@ -1,6 +1,6 @@
 // app/routes/tea-timer.tsx
 import type { Route } from "./+types/tea-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -721,7 +721,7 @@ export default function TeaTimerPage({
         <ContentSection title="Related kitchen timers">
           <p>
             For general cooking steps, use the{" "}
-            <a className="ilt-content-link" href="/cooking-timer">
+            <a className="ilt-content-link" href="/kitchen-timer">
               cooking timer
             </a>
             . For boiled eggs, use the{" "}

@@ -1,6 +1,6 @@
 // app/routes/sleep-timer.tsx
 import type { Route } from "./+types/sleep-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,

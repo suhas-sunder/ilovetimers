@@ -1,6 +1,6 @@
 // app/routes/billable-hours-clock.tsx
 import type { Route } from "./+types/billable-hours-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -346,9 +346,14 @@ function BillableHoursClockCard() {
     if (hydratedRef.current) return;
     hydratedRef.current = true;
 
-    const saved = safeParseJSON<PersistedStateV1>(
-      window.localStorage.getItem(LS_KEY),
-    );
+    let saved: PersistedStateV1 | null = null;
+    try {
+      saved = safeParseJSON<PersistedStateV1>(
+        window.localStorage.getItem(LS_KEY),
+      );
+    } catch {
+      // Restricted storage must not prevent the clock from loading.
+    }
     if (
       !saved ||
       saved.v !== 1 ||

@@ -1,0 +1,555 @@
+{
+  "generatedAt": "2026-07-22T00:28:41.295Z",
+  "stage": 5,
+  "summary": {
+    "guideIndexRoutes": 1,
+    "guideArticleRoutes": 6,
+    "totalGuideRoutes": 7,
+    "totalRenderedArticleWords": 6128,
+    "minimumRenderedArticleWords": 884,
+    "duplicateTitles": 0,
+    "duplicateDescriptions": 0,
+    "duplicateDirectQuestions": 0,
+    "identicalHeadingSequences": 0,
+    "contextualToolPagesLinked": 13,
+    "citationUrlCount": 15,
+    "canonicalRouteCount": 132,
+    "xmlSitemapUrlCount": 109,
+    "result": "passed"
+  },
+  "routes": [
+    {
+      "path": "/guides",
+      "title": "Browser Timing, Timezone, and Storage Guides | iLoveTimers",
+      "h1": "Guides to Browser Timing, Timezones, and Local Data",
+      "metaDescription": "Read implementation-backed guides to browser timer behavior, alarm sound, elapsed-time measurement, Unix timestamp units, DST conversions, and local storage.",
+      "canonical": "https://www.ilovetimers.com/guides",
+      "robots": "index,follow,max-image-preview:large",
+      "renderedMainWordCount": 433,
+      "directQuestion": null,
+      "sectionHeadings": [
+        "Choose the question you need to answer",
+        "Browser Timers in Background Tabs, Locked Phones, and Closed Tabs",
+        "Why a Browser Timer or Alarm May Stay Silent",
+        "How Browser Timers Measure Elapsed Time and Handle Delays",
+        "Unix Timestamps in Seconds, Milliseconds, and Microseconds",
+        "Daylight-Saving Gaps, Repeated Times, and Timezone Conversions",
+        "What iLoveTimers Stores in Your Browser",
+        "How these guides are checked"
+      ],
+      "sourceLinks": [],
+      "schemaTypes": [
+        "WebSite",
+        "CollectionPage",
+        "ItemList",
+        "ListItem",
+        "BreadcrumbList"
+      ],
+      "visibleAuthor": true,
+      "visibleReviewDate": "2026-07-21",
+      "internalGuideLinks": [
+        "/guides/browser-timers-background-tabs",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/browser-storage"
+      ]
+    },
+    {
+      "path": "/guides/browser-timers-background-tabs",
+      "title": "Browser Timers in Background Tabs, Locked Phones, and Closed Tabs | iLoveTimers",
+      "h1": "Browser Timers in Background Tabs, Locked Phones, and Closed Tabs",
+      "metaDescription": "Understand what can happen to a browser timer when its tab is hidden, a phone is locked, the browser freezes the page, or the tab is closed.",
+      "canonical": "https://www.ilovetimers.com/guides/browser-timers-background-tabs",
+      "robots": "index,follow,max-image-preview:large",
+      "renderedMainWordCount": 1004,
+      "directQuestion": "Will a browser timer keep working in a background tab, on a locked phone, or after I close the tab?",
+      "sectionHeadings": [
+        "Will a browser timer keep working in a background tab, on a locked phone, or after I close the tab?",
+        "What changes when a tab is merely hidden",
+        "Hidden, frozen, discarded, and closed are different states",
+        "What happens when a phone is locked",
+        "What iLoveTimers can and cannot recover",
+        "Safer setup for an important timer",
+        "Sources and further reading",
+        "Related iLoveTimers guides"
+      ],
+      "sourceLinks": [
+        "https://developer.chrome.com/docs/web-platform/page-lifecycle-api",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "TechArticle",
+        "BreadcrumbList",
+        "ListItem"
+      ],
+      "visibleAuthor": true,
+      "visibleReviewDate": "2026-07-21",
+      "internalGuideLinks": [
+        "/guides",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/browser-timer-alarm-silent"
+      ]
+    },
+    {
+      "path": "/guides/browser-timer-alarm-silent",
+      "title": "Why a Browser Timer or Alarm May Stay Silent | iLoveTimers",
+      "h1": "Why a Browser Timer or Alarm May Stay Silent",
+      "metaDescription": "Troubleshoot browser timer and alarm sound, including autoplay rules, muted output, suspended audio, background pages, and device sleep.",
+      "canonical": "https://www.ilovetimers.com/guides/browser-timer-alarm-silent",
+      "robots": "index,follow,max-image-preview:large",
+      "renderedMainWordCount": 1002,
+      "directQuestion": "Why did my browser timer finish without making a sound?",
+      "sectionHeadings": [
+        "Why did my browser timer finish without making a sound?",
+        "The six separate points where sound can fail",
+        "Why clicking Test sound is more useful than waiting",
+        "What suspended, interrupted, and closed audio mean",
+        "Background tabs and locked devices add another risk",
+        "Troubleshooting checklist",
+        "What a successful browser test does not prove",
+        "Sources and further reading",
+        "Related iLoveTimers guides"
+      ],
+      "sourceLinks": [
+        "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay",
+        "https://webaudio.github.io/web-audio-api/",
+        "https://developer.chrome.com/docs/web-platform/page-lifecycle-api"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "TechArticle",
+        "BreadcrumbList",
+        "ListItem"
+      ],
+      "visibleAuthor": true,
+      "visibleReviewDate": "2026-07-21",
+      "internalGuideLinks": [
+        "/guides",
+        "/guides/browser-timers-background-tabs",
+        "/guides/how-browser-timers-measure-time"
+      ]
+    },
+    {
+      "path": "/guides/how-browser-timers-measure-time",
+      "title": "How Browser Timers Measure Elapsed Time and Handle Delays | iLoveTimers",
+      "h1": "How Browser Timers Measure Elapsed Time and Handle Delays",
+      "metaDescription": "Learn why accurate browser timers measure elapsed or target time instead of assuming every callback arrives on schedule.",
+      "canonical": "https://www.ilovetimers.com/guides/how-browser-timers-measure-time",
+      "robots": "index,follow,max-image-preview:large",
+      "renderedMainWordCount": 1000,
+      "directQuestion": "How can a browser timer stay accurate when animation frames and timer callbacks are delayed?",
+      "sectionHeadings": [
+        "How can a browser timer stay accurate when animation frames and timer callbacks are delayed?",
+        "Scheduling a callback is not measuring a duration",
+        "Why performance.now is useful for elapsed time",
+        "Countdowns use a target; stopwatches use a start",
+        "Clocks and metronomes need different sources of truth",
+        "What still happens during a long delay",
+        "How to judge a browser timer claim",
+        "Sources and further reading",
+        "Related iLoveTimers guides"
+      ],
+      "sourceLinks": [
+        "https://www.w3.org/TR/hr-time-3/",
+        "https://html.spec.whatwg.org/multipage/timers.html",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "TechArticle",
+        "BreadcrumbList",
+        "ListItem"
+      ],
+      "visibleAuthor": true,
+      "visibleReviewDate": "2026-07-21",
+      "internalGuideLinks": [
+        "/guides",
+        "/guides/browser-timers-background-tabs",
+        "/guides/browser-timer-alarm-silent"
+      ]
+    },
+    {
+      "path": "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "title": "Unix Timestamps in Seconds, Milliseconds, and Microseconds | iLoveTimers",
+      "h1": "Unix Timestamps in Seconds, Milliseconds, and Microseconds",
+      "metaDescription": "Distinguish Unix timestamp seconds, milliseconds, and microseconds, recognize common digit lengths, and avoid 1,000-times unit errors.",
+      "canonical": "https://www.ilovetimers.com/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "robots": "index,follow,max-image-preview:large",
+      "renderedMainWordCount": 884,
+      "directQuestion": "Is this Unix timestamp in seconds, milliseconds, or microseconds?",
+      "sectionHeadings": [
+        "Is this Unix timestamp in seconds, milliseconds, or microseconds?",
+        "One instant written in three units",
+        "What the Unix epoch means",
+        "How iLoveTimers detects the unit",
+        "How conversion and truncation work",
+        "Common failure patterns",
+        "Current timestamps still depend on the device clock",
+        "Sources and further reading",
+        "Related iLoveTimers guides"
+      ],
+      "sourceLinks": [
+        "https://www.w3.org/TR/hr-time-3/",
+        "https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-objects",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "TechArticle",
+        "BreadcrumbList",
+        "ListItem"
+      ],
+      "visibleAuthor": true,
+      "visibleReviewDate": "2026-07-21",
+      "internalGuideLinks": [
+        "/guides",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time"
+      ]
+    },
+    {
+      "path": "/guides/daylight-saving-time-zone-conversions",
+      "title": "Daylight-Saving Gaps, Repeated Times, and Timezone Conversions | iLoveTimers",
+      "h1": "Daylight-Saving Gaps, Repeated Times, and Timezone Conversions",
+      "metaDescription": "Understand nonexistent spring-forward times, repeated fall-back times, date-specific offsets, and how iLoveTimers resolves timezone input.",
+      "canonical": "https://www.ilovetimers.com/guides/daylight-saving-time-zone-conversions",
+      "robots": "index,follow,max-image-preview:large",
+      "renderedMainWordCount": 967,
+      "directQuestion": "Why can a local time be nonexistent or occur twice during a timezone conversion?",
+      "sectionHeadings": [
+        "Why can a local time be nonexistent or occur twice during a timezone conversion?",
+        "An instant and a wall time are not the same thing",
+        "Spring-forward gaps: a local time that never happened",
+        "Fall-back repeats: one wall time, two instants",
+        "Why a city name is better than a fixed offset for future plans",
+        "Timezone abbreviations are display labels, not identifiers",
+        "What browser timezone data can and cannot guarantee",
+        "A practical conversion checklist",
+        "Sources and further reading",
+        "Related iLoveTimers guides"
+      ],
+      "sourceLinks": [
+        "https://tc39.es/ecma402/#sec-iana-time-zone-database",
+        "https://www.iana.org/time-zones",
+        "https://tc39.es/proposal-temporal/docs/timezone.html"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "TechArticle",
+        "BreadcrumbList",
+        "ListItem"
+      ],
+      "visibleAuthor": true,
+      "visibleReviewDate": "2026-07-21",
+      "internalGuideLinks": [
+        "/guides",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+        "/guides/how-browser-timers-measure-time"
+      ]
+    },
+    {
+      "path": "/guides/browser-storage",
+      "title": "What iLoveTimers Stores in Your Browser | iLoveTimers",
+      "h1": "What iLoveTimers Stores in Your Browser",
+      "metaDescription": "See which iLoveTimers preferences and tool data use local browser storage, what is session-only, and how clearing site data affects them.",
+      "canonical": "https://www.ilovetimers.com/guides/browser-storage",
+      "robots": "index,follow,max-image-preview:large",
+      "renderedMainWordCount": 1271,
+      "directQuestion": "What does iLoveTimers save in my browser, and what is not saved?",
+      "sectionHeadings": [
+        "What does iLoveTimers save in my browser, and what is not saved?",
+        "The production local-storage inventory",
+        "What stays only in the current page session",
+        "Share links are different from local presets",
+        "Local storage is origin-scoped, not a server account",
+        "What happens when storage is missing or corrupt",
+        "Analytics storage is consent-controlled",
+        "How to clear or preserve your data",
+        "Sources and further reading",
+        "Related iLoveTimers guides"
+      ],
+      "sourceLinks": [
+        "https://html.spec.whatwg.org/multipage/webstorage.html",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage",
+        "https://storage.spec.whatwg.org/"
+      ],
+      "schemaTypes": [
+        "WebSite",
+        "TechArticle",
+        "BreadcrumbList",
+        "ListItem"
+      ],
+      "visibleAuthor": true,
+      "visibleReviewDate": "2026-07-21",
+      "internalGuideLinks": [
+        "/guides",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions"
+      ]
+    }
+  ],
+  "citationChecks": [
+    {
+      "url": "https://developer.chrome.com/docs/web-platform/page-lifecycle-api",
+      "status": 200,
+      "finalUrl": "https://developer.chrome.com/docs/web-platform/page-lifecycle-api?hl=fr",
+      "reachable": true,
+      "checkedInMs": 479
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout",
+      "status": 200,
+      "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout",
+      "reachable": true,
+      "checkedInMs": 52
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API",
+      "status": 200,
+      "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API",
+      "reachable": true,
+      "checkedInMs": 58
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay",
+      "status": 200,
+      "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay",
+      "reachable": true,
+      "checkedInMs": 56
+    },
+    {
+      "url": "https://webaudio.github.io/web-audio-api/",
+      "status": 200,
+      "finalUrl": "https://webaudio.github.io/web-audio-api/",
+      "reachable": true,
+      "checkedInMs": 35
+    },
+    {
+      "url": "https://www.w3.org/TR/hr-time-3/",
+      "status": 200,
+      "finalUrl": "https://www.w3.org/TR/hr-time-3/",
+      "reachable": true,
+      "checkedInMs": 44
+    },
+    {
+      "url": "https://html.spec.whatwg.org/multipage/timers.html",
+      "status": 200,
+      "finalUrl": "https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html",
+      "reachable": true,
+      "checkedInMs": 337
+    },
+    {
+      "url": "https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-objects",
+      "status": 200,
+      "finalUrl": "https://tc39.es/ecma262/multipage/numbers-and-dates.html",
+      "reachable": true,
+      "checkedInMs": 58
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime",
+      "status": 200,
+      "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime",
+      "reachable": true,
+      "checkedInMs": 57
+    },
+    {
+      "url": "https://tc39.es/ecma402/#sec-iana-time-zone-database",
+      "status": 200,
+      "finalUrl": "https://tc39.es/ecma402/",
+      "reachable": true,
+      "checkedInMs": 35
+    },
+    {
+      "url": "https://www.iana.org/time-zones",
+      "status": 200,
+      "finalUrl": "https://www.iana.org/time-zones",
+      "reachable": true,
+      "checkedInMs": 69
+    },
+    {
+      "url": "https://tc39.es/proposal-temporal/docs/timezone.html",
+      "status": 200,
+      "finalUrl": "https://tc39.es/proposal-temporal/docs/timezone.html",
+      "reachable": true,
+      "checkedInMs": 36
+    },
+    {
+      "url": "https://html.spec.whatwg.org/multipage/webstorage.html",
+      "status": 200,
+      "finalUrl": "https://html.spec.whatwg.org/multipage/webstorage.html",
+      "reachable": true,
+      "checkedInMs": 240
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage",
+      "status": 200,
+      "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage",
+      "reachable": true,
+      "checkedInMs": 57
+    },
+    {
+      "url": "https://storage.spec.whatwg.org/",
+      "status": 200,
+      "finalUrl": "https://storage.spec.whatwg.org/",
+      "reachable": true,
+      "checkedInMs": 242
+    }
+  ],
+  "browserValidation": {
+    "status": "passed",
+    "testedAt": "2026-07-21",
+    "environment": "Codex Desktop 26.715.7063 on Windows using the in-app Chromium browser against the local React Router production build at 127.0.0.1:3030; the automation API did not expose the exact Chromium runtime version. Desktop viewports were 1440x1000 and 1365x900; the mobile viewport was 390x844.",
+    "scenarios": [
+      "Rendered the guides index, all six guide articles, and all eleven contextually linked tool routes in desktop light, desktop dark, mobile light, and mobile dark modes: 72 screenshots, 72 single-H1 checks, and zero document-level horizontal-overflow failures.",
+      "Verified all three guide tables remain inside horizontal-scroll wrappers at 390px rather than widening the document.",
+      "Rendered all 132 canonical non-redirect routes in Chromium: 132 paths matched, 132 single-H1 checks passed, canonical link metadata was present on every route, and no document-level horizontal overflow or hydration-error text was found.",
+      "Ran a three-second countdown, opened a second browser tab, waited 4.3 seconds, and confirmed the countdown reconciled to 0:00 with the Finished state. The automation environment continued to report the countdown page as visible, so this does not simulate operating-system freezing or a physically locked device.",
+      "Activated the Online Alarm Clock Test sound control from a user-gesture click and observed no browser warning or error logs.",
+      "Changed Speedcubing Timer preferences to Instant toggle and 12 maximum session solves, recorded a solve, reloaded, and confirmed the preferences persisted while the session result cleared.",
+      "Entered America/New_York 2026-03-08 02:30 and confirmed the converter rejected the nonexistent spring-forward time; entered 2026-11-01 01:30 and confirmed the earlier-occurrence ambiguity warning plus 2026-11-01T05:30:00.000Z.",
+      "Entered 1700000000 seconds, 1700000000000 milliseconds, and 1700000000000000 microseconds in auto-detect mode; all three resolved to 2023-11-14T22:13:20.000Z with the expected unit labels.",
+      "Collected warning and error logs after the representative interaction tests and the 132-route sweep; no warnings or errors were reported."
+    ],
+    "screenshots": [
+      "Guide and changed-tool matrix: 18 routes x desktop/mobile x light/dark = 72 captured viewport screenshots.",
+      "Representative visual inspection: guides index in desktop light and dark.",
+      "Representative visual inspection: browser-storage guide in desktop dark and 390px mobile light.",
+      "Representative visual inspection: Unix-units guide in 390px mobile dark and DST guide in desktop light."
+    ],
+    "manualTestRecords": [
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/countdown-timer",
+        "setup": "Production build, three-second countdown, second browser tab available.",
+        "steps": [
+          "Entered 0 minutes and 3 seconds, applied the value, and started the countdown.",
+          "Opened the background-timer guide in a second tab and waited 4.3 seconds.",
+          "Read the countdown route state after the wait."
+        ],
+        "observedResult": "The countdown displayed 0:00 and the Finished state.",
+        "limitations": "The automation environment continued to report the countdown page as visible, so this did not reproduce operating-system page freezing, device sleep, or a physically locked phone."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/online-alarm-clock",
+        "setup": "Production build with Sound enabled.",
+        "steps": [
+          "Located the Test sound control from the rendered accessibility tree.",
+          "Clicked Test sound as a user gesture.",
+          "Collected browser warning and error logs."
+        ],
+        "observedResult": "The control executed and no warning or error logs were reported.",
+        "limitations": "Automation cannot confirm that a person heard audio through the speakers or reproduce every mute, silent-mode, output-routing, or background policy."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/speedcubing-timer",
+        "setup": "Production build with an empty session.",
+        "steps": [
+          "Selected Instant toggle and set the maximum session solves to 12.",
+          "Started and stopped a solve to create a session result.",
+          "Reloaded the route."
+        ],
+        "observedResult": "Instant toggle and the 12-solve preference persisted; the session result cleared and the empty-session message returned.",
+        "limitations": "This proves the tested preference/session distinction in one Chromium profile; it does not prove indefinite retention in private browsing or after site-data clearing."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/time-zone-converter",
+        "setup": "Production build with America/New_York as the source zone and Europe/London as the destination.",
+        "steps": [
+          "Loaded 2026-03-08 02:30 through deterministic route parameters.",
+          "Loaded 2026-11-01 01:30 through deterministic route parameters.",
+          "Read the rendered status and ISO output after client hydration."
+        ],
+        "observedResult": "The spring time was rejected as nonexistent; the fall time was labeled as occurring twice, selected the earlier occurrence, and produced 2026-11-01T05:30:00.000Z.",
+        "limitations": "Results use the IANA timezone data supplied by this runtime and do not prove every browser or future timezone-rule update."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/unix-timestamp-converter",
+        "setup": "Production build with Auto-detect selected.",
+        "steps": [
+          "Entered 1700000000.",
+          "Entered 1700000000000.",
+          "Entered 1700000000000000 and compared the rendered unit labels and ISO values."
+        ],
+        "observedResult": "The inputs were labeled seconds, milliseconds, and microseconds respectively; all three resolved to 2023-11-14T22:13:20.000Z.",
+        "limitations": "The test covers the production thresholds and example range, not every negative, fractional, or out-of-Date-range value."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "/guides and seventeen changed routes",
+        "setup": "Production build at desktop 1440x1000 and mobile 390x844 in light and dark modes.",
+        "steps": [
+          "Rendered the guide index, six guide articles, and eleven changed tool pages in each viewport and theme combination.",
+          "Captured 72 viewport screenshots and checked H1 count and document width.",
+          "Inspected the three mobile guide tables for scroll containment."
+        ],
+        "observedResult": "All 72 renders had one H1 and no document-level horizontal overflow; all three tables stayed inside horizontal-scroll wrappers.",
+        "limitations": "This visual matrix covers the recorded Chromium environment, not Safari, Firefox, physical phones, or assistive-technology combinations."
+      },
+      {
+        "browser": "Codex in-app Chromium",
+        "browserVersion": "Exact Chromium runtime version not exposed; Codex Desktop build 26.715.7063",
+        "operatingSystem": "Windows desktop test environment",
+        "testDate": "2026-07-21",
+        "route": "All 132 canonical routes",
+        "setup": "Production build at 1365x900.",
+        "steps": [
+          "Loaded every non-redirect canonical path from the route architecture manifest.",
+          "Checked final path, one H1, canonical link presence, document overflow, and hydration-error text.",
+          "Collected warning and error logs after the sweep."
+        ],
+        "observedResult": "132 of 132 paths matched with one H1, canonical metadata, no document overflow, no hydration-error text, and no warning or error logs.",
+        "limitations": "The sweep verifies the local production build in one Chromium runtime and does not replace deployed monitoring or cross-browser testing."
+      }
+    ],
+    "limitations": [
+      "The automation environment cannot reproduce physical device lock, operating-system sleep, browser process discard, or every background-throttling policy.",
+      "The sound control executed without console errors, but automation cannot confirm that a human heard audio through the machine's speakers.",
+      "The automation API did not expose the exact Chromium runtime version; the host Codex Desktop build is recorded instead.",
+      "This pass used the in-app Chromium browser; Firefox, Safari, mobile browser shells, and assistive-technology combinations were not independently exercised.",
+      "Corrupt or inaccessible localStorage fallback is covered by source review and automated safeguards rather than by mutating browser storage during this visual pass."
+    ]
+  },
+  "safeguards": {
+    "exactGuideArticleCount": true,
+    "allGuideRoutesCanonicalAndIndexable": true,
+    "visibleAuthorshipAndDates": true,
+    "guideArticlesAbsentFromFooter": true,
+    "guideIndexInNavigationAndFooter": true,
+    "toolBehaviorChanged": false,
+    "routeAliasesAdded": false,
+    "adsAdded": false
+  },
+  "stage6StorageUpdate": {
+    "status": "reviewed",
+    "browserStorageGuideUpdated": true,
+    "namedPresetKeysRegistered": true,
+    "evidence": "docs/stage6-share-preset-evidence.json"
+  },
+  "failures": []
+}

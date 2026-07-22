@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/meditation-timer.tsx
 import type { Route } from "./+types/meditation-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -30,12 +31,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/meditation-timer/HowItWorks";
-import Disclaimer from "~/clients/components/meditation-timer/Disclaimer";
-import FAQ from "~/clients/components/meditation-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/meditation-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/meditation-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -620,11 +615,7 @@ export default function MeditationTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <Stage4RouteContent routePath="/meditation-timer" />
       </SeoBand>
     </PageShell>
   );

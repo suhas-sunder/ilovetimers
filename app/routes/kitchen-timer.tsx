@@ -531,7 +531,7 @@ export default function KitchenTimerPage() {
           <p>
             This page is a direct online kitchen timer with simple presets and
             custom input. The{" "}
-            <a className="ilt-content-link" href="/cooking-timer">
+            <a className="ilt-content-link" href="/kitchen-timer">
               cooking timer
             </a>{" "}
             is broader and includes more cooking-oriented presets and guidance.

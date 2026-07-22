@@ -32,7 +32,7 @@ export default function PopularUseCases({
         "You need a calendar-based countdown to a specific date/time. Use an event countdown instead.",
       links: [
         { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {
@@ -93,7 +93,7 @@ export default function PopularUseCases({
       notFor:
         "You need to track time upward from zero during discussion or Q&A. Use a count up timer instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Classroom Timer", href: "/classroom-timer" },
       ],
     },

@@ -474,7 +474,7 @@ export default function HowItWorks({
             <PillLink href={abs("/round-timer")}>Round Timer</PillLink>
             <PillLink href={abs("/workout-timer")}>Workout Timer</PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/silent-timer")}>Silent Timer</PillLink>

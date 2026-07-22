@@ -94,7 +94,7 @@ export default function PopularUseCases({
       notFor:
         "You need a hard stop and a visible finish. Use this fullscreen countdown instead.",
       links: [
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
@@ -106,7 +106,7 @@ export default function PopularUseCases({
   // Keep UI links relative (Remix-friendly), schema uses absolute URLs for this page
   const schemaList = scenarios.map((s) => ({
     title: s.title,
-    primaryUrl: abs("/fullscreen-timer"),
+    primaryUrl: abs("/online-timer"),
   }));
 
   const itemListLd = {

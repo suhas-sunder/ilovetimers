@@ -51,7 +51,7 @@ export default function Contact() {
         </p>
 
         <p>
-          There is no contact form in this pass. Email is the simplest way to
+          There is no contact form. Email is the simplest way to
           send enough detail for a bug report, calculator concern, accessibility
           issue, privacy question, copyright concern, correction request, or
           general feedback.

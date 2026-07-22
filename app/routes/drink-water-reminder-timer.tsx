@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/drink-water-reminder-timer.tsx
 import type { Route } from "./+types/drink-water-reminder-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -24,12 +25,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/drink-water-reminder-timer/HowItWorks";
-import Disclaimer from "~/clients/components/drink-water-reminder-timer/Disclaimer";
-import FAQ from "~/clients/components/drink-water-reminder-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/drink-water-reminder-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/drink-water-reminder-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -610,11 +605,7 @@ export default function WaterReminderTimerPage(_: Route.ComponentProps) {
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <Stage4RouteContent routePath="/drink-water-reminder-timer" />
       </SeoBand>
     </PageShell>
   );

@@ -1,5 +1,6 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 import type { Route } from "./+types/new-year-countdown";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -168,7 +169,8 @@ function NewYearCountdownTool({ initialNowISO }: { initialNowISO: string }) {
     minPx: isFs ? 48 : 36,
     maxPx: isFs ? 540 : 500,
     paddingAllowancePx: isFs ? 64 : 76,
-    initialScale: isFs ? 1 : 1.13,
+    initialScale: isFs ? 1 : 0.9,
+    initialMobileScale: isFs ? 1 : 0.88,
   });
 
   const copy = useCallback(async () => {
@@ -375,6 +377,7 @@ export default function NewYearCountdownPage({
       />
 
       <SeoBand>
+        <Stage4RouteContent routePath="/new-year-countdown" />
         <ContentSection title="What this New Year countdown counts toward">
           <p>
             This countdown points to the next January 1 at 12:00 AM in your
@@ -407,7 +410,7 @@ export default function NewYearCountdownPage({
               countdown timer
             </a>{" "}
             or{" "}
-            <a className="ilt-content-link" href="/fullscreen-timer">
+            <a className="ilt-content-link" href="/online-timer">
               fullscreen timer
             </a>
             . To compare New Year with another calendar date without a live

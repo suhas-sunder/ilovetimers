@@ -1,6 +1,6 @@
 // app/routes/study-timer.tsx
 import type { Route } from "./+types/study-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -45,7 +45,7 @@ export function meta({}: Route.MetaArgs) {
   return [
     { title },
     { name: "description", content: description },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },

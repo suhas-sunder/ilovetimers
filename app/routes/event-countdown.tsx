@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/event-countdown.tsx
 import type { Route } from "./+types/event-countdown";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -31,12 +32,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/event-countdown/HowItWorks";
-import Disclaimer from "~/clients/components/event-countdown/Disclaimer";
-import FAQ from "~/clients/components/event-countdown/FAQ";
-import KeyboardShortcuts from "~/clients/components/event-countdown/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/event-countdown/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -356,7 +351,12 @@ function EventCountdownCard({ initialNowISO }: { initialNowISO: string }) {
 
   // Load from localStorage once on mount.
   useEffect(() => {
-    const loaded = safeJsonParse<StoredStateV1>(localStorage.getItem(LS_KEY));
+    let loaded: StoredStateV1 | null = null;
+    try {
+      loaded = safeJsonParse<StoredStateV1>(localStorage.getItem(LS_KEY));
+    } catch {
+      // Restricted storage must not prevent the countdown from loading.
+    }
     const normalized = normalizeState(loaded);
     setStore(normalized);
     setHydrated(true);
@@ -944,7 +944,7 @@ export default function EventCountdownPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/event-countdown" />
         <ContentSection>
           <p>
             Counting down specifically to the next January 1? Use the{" "}
@@ -986,10 +986,6 @@ export default function EventCountdownPage({
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

@@ -3,11 +3,24 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
+import { STAGE3_NEW_REDIRECTS } from "../../app/config/routeArchitecture.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const routeSource = await readFile(path.join(ROOT, "app/routes.ts"), "utf8");
 const routes = ["/", ...[...routeSource.matchAll(/\broute\(\s*["']([^"']+)["']/g)].map((match) => `/${match[1]}`)];
-const informationalRoutes = new Set(["/", "/about", "/author/suhas-sunder", "/contact", "/how-ilovetimers-is-made", "/copyright", "/privacy", "/terms", "/cookies", "/sitemap"]);
+const informationalRoutes = new Set([
+  "/",
+  "/about",
+  "/author/suhas-sunder",
+  "/contact",
+  "/how-ilovetimers-is-made",
+  "/copyright",
+  "/privacy",
+  "/terms",
+  "/cookies",
+  "/sitemap",
+  ...routes.filter((route) => route === "/guides" || route.startsWith("/guides/")),
+]);
 const failures = [];
 const PORT = 3013;
 const base = `http://127.0.0.1:${PORT}`;
@@ -66,7 +79,10 @@ try {
   for (const [source, destination] of Object.entries(PERMANENT_REDIRECTS)) {
     const response = await fetch(`${base}${source}?qa=1`, { redirect: "manual" });
     check(response.status === 301, `${source} returned ${response.status}, expected 301.`);
-    check(response.headers.get("location") === `${destination}?qa=1`, `${source} does not preserve the query string in one redirect.`);
+    const expectedLocation = Object.hasOwn(STAGE3_NEW_REDIRECTS, source)
+      ? destination
+      : `${destination}?qa=1`;
+    check(response.headers.get("location") === expectedLocation, `${source} does not follow its declared one-hop query policy.`);
     const destinationResponse = await fetch(`${base}${destination}`, { redirect: "manual" });
     check(destinationResponse.status === 200, `Redirect destination ${destination} returned ${destinationResponse.status}.`);
   }

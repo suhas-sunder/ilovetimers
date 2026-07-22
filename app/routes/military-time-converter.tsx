@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/military-time-converter.tsx
 import type { Route } from "./+types/military-time-converter";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -27,13 +28,13 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/military-time-converter/HowItWorks";
-import FAQ from "~/clients/components/military-time-converter/FAQ";
-import KeyboardShortcuts from "~/clients/components/military-time-converter/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/military-time-converter/PopularUseCases";
-import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+import {
+  TechnicalMethod,
+  ToolTrustNote,
+} from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
 
-const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-18", label: "July 18, 2026" } as const;
 
 /* =========================================================
    META
@@ -136,8 +137,8 @@ function parseMilitary(input: string): ParseResult {
   let m = 0;
 
   if (hasColon) {
-    const parts = raw.split(":");
-    if (parts.length !== 2) {
+    const match = /^(\d{1,2}):(\d{2})$/.exec(raw);
+    if (!match) {
       return {
         valid: false,
         h24: 0,
@@ -148,25 +149,10 @@ function parseMilitary(input: string): ParseResult {
       };
     }
 
-    const hh = cleanDigits(parts[0]);
-    const mm = cleanDigits(parts[1]);
-
-    if (!hh || !mm) {
-      return {
-        valid: false,
-        h24: 0,
-        m: 0,
-        normalized: "",
-        standard: "",
-        error: "Use a valid format like 17:30.",
-      };
-    }
-
-    h = Number(hh);
-    m = Number(mm);
+    h = Number(match[1]);
+    m = Number(match[2]);
   } else {
-    const d = cleanDigits(raw);
-    if (!d) {
+    if (!/^\d{1,4}$/.test(raw)) {
       return {
         valid: false,
         h24: 0,
@@ -177,15 +163,15 @@ function parseMilitary(input: string): ParseResult {
       };
     }
 
-    if (d.length === 1 || d.length === 2) {
-      h = Number(d);
+    if (raw.length === 1 || raw.length === 2) {
+      h = Number(raw);
       m = 0;
-    } else if (d.length === 3) {
-      h = Number(d.slice(0, 1));
-      m = Number(d.slice(1));
+    } else if (raw.length === 3) {
+      h = Number(raw.slice(0, 1));
+      m = Number(raw.slice(1));
     } else {
-      h = Number(d.slice(0, d.length - 2));
-      m = Number(d.slice(d.length - 2));
+      h = Number(raw.slice(0, 2));
+      m = Number(raw.slice(2));
     }
   }
 
@@ -264,10 +250,10 @@ function parseStandard(input: string): ParseStandardResult {
 
   const s = raw.toLowerCase().replace(/\./g, "").replace(/\s+/g, " ").trim();
 
-  const hasAM = /\bam\b/.test(s);
-  const hasPM = /\bpm\b/.test(s);
-
-  if (!hasAM && !hasPM) {
+  const match = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/.exec(
+    s.replace(/\s+/g, ""),
+  );
+  if (!match) {
     return {
       valid: false,
       h24: 0,
@@ -278,54 +264,9 @@ function parseStandard(input: string): ParseStandardResult {
     };
   }
 
-  const suffix = hasPM ? "PM" : "AM";
-  const timePart = s.replace(/\bam\b|\bpm\b/g, "").trim();
-
-  let h = 0;
-  let m = 0;
-
-  if (!timePart) {
-    return {
-      valid: false,
-      h24: 0,
-      m: 0,
-      normalized: "",
-      military: "",
-      error: "Enter a time like 5:30 PM or 5 PM.",
-    };
-  }
-
-  if (timePart.includes(":")) {
-    const [hhRaw, mmRaw] = timePart.split(":");
-    const hh = cleanDigits(hhRaw);
-    const mm = cleanDigits(mmRaw);
-    if (!hh || !mm) {
-      return {
-        valid: false,
-        h24: 0,
-        m: 0,
-        normalized: "",
-        military: "",
-        error: "Use a valid format like 5:30 PM.",
-      };
-    }
-    h = Number(hh);
-    m = Number(mm);
-  } else {
-    const d = cleanDigits(timePart);
-    if (!d) {
-      return {
-        valid: false,
-        h24: 0,
-        m: 0,
-        normalized: "",
-        military: "",
-        error: "Use a format like 5 PM or 5:30 PM.",
-      };
-    }
-    h = Number(d);
-    m = 0;
-  }
+  const h = Number(match[1]);
+  const m = Number(match[2] ?? "0");
+  const suffix = match[3] === "pm" ? "PM" : "AM";
 
   if (!Number.isFinite(h) || !Number.isFinite(m)) {
     return {
@@ -405,8 +346,8 @@ function MilitaryTimeConverterCard() {
     activeField === "mil" ? "Standard time (AM/PM)" : "Military time (24-hour)";
 
   const shownValue = useMemo(() => {
-    if (activeField === "mil") return mil.valid ? mil.standard : "—";
-    return std.valid ? std.military : "—";
+    if (activeField === "mil") return mil.valid ? mil.standard : "Invalid";
+    return std.valid ? std.military : "Invalid";
   }, [activeField, mil.valid, mil.standard, std.valid, std.military]);
 
   // Reserve width to reduce jitter (monospace + fixed ch width for the display value)
@@ -734,7 +675,7 @@ function MilitaryTimeConverterCard() {
                 <div className="mt-1 min-h-[92px]">
                   {/* Value row (reserved) */}
                   <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tabular-nums">
-                    {mil.valid ? mil.standard : "—"}
+                    {mil.valid ? mil.standard : "Invalid"}
                   </div>
 
                   {/* Sub row (reserved) */}
@@ -801,7 +742,7 @@ function MilitaryTimeConverterCard() {
 
                 <div className="mt-1 min-h-[92px]">
                   <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tabular-nums">
-                    {std.valid ? std.military : "—"}
+                    {std.valid ? std.military : "Invalid"}
                   </div>
 
                   <div className="mt-1 text-sm text-slate-700">
@@ -914,7 +855,34 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
       />
 
       <SeoBand>
-        <HowItWorks />
+        <TechnicalMethod
+          heading="12-hour and 24-hour conversion rules"
+          sources={[TECHNICAL_SOURCES.militaryTime]}
+        >
+          <p>
+            The military-style input accepts one to four digits or an
+            hour-and-minute value such as 17:30. Minutes must be 00 through 59.
+            Hours must be 00 through 23. This converter also accepts 2400 and
+            interprets it as midnight, equal to 00:00. Other 24-hour values are
+            rejected.
+          </p>
+          <p>
+            To convert a PM time other than 12 PM, add 12 to the hour. To convert
+            an hour from 13 through 23, subtract 12 and label it PM. Midnight is
+            12:00 AM and 00:00. Noon is 12:00 PM and 12:00.
+          </p>
+          <p>
+            Example: 1730 separates into hour 17 and minute 30. Subtracting 12
+            from 17 gives 5, so the result is <strong>5:30 PM</strong>. In the
+            other direction, 7:05 AM keeps hour 7 and pads it to produce{" "}
+            <strong>07:05</strong>. The converter performs no rounding.
+          </p>
+          <p>
+            The value contains no date or location. A short military-style time
+            is not a time zone, and this page does not infer UTC or Zulu time.
+          </p>
+        </TechnicalMethod>
+        <Stage4RouteContent routePath="/military-time-converter" />
         <ContentSection>
           <p>
             Need the current live 24-hour time instead of converting a written
@@ -941,9 +909,6 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
             certify the accuracy of a source schedule or add location context.
           </p>
         </ToolTrustNote>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
       </SeoBand>
     </PageShell>
   );

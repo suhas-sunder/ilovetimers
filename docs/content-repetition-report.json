@@ -1,0 +1,3022 @@
+{
+  "generatedAt": "2026-07-22T00:28:40.228Z",
+  "exclusionsUsedForSharedLayoutContent": [
+    "Only text inside each route's first <main> element was analyzed.",
+    "The global header, More directory, route-aware related-tools band, footer directory, analytics banner, and root WebSite schema were excluded.",
+    "Exact paragraph analysis ignored paragraphs shorter than 12 words.",
+    "Five-to-ten-word phrase analysis excluded route-title tokens and normalized numbers."
+  ],
+  "summary": {
+    "routesAnalyzed": 132,
+    "repeatedHeadingGroups": 18,
+    "repeatedPhraseGroups": 60,
+    "exactRepeatedParagraphGroups": 9,
+    "nearRepeatedParagraphGroups": 9,
+    "pagesWithSubstantialRepeatedContent": 0,
+    "stage3ArchitectureStatuses": {
+      "A": 101,
+      "C": 23,
+      "E": 7,
+      "D": 21,
+      "B": 8
+    },
+    "noindexDoesNotResolveVisibleRepetition": true,
+    "stage4ResolvedRoutes": 47
+  },
+  "pagesWithSubstantialRepeatedContent": [],
+  "requestedPhraseAudit": [
+    {
+      "phrase": "built for one job",
+      "occurrenceCount": 14,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 14,
+      "sourceFileCount": 14,
+      "affectedRoutes": [
+        "/billable-hours-calculator"
+      ],
+      "affectedFiles": [
+        "app/clients/components/billable-hours-calculator/HowItWorks.tsx",
+        "app/clients/components/break-timer/HowItWorks.tsx",
+        "app/clients/components/cooking-timer/HowItWorks.tsx",
+        "app/clients/components/count-up-timer/HowItWorks.tsx",
+        "app/clients/components/current-local-time/HowItWorks.tsx",
+        "app/clients/components/egg-timer/HowItWorks.tsx",
+        "app/clients/components/fullscreen-timer/HowItWorks.tsx",
+        "app/clients/components/golden-hour-clock/HowItWorks.tsx",
+        "app/clients/components/hexadecimal-clock/HowItWorks.tsx",
+        "app/clients/components/hiit-timer/HowItWorks.tsx",
+        "app/clients/components/meditation-timer/HowItWorks.tsx",
+        "app/clients/components/meeting-timer/HowItWorks.tsx",
+        "app/clients/components/milliseconds-converter/HowItWorks.tsx",
+        "app/clients/components/world-clock/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "this page is not a guide",
+      "occurrenceCount": 0,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 0,
+      "sourceFileCount": 0,
+      "affectedRoutes": [],
+      "affectedFiles": []
+    },
+    {
+      "phrase": "what most people do",
+      "occurrenceCount": 25,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 25,
+      "sourceFileCount": 25,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/cooking-timer/HowItWorks.tsx",
+        "app/clients/components/current-local-time/HowItWorks.tsx",
+        "app/clients/components/debt-clock/HowItWorks.tsx",
+        "app/clients/components/digital-clock/HowItWorks.tsx",
+        "app/clients/components/drink-water-reminder-timer/HowItWorks.tsx",
+        "app/clients/components/egg-timer/HowItWorks.tsx",
+        "app/clients/components/emom-timer/HowItWorks.tsx",
+        "app/clients/components/epoch-unix-time-clock/HowItWorks.tsx",
+        "app/clients/components/event-countdown/HowItWorks.tsx",
+        "app/clients/components/exam-timer/HowItWorks.tsx",
+        "app/clients/components/focus-session-timer/HowItWorks.tsx",
+        "app/clients/components/fullscreen-timer/HowItWorks.tsx",
+        "app/clients/components/golden-hour-clock/HowItWorks.tsx",
+        "app/clients/components/hexadecimal-clock/HowItWorks.tsx",
+        "app/clients/components/hiit-timer/HowItWorks.tsx",
+        "app/clients/components/lab-timer/HowItWorks.tsx",
+        "app/clients/components/meditation-timer/HowItWorks.tsx",
+        "app/clients/components/meeting-count-up-timer/HowItWorks.tsx",
+        "app/clients/components/meeting-timer/HowItWorks.tsx",
+        "app/clients/components/metronome/HowItWorks.tsx",
+        "app/clients/components/military-time-converter/HowItWorks.tsx",
+        "app/clients/components/milliseconds-converter/HowItWorks.tsx",
+        "app/clients/components/minimalist-clock/HowItWorks.tsx",
+        "app/clients/components/moon-phase-clock/HowItWorks.tsx",
+        "app/clients/components/morse-code-clock/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "fast use",
+      "occurrenceCount": 6,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 6,
+      "sourceFileCount": 6,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/current-local-time/HowItWorks.tsx",
+        "app/clients/components/debt-clock/HowItWorks.tsx",
+        "app/clients/components/digital-clock/HowItWorks.tsx",
+        "app/clients/components/drink-water-reminder-timer/HowItWorks.tsx",
+        "app/clients/components/egg-timer/HowItWorks.tsx",
+        "app/clients/components/emom-timer/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "fastest setup",
+      "occurrenceCount": 1,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 1,
+      "sourceFileCount": 1,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/binary-clock/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "at a glance",
+      "occurrenceCount": 53,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 53,
+      "sourceFileCount": 47,
+      "affectedRoutes": [
+        "/moon-phase-clock",
+        "/sunrise-sunset-clock",
+        "/time-blocking-clock"
+      ],
+      "affectedFiles": [
+        "app/clients/components/analog-clock/HowItWorks.tsx",
+        "app/clients/components/astronomical-clock/PopularUseCases.tsx",
+        "app/clients/components/binary-stopwatch/HowItWorks.tsx",
+        "app/clients/components/classroom-timer/Disclaimer.tsx",
+        "app/clients/components/classroom-timer/HowItWorks.tsx",
+        "app/clients/components/cooking-timer/Disclaimer.tsx",
+        "app/clients/components/count-up-timer/HowItWorks.tsx",
+        "app/clients/components/current-local-time/Disclaimer.tsx",
+        "app/clients/components/debt-clock/Disclaimer.tsx",
+        "app/clients/components/debt-repayment-timer/Disclaimer.tsx",
+        "app/clients/components/digital-clock/Disclaimer.tsx",
+        "app/clients/components/drink-water-reminder-timer/Disclaimer.tsx",
+        "app/clients/components/egg-timer/Disclaimer.tsx",
+        "app/clients/components/egg-timer/HowItWorks.tsx",
+        "app/clients/components/emom-timer/Disclaimer.tsx",
+        "app/clients/components/emom-timer/HowItWorks.tsx",
+        "app/clients/components/epoch-unix-time-clock/Disclaimer.tsx",
+        "app/clients/components/event-countdown/Disclaimer.tsx",
+        "app/clients/components/exam-timer/Disclaimer.tsx",
+        "app/clients/components/fibonacci-clock/Disclaimer.tsx",
+        "app/clients/components/focus-session-timer/Disclaimer.tsx",
+        "app/clients/components/focus-session-timer/HowItWorks.tsx",
+        "app/clients/components/fullscreen-timer/Disclaimer.tsx",
+        "app/clients/components/fullscreen-timer/HowItWorks.tsx",
+        "app/clients/components/golden-hour-clock/Disclaimer.tsx",
+        "app/clients/components/golden-hour-clock/HowItWorks.tsx",
+        "app/clients/components/hexadecimal-clock/Disclaimer.tsx",
+        "app/clients/components/hexadecimal-clock/PopularUseCases.tsx",
+        "app/clients/components/hiit-timer/Disclaimer.tsx",
+        "app/clients/components/lab-timer/Disclaimer.tsx",
+        "app/clients/components/meditation-timer/Disclaimer.tsx",
+        "app/clients/components/meeting-count-up-timer/Disclaimer.tsx",
+        "app/clients/components/meeting-timer/Disclaimer.tsx",
+        "app/clients/components/metronome/Disclaimer.tsx",
+        "app/clients/components/military-time-converter/Disclaimer.tsx",
+        "app/clients/components/milliseconds-converter/Disclaimer.tsx",
+        "app/clients/components/minimalist-clock/Disclaimer.tsx",
+        "app/clients/components/moon-phase-clock/Disclaimer.tsx",
+        "app/clients/components/moon-phase-clock/PopularUseCases.tsx",
+        "app/clients/components/morse-code-clock/Disclaimer.tsx",
+        "app/clients/components/morse-code-clock/HowItWorks.tsx",
+        "app/clients/components/multiple-timers/Disclaimer.tsx",
+        "app/clients/components/multiple-timers/PopularUseCases.tsx",
+        "app/clients/components/world-clock/Disclaimer.tsx",
+        "app/routes/moon-phase-clock.tsx",
+        "app/routes/sunrise-sunset-clock.tsx",
+        "app/routes/time-blocking-clock.tsx"
+      ]
+    },
+    {
+      "phrase": "real world examples",
+      "occurrenceCount": 0,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 0,
+      "sourceFileCount": 0,
+      "affectedRoutes": [],
+      "affectedFiles": []
+    },
+    {
+      "phrase": "real scenarios",
+      "occurrenceCount": 18,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 18,
+      "sourceFileCount": 18,
+      "affectedRoutes": [
+        "/billable-hours-calculator",
+        "/billable-hours-clock",
+        "/work-hours-calculator"
+      ],
+      "affectedFiles": [
+        "app/clients/components/analog-clock/HowItWorks.tsx",
+        "app/clients/components/astronomical-clock/HowItWorks.tsx",
+        "app/clients/components/atomic-clock/HowItWorks.tsx",
+        "app/clients/components/billable-hours-calculator/HowItWorks.tsx",
+        "app/clients/components/billable-hours-clock/HowItWorks.tsx",
+        "app/clients/components/binary-clock/HowItWorks.tsx",
+        "app/clients/components/binary-stopwatch/HowItWorks.tsx",
+        "app/clients/components/bpm-tapper/HowItWorks.tsx",
+        "app/clients/components/break-timer/HowItWorks.tsx",
+        "app/clients/components/breathing-timer/HowItWorks.tsx",
+        "app/clients/components/chaos-timer/HowItWorks.tsx",
+        "app/clients/components/classroom-timer/HowItWorks.tsx",
+        "app/clients/components/count-up-timer/HowItWorks.tsx",
+        "app/clients/components/current-local-time/HowItWorks.tsx",
+        "app/clients/components/stopwatch/HowItWorks.tsx",
+        "app/clients/components/time-zone-converter/HowItWorks.tsx",
+        "app/clients/components/work-hours-calculator/HowItWorks.tsx",
+        "app/clients/components/world-clock/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "practical fit",
+      "occurrenceCount": 1,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 1,
+      "sourceFileCount": 1,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/count-up-timer/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "stays out of the way",
+      "occurrenceCount": 0,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 0,
+      "sourceFileCount": 0,
+      "affectedRoutes": [],
+      "affectedFiles": []
+    },
+    {
+      "phrase": "in plain terms",
+      "occurrenceCount": 1,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 1,
+      "sourceFileCount": 1,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/epoch-unix-time-clock/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "this page is intentionally",
+      "occurrenceCount": 2,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 2,
+      "sourceFileCount": 2,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/count-up-timer/HowItWorks.tsx",
+        "app/clients/components/focus-session-timer/Disclaimer.tsx"
+      ]
+    },
+    {
+      "phrase": "this route keeps",
+      "occurrenceCount": 0,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 0,
+      "sourceFileCount": 0,
+      "affectedRoutes": [],
+      "affectedFiles": []
+    },
+    {
+      "phrase": "what you are actually looking at",
+      "occurrenceCount": 1,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 1,
+      "sourceFileCount": 1,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/binary-clock/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "quick checklist",
+      "occurrenceCount": 4,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 4,
+      "sourceFileCount": 4,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/digital-clock/HowItWorks.tsx",
+        "app/clients/components/drink-water-reminder-timer/HowItWorks.tsx",
+        "app/clients/components/egg-timer/HowItWorks.tsx",
+        "app/clients/components/emom-timer/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "smooth run",
+      "occurrenceCount": 3,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 3,
+      "sourceFileCount": 3,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/drink-water-reminder-timer/HowItWorks.tsx",
+        "app/clients/components/egg-timer/HowItWorks.tsx",
+        "app/clients/components/emom-timer/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "designed to help",
+      "occurrenceCount": 1,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 1,
+      "sourceFileCount": 1,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/hiit-timer/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "simple and easy",
+      "occurrenceCount": 0,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 0,
+      "sourceFileCount": 0,
+      "affectedRoutes": [],
+      "affectedFiles": []
+    },
+    {
+      "phrase": "perfect for",
+      "occurrenceCount": 0,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 0,
+      "sourceFileCount": 0,
+      "affectedRoutes": [],
+      "affectedFiles": []
+    },
+    {
+      "phrase": "whether you are",
+      "occurrenceCount": 7,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 7,
+      "sourceFileCount": 7,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/amrap-timer/HowItWorks.tsx",
+        "app/clients/components/drink-water-reminder-timer/HowItWorks.tsx",
+        "app/clients/components/golden-hour-clock/HowItWorks.tsx",
+        "app/clients/components/meeting-count-up-timer/HowItWorks.tsx",
+        "app/clients/components/minimalist-clock/HowItWorks.tsx",
+        "app/clients/components/pace-timer/HowItWorks.tsx",
+        "app/clients/components/pomodoro-timer/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "you can use this",
+      "occurrenceCount": 0,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 0,
+      "sourceFileCount": 0,
+      "affectedRoutes": [],
+      "affectedFiles": []
+    },
+    {
+      "phrase": "this tool helps",
+      "occurrenceCount": 0,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 0,
+      "sourceFileCount": 0,
+      "affectedRoutes": [],
+      "affectedFiles": []
+    },
+    {
+      "phrase": "without distractions",
+      "occurrenceCount": 4,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 4,
+      "sourceFileCount": 4,
+      "affectedRoutes": [],
+      "affectedFiles": [
+        "app/clients/components/epoch-unix-time-clock/PopularUseCases.tsx",
+        "app/clients/components/exam-timer/HowItWorks.tsx",
+        "app/clients/components/meditation-timer/HowItWorks.tsx",
+        "app/clients/components/minimalist-clock/HowItWorks.tsx"
+      ]
+    },
+    {
+      "phrase": "without unnecessary features",
+      "occurrenceCount": 0,
+      "renderedOccurrenceCount": 0,
+      "sourceOccurrenceCount": 0,
+      "sourceFileCount": 0,
+      "affectedRoutes": [],
+      "affectedFiles": []
+    }
+  ],
+  "repeatedHeadings": [
+    {
+      "heading": "accuracy and limitations",
+      "occurrenceCount": 12,
+      "affectedRoutes": [
+        "/atomic-clock",
+        "/clock-with-milliseconds",
+        "/epoch-unix-time-clock",
+        "/stopwatch-with-milliseconds",
+        "/study-stopwatch",
+        "/time-zone-converter",
+        "/time-zone-meeting-planner",
+        "/timer-clock",
+        "/timer-stopwatch",
+        "/unix-timestamp-converter",
+        "/utc-clock",
+        "/world-clock-with-milliseconds"
+      ],
+      "affectedFiles": [
+        "app/clients/components/trust/ToolTrust.tsx"
+      ]
+    },
+    {
+      "heading": "clock settings",
+      "occurrenceCount": 10,
+      "affectedRoutes": [
+        "/12-hour-clock",
+        "/24-hour-clock",
+        "/analog-clock",
+        "/atomic-clock",
+        "/clock-with-milliseconds",
+        "/current-local-time",
+        "/digital-clock",
+        "/military-time-clock",
+        "/minimalist-clock",
+        "/utc-clock"
+      ],
+      "affectedFiles": [
+        "app/clients/components/analog-clock/PopularUseCases.tsx",
+        "app/clients/components/clock-discovery/ClockDiscoveryPages.tsx",
+        "app/routes/12-hour-clock.tsx",
+        "app/routes/24-hour-clock.tsx",
+        "app/routes/analog-clock.tsx",
+        "app/routes/astronomical-clock.tsx",
+        "app/routes/atomic-clock.tsx",
+        "app/routes/binary-clock.tsx",
+        "app/routes/clock-with-milliseconds.tsx",
+        "app/routes/current-local-time.tsx",
+        "app/routes/digital-clock.tsx",
+        "app/routes/fibonacci-clock.tsx",
+        "app/routes/hexadecimal-clock.tsx",
+        "app/routes/military-time-clock.tsx",
+        "app/routes/minimalist-clock.tsx",
+        "app/routes/morse-code-clock.tsx",
+        "app/routes/retro-flip-clock.tsx",
+        "app/routes/roman-numeral-clock.tsx",
+        "app/routes/utc-clock.tsx",
+        "app/routes/world-clock.tsx"
+      ]
+    },
+    {
+      "heading": "timer settings",
+      "occurrenceCount": 10,
+      "affectedRoutes": [
+        "/1-minute-timer",
+        "/10-minute-timer",
+        "/15-minute-timer",
+        "/30-minute-timer",
+        "/5-minute-timer",
+        "/egg-timer",
+        "/kitchen-timer",
+        "/online-timer",
+        "/pizza-timer",
+        "/tea-timer"
+      ],
+      "affectedFiles": [
+        "app/clients/components/pizza-timer/FAQ.tsx",
+        "app/clients/components/pomodoro-timer/FAQ.tsx",
+        "app/clients/components/preset-duration-timer/PresetDurationTimerPage.tsx",
+        "app/routes/cookies.tsx",
+        "app/routes/egg-timer.tsx",
+        "app/routes/kitchen-timer.tsx",
+        "app/routes/lab-timer.tsx",
+        "app/routes/online-timer.tsx",
+        "app/routes/pizza-timer.tsx",
+        "app/routes/privacy.tsx",
+        "app/routes/silent-timer.tsx",
+        "app/routes/tea-timer.tsx"
+      ]
+    },
+    {
+      "heading": "when to use it",
+      "occurrenceCount": 10,
+      "affectedRoutes": [
+        "/chess-clock",
+        "/meeting-agenda-timer",
+        "/military-time-clock",
+        "/new-year-countdown",
+        "/presentation-timer",
+        "/roman-numeral-clock",
+        "/sleep-timer",
+        "/speech-timer",
+        "/time-zone-meeting-planner",
+        "/unix-timestamp-converter"
+      ],
+      "affectedFiles": [
+        "app/routes/chess-clock.tsx",
+        "app/routes/meeting-agenda-timer.tsx",
+        "app/routes/military-time-clock.tsx",
+        "app/routes/new-year-countdown.tsx",
+        "app/routes/presentation-timer.tsx",
+        "app/routes/roman-numeral-clock.tsx",
+        "app/routes/sleep-timer.tsx",
+        "app/routes/speech-timer.tsx",
+        "app/routes/time-zone-meeting-planner.tsx",
+        "app/routes/unix-timestamp-converter.tsx"
+      ]
+    },
+    {
+      "heading": "browser timing note",
+      "occurrenceCount": 6,
+      "affectedRoutes": [
+        "/1-minute-timer",
+        "/10-minute-timer",
+        "/15-minute-timer",
+        "/30-minute-timer",
+        "/5-minute-timer",
+        "/seconds-timer"
+      ],
+      "affectedFiles": [
+        "app/clients/components/preset-duration-timer/PresetDurationTimerPage.tsx",
+        "app/routes/seconds-timer.tsx"
+      ]
+    },
+    {
+      "heading": "choose another timer",
+      "occurrenceCount": 6,
+      "affectedRoutes": [
+        "/1-minute-timer",
+        "/10-minute-timer",
+        "/15-minute-timer",
+        "/30-minute-timer",
+        "/5-minute-timer",
+        "/seconds-timer"
+      ],
+      "affectedFiles": [
+        "app/clients/components/preset-duration-timer/PresetDurationTimerPage.tsx",
+        "app/routes/seconds-timer.tsx"
+      ]
+    },
+    {
+      "heading": "related ilovetimers guides",
+      "occurrenceCount": 6,
+      "affectedRoutes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ],
+      "affectedFiles": [
+        "app/clients/components/guides/GuidePage.tsx"
+      ]
+    },
+    {
+      "heading": "sources and further reading",
+      "occurrenceCount": 6,
+      "affectedRoutes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ],
+      "affectedFiles": [
+        "app/clients/components/guides/GuidePage.tsx"
+      ]
+    },
+    {
+      "heading": "frequently asked questions",
+      "occurrenceCount": 5,
+      "affectedRoutes": [
+        "/billable-hours-calculator",
+        "/billable-hours-clock",
+        "/sunrise-sunset-clock",
+        "/utc-clock",
+        "/work-hours-calculator"
+      ],
+      "affectedFiles": [
+        "app/clients/components/alarm-timer/FAQ.tsx",
+        "app/clients/components/amrap-timer/FAQ.tsx",
+        "app/clients/components/analog-clock/FAQ.tsx",
+        "app/clients/components/astronomical-clock/FAQ.tsx",
+        "app/clients/components/atomic-clock/FAQ.tsx",
+        "app/clients/components/billable-hours-calculator/FAQ.tsx",
+        "app/clients/components/billable-hours-clock/FAQ.tsx",
+        "app/clients/components/binary-clock/FAQ.tsx",
+        "app/clients/components/binary-stopwatch/FAQ.tsx",
+        "app/clients/components/bpm-tapper/FAQ.tsx",
+        "app/clients/components/break-timer/FAQ.tsx",
+        "app/clients/components/breathing-timer/FAQ.tsx",
+        "app/clients/components/chaos-timer/FAQ.tsx",
+        "app/clients/components/classroom-timer/FAQ.tsx",
+        "app/clients/components/cooking-timer/FAQ.tsx",
+        "app/clients/components/count-up-timer/FAQ.tsx",
+        "app/clients/components/countdown-timer/FAQ.tsx",
+        "app/clients/components/current-local-time/FAQ.tsx",
+        "app/clients/components/debt-clock/FAQ.tsx",
+        "app/clients/components/debt-repayment-timer/FAQ.tsx",
+        "app/clients/components/digital-clock/FAQ.tsx",
+        "app/clients/components/drink-water-reminder-timer/FAQ.tsx",
+        "app/clients/components/egg-timer/FAQ.tsx",
+        "app/clients/components/emom-timer/FAQ.tsx",
+        "app/clients/components/epoch-unix-time-clock/FAQ.tsx",
+        "app/clients/components/event-countdown/FAQ.tsx",
+        "app/clients/components/exam-timer/FAQ.tsx",
+        "app/clients/components/fibonacci-clock/FAQ.tsx",
+        "app/clients/components/focus-session-timer/FAQ.tsx",
+        "app/clients/components/fullscreen-timer/FAQ.tsx",
+        "app/clients/components/golden-hour-clock/FAQ.tsx",
+        "app/clients/components/hexadecimal-clock/FAQ.tsx",
+        "app/clients/components/hiit-timer/FAQ.tsx",
+        "app/clients/components/home/FAQ.tsx",
+        "app/clients/components/lab-timer/FAQ.tsx",
+        "app/clients/components/meditation-timer/FAQ.tsx",
+        "app/clients/components/meeting-count-up-timer/FAQ.tsx",
+        "app/clients/components/meeting-timer/FAQ.tsx",
+        "app/clients/components/metronome/FAQ.tsx",
+        "app/clients/components/military-time-converter/FAQ.tsx",
+        "app/clients/components/milliseconds-converter/FAQ.tsx",
+        "app/clients/components/minimalist-clock/FAQ.tsx",
+        "app/clients/components/moon-phase-clock/FAQ.tsx",
+        "app/clients/components/morse-code-clock/FAQ.tsx",
+        "app/clients/components/multiple-timers/FAQ.tsx",
+        "app/clients/components/online-timer/FAQ.tsx",
+        "app/clients/components/pace-timer/FAQ.tsx",
+        "app/clients/components/pizza-timer/FAQ.tsx",
+        "app/clients/components/pomodoro-timer/FAQ.tsx",
+        "app/clients/components/stopwatch/FAQ.tsx",
+        "app/clients/components/time-zone-converter/FAQ.tsx",
+        "app/clients/components/work-hours-calculator/FAQ.tsx",
+        "app/clients/components/world-clock/FAQ.tsx",
+        "app/routes/sunrise-sunset-clock.tsx",
+        "app/routes/utc-clock.tsx"
+      ]
+    },
+    {
+      "heading": "settings",
+      "occurrenceCount": 5,
+      "affectedRoutes": [
+        "/alarm-timer",
+        "/drink-water-reminder-timer",
+        "/meditation-timer",
+        "/rest-timer",
+        "/stretch-timer"
+      ],
+      "affectedFiles": [
+        "app/clients/assets/svg/Icons.tsx",
+        "app/clients/components/alarm-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/amrap-timer/HowItWorks.tsx",
+        "app/clients/components/amrap-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/analog-clock/Disclaimer.tsx",
+        "app/clients/components/analog-clock/FAQ.tsx",
+        "app/clients/components/analog-clock/HowItWorks.tsx",
+        "app/clients/components/analog-clock/KeyboardShortcuts.tsx",
+        "app/clients/components/analog-clock/PopularUseCases.tsx",
+        "app/clients/components/astronomical-clock/PopularUseCases.tsx",
+        "app/clients/components/atomic-clock/HowItWorks.tsx",
+        "app/clients/components/binary-clock/HowItWorks.tsx",
+        "app/clients/components/binary-stopwatch/HowItWorks.tsx",
+        "app/clients/components/bpm-tapper/FAQ.tsx",
+        "app/clients/components/bpm-tapper/HowItWorks.tsx",
+        "app/clients/components/bpm-tapper/KeyboardShortcuts.tsx",
+        "app/clients/components/break-timer/FAQ.tsx",
+        "app/clients/components/break-timer/HowItWorks.tsx",
+        "app/clients/components/breathing-timer/FAQ.tsx",
+        "app/clients/components/chaos-timer/FAQ.tsx",
+        "app/clients/components/chaos-timer/HowItWorks.tsx",
+        "app/clients/components/chaos-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/classroom-timer/FAQ.tsx",
+        "app/clients/components/classroom-timer/HowItWorks.tsx",
+        "app/clients/components/clock-discovery/ClockDiscoveryPages.tsx",
+        "app/clients/components/content/Stage4RouteContent.tsx",
+        "app/clients/components/cooking-timer/FAQ.tsx",
+        "app/clients/components/cooking-timer/HowItWorks.tsx",
+        "app/clients/components/count-up-timer/HowItWorks.tsx",
+        "app/clients/components/current-local-time/Disclaimer.tsx",
+        "app/clients/components/current-local-time/FAQ.tsx",
+        "app/clients/components/current-local-time/HowItWorks.tsx",
+        "app/clients/components/current-local-time/KeyboardShortcuts.tsx",
+        "app/clients/components/date-calculators/DateCalculatorPages.tsx",
+        "app/clients/components/debt-clock/FAQ.tsx",
+        "app/clients/components/debt-repayment-timer/FAQ.tsx",
+        "app/clients/components/digital-clock/KeyboardShortcuts.tsx",
+        "app/clients/components/drink-water-reminder-timer/FAQ.tsx",
+        "app/clients/components/drink-water-reminder-timer/PopularUseCases.tsx",
+        "app/clients/components/egg-timer/FAQ.tsx",
+        "app/clients/components/emom-timer/Disclaimer.tsx",
+        "app/clients/components/emom-timer/FAQ.tsx",
+        "app/clients/components/emom-timer/HowItWorks.tsx",
+        "app/clients/components/emom-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/epoch-unix-time-clock/HowItWorks.tsx",
+        "app/clients/components/epoch-unix-time-clock/KeyboardShortcuts.tsx",
+        "app/clients/components/event-countdown/FAQ.tsx",
+        "app/clients/components/event-countdown/HowItWorks.tsx",
+        "app/clients/components/event-countdown/KeyboardShortcuts.tsx",
+        "app/clients/components/exam-timer/Disclaimer.tsx",
+        "app/clients/components/exam-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/fibonacci-clock/KeyboardShortcuts.tsx",
+        "app/clients/components/focus-session-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/fullscreen-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/golden-hour-clock/FAQ.tsx",
+        "app/clients/components/golden-hour-clock/KeyboardShortcuts.tsx",
+        "app/clients/components/hexadecimal-clock/FAQ.tsx",
+        "app/clients/components/hexadecimal-clock/HowItWorks.tsx",
+        "app/clients/components/hexadecimal-clock/KeyboardShortcuts.tsx",
+        "app/clients/components/hiit-timer/FAQ.tsx",
+        "app/clients/components/hiit-timer/HowItWorks.tsx",
+        "app/clients/components/hiit-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/hiit-timer/PopularUseCases.tsx",
+        "app/clients/components/home/KeyboardShortcuts.tsx",
+        "app/clients/components/meditation-timer/FAQ.tsx",
+        "app/clients/components/meditation-timer/HowItWorks.tsx",
+        "app/clients/components/meeting-count-up-timer/FAQ.tsx",
+        "app/clients/components/meeting-count-up-timer/HowItWorks.tsx",
+        "app/clients/components/meeting-count-up-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/meeting-timer/HowItWorks.tsx",
+        "app/clients/components/meeting-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/metronome/Disclaimer.tsx",
+        "app/clients/components/metronome/FAQ.tsx",
+        "app/clients/components/metronome/HowItWorks.tsx",
+        "app/clients/components/metronome/KeyboardShortcuts.tsx",
+        "app/clients/components/metronome/PopularUseCases.tsx",
+        "app/clients/components/minimalist-clock/HowItWorks.tsx",
+        "app/clients/components/moon-phase-clock/HowItWorks.tsx",
+        "app/clients/components/morse-code-clock/HowItWorks.tsx",
+        "app/clients/components/morse-code-clock/KeyboardShortcuts.tsx",
+        "app/clients/components/multiple-timers/Disclaimer.tsx",
+        "app/clients/components/multiple-timers/FAQ.tsx",
+        "app/clients/components/multiple-timers/KeyboardShortcuts.tsx",
+        "app/clients/components/pace-timer/Disclaimer.tsx",
+        "app/clients/components/pizza-timer/FAQ.tsx",
+        "app/clients/components/pomodoro-timer/FAQ.tsx",
+        "app/clients/components/pomodoro-timer/KeyboardShortcuts.tsx",
+        "app/clients/components/preset-duration-timer/PresetDurationTimerPage.tsx",
+        "app/clients/components/share/SharePresetPanel.tsx",
+        "app/clients/components/time-zone-converter/Disclaimer.tsx",
+        "app/clients/components/ui/foundation.tsx",
+        "app/clients/components/work-hours-calculator/KeyboardShortcuts.tsx",
+        "app/clients/components/world-clock/FAQ.tsx",
+        "app/clients/components/world-clock/KeyboardShortcuts.tsx",
+        "app/clients/config/presetTimers.js",
+        "app/clients/lib/shareConfigurations.ts",
+        "app/routes/12-hour-clock.tsx",
+        "app/routes/24-hour-clock.tsx",
+        "app/routes/about.tsx",
+        "app/routes/alarm-timer.tsx",
+        "app/routes/amrap-timer.tsx",
+        "app/routes/analog-clock.tsx",
+        "app/routes/astronomical-clock.tsx",
+        "app/routes/atomic-clock.tsx",
+        "app/routes/binary-clock.tsx",
+        "app/routes/binary-stopwatch.tsx",
+        "app/routes/bpm-tapper.tsx",
+        "app/routes/break-timer.tsx",
+        "app/routes/breathing-timer.tsx",
+        "app/routes/chaos-timer.tsx",
+        "app/routes/chess-clock.tsx",
+        "app/routes/classroom-timer.tsx",
+        "app/routes/clock-with-milliseconds.tsx",
+        "app/routes/cookies.tsx",
+        "app/routes/current-local-time.tsx",
+        "app/routes/debt-clock.tsx",
+        "app/routes/digital-clock.tsx",
+        "app/routes/drink-water-reminder-timer.tsx",
+        "app/routes/egg-timer.tsx",
+        "app/routes/emom-timer.tsx",
+        "app/routes/epoch-unix-time-clock.tsx",
+        "app/routes/event-countdown.tsx",
+        "app/routes/fibonacci-clock.tsx",
+        "app/routes/focus-session-timer.tsx",
+        "app/routes/golden-hour-clock.tsx",
+        "app/routes/guides.browser-storage.tsx",
+        "app/routes/guides.browser-timer-alarm-silent.tsx",
+        "app/routes/guides.browser-timers-background-tabs.tsx",
+        "app/routes/guides.how-browser-timers-measure-time.tsx",
+        "app/routes/hexadecimal-clock.tsx",
+        "app/routes/hiit-timer.tsx",
+        "app/routes/home.tsx",
+        "app/routes/interval-timer.tsx",
+        "app/routes/kitchen-timer.tsx",
+        "app/routes/lab-timer.tsx",
+        "app/routes/meditation-timer.tsx",
+        "app/routes/meeting-timer.tsx",
+        "app/routes/metronome.tsx",
+        "app/routes/military-time-clock.tsx",
+        "app/routes/milliseconds-converter.tsx",
+        "app/routes/minimalist-clock.tsx",
+        "app/routes/moon-phase-clock.tsx",
+        "app/routes/morse-code-clock.tsx",
+        "app/routes/multiple-timers.tsx",
+        "app/routes/online-alarm-clock.tsx",
+        "app/routes/online-timer.tsx",
+        "app/routes/pace-timer.tsx",
+        "app/routes/pizza-timer.tsx",
+        "app/routes/pomodoro-timer.tsx",
+        "app/routes/presentation-timer.tsx",
+        "app/routes/privacy.tsx",
+        "app/routes/productivity-timer.tsx",
+        "app/routes/reaction-time-test.tsx",
+        "app/routes/rest-timer.tsx",
+        "app/routes/retro-flip-clock.tsx",
+        "app/routes/roman-numeral-clock.tsx",
+        "app/routes/round-timer.tsx",
+        "app/routes/silent-timer.tsx",
+        "app/routes/sleep-timer.tsx",
+        "app/routes/speedcubing-timer.tsx",
+        "app/routes/stretch-timer.tsx",
+        "app/routes/study-timer.tsx",
+        "app/routes/sunrise-sunset-clock.tsx",
+        "app/routes/swatch-internet-time-clock.tsx",
+        "app/routes/tabata-timer.tsx",
+        "app/routes/tea-timer.tsx",
+        "app/routes/terms.tsx",
+        "app/routes/time-zone-converter.tsx",
+        "app/routes/unix-timestamp-converter.tsx",
+        "app/routes/utc-clock.tsx",
+        "app/routes/video-game-challenge-timer.tsx",
+        "app/routes/visual-timer.tsx",
+        "app/routes/workout-timer.tsx",
+        "app/routes/world-clock.tsx"
+      ]
+    },
+    {
+      "heading": "share and reuse this setup",
+      "occurrenceCount": 4,
+      "affectedRoutes": [
+        "/countdown-timer",
+        "/hiit-timer",
+        "/pomodoro-timer",
+        "/time-zone-meeting-planner"
+      ],
+      "affectedFiles": [
+        "app/clients/components/share/SharePresetPanel.tsx"
+      ]
+    },
+    {
+      "heading": "common uses",
+      "occurrenceCount": 3,
+      "affectedRoutes": [
+        "/12-hour-clock",
+        "/24-hour-clock",
+        "/retro-flip-clock"
+      ],
+      "affectedFiles": [
+        "app/clients/components/countdown-timer/PopularUseCases.tsx",
+        "app/clients/components/epoch-unix-time-clock/Disclaimer.tsx",
+        "app/clients/components/event-countdown/Disclaimer.tsx",
+        "app/clients/components/fibonacci-clock/Disclaimer.tsx",
+        "app/clients/components/focus-session-timer/Disclaimer.tsx",
+        "app/clients/components/fullscreen-timer/Disclaimer.tsx",
+        "app/clients/components/golden-hour-clock/Disclaimer.tsx",
+        "app/clients/components/hexadecimal-clock/Disclaimer.tsx",
+        "app/routes/12-hour-clock.tsx",
+        "app/routes/24-hour-clock.tsx",
+        "app/routes/online-alarm-clock.tsx",
+        "app/routes/retro-flip-clock.tsx"
+      ]
+    },
+    {
+      "heading": "contact",
+      "occurrenceCount": 3,
+      "affectedRoutes": [
+        "/privacy",
+        "/sitemap",
+        "/terms"
+      ],
+      "affectedFiles": [
+        "app/clients/components/content/Stage4RouteContent.tsx",
+        "app/clients/components/digital-clock/KeyboardShortcuts.tsx",
+        "app/clients/components/guides/GuidePage.tsx",
+        "app/clients/config/monetization.ts",
+        "app/routes/about.tsx",
+        "app/routes/author.suhas-sunder.tsx",
+        "app/routes/contact.tsx",
+        "app/routes/cookies.tsx",
+        "app/routes/copyright.tsx",
+        "app/routes/epoch-unix-time-clock.tsx",
+        "app/routes/how-ilovetimers-is-made.tsx",
+        "app/routes/privacy.tsx",
+        "app/routes/sitemap.tsx",
+        "app/routes/swatch-internet-time-clock.tsx",
+        "app/routes/terms.tsx",
+        "app/routes/utc-clock.tsx",
+        "app/routes.ts"
+      ]
+    },
+    {
+      "heading": "date range",
+      "occurrenceCount": 3,
+      "affectedRoutes": [
+        "/date-duration-calculator",
+        "/months-between-dates-calculator",
+        "/weeks-between-dates-calculator"
+      ],
+      "affectedFiles": [
+        "app/clients/components/date-calculators/CountdownWorkdayUtilityPages.tsx",
+        "app/clients/components/date-calculators/DateCalculatorPages.tsx",
+        "app/clients/components/date-calculators/DateTimeUtilityExtras.tsx",
+        "app/clients/components/date-calculators/MoreDateTimeCalculatorPages.tsx",
+        "app/routes/guides.unix-timestamps-seconds-milliseconds-microseconds.tsx",
+        "app/routes/sitemap.tsx",
+        "app/routes/unix-timestamp-converter.tsx"
+      ]
+    },
+    {
+      "heading": "faq",
+      "occurrenceCount": 3,
+      "affectedRoutes": [
+        "/",
+        "/time-calculator",
+        "/visual-timer"
+      ],
+      "affectedFiles": [
+        "app/clients/components/alarm-timer/FAQ.tsx",
+        "app/clients/components/amrap-timer/FAQ.tsx",
+        "app/clients/components/analog-clock/FAQ.tsx",
+        "app/clients/components/astronomical-clock/FAQ.tsx",
+        "app/clients/components/atomic-clock/FAQ.tsx",
+        "app/clients/components/billable-hours-calculator/FAQ.tsx",
+        "app/clients/components/billable-hours-clock/FAQ.tsx",
+        "app/clients/components/binary-clock/FAQ.tsx",
+        "app/clients/components/binary-stopwatch/FAQ.tsx",
+        "app/clients/components/bpm-tapper/FAQ.tsx",
+        "app/clients/components/break-timer/FAQ.tsx",
+        "app/clients/components/breathing-timer/FAQ.tsx",
+        "app/clients/components/chaos-timer/FAQ.tsx",
+        "app/clients/components/classroom-timer/FAQ.tsx",
+        "app/clients/components/clock-discovery/ClockDiscoveryPages.tsx",
+        "app/clients/components/cooking-timer/FAQ.tsx",
+        "app/clients/components/count-up-timer/FAQ.tsx",
+        "app/clients/components/countdown-timer/FAQ.tsx",
+        "app/clients/components/current-local-time/FAQ.tsx",
+        "app/clients/components/date-calculators/CountdownWorkdayUtilityPages.tsx",
+        "app/clients/components/date-calculators/DateCalculatorPages.tsx",
+        "app/clients/components/date-calculators/DateTimeUtilityExtras.tsx",
+        "app/clients/components/date-calculators/MoreDateTimeCalculatorPages.tsx",
+        "app/clients/components/debt-clock/FAQ.tsx",
+        "app/clients/components/debt-repayment-timer/FAQ.tsx",
+        "app/clients/components/digital-clock/FAQ.tsx",
+        "app/clients/components/drink-water-reminder-timer/FAQ.tsx",
+        "app/clients/components/egg-timer/FAQ.tsx",
+        "app/clients/components/emom-timer/FAQ.tsx",
+        "app/clients/components/epoch-unix-time-clock/FAQ.tsx",
+        "app/clients/components/event-countdown/FAQ.tsx",
+        "app/clients/components/exam-timer/FAQ.tsx",
+        "app/clients/components/fibonacci-clock/FAQ.tsx",
+        "app/clients/components/focus-session-timer/FAQ.tsx",
+        "app/clients/components/fullscreen-timer/FAQ.tsx",
+        "app/clients/components/golden-hour-clock/FAQ.tsx",
+        "app/clients/components/hexadecimal-clock/FAQ.tsx",
+        "app/clients/components/hiit-timer/FAQ.tsx",
+        "app/clients/components/home/FAQ.tsx",
+        "app/clients/components/lab-timer/FAQ.tsx",
+        "app/clients/components/meditation-timer/FAQ.tsx",
+        "app/clients/components/meeting-count-up-timer/FAQ.tsx",
+        "app/clients/components/meeting-timer/FAQ.tsx",
+        "app/clients/components/metronome/FAQ.tsx",
+        "app/clients/components/military-time-converter/FAQ.tsx",
+        "app/clients/components/milliseconds-converter/FAQ.tsx",
+        "app/clients/components/minimalist-clock/FAQ.tsx",
+        "app/clients/components/moon-phase-clock/FAQ.tsx",
+        "app/clients/components/morse-code-clock/FAQ.tsx",
+        "app/clients/components/multiple-timers/FAQ.tsx",
+        "app/clients/components/multiple-timers/HowItWorks.tsx",
+        "app/clients/components/online-timer/FAQ.tsx",
+        "app/clients/components/online-timer/HowItWorks.tsx",
+        "app/clients/components/pace-timer/FAQ.tsx",
+        "app/clients/components/pace-timer/HowItWorks.tsx",
+        "app/clients/components/pizza-timer/FAQ.tsx",
+        "app/clients/components/pomodoro-timer/FAQ.tsx",
+        "app/clients/components/preset-duration-timer/PresetDurationTimerPage.tsx",
+        "app/clients/components/stopwatch/FAQ.tsx",
+        "app/clients/components/stopwatch/HowItWorks.tsx",
+        "app/clients/components/time-zone-converter/FAQ.tsx",
+        "app/clients/components/time-zone-converter/HowItWorks.tsx",
+        "app/clients/components/work-hours-calculator/FAQ.tsx",
+        "app/clients/components/work-hours-calculator/HowItWorks.tsx",
+        "app/clients/components/world-clock/FAQ.tsx",
+        "app/clients/components/world-clock/HowItWorks.tsx",
+        "app/clients/config/presetTimers.js",
+        "app/routes/12-hour-clock.tsx",
+        "app/routes/24-hour-clock.tsx",
+        "app/routes/alarm-timer.tsx",
+        "app/routes/billable-hours-calculator.tsx",
+        "app/routes/billable-hours-clock.tsx",
+        "app/routes/bpm-tapper.tsx",
+        "app/routes/chess-clock.tsx",
+        "app/routes/clock-with-milliseconds.tsx",
+        "app/routes/home.tsx",
+        "app/routes/interval-timer.tsx",
+        "app/routes/kitchen-timer.tsx",
+        "app/routes/meeting-agenda-timer.tsx",
+        "app/routes/metronome.tsx",
+        "app/routes/military-time-clock.tsx",
+        "app/routes/millisecond-timer.tsx",
+        "app/routes/new-year-countdown.tsx",
+        "app/routes/online-alarm-clock.tsx",
+        "app/routes/presentation-timer.tsx",
+        "app/routes/reaction-time-test.tsx",
+        "app/routes/round-timer.tsx",
+        "app/routes/seconds-timer.tsx",
+        "app/routes/silent-timer.tsx",
+        "app/routes/speech-timer.tsx",
+        "app/routes/speedcubing-timer.tsx",
+        "app/routes/speedrun-timer.tsx",
+        "app/routes/stopwatch-with-milliseconds.tsx",
+        "app/routes/study-stopwatch.tsx",
+        "app/routes/tabata-timer.tsx",
+        "app/routes/tea-timer.tsx",
+        "app/routes/time-calculator.tsx",
+        "app/routes/time-zone-meeting-planner.tsx",
+        "app/routes/timer-clock.tsx",
+        "app/routes/timer-stopwatch.tsx",
+        "app/routes/unix-timestamp-converter.tsx",
+        "app/routes/utc-clock.tsx",
+        "app/routes/video-game-challenge-timer.tsx",
+        "app/routes/visual-timer.tsx",
+        "app/routes/work-hours-calculator.tsx",
+        "app/routes/workout-timer.tsx"
+      ]
+    },
+    {
+      "heading": "related date calculators",
+      "occurrenceCount": 3,
+      "affectedRoutes": [
+        "/months-between-dates-calculator",
+        "/week-number-calculator",
+        "/weeks-between-dates-calculator"
+      ],
+      "affectedFiles": [
+        "app/clients/components/date-calculators/DateTimeUtilityExtras.tsx",
+        "app/clients/components/date-calculators/MoreDateTimeCalculatorPages.tsx"
+      ]
+    },
+    {
+      "heading": "related interval tools",
+      "occurrenceCount": 3,
+      "affectedRoutes": [
+        "/rest-timer",
+        "/round-timer",
+        "/tabata-timer"
+      ],
+      "affectedFiles": [
+        "app/routes/rest-timer.tsx",
+        "app/routes/round-timer.tsx",
+        "app/routes/tabata-timer.tsx"
+      ]
+    },
+    {
+      "heading": "set countdown",
+      "occurrenceCount": 3,
+      "affectedRoutes": [
+        "/countdown-timer",
+        "/timer-clock",
+        "/timer-stopwatch"
+      ],
+      "affectedFiles": [
+        "app/clients/components/fullscreen-timer/PopularUseCases.tsx",
+        "app/routes/countdown-timer.tsx",
+        "app/routes/timer-clock.tsx",
+        "app/routes/timer-stopwatch.tsx"
+      ]
+    }
+  ],
+  "repeatedPhrases": [
+    {
+      "text": "use the date duration calculator",
+      "routes": [
+        "/business-days-calculator",
+        "/days-until-calculator",
+        "/event-countdown",
+        "/months-between-dates-calculator",
+        "/new-year-countdown",
+        "/time-calculator",
+        "/time-duration-calculator",
+        "/week-number-calculator",
+        "/weekday-calculator",
+        "/weeks-between-dates-calculator",
+        "/workdays-calculator"
+      ]
+    },
+    {
+      "text": "use the days until calculator",
+      "routes": [
+        "/birthday-countdown",
+        "/christmas-countdown",
+        "/countdown-to-date",
+        "/date-duration-calculator",
+        "/event-countdown",
+        "/hours-until-calculator",
+        "/months-between-dates-calculator",
+        "/new-year-countdown",
+        "/weekday-calculator"
+      ]
+    },
+    {
+      "text": "your browser and device clock",
+      "routes": [
+        "/12-hour-clock",
+        "/24-hour-clock",
+        "/atomic-clock",
+        "/christmas-countdown",
+        "/clock-with-milliseconds",
+        "/military-time-clock",
+        "/new-year-countdown",
+        "/sunrise-sunset-clock",
+        "/world-clock-with-milliseconds"
+      ]
+    },
+    {
+      "text": "device sleep can delay the",
+      "routes": [
+        "/1-minute-timer",
+        "/amrap-timer",
+        "/event-countdown",
+        "/meditation-timer",
+        "/meeting-timer",
+        "/new-year-countdown",
+        "/reaction-time-test"
+      ]
+    },
+    {
+      "text": "how ilovetimers is made or",
+      "routes": [
+        "/contact",
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "the date duration calculator for",
+      "routes": [
+        "/business-days-calculator",
+        "/days-until-calculator",
+        "/event-countdown",
+        "/months-between-dates-calculator",
+        "/new-year-countdown",
+        "/week-number-calculator",
+        "/weeks-between-dates-calculator"
+      ]
+    },
+    {
+      "text": "use the countdown timer for",
+      "routes": [
+        "/break-timer",
+        "/chess-clock",
+        "/online-timer",
+        "/silent-timer",
+        "/sleep-timer",
+        "/video-game-challenge-timer",
+        "/visual-timer"
+      ]
+    },
+    {
+      "text": "# # # # #",
+      "routes": [
+        "/binary-clock",
+        "/epoch-unix-time-clock",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+        "/metronome",
+        "/seconds-timer",
+        "/unix-timestamp-converter"
+      ]
+    },
+    {
+      "text": "a problem through the contact",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "above ilovetimers implementation details are",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "and standards behavior described above",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "are checked on how ilovetimers",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "are identified separately in the",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "behavior described above ilovetimers implementation",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "browser and standards behavior described",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "checked on how ilovetimers is",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "dates use the date duration",
+      "routes": [
+        "/business-days-calculator",
+        "/days-until-calculator",
+        "/event-countdown",
+        "/time-calculator",
+        "/week-number-calculator",
+        "/weekday-calculator"
+      ]
+    },
+    {
+      "text": "described above ilovetimers implementation details",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "details are identified separately in",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "explanations are checked on how",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "external references support the browser",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "how these explanations are checked",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "identified separately in the guide",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "ilovetimers implementation details are identified",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "ilovetimers is made or report",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "implementation details are identified separately",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "is made or report a",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "made or report a problem",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "on how ilovetimers is made",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "or report a problem through",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "problem through the contact page",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "read how these explanations are",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "references support the browser and",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "repeated work and break cycles",
+      "routes": [
+        "/15-minute-timer",
+        "/30-minute-timer",
+        "/pomodoro-timer",
+        "/productivity-timer",
+        "/study-stopwatch",
+        "/study-timer"
+      ]
+    },
+    {
+      "text": "report a problem through the",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "standards behavior described above ilovetimers",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "support the browser and standards",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "the browser and standards behavior",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "the new year countdown for",
+      "routes": [
+        "/birthday-countdown",
+        "/christmas-countdown",
+        "/countdown-to-date",
+        "/date-duration-calculator",
+        "/days-until-calculator",
+        "/event-countdown"
+      ]
+    },
+    {
+      "text": "these explanations are checked on",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "these external references support the",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "use the event countdown for",
+      "routes": [
+        "/countdown-to-date",
+        "/date-duration-calculator",
+        "/days-until-calculator",
+        "/hours-until-calculator",
+        "/new-year-countdown",
+        "/presentation-timer"
+      ]
+    },
+    {
+      "text": "use the new year countdown",
+      "routes": [
+        "/birthday-countdown",
+        "/christmas-countdown",
+        "/countdown-timer",
+        "/date-duration-calculator",
+        "/days-until-calculator",
+        "/event-countdown"
+      ]
+    },
+    {
+      "text": "use the time zone converter",
+      "routes": [
+        "/military-time-clock",
+        "/sunrise-sunset-clock",
+        "/time-calculator",
+        "/time-zone-meeting-planner",
+        "/unix-timestamp-converter",
+        "/utc-clock"
+      ]
+    },
+    {
+      "text": "# # # # utc",
+      "routes": [
+        "/astronomical-clock",
+        "/epoch-unix-time-clock",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+        "/moon-phase-clock",
+        "/unix-timestamp-converter"
+      ]
+    },
+    {
+      "text": "# use the new year",
+      "routes": [
+        "/birthday-countdown",
+        "/christmas-countdown",
+        "/countdown-timer",
+        "/date-duration-calculator",
+        "/event-countdown"
+      ]
+    },
+    {
+      "text": "a date use the date",
+      "routes": [
+        "/event-countdown",
+        "/months-between-dates-calculator",
+        "/week-number-calculator",
+        "/weekday-calculator",
+        "/workdays-calculator"
+      ]
+    },
+    {
+      "text": "and device performance can affect",
+      "routes": [
+        "/atomic-clock",
+        "/breathing-timer",
+        "/clock-with-milliseconds",
+        "/millisecond-timer",
+        "/stopwatch-with-milliseconds"
+      ]
+    },
+    {
+      "text": "and device sleep can delay",
+      "routes": [
+        "/drink-water-reminder-timer",
+        "/event-countdown",
+        "/free-online-timers",
+        "/new-year-countdown",
+        "/reaction-time-test"
+      ]
+    },
+    {
+      "text": "can affect what you see",
+      "routes": [
+        "/5-minute-timer",
+        "/epoch-unix-time-clock",
+        "/speech-timer",
+        "/stopwatch-with-milliseconds",
+        "/visual-timer"
+      ]
+    },
+    {
+      "text": "date use the date calculator",
+      "routes": [
+        "/event-countdown",
+        "/months-between-dates-calculator",
+        "/week-number-calculator",
+        "/weekday-calculator",
+        "/workdays-calculator"
+      ]
+    },
+    {
+      "text": "from your browser and device",
+      "routes": [
+        "/12-hour-clock",
+        "/24-hour-clock",
+        "/clock-with-milliseconds",
+        "/sunrise-sunset-clock",
+        "/world-clock-with-milliseconds"
+      ]
+    },
+    {
+      "text": "january # use the new",
+      "routes": [
+        "/birthday-countdown",
+        "/christmas-countdown",
+        "/countdown-timer",
+        "/date-duration-calculator",
+        "/event-countdown"
+      ]
+    },
+    {
+      "text": "keep the page open and",
+      "routes": [
+        "/5-minute-timer",
+        "/alarm-timer",
+        "/meditation-timer",
+        "/meeting-agenda-timer",
+        "/silent-timer"
+      ]
+    },
+    {
+      "text": "the days until calculator for",
+      "routes": [
+        "/date-duration-calculator",
+        "/event-countdown",
+        "/hours-until-calculator",
+        "/new-year-countdown",
+        "/weeks-between-dates-calculator"
+      ]
+    },
+    {
+      "text": "the work hours calculator for",
+      "routes": [
+        "/business-days-calculator",
+        "/time-calculator",
+        "/time-card-calculator",
+        "/time-duration-calculator",
+        "/weekly-timesheet-calculator"
+      ]
+    },
+    {
+      "text": "use the # hour clock",
+      "routes": [
+        "/12-hour-clock",
+        "/current-local-time",
+        "/digital-clock",
+        "/military-time-clock",
+        "/military-time-converter"
+      ]
+    },
+    {
+      "text": "use the date calculator to",
+      "routes": [
+        "/business-days-calculator",
+        "/months-between-dates-calculator",
+        "/week-number-calculator",
+        "/weekday-calculator",
+        "/workdays-calculator"
+      ]
+    },
+    {
+      "text": "use the hours until calculator",
+      "routes": [
+        "/date-duration-calculator",
+        "/days-until-calculator",
+        "/event-countdown",
+        "/time-calculator",
+        "/time-duration-calculator"
+      ]
+    },
+    {
+      "text": "uses your browser and device",
+      "routes": [
+        "/12-hour-clock",
+        "/christmas-countdown",
+        "/military-time-clock",
+        "/new-year-countdown",
+        "/unix-timestamp-converter"
+      ]
+    }
+  ],
+  "repeatedParagraphs": [
+    {
+      "text": "Read how these explanations are checked on How iLoveTimers Is Made , or report a problem through the contact page .",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "These external references support the browser and standards behavior described above. iLoveTimers implementation details are identified separately in the guide.",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "Distinguish Unix timestamp seconds, milliseconds, and microseconds, recognize common digit lengths, and avoid 1,000-times unit errors.",
+      "routes": [
+        "/guides",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "Learn why accurate browser timers measure elapsed or target time instead of assuming every callback arrives on schedule.",
+      "routes": [
+        "/guides",
+        "/guides/how-browser-timers-measure-time"
+      ]
+    },
+    {
+      "text": "See which iLoveTimers preferences and tool data use local browser storage, what is session-only, and how clearing site data affects them.",
+      "routes": [
+        "/guides",
+        "/guides/browser-storage"
+      ]
+    },
+    {
+      "text": "Sources: The Open Group explanation of seconds since the Epoch ; ECMAScript Date objects .",
+      "routes": [
+        "/epoch-unix-time-clock",
+        "/unix-timestamp-converter"
+      ]
+    },
+    {
+      "text": "Troubleshoot browser timer and alarm sound, including autoplay rules, muted output, suspended audio, background pages, and device sleep.",
+      "routes": [
+        "/guides",
+        "/guides/browser-timer-alarm-silent"
+      ]
+    },
+    {
+      "text": "Understand nonexistent spring-forward times, repeated fall-back times, date-specific offsets, and how iLoveTimers resolves timezone input.",
+      "routes": [
+        "/guides",
+        "/guides/daylight-saving-time-zone-conversions"
+      ]
+    },
+    {
+      "text": "Understand what can happen to a browser timer when its tab is hidden, a phone is locked, the browser freezes the page, or the tab is closed.",
+      "routes": [
+        "/guides",
+        "/guides/browser-timers-background-tabs"
+      ]
+    }
+  ],
+  "nearRepeatedParagraphs": [
+    {
+      "text": "Read how these explanations are checked on How iLoveTimers Is Made , or report a problem through the contact page .",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "These external references support the browser and standards behavior described above. iLoveTimers implementation details are identified separately in the guide.",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "Distinguish Unix timestamp seconds, milliseconds, and microseconds, recognize common digit lengths, and avoid 1,000-times unit errors.",
+      "routes": [
+        "/guides",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    {
+      "text": "Learn why accurate browser timers measure elapsed or target time instead of assuming every callback arrives on schedule.",
+      "routes": [
+        "/guides",
+        "/guides/how-browser-timers-measure-time"
+      ]
+    },
+    {
+      "text": "See which iLoveTimers preferences and tool data use local browser storage, what is session-only, and how clearing site data affects them.",
+      "routes": [
+        "/guides",
+        "/guides/browser-storage"
+      ]
+    },
+    {
+      "text": "Sources: The Open Group explanation of seconds since the Epoch ; ECMAScript Date objects .",
+      "routes": [
+        "/epoch-unix-time-clock",
+        "/unix-timestamp-converter"
+      ]
+    },
+    {
+      "text": "Troubleshoot browser timer and alarm sound, including autoplay rules, muted output, suspended audio, background pages, and device sleep.",
+      "routes": [
+        "/guides",
+        "/guides/browser-timer-alarm-silent"
+      ]
+    },
+    {
+      "text": "Understand nonexistent spring-forward times, repeated fall-back times, date-specific offsets, and how iLoveTimers resolves timezone input.",
+      "routes": [
+        "/guides",
+        "/guides/daylight-saving-time-zone-conversions"
+      ]
+    },
+    {
+      "text": "Understand what can happen to a browser timer when its tab is hidden, a phone is locked, the browser freezes the page, or the tab is closed.",
+      "routes": [
+        "/guides",
+        "/guides/browser-timers-background-tabs"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "sourcePath": "/",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 649,
+      "finalSupportingWordCount": 649
+    },
+    {
+      "sourcePath": "/free-online-timers",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 936,
+      "finalSupportingWordCount": 246
+    },
+    {
+      "sourcePath": "/about",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 486,
+      "finalSupportingWordCount": 486
+    },
+    {
+      "sourcePath": "/author/suhas-sunder",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 190,
+      "finalSupportingWordCount": 190
+    },
+    {
+      "sourcePath": "/contact",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 145,
+      "finalSupportingWordCount": 143
+    },
+    {
+      "sourcePath": "/how-ilovetimers-is-made",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 502,
+      "finalSupportingWordCount": 493
+    },
+    {
+      "sourcePath": "/copyright",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 151,
+      "finalSupportingWordCount": 152
+    },
+    {
+      "sourcePath": "/guides",
+      "visibleRepetitionStatus": "manual exemption review",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 0,
+      "finalSupportingWordCount": 414
+    },
+    {
+      "sourcePath": "/guides/browser-timers-background-tabs",
+      "visibleRepetitionStatus": "manual exemption review",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 0,
+      "finalSupportingWordCount": 975
+    },
+    {
+      "sourcePath": "/guides/browser-timer-alarm-silent",
+      "visibleRepetitionStatus": "manual exemption review",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 0,
+      "finalSupportingWordCount": 972
+    },
+    {
+      "sourcePath": "/guides/how-browser-timers-measure-time",
+      "visibleRepetitionStatus": "manual exemption review",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 0,
+      "finalSupportingWordCount": 971
+    },
+    {
+      "sourcePath": "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "visibleRepetitionStatus": "manual exemption review",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 0,
+      "finalSupportingWordCount": 859
+    },
+    {
+      "sourcePath": "/guides/daylight-saving-time-zone-conversions",
+      "visibleRepetitionStatus": "manual exemption review",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 0,
+      "finalSupportingWordCount": 941
+    },
+    {
+      "sourcePath": "/guides/browser-storage",
+      "visibleRepetitionStatus": "manual exemption review",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 0,
+      "finalSupportingWordCount": 1246
+    },
+    {
+      "sourcePath": "/countdown-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 880,
+      "finalSupportingWordCount": 322
+    },
+    {
+      "sourcePath": "/timer-stopwatch",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 345,
+      "finalSupportingWordCount": 345
+    },
+    {
+      "sourcePath": "/timer-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 366,
+      "finalSupportingWordCount": 366
+    },
+    {
+      "sourcePath": "/stopwatch",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2576,
+      "finalSupportingWordCount": 291
+    },
+    {
+      "sourcePath": "/stopwatch-with-milliseconds",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 384,
+      "finalSupportingWordCount": 384
+    },
+    {
+      "sourcePath": "/pomodoro-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "structural reorganization",
+      "previousSupportingWordCount": 1695,
+      "finalSupportingWordCount": 268
+    },
+    {
+      "sourcePath": "/hiit-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2895,
+      "finalSupportingWordCount": 154
+    },
+    {
+      "sourcePath": "/silent-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 413,
+      "finalSupportingWordCount": 413
+    },
+    {
+      "sourcePath": "/online-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 2451,
+      "finalSupportingWordCount": 212
+    },
+    {
+      "sourcePath": "/seconds-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "concise preset treatment",
+      "previousSupportingWordCount": 344,
+      "finalSupportingWordCount": 344
+    },
+    {
+      "sourcePath": "/1-minute-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 341,
+      "finalSupportingWordCount": 341
+    },
+    {
+      "sourcePath": "/5-minute-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 345,
+      "finalSupportingWordCount": 345
+    },
+    {
+      "sourcePath": "/10-minute-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 331,
+      "finalSupportingWordCount": 331
+    },
+    {
+      "sourcePath": "/15-minute-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 337,
+      "finalSupportingWordCount": 337
+    },
+    {
+      "sourcePath": "/30-minute-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 349,
+      "finalSupportingWordCount": 349
+    },
+    {
+      "sourcePath": "/interval-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 353,
+      "finalSupportingWordCount": 354
+    },
+    {
+      "sourcePath": "/presentation-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 381,
+      "finalSupportingWordCount": 381
+    },
+    {
+      "sourcePath": "/speech-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 355,
+      "finalSupportingWordCount": 355
+    },
+    {
+      "sourcePath": "/classroom-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2721,
+      "finalSupportingWordCount": 137
+    },
+    {
+      "sourcePath": "/meeting-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 3410,
+      "finalSupportingWordCount": 451
+    },
+    {
+      "sourcePath": "/meeting-agenda-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 430,
+      "finalSupportingWordCount": 430
+    },
+    {
+      "sourcePath": "/exam-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2984,
+      "finalSupportingWordCount": 125
+    },
+    {
+      "sourcePath": "/break-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 274,
+      "finalSupportingWordCount": 274
+    },
+    {
+      "sourcePath": "/study-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 306,
+      "finalSupportingWordCount": 306
+    },
+    {
+      "sourcePath": "/study-stopwatch",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 387,
+      "finalSupportingWordCount": 387
+    },
+    {
+      "sourcePath": "/workout-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 435,
+      "finalSupportingWordCount": 435
+    },
+    {
+      "sourcePath": "/rest-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 188,
+      "finalSupportingWordCount": 188
+    },
+    {
+      "sourcePath": "/tabata-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "concise preset treatment",
+      "previousSupportingWordCount": 361,
+      "finalSupportingWordCount": 361
+    },
+    {
+      "sourcePath": "/kitchen-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 288,
+      "finalSupportingWordCount": 288
+    },
+    {
+      "sourcePath": "/meditation-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 3057,
+      "finalSupportingWordCount": 115
+    },
+    {
+      "sourcePath": "/speedcubing-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 498,
+      "finalSupportingWordCount": 516
+    },
+    {
+      "sourcePath": "/lab-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 3207,
+      "finalSupportingWordCount": 135
+    },
+    {
+      "sourcePath": "/alarm-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 318,
+      "finalSupportingWordCount": 318
+    },
+    {
+      "sourcePath": "/online-alarm-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 292,
+      "finalSupportingWordCount": 330
+    },
+    {
+      "sourcePath": "/multiple-timers",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2590,
+      "finalSupportingWordCount": 280
+    },
+    {
+      "sourcePath": "/visual-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 332,
+      "finalSupportingWordCount": 323
+    },
+    {
+      "sourcePath": "/productivity-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 365,
+      "finalSupportingWordCount": 365
+    },
+    {
+      "sourcePath": "/meeting-count-up-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 3324,
+      "finalSupportingWordCount": 152
+    },
+    {
+      "sourcePath": "/breathing-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2244,
+      "finalSupportingWordCount": 196
+    },
+    {
+      "sourcePath": "/sleep-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 292,
+      "finalSupportingWordCount": 292
+    },
+    {
+      "sourcePath": "/stretch-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 184,
+      "finalSupportingWordCount": 184
+    },
+    {
+      "sourcePath": "/drink-water-reminder-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2795,
+      "finalSupportingWordCount": 126
+    },
+    {
+      "sourcePath": "/emom-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2989,
+      "finalSupportingWordCount": 125
+    },
+    {
+      "sourcePath": "/amrap-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2562,
+      "finalSupportingWordCount": 135
+    },
+    {
+      "sourcePath": "/round-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 352,
+      "finalSupportingWordCount": 352
+    },
+    {
+      "sourcePath": "/pace-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2660,
+      "finalSupportingWordCount": 134
+    },
+    {
+      "sourcePath": "/tea-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "concise preset treatment",
+      "previousSupportingWordCount": 376,
+      "finalSupportingWordCount": 376
+    },
+    {
+      "sourcePath": "/egg-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 2745,
+      "finalSupportingWordCount": 141
+    },
+    {
+      "sourcePath": "/chaos-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 2792,
+      "finalSupportingWordCount": 140
+    },
+    {
+      "sourcePath": "/video-game-challenge-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 436,
+      "finalSupportingWordCount": 436
+    },
+    {
+      "sourcePath": "/speedrun-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 460,
+      "finalSupportingWordCount": 460
+    },
+    {
+      "sourcePath": "/pizza-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 1771,
+      "finalSupportingWordCount": 136
+    },
+    {
+      "sourcePath": "/fibonacci-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 1830,
+      "finalSupportingWordCount": 141
+    },
+    {
+      "sourcePath": "/sunrise-sunset-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 894,
+      "finalSupportingWordCount": 898
+    },
+    {
+      "sourcePath": "/debt-repayment-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 1827,
+      "finalSupportingWordCount": 262
+    },
+    {
+      "sourcePath": "/focus-session-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 2940,
+      "finalSupportingWordCount": 216
+    },
+    {
+      "sourcePath": "/morse-code-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 2512,
+      "finalSupportingWordCount": 115
+    },
+    {
+      "sourcePath": "/world-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "structural reorganization",
+      "previousSupportingWordCount": 2547,
+      "finalSupportingWordCount": 187
+    },
+    {
+      "sourcePath": "/world-clock-with-milliseconds",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 326,
+      "finalSupportingWordCount": 326
+    },
+    {
+      "sourcePath": "/debt-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 3216,
+      "finalSupportingWordCount": 249
+    },
+    {
+      "sourcePath": "/current-local-time",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 3098,
+      "finalSupportingWordCount": 179
+    },
+    {
+      "sourcePath": "/utc-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 1012,
+      "finalSupportingWordCount": 1119
+    },
+    {
+      "sourcePath": "/24-hour-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 311,
+      "finalSupportingWordCount": 311
+    },
+    {
+      "sourcePath": "/12-hour-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 278,
+      "finalSupportingWordCount": 278
+    },
+    {
+      "sourcePath": "/analog-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 2551,
+      "finalSupportingWordCount": 189
+    },
+    {
+      "sourcePath": "/digital-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 2539,
+      "finalSupportingWordCount": 205
+    },
+    {
+      "sourcePath": "/clock-with-milliseconds",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 398,
+      "finalSupportingWordCount": 398
+    },
+    {
+      "sourcePath": "/binary-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 2596,
+      "finalSupportingWordCount": 130
+    },
+    {
+      "sourcePath": "/hexadecimal-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 2961,
+      "finalSupportingWordCount": 123
+    },
+    {
+      "sourcePath": "/event-countdown",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "full rewrite",
+      "previousSupportingWordCount": 3222,
+      "finalSupportingWordCount": 255
+    },
+    {
+      "sourcePath": "/countdown-to-date",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 256,
+      "finalSupportingWordCount": 256
+    },
+    {
+      "sourcePath": "/new-year-countdown",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "concise preset treatment",
+      "previousSupportingWordCount": 305,
+      "finalSupportingWordCount": 413
+    },
+    {
+      "sourcePath": "/christmas-countdown",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "concise preset treatment",
+      "previousSupportingWordCount": 240,
+      "finalSupportingWordCount": 240
+    },
+    {
+      "sourcePath": "/golden-hour-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 3261,
+      "finalSupportingWordCount": 334
+    },
+    {
+      "sourcePath": "/moon-phase-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 3185,
+      "finalSupportingWordCount": 285
+    },
+    {
+      "sourcePath": "/astronomical-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 3144,
+      "finalSupportingWordCount": 433
+    },
+    {
+      "sourcePath": "/epoch-unix-time-clock",
+      "visibleRepetitionStatus": "manual exemption review",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 2542,
+      "finalSupportingWordCount": 443
+    },
+    {
+      "sourcePath": "/swatch-internet-time-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 543,
+      "finalSupportingWordCount": 547
+    },
+    {
+      "sourcePath": "/billable-hours-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 463,
+      "finalSupportingWordCount": 463
+    },
+    {
+      "sourcePath": "/time-blocking-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 194,
+      "finalSupportingWordCount": 194
+    },
+    {
+      "sourcePath": "/atomic-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 2480,
+      "finalSupportingWordCount": 387
+    },
+    {
+      "sourcePath": "/time-zone-converter",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 2466,
+      "finalSupportingWordCount": 463
+    },
+    {
+      "sourcePath": "/time-zone-meeting-planner",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 638,
+      "finalSupportingWordCount": 681
+    },
+    {
+      "sourcePath": "/military-time-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 361,
+      "finalSupportingWordCount": 361
+    },
+    {
+      "sourcePath": "/binary-stopwatch",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "structural reorganization",
+      "previousSupportingWordCount": 2508,
+      "finalSupportingWordCount": 128
+    },
+    {
+      "sourcePath": "/roman-numeral-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 336,
+      "finalSupportingWordCount": 336
+    },
+    {
+      "sourcePath": "/retro-flip-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 299,
+      "finalSupportingWordCount": 299
+    },
+    {
+      "sourcePath": "/minimalist-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "substantial reduction",
+      "previousSupportingWordCount": 2611,
+      "finalSupportingWordCount": 150
+    },
+    {
+      "sourcePath": "/reaction-time-test",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 729,
+      "finalSupportingWordCount": 731
+    },
+    {
+      "sourcePath": "/metronome",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 577,
+      "finalSupportingWordCount": 621
+    },
+    {
+      "sourcePath": "/bpm-tapper",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 298,
+      "finalSupportingWordCount": 298
+    },
+    {
+      "sourcePath": "/military-time-converter",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 2722,
+      "finalSupportingWordCount": 394
+    },
+    {
+      "sourcePath": "/work-hours-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 417,
+      "finalSupportingWordCount": 419
+    },
+    {
+      "sourcePath": "/time-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 431,
+      "finalSupportingWordCount": 431
+    },
+    {
+      "sourcePath": "/time-duration-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 284,
+      "finalSupportingWordCount": 284
+    },
+    {
+      "sourcePath": "/date-duration-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 331,
+      "finalSupportingWordCount": 331
+    },
+    {
+      "sourcePath": "/date-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 348,
+      "finalSupportingWordCount": 135
+    },
+    {
+      "sourcePath": "/business-days-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 287,
+      "finalSupportingWordCount": 287
+    },
+    {
+      "sourcePath": "/workdays-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 308,
+      "finalSupportingWordCount": 308
+    },
+    {
+      "sourcePath": "/age-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 290,
+      "finalSupportingWordCount": 119
+    },
+    {
+      "sourcePath": "/days-until-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 336,
+      "finalSupportingWordCount": 336
+    },
+    {
+      "sourcePath": "/weekday-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 234,
+      "finalSupportingWordCount": 234
+    },
+    {
+      "sourcePath": "/week-number-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 386,
+      "finalSupportingWordCount": 386
+    },
+    {
+      "sourcePath": "/months-between-dates-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 332,
+      "finalSupportingWordCount": 332
+    },
+    {
+      "sourcePath": "/weeks-between-dates-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 308,
+      "finalSupportingWordCount": 308
+    },
+    {
+      "sourcePath": "/birthday-countdown",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "concise preset treatment",
+      "previousSupportingWordCount": 270,
+      "finalSupportingWordCount": 270
+    },
+    {
+      "sourcePath": "/hours-until-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 331,
+      "finalSupportingWordCount": 331
+    },
+    {
+      "sourcePath": "/time-card-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 387,
+      "finalSupportingWordCount": 387
+    },
+    {
+      "sourcePath": "/weekly-timesheet-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 318,
+      "finalSupportingWordCount": 318
+    },
+    {
+      "sourcePath": "/billable-hours-calculator",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 368,
+      "finalSupportingWordCount": 370
+    },
+    {
+      "sourcePath": "/milliseconds-converter",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "methodology preservation with surrounding cleanup",
+      "previousSupportingWordCount": 2234,
+      "finalSupportingWordCount": 237
+    },
+    {
+      "sourcePath": "/millisecond-timer",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 294,
+      "finalSupportingWordCount": 294
+    },
+    {
+      "sourcePath": "/unix-timestamp-converter",
+      "visibleRepetitionStatus": "manual exemption review",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 602,
+      "finalSupportingWordCount": 624
+    },
+    {
+      "sourcePath": "/chess-clock",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "targeted correction",
+      "previousSupportingWordCount": 300,
+      "finalSupportingWordCount": 300
+    },
+    {
+      "sourcePath": "/privacy",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 575,
+      "finalSupportingWordCount": 766
+    },
+    {
+      "sourcePath": "/terms",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 541,
+      "finalSupportingWordCount": 544
+    },
+    {
+      "sourcePath": "/cookies",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 289,
+      "finalSupportingWordCount": 290
+    },
+    {
+      "sourcePath": "/sitemap",
+      "visibleRepetitionStatus": "no substantial repetition flag",
+      "stage4ContentAction": "no change required",
+      "previousSupportingWordCount": 2051,
+      "finalSupportingWordCount": 2196
+    }
+  ],
+  "stage4BaselineSummary": {
+    "capturedFrom": "docs/adsense-route-inventory.json and docs/content-repetition-report.json before Stage 4 rewrites",
+    "canonicalPages": 125,
+    "supportingWordTotal": 144693,
+    "repetitionFlaggedRoutes": [
+      "/age-calculator",
+      "/amrap-timer",
+      "/analog-clock",
+      "/astronomical-clock",
+      "/atomic-clock",
+      "/binary-clock",
+      "/binary-stopwatch",
+      "/breathing-timer",
+      "/chaos-timer",
+      "/classroom-timer",
+      "/countdown-timer",
+      "/current-local-time",
+      "/date-calculator",
+      "/debt-clock",
+      "/debt-repayment-timer",
+      "/digital-clock",
+      "/drink-water-reminder-timer",
+      "/egg-timer",
+      "/emom-timer",
+      "/epoch-unix-time-clock",
+      "/event-countdown",
+      "/exam-timer",
+      "/fibonacci-clock",
+      "/focus-session-timer",
+      "/free-online-timers",
+      "/golden-hour-clock",
+      "/hexadecimal-clock",
+      "/hiit-timer",
+      "/lab-timer",
+      "/meditation-timer",
+      "/meeting-count-up-timer",
+      "/meeting-timer",
+      "/military-time-converter",
+      "/milliseconds-converter",
+      "/minimalist-clock",
+      "/moon-phase-clock",
+      "/morse-code-clock",
+      "/multiple-timers",
+      "/new-year-countdown",
+      "/online-timer",
+      "/pace-timer",
+      "/pizza-timer",
+      "/pomodoro-timer",
+      "/stopwatch",
+      "/time-zone-converter",
+      "/utc-clock",
+      "/world-clock"
+    ],
+    "exactDuplicateParagraphGroups": 22,
+    "nearDuplicateParagraphGroups": 16
+  },
+  "repeatedHeadingSequences": [],
+  "repeatedFaqs": [
+    {
+      "text": "are the start and end dates included",
+      "routes": [
+        "/weeks-between-dates-calculator",
+        "/workdays-calculator"
+      ]
+    },
+    {
+      "text": "can i use it fullscreen",
+      "routes": [
+        "/christmas-countdown",
+        "/clock-with-milliseconds"
+      ]
+    },
+    {
+      "text": "can i use this for official deadlines",
+      "routes": [
+        "/countdown-to-date",
+        "/date-duration-calculator"
+      ]
+    },
+    {
+      "text": "does this include holidays",
+      "routes": [
+        "/business-days-calculator",
+        "/workdays-calculator"
+      ]
+    },
+    {
+      "text": "how is this different from the business days calculator",
+      "routes": [
+        "/weekday-calculator",
+        "/workdays-calculator"
+      ]
+    },
+    {
+      "text": "is this an official deadline calculator",
+      "routes": [
+        "/days-until-calculator",
+        "/hours-until-calculator"
+      ]
+    },
+    {
+      "text": "what happens if the browser or device sleeps",
+      "routes": [
+        "/30-minute-timer",
+        "/silent-timer"
+      ]
+    },
+    {
+      "text": "what is a # hour clock",
+      "routes": [
+        "/12-hour-clock",
+        "/24-hour-clock"
+      ]
+    }
+  ],
+  "repeatedExamples": [],
+  "stage4Exemptions": [
+    {
+      "type": "precise technical citation",
+      "text": "Read how these explanations are checked on How iLoveTimers Is Made , or report a problem through the contact page .",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ],
+      "reason": "The Unix clock and Unix converter cite the same two primary standards because both explain the same Epoch and ECMAScript Date foundations. The surrounding methodology and examples remain route-specific."
+    },
+    {
+      "type": "precise technical citation",
+      "text": "These external references support the browser and standards behavior described above. iLoveTimers implementation details are identified separately in the guide.",
+      "routes": [
+        "/guides/browser-storage",
+        "/guides/browser-timer-alarm-silent",
+        "/guides/browser-timers-background-tabs",
+        "/guides/daylight-saving-time-zone-conversions",
+        "/guides/how-browser-timers-measure-time",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ],
+      "reason": "The Unix clock and Unix converter cite the same two primary standards because both explain the same Epoch and ECMAScript Date foundations. The surrounding methodology and examples remain route-specific."
+    },
+    {
+      "type": "precise technical citation",
+      "text": "Distinguish Unix timestamp seconds, milliseconds, and microseconds, recognize common digit lengths, and avoid 1,000-times unit errors.",
+      "routes": [
+        "/guides",
+        "/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ],
+      "reason": "The Unix clock and Unix converter cite the same two primary standards because both explain the same Epoch and ECMAScript Date foundations. The surrounding methodology and examples remain route-specific."
+    },
+    {
+      "type": "precise technical citation",
+      "text": "Learn why accurate browser timers measure elapsed or target time instead of assuming every callback arrives on schedule.",
+      "routes": [
+        "/guides",
+        "/guides/how-browser-timers-measure-time"
+      ],
+      "reason": "The Unix clock and Unix converter cite the same two primary standards because both explain the same Epoch and ECMAScript Date foundations. The surrounding methodology and examples remain route-specific."
+    },
+    {
+      "type": "precise technical citation",
+      "text": "See which iLoveTimers preferences and tool data use local browser storage, what is session-only, and how clearing site data affects them.",
+      "routes": [
+        "/guides",
+        "/guides/browser-storage"
+      ],
+      "reason": "The Unix clock and Unix converter cite the same two primary standards because both explain the same Epoch and ECMAScript Date foundations. The surrounding methodology and examples remain route-specific."
+    },
+    {
+      "type": "precise technical citation",
+      "text": "Sources: The Open Group explanation of seconds since the Epoch ; ECMAScript Date objects .",
+      "routes": [
+        "/epoch-unix-time-clock",
+        "/unix-timestamp-converter"
+      ],
+      "reason": "The Unix clock and Unix converter cite the same two primary standards because both explain the same Epoch and ECMAScript Date foundations. The surrounding methodology and examples remain route-specific."
+    },
+    {
+      "type": "precise technical citation",
+      "text": "Troubleshoot browser timer and alarm sound, including autoplay rules, muted output, suspended audio, background pages, and device sleep.",
+      "routes": [
+        "/guides",
+        "/guides/browser-timer-alarm-silent"
+      ],
+      "reason": "The Unix clock and Unix converter cite the same two primary standards because both explain the same Epoch and ECMAScript Date foundations. The surrounding methodology and examples remain route-specific."
+    },
+    {
+      "type": "precise technical citation",
+      "text": "Understand nonexistent spring-forward times, repeated fall-back times, date-specific offsets, and how iLoveTimers resolves timezone input.",
+      "routes": [
+        "/guides",
+        "/guides/daylight-saving-time-zone-conversions"
+      ],
+      "reason": "The Unix clock and Unix converter cite the same two primary standards because both explain the same Epoch and ECMAScript Date foundations. The surrounding methodology and examples remain route-specific."
+    },
+    {
+      "type": "precise technical citation",
+      "text": "Understand what can happen to a browser timer when its tab is hidden, a phone is locked, the browser freezes the page, or the tab is closed.",
+      "routes": [
+        "/guides",
+        "/guides/browser-timers-background-tabs"
+      ],
+      "reason": "The Unix clock and Unix converter cite the same two primary standards because both explain the same Epoch and ECMAScript Date foundations. The surrounding methodology and examples remain route-specific."
+    }
+  ]
+}

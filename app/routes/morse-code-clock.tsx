@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/morse-code-clock.tsx
 import type { Route } from "./+types/morse-code-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,
@@ -8,11 +9,6 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import HowItWorks from "~/clients/components/morse-code-clock/HowItWorks";
-import Disclaimer from "~/clients/components/morse-code-clock/Disclaimer";
-import FAQ from "~/clients/components/morse-code-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/morse-code-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/morse-code-clock/PopularUseCases";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
@@ -564,12 +560,7 @@ export default function MorseCodeClockPage({
 
       <SeoBand>
 
-          <HowItWorks />
-          <KeyboardShortcuts />
-          <PopularUseCases />
-          <FAQ />
-          <Disclaimer />
-
+          <Stage4RouteContent routePath="/morse-code-clock" />
       </SeoBand>
     </PageShell>
   );

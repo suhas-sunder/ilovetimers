@@ -1,6 +1,6 @@
 // app/routes/swatch-internet-time-clock.tsx
 import type { Route } from "./+types/swatch-internet-time-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,
@@ -26,6 +26,8 @@ import {
   ToolFrame as Card,
   Toggle,
 } from "~/clients/components/ui/foundation";
+import { TechnicalMethod } from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
 
 /* =========================================================
    META
@@ -33,7 +35,7 @@ import {
 export function meta({}: Route.MetaArgs) {
   const title = "Swatch Internet Time (.beat) Clock, Live";
   const description =
-    "View the current Swatch Internet Time (@beat) live. A clean, timezone-free clock that shows .beats with a clear, readable display.";
+    "View a live Swatch Internet Time @beat value calculated from the device clock and the fixed Biel Mean Time basis.";
 
   const url = "https://www.ilovetimers.com/swatch-internet-time-clock";
 
@@ -396,6 +398,36 @@ export default function SwatchInternetTimePage({
       />
 
       <SeoBand title="How Swatch Internet Time works">
+        <TechnicalMethod
+          heading="@beat calculation"
+          sources={[TECHNICAL_SOURCES.swatchInternetTime]}
+        >
+          <p>
+            Swatch Internet Time divides a 24-hour day into 1,000 beats. One beat
+            is 86.4 ordinary seconds. The day starts at @000 at midnight Biel
+            Mean Time, which this route implements as a fixed UTC+1 basis with no
+            daylight-saving change.
+          </p>
+          <p>
+            The page adds one hour to the device-clock instant, finds the elapsed
+            milliseconds within that 24-hour period, and calculates{" "}
+            <strong>elapsed day fraction multiplied by 1,000</strong>. It
+            truncates the whole beat and the two displayed fractional digits.
+            One displayed hundredth of a beat is 0.864 seconds.
+          </p>
+          <p>
+            Example: 12:00:00 in the fixed BMT day is halfway through 86,400
+            seconds. The calculation is 0.5 multiplied by 1,000, so the result is
+            <strong> @500.00</strong>. Everyone sees the same value for the same
+            device-clock instant, regardless of local time zone.
+          </p>
+          <p>
+            Live mode reads the browser device clock and repaints about ten
+            times per second. Freeze stops the display. The page does not contact
+            an official time source, so device-clock error and background or
+            sleep delays affect the visible value.
+          </p>
+        </TechnicalMethod>
         <p>
           The display above shows Swatch Internet Time as @beats. It uses the
           intended UTC plus one hour basis for Biel Mean Time instead of local

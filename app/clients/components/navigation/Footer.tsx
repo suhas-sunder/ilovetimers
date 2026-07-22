@@ -13,6 +13,7 @@ export const footerSections: TimerMenuSection[] = [
     links: [
       { to: "/", label: "Home" },
       { to: "/free-online-timers", label: "Free Online Timers" },
+      { to: "/guides", label: "Guides" },
       { to: "/about", label: "About" },
       { to: "/author/suhas-sunder", label: "Suhas Sunder" },
       { to: "/contact", label: "Contact" },
@@ -29,11 +30,9 @@ export const footerSections: TimerMenuSection[] = [
     links: [
       { to: "/countdown-timer", label: "Countdown Timer" },
       { to: "/timer-clock", label: "Clock and Timer" },
-      { to: "/count-up-timer", label: "Count Up Timer" },
       { to: "/stopwatch", label: "Stopwatch" },
       { to: "/pomodoro-timer", label: "Pomodoro Timer" },
       { to: "/online-timer", label: "Online Timer" },
-      { to: "/fullscreen-timer", label: "Fullscreen Timer" },
       { to: "/silent-timer", label: "Silent Timer" },
       { to: "/visual-timer", label: "Visual Timer" },
       { to: "/alarm-timer", label: "Alarm Timer" },
@@ -106,13 +105,11 @@ export const footerSections: TimerMenuSection[] = [
       { to: "/round-timer", label: "Round Timer" },
       { to: "/pace-timer", label: "Pace Timer" },
       { to: "/rest-timer", label: "Rest Timer" },
-      { to: "/boxing-timer", label: "Boxing Timer" },
     ],
   },
   {
     title: "Cooking & Food",
     links: [
-      { to: "/cooking-timer", label: "Cooking Timer" },
       { to: "/kitchen-timer", label: "Kitchen Timer" },
       { to: "/tea-timer", label: "Tea Timer" },
       { to: "/egg-timer", label: "Egg Timer" },
@@ -124,9 +121,6 @@ export const footerSections: TimerMenuSection[] = [
     links: [
       { to: "/current-local-time", label: "Current Local Time" },
       { to: "/digital-clock", label: "Digital Clock" },
-      { to: "/full-screen-clock", label: "Full Screen Clock" },
-      { to: "/big-digital-clock", label: "Big Digital Clock" },
-      { to: "/clock-with-seconds", label: "Clock With Seconds" },
       {
         to: "/clock-with-milliseconds",
         label: "Clock With Milliseconds",
@@ -144,15 +138,6 @@ export const footerSections: TimerMenuSection[] = [
     title: "Analog & Specialty Clocks",
     links: [
       { to: "/analog-clock", label: "Analog Clock" },
-      {
-        to: "/analog-clock-with-second-hand",
-        label: "Analog Clock With Second Hand",
-      },
-      {
-        to: "/full-screen-analog-clock",
-        label: "Full Screen Analog Clock",
-      },
-      { to: "/smooth-second-hand-clock", label: "Smooth Second Hand Clock" },
       { to: "/binary-clock", label: "Binary Clock" },
       { to: "/hexadecimal-clock", label: "Hexadecimal Clock" },
       { to: "/morse-code-clock", label: "Morse Code Clock" },
@@ -173,7 +158,6 @@ export const footerSections: TimerMenuSection[] = [
     title: "World Time & Time Zones",
     links: [
       { to: "/world-clock", label: "World Clock" },
-      { to: "/world-clock-with-seconds", label: "World Clock With Seconds" },
       {
         to: "/world-clock-with-milliseconds",
         label: "World Clock With Milliseconds",

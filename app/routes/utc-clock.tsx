@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/utc-clock.tsx
 import type { Route } from "./+types/utc-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -22,9 +23,13 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
+import {
+  TechnicalMethod,
+  ToolTrustNote,
+} from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
 
-const REVIEW_DATE = { iso: "2026-07-15", label: "July 15, 2026" } as const;
+const REVIEW_DATE = { iso: "2026-07-18", label: "July 18, 2026" } as const;
 
 const utcFaqs = [
   {
@@ -50,7 +55,7 @@ const utcFaqs = [
   {
     question: "What is the ISO timestamp shown under the clock?",
     answer:
-      "The ISO timestamp is a machine-readable UTC value from the same moment as the display. It is useful when copying time into logs, tickets, or systems that expect a precise date-time string.",
+      "The ISO timestamp is a machine-readable UTC value from the same device-clock moment as the display. It is useful when copying time into logs, tickets, or systems that expect an ISO date-time string.",
   },
   {
     question: "Which related tool should I use instead?",
@@ -230,7 +235,7 @@ function formatTimeInZone(
       .replace(/\u200e/g, "")
       .trim();
   } catch {
-    return "—";
+  return "Unavailable";
   }
 }
 
@@ -725,6 +730,7 @@ export default function UtcClockPage({
       />
 
       <SeoBand>
+        <Stage4RouteContent routePath="/utc-clock" />
         <ContentSection title="How this UTC clock works">
           <p>
             UTC Clock shows Coordinated Universal Time as the primary display.
@@ -734,7 +740,7 @@ export default function UtcClockPage({
             you comparison controls below the utility.
           </p>
           <p>
-            The page is built for quick checks: show seconds when exact timing
+            The page is built for quick checks: show seconds when that display
             matters, switch between 12-hour and 24-hour display, copy the
             current UTC value, and use fullscreen when a room or shared screen
             needs a large reference clock. The ISO timestamp shown with the
@@ -742,6 +748,40 @@ export default function UtcClockPage({
             clearer than a human-readable label.
           </p>
         </ContentSection>
+        <TechnicalMethod
+          heading="UTC display method and clock source"
+          sources={[
+            TECHNICAL_SOURCES.ecmaDate,
+            TECHNICAL_SOURCES.nistTime,
+          ]}
+        >
+          <p>
+            The page reads the current instant from the device clock with a
+            browser Date object. It formats that instant with the UTC time zone
+            and also calls toISOString for the machine-readable value. The UTC
+            display does not apply the device's local offset. The comparison
+            rows format the same instant in other zones.
+          </p>
+          <p>
+            With seconds on, the route reads a new device-clock value four times
+            per second. With seconds off, it aligns near the next minute and
+            then checks every ten seconds. These update intervals affect when
+            the screen repaints. They do not change the underlying device-clock
+            source.
+          </p>
+          <p>
+            Example: if the device-clock instant is{" "}
+            <strong>2026-01-15T14:30:00.000Z</strong>, the UTC display is 14:30
+            in 24-hour mode. A New York comparison displays 09:30 with the
+            browser's January offset. Both labels represent one instant.
+          </p>
+          <p>
+            The page does not contact NIST, an NTP server, or another official
+            time service. A wrong device clock produces a wrong UTC instant.
+            Background throttling or sleep can delay repainting until the page
+            runs again.
+          </p>
+        </TechnicalMethod>
 
         <ContentSection title="When to use UTC">
           <p>
@@ -768,8 +808,8 @@ export default function UtcClockPage({
             during the year.
           </p>
           <p>
-            This route keeps UTC first so it does not accidentally describe
-            local time as UTC. The comparison rows are there only to help you
+            UTC remains the primary value so the label cannot be confused with
+            local time. The comparison rows help you
             understand how the current UTC moment maps to local or city times.
             For your device's local clock, use{" "}
             <a className="ilt-content-link" href="/current-local-time">

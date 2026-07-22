@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "testedAt": "2026-07-21",
+  "environment": "Bundled Chromium revision 1217 through Playwright 1.61.1 on Windows against the local React Router production build at 127.0.0.1:3037. Desktop tests used 1280x900 in light mode and mobile tests used 390x844 in dark mode; the canonical sweep used 1365x900.",
+  "scenarios": [
+    "Configured non-default values on all five share routes, created production-origin links through the visible Share setup controls, and opened each link in a new clean browser context.",
+    "Verified restored fields, accessible shared-setup confirmation, no automatic timer start, no automatic sound, clean canonical and Open Graph URLs, no parameterized structured-data URL, and no automatic preset creation.",
+    "Started Countdown Timer, Pomodoro Timer, and HIIT Timer manually after loading their shared setups and verified each exposed the active Pause control.",
+    "Tested desktop light mode at 1280x900 and mobile dark mode at 390x844 for all five share routes with no document-level horizontal overflow.",
+    "For Countdown Timer, Pomodoro Timer, HIIT Timer, and Time Zone Meeting Planner, saved a named preset, reloaded, loaded and verified it, renamed it, deleted it, saved two records, confirmed and completed Delete all, injected corrupt storage, and verified safe recovery.",
+    "Verified clearing one tool's presets preserved an unrelated localStorage key and preset actions did not add URL parameters.",
+    "Rendered all 132 canonical routes in Chromium with HTTP 200, one H1, canonical metadata, no document-level horizontal overflow, no hydration-failure text, and no browser console errors after waiting for network idle."
+  ],
+  "screenshots": [
+    "Ten viewport captures cover each supported share route at 1280x900 light and 390x844 dark in the Codex visualizations workspace.",
+    "Manual review confirmed wrapped mobile action rows, stacked narrow inputs, readable dark surfaces, visible touch controls, and no Stage 6 control overlap."
+  ],
+  "limitations": [
+    "The automated interaction pass used one Chromium-family browser on Windows and does not independently prove Safari, Firefox, physical-phone, or assistive-technology behavior.",
+    "Audio did not autostart because no timer entered a running state before explicit interaction; the test does not verify audible speaker output after a manual start.",
+    "Clipboard behavior was tested with browser permission granted; source and unit coverage verify the manual-copy fallback when clipboard access fails."
+  ]
+}

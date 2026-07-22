@@ -31,7 +31,7 @@ export default function PopularUseCases({
       notFor:
         "You need a countdown or interval workflow. Use Fullscreen Timer or a workout timer instead.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Online Timer", href: "/online-timer" },
       ],
     },

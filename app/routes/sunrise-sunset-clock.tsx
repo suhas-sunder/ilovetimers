@@ -1,6 +1,6 @@
 // app/routes/sunrise-sunset-clock.tsx
 import type { Route } from "./+types/sunrise-sunset-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,
@@ -28,6 +28,8 @@ import {
   ToolFrame as Card,
   Toggle,
 } from "~/clients/components/ui/foundation";
+import { TechnicalMethod } from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
 
 /* =========================================================
    META
@@ -195,6 +197,28 @@ function toISODate(d: Date) {
   return `${y}-${m}-${day}`;
 }
 
+function toISODateInTimeZone(date: Date, timeZone: string) {
+  try {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(date);
+    const get = (type: string) =>
+      parts.find((part) => part.type === type)?.value ?? "";
+    const result = `${get("year")}-${get("month")}-${get("day")}`;
+    return /^\d{4}-\d{2}-\d{2}$/.test(result) ? result : toISODate(date);
+  } catch {
+    return toISODate(date);
+  }
+}
+
+function nextISODate(dateISO: string) {
+  const [year, month, day] = dateISO.split("-").map(Number);
+  return toISODate(new Date(Date.UTC(year, month - 1, day + 1)));
+}
+
 /* =========================================================
    API (sunrise-sunset.org)
    Returns UTC timestamps when formatted=0.
@@ -251,10 +275,12 @@ function SunriseSunsetClockCard({ initialNowISO }: { initialNowISO: string }) {
     return Number.isFinite(parsed) ? parsed : Date.now();
   });
 
-  const [locMode, setLocMode] = useState<LocMode>("device");
+  const [locMode, setLocMode] = useState<LocMode>("manual");
   const [lat, setLat] = useState<number>(40.7128);
   const [lng, setLng] = useState<number>(-74.006);
-  const [locStatus, setLocStatus] = useState<string>("");
+  const [locStatus, setLocStatus] = useState<string>(
+    "Using New York example coordinates.",
+  );
 
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string>("");
@@ -364,12 +390,12 @@ function SunriseSunsetClockCard({ initialNowISO }: { initialNowISO: string }) {
       setErr("");
 
       try {
-        const d0 = new Date();
-        const d1 = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        const todayISO = toISODateInTimeZone(new Date(), timeZone);
+        const tomorrowISO = nextISODate(todayISO);
 
         const [t0, t1] = await Promise.all([
-          fetchSunTimes({ lat, lng, dateISO: toISODate(d0) }),
-          fetchSunTimes({ lat, lng, dateISO: toISODate(d1) }),
+          fetchSunTimes({ lat, lng, dateISO: todayISO }),
+          fetchSunTimes({ lat, lng, dateISO: tomorrowISO }),
         ]);
 
         if (cancelled) return;
@@ -409,7 +435,7 @@ function SunriseSunsetClockCard({ initialNowISO }: { initialNowISO: string }) {
     return () => {
       cancelled = true;
     };
-  }, [lat, lng]);
+  }, [lat, lng, timeZone]);
 
   // Determine next event and progress
   const derived = useMemo(() => {
@@ -665,7 +691,7 @@ function SunriseSunsetClockCard({ initialNowISO }: { initialNowISO: string }) {
                     Sunset {sunsetText}
                   </span>
                   <span className="timer-specialty-clock-pill rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-800">
-                    Lat {lat.toFixed(4)} · Lng {lng.toFixed(4)}
+                    Lat {lat.toFixed(2)} · Lng {lng.toFixed(2)}
                   </span>
                 </div>
                 <div className="mt-2 text-xs text-slate-600">
@@ -678,7 +704,7 @@ function SunriseSunsetClockCard({ initialNowISO }: { initialNowISO: string }) {
                   Next event
                 </div>
                 <div className="mt-2 text-base font-extrabold text-slate-900">
-                  {derived ? derived.nextLabel : loading ? "Loading..." : "—"}
+                {derived ? derived.nextLabel : loading ? "Loading..." : "Unavailable"}
                 </div>
                 <div className="mt-1 text-xs font-semibold text-slate-700">
                   At {nextAtText}
@@ -962,6 +988,45 @@ export default function SunriseSunsetClockPage({
       />
 
       <SeoBand title="How sunrise and sunset estimates work">
+        <TechnicalMethod
+          heading="Data source, inputs, and date handling"
+          sources={[
+            TECHNICAL_SOURCES.sunriseSunsetApi,
+            TECHNICAL_SOURCES.ianaTimeZones,
+          ]}
+        >
+          <p>
+            This page retrieves calculated sunrise and sunset timestamps from
+            the Sunrise-Sunset API. It does not run a solar-position algorithm
+            in this site's code. Each request includes the selected latitude,
+            longitude, and local calendar date. The service returns UTC
+            timestamps, and the browser formats them in the IANA time zone you
+            enter.
+          </p>
+          <p>
+            The page starts with manual New York example coordinates. If you
+            switch to Device location and grant permission, the browser supplies
+            your coordinates. Those coordinates and the date are then sent to
+            <strong> api.sunrise-sunset.org</strong> to get the result. This
+            route does not save coordinates in localStorage or place them in the
+            URL.
+          </p>
+          <p>
+            Example: select Manual location, enter latitude{" "}
+            <strong>40.7128</strong> and longitude{" "}
+            <strong>-74.0060</strong>, then use{" "}
+            <strong>America/New_York</strong>. The page sends those coordinates
+            and the date shown for that time zone. It displays the returned UTC
+            sunrise and sunset rounded to the minute in New York time.
+          </p>
+          <p>
+            These are modeled horizon times. Terrain, buildings, elevation,
+            weather, and the visible local horizon are not inputs. The results
+            are for general planning and are not observational, navigational, or
+            safety-grade data. High latitudes can have dates with no sunrise or
+            sunset.
+          </p>
+        </TechnicalMethod>
         <p>
           Use the clock above to estimate sunrise, sunset, solar noon, daylight
           length, and the next solar event for the current date and location.
@@ -1015,7 +1080,7 @@ export default function SunriseSunsetClockPage({
         </p>
         <p>
           The time zone field controls how the resulting times are formatted and
-          which local date the page uses for today's live clock. Your device
+          which local date is sent for the calculation. Your device
           time zone is fine for a local check. If you are planning for another
           city or country, enter a matching IANA time zone such as{" "}
           <strong>Europe/Berlin</strong>,{" "}

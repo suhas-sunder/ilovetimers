@@ -141,7 +141,7 @@ export default function FAQ({
           </Link>
           . Want one big screen?{" "}
           <Link
-            to="/fullscreen-timer"
+            to="/online-timer"
             className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300  hover:decoration-slate-500"
           >
             Fullscreen Timer

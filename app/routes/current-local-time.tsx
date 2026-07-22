@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/current-local-time.tsx
 import type { Route } from "./+types/current-local-time";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -22,12 +23,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/current-local-time/HowItWorks";
-import Disclaimer from "~/clients/components/current-local-time/Disclaimer";
-import FAQ from "~/clients/components/current-local-time/FAQ";
-import KeyboardShortcuts from "~/clients/components/current-local-time/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/current-local-time/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -53,7 +48,7 @@ export function meta({}: Route.MetaArgs) {
         "current time in my location",
       ].join(", "),
     },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -627,7 +622,7 @@ export default function CurrentLocalTimePage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/current-local-time" />
         <ContentSection>
           <p>
             If you need the current time with milliseconds visible, use the{" "}
@@ -637,7 +632,7 @@ export default function CurrentLocalTimePage({
             . It shows local or UTC time in a larger millisecond-focused
             display while still using browser/device time.
             For a seconds-focused clock, use the{" "}
-            <a className="ilt-content-link" href="/clock-with-seconds">
+            <a className="ilt-content-link" href="/digital-clock">
               clock with seconds
             </a>
             . For AM/PM as the main display, use the{" "}
@@ -647,10 +642,6 @@ export default function CurrentLocalTimePage({
             .
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
 
     </PageShell>

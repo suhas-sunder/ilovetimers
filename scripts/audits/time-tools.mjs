@@ -4,6 +4,10 @@ import { fileURLToPath } from "node:url";
 import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
 import { RELATED_TOOL_LINKS } from "../../app/clients/config/relatedTools.js";
 import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
+import {
+  STAGE3_NOINDEX_ROUTE_SET,
+  STAGE3_REDIRECT_SOURCE_SET,
+} from "../../app/config/routeArchitecture.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SITE_URL = "https://www.ilovetimers.com";
@@ -12,16 +16,10 @@ const failures = [];
 const timeTools = [
   ["/current-local-time", "Current Local Time | Device Clock with Fullscreen", "Current Local Time"],
   ["/digital-clock", "Digital Clock Online | Current Local Time", "Digital Clock"],
-  ["/big-digital-clock", "Big Digital Clock | Large Current Time Display", "Big Digital Clock"],
   ["/minimalist-clock", "Minimalist Clock | Clean Current Time Display", "Minimalist Clock"],
-  ["/clock-with-seconds", "Clock with Seconds | Live Local Time Display", "Clock With Seconds"],
   ["/clock-with-milliseconds", "Clock with Milliseconds | Local Time Display", "Clock With Milliseconds"],
-  ["/full-screen-clock", "Fullscreen Digital Clock | Large Current Time Display", "Full Screen Clock"],
   ["/timer-clock", "Clock and Timer Online | Current Time with Countdown", "Clock and Timer"],
   ["/analog-clock", "Analog Clock Online | Current Local Time", "Analog Clock"],
-  ["/analog-clock-with-second-hand", "Analog Clock with Second Hand | Live Local Time", "Analog Clock With Second Hand"],
-  ["/smooth-second-hand-clock", "Smooth Second Hand Clock | Analog Time Display", "Smooth Second Hand Clock"],
-  ["/full-screen-analog-clock", "Fullscreen Analog Clock | Large Local Time Display", "Full Screen Analog Clock"],
   ["/millisecond-timer", "Millisecond Timer Online | Short Precision-Display Countdown", "Millisecond Timer"],
   ["/milliseconds-converter", "Milliseconds Converter | Seconds, Minutes and Hours", "Milliseconds Converter"],
   ["/stopwatch-with-milliseconds", "Stopwatch with Milliseconds | Laps and Fullscreen", "Stopwatch With Milliseconds"],
@@ -33,20 +31,25 @@ const timeTools = [
   ["/epoch-unix-time-clock", "Unix Timestamp Clock | Current Epoch Time", "Unix Time Clock (Epoch Timestamp)"],
   ["/unix-timestamp-converter", "Unix Timestamp Converter | Seconds, Milliseconds and Dates", "Unix Timestamp Converter"],
   ["/world-clock", "World Clock Online | Current Time in Multiple Cities", "World Clock"],
-  ["/world-clock-with-seconds", "World Clock with Seconds | Multiple Time Zones", "World Clock With Seconds"],
   ["/world-clock-with-milliseconds", "World Clock with Milliseconds | Multiple Time Zones", "World Clock With Milliseconds"],
   ["/time-zone-converter", "Time Zone Converter | Convert Times Between Cities", "Time Zone Converter"],
   ["/time-zone-meeting-planner", "Time Zone Meeting Planner | Compare Working Hours", "Time Zone Meeting Planner"],
-  ["/atomic-clock", "Online Atomic Clock (Device Time With Milliseconds, Fullscreen)", "Atomic Clock"],
+  ["/atomic-clock", "Online Atomic Clock (Device Time With Milliseconds, Fullscreen)", "Atomic Clock (Device Time Display)"],
 ];
 
 const reviewedRouteFiles = [
   "clock-with-milliseconds",
   "milliseconds-converter",
+];
+
+const stage2ReviewedRouteFiles = [
   "military-time-converter",
   "utc-clock",
   "epoch-unix-time-clock",
   "unix-timestamp-converter",
+];
+
+const stage6ReviewedRouteFiles = [
   "time-zone-converter",
   "time-zone-meeting-planner",
 ];
@@ -112,9 +115,18 @@ const [routesSource, sitemapSource, rootSource, footerSource, discoverySource] =
 const configuredRoutes = configuredRoutesFrom(routesSource);
 const redirectSources = new Set(Object.keys(PERMANENT_REDIRECTS));
 const xmlPaths = xmlPathsFrom(sitemapSource);
-const moreDirectoryRoutes = moreDirectoryRoutesFrom(rootSource);
+const moreDirectoryRoutes = moreDirectoryRoutesFrom(rootSource).filter(
+  (route) =>
+    !STAGE3_NOINDEX_ROUTE_SET.has(route) &&
+    !STAGE3_REDIRECT_SOURCE_SET.has(route),
+);
 const footerRoutes = footerRoutesFrom(footerSource);
 const htmlSitemapRoutes = SITEMAP_GROUPS.flatMap((group) => group.routes);
+const guideArticleRoutes = new Set(
+  (SITEMAP_GROUPS.find((group) => group.title === "Guides")?.routes ?? []).filter(
+    (route) => route !== "/guides",
+  ),
+);
 const titles = [];
 const descriptions = [];
 const scopedSources = [discoverySource];
@@ -178,6 +190,22 @@ for (const file of reviewedRouteFiles) {
   );
   check(source.includes("dateModified: REVIEW_DATE.iso"), `/${file} schema date is not tied to its visible review date.`);
 }
+for (const file of stage2ReviewedRouteFiles) {
+  const source = await read(`app/routes/${file}.tsx`);
+  check(
+    source.includes('iso: "2026-07-18"') && source.includes('label: "July 18, 2026"'),
+    `/${file} does not use the reviewed July 18 date pair.`,
+  );
+  check(source.includes("dateModified: REVIEW_DATE.iso"), `/${file} schema date is not tied to its visible review date.`);
+}
+for (const file of stage6ReviewedRouteFiles) {
+  const source = await read(`app/routes/${file}.tsx`);
+  check(
+    source.includes('iso: "2026-07-21"') && source.includes('label: "July 21, 2026"'),
+    `/${file} does not use the Stage 6 reviewed July 21 date pair.`,
+  );
+  check(source.includes("dateModified: REVIEW_DATE.iso"), `/${file} schema date is not tied to its visible review date.`);
+}
 check(
   discoverySource.includes('iso: "2026-07-15"') &&
     discoverySource.includes('label: "July 15, 2026"') &&
@@ -187,7 +215,10 @@ check(
 
 for (const [route] of timeTools) {
   const group = RELATED_TOOL_LINKS[route];
-  check(Boolean(group), `${route} has no centralized related-tool group.`);
+  check(
+    Boolean(group) === !STAGE3_NOINDEX_ROUTE_SET.has(route),
+    `${route} has contextual-link prominence inconsistent with its indexability.`,
+  );
   if (!group) continue;
   check(group.links.length >= 3 && group.links.length <= 6, `${route} has an invalid related-link count.`);
   const destinations = group.links.map((link) => link.to);
@@ -222,9 +253,10 @@ check(
 );
 
 const converterSource = await read("app/routes/unix-timestamp-converter.tsx");
+const technicalTimeMathSource = await read("app/clients/lib/technicalTimeMath.js");
 check(
   converterSource.includes('value="microseconds"') &&
-    converterSource.includes('unit === "microseconds"') &&
+    technicalTimeMathSource.includes('unit === "microseconds"') &&
     converterSource.includes('type TimestampUnit = "auto" | "seconds" | "milliseconds" | "microseconds"'),
   "Unix converter no longer exposes and handles microseconds consistently.",
 );
@@ -241,17 +273,24 @@ check(
   "Meeting planner no longer exposes its UTC reference-date policy.",
 );
 
-check(configuredRoutes.size === 136, `Expected 136 configured routes; found ${configuredRoutes.size}.`);
-check(Object.keys(PERMANENT_REDIRECTS).length === 17, "Expected 17 permanent redirects.");
-check(xmlPaths.length === 133, `Expected 133 XML sitemap URLs; found ${xmlPaths.length}.`);
-check(moreDirectoryRoutes.length === 126, `Expected 126 More-directory tools; found ${moreDirectoryRoutes.length}.`);
-check(footerRoutes.length === 136, `Expected 136 footer routes; found ${footerRoutes.length}.`);
-check(Object.keys(RELATED_TOOL_LINKS).length === 81, "Expected 81 centralized related-tool groups.");
+check(configuredRoutes.size === htmlSitemapRoutes.length, `Configured and HTML-directory route counts differ (${configuredRoutes.size} vs ${htmlSitemapRoutes.length}).`);
+check(Object.keys(PERMANENT_REDIRECTS).length === STAGE3_REDIRECT_SOURCE_SET.size + 17, "Permanent redirect count does not match the retained aliases plus Stage 3 decisions.");
+check(xmlPaths.length === configuredRoutes.size - STAGE3_NOINDEX_ROUTE_SET.size, `XML sitemap count does not match indexable canonical routes; found ${xmlPaths.length}.`);
+check(footerRoutes.includes("/guides"), "Footer must contain the Guides index.");
+check([...guideArticleRoutes].every((route) => !footerRoutes.includes(route)), "Guide articles must stay out of the global footer.");
+check(footerRoutes.length === configuredRoutes.size - guideArticleRoutes.size, `Footer must contain every canonical route except guide articles; found ${footerRoutes.length}.`);
+check(Object.keys(RELATED_TOOL_LINKS).length === moreDirectoryRoutes.length, "Contextual-link groups must cover every discoverable indexable tool.");
 for (const [route] of timeTools) {
   check(htmlSitemapRoutes.includes(route), `${route} is missing from the HTML sitemap.`);
   check(footerRoutes.includes(route), `${route} is missing from the footer directory.`);
-  check(moreDirectoryRoutes.includes(route), `${route} is missing from the More directory.`);
-  check(xmlPaths.includes(route), `${route} is missing from the XML sitemap.`);
+  check(
+    moreDirectoryRoutes.includes(route) === !STAGE3_NOINDEX_ROUTE_SET.has(route),
+    `${route} has incorrect More-directory prominence.`,
+  );
+  check(
+    xmlPaths.includes(route) === !STAGE3_NOINDEX_ROUTE_SET.has(route),
+    `${route} has incorrect XML sitemap indexability.`,
+  );
 }
 
 if (failures.length > 0) {

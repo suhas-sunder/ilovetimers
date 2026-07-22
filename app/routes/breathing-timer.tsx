@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/breathing-timer.tsx
 import type { Route } from "./+types/breathing-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -23,10 +24,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/breathing-timer/HowItWorks";
-import FAQ from "~/clients/components/breathing-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/breathing-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/breathing-timer/PopularUseCases";
 import { ToolTrustNote } from "~/clients/components/trust/ToolTrust";
 
 const REVIEW_DATE = { iso: "2026-07-14", label: "July 14, 2026" } as const;
@@ -748,7 +745,7 @@ export default function BreathingTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <Stage4RouteContent routePath="/breathing-timer" />
         <ToolTrustNote reviewDate={REVIEW_DATE} heading="Health and timing limits">
           <p>
             This is a general timing and pacing tool. It is not medical advice,
@@ -760,9 +757,6 @@ export default function BreathingTimerPage({
             device performance can affect the timing or sound of phase changes.
           </p>
         </ToolTrustNote>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
       </SeoBand>
     </PageShell>
   );

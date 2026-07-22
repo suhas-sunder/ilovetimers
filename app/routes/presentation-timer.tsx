@@ -1,6 +1,6 @@
 // app/routes/presentation-timer.tsx
 import type { Route } from "./+types/presentation-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -588,7 +588,7 @@ export default function PresentationTimerPage({}: Route.ComponentProps) {
               event countdown
             </a>
             . For the simplest projected countdown, try the{" "}
-            <a className="ilt-content-link" href="/fullscreen-timer">
+            <a className="ilt-content-link" href="/online-timer">
               fullscreen timer
             </a>
             . For student-facing classroom activities, use the{" "}

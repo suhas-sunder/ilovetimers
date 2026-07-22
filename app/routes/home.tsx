@@ -31,9 +31,9 @@ const popularTimers: LinkItem[] = [
     description: "Start a browser timer without setup.",
   },
   {
-    title: "Fullscreen Timer",
-    href: "/fullscreen-timer",
-    description: "Show a large timer on any screen.",
+    title: "Timer and Stopwatch",
+    href: "/timer-stopwatch",
+    description: "Switch between countdown and elapsed-time modes.",
   },
   {
     title: "Stopwatch",
@@ -71,19 +71,19 @@ const popularTimers: LinkItem[] = [
     description: "See time passing visually.",
   },
   {
-    title: "Workout Timer",
-    href: "/workout-timer",
-    description: "Time sets and circuits.",
+    title: "Interval Timer",
+    href: "/interval-timer",
+    description: "Build repeating steps and rounds.",
   },
   {
-    title: "Study Timer",
-    href: "/study-timer",
-    description: "Keep study blocks structured.",
+    title: "Study Stopwatch",
+    href: "/study-stopwatch",
+    description: "Track open-ended study sessions and markers.",
   },
   {
-    title: "Cooking Timer",
-    href: "/cooking-timer",
-    description: "Time cooking and resting.",
+    title: "Kitchen Timer",
+    href: "/kitchen-timer",
+    description: "Time cooking steps with useful presets.",
   },
   {
     title: "Classroom Timer",
@@ -123,16 +123,6 @@ const categories: Category[] = [
       popularTimers[4],
       popularTimers[11],
       {
-        title: "Focus Session Timer",
-        href: "/focus-session-timer",
-        description: "Run one clean deep-work session.",
-      },
-      {
-        title: "Break Timer",
-        href: "/break-timer",
-        description: "Keep breaks intentional and visible.",
-      },
-      {
         title: "Time Blocking Clock",
         href: "/time-blocking-clock",
         description: "See the current block in a daily schedule.",
@@ -143,11 +133,6 @@ const categories: Category[] = [
     title: "Work and meetings",
     description: "Meeting, presentation, classroom, exam, and billable timing.",
     links: [
-      {
-        title: "Meeting Timer",
-        href: "/meeting-timer",
-        description: "Keep agenda blocks on schedule.",
-      },
       {
         title: "Meeting Count Up Timer",
         href: "/meeting-count-up-timer",
@@ -214,11 +199,6 @@ const categories: Category[] = [
         href: "/round-timer",
         description: "Time rounds for training and drills.",
       },
-      {
-        title: "Rest Timer",
-        href: "/rest-timer",
-        description: "Track recovery between sets.",
-      },
     ],
   },
   {
@@ -232,11 +212,6 @@ const categories: Category[] = [
         title: "UTC Clock",
         href: "/utc-clock",
         description: "Display current Coordinated Universal Time.",
-      },
-      {
-        title: "Current Local Time",
-        href: "/current-local-time",
-        description: "Show your browser's local time and date.",
       },
       {
         title: "Analog Clock",
@@ -558,7 +533,7 @@ export default function Home() {
                   controls, and no unnecessary popups or intrusive distractions.
                 </p>
                 <p>
-                  Prefer the older all-in-one page? The original four-timer
+                  Prefer the older combined page? The original four-timer
                   homepage is still available at{" "}
                   <a
                     href="/free-online-timers"

@@ -139,8 +139,8 @@ export default function HowItWorks({
             <PillLink href={abs("/online-timer")}>Online Timer</PillLink>
             <PillLink href={abs("/silent-timer")}>Silent Timer</PillLink>
             <PillLink href={abs("/break-timer")}>Break Timer</PillLink>
-            <PillLink href={abs("/cooking-timer")}>Cooking Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/kitchen-timer")}>Cooking Timer</PillLink>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
           </div>

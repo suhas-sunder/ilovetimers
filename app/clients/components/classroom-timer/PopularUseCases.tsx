@@ -45,7 +45,7 @@ export default function PopularUseCases({
         "If you want the absolute simplest big countdown with fewer options. Use Fullscreen Timer instead.",
       links: [
         { label: "Classroom Timer", href: "/classroom-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Presentation Timer", href: "/presentation-timer" },
       ],
     },

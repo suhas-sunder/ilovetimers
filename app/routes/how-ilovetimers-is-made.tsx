@@ -104,15 +104,38 @@ export default function HowILoveTimersIsMade() {
 
       <ContentSection title="Content and documentation">
         <p>
-          Explanatory content should match the actual tool, describe real use
-          cases, avoid filler and keyword stuffing, disclose meaningful
-          limitations, and be corrected when behavior or guidance changes.
+          Explanations are checked against the working tools, formulas,
+          metadata, and structured data. Technical
+          pages show a method or limitation beside the tool when that detail
+          changes how you should read the result.
         </p>
 
         <p>
-          Development and drafting tools may assist the workflow, but changes
-          are reviewed against the actual iLoveTimers implementation before
-          publication.
+          Automated checks cover the production build, route metadata, internal
+          links, calculator formulas, timer and specialty-tool behavior,
+          accessibility markup, and shared interface rules. Tests cover selected
+          behavior and boundary cases. They do not
+          prove that every browser, device, formula, or page has received a
+          manual review.
+        </p>
+      </ContentSection>
+
+      <ContentSection title="How checks are applied">
+        <p>
+          Checks are chosen for the tool or explanation being changed. Formula
+          tests compare deterministic inputs with expected outputs. Automated
+          checks protect important labels, metadata, disclosures, and route
+          relationships.
+          Browser checks are used for representative desktop, mobile, light,
+          and dark views when a change affects rendered behavior.
+        </p>
+
+        <p>
+          A passing check means the covered case behaved as expected in that
+          run. It does not certify official time, laboratory measurement,
+          payroll results, legal compliance, or universal browser support.
+          Calculator and technical pages state their own assumptions because
+          those assumptions differ by tool.
         </p>
       </ContentSection>
 

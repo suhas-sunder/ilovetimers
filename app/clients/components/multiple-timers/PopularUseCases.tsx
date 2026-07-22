@@ -31,7 +31,7 @@ export default function PopularUseCases({
       notFor:
         "You only need one simple countdown. Use Countdown Timer instead.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Egg Timer", href: "/egg-timer" },
         { label: "Tea Timer", href: "/tea-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
@@ -103,7 +103,7 @@ export default function PopularUseCases({
       notFor: "You want a dedicated no-sound experience. Use Silent Timer.",
       links: [
         { label: "Silent Timer", href: "/silent-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {
@@ -116,7 +116,7 @@ export default function PopularUseCases({
         "You need one large projected countdown. Use Countdown Timer or Fullscreen Timer.",
       links: [
         { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Break Timer", href: "/break-timer" },
       ],
     },

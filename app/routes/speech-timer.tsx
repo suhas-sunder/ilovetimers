@@ -491,7 +491,7 @@ export default function SpeechTimerPage() {
               meeting timer
             </a>
             . For a simple projected countdown, use the{" "}
-            <a className="ilt-content-link" href="/fullscreen-timer">
+            <a className="ilt-content-link" href="/online-timer">
               fullscreen timer
             </a>
             .

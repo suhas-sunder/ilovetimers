@@ -14,13 +14,13 @@ export function JsonLd({ data }: { data: any }) {
    1) HOW IT WORKS (trust + SEO + user intent)
    Notes:
    - Uses only your real routes (no hash anchors).
-   - Scenario-based with concrete examples for /cooking-timer.
+   - Scenario-based with concrete examples for /kitchen-timer.
    - Tool-focused, not a blog post.
    - Technical details live in an expandable section.
    - Aim: ~800–1200 words of unique, intent-matching content.
 ========================================================= */
 export default function HowItWorks({
-  canonicalUrl = "https://www.ilovetimers.com/cooking-timer",
+  canonicalUrl = "https://www.ilovetimers.com/kitchen-timer",
   baseUrl = "https://www.ilovetimers.com",
 }: {
   canonicalUrl?: string;
@@ -131,7 +131,7 @@ export default function HowItWorks({
               when you need several timers running at once, or{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                href={abs("/fullscreen-timer")}
+                href={abs("/online-timer")}
               >
                 Fullscreen Timer
               </a>{" "}
@@ -485,7 +485,7 @@ export default function HowItWorks({
             <PillLink href={abs("/tea-timer")}>Tea Timer</PillLink>
             <PillLink href={abs("/pizza-timer")}>Pizza Timer</PillLink>
             <PillLink href={abs("/multiple-timers")}>Multiple Timers</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>

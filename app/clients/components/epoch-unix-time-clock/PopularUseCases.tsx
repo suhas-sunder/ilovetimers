@@ -69,7 +69,7 @@ export default function PopularUseCases({
         "Teams on calls, live debugging sessions, or anyone needing a clearly visible “now” reference.",
       notFor: "You want a stylized clock face (use a clock-specific view).",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Minimalist Clock", href: "/minimalist-clock" },
       ],
     },

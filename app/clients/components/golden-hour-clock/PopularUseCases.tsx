@@ -70,7 +70,7 @@ export default function PopularUseCases({
       notFor:
         "You need multiple independent timers on one screen. Use Multiple Timers instead.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
       ],
     },
@@ -135,8 +135,8 @@ export default function PopularUseCases({
           <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
             Use this page to get golden hour start/end times (morning and
             evening) for a chosen date and location, plus sunrise and sunset and
-            a live countdown to the next change. Use GPS for on-location
-            accuracy and fullscreen for a clean view.
+            a live countdown to the next change. Use GPS to set the location and
+            fullscreen for a larger view.
           </p>
         </div>
 

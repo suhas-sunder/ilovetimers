@@ -1,6 +1,6 @@
 // app/routes/time-blocking-clock.tsx
 import type { Route } from "./+types/time-blocking-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,

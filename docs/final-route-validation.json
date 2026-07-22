@@ -1,0 +1,5013 @@
+{
+  "status": "passed",
+  "generatedAt": "2026-07-21T23:50:12.696Z",
+  "environment": {
+    "server": "local React Router production build through server.js",
+    "browser": "Bundled Chromium 1217 through Playwright 1.61.1 on Windows",
+    "originUnderTest": "http://127.0.0.1:3047",
+    "metadataOrigin": "https://www.ilovetimers.com"
+  },
+  "counts": {
+    "canonical": 132,
+    "redirects": 28,
+    "indexable": 109,
+    "noindex": 23
+  },
+  "canonical": [
+    {
+      "path": "/",
+      "pageType": "homepage",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com",
+      "ogUrl": "https://www.ilovetimers.com",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/1-minute-timer",
+      "pageType": "preset-duration countdown",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/1-minute-timer",
+      "ogUrl": "https://www.ilovetimers.com/1-minute-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 7,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/10-minute-timer",
+      "pageType": "preset-duration countdown",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/10-minute-timer",
+      "ogUrl": "https://www.ilovetimers.com/10-minute-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 7,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/12-hour-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/12-hour-clock",
+      "ogUrl": "https://www.ilovetimers.com/12-hour-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/15-minute-timer",
+      "pageType": "preset-duration countdown",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/15-minute-timer",
+      "ogUrl": "https://www.ilovetimers.com/15-minute-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 7,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/24-hour-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/24-hour-clock",
+      "ogUrl": "https://www.ilovetimers.com/24-hour-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/30-minute-timer",
+      "pageType": "preset-duration countdown",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/30-minute-timer",
+      "ogUrl": "https://www.ilovetimers.com/30-minute-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 7,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/5-minute-timer",
+      "pageType": "preset-duration countdown",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/5-minute-timer",
+      "ogUrl": "https://www.ilovetimers.com/5-minute-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 7,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/about",
+      "pageType": "trust page",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/about",
+      "ogUrl": "https://www.ilovetimers.com/about",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/age-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/age-calculator",
+      "ogUrl": "https://www.ilovetimers.com/age-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "activated Copy result",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/alarm-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/alarm-timer",
+      "ogUrl": "https://www.ilovetimers.com/alarm-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 22,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/amrap-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/amrap-timer",
+      "ogUrl": "https://www.ilovetimers.com/amrap-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 28,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/analog-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/analog-clock",
+      "ogUrl": "https://www.ilovetimers.com/analog-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/astronomical-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/astronomical-clock",
+      "ogUrl": "https://www.ilovetimers.com/astronomical-clock",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 15,
+      "interaction": "activated New York",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/atomic-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/atomic-clock",
+      "ogUrl": "https://www.ilovetimers.com/atomic-clock",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/author/suhas-sunder",
+      "pageType": "trust page",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/author/suhas-sunder",
+      "ogUrl": "https://www.ilovetimers.com/author/suhas-sunder",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/billable-hours-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/billable-hours-calculator",
+      "ogUrl": "https://www.ilovetimers.com/billable-hours-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 29,
+      "interaction": "activated Copy",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 3,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/billable-hours-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/billable-hours-clock",
+      "ogUrl": "https://www.ilovetimers.com/billable-hours-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 40,
+      "interaction": "activated Add timer",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 3,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/binary-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/binary-clock",
+      "ogUrl": "https://www.ilovetimers.com/binary-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/binary-stopwatch",
+      "pageType": "stopwatch or count-up tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/binary-stopwatch",
+      "ogUrl": "https://www.ilovetimers.com/binary-stopwatch",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 13,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/birthday-countdown",
+      "pageType": "date or event countdown",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/birthday-countdown",
+      "ogUrl": "https://www.ilovetimers.com/birthday-countdown",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 10,
+      "interaction": "activated Copy result",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/bpm-tapper",
+      "pageType": "interactive measurement or rhythm tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/bpm-tapper",
+      "ogUrl": "https://www.ilovetimers.com/bpm-tapper",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 20,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/break-timer",
+      "pageType": "timer",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/break-timer",
+      "ogUrl": "https://www.ilovetimers.com/break-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 19,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/breathing-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/breathing-timer",
+      "ogUrl": "https://www.ilovetimers.com/breathing-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 16,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/business-days-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/business-days-calculator",
+      "ogUrl": "https://www.ilovetimers.com/business-days-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 10,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/chaos-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/chaos-timer",
+      "ogUrl": "https://www.ilovetimers.com/chaos-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 15,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/chess-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/chess-clock",
+      "ogUrl": "https://www.ilovetimers.com/chess-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 16,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/christmas-countdown",
+      "pageType": "date or event countdown",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/christmas-countdown",
+      "ogUrl": "https://www.ilovetimers.com/christmas-countdown",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 6,
+      "interaction": "activated Copy countdown",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/classroom-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/classroom-timer",
+      "ogUrl": "https://www.ilovetimers.com/classroom-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 26,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/clock-with-milliseconds",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/clock-with-milliseconds",
+      "ogUrl": "https://www.ilovetimers.com/clock-with-milliseconds",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/contact",
+      "pageType": "trust page",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/contact",
+      "ogUrl": "https://www.ilovetimers.com/contact",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 1,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/cookies",
+      "pageType": "legal page",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/cookies",
+      "ogUrl": "https://www.ilovetimers.com/cookies",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 1,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/copyright",
+      "pageType": "trust page",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/copyright",
+      "ogUrl": "https://www.ilovetimers.com/copyright",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 1,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/countdown-timer",
+      "pageType": "date or event countdown",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/countdown-timer",
+      "ogUrl": "https://www.ilovetimers.com/countdown-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 24,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/countdown-to-date",
+      "pageType": "date or event countdown",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/countdown-to-date",
+      "ogUrl": "https://www.ilovetimers.com/countdown-to-date",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 13,
+      "interaction": "activated Tomorrow",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/current-local-time",
+      "pageType": "specialty time tool",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/current-local-time",
+      "ogUrl": "https://www.ilovetimers.com/current-local-time",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 17,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/date-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/date-calculator",
+      "ogUrl": "https://www.ilovetimers.com/date-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 17,
+      "interaction": "activated +7 days",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/date-duration-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/date-duration-calculator",
+      "ogUrl": "https://www.ilovetimers.com/date-duration-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "activated Copy result",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/days-until-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/days-until-calculator",
+      "ogUrl": "https://www.ilovetimers.com/days-until-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 12,
+      "interaction": "activated New Year",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/debt-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/debt-clock",
+      "ogUrl": "https://www.ilovetimers.com/debt-clock",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 15,
+      "interaction": "activated Pause",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/debt-repayment-timer",
+      "pageType": "timer",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/debt-repayment-timer",
+      "ogUrl": "https://www.ilovetimers.com/debt-repayment-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 13,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/digital-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/digital-clock",
+      "ogUrl": "https://www.ilovetimers.com/digital-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/drink-water-reminder-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/drink-water-reminder-timer",
+      "ogUrl": "https://www.ilovetimers.com/drink-water-reminder-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 17,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/egg-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/egg-timer",
+      "ogUrl": "https://www.ilovetimers.com/egg-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 15,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/emom-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/emom-timer",
+      "ogUrl": "https://www.ilovetimers.com/emom-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 22,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/epoch-unix-time-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/epoch-unix-time-clock",
+      "ogUrl": "https://www.ilovetimers.com/epoch-unix-time-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/event-countdown",
+      "pageType": "date or event countdown",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/event-countdown",
+      "ogUrl": "https://www.ilovetimers.com/event-countdown",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 20,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/exam-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/exam-timer",
+      "ogUrl": "https://www.ilovetimers.com/exam-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 26,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/fibonacci-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/fibonacci-clock",
+      "ogUrl": "https://www.ilovetimers.com/fibonacci-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "activated Live",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/focus-session-timer",
+      "pageType": "timer",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/focus-session-timer",
+      "ogUrl": "https://www.ilovetimers.com/focus-session-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 23,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/free-online-timers",
+      "pageType": "archived multi-tool page",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/free-online-timers",
+      "ogUrl": "https://www.ilovetimers.com/free-online-timers",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 41,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": [
+          {
+            "level": 3,
+            "text": "Countdown Timer"
+          }
+        ]
+      },
+      "structuredData": {
+        "blocks": 1,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/golden-hour-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/golden-hour-clock",
+      "ogUrl": "https://www.ilovetimers.com/golden-hour-clock",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 12,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/guides",
+      "pageType": "specialty time tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/guides",
+      "ogUrl": "https://www.ilovetimers.com/guides",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/guides/browser-storage",
+      "pageType": "specialty time tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/guides/browser-storage",
+      "ogUrl": "https://www.ilovetimers.com/guides/browser-storage",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/guides/browser-timer-alarm-silent",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/guides/browser-timer-alarm-silent",
+      "ogUrl": "https://www.ilovetimers.com/guides/browser-timer-alarm-silent",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/guides/browser-timers-background-tabs",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/guides/browser-timers-background-tabs",
+      "ogUrl": "https://www.ilovetimers.com/guides/browser-timers-background-tabs",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/guides/daylight-saving-time-zone-conversions",
+      "pageType": "specialty time tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/guides/daylight-saving-time-zone-conversions",
+      "ogUrl": "https://www.ilovetimers.com/guides/daylight-saving-time-zone-conversions",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/guides/how-browser-timers-measure-time",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/guides/how-browser-timers-measure-time",
+      "ogUrl": "https://www.ilovetimers.com/guides/how-browser-timers-measure-time",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "pageType": "specialty time tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "ogUrl": "https://www.ilovetimers.com/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/hexadecimal-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/hexadecimal-clock",
+      "ogUrl": "https://www.ilovetimers.com/hexadecimal-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/hiit-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/hiit-timer",
+      "ogUrl": "https://www.ilovetimers.com/hiit-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 25,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/hours-until-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/hours-until-calculator",
+      "ogUrl": "https://www.ilovetimers.com/hours-until-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 13,
+      "interaction": "activated +1 hour",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/how-ilovetimers-is-made",
+      "pageType": "trust page",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/how-ilovetimers-is-made",
+      "ogUrl": "https://www.ilovetimers.com/how-ilovetimers-is-made",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 1,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/interval-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/interval-timer",
+      "ogUrl": "https://www.ilovetimers.com/interval-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 23,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/kitchen-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/kitchen-timer",
+      "ogUrl": "https://www.ilovetimers.com/kitchen-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 18,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/lab-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/lab-timer",
+      "ogUrl": "https://www.ilovetimers.com/lab-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 24,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/meditation-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/meditation-timer",
+      "ogUrl": "https://www.ilovetimers.com/meditation-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 28,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/meeting-agenda-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/meeting-agenda-timer",
+      "ogUrl": "https://www.ilovetimers.com/meeting-agenda-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 29,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/meeting-count-up-timer",
+      "pageType": "stopwatch or count-up tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/meeting-count-up-timer",
+      "ogUrl": "https://www.ilovetimers.com/meeting-count-up-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/meeting-timer",
+      "pageType": "timer",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/meeting-timer",
+      "ogUrl": "https://www.ilovetimers.com/meeting-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 22,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/metronome",
+      "pageType": "interactive measurement or rhythm tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/metronome",
+      "ogUrl": "https://www.ilovetimers.com/metronome",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 18,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/military-time-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/military-time-clock",
+      "ogUrl": "https://www.ilovetimers.com/military-time-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/military-time-converter",
+      "pageType": "converter",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/military-time-converter",
+      "ogUrl": "https://www.ilovetimers.com/military-time-converter",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 18,
+      "interaction": "activated Use current time",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/millisecond-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/millisecond-timer",
+      "ogUrl": "https://www.ilovetimers.com/millisecond-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 17,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/milliseconds-converter",
+      "pageType": "converter",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/milliseconds-converter",
+      "ogUrl": "https://www.ilovetimers.com/milliseconds-converter",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 18,
+      "interaction": "activated Reset",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/minimalist-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/minimalist-clock",
+      "ogUrl": "https://www.ilovetimers.com/minimalist-clock",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/months-between-dates-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/months-between-dates-calculator",
+      "ogUrl": "https://www.ilovetimers.com/months-between-dates-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "activated Copy result",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/moon-phase-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/moon-phase-clock",
+      "ogUrl": "https://www.ilovetimers.com/moon-phase-clock",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 12,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/morse-code-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/morse-code-clock",
+      "ogUrl": "https://www.ilovetimers.com/morse-code-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/multiple-timers",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/multiple-timers",
+      "ogUrl": "https://www.ilovetimers.com/multiple-timers",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 46,
+      "interaction": "activated Add timer",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/new-year-countdown",
+      "pageType": "date or event countdown",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/new-year-countdown",
+      "ogUrl": "https://www.ilovetimers.com/new-year-countdown",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 6,
+      "interaction": "activated Copy countdown",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/online-alarm-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/online-alarm-clock",
+      "ogUrl": "https://www.ilovetimers.com/online-alarm-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "activated Set alarm",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/online-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/online-timer",
+      "ogUrl": "https://www.ilovetimers.com/online-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 21,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/pace-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/pace-timer",
+      "ogUrl": "https://www.ilovetimers.com/pace-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 18,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/pizza-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/pizza-timer",
+      "ogUrl": "https://www.ilovetimers.com/pizza-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 20,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/pomodoro-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/pomodoro-timer",
+      "ogUrl": "https://www.ilovetimers.com/pomodoro-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 23,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/presentation-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/presentation-timer",
+      "ogUrl": "https://www.ilovetimers.com/presentation-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 20,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/privacy",
+      "pageType": "legal page",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/privacy",
+      "ogUrl": "https://www.ilovetimers.com/privacy",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 1,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/productivity-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/productivity-timer",
+      "ogUrl": "https://www.ilovetimers.com/productivity-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 16,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/reaction-time-test",
+      "pageType": "interactive measurement or rhythm tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/reaction-time-test",
+      "ogUrl": "https://www.ilovetimers.com/reaction-time-test",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 16,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/rest-timer",
+      "pageType": "timer",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/rest-timer",
+      "ogUrl": "https://www.ilovetimers.com/rest-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 19,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/retro-flip-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/retro-flip-clock",
+      "ogUrl": "https://www.ilovetimers.com/retro-flip-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/roman-numeral-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/roman-numeral-clock",
+      "ogUrl": "https://www.ilovetimers.com/roman-numeral-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/round-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/round-timer",
+      "ogUrl": "https://www.ilovetimers.com/round-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 22,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/seconds-timer",
+      "pageType": "seconds countdown",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/seconds-timer",
+      "ogUrl": "https://www.ilovetimers.com/seconds-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 17,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/silent-timer",
+      "pageType": "timer",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/silent-timer",
+      "ogUrl": "https://www.ilovetimers.com/silent-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 20,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/sitemap",
+      "pageType": "HTML directory",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/sitemap",
+      "ogUrl": "https://www.ilovetimers.com/sitemap",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/sleep-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/sleep-timer",
+      "ogUrl": "https://www.ilovetimers.com/sleep-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 19,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/speech-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/speech-timer",
+      "ogUrl": "https://www.ilovetimers.com/speech-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 14,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/speedcubing-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/speedcubing-timer",
+      "ogUrl": "https://www.ilovetimers.com/speedcubing-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 10,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/speedrun-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/speedrun-timer",
+      "ogUrl": "https://www.ilovetimers.com/speedrun-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 10,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/stopwatch",
+      "pageType": "stopwatch or count-up tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/stopwatch",
+      "ogUrl": "https://www.ilovetimers.com/stopwatch",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/stopwatch-with-milliseconds",
+      "pageType": "stopwatch or count-up tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/stopwatch-with-milliseconds",
+      "ogUrl": "https://www.ilovetimers.com/stopwatch-with-milliseconds",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 11,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/stretch-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/stretch-timer",
+      "ogUrl": "https://www.ilovetimers.com/stretch-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 12,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/study-stopwatch",
+      "pageType": "stopwatch or count-up tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/study-stopwatch",
+      "ogUrl": "https://www.ilovetimers.com/study-stopwatch",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/study-timer",
+      "pageType": "timer",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/study-timer",
+      "ogUrl": "https://www.ilovetimers.com/study-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 24,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/sunrise-sunset-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/sunrise-sunset-clock",
+      "ogUrl": "https://www.ilovetimers.com/sunrise-sunset-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 10,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [
+        "https://api.sunrise-sunset.org"
+      ],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/swatch-internet-time-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/swatch-internet-time-clock",
+      "ogUrl": "https://www.ilovetimers.com/swatch-internet-time-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 7,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/tabata-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/tabata-timer",
+      "ogUrl": "https://www.ilovetimers.com/tabata-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 31,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/tea-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/tea-timer",
+      "ogUrl": "https://www.ilovetimers.com/tea-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 19,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/terms",
+      "pageType": "legal page",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/terms",
+      "ogUrl": "https://www.ilovetimers.com/terms",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 3,
+      "interaction": "informational page rendered; navigation controls verified",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 1,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/time-blocking-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/time-blocking-clock",
+      "ogUrl": "https://www.ilovetimers.com/time-blocking-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 23,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/time-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/time-calculator",
+      "ogUrl": "https://www.ilovetimers.com/time-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 16,
+      "interaction": "activated Reset",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/time-card-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/time-card-calculator",
+      "ogUrl": "https://www.ilovetimers.com/time-card-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 11,
+      "interaction": "activated Add row",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/time-duration-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/time-duration-calculator",
+      "ogUrl": "https://www.ilovetimers.com/time-duration-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 8,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/time-zone-converter",
+      "pageType": "converter",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/time-zone-converter",
+      "ogUrl": "https://www.ilovetimers.com/time-zone-converter",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 21,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/time-zone-meeting-planner",
+      "pageType": "specialty time tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/time-zone-meeting-planner",
+      "ogUrl": "https://www.ilovetimers.com/time-zone-meeting-planner",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 23,
+      "interaction": "activated Add zone",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/timer-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/timer-clock",
+      "ogUrl": "https://www.ilovetimers.com/timer-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 16,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/timer-stopwatch",
+      "pageType": "stopwatch or count-up tool",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/timer-stopwatch",
+      "ogUrl": "https://www.ilovetimers.com/timer-stopwatch",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 18,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/unix-timestamp-converter",
+      "pageType": "converter",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/unix-timestamp-converter",
+      "ogUrl": "https://www.ilovetimers.com/unix-timestamp-converter",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 13,
+      "interaction": "activated Set now",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/utc-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/utc-clock",
+      "ogUrl": "https://www.ilovetimers.com/utc-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 20,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/video-game-challenge-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/video-game-challenge-timer",
+      "ogUrl": "https://www.ilovetimers.com/video-game-challenge-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 16,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/visual-timer",
+      "pageType": "timer",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/visual-timer",
+      "ogUrl": "https://www.ilovetimers.com/visual-timer",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 25,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/week-number-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/week-number-calculator",
+      "ogUrl": "https://www.ilovetimers.com/week-number-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 7,
+      "interaction": "activated Copy result",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/weekday-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/weekday-calculator",
+      "ogUrl": "https://www.ilovetimers.com/weekday-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 7,
+      "interaction": "activated Copy result",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/weekly-timesheet-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/weekly-timesheet-calculator",
+      "ogUrl": "https://www.ilovetimers.com/weekly-timesheet-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 26,
+      "interaction": "activated Copy summary",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/weeks-between-dates-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/weeks-between-dates-calculator",
+      "ogUrl": "https://www.ilovetimers.com/weeks-between-dates-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 9,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/work-hours-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/work-hours-calculator",
+      "ogUrl": "https://www.ilovetimers.com/work-hours-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 18,
+      "interaction": "activated Now",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 3,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/workdays-calculator",
+      "pageType": "calculator",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/workdays-calculator",
+      "ogUrl": "https://www.ilovetimers.com/workdays-calculator",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 21,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/workout-timer",
+      "pageType": "timer",
+      "expectedIndexability": "noindex",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/workout-timer",
+      "ogUrl": "https://www.ilovetimers.com/workout-timer",
+      "robots": "noindex,follow",
+      "h1Count": 1,
+      "primaryControls": 31,
+      "interaction": "activated Start",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/world-clock",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/world-clock",
+      "ogUrl": "https://www.ilovetimers.com/world-clock",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 27,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "path": "/world-clock-with-milliseconds",
+      "pageType": "clock or live time display",
+      "expectedIndexability": "indexable",
+      "status": 200,
+      "canonical": "https://www.ilovetimers.com/world-clock-with-milliseconds",
+      "ogUrl": "https://www.ilovetimers.com/world-clock-with-milliseconds",
+      "robots": "index,follow,max-image-preview:large",
+      "h1Count": 1,
+      "primaryControls": 13,
+      "interaction": "toggled and restored a setting",
+      "initialAutomaticPermissionOrFullscreenCalls": {
+        "geolocation": 0,
+        "notification": 0,
+        "fullscreen": 0
+      },
+      "accessibility": {
+        "unnamedControls": [],
+        "missingAltImages": [],
+        "duplicateIds": [],
+        "headingJumps": []
+      },
+      "structuredData": {
+        "blocks": 2,
+        "invalidBlocks": 0,
+        "parameterizedUrls": [],
+        "localUrls": []
+      },
+      "horizontalOverflow": false,
+      "internalProcessLanguage": [],
+      "externalRequestOrigins": [],
+      "externalScriptUrls": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "passed": true
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/stopwatch-timer",
+      "destination": "/timer-stopwatch",
+      "status": 301,
+      "location": "/timer-stopwatch",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/timer-and-stopwatch",
+      "destination": "/timer-stopwatch",
+      "status": 301,
+      "location": "/timer-stopwatch",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/online-timer-stopwatch",
+      "destination": "/timer-stopwatch",
+      "status": 301,
+      "location": "/timer-stopwatch",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/stopwatch-countdown",
+      "destination": "/timer-stopwatch",
+      "status": 301,
+      "location": "/timer-stopwatch",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/countdown-stopwatch",
+      "destination": "/timer-stopwatch",
+      "status": 301,
+      "location": "/timer-stopwatch",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/focus-stopwatch",
+      "destination": "/study-stopwatch",
+      "status": 301,
+      "location": "/study-stopwatch",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/stopwatch-for-study",
+      "destination": "/study-stopwatch",
+      "status": 301,
+      "location": "/study-stopwatch",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/study-timer-stopwatch",
+      "destination": "/study-stopwatch",
+      "status": 301,
+      "location": "/study-stopwatch",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/clock-timer",
+      "destination": "/timer-clock",
+      "status": 301,
+      "location": "/timer-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/online-clock-timer",
+      "destination": "/timer-clock",
+      "status": 301,
+      "location": "/timer-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/military-time-calculator",
+      "destination": "/military-time-converter",
+      "status": 301,
+      "location": "/military-time-converter",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/army-time-converter",
+      "destination": "/military-time-converter",
+      "status": 301,
+      "location": "/military-time-converter",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/military-time-translator",
+      "destination": "/military-time-converter",
+      "status": 301,
+      "location": "/military-time-converter",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/ms-to-seconds",
+      "destination": "/milliseconds-converter",
+      "status": 301,
+      "location": "/milliseconds-converter",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/milliseconds-to-seconds",
+      "destination": "/milliseconds-converter",
+      "status": 301,
+      "location": "/milliseconds-converter",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/utc-time-now",
+      "destination": "/utc-clock",
+      "status": 301,
+      "location": "/utc-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/current-unix-timestamp",
+      "destination": "/epoch-unix-time-clock",
+      "status": 301,
+      "location": "/epoch-unix-time-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/fullscreen-timer",
+      "destination": "/online-timer",
+      "status": 301,
+      "location": "/online-timer",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/count-up-timer",
+      "destination": "/stopwatch",
+      "status": 301,
+      "location": "/stopwatch",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/cooking-timer",
+      "destination": "/kitchen-timer",
+      "status": 301,
+      "location": "/kitchen-timer",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/boxing-timer",
+      "destination": "/round-timer",
+      "status": 301,
+      "location": "/round-timer",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/world-clock-with-seconds",
+      "destination": "/world-clock",
+      "status": 301,
+      "location": "/world-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/analog-clock-with-second-hand",
+      "destination": "/analog-clock",
+      "status": 301,
+      "location": "/analog-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/full-screen-analog-clock",
+      "destination": "/analog-clock",
+      "status": 301,
+      "location": "/analog-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/smooth-second-hand-clock",
+      "destination": "/analog-clock",
+      "status": 301,
+      "location": "/analog-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/full-screen-clock",
+      "destination": "/digital-clock",
+      "status": 301,
+      "location": "/digital-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/big-digital-clock",
+      "destination": "/digital-clock",
+      "status": 301,
+      "location": "/digital-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    },
+    {
+      "source": "/clock-with-seconds",
+      "destination": "/digital-clock",
+      "status": 301,
+      "location": "/digital-clock",
+      "destinationStatus": 200,
+      "oneHop": true
+    }
+  ],
+  "unknownRoute": {
+    "path": "/final-release-unknown-route",
+    "status": 404,
+    "h1Present": true,
+    "passed": true
+  },
+  "limitations": [
+    "Generic interaction activates one safe primary control or reversible setting on each tool route; specialized formulas and workflows are additionally covered by repository tests and audits.",
+    "Automated browser checks do not prove audible speaker output, physical-device behavior, assistive-technology interoperability, or every locale and timezone combination."
+  ]
+}

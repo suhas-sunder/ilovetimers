@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/pace-timer.tsx
 import type { Route } from "./+types/pace-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -29,12 +30,6 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { trackEvent } from "~/clients/lib/analytics";
-import HowItWorks from "~/clients/components/pace-timer/HowItWorks";
-import Disclaimer from "~/clients/components/pace-timer/Disclaimer";
-import FAQ from "~/clients/components/pace-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/pace-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/pace-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -930,11 +925,7 @@ export default function PaceTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <Stage4RouteContent routePath="/pace-timer" />
       </SeoBand>
     </PageShell>
   );

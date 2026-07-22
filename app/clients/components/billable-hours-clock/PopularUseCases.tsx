@@ -35,7 +35,7 @@ export default function PopularUseCases({
           label: "Billable hours calculator",
           href: "/billable-hours-calculator",
         },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
@@ -118,7 +118,7 @@ export default function PopularUseCases({
         "If you want a generic fullscreen timer without billing fields. Use the fullscreen timer route instead.",
       links: [
         { label: "Billable Hours Clock", href: "/billable-hours-clock" },
-        { label: "Fullscreen timer", href: "/fullscreen-timer" },
+        { label: "Online timer", href: "/online-timer" },
         { label: "Stopwatch", href: "/stopwatch" },
       ],
     },

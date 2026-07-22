@@ -30,9 +30,9 @@ export default function PopularUseCases({
       notFor:
         "You want a general-purpose kitchen timer for everything you cook. Use Cooking Timer instead.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {
@@ -43,7 +43,7 @@ export default function PopularUseCases({
       notFor: "You need a silent timer by default. Use Silent Timer instead.",
       links: [
         { label: "Silent Timer", href: "/silent-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
       ],
     },
@@ -57,7 +57,7 @@ export default function PopularUseCases({
       links: [
         { label: "Multiple Timers", href: "/multiple-timers" },
         { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
       ],
     },
     {
@@ -69,7 +69,7 @@ export default function PopularUseCases({
         "You want a more visual, “at-a-glance” style timer. Use Visual Timer instead.",
       links: [
         { label: "Visual Timer", href: "/visual-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Countdown Timer", href: "/countdown-timer" },
       ],
     },
@@ -81,7 +81,7 @@ export default function PopularUseCases({
       notFor:
         "You only want a dedicated big-screen timer with minimal controls. Use Fullscreen Timer instead.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Online Timer", href: "/online-timer" },
         { label: "Silent Timer", href: "/silent-timer" },
       ],
@@ -96,7 +96,7 @@ export default function PopularUseCases({
       links: [
         { label: "Multiple Timers", href: "/multiple-timers" },
         { label: "Countdown Timer", href: "/countdown-timer" },
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
       ],
     },
   ];

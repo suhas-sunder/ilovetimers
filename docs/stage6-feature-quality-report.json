@@ -1,0 +1,474 @@
+{
+  "generatedAt": "2026-07-22T00:28:41.930Z",
+  "stage": 6,
+  "repositoryRoot": "E:/PROJECTS-and-WORK/work-projects/all_projects/ilovetimers",
+  "summary": {
+    "evaluatedCandidates": 10,
+    "shareRoutes": 5,
+    "presetRoutes": 4,
+    "schemaVersion": 1,
+    "shareUrlMaximumLength": 1800,
+    "presetLimitPerTool": 20,
+    "presetNameMaximumLength": 40,
+    "routeCount": 132,
+    "sitemapUrlCount": 109
+  },
+  "safeguards": {
+    "checks": 2515,
+    "failures": [],
+    "renderedMetadata": [
+      {
+        "path": "/countdown-timer",
+        "queryKind": "valid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/countdown-timer",
+        "openGraphUrl": "https://www.ilovetimers.com/countdown-timer",
+        "structuredDataParameterizedUrlCount": 0
+      },
+      {
+        "path": "/countdown-timer",
+        "queryKind": "invalid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/countdown-timer",
+        "openGraphUrl": "https://www.ilovetimers.com/countdown-timer",
+        "structuredDataParameterizedUrlCount": 0
+      },
+      {
+        "path": "/pomodoro-timer",
+        "queryKind": "valid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/pomodoro-timer",
+        "openGraphUrl": "https://www.ilovetimers.com/pomodoro-timer",
+        "structuredDataParameterizedUrlCount": 0
+      },
+      {
+        "path": "/pomodoro-timer",
+        "queryKind": "invalid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/pomodoro-timer",
+        "openGraphUrl": "https://www.ilovetimers.com/pomodoro-timer",
+        "structuredDataParameterizedUrlCount": 0
+      },
+      {
+        "path": "/hiit-timer",
+        "queryKind": "valid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/hiit-timer",
+        "openGraphUrl": "https://www.ilovetimers.com/hiit-timer",
+        "structuredDataParameterizedUrlCount": 0
+      },
+      {
+        "path": "/hiit-timer",
+        "queryKind": "invalid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/hiit-timer",
+        "openGraphUrl": "https://www.ilovetimers.com/hiit-timer",
+        "structuredDataParameterizedUrlCount": 0
+      },
+      {
+        "path": "/time-zone-meeting-planner",
+        "queryKind": "valid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/time-zone-meeting-planner",
+        "openGraphUrl": "https://www.ilovetimers.com/time-zone-meeting-planner",
+        "structuredDataParameterizedUrlCount": 0
+      },
+      {
+        "path": "/time-zone-meeting-planner",
+        "queryKind": "invalid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/time-zone-meeting-planner",
+        "openGraphUrl": "https://www.ilovetimers.com/time-zone-meeting-planner",
+        "structuredDataParameterizedUrlCount": 0
+      },
+      {
+        "path": "/time-zone-converter",
+        "queryKind": "valid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/time-zone-converter",
+        "openGraphUrl": "https://www.ilovetimers.com/time-zone-converter",
+        "structuredDataParameterizedUrlCount": 0
+      },
+      {
+        "path": "/time-zone-converter",
+        "queryKind": "invalid",
+        "httpStatus": 200,
+        "canonical": "https://www.ilovetimers.com/time-zone-converter",
+        "openGraphUrl": "https://www.ilovetimers.com/time-zone-converter",
+        "structuredDataParameterizedUrlCount": 0
+      }
+    ],
+    "externalPresetServices": 0,
+    "parameterizedSitemapUrls": 0,
+    "routeArchitectureChanged": false
+  },
+  "browserValidation": {
+    "status": "passed",
+    "testedAt": "2026-07-21",
+    "environment": "Bundled Chromium revision 1217 through Playwright 1.61.1 on Windows against the local React Router production build at 127.0.0.1:3037. Desktop tests used 1280x900 in light mode and mobile tests used 390x844 in dark mode; the canonical sweep used 1365x900.",
+    "scenarios": [
+      "Configured non-default values on all five share routes, created production-origin links through the visible Share setup controls, and opened each link in a new clean browser context.",
+      "Verified restored fields, accessible shared-setup confirmation, no automatic timer start, no automatic sound, clean canonical and Open Graph URLs, no parameterized structured-data URL, and no automatic preset creation.",
+      "Started Countdown Timer, Pomodoro Timer, and HIIT Timer manually after loading their shared setups and verified each exposed the active Pause control.",
+      "Tested desktop light mode at 1280x900 and mobile dark mode at 390x844 for all five share routes with no document-level horizontal overflow.",
+      "For Countdown Timer, Pomodoro Timer, HIIT Timer, and Time Zone Meeting Planner, saved a named preset, reloaded, loaded and verified it, renamed it, deleted it, saved two records, confirmed and completed Delete all, injected corrupt storage, and verified safe recovery.",
+      "Verified clearing one tool's presets preserved an unrelated localStorage key and preset actions did not add URL parameters.",
+      "Rendered all 132 canonical routes in Chromium with HTTP 200, one H1, canonical metadata, no document-level horizontal overflow, no hydration-failure text, and no browser console errors after waiting for network idle."
+    ],
+    "screenshots": [
+      "Ten viewport captures cover each supported share route at 1280x900 light and 390x844 dark in the Codex visualizations workspace.",
+      "Manual review confirmed wrapped mobile action rows, stacked narrow inputs, readable dark surfaces, visible touch controls, and no Stage 6 control overlap."
+    ],
+    "limitations": [
+      "The automated interaction pass used one Chromium-family browser on Windows and does not independently prove Safari, Firefox, physical-phone, or assistive-technology behavior.",
+      "Audio did not autostart because no timer entered a running state before explicit interaction; the test does not verify audible speaker output after a manual start.",
+      "Clipboard behavior was tested with browser permission granted; source and unit coverage verify the manual-copy fallback when clipboard access fails."
+    ]
+  },
+  "candidates": [
+    {
+      "path": "/countdown-timer",
+      "shareStatus": "implemented",
+      "presetStatus": "implemented",
+      "shareFields": [
+        "durationSeconds"
+      ],
+      "excludedFields": [
+        "remaining milliseconds",
+        "running state",
+        "target performance timestamp",
+        "fullscreen state"
+      ],
+      "schemaVersion": 1,
+      "parameterExamples": [
+        "https://www.ilovetimers.com/countdown-timer?v=1&duration=61"
+      ],
+      "canonicalStatus": "clean canonical, Open Graph, and structured-data URLs verified with valid and invalid parameters",
+      "autostartStatus": "shared configuration contains no runtime start state and route applies it stopped or ready",
+      "storageKey": "ilovetimers:presets:countdown-timer:v1",
+      "presetLimit": 20,
+      "corruptionHandling": "versioned root validation, valid-sibling preservation, safe stale-root discard, and legacy v1 root migration",
+      "privacyCoverage": "privacy policy, browser-storage guide, and concise tool disclosure",
+      "accessibilityCoverage": "labeled fields, keyboard-native controls, visible focus, live status, and wrapped touch actions",
+      "browserTests": {
+        "status": "passed",
+        "scenarios": [
+          "Configured non-default values on all five share routes, created production-origin links through the visible Share setup controls, and opened each link in a new clean browser context.",
+          "Verified restored fields, accessible shared-setup confirmation, no automatic timer start, no automatic sound, clean canonical and Open Graph URLs, no parameterized structured-data URL, and no automatic preset creation.",
+          "Started Countdown Timer, Pomodoro Timer, and HIIT Timer manually after loading their shared setups and verified each exposed the active Pause control.",
+          "Tested desktop light mode at 1280x900 and mobile dark mode at 390x844 for all five share routes with no document-level horizontal overflow.",
+          "For Countdown Timer, Pomodoro Timer, HIIT Timer, and Time Zone Meeting Planner, saved a named preset, reloaded, loaded and verified it, renamed it, deleted it, saved two records, confirmed and completed Delete all, injected corrupt storage, and verified safe recovery.",
+          "Verified clearing one tool's presets preserved an unrelated localStorage key and preset actions did not add URL parameters.",
+          "Rendered all 132 canonical routes in Chromium with HTTP 200, one H1, canonical metadata, no document-level horizontal overflow, no hydration-failure text, and no browser console errors after waiting for network idle."
+        ]
+      },
+      "finalStatus": "passed"
+    },
+    {
+      "path": "/pomodoro-timer",
+      "shareStatus": "implemented",
+      "presetStatus": "implemented",
+      "shareFields": [
+        "workMinutes",
+        "breakMinutes",
+        "cycles",
+        "longBreakEnabled",
+        "longBreakMinutes",
+        "autoAdvance",
+        "sound",
+        "finalCountdownBeeps"
+      ],
+      "excludedFields": [
+        "current phase",
+        "cycle index",
+        "remaining milliseconds",
+        "running state",
+        "audio context",
+        "fullscreen state"
+      ],
+      "schemaVersion": 1,
+      "parameterExamples": [
+        "https://www.ilovetimers.com/pomodoro-timer?v=1&work=50&break=10&cycles=6&long=0&longDuration=25&auto=0&sound=0&countdown=1"
+      ],
+      "canonicalStatus": "clean canonical, Open Graph, and structured-data URLs verified with valid and invalid parameters",
+      "autostartStatus": "shared configuration contains no runtime start state and route applies it stopped or ready",
+      "storageKey": "ilovetimers:presets:pomodoro-timer:v1",
+      "presetLimit": 20,
+      "corruptionHandling": "versioned root validation, valid-sibling preservation, safe stale-root discard, and legacy v1 root migration",
+      "privacyCoverage": "privacy policy, browser-storage guide, and concise tool disclosure",
+      "accessibilityCoverage": "labeled fields, keyboard-native controls, visible focus, live status, and wrapped touch actions",
+      "browserTests": {
+        "status": "passed",
+        "scenarios": [
+          "Configured non-default values on all five share routes, created production-origin links through the visible Share setup controls, and opened each link in a new clean browser context.",
+          "Verified restored fields, accessible shared-setup confirmation, no automatic timer start, no automatic sound, clean canonical and Open Graph URLs, no parameterized structured-data URL, and no automatic preset creation.",
+          "Started Countdown Timer, Pomodoro Timer, and HIIT Timer manually after loading their shared setups and verified each exposed the active Pause control.",
+          "Tested desktop light mode at 1280x900 and mobile dark mode at 390x844 for all five share routes with no document-level horizontal overflow.",
+          "For Countdown Timer, Pomodoro Timer, HIIT Timer, and Time Zone Meeting Planner, saved a named preset, reloaded, loaded and verified it, renamed it, deleted it, saved two records, confirmed and completed Delete all, injected corrupt storage, and verified safe recovery.",
+          "Verified clearing one tool's presets preserved an unrelated localStorage key and preset actions did not add URL parameters.",
+          "Rendered all 132 canonical routes in Chromium with HTTP 200, one H1, canonical metadata, no document-level horizontal overflow, no hydration-failure text, and no browser console errors after waiting for network idle."
+        ]
+      },
+      "finalStatus": "passed"
+    },
+    {
+      "path": "/interval-timer",
+      "shareStatus": "excluded: Excluded because the meaningful configuration depends on arbitrary user labels and an array schema; omitting labels loses meaning while including them conflicts with the privacy-first URL scope.",
+      "presetStatus": "excluded: Excluded because the meaningful configuration depends on arbitrary user labels and an array schema; omitting labels loses meaning while including them conflicts with the privacy-first URL scope.",
+      "shareFields": [],
+      "excludedFields": [
+        "arbitrary step labels",
+        "active index",
+        "current round",
+        "remaining milliseconds",
+        "running state"
+      ],
+      "schemaVersion": null,
+      "parameterExamples": [],
+      "canonicalStatus": "unchanged clean route",
+      "autostartStatus": "not applicable",
+      "storageKey": null,
+      "presetLimit": null,
+      "corruptionHandling": "not applicable",
+      "privacyCoverage": "exclusion documented in Stage 6 evidence",
+      "accessibilityCoverage": "not applicable",
+      "browserTests": {
+        "status": "not applicable",
+        "scenarios": []
+      },
+      "finalStatus": "passed"
+    },
+    {
+      "path": "/hiit-timer",
+      "shareStatus": "implemented",
+      "presetStatus": "implemented",
+      "shareFields": [
+        "warmupSeconds",
+        "workSeconds",
+        "restSeconds",
+        "rounds",
+        "cooldownSeconds",
+        "sound",
+        "finalCountdownBeeps"
+      ],
+      "excludedFields": [
+        "current step",
+        "round index",
+        "remaining milliseconds",
+        "running state",
+        "audio context",
+        "fullscreen state"
+      ],
+      "schemaVersion": 1,
+      "parameterExamples": [
+        "https://www.ilovetimers.com/hiit-timer?v=1&warmup=0&work=45&rest=15&rounds=12&cooldown=60&sound=0&countdown=1"
+      ],
+      "canonicalStatus": "clean canonical, Open Graph, and structured-data URLs verified with valid and invalid parameters",
+      "autostartStatus": "shared configuration contains no runtime start state and route applies it stopped or ready",
+      "storageKey": "ilovetimers:presets:hiit-timer:v1",
+      "presetLimit": 20,
+      "corruptionHandling": "versioned root validation, valid-sibling preservation, safe stale-root discard, and legacy v1 root migration",
+      "privacyCoverage": "privacy policy, browser-storage guide, and concise tool disclosure",
+      "accessibilityCoverage": "labeled fields, keyboard-native controls, visible focus, live status, and wrapped touch actions",
+      "browserTests": {
+        "status": "passed",
+        "scenarios": [
+          "Configured non-default values on all five share routes, created production-origin links through the visible Share setup controls, and opened each link in a new clean browser context.",
+          "Verified restored fields, accessible shared-setup confirmation, no automatic timer start, no automatic sound, clean canonical and Open Graph URLs, no parameterized structured-data URL, and no automatic preset creation.",
+          "Started Countdown Timer, Pomodoro Timer, and HIIT Timer manually after loading their shared setups and verified each exposed the active Pause control.",
+          "Tested desktop light mode at 1280x900 and mobile dark mode at 390x844 for all five share routes with no document-level horizontal overflow.",
+          "For Countdown Timer, Pomodoro Timer, HIIT Timer, and Time Zone Meeting Planner, saved a named preset, reloaded, loaded and verified it, renamed it, deleted it, saved two records, confirmed and completed Delete all, injected corrupt storage, and verified safe recovery.",
+          "Verified clearing one tool's presets preserved an unrelated localStorage key and preset actions did not add URL parameters.",
+          "Rendered all 132 canonical routes in Chromium with HTTP 200, one H1, canonical metadata, no document-level horizontal overflow, no hydration-failure text, and no browser console errors after waiting for network idle."
+        ]
+      },
+      "finalStatus": "passed"
+    },
+    {
+      "path": "/meeting-agenda-timer",
+      "shareStatus": "excluded: Excluded because agenda titles may contain private meeting information and the route already persists the active agenda locally.",
+      "presetStatus": "excluded: Excluded because agenda titles may contain private meeting information and the route already persists the active agenda locally.",
+      "shareFields": [],
+      "excludedFields": [
+        "arbitrary agenda text",
+        "active item",
+        "remaining milliseconds",
+        "running state"
+      ],
+      "schemaVersion": null,
+      "parameterExamples": [],
+      "canonicalStatus": "unchanged clean route",
+      "autostartStatus": "not applicable",
+      "storageKey": null,
+      "presetLimit": null,
+      "corruptionHandling": "not applicable",
+      "privacyCoverage": "exclusion documented in Stage 6 evidence",
+      "accessibilityCoverage": "not applicable",
+      "browserTests": {
+        "status": "not applicable",
+        "scenarios": []
+      },
+      "finalStatus": "passed"
+    },
+    {
+      "path": "/time-zone-converter",
+      "shareStatus": "implemented",
+      "presetStatus": "excluded: Named presets are excluded because existing preference restoration covers the repeated-use case without adding another storage model.",
+      "shareFields": [
+        "fromZone",
+        "toZone",
+        "date",
+        "time",
+        "showSeconds"
+      ],
+      "excludedFields": [
+        "formatted result text",
+        "copy status",
+        "fullscreen state"
+      ],
+      "schemaVersion": 1,
+      "parameterExamples": [
+        "https://www.ilovetimers.com/time-zone-converter?v=1&from=America%2FNew_York&to=Europe%2FLondon&date=2026-11-01&time=01%3A30&sec=0"
+      ],
+      "canonicalStatus": "clean canonical, Open Graph, and structured-data URLs verified with valid and invalid parameters",
+      "autostartStatus": "shared configuration contains no runtime start state and route applies it stopped or ready",
+      "storageKey": null,
+      "presetLimit": null,
+      "corruptionHandling": "not applicable",
+      "privacyCoverage": "privacy policy, browser-storage guide, and concise tool disclosure",
+      "accessibilityCoverage": "labeled fields, keyboard-native controls, visible focus, live status, and wrapped touch actions",
+      "browserTests": {
+        "status": "passed",
+        "scenarios": [
+          "Configured non-default values on all five share routes, created production-origin links through the visible Share setup controls, and opened each link in a new clean browser context.",
+          "Verified restored fields, accessible shared-setup confirmation, no automatic timer start, no automatic sound, clean canonical and Open Graph URLs, no parameterized structured-data URL, and no automatic preset creation.",
+          "Started Countdown Timer, Pomodoro Timer, and HIIT Timer manually after loading their shared setups and verified each exposed the active Pause control.",
+          "Tested desktop light mode at 1280x900 and mobile dark mode at 390x844 for all five share routes with no document-level horizontal overflow.",
+          "For Countdown Timer, Pomodoro Timer, HIIT Timer, and Time Zone Meeting Planner, saved a named preset, reloaded, loaded and verified it, renamed it, deleted it, saved two records, confirmed and completed Delete all, injected corrupt storage, and verified safe recovery.",
+          "Verified clearing one tool's presets preserved an unrelated localStorage key and preset actions did not add URL parameters.",
+          "Rendered all 132 canonical routes in Chromium with HTTP 200, one H1, canonical metadata, no document-level horizontal overflow, no hydration-failure text, and no browser console errors after waiting for network idle."
+        ]
+      },
+      "finalStatus": "passed"
+    },
+    {
+      "path": "/time-zone-meeting-planner",
+      "shareStatus": "implemented",
+      "presetStatus": "implemented",
+      "shareFields": [
+        "date",
+        "durationMinutes",
+        "workStartHour",
+        "workEndHour",
+        "zones"
+      ],
+      "excludedFields": [
+        "derived candidate rows",
+        "local device zone",
+        "copy/share feedback"
+      ],
+      "schemaVersion": 1,
+      "parameterExamples": [
+        "https://www.ilovetimers.com/time-zone-meeting-planner?v=1&date=2026-07-21&duration=90&start=7&end=20&zones=Pacific%2FAuckland%2CAmerica%2FLos_Angeles%2CAsia%2FTokyo"
+      ],
+      "canonicalStatus": "clean canonical, Open Graph, and structured-data URLs verified with valid and invalid parameters",
+      "autostartStatus": "shared configuration contains no runtime start state and route applies it stopped or ready",
+      "storageKey": "ilovetimers:presets:time-zone-meeting-planner:v1",
+      "presetLimit": 20,
+      "corruptionHandling": "versioned root validation, valid-sibling preservation, safe stale-root discard, and legacy v1 root migration",
+      "privacyCoverage": "privacy policy, browser-storage guide, and concise tool disclosure",
+      "accessibilityCoverage": "labeled fields, keyboard-native controls, visible focus, live status, and wrapped touch actions",
+      "browserTests": {
+        "status": "passed",
+        "scenarios": [
+          "Configured non-default values on all five share routes, created production-origin links through the visible Share setup controls, and opened each link in a new clean browser context.",
+          "Verified restored fields, accessible shared-setup confirmation, no automatic timer start, no automatic sound, clean canonical and Open Graph URLs, no parameterized structured-data URL, and no automatic preset creation.",
+          "Started Countdown Timer, Pomodoro Timer, and HIIT Timer manually after loading their shared setups and verified each exposed the active Pause control.",
+          "Tested desktop light mode at 1280x900 and mobile dark mode at 390x844 for all five share routes with no document-level horizontal overflow.",
+          "For Countdown Timer, Pomodoro Timer, HIIT Timer, and Time Zone Meeting Planner, saved a named preset, reloaded, loaded and verified it, renamed it, deleted it, saved two records, confirmed and completed Delete all, injected corrupt storage, and verified safe recovery.",
+          "Verified clearing one tool's presets preserved an unrelated localStorage key and preset actions did not add URL parameters.",
+          "Rendered all 132 canonical routes in Chromium with HTTP 200, one H1, canonical metadata, no document-level horizontal overflow, no hydration-failure text, and no browser console errors after waiting for network idle."
+        ]
+      },
+      "finalStatus": "passed"
+    },
+    {
+      "path": "/event-countdown",
+      "shareStatus": "excluded: Excluded because event names can be private and the route already provides named persistent events rather than reusable configuration presets.",
+      "presetStatus": "excluded: Excluded because event names can be private and the route already provides named persistent events rather than reusable configuration presets.",
+      "shareFields": [],
+      "excludedFields": [
+        "arbitrary event names",
+        "event collection",
+        "selected event identifier",
+        "remaining time",
+        "running/status state"
+      ],
+      "schemaVersion": null,
+      "parameterExamples": [],
+      "canonicalStatus": "unchanged clean route",
+      "autostartStatus": "not applicable",
+      "storageKey": null,
+      "presetLimit": null,
+      "corruptionHandling": "not applicable",
+      "privacyCoverage": "exclusion documented in Stage 6 evidence",
+      "accessibilityCoverage": "not applicable",
+      "browserTests": {
+        "status": "not applicable",
+        "scenarios": []
+      },
+      "finalStatus": "passed"
+    },
+    {
+      "path": "/multiple-timers",
+      "shareStatus": "excluded: Excluded because labels may be private, the existing storage includes transient live state, and a safe named-template model should not be layered onto that payload in this stage.",
+      "presetStatus": "excluded: Excluded because labels may be private, the existing storage includes transient live state, and a safe named-template model should not be layered onto that payload in this stage.",
+      "shareFields": [],
+      "excludedFields": [
+        "arbitrary timer labels",
+        "remaining values",
+        "running state",
+        "target timestamps",
+        "alarm state"
+      ],
+      "schemaVersion": null,
+      "parameterExamples": [],
+      "canonicalStatus": "unchanged clean route",
+      "autostartStatus": "not applicable",
+      "storageKey": null,
+      "presetLimit": null,
+      "corruptionHandling": "not applicable",
+      "privacyCoverage": "exclusion documented in Stage 6 evidence",
+      "accessibilityCoverage": "not applicable",
+      "browserTests": {
+        "status": "not applicable",
+        "scenarios": []
+      },
+      "finalStatus": "passed"
+    },
+    {
+      "path": "/world-clock",
+      "shareStatus": "excluded: Excluded to keep timezone-group sharing and presets on the meeting planner, where date, duration, and work-window context make the setup actionable.",
+      "presetStatus": "excluded: Excluded to keep timezone-group sharing and presets on the meeting planner, where date, duration, and work-window context make the setup actionable.",
+      "shareFields": [],
+      "excludedFields": [
+        "live timestamps",
+        "copy status"
+      ],
+      "schemaVersion": null,
+      "parameterExamples": [],
+      "canonicalStatus": "unchanged clean route",
+      "autostartStatus": "not applicable",
+      "storageKey": null,
+      "presetLimit": null,
+      "corruptionHandling": "not applicable",
+      "privacyCoverage": "exclusion documented in Stage 6 evidence",
+      "accessibilityCoverage": "not applicable",
+      "browserTests": {
+        "status": "not applicable",
+        "scenarios": []
+      },
+      "finalStatus": "passed"
+    }
+  ]
+}

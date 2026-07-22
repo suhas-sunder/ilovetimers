@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/emom-timer.tsx
 import type { Route } from "./+types/emom-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useEffect,
   useMemo,
@@ -29,12 +30,6 @@ import {
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
-import HowItWorks from "~/clients/components/emom-timer/HowItWorks";
-import Disclaimer from "~/clients/components/emom-timer/Disclaimer";
-import FAQ from "~/clients/components/emom-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/emom-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/emom-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -710,11 +705,7 @@ export default function EmomTimerPage({}: Route.ComponentProps) {
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <Stage4RouteContent routePath="/emom-timer" />
       </SeoBand>
     </PageShell>
   );

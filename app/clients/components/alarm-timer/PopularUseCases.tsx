@@ -24,7 +24,7 @@ export default function PopularUseCases({
       notFor:
         "Wake-up alarms, medication alerts, or anything that must ring after the tab is closed.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Tea Timer", href: "/tea-timer" },
         { label: "Egg Timer", href: "/egg-timer" },
       ],
@@ -40,7 +40,7 @@ export default function PopularUseCases({
       links: [
         { label: "Meeting Timer", href: "/meeting-timer" },
         { label: "Classroom Timer", href: "/classroom-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {

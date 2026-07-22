@@ -439,7 +439,7 @@ export default function HowItWorks({
               . For the largest display with minimal extras, use{" "}
               <Link
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                to="/fullscreen-timer"
+                to="/online-timer"
               >
                 Fullscreen Timer
               </Link>
@@ -475,7 +475,7 @@ export default function HowItWorks({
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/breathing-timer">Breathing Timer</PillLink>
             <PillLink to="/silent-timer">Silent Timer</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>
             <PillLink to="/focus-session-timer">Focus Session Timer</PillLink>
             <PillLink to="/sleep-timer">Sleep Timer</PillLink>

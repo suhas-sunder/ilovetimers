@@ -1,6 +1,6 @@
 // app/routes/billable-hours-calculator.tsx
 import type { Route } from "./+types/billable-hours-calculator";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,

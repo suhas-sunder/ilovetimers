@@ -109,7 +109,7 @@ export default function HowItWorks({
               Key behavior to understand: the clock reads from your device time.
               If your device clock is off, the epoch value will be off too. For
               normal workflows like logs, debugging, and test payloads, this is
-              exactly what you want: it matches what your browser and many
+              the format you want: it matches what your browser and many
               client-side apps consider “now.”
             </p>
           </div>
@@ -370,7 +370,7 @@ export default function HowItWorks({
                 "",
                 "What you see:",
                 "- seconds jumps to something like 1740991263",
-                "- ms updates to match that exact moment",
+                "- ms updates to match that displayed moment",
                 "",
                 "Why it helps:",
                 "- You stay in a stable mode but can refresh on demand",
@@ -453,7 +453,7 @@ export default function HowItWorks({
                 Technical details (units, clock source, clipboard, fullscreen)
               </div>
               <div className="mt-1 text-xs font-medium text-[var(--ilt-text-muted)]">
-                Notes that matter when you rely on precise copy behavior
+                Notes about copy behavior
               </div>
             </div>
             <span className="shrink-0 ilt-inline-pill px-2 py-0.5 text-xs font-semibold text-[var(--ilt-text-secondary)] transition group-open:rotate-180">

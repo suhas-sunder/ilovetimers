@@ -26,6 +26,10 @@ import {
 } from "./clients/hooks/useThemeMode";
 import { SITE_IDENTITY_JSON_LD } from "./clients/lib/siteIdentity";
 import { getPermanentRedirect } from "./config/redirects.js";
+import {
+  STAGE3_NOINDEX_ROUTE_SET,
+  STAGE3_REDIRECT_SOURCE_SET,
+} from "./config/routeArchitecture.js";
 
 import logoPng from "./clients/assets/images/ilovetimers-icon.png";
 
@@ -66,7 +70,10 @@ export async function loader({ request }: Route.LoaderArgs) {
   const permanentDestination = getPermanentRedirect(normalizedPath);
 
   if (permanentDestination) {
-    return redirect(permanentDestination + url.search, { status: 301 });
+    const preservedSearch = STAGE3_REDIRECT_SOURCE_SET.has(normalizedPath)
+      ? ""
+      : url.search;
+    return redirect(permanentDestination + preservedSearch, { status: 301 });
   }
 
   if (normalizedPath !== url.pathname) {
@@ -75,18 +82,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   return null;
 }
 
-export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-];
+export const links: Route.LinksFunction = () => [];
 
 type TimerDirectoryItem = {
   title: string;
@@ -925,6 +921,12 @@ const TIMER_DIRECTORY: TimerDirectoryItem[] = [
   },
 ];
 
+const DISCOVERABLE_TIMER_DIRECTORY = TIMER_DIRECTORY.filter(
+  ({ href }) =>
+    !STAGE3_NOINDEX_ROUTE_SET.has(href) &&
+    !STAGE3_REDIRECT_SOURCE_SET.has(href),
+);
+
 function normalizeSearchText(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
@@ -1011,8 +1013,10 @@ function TimerDirectoryMenu({
 
   const filteredItems = useMemo(() => {
     const source = normalizedQuery
-      ? TIMER_DIRECTORY
-      : TIMER_DIRECTORY.filter((item) => !PRIMARY_TIMER_HREFS.has(item.href));
+      ? DISCOVERABLE_TIMER_DIRECTORY
+      : DISCOVERABLE_TIMER_DIRECTORY.filter(
+          (item) => !PRIMARY_TIMER_HREFS.has(item.href),
+        );
 
     if (!normalizedQuery) return source;
 
@@ -1269,6 +1273,9 @@ function SiteHeader() {
             <a href="/pizza-timer" className={desktopLink}>
               Pizza
             </a>
+            <a href="/guides" className={desktopLink}>
+              Guides
+            </a>
 
             <div className="relative">
               <button
@@ -1439,6 +1446,9 @@ function SiteHeader() {
                   <a href="/pizza-timer" onClick={close} className={mobileLink}>
                     Pizza Timer
                   </a>
+                  <a href="/guides" onClick={close} className={mobileLink}>
+                    Guides
+                  </a>
                 </div>
               </div>
             )}
@@ -1486,14 +1496,15 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
+  let message = "Something went wrong";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
+  const isNotFound = isRouteErrorResponse(error) && error.status === 404;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = isNotFound ? "Page not found" : "Request error";
     details =
-      error.status === 404
+      isNotFound
         ? "The requested page could not be found."
         : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
@@ -1502,11 +1513,63 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto ">
-      <h1>{message}</h1>
-      <p>{details}</p>
+    <main className="container mx-auto min-h-[60vh] max-w-4xl px-4 py-16 sm:py-24">
+      <title>
+        {isNotFound
+          ? "Page Not Found | iLoveTimers"
+          : "Request Error | iLoveTimers"}
+      </title>
+      {isNotFound ? <meta name="robots" content="noindex,follow" /> : null}
+
+      <p className="ilt-content-label">{isNotFound ? "404" : "Error"}</p>
+      <h1 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--ilt-text-primary)] sm:text-4xl">
+        {message}
+      </h1>
+      <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--ilt-text-secondary)]">
+        {details}
+      </p>
+
+      {isNotFound ? (
+        <>
+          <nav
+            aria-label="Page recovery"
+            className="mt-8 flex flex-wrap gap-x-6 gap-y-3"
+          >
+            <a className="ilt-content-link ilt-focus-ring" href="/">
+              Go to the homepage
+            </a>
+            <a className="ilt-content-link ilt-focus-ring" href="/sitemap">
+              Browse the tool directory
+            </a>
+          </nav>
+
+          <section className="mt-12" aria-labelledby="useful-tools-heading">
+            <h2
+              id="useful-tools-heading"
+              className="text-xl font-semibold text-[var(--ilt-text-primary)]"
+            >
+              Useful tool categories
+            </h2>
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3">
+              <a className="ilt-content-link ilt-focus-ring" href="/countdown-timer">
+                Timers
+              </a>
+              <a className="ilt-content-link ilt-focus-ring" href="/stopwatch">
+                Stopwatches
+              </a>
+              <a className="ilt-content-link ilt-focus-ring" href="/world-clock">
+                Clocks and world time
+              </a>
+              <a className="ilt-content-link ilt-focus-ring" href="/time-calculator">
+                Date and time calculators
+              </a>
+            </div>
+          </section>
+        </>
+      ) : null}
+
       {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
+        <pre className="mt-8 w-full overflow-x-auto p-4">
           <code>{stack}</code>
         </pre>
       )}

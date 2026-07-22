@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/hiit-timer.tsx
 import type { Route } from "./+types/hiit-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -31,12 +32,11 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { trackEvent } from "~/clients/lib/analytics";
-import HowItWorks from "~/clients/components/hiit-timer/HowItWorks";
-import Disclaimer from "~/clients/components/hiit-timer/Disclaimer";
-import FAQ from "~/clients/components/hiit-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/hiit-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/hiit-timer/PopularUseCases";
-
+import { SharePresetPanel } from "~/clients/components/share/SharePresetPanel";
+import {
+  hiitShareSchema,
+  type HiitShareConfig,
+} from "~/clients/lib/shareConfigurations";
 /* =========================================================
    META
 ========================================================= */
@@ -310,6 +310,37 @@ function HIITCard() {
     lastBeepSecondRef.current = null;
     stopRaf();
   }
+
+  function applyReusableSetup(config: HiitShareConfig) {
+    setWarmSec(config.warmupSeconds);
+    setWorkSec(config.workSeconds);
+    setRestSec(config.restSeconds);
+    setRounds(config.rounds);
+    setCoolSec(config.cooldownSeconds);
+    setSound(config.sound);
+    setFinalCountdownBeeps(config.finalCountdownBeeps);
+    setRunning(false);
+    setStep("warmup");
+    setRoundIdx(0);
+    setRemaining(config.warmupSeconds * 1000);
+    remainingRef.current = config.warmupSeconds * 1000;
+    endRef.current = null;
+    lastBeepSecondRef.current = null;
+    stopRaf();
+  }
+
+  const reusableConfig = useMemo<HiitShareConfig>(
+    () => ({
+      warmupSeconds: warmSec,
+      workSeconds: workSec,
+      restSeconds: restSec,
+      rounds,
+      cooldownSeconds: coolSec,
+      sound,
+      finalCountdownBeeps,
+    }),
+    [coolSec, finalCountdownBeeps, restSec, rounds, sound, warmSec, workSec],
+  );
 
   function startPause() {
     const s = stepRef.current;
@@ -739,6 +770,13 @@ function HIITCard() {
               </SettingRow>
             </SettingGroup>
 
+            <SharePresetPanel
+              schema={hiitShareSchema}
+              currentConfig={reusableConfig}
+              onApply={applyReusableSetup}
+              loadDisabled={running}
+            />
+
             <SecondaryActionRow>
               <Btn
                 kind="ghost"
@@ -822,11 +860,7 @@ export default function HIITTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
+        <Stage4RouteContent routePath="/hiit-timer" />
       </SeoBand>
     </PageShell>
   );

@@ -4,22 +4,27 @@ import { fileURLToPath } from "node:url";
 import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
 import { RELATED_TOOL_LINKS } from "../../app/clients/config/relatedTools.js";
 import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
+import {
+  STAGE3_INDEXABLE_PRESET_ROUTE_SET,
+  STAGE3_NOINDEX_ROUTE_SET,
+  STAGE3_REDIRECT_SOURCE_SET,
+} from "../../app/config/routeArchitecture.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SITE_URL = "https://www.ilovetimers.com";
 const failures = [];
 
 const taskRoutes = [
-  "/fullscreen-timer", "/silent-timer", "/visual-timer", "/multiple-timers",
+  "/silent-timer", "/visual-timer", "/multiple-timers",
   "/interval-timer", "/timer-stopwatch", "/timer-clock", "/pomodoro-timer",
   "/hiit-timer", "/presentation-timer", "/speech-timer", "/classroom-timer",
   "/meeting-timer", "/meeting-agenda-timer", "/exam-timer", "/break-timer",
   "/study-timer", "/study-stopwatch", "/workout-timer", "/rest-timer",
-  "/tabata-timer", "/cooking-timer", "/kitchen-timer", "/meditation-timer",
+  "/tabata-timer", "/kitchen-timer", "/meditation-timer",
   "/speedcubing-timer", "/lab-timer", "/alarm-timer", "/online-alarm-clock",
   "/productivity-timer", "/meeting-count-up-timer", "/breathing-timer",
   "/sleep-timer", "/stretch-timer", "/drink-water-reminder-timer",
-  "/emom-timer", "/amrap-timer", "/round-timer", "/boxing-timer",
+  "/emom-timer", "/amrap-timer", "/round-timer",
   "/pace-timer", "/tea-timer", "/egg-timer", "/video-game-challenge-timer",
   "/speedrun-timer", "/pizza-timer", "/debt-repayment-timer",
   "/focus-session-timer", "/time-blocking-clock", "/reaction-time-test",
@@ -48,20 +53,22 @@ const scoped = [
 ];
 
 const classification = {
-  "KEEP AND IMPROVE": scoped.map(([route]) => route),
-  "CONSOLIDATION CANDIDATE": ["/cooking-timer"],
-  "REDIRECT CANDIDATE": [],
-  "NOINDEX CANDIDATE": ["/debt-clock"],
-  "REQUIRES USER DECISION": [
-    "/event-countdown", "/countdown-to-date", "/round-timer", "/boxing-timer",
-  ],
+  "A INDEPENDENT INDEXABLE": specialtyRoutes.filter(
+    (route) =>
+      !STAGE3_NOINDEX_ROUTE_SET.has(route) &&
+      !STAGE3_INDEXABLE_PRESET_ROUTE_SET.has(route),
+  ),
+  "B CONCISE INDEXABLE PRESET": specialtyRoutes.filter((route) =>
+    STAGE3_INDEXABLE_PRESET_ROUTE_SET.has(route),
+  ),
+  "C NON-INDEXABLE UTILITY": specialtyRoutes.filter((route) =>
+    STAGE3_NOINDEX_ROUTE_SET.has(route),
+  ),
 };
-const classifiedSpecialCases = new Set(Object.values(classification).flat());
-classification.KEEP = specialtyRoutes.filter((route) => !classifiedSpecialCases.has(route));
 
 const protectedRoutes = [
-  "/online-alarm-clock", "/silent-timer", "/metronome", "/chaos-timer",
-  "/hexadecimal-clock", "/binary-clock", "/astronomical-clock",
+  "/online-alarm-clock", "/metronome", "/chaos-timer",
+  "/hexadecimal-clock", "/binary-clock",
   "/fibonacci-clock", "/speedrun-timer", "/exam-timer",
 ];
 
@@ -111,9 +118,18 @@ const [routesSource, sitemapSource, rootSource, footerSource] = await Promise.al
 ]);
 const configuredRoutes = configuredRoutesFrom(routesSource);
 const xmlPaths = xmlPathsFrom(sitemapSource);
-const moreRoutes = moreDirectoryRoutesFrom(rootSource);
+const moreRoutes = moreDirectoryRoutesFrom(rootSource).filter(
+  (route) =>
+    !STAGE3_NOINDEX_ROUTE_SET.has(route) &&
+    !STAGE3_REDIRECT_SOURCE_SET.has(route),
+);
 const footerRoutes = footerRoutesFrom(footerSource);
 const htmlRoutes = SITEMAP_GROUPS.flatMap((group) => group.routes);
+const guideArticleRoutes = new Set(
+  (SITEMAP_GROUPS.find((group) => group.title === "Guides")?.routes ?? []).filter(
+    (route) => route !== "/guides",
+  ),
+);
 const redirectSources = new Set(Object.keys(PERMANENT_REDIRECTS));
 
 check(new Set(specialtyRoutes).size === specialtyRoutes.length, "Specialty inventory contains duplicate routes.");
@@ -129,7 +145,14 @@ for (const route of specialtyRoutes) {
   check(!redirectSources.has(route), `Specialty route is unexpectedly a redirect source: ${route}`);
   check(htmlRoutes.includes(route), `Specialty route is missing from the HTML sitemap: ${route}`);
   check(footerRoutes.includes(route), `Specialty route is missing from the footer: ${route}`);
-  check(moreRoutes.includes(route), `Specialty route is missing from the More directory: ${route}`);
+  check(
+    moreRoutes.includes(route) === !STAGE3_NOINDEX_ROUTE_SET.has(route),
+    `Specialty route has incorrect More-directory prominence: ${route}`,
+  );
+  check(
+    xmlPaths.includes(route) === !STAGE3_NOINDEX_ROUTE_SET.has(route),
+    `Specialty route has incorrect XML sitemap indexability: ${route}`,
+  );
 }
 
 const scopedTitles = [];
@@ -158,11 +181,21 @@ const alarmTimerSource = await read("app/routes/alarm-timer.tsx");
 const silentSource = await read("app/routes/silent-timer.tsx");
 const metronomeSource = await read("app/routes/metronome.tsx");
 const bpmSource = await read("app/routes/bpm-tapper.tsx");
+const goldenHourSource = await read("app/routes/golden-hour-clock.tsx");
 check(alarmSource.includes("time of day") && alarmTimerSource.includes("counts down a duration"), "Clock-time and duration alarm intents are not visibly distinct.");
 check(!/AudioContext|createOscillator|label="Sound"/.test(silentSource), "Silent Timer still contains an audio path or Sound control.");
 check(silentSource.includes("no completion beep or ticking sound"), "Silent Timer does not state its no-sound behavior.");
 check(metronomeSource.includes("TS_OPTIONS") && metronomeSource.includes("type Subdivision = 1 | 2 | 3 | 4"), "Metronome no longer exposes time signatures and subdivisions.");
 check(bpmSource.includes("calculateTapTempo") && bpmSource.includes("onPointerDownCapture"), "BPM Tapper no longer uses its filtered tap path.");
+check(
+  goldenHourSource.includes("const Jset = getSetJ(h0") &&
+    goldenHourSource.includes("const Jrise = Jnoon * 2 - Jset"),
+  "Golden Hour Clock no longer assigns the evening crossing to sunset and mirrors dawn around solar noon.",
+);
+check(
+  goldenHourSource.includes("relative mt-4 w-full sm:absolute"),
+  "Golden Hour Clock no longer keeps its golden-window summary in normal flow at mobile widths.",
+);
 
 for (const [route] of scoped.slice(0, 5)) {
   const source = await read(`app/routes/${route.slice(1)}.tsx`);
@@ -177,12 +210,11 @@ for (const route of protectedRoutes) {
 }
 
 for (const route of [
-  "/online-alarm-clock", "/alarm-timer", "/silent-timer", "/metronome",
+  "/online-alarm-clock", "/alarm-timer", "/metronome",
   "/bpm-tapper", "/pizza-timer", "/egg-timer", "/tea-timer",
-  "/kitchen-timer", "/cooking-timer", "/meeting-timer",
+  "/kitchen-timer",
   "/meeting-agenda-timer", "/presentation-timer", "/speech-timer",
-  "/interval-timer", "/hiit-timer", "/amrap-timer", "/boxing-timer",
-  "/workout-timer", "/pace-timer",
+  "/interval-timer", "/hiit-timer", "/amrap-timer", "/pace-timer",
 ]) {
   const group = RELATED_TOOL_LINKS[route];
   check(Boolean(group), `${route} is missing a centralized related-tool group.`);
@@ -204,12 +236,13 @@ for (const schemaType of ["HowTo", "Organization", "Review", "AggregateRating", 
 }
 check(!/["'](?:aggregateRating|reviewRating|offers)["']\s*:/.test(schemaSource), "Specialty source contains rating, review, or offer properties.");
 
-check(configuredRoutes.size === 136, `Expected 136 configured routes; found ${configuredRoutes.size}.`);
-check(Object.keys(PERMANENT_REDIRECTS).length === 17, "Expected 17 permanent redirects.");
-check(xmlPaths.length === 133, `Expected 133 XML sitemap URLs; found ${xmlPaths.length}.`);
-check(moreRoutes.length === 126, `Expected 126 More-directory tools; found ${moreRoutes.length}.`);
-check(footerRoutes.length === 136, `Expected 136 footer routes; found ${footerRoutes.length}.`);
-check(Object.keys(RELATED_TOOL_LINKS).length === 81, `Expected 81 related-tool groups; found ${Object.keys(RELATED_TOOL_LINKS).length}.`);
+check(configuredRoutes.size === htmlRoutes.length, `Configured and HTML-directory route counts differ (${configuredRoutes.size} vs ${htmlRoutes.length}).`);
+check(Object.keys(PERMANENT_REDIRECTS).length === STAGE3_REDIRECT_SOURCE_SET.size + 17, "Permanent redirect count does not match the retained aliases plus Stage 3 decisions.");
+check(xmlPaths.length === configuredRoutes.size - STAGE3_NOINDEX_ROUTE_SET.size, `XML sitemap count does not match indexable canonical routes; found ${xmlPaths.length}.`);
+check(footerRoutes.includes("/guides"), "Footer must contain the Guides index.");
+check([...guideArticleRoutes].every((route) => !footerRoutes.includes(route)), "Guide articles must stay out of the global footer.");
+check(footerRoutes.length === configuredRoutes.size - guideArticleRoutes.size, `Footer must contain every canonical route except guide articles; found ${footerRoutes.length}.`);
+check(Object.keys(RELATED_TOOL_LINKS).length === moreRoutes.length, `Related-tool and discoverable-tool counts differ (${Object.keys(RELATED_TOOL_LINKS).length} vs ${moreRoutes.length}).`);
 
 if (failures.length) {
   console.error("Specialty-tool audit failed:");

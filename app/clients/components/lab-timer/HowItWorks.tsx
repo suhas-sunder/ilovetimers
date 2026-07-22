@@ -484,7 +484,7 @@ export default function HowItWorks({
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/stopwatch">Stopwatch</PillLink>
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>
             <PillLink to="/time-calculator">Time Calculator</PillLink>
             <PillLink to="/reaction-time-test">Reaction Time Test</PillLink>
@@ -591,7 +591,7 @@ export default function HowItWorks({
             Use{" "}
             <Link
               className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-              to="/fullscreen-timer"
+              to="/online-timer"
             >
               Fullscreen Timer
             </Link>{" "}

@@ -1,3 +1,4 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 import { useEffect, useMemo, useState } from "react";
 import {
   Button,
@@ -45,6 +46,8 @@ import {
   isoWeekForDate,
   parseClockTime,
 } from "~/clients/lib/calculatorMath";
+import { TechnicalMethod } from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
 
 const MINUTES_PER_DAY = 1_440;
 const SECONDS_PER_MINUTE = 60;
@@ -64,24 +67,6 @@ const TIME_DURATION_FAQ: FaqItem[] = [
     question: "Can I use this for payroll or official records?",
     answer:
       "No. It is a general elapsed-time calculator, not a payroll, legal, HR, tax, contract, or compliance system.",
-  },
-];
-
-const AGE_FAQ: FaqItem[] = [
-  {
-    question: "What does years, months, and days mean?",
-    answer:
-      "The result shows completed years, completed months after those years, and remaining calendar days as of the selected age-on date.",
-  },
-  {
-    question: "How are leap-day birthdays handled?",
-    answer:
-      "February 29 remains the birth date. When an age anniversary falls in a non-leap year, the completed-year calculation clamps it to February 28.",
-  },
-  {
-    question: "Can this verify legal age or eligibility?",
-    answer:
-      "No. It is a date-math helper only and does not verify legal age, identity, eligibility, or official status.",
   },
 ];
 
@@ -1564,7 +1549,6 @@ export function AgeCalculatorPage({ initialToday }: { initialToday: string }) {
         name="Age Calculator"
         path="/age-calculator"
         description="Calculate age in years, months, and days from a birth date to today or another selected date."
-        faqItems={AGE_FAQ}
       />
 
       <ToolHero
@@ -1574,66 +1558,7 @@ export function AgeCalculatorPage({ initialToday }: { initialToday: string }) {
       />
 
       <SeoBand>
-        <ContentSection title="How this age calculator works">
-          <p>
-            Enter a birth date and choose the date to calculate age on. The main
-            result shows completed years, months, and days for that date.
-          </p>
-          <p>
-            The supporting rows show total days, completed months, the next
-            birthday distance, and the weekday of the birth date.
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Age on today or another date">
-          <p>
-            The age-on date defaults to today, but you can set it to a past or
-            future calendar date for classroom date math, birthday planning, or
-            forms where you need to know an age. This page does not verify legal
-            age or eligibility.
-          </p>
-          <p>
-            A February 29 birth date remains February 29. For completed-age
-            arithmetic in a non-leap year, its anniversary is clamped to
-            February 28; the same month-end rule is used for the remaining
-            month and day breakdown.
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Related date calculators">
-          <p>
-            For all days between two dates, use the{" "}
-            <a className="ilt-content-link" href="/date-duration-calculator">
-              date duration calculator
-            </a>
-            . For adding days or months to a date, use the{" "}
-            <a className="ilt-content-link" href="/date-calculator">
-              date calculator
-            </a>
-            . For days remaining until a target date, use the{" "}
-            <a className="ilt-content-link" href="/days-until-calculator">
-              days until calculator
-            </a>
-            . For the next birthday specifically, use the{" "}
-            <a className="ilt-content-link" href="/birthday-countdown">
-              birthday countdown
-            </a>
-            . For January 1, use the{" "}
-            <a className="ilt-content-link" href="/new-year-countdown">
-              New Year countdown
-            </a>
-            .
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Age calculator FAQ">
-          {AGE_FAQ.map((item) => (
-            <div key={item.question}>
-              <h3>{item.question}</h3>
-              <p>{item.answer}</p>
-            </div>
-          ))}
-        </ContentSection>
+        <Stage4RouteContent routePath="/age-calculator" />
       </SeoBand>
     </PageShell>
   );
@@ -1832,6 +1757,26 @@ export function WeekNumberCalculatorPage({ initialToday }: { initialToday: strin
       />
 
       <SeoBand>
+        <TechnicalMethod
+          heading="How the ISO week number is calculated"
+          sources={[TECHNICAL_SOURCES.isoWeekDate]}
+        >
+          <p>
+            This calculator uses the ISO week-date rules. Weeks run from Monday
+            through Sunday. Week 1 is the week that contains January 4, which
+            is also the week with the year's first Thursday. The calculation
+            moves the selected date to its Thursday, finds that Thursday's
+            week-year, then counts complete seven-day periods from week 1.
+          </p>
+          <p>
+            For example, January 1, 2021 was a Friday. Its week's Thursday was
+            December 31, 2020, so the result is week 53 of ISO week-year 2020.
+            January 4, 2021 was a Monday and started week 1 of ISO week-year
+            2021. The input is a local calendar date. Time of day and timezone
+            offsets do not enter the calculation.
+          </p>
+        </TechnicalMethod>
+
         <ContentSection title="How this week number calculator works">
           <p>
             Choose a calendar date and the result shows the ISO week number.

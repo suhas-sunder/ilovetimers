@@ -1,3 +1,4 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Button,
@@ -70,24 +71,6 @@ const DATE_DURATION_FAQ: FaqItem[] = [
     question: "Can I use this for official deadlines?",
     answer:
       "No. It is a planning calculator. Check any legal, contract, payroll, HR, tax, or official deadline rules separately.",
-  },
-];
-
-const DATE_CALCULATOR_FAQ: FaqItem[] = [
-  {
-    question: "How does month addition work at month end?",
-    answer:
-      "When the target month has fewer days, the result is clamped to the last valid day of that month.",
-  },
-  {
-    question: "Can I subtract dates too?",
-    answer:
-      "Yes. Choose subtract, enter days, weeks, months, or years, and the result moves backward from the start date.",
-  },
-  {
-    question: "Is this an official deadline calculator?",
-    answer:
-      "No. It is a browser utility for planning and checking dates, not an official legal, tax, HR, payroll, or contract system.",
   },
 ];
 
@@ -316,7 +299,7 @@ export function JsonLd({
   name: string;
   path: string;
   description: string;
-  faqItems: FaqItem[];
+  faqItems?: FaqItem[];
 }) {
   const routeUrl = `${SITE_URL}${path}`;
   const jsonLd = {
@@ -337,14 +320,16 @@ export function JsonLd({
           { "@type": "ListItem", position: 2, name, item: routeUrl },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: faqItems.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: { "@type": "Answer", text: item.answer },
-        })),
-      },
+      ...(faqItems
+        ? [{
+            "@type": "FAQPage",
+            mainEntity: faqItems.map((item) => ({
+              "@type": "Question",
+              name: item.question,
+              acceptedAnswer: { "@type": "Answer", text: item.answer },
+            })),
+          }]
+        : []),
     ],
   };
 
@@ -908,7 +893,6 @@ export function DateCalculatorPage() {
         name="Date Calculator"
         path="/date-calculator"
         description="Add or subtract days, weeks, months, and years from a local calendar date and show the calculated date and weekday."
-        faqItems={DATE_CALCULATOR_FAQ}
       />
 
       <ToolHero
@@ -918,81 +902,7 @@ export function DateCalculatorPage() {
       />
 
       <SeoBand>
-        <ContentSection title="How this date calculator works">
-          <p>
-            Pick a start date, choose add or subtract, and enter days, weeks,
-            months, or years. The result date appears first, followed by the
-            weekday and a short operation summary.
-          </p>
-          <p>
-            Days and weeks are counted as calendar days. Months and years are
-            applied as calendar units, then the remaining week and day amounts
-            are applied.
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Month-end behavior">
-          <p>
-            Some month additions are ambiguous. For example, adding one month
-            to January 31 points to a month that may not have 31 days. This
-            calculator clamps that result to the last valid day of the target
-            month and shows the final date clearly.
-          </p>
-          <p>
-            The same rule applies to leap years: adding one year to February
-            29 clamps to February 28 when the result year is not a leap year.
-            Days and weeks are applied after calendar months and years.
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Common uses and related calculators">
-          <p>
-            Use it for planning follow-ups, checking future dates, estimating
-            project dates, reminders, and scheduling examples. For days between
-            two dates, use the{" "}
-            <a className="ilt-content-link" href="/date-duration-calculator">
-              date duration calculator
-            </a>
-            . For weekday-only ranges, use the{" "}
-            <a className="ilt-content-link" href="/business-days-calculator">
-              business days calculator
-            </a>
-            . To find the weekday for the result date, use the{" "}
-            <a className="ilt-content-link" href="/weekday-calculator">
-              weekday calculator
-            </a>
-            . To find the ISO week number for a date, use the{" "}
-            <a className="ilt-content-link" href="/week-number-calculator">
-              week number calculator
-            </a>
-            . To compare completed months between two dates, use the{" "}
-            <a className="ilt-content-link" href="/months-between-dates-calculator">
-              months between dates calculator
-            </a>
-            . To count days until a target date, use the{" "}
-            <a className="ilt-content-link" href="/days-until-calculator">
-              days until calculator
-            </a>
-            . For a live countdown to a date, use the{" "}
-            <a className="ilt-content-link" href="/event-countdown">
-              event countdown
-            </a>
-            . For hours and minutes, use the{" "}
-            <a className="ilt-content-link" href="/time-calculator">
-              time calculator
-            </a>
-            .
-          </p>
-        </ContentSection>
-
-        <ContentSection title="Date calculator FAQ">
-          {DATE_CALCULATOR_FAQ.map((item) => (
-            <div key={item.question}>
-              <h3>{item.question}</h3>
-              <p>{item.answer}</p>
-            </div>
-          ))}
-        </ContentSection>
+        <Stage4RouteContent routePath="/date-calculator" />
       </SeoBand>
     </PageShell>
   );

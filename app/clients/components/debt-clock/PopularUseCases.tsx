@@ -30,7 +30,7 @@ export default function PopularUseCases({
       notFor:
         "A verified official total. This tool is an estimate based on your starting value and average rate.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Presentation Timer", href: "/presentation-timer" },
         { label: "Meeting Timer", href: "/meeting-timer" },
       ],
@@ -45,7 +45,7 @@ export default function PopularUseCases({
         "Exporting charts or time series. This tool is meant for a running display and quick copy.",
       links: [
         { label: "Debt Repayment Timer", href: "/debt-repayment-timer" },
-        { label: "Count Up Timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         { label: "Meeting Count Up Timer", href: "/meeting-count-up-timer" },
       ],
     },

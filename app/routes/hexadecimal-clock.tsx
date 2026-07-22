@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/hexadecimal-clock.tsx
 import type { Route } from "./+types/hexadecimal-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -8,11 +9,6 @@ import {
   useRef,
   useState,
 } from "react";
-import HowItWorks from "~/clients/components/hexadecimal-clock/HowItWorks";
-import Disclaimer from "~/clients/components/hexadecimal-clock/Disclaimer";
-import FAQ from "~/clients/components/hexadecimal-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/hexadecimal-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/hexadecimal-clock/PopularUseCases";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
@@ -313,6 +309,8 @@ function HexClockCard({ initialNowISO }: { initialNowISO: string }) {
     minPx: 52,
     maxPx: isFs ? 520 : 520,
     paddingAllowancePx: isFs ? 56 : 64,
+    initialScale: isFs ? 1 : 0.86,
+    initialMobileScale: isFs ? 1 : 0.84,
   });
 
   return (
@@ -571,12 +569,7 @@ export default function HexadecimalClockPage({
 
       <SeoBand>
 
-          <HowItWorks />
-          <KeyboardShortcuts />
-          <PopularUseCases />
-          <FAQ />
-          <Disclaimer />
-
+          <Stage4RouteContent routePath="/hexadecimal-clock" />
       </SeoBand>
     </PageShell>
   );

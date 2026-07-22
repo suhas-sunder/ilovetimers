@@ -82,7 +82,7 @@ export default function PopularUseCases({
       notFor:
         "You need multiple independent timers on one screen. Use Multiple Timers instead.",
       links: [
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },
       ],
     },

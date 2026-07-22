@@ -1,6 +1,11 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["server.js", "vite.config.ts", "app/config/redirects.js"],
+  "include": [
+    "server.js",
+    "vite.config.ts",
+    "app/config/redirects.js",
+    "app/config/routeArchitecture.js"
+  ],
   "compilerOptions": {
     "composite": true,
     "strict": true,

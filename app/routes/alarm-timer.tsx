@@ -1,6 +1,6 @@
 // app/routes/alarm-timer.tsx
 import type { Route } from "./+types/alarm-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,

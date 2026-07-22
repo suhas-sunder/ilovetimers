@@ -32,7 +32,7 @@ export default function PopularUseCases({
         "You need a tool tailored to slides, agendas, or speaker workflows. Use Presentation Timer instead.",
       links: [
         { label: "Presentation Timer", href: "/presentation-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Meeting Timer", href: "/meeting-timer" },
       ],
     },
@@ -47,7 +47,7 @@ export default function PopularUseCases({
       links: [
         { label: "Classroom Timer", href: "/classroom-timer" },
         { label: "Silent Timer", href: "/silent-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
       ],
     },
     {
@@ -87,7 +87,7 @@ export default function PopularUseCases({
       notFor:
         "You need multiple countdowns at once. Use Multiple Timers instead.",
       links: [
-        { label: "Cooking Timer", href: "/cooking-timer" },
+        { label: "Kitchen Timer", href: "/kitchen-timer" },
         { label: "Egg Timer", href: "/egg-timer" },
         { label: "Tea Timer", href: "/tea-timer" },
         { label: "Multiple Timers", href: "/multiple-timers" },

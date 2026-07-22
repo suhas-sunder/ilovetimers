@@ -1,6 +1,6 @@
 // app/routes/break-timer.tsx
 import type { Route } from "./+types/break-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,
@@ -50,7 +50,7 @@ export function meta({}: Route.MetaArgs) {
         "countdown timer for breaks",
       ].join(", "),
     },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },

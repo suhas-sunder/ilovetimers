@@ -190,7 +190,7 @@ export default function Disclaimer() {
                 <div className="ilt-surface-muted p-3">
                   Need a pure big-screen clock?{" "}
                   <Link
-                    to="/fullscreen-timer"
+                    to="/online-timer"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Fullscreen Timer

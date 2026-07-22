@@ -113,7 +113,7 @@ export default function HowItWorks({
               use{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                href={abs("/fullscreen-timer")}
+                href={abs("/online-timer")}
               >
                 Fullscreen Timer
               </a>
@@ -443,7 +443,7 @@ export default function HowItWorks({
             </PillLink>
             <PillLink href={abs("/visual-timer")}>Visual Timer</PillLink>
             <PillLink href={abs("/silent-timer")}>Silent Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>

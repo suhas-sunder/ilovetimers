@@ -14,13 +14,13 @@ export function JsonLd({ data }: { data: any }) {
    1) HOW IT WORKS (trust + SEO + user intent)
    Notes:
    - Uses only your real routes (no hash anchors).
-   - Scenario-based with concrete examples for /count-up-timer.
+   - Scenario-based with concrete examples for /stopwatch.
    - Tool-focused, not a blog post.
    - Technical details live in an expandable section.
    - Aim: ~800–1200 words of unique, intent-matching content.
 ========================================================= */
 export default function HowItWorks({
-  canonicalUrl = "https://www.ilovetimers.com/count-up-timer",
+  canonicalUrl = "https://www.ilovetimers.com/stopwatch",
   baseUrl = "https://www.ilovetimers.com",
 }: {
   canonicalUrl?: string;
@@ -139,7 +139,7 @@ export default function HowItWorks({
               for work/rest cycles, or{" "}
               <a
                 className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] hover:underline"
-                href={abs("/fullscreen-timer")}
+                href={abs("/online-timer")}
               >
                 Fullscreen Timer
               </a>{" "}
@@ -483,7 +483,7 @@ export default function HowItWorks({
             </PillLink>
             <PillLink href={abs("/time-calculator")}>Time Calculator</PillLink>
             <PillLink href={abs("/countdown-timer")}>Countdown Timer</PillLink>
-            <PillLink href={abs("/fullscreen-timer")}>
+            <PillLink href={abs("/online-timer")}>
               Fullscreen Timer
             </PillLink>
             <PillLink href={abs("/pomodoro-timer")}>Pomodoro Timer</PillLink>

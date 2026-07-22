@@ -146,7 +146,7 @@ export default function Disclaimer() {
                   </a>{" "}
                   or{" "}
                   <a
-                    href="/count-up-timer"
+                    href="/stopwatch"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Count Up Timer
@@ -173,7 +173,7 @@ export default function Disclaimer() {
                 <div className="ilt-surface-muted p-3">
                   Want a dedicated fullscreen page?{" "}
                   <a
-                    href="/fullscreen-timer"
+                    href="/online-timer"
                     className="cursor-pointer font-semibold text-[var(--ilt-text-primary)] underline decoration-slate-300 hover:decoration-slate-500"
                   >
                     Fullscreen Timer

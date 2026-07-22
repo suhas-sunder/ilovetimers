@@ -1,0 +1,374 @@
+{
+  "status": "passed",
+  "generatedAt": "2026-07-22T00:28:47.058Z",
+  "repositoryCodeGate": "passed; no unresolved material internal blocker",
+  "checks": 53,
+  "failures": [],
+  "warnings": [],
+  "counts": {
+    "canonical": 132,
+    "indexable": 109,
+    "noindex": 23,
+    "redirects": 28,
+    "sitemap": 109,
+    "shareRoutes": 5,
+    "presetRoutes": 4,
+    "guides": 7
+  },
+  "buildAndPriorAudits": [
+    {
+      "name": "typecheck",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "> ilovetimers@1.0.0 typecheck",
+        "> react-router typegen && tsc -b"
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "production build",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run build",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "\u001b[2mbuild/server/\u001b[22m\u001b[36mserver.js                             \u001b[39m\u001b[1m\u001b[33m2,951.12 kB\u001b[39m\u001b[22m",
+        "",
+        "\u001b[32m✓\u001b[39m 3 assets cleaned from React Router server build.",
+        "\u001b[2mbuild\\client\\assets\\ilovetimers-icon-CBY8HX2p.png\u001b[22m",
+        "\u001b[2mbuild\\client\\assets\\suhas-BPY11p11.jpg\u001b[22m",
+        "\u001b[2mbuild\\server\\assets\\server-DvOgVFdS.css\u001b[22m",
+        "",
+        "\u001b[32m✓ built in 4.08s\u001b[39m"
+      ],
+      "stderrTail": [
+        "\u001b[33m\"default\" is imported from external module \"react\" but never used in \"app/routes/digital-clock.tsx\", \"app/clients/components/billable-hours-calculator/HowItWorks.tsx\" and \"app/clients/components/billable-hours-clock/HowItWorks.tsx\".\u001b[39m"
+      ]
+    },
+    {
+      "name": "SEO integrity",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/seo-integrity.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "SEO integrity audit passed (132 routes, 28 redirects, 109 sitemap URLs)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "internal links",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/internal-links.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Internal-link audit passed (132 routes, 95 More-directory tools, 95 related-tool groups, 126 footer links)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "preset timers",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/preset-timers.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Preset timer audit passed (6 generic preset routes, 132 routes, 109 sitemap URLs, 126 footer links)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "time tools",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/time-tools.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Time-tool audit passed (21 routes, 132 canonical routes, 28 redirects, 109 sitemap URLs, 95 related groups)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "Stage 2 accuracy",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/stage2-accuracy.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Stage 2 accuracy audit passed (17 methodology source files, 13 primary sources)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "route architecture",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/route-architecture.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Route architecture audit passed: 132 canonical pages, 28 redirects, 109 indexable sitemap routes; A=101, B=8, C=23, D=21, E=7."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "Stage 4 content",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/stage4-content-quality.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Stage 4 content-quality audit passed: 132 canonical pages reviewed; 47 prior repetition flags resolved; 144693 -> 48653 supporting words."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "Stage 5 guides",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/stage5-guides.mjs --check-citations",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Stage 5 guide audit passed: 1 index, 6 substantial guides, 6128 rendered article words, 15 citation URLs, 13 contextual tool pages."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "Stage 6 sharing and presets",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/stage6-share-presets.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Stage 6 share and preset audit passed (2515 checks, 5 share routes, 4 preset routes)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "calculators",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/calculators.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Calculator integrity audit passed (18 routes, 132 canonical routes, 28 redirects, 109 sitemap URLs, 95 related groups)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "specialty tools",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/specialty-tools.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Specialty-tool audit passed (68 routes; A INDEPENDENT INDEXABLE: 48, B CONCISE INDEXABLE PRESET: 7, C NON-INDEXABLE UTILITY: 13; 132 canonical routes; 109 sitemap URLs; 95 related groups)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "UI integrity",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/ui-integrity.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "UI integrity audit passed (132 routes; shared targets, focus, labels, reduced motion, and narrow displays)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "accessibility source audit",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/accessibility.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Accessibility audit passed (432 source files; names, fields, modal focus, touch targets, live regions, and reduced motion)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "release readiness",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/release-readiness.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Release-readiness audit passed (132 routes, 28 redirects, 109 sitemap URLs, 95 More tools, 126 footer destinations, 95 related groups).",
+        "Static checks do not predict rankings, field Core Web Vitals, or AdSense approval; use the human readiness report and post-release monitoring plan."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    }
+  ],
+  "dependencyAudit": {
+    "status": "completed",
+    "exitCode": 0,
+    "productionCounts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "fullTreeCounts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "productionReachability": "The production scan omits devDependencies. The full-tree scan is recorded separately; neither scan alone proves runtime reachability."
+  },
+  "privacyStorageInventory": {
+    "localStorage": [
+      {
+        "key": "ilt-theme-mode",
+        "feature": "theme preference"
+      },
+      {
+        "key": "ilt-analytics-consent",
+        "feature": "analytics choice"
+      },
+      {
+        "key": "ilt-posthog-capture-consent",
+        "feature": "PostHog SDK consent persistence when configured and allowed"
+      },
+      {
+        "key": "astroClockPrefs",
+        "feature": "astronomical clock coordinates and timezone"
+      },
+      {
+        "key": "bpmTapper.settings.v1",
+        "feature": "BPM tapper settings"
+      },
+      {
+        "key": "bpmTapper.history.v1",
+        "feature": "BPM tapper recent results"
+      },
+      {
+        "key": "ilovetimers:billable-hours-clock:v1",
+        "feature": "billable-hours clock state"
+      },
+      {
+        "key": "ilovetimers:event-countdown:v1",
+        "feature": "saved event countdowns"
+      },
+      {
+        "key": "ilt-meeting-agenda-timer-items",
+        "feature": "meeting agenda items"
+      },
+      {
+        "key": "ilovetimers:multiple-timers:v2",
+        "feature": "multiple-timer configuration"
+      },
+      {
+        "key": "ilovetimers:time-blocking-clock:v2",
+        "feature": "time blocks"
+      },
+      {
+        "key": "ilovetimers:time-zone-converter:v1",
+        "feature": "timezone converter preferences"
+      },
+      {
+        "key": "sc_start_mode",
+        "feature": "speedcubing start mode"
+      },
+      {
+        "key": "sc_auto_save",
+        "feature": "speedcubing add-on-stop preference"
+      },
+      {
+        "key": "sc_max_solves",
+        "feature": "speedcubing result limit"
+      },
+      {
+        "key": "ilovetimers:presets:countdown-timer:v1",
+        "feature": "Countdown Timer named presets"
+      },
+      {
+        "key": "ilovetimers:presets:pomodoro-timer:v1",
+        "feature": "Pomodoro Timer named presets"
+      },
+      {
+        "key": "ilovetimers:presets:hiit-timer:v1",
+        "feature": "HIIT Timer named presets"
+      },
+      {
+        "key": "ilovetimers:presets:time-zone-meeting-planner:v1",
+        "feature": "Time Zone Meeting Planner named presets"
+      }
+    ],
+    "sessionStorage": [],
+    "indexedDB": [],
+    "notes": [
+      "PostHog SDK-managed local persistence exists only when a production key is configured and the user explicitly allows analytics.",
+      "Share configurations are URL-carried rather than browser storage; preset names are excluded from URLs."
+    ]
+  },
+  "advertising": {
+    "mode": "disabled; homepage placeholder-only",
+    "liveNetworkScript": false,
+    "publisherRecordPresent": true,
+    "publisherOwnershipVerified": false
+  },
+  "buildOutput": {
+    "filesInspected": 170,
+    "sourceMaps": 0,
+    "localPathMatches": [],
+    "likelySecretMatches": []
+  },
+  "blockerClassification": {
+    "internalBlocking": [],
+    "internalNonBlocking": [
+      "The repository has no separate lint or formatter script; type checking, source audits, SSR rendering, browser interaction, and diff-whitespace checks provide the current automated coverage.",
+      "Firefox, physical-device, assistive-technology, and production field Core Web Vitals data were unavailable in this environment and are not claimed as certified coverage.",
+      "Two simulated-mobile Lighthouse LCP results were slightly above the 2.5-second good threshold (2.524 and 2.540 seconds); both remained well below the 4-second poor threshold and the affected performance scores remained at least 95."
+    ],
+    "ownerAction": [
+      "Approve the final accumulated diff and decide when it is coherent enough to commit.",
+      "Confirm that ads.txt publisher ID pub-4810616735714570 belongs to the intended AdSense account.",
+      "Approve the deployment timing and confirm the production branch/contact preference if different from repository evidence.",
+      "Choose whether and when to configure production PostHog, future advertising, and a consent solution; none is required for the current ad-disabled release."
+    ],
+    "externalAccountOrPlatformAction": [
+      "Netlify account access is required to confirm the production branch, environment values, domain/DNS/HTTPS state, deploy preview behavior, and rollback controls.",
+      "AdSense account access is required for site ownership, application/review status, publisher-ID confirmation, ads.txt authorization, and any future ad units.",
+      "A Google-certified CMP and correct regional configuration are required before eligible personalized ads are served in the EEA, UK, or Switzerland.",
+      "Search Console and DNS/domain registrar verification are post-repository account tasks where the owner chooses to use them."
+    ],
+    "postDeploymentVerification": [
+      "Run docs/post-deployment-smoke-tests.json against the exact published deploy and record the deploy ID and Git revision.",
+      "Verify production response headers, MIME types, compression/CDN caching, canonical/robots behavior, 404 status, assets, console, and mobile physical-device layout.",
+      "Verify /ads.txt over HTTPS and its AdSense account status before enabling advertising.",
+      "If analytics is configured, verify no request before consent and inspect actual production event properties after consent."
+    ]
+  },
+  "artifactsVerified": [
+    "docs/final-worktree-inventory.json",
+    "docs/final-google-policy-evidence.json",
+    "docs/final-route-validation.json",
+    "docs/final-performance-accessibility.json",
+    "docs/post-deployment-smoke-tests.json",
+    "docs/rollback-plan.md"
+  ]
+}

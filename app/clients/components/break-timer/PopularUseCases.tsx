@@ -59,7 +59,7 @@ export default function PopularUseCases({
         "If you want a general purpose fullscreen countdown without break-specific defaults. Use Fullscreen Timer instead.",
       links: [
         { label: "Break Timer", href: "/break-timer" },
-        { label: "Fullscreen Timer", href: "/fullscreen-timer" },
+        { label: "Online Timer", href: "/online-timer" },
         { label: "Presentation Timer", href: "/presentation-timer" },
       ],
     },

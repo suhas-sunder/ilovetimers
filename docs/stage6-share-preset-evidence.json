@@ -1,0 +1,513 @@
+{
+  "generatedAt": "2026-07-21",
+  "stage": 6,
+  "repositoryRoot": "E:/PROJECTS-and-WORK/work-projects/all_projects/ilovetimers",
+  "schemaVersion": 1,
+  "presetPolicy": {
+    "maximumPresetsPerTool": 20,
+    "maximumPresetNameLength": 40,
+    "storageModel": "One versioned localStorage root per supported tool. Records use generated identifiers and validated tool-owned configurations.",
+    "sharedUrlMaximumLength": 1800
+  },
+  "candidates": [
+    {
+      "path": "/countdown-timer",
+      "toolType": "scalar countdown",
+      "currentStateModel": "Configured total milliseconds plus remaining milliseconds and a running flag; minutes and seconds are editable while stopped.",
+      "existingQueryParameters": [],
+      "existingStorageKeys": [],
+      "existingPersistence": "No route-local persistence.",
+      "configurationFields": [
+        "durationSeconds"
+      ],
+      "privateOrUnsafeFields": [
+        "remaining milliseconds",
+        "running state",
+        "target performance timestamp",
+        "fullscreen state"
+      ],
+      "shareValue": "High: a recipient can reproduce an exact countdown duration.",
+      "presetValue": "High: repeated custom durations are common and the configuration is one bounded scalar.",
+      "implementationComplexity": "low",
+      "selectedForSharing": true,
+      "selectedForPresets": true,
+      "exclusionReason": null,
+      "evidenceFiles": [
+        "app/routes/countdown-timer.tsx"
+      ],
+      "requiredTests": [
+        "duration boundaries",
+        "round trip",
+        "ready-state load",
+        "no autostart",
+        "preset CRUD",
+        "storage failure"
+      ],
+      "shareParameterNames": [
+        "v",
+        "duration"
+      ],
+      "schemaVersion": 1,
+      "stage6StorageKey": "ilovetimers:presets:countdown-timer:v1",
+      "stage6Limits": {
+        "shareUrlCharacters": 1800,
+        "presetsPerTool": 20,
+        "presetNameCharacters": 40
+      }
+    },
+    {
+      "path": "/pomodoro-timer",
+      "toolType": "multi-phase focus timer",
+      "currentStateModel": "Work, short-break, long-break, cycle, cue, phase, remaining, and running state.",
+      "existingQueryParameters": [],
+      "existingStorageKeys": [],
+      "existingPersistence": "No route-local persistence.",
+      "configurationFields": [
+        "workMinutes",
+        "breakMinutes",
+        "cycles",
+        "longBreakEnabled",
+        "longBreakMinutes",
+        "autoAdvance",
+        "sound",
+        "finalCountdownBeeps"
+      ],
+      "privateOrUnsafeFields": [
+        "current phase",
+        "cycle index",
+        "remaining milliseconds",
+        "running state",
+        "audio context",
+        "fullscreen state"
+      ],
+      "shareValue": "High: timing and cue choices form a meaningful reusable routine.",
+      "presetValue": "High: users may switch between several focus and break patterns.",
+      "implementationComplexity": "medium",
+      "selectedForSharing": true,
+      "selectedForPresets": true,
+      "exclusionReason": null,
+      "evidenceFiles": [
+        "app/routes/pomodoro-timer.tsx"
+      ],
+      "requiredTests": [
+        "numeric and boolean validation",
+        "default omission",
+        "round trip",
+        "ready-state load",
+        "no audio on load",
+        "preset CRUD"
+      ],
+      "shareParameterNames": [
+        "v",
+        "work",
+        "break",
+        "cycles",
+        "long",
+        "longDuration",
+        "auto",
+        "sound",
+        "countdown"
+      ],
+      "schemaVersion": 1,
+      "stage6StorageKey": "ilovetimers:presets:pomodoro-timer:v1",
+      "stage6Limits": {
+        "shareUrlCharacters": 1800,
+        "presetsPerTool": 20,
+        "presetNameCharacters": 40
+      }
+    },
+    {
+      "path": "/interval-timer",
+      "toolType": "custom labeled interval sequence",
+      "currentStateModel": "One to many user-labeled steps, per-step durations, rounds, active index, current round, remaining time, and running/completed state.",
+      "existingQueryParameters": [],
+      "existingStorageKeys": [],
+      "existingPersistence": "No route-local persistence.",
+      "configurationFields": [
+        "steps",
+        "rounds"
+      ],
+      "privateOrUnsafeFields": [
+        "arbitrary step labels",
+        "active index",
+        "current round",
+        "remaining milliseconds",
+        "running state"
+      ],
+      "shareValue": "Moderate, but the labels are necessary to understand the sequence and can contain arbitrary private text.",
+      "presetValue": "High in principle, but a safe preset would need a label policy and array migration work beyond the selected scalar infrastructure.",
+      "implementationComplexity": "high",
+      "selectedForSharing": false,
+      "selectedForPresets": false,
+      "exclusionReason": "Excluded because the meaningful configuration depends on arbitrary user labels and an array schema; omitting labels loses meaning while including them conflicts with the privacy-first URL scope.",
+      "evidenceFiles": [
+        "app/routes/interval-timer.tsx"
+      ],
+      "requiredTests": [
+        "step count",
+        "label policy",
+        "per-step duration",
+        "array length",
+        "URL length",
+        "active-session loading"
+      ],
+      "shareParameterNames": [],
+      "schemaVersion": null,
+      "stage6StorageKey": null,
+      "stage6Limits": {
+        "shareUrlCharacters": null,
+        "presetsPerTool": null,
+        "presetNameCharacters": null
+      }
+    },
+    {
+      "path": "/hiit-timer",
+      "toolType": "fixed-phase workout interval timer",
+      "currentStateModel": "Warm-up, work, rest, rounds, cool-down, cue settings, current step, round index, remaining time, and running state.",
+      "existingQueryParameters": [],
+      "existingStorageKeys": [],
+      "existingPersistence": "No route-local persistence.",
+      "configurationFields": [
+        "warmupSeconds",
+        "workSeconds",
+        "restSeconds",
+        "rounds",
+        "cooldownSeconds",
+        "sound",
+        "finalCountdownBeeps"
+      ],
+      "privateOrUnsafeFields": [
+        "current step",
+        "round index",
+        "remaining milliseconds",
+        "running state",
+        "audio context",
+        "fullscreen state"
+      ],
+      "shareValue": "High: the fixed phase model can be represented safely without labels.",
+      "presetValue": "High: workout timing patterns are commonly reused.",
+      "implementationComplexity": "medium",
+      "selectedForSharing": true,
+      "selectedForPresets": true,
+      "exclusionReason": null,
+      "evidenceFiles": [
+        "app/routes/hiit-timer.tsx"
+      ],
+      "requiredTests": [
+        "phase limits",
+        "round trip",
+        "ready-state load",
+        "no audio on load",
+        "preset CRUD",
+        "running-state load guard"
+      ],
+      "shareParameterNames": [
+        "v",
+        "warmup",
+        "work",
+        "rest",
+        "rounds",
+        "cooldown",
+        "sound",
+        "countdown"
+      ],
+      "schemaVersion": 1,
+      "stage6StorageKey": "ilovetimers:presets:hiit-timer:v1",
+      "stage6Limits": {
+        "shareUrlCharacters": 1800,
+        "presetsPerTool": 20,
+        "presetNameCharacters": 40
+      }
+    },
+    {
+      "path": "/meeting-agenda-timer",
+      "toolType": "custom labeled meeting agenda",
+      "currentStateModel": "Persistent user-titled agenda items, durations, active item, remaining time, and running state.",
+      "existingQueryParameters": [],
+      "existingStorageKeys": [
+        "ilt-meeting-agenda-timer-items"
+      ],
+      "existingPersistence": "Agenda items are already restored automatically from localStorage.",
+      "configurationFields": [
+        "agenda item titles",
+        "agenda item minutes"
+      ],
+      "privateOrUnsafeFields": [
+        "arbitrary agenda text",
+        "active item",
+        "remaining milliseconds",
+        "running state"
+      ],
+      "shareValue": "Low under the privacy rules because meaningful links would contain agenda text.",
+      "presetValue": "Limited incremental value because the current agenda already persists; named copies would encourage storage of meeting notes.",
+      "implementationComplexity": "high",
+      "selectedForSharing": false,
+      "selectedForPresets": false,
+      "exclusionReason": "Excluded because agenda titles may contain private meeting information and the route already persists the active agenda locally.",
+      "evidenceFiles": [
+        "app/routes/meeting-agenda-timer.tsx"
+      ],
+      "requiredTests": [
+        "private text exclusion",
+        "array limits",
+        "current storage compatibility"
+      ],
+      "shareParameterNames": [],
+      "schemaVersion": null,
+      "stage6StorageKey": null,
+      "stage6Limits": {
+        "shareUrlCharacters": null,
+        "presetsPerTool": null,
+        "presetNameCharacters": null
+      }
+    },
+    {
+      "path": "/time-zone-converter",
+      "toolType": "date-aware two-zone converter",
+      "currentStateModel": "Source zone, destination zone, date, time, seconds visibility, rendered resolution, and locally persisted preferences.",
+      "existingQueryParameters": [
+        "from",
+        "to",
+        "date",
+        "time",
+        "sec"
+      ],
+      "existingStorageKeys": [
+        "ilovetimers:time-zone-converter:v1"
+      ],
+      "existingPersistence": "Preferences restore from localStorage; the existing share link currently overrides them on load.",
+      "configurationFields": [
+        "fromZone",
+        "toZone",
+        "date",
+        "time",
+        "showSeconds"
+      ],
+      "privateOrUnsafeFields": [
+        "formatted result text",
+        "copy status",
+        "fullscreen state"
+      ],
+      "shareValue": "Already implemented and valuable; Stage 6 must version and strictly validate it while preventing automatic persistence of shared input.",
+      "presetValue": "Low: the route already restores its most recent conversion and the meeting planner owns reusable timezone groups.",
+      "implementationComplexity": "medium",
+      "selectedForSharing": true,
+      "selectedForPresets": false,
+      "exclusionReason": "Named presets are excluded because existing preference restoration covers the repeated-use case without adding another storage model.",
+      "evidenceFiles": [
+        "app/routes/time-zone-converter.tsx",
+        "app/clients/lib/technicalTimeMath.js"
+      ],
+      "requiredTests": [
+        "legacy URL compatibility",
+        "version validation",
+        "date/time/timezone validation",
+        "no shared-input persistence",
+        "clean canonical and schema URLs"
+      ],
+      "shareParameterNames": [
+        "v",
+        "from",
+        "to",
+        "date",
+        "time",
+        "sec"
+      ],
+      "schemaVersion": 1,
+      "stage6StorageKey": null,
+      "stage6Limits": {
+        "shareUrlCharacters": 1800,
+        "presetsPerTool": null,
+        "presetNameCharacters": null
+      }
+    },
+    {
+      "path": "/time-zone-meeting-planner",
+      "toolType": "multi-zone meeting planner",
+      "currentStateModel": "UTC reference date, duration, work window, one to eight IANA zones, and derived candidates.",
+      "existingQueryParameters": [],
+      "existingStorageKeys": [],
+      "existingPersistence": "No route-local persistence.",
+      "configurationFields": [
+        "date",
+        "durationMinutes",
+        "workStartHour",
+        "workEndHour",
+        "zones"
+      ],
+      "privateOrUnsafeFields": [
+        "derived candidate rows",
+        "local device zone",
+        "copy/share feedback"
+      ],
+      "shareValue": "High: a recipient can reproduce the same zone comparison without private labels.",
+      "presetValue": "High: named timezone groups and work windows are useful for recurring teams.",
+      "implementationComplexity": "medium",
+      "selectedForSharing": true,
+      "selectedForPresets": true,
+      "exclusionReason": null,
+      "evidenceFiles": [
+        "app/routes/time-zone-meeting-planner.tsx",
+        "app/clients/lib/technicalTimeMath.js"
+      ],
+      "requiredTests": [
+        "date validation",
+        "timezone validation",
+        "zone count and duplicate handling",
+        "URL length",
+        "round trip",
+        "preset CRUD"
+      ],
+      "shareParameterNames": [
+        "v",
+        "date",
+        "duration",
+        "start",
+        "end",
+        "zones"
+      ],
+      "schemaVersion": 1,
+      "stage6StorageKey": "ilovetimers:presets:time-zone-meeting-planner:v1",
+      "stage6Limits": {
+        "shareUrlCharacters": 1800,
+        "presetsPerTool": 20,
+        "presetNameCharacters": 40
+      }
+    },
+    {
+      "path": "/event-countdown",
+      "toolType": "persistent named event countdown collection",
+      "currentStateModel": "One to twelve named events with target local date-times, selected event, sound choices, remaining time, and status.",
+      "existingQueryParameters": [],
+      "existingStorageKeys": [
+        "ilovetimers:event-countdown:v1"
+      ],
+      "existingPersistence": "The complete event collection already restores from localStorage.",
+      "configurationFields": [
+        "event name",
+        "target local date-time",
+        "sound",
+        "selected event"
+      ],
+      "privateOrUnsafeFields": [
+        "arbitrary event names",
+        "event collection",
+        "selected event identifier",
+        "remaining time",
+        "running/status state"
+      ],
+      "shareValue": "Moderate, but useful links would expose arbitrary event names and collection state.",
+      "presetValue": "Low incremental value because events are already named and persist locally.",
+      "implementationComplexity": "high",
+      "selectedForSharing": false,
+      "selectedForPresets": false,
+      "exclusionReason": "Excluded because event names can be private and the route already provides named persistent events rather than reusable configuration presets.",
+      "evidenceFiles": [
+        "app/routes/event-countdown.tsx"
+      ],
+      "requiredTests": [
+        "private event-name exclusion",
+        "date validation",
+        "collection limits",
+        "existing storage compatibility"
+      ],
+      "shareParameterNames": [],
+      "schemaVersion": null,
+      "stage6StorageKey": null,
+      "stage6Limits": {
+        "shareUrlCharacters": null,
+        "presetsPerTool": null,
+        "presetNameCharacters": null
+      }
+    },
+    {
+      "path": "/multiple-timers",
+      "toolType": "persistent multi-timer collection",
+      "currentStateModel": "One to eight labeled timers with configured and remaining milliseconds, run/alarm state, sound settings, and target timestamps.",
+      "existingQueryParameters": [],
+      "existingStorageKeys": [
+        "ilovetimers:multiple-timers:v2"
+      ],
+      "existingPersistence": "The timer collection and active timing state already restore from localStorage.",
+      "configurationFields": [
+        "timer labels",
+        "durations",
+        "sound settings"
+      ],
+      "privateOrUnsafeFields": [
+        "arbitrary timer labels",
+        "remaining values",
+        "running state",
+        "target timestamps",
+        "alarm state"
+      ],
+      "shareValue": "Moderate, but a safe ready-state representation would either expose labels or strip essential context.",
+      "presetValue": "Moderate, but the current collection already persists and separating configuration from live state requires a dedicated collection migration.",
+      "implementationComplexity": "high",
+      "selectedForSharing": false,
+      "selectedForPresets": false,
+      "exclusionReason": "Excluded because labels may be private, the existing storage includes transient live state, and a safe named-template model should not be layered onto that payload in this stage.",
+      "evidenceFiles": [
+        "app/routes/multiple-timers.tsx"
+      ],
+      "requiredTests": [
+        "label privacy",
+        "timer count",
+        "URL length",
+        "ready-state stripping",
+        "v2 storage compatibility"
+      ],
+      "shareParameterNames": [],
+      "schemaVersion": null,
+      "stage6StorageKey": null,
+      "stage6Limits": {
+        "shareUrlCharacters": null,
+        "presetsPerTool": null,
+        "presetNameCharacters": null
+      }
+    },
+    {
+      "path": "/world-clock",
+      "toolType": "live multi-zone clock",
+      "currentStateModel": "A route-local zone list and live derived clock rows.",
+      "existingQueryParameters": [],
+      "existingStorageKeys": [],
+      "existingPersistence": "No route-local persistence.",
+      "configurationFields": [
+        "zones"
+      ],
+      "privateOrUnsafeFields": [
+        "live timestamps",
+        "copy status"
+      ],
+      "shareValue": "Moderate, but the meeting planner provides a more meaningful shareable multi-zone task.",
+      "presetValue": "Moderate, but timezone groups are implemented once on the meeting planner to avoid duplicate preset systems.",
+      "implementationComplexity": "medium",
+      "selectedForSharing": false,
+      "selectedForPresets": false,
+      "exclusionReason": "Excluded to keep timezone-group sharing and presets on the meeting planner, where date, duration, and work-window context make the setup actionable.",
+      "evidenceFiles": [
+        "app/routes/world-clock.tsx"
+      ],
+      "requiredTests": [
+        "zone validation",
+        "group isolation",
+        "duplicate feature review"
+      ],
+      "shareParameterNames": [],
+      "schemaVersion": null,
+      "stage6StorageKey": null,
+      "stage6Limits": {
+        "shareUrlCharacters": null,
+        "presetsPerTool": null,
+        "presetNameCharacters": null
+      }
+    }
+  ],
+  "analyticsAndTransmissionReview": {
+    "analyticsImplementation": "app/clients/lib/analytics.ts sends path-only pageviews and allowlisted custom event properties after consent. Full URLs, query strings, preset names, and configuration fields are not intentionally included.",
+    "newExternalRequestsRequired": false,
+    "sharedUrlDisclosure": "A recipient and services involved in transporting or requesting a shared URL can read its selected settings. Share links therefore exclude notes, names, history, and transient state.",
+    "presetTransmission": "Preset CRUD uses browser localStorage only and adds no external request or custom analytics payload."
+  }
+}

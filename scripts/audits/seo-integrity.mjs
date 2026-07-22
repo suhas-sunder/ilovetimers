@@ -1,6 +1,12 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
+import {
+  STAGE3_NEW_REDIRECTS,
+  STAGE3_NOINDEX_ROUTES,
+} from "../../app/config/routeArchitecture.js";
+import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const failures = [];
@@ -65,19 +71,7 @@ for (const match of routeConfigSource.matchAll(/\broute\(\s*["']([^"']+)["']/g))
   configuredRoutes.add(`/${match[1]}`);
 }
 
-const redirectObject = redirectSource.match(
-  /PERMANENT_REDIRECTS\s*=\s*Object\.freeze\(\{([\s\S]*?)\}\);/,
-);
-check(Boolean(redirectObject), "Could not parse PERMANENT_REDIRECTS.");
-
-const redirects = new Map();
-if (redirectObject) {
-  for (const match of redirectObject[1].matchAll(
-    /["'](\/[^"']+)["']\s*:\s*["'](\/[^"']+)["']/g,
-  )) {
-    redirects.set(match[1], match[2]);
-  }
-}
+const redirects = new Map(Object.entries(PERMANENT_REDIRECTS));
 check(redirects.size > 0, "The permanent redirect map is empty.");
 
 const currentToolClusterRedirects = new Map([
@@ -135,11 +129,14 @@ for (const url of xmlUrls) {
   );
 }
 
-const noindexLegalRoutes = ["/privacy", "/terms", "/cookies"];
-for (const route of noindexLegalRoutes) {
-  check(configuredRoutes.has(route), `Noindex legal route is not configured: ${route}`);
-  check(!xmlPaths.has(route), `Noindex legal route appears in XML sitemap: ${route}`);
+for (const route of STAGE3_NOINDEX_ROUTES) {
+  check(configuredRoutes.has(route), `Noindex route is not configured: ${route}`);
+  check(!xmlPaths.has(route), `Noindex route appears in XML sitemap: ${route}`);
 }
+check(
+  xmlPaths.size === configuredRoutes.size - STAGE3_NOINDEX_ROUTES.length,
+  `XML sitemap count does not match indexable canonical routes (${xmlPaths.size}).`,
+);
 
 const trustRoutes = [
   "/author/suhas-sunder",
@@ -162,8 +159,8 @@ for (const [source, destination] of redirects) {
   check(!configuredRoutes.has(source), `Redirect source is also a live route: ${source}`);
   check(!xmlPaths.has(source), `Redirect source appears in XML sitemap: ${source}`);
   check(
-    !htmlSitemapSource.includes(source),
-    `Redirect source appears in the HTML sitemap source: ${source}`,
+    !SITEMAP_GROUPS.some(({ routes }) => routes.includes(source)),
+    `Redirect source appears in the rendered HTML sitemap groups: ${source}`,
   );
 }
 
@@ -183,6 +180,13 @@ const netlifyRuleMap = new Map(
 for (const [source, destination] of redirects) {
   for (const netlifySource of [source, `${source}/`]) {
     const rule = netlifyRuleMap.get(netlifySource);
+    if (Object.hasOwn(STAGE3_NEW_REDIRECTS, source)) {
+      check(
+        !rule,
+        `Stage 3 redirect must reach the app so unsupported query parameters can be removed: ${netlifySource}`,
+      );
+      continue;
+    }
     check(Boolean(rule), `Netlify redirect is missing: ${netlifySource}`);
     if (rule) {
       check(
@@ -290,8 +294,15 @@ check(
   "The author ProfilePage does not use the stable Person identifier.",
 );
 
+const redirectOwnershipFiles = new Set([
+  "app/root.tsx",
+  "app/routes/sitemap.tsx",
+  "app/config/redirects.js",
+  "app/config/routeArchitecture.js",
+  "app/clients/config/relatedTools.js",
+]);
 const navigationSources = [...appSources.entries()].filter(
-  ([file]) => file !== "app/root.tsx",
+  ([file]) => !redirectOwnershipFiles.has(file),
 );
 for (const source of redirects.keys()) {
   for (const [file, contents] of navigationSources) {

@@ -94,7 +94,7 @@ export default function CookiesPolicy() {
 
       <ContentSection title="Advertising cookies">
         <p>
-          iLoveTimers does not currently install live AdSense code or
+          iLoveTimers does not currently install live advertising code or
           third-party advertising scripts. The homepage may contain quiet
           "Advertisements" placeholders, but those placeholders are not live ads
           and do not set advertising cookies.

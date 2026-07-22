@@ -1,6 +1,6 @@
 // app/routes/bpm-tapper.tsx
 import type { Route } from "./+types/bpm-tapper";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Button as Btn,

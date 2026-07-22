@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/moon-phase-clock.tsx
 import type { Route } from "./+types/moon-phase-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -8,11 +9,6 @@ import {
   useRef,
   useState,
 } from "react";
-import HowItWorks from "~/clients/components/moon-phase-clock/HowItWorks";
-import Disclaimer from "~/clients/components/moon-phase-clock/Disclaimer";
-import FAQ from "~/clients/components/moon-phase-clock/FAQ";
-import KeyboardShortcuts from "~/clients/components/moon-phase-clock/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/moon-phase-clock/PopularUseCases";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 
@@ -32,6 +28,12 @@ import {
   ToolFrame as Card,
   Toggle,
 } from "~/clients/components/ui/foundation";
+import { TechnicalMethod } from "~/clients/components/trust/ToolTrust";
+import { TECHNICAL_SOURCES } from "~/clients/config/technicalSources";
+import {
+  estimateMoonCycle,
+  SYNODIC_MONTH_DAYS,
+} from "~/clients/lib/technicalTimeMath.js";
 
 /* =========================================================
    META
@@ -46,7 +48,7 @@ export function meta({}: Route.MetaArgs) {
   return [
     { title },
     { name: "description", content: description },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -180,18 +182,11 @@ function useBeep() {
 /* =========================================================
    LUNAR MODEL (fast, dependency-free, stable for UI)
 ========================================================= */
-const SYNODIC_MONTH_DAYS = 29.530588853;
-const NEW_MOON_REF_UTC_MS = Date.UTC(2000, 0, 6, 18, 14, 0);
-
 type MajorPhase = "New Moon" | "First Quarter" | "Full Moon" | "Last Quarter";
 
 function normalize01(x: number) {
   const r = x % 1;
   return r < 0 ? r + 1 : r;
-}
-
-function illuminationFromPhaseFraction(f: number) {
-  return 0.5 * (1 - Math.cos(2 * Math.PI * f));
 }
 
 function phaseNameFromFraction(f: number) {
@@ -206,15 +201,10 @@ function phaseNameFromFraction(f: number) {
 }
 
 function getMoonInfo(at: Date) {
-  const msSinceRef = at.getTime() - NEW_MOON_REF_UTC_MS;
-  const daysSinceRef = msSinceRef / 86400000;
-
-  const ageDays =
-    ((daysSinceRef % SYNODIC_MONTH_DAYS) + SYNODIC_MONTH_DAYS) %
-    SYNODIC_MONTH_DAYS;
-
-  const phaseFraction = normalize01(ageDays / SYNODIC_MONTH_DAYS);
-  const illumination = illuminationFromPhaseFraction(phaseFraction);
+  const cycle = estimateMoonCycle(at);
+  const ageDays = cycle?.ageDays ?? 0;
+  const phaseFraction = cycle?.phaseFraction ?? 0;
+  const illumination = cycle?.illuminationFraction ?? 0;
   const phaseLabel = phaseNameFromFraction(phaseFraction);
 
   const targets: Array<{ name: MajorPhase; frac: number }> = [
@@ -818,12 +808,39 @@ export default function MoonPhaseClockPage({
 
       <SeoBand>
 
-          <HowItWorks />
-          <KeyboardShortcuts />
-          <PopularUseCases />
-          <FAQ />
-          <Disclaimer />
-
+          <TechnicalMethod
+            heading="Lunar-cycle estimate"
+            sources={[TECHNICAL_SOURCES.usnoMoonPhases]}
+          >
+            <p>
+              This page uses a fixed mean lunar cycle. It starts from a
+              reference new moon at <strong>2000-01-06 18:14 UTC</strong> and
+              divides elapsed time by a mean synodic month of{" "}
+              <strong>29.530588853 days</strong>. The cycle fraction sets the
+              phase label, estimated age, and the next quarter-cycle boundary.
+              Illumination uses a cosine phase model.
+            </p>
+            <p>
+              Example: at one quarter of the model cycle, age is about 7.4 days,
+              the label is First Quarter, and estimated illumination is 50%.
+              The countdown then points to the model's Full Moon boundary about
+              7.4 days later.
+            </p>
+            <p>
+              The model does not use an ephemeris, observer coordinates,
+              moonrise, moonset, orbital perturbations, or atmospheric
+              conditions. Treat the displayed phase time, illumination, and age
+              as general estimates. Use an astronomical almanac for observation
+              planning that needs verified event times.
+            </p>
+            <p>
+              Sound and Final beeps work only while Live is on and the page can
+              run audio. Browser audio permission, background throttling, a
+              closed tab, and device sleep can prevent or delay them. The page
+              cannot wake a sleeping device.
+            </p>
+          </TechnicalMethod>
+          <Stage4RouteContent routePath="/moon-phase-clock" />
       </SeoBand>
     </PageShell>
   );

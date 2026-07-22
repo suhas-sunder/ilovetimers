@@ -1,5 +1,5 @@
 import type { Route } from "./+types/online-alarm-clock";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -557,6 +557,16 @@ export default function OnlineAlarmClockPage({
             page open, keep the device awake, and check volume, mute, and audio
             permission settings before relying on the sound.
           </p>
+          <p>
+            If a test or completed alarm is silent, follow the guide to{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/browser-timer-alarm-silent"
+            >
+              browser alarm sound and audio troubleshooting
+            </a>
+            .
+          </p>
         </ContentSection>
 
         <ContentSection title="Alarm clock vs alarm timer">
@@ -598,6 +608,16 @@ export default function OnlineAlarmClockPage({
             </a>
             . This page does not use notifications or claim guaranteed alarm
             delivery.
+          </p>
+          <p>
+            The guide to{" "}
+            <a
+              className="ilt-content-link"
+              href="/guides/browser-timers-background-tabs"
+            >
+              browser timers in background, locked, and closed states
+            </a>{" "}
+            explains why keeping an important backup alert is prudent.
           </p>
         </ContentSection>
 

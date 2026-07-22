@@ -39,7 +39,7 @@ export default function PopularUseCases({
           href: "/billable-hours-calculator",
         },
         { label: "Stopwatch", href: "/stopwatch" },
-        { label: "Count up timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
       ],
     },
     {
@@ -107,7 +107,7 @@ export default function PopularUseCases({
           href: "/billable-hours-clock",
         },
         { label: "Stopwatch", href: "/stopwatch" },
-        { label: "Count up timer", href: "/count-up-timer" },
+        { label: "Stopwatch", href: "/stopwatch" },
         {
           label: "Billable hours calculator",
           href: "/billable-hours-calculator",

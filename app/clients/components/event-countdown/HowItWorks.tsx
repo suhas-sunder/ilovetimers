@@ -427,7 +427,7 @@ export default function HowItWorks({
 
           <div className="mt-4 flex flex-wrap gap-2">
             <PillLink to="/countdown-timer">Countdown Timer</PillLink>
-            <PillLink to="/fullscreen-timer">Fullscreen Timer</PillLink>
+            <PillLink to="/online-timer">Online Timer</PillLink>
             <PillLink to="/alarm-timer">Alarm Timer</PillLink>
             <PillLink to="/multiple-timers">Multiple Timers</PillLink>
             <PillLink to="/meeting-timer">Meeting Timer</PillLink>

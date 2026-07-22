@@ -1,6 +1,7 @@
+import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/meeting-timer.tsx
 import type { Route } from "./+types/meeting-timer";
-import { json } from "@remix-run/node";
+import { data as json } from "react-router";
 import {
   useCallback,
   useEffect,
@@ -31,12 +32,6 @@ import {
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
 import { trackEvent } from "~/clients/lib/analytics";
-import HowItWorks from "~/clients/components/meeting-timer/HowItWorks";
-import Disclaimer from "~/clients/components/meeting-timer/Disclaimer";
-import FAQ from "~/clients/components/meeting-timer/FAQ";
-import KeyboardShortcuts from "~/clients/components/meeting-timer/KeyboardShortcuts";
-import PopularUseCases from "~/clients/components/meeting-timer/PopularUseCases";
-
 /* =========================================================
    META
 ========================================================= */
@@ -50,7 +45,7 @@ export function meta({}: Route.MetaArgs) {
   return [
     { title },
     { name: "description", content: description },
-    { name: "robots", content: "index,follow,max-image-preview:large" },
+    { name: "robots", content: "noindex,follow" },
 
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -573,7 +568,44 @@ export default function MeetingTimerPage({
       />
 
       <SeoBand>
-        <HowItWorks />
+        <ContentSection title="Meeting timer behavior">
+          <p>
+            The timer opens at <strong>10:00</strong> in the Ready state. Start
+            begins the countdown. Pause keeps the remaining time, and Start then
+            resumes from that point. Reset stops the timer and restores the
+            selected duration. At 0:00 the timer stops. It does not count
+            overtime.
+          </p>
+          <p>
+            Meeting-length presets and Custom minutes are disabled while the
+            timer runs. Pause before changing the duration. Sound is on by
+            default and plays one short completion tone. Final beeps are off by
+            default. If you enable them, the page beeps once for each of the
+            final five seconds. You can change the sound toggles during a run.
+            The last ten seconds use the warning style.
+          </p>
+          <p>
+            Space starts or pauses, R resets, and F toggles fullscreen when the
+            timer frame has focus. Fullscreen also lets you tap the time to
+            start or pause. The page does not save meeting state. Refreshing or
+            reopening it restores the 10-minute default and the default sound
+            settings. Each browser tab runs its own timer.
+          </p>
+          <p>
+            Example: choose <strong>7m</strong> and press Start. After two
+            minutes the display is about 5:00. Pause, then press Start to
+            continue. When it reaches 0:00 it stops and plays the completion
+            tone if sound is enabled. Press Reset to return to 7:00.
+          </p>
+          <p>
+            The countdown uses the browser's monotonic elapsed-time clock while
+            the page stays open. A background tab can repaint less often and
+            catch up when it runs again. Browser suspension or device sleep can
+            delay the display and sound. The page cannot wake a sleeping device,
+            and it cannot alert you after the tab is closed.
+          </p>
+        </ContentSection>
+        <Stage4RouteContent routePath="/meeting-timer" />
         <ContentSection>
           <p>
             Need separate durations for each agenda topic? Use the{" "}
@@ -592,10 +624,6 @@ export default function MeetingTimerPage({
             starts.
           </p>
         </ContentSection>
-        <KeyboardShortcuts />
-        <PopularUseCases />
-        <FAQ />
-        <Disclaimer />
       </SeoBand>
     </PageShell>
   );

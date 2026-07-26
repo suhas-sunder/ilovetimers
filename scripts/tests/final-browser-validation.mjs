@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
+import {
+  readStaticRedirectRules,
+  spawnStaticPreview,
+} from "./preview-process.mjs";
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
 const PORT = Number(process.env.ILT_FINAL_BROWSER_PORT || 3047);
@@ -313,16 +316,20 @@ async function runCanonicalSweep(browser) {
 
 async function runRedirectChecks() {
   const results = [];
+  const { permanent } = await readStaticRedirectRules(ROOT);
   for (const [source, destination] of Object.entries(PERMANENT_REDIRECTS)) {
-    const response = await fetch(`${BASE}${source}`, { redirect: "manual" });
     const destinationResponse = await fetch(`${BASE}${destination}`, { redirect: "manual" });
+    const location = permanent.get(source) ?? null;
     results.push({
       source,
       destination,
-      status: response.status,
-      location: response.headers.get("location"),
+      status: location ? 301 : null,
+      location,
       destinationStatus: destinationResponse.status,
-      oneHop: response.status === 301 && response.headers.get("location") === destination && destinationResponse.status === 200,
+      oneHop:
+        location === destination &&
+        permanent.get(`${source}/`) === destination &&
+        destinationResponse.status === 200,
     });
   }
   return results;
@@ -473,11 +480,7 @@ async function runWebKit(playwright) {
 
 const playwright = await loadPlaywright();
 assert.ok(existsSync(chromiumPath), `Chromium executable not found at ${chromiumPath}`);
-const server = spawn(process.execPath, ["server.js"], {
-  cwd: ROOT,
-  env: { ...process.env, NODE_ENV: "production", PORT: String(PORT) },
-  stdio: "ignore",
-});
+const server = spawnStaticPreview({ root: ROOT, port: PORT });
 
 let browser;
 let routeReport;
@@ -496,17 +499,45 @@ try {
   const storageFailure = await storageFailureChecks(browser);
   const keyboard = await keyboardChecks(browser);
   const webkit = await runWebKit(playwright);
-  const unknown = await fetch(`${BASE}/final-release-unknown-route`, { redirect: "manual" });
-  const unknownHtml = await unknown.text();
+  const unknownContext = await browser.newContext();
+  const unknownPage = await unknownContext.newPage();
+  const unknownErrors = [];
+  unknownPage.on("pageerror", (error) => unknownErrors.push(error.message));
+  unknownPage.on("console", (message) => {
+    if (message.type() !== "error") return;
+    const expectedDocument404 =
+      message.text().includes("the server responded with a status of 404") &&
+      message.location().url === `${BASE}/final-release-unknown-route`;
+    if (!expectedDocument404) unknownErrors.push(message.text());
+  });
+  const unknownResponse = await unknownPage.goto(
+    `${BASE}/final-release-unknown-route`,
+    { waitUntil: "networkidle" },
+  );
+  const unknown = {
+    path: "/final-release-unknown-route",
+    status: unknownResponse?.status() ?? null,
+    h1Present: (await unknownPage.locator("h1").count()) === 1,
+    title: await unknownPage.title(),
+    noindex: (await unknownPage.locator('meta[name="robots"]').getAttribute("content"))?.includes("noindex") ?? false,
+    browserErrors: unknownErrors,
+  };
+  unknown.passed =
+    unknown.status === 404 &&
+    unknown.h1Present &&
+    unknown.title === "Page Not Found | iLoveTimers" &&
+    unknown.noindex &&
+    unknown.browserErrors.length === 0;
+  await unknownContext.close();
   const canonicalPassed = canonical.every((item) => item.passed);
   const redirectsPassed = redirects.every((item) => item.oneHop);
   const responsivePassed = responsive.every((item) => item.passed);
   const storagePassed = storageFailure.every((item) => item.passed);
   routeReport = {
-    status: canonicalPassed && redirectsPassed && unknown.status === 404 ? "passed" : "failed",
+    status: canonicalPassed && redirectsPassed && unknown.passed ? "passed" : "failed",
     generatedAt: new Date().toISOString(),
     environment: {
-      server: "local React Router production build through server.js",
+      server: "local static build through Vite preview",
       browser: "Bundled Chromium 1217 through Playwright 1.61.1 on Windows",
       originUnderTest: BASE,
       metadataOrigin: ORIGIN,
@@ -514,7 +545,7 @@ try {
     counts: { canonical: canonical.length, redirects: redirects.length, indexable: canonical.filter((item) => item.expectedIndexability === "indexable").length, noindex: canonical.filter((item) => item.expectedIndexability === "noindex").length },
     canonical,
     redirects,
-    unknownRoute: { path: "/final-release-unknown-route", status: unknown.status, h1Present: /<h1\b/i.test(unknownHtml), passed: unknown.status === 404 },
+    unknownRoute: unknown,
     limitations: [
       "Generic interaction activates one safe primary control or reversible setting on each tool route; specialized formulas and workflows are additionally covered by repository tests and audits.",
       "Automated browser checks do not prove audible speaker output, physical-device behavior, assistive-technology interoperability, or every locale and timezone combination.",

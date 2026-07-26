@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { spawnStaticPreview } from "./preview-process.mjs";
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
 const PORT = Number(process.env.ILT_STAGE6_BROWSER_PORT || 3037);
@@ -77,12 +77,15 @@ async function setTheme(page, theme) {
 
 async function readCopiedLink(page) {
   await page.getByRole("button", { name: "Share setup" }).last().click();
-  await page.waitForTimeout(250);
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll('[role="status"]')].some(
+      (node) => (node.textContent || "").trim().length > 0,
+    ),
+  );
   const manual = page.getByLabel("Share link for manual copying");
   if (await manual.count()) return manual.inputValue();
   const link = await page.evaluate(() => navigator.clipboard.readText());
   assert.match(link, /^https:\/\/www\.ilovetimers\.com\//);
-  assert.ok(await page.locator('[role="status"]').evaluateAll((nodes) => nodes.some((node) => (node.textContent || "").trim().length > 0)));
   return link;
 }
 
@@ -268,15 +271,31 @@ async function runCanonicalSweep(browser) {
   const context = await browser.newContext({ baseURL: BASE, viewport: { width: 1365, height: 900 } });
   const page = await context.newPage();
   const browserErrors = [];
-  page.on("pageerror", (error) => browserErrors.push(error.message));
+  let activeRoute = "startup";
+  page.on("pageerror", (error) => browserErrors.push(`${activeRoute}: ${error.message}`));
   page.on("console", (message) => {
-    if (message.type() === "error") browserErrors.push(message.text());
+    if (message.type() === "error") browserErrors.push(`${activeRoute}: ${message.text()}`);
   });
   for (const routePath of paths) {
+    activeRoute = routePath;
     const response = await page.goto(routePath, { waitUntil: "networkidle" });
     assert.equal(response?.status(), 200, `${routePath} did not render HTTP 200`);
     assert.equal(await page.locator("h1").count(), 1, `${routePath} does not have one H1`);
-    assert.ok(await page.locator('link[rel="canonical"]').getAttribute("href"), `${routePath} lacks a canonical`);
+    let canonicalHref;
+    try {
+      canonicalHref = await page.locator('link[rel="canonical"]').getAttribute("href", { timeout: 5_000 });
+    } catch (error) {
+      const diagnostics = await page.evaluate(() => ({
+        title: document.title,
+        h1: document.querySelector("h1")?.textContent?.trim() ?? null,
+        body: document.body.innerText.slice(0, 300),
+      }));
+      throw new Error(
+        `${routePath} did not expose its canonical link after navigation: ${JSON.stringify(diagnostics)}; browser errors: ${browserErrors.slice(-5).join(" | ")}.`,
+        { cause: error },
+      );
+    }
+    assert.ok(canonicalHref, `${routePath} lacks a canonical`);
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), `${routePath} overflows horizontally`);
     assert.doesNotMatch(await page.locator("body").innerText(), /hydration failed|hydration mismatch/i, `${routePath} reports a hydration failure`);
   }
@@ -286,11 +305,7 @@ async function runCanonicalSweep(browser) {
 }
 
 const { chromium } = await loadPlaywright();
-const server = spawn(process.execPath, ["server.js"], {
-  cwd: ROOT,
-  env: { ...process.env, PORT: String(PORT), NODE_ENV: "production" },
-  stdio: "ignore",
-});
+const server = spawnStaticPreview({ root: ROOT, port: PORT });
 
 let browser;
 try {

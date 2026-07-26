@@ -616,7 +616,7 @@
     "currentSitemapStatus": "included in XML and HTML sitemaps",
     "primaryHeading": "Contact iLoveTimers",
     "approximateVisibleSupportingWordCount": 143,
-    "approximateTotalMainWordCount": 147,
+    "approximateTotalMainWordCount": 144,
     "functionalitySummary": "Contact iLoveTimers informational page with 3 supporting subsections.",
     "distinctiveFeatures": [],
     "availableControls": [],
@@ -747,7 +747,7 @@
     "currentSitemapStatus": "included in XML and HTML sitemaps",
     "primaryHeading": "How iLoveTimers Is Made",
     "approximateVisibleSupportingWordCount": 493,
-    "approximateTotalMainWordCount": 506,
+    "approximateTotalMainWordCount": 497,
     "functionalitySummary": "How iLoveTimers Is Made informational page with 8 supporting subsections.",
     "distinctiveFeatures": [],
     "availableControls": [],
@@ -2369,7 +2369,7 @@
       "number: 5",
       "checkbox: checked"
     ],
-    "outputProduced": "Local time 7:14:55 PM Countdown / Ready 00:05:00 Start Reset Countdown presets Choose a common duration or set hours, minutes, and seconds. 1 m 5 m 10 m 15 m 30 m Set countdown Pause before changing the selected duration. Hours Minutes Seconds Apply Completion sound Fullscreen Shortcuts: Space start",
+    "outputProduced": "Local time 3:46:11 AM Countdown / Ready 00:05:00 Start Reset Countdown presets Choose a common duration or set hours, minutes, and seconds. 1 m 5 m 10 m 15 m 30 m Set countdown Pause before changing the selected duration. Hours Minutes Seconds Apply Completion sound Fullscreen Shortcuts: Space start",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -7912,10 +7912,10 @@
       "Sound"
     ],
     "defaultValues": [
-      "time: 19:19",
+      "time: 03:51",
       "checkbox: checked"
     ],
-    "outputProduced": "Current time 7:14:55 PM Alarm time: 7:19 PM / Today Next occurrence: Tue, Jul 21, 7:19 PM / America/New_York Set alarm Reset Alarm settings Choose a clock time. If that time has already passed today, the next occurrence is tomorrow. Alarm time Sound Browser audio may require interaction before it ca",
+    "outputProduced": "Current time 3:46:11 AM Alarm time: 3:51 AM / Today Next occurrence: Sun, Jul 26, 3:51 AM / America/New_York Set alarm Reset Alarm settings Choose a clock time. If that time has already passed today, the next occurrence is tomorrow. Alarm time Sound Browser audio may require interaction before it ca",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -11140,7 +11140,7 @@
     "currentSitemapStatus": "included in XML and HTML sitemaps",
     "primaryHeading": "Fibonacci Clock (Time Zones + Explore)",
     "approximateVisibleSupportingWordCount": 141,
-    "approximateTotalMainWordCount": 318,
+    "approximateTotalMainWordCount": 317,
     "functionalitySummary": "Fibonacci Clock (Time Zones + Explore) is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Live, Explore, Mode Live Explore.",
     "distinctiveFeatures": [
       "fullscreen",
@@ -11318,7 +11318,7 @@
       "checkbox: checked",
       "select: Manual latitude/longitude"
     ],
-    "outputProduced": "Fullscreen Ready 19:14:55 Date Tuesday, July 21, 2026 Manual location · America/New_York Today Sunrise -- Sunset -- Lat 40.71 · Lng -74.01 Next event Unavailable At -- --:-- Time until next event Progress --% Sunrise and sunset are fetched as UTC timestamps and displayed in the time zone you entered",
+    "outputProduced": "Fullscreen Ready 03:46:12 Date Sunday, July 26, 2026 Manual location · America/New_York Today Sunrise -- Sunset -- Lat 40.71 · Lng -74.01 Next event Unavailable At -- --:-- Time until next event Progress --% Sunrise and sunset are fetched as UTC timestamps and displayed in the time zone you entered.",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -11473,8 +11473,8 @@
     "defaultValues": [
       "number: 5000",
       "number: 0",
-      "date: 2026-07-21",
-      "date: 2027-01-21",
+      "date: 2026-07-26",
+      "date: 2027-01-26",
       "select: USD"
     ],
     "outputProduced": "Fullscreen Payoff mode Payoff date Duration (days) Debt estimate inputs These estimates use the balances, dates, and currency you enter. Currency USD CAD EUR GBP AUD NZD JPY Starting balance Target balance Start date Payoff date Start Reset Fullscreen Space start/pause / R reset / F fullscreen Ready",
@@ -11818,7 +11818,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "Local time 19:14:55 Morse output 1 9 : 1 4 : 5 5 Morse clock settings 24-hour Seconds Text view Copy Fullscreen Shortcuts: F fullscreen, T 24-hour, S seconds, V view, C copy Morse Code Clock",
+    "outputProduced": "Local time 03:46:12 Morse output 0 3 : 4 6 : 1 2 Morse clock settings 24-hour Seconds Text view Copy Fullscreen Shortcuts: F fullscreen, T 24-hour, S seconds, V view, C copy Morse Code Clock",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -11996,7 +11996,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "19:14:55 Your local time 5 selected 19:14:55 Toronto America/Toronto Remove 19:14:55 New York America/New_York Remove 16:14:55 Los Angeles America/Los_Angeles Remove 00:14:55 London Europe/London Remove 08:14:55 Tokyo Asia/Tokyo Remove Cities and time zones Search, add, or remove cities. Selected ci",
+    "outputProduced": "03:46:12 Your local time 5 selected 03:46:12 Toronto America/Toronto Remove 03:46:12 New York America/New_York Remove 00:46:12 Los Angeles America/Los_Angeles Remove 08:46:12 London Europe/London Remove 16:46:12 Tokyo Asia/Tokyo Remove Cities and time zones Search, add, or remove cities. Selected ci",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -12173,7 +12173,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "19:14:55.889 Local time America/New_York / Tue, Jul 21 23:14:55.889 UTC Remove UTC / Tue, Jul 21 19:14:55.889 New York Remove America/New_York / Tue, Jul 21 00:14:55.889 London Remove Europe/London / Wed, Jul 22 08:14:55.889 Tokyo Remove Asia/Tokyo / Wed, Jul 22 World clock settings Milliseconds upd",
+    "outputProduced": "03:46:12.083 Local time America/New_York / Sun, Jul 26 07:46:12.083 UTC Remove UTC / Sun, Jul 26 03:46:12.083 New York Remove America/New_York / Sun, Jul 26 08:46:12.083 London Remove Europe/London / Sun, Jul 26 16:46:12.083 Tokyo Remove Asia/Tokyo / Sun, Jul 26 World clock settings Milliseconds upd",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -12480,7 +12480,7 @@
     "primaryHeading": "Current Local Time",
     "approximateVisibleSupportingWordCount": 179,
     "approximateTotalMainWordCount": 245,
-    "functionalitySummary": "Current Local Time is implemented as a specialty time tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Local, Toronto, New York, London, Vancouver 04:14 PM, Toronto 07:14 PM.",
+    "functionalitySummary": "Current Local Time is implemented as a specialty time tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Local, Toronto, New York, London, Vancouver 12:46 AM, Toronto 03:46 AM.",
     "distinctiveFeatures": [
       "fullscreen",
       "copy"
@@ -12492,19 +12492,19 @@
       "Toronto",
       "New York",
       "London",
-      "Vancouver 04:14 PM",
-      "Toronto 07:14 PM",
-      "New York 07:14 PM",
-      "London 12:14 AM",
-      "Milan 01:14 AM",
-      "Beijing 07:14 AM",
+      "Vancouver 12:46 AM",
+      "Toronto 03:46 AM",
+      "New York 03:46 AM",
+      "London 08:46 AM",
+      "Milan 09:46 AM",
+      "Beijing 03:46 PM",
       "Seconds",
       "24-hour"
     ],
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "Local time now · America/New_York 07:14:55 PM Tuesday, July 21, 2026 , week 30 Clock settings Seconds 24-hour Copy Fullscreen Quick compare Local Toronto New York London Vancouver 04:14 PM Toronto 07:14 PM New York 07:14 PM London 12:14 AM Milan 01:14 AM Beijing 07:14 AM Shortcuts: F fullscreen, C c",
+    "outputProduced": "Local time now · America/New_York 03:46:12 AM Sunday, July 26, 2026 , week 30 Clock settings Seconds 24-hour Copy Fullscreen Quick compare Local Toronto New York London Vancouver 12:46 AM Toronto 03:46 AM New York 03:46 AM London 08:46 AM Milan 09:46 AM Beijing 03:46 PM Shortcuts: F fullscreen, C co",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -12632,12 +12632,12 @@
       "Toronto",
       "New York",
       "London",
-      "Vancouver 04:14 PM",
-      "Toronto 07:14 PM",
-      "New York 07:14 PM",
-      "London 12:14 AM",
-      "Milan 01:14 AM",
-      "Beijing 07:14 AM",
+      "Vancouver 12:46 AM",
+      "Toronto 03:46 AM",
+      "New York 03:46 AM",
+      "London 08:46 AM",
+      "Milan 09:46 AM",
+      "Beijing 03:46 PM",
       "Seconds",
       "24-hour"
     ],
@@ -12661,7 +12661,7 @@
     "primaryHeading": "UTC Clock",
     "approximateVisibleSupportingWordCount": 1119,
     "approximateTotalMainWordCount": 1195,
-    "functionalitySummary": "UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 19:14.",
+    "functionalitySummary": "UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 03:46.",
     "distinctiveFeatures": [
       "fullscreen",
       "copy",
@@ -12675,21 +12675,21 @@
       "Toronto",
       "New York",
       "London",
-      "Local (America/New_York) 19:14",
-      "UTC 23:14",
-      "Vancouver 16:14",
-      "Toronto 19:14",
-      "New York 19:14",
-      "London 00:14",
-      "Milan 01:14",
-      "Beijing 07:14",
+      "Local (America/New_York) 03:46",
+      "UTC 07:46",
+      "Vancouver 00:46",
+      "Toronto 03:46",
+      "New York 03:46",
+      "London 08:46",
+      "Milan 09:46",
+      "Beijing 15:46",
       "Seconds",
       "24-hour"
     ],
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "UTC time now 23:14:55 UTC Tuesday, July 21, 2026 , week 30 ISO timestamp: 2026-07-21T23:14:55.907Z Clock settings Seconds 24-hour Copy Fullscreen Quick compare UTC Local Toronto New York London Local (America/New_York) 19:14 UTC 23:14 Vancouver 16:14 Toronto 19:14 New York 19:14 London 00:14 Milan 0",
+    "outputProduced": "UTC time now 07:46:12 UTC Sunday, July 26, 2026 , week 30 ISO timestamp: 2026-07-26T07:46:12.118Z Clock settings Seconds 24-hour Copy Fullscreen Quick compare UTC Local Toronto New York London Local (America/New_York) 03:46 UTC 07:46 Vancouver 00:46 Toronto 03:46 New York 03:46 London 08:46 Milan 09",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -12818,14 +12818,14 @@
       "Toronto",
       "New York",
       "London",
-      "Local (America/New_York) 19:14",
-      "UTC 23:14",
-      "Vancouver 16:14",
-      "Toronto 19:14",
-      "New York 19:14",
-      "London 00:14",
-      "Milan 01:14",
-      "Beijing 07:14",
+      "Local (America/New_York) 03:46",
+      "UTC 07:46",
+      "Vancouver 00:46",
+      "Toronto 03:46",
+      "New York 03:46",
+      "London 08:46",
+      "Milan 09:46",
+      "Beijing 15:46",
       "Seconds",
       "24-hour"
     ],
@@ -12866,7 +12866,7 @@
       "checkbox: checked",
       "select: Local"
     ],
-    "outputProduced": "Local device time 19:14:55 12-hour equivalent: 7:14:55 PM EDT Tuesday, July 21, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC Local mode uses your device clock and timezone. UTC mode formats that same instant as UTC. Copy 24-hour time Fullscreen Shortcuts: F fullscreen / ",
+    "outputProduced": "Local device time 03:46:12 12-hour equivalent: 3:46:12 AM EDT Sunday, July 26, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC Local mode uses your device clock and timezone. UTC mode formats that same instant as UTC. Copy 24-hour time Fullscreen Shortcuts: F fullscreen / C",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -13017,7 +13017,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "Local AM/PM time 7:14:55 PM 24-hour equivalent: 19:14:55 Tuesday, July 21, 2026 / America/New_York Clock settings Seconds Date 24-hour comparison Copy 12-hour time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / D date / H comparison 12 Hour Clock",
+    "outputProduced": "Local AM/PM time 3:46:12 AM 24-hour equivalent: 03:46:12 Sunday, July 26, 2026 / America/New_York Clock settings Seconds Date 24-hour comparison Copy 12-hour time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / D date / H comparison 12 Hour Clock",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -13321,7 +13321,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "19:14:55 Local time · America/New_York Tuesday, July 21, 2026 Clock settings Seconds 24-hour Date Minimal Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, D date, M minimal, 1 12-hour, 2 24-hour Digital Clock",
+    "outputProduced": "03:46:12 Local time · America/New_York Sunday, July 26, 2026 Clock settings Seconds 24-hour Date Minimal Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, D date, M minimal, 1 12-hour, 2 24-hour Digital Clock",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -13492,7 +13492,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "Milliseconds visible / Local 19:14:55.946 Local device time / America/New_York Tuesday, July 21, 2026 Clock settings The display uses your browser and device clock. UTC mode formats the same instant against UTC. 24-hour time Milliseconds UTC mode Date Copy current time Fullscreen Shortcuts: F fullsc",
+    "outputProduced": "Milliseconds visible / Local 03:46:12.163 Local device time / America/New_York Sunday, July 26, 2026 Clock settings The display uses your browser and device clock. UTC mode formats the same instant against UTC. 24-hour time Milliseconds UTC mode Date Copy current time Fullscreen Shortcuts: F fullscr",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -13651,7 +13651,7 @@
       "checkbox: checked",
       "select: BCD digits"
     ],
-    "outputProduced": "Local time · America/New_York · BCD digits 19:14:55 HH MM SS Hours 0 0 0 1 1 1 0 0 1 9 0001 1001 Minutes 0 0 0 1 1 0 1 0 0 4 0001 0100 Seconds 0 1 0 1 5 0 1 0 1 5 0101 0101 BCD shows each decimal digit as 4 binary bits. Tuesday, July 21, 2026 Copy preview 19:14:55 -> 0001 1001 0001 0100 0101 0101 Bi",
+    "outputProduced": "Local time · America/New_York · BCD digits 03:46:12 HH MM SS Hours 0 0 0 0 0 0 0 1 1 3 0000 0011 Minutes 0 1 0 0 4 0 1 1 0 6 0100 0110 Seconds 0 0 0 1 1 0 0 1 0 2 0001 0010 BCD shows each decimal digit as 4 binary bits. Sunday, July 26, 2026 Copy preview 03:46:12 -> 0000 0011 0100 0110 0001 0010 Bin",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -13808,7 +13808,7 @@
       "checkbox: checked",
       "select: Hex HH:MM:SS"
     ],
-    "outputProduced": "Local time · America/New_York · Hex HH:MM:SS 13:0E:37 Hours=13 · Minutes=0E · Seconds=37 Tuesday, July 21, 2026 · Decimal 19:14:55 Hex clock settings Mode Hex HH:MM:SS Hex color Seconds Milliseconds 24-hour Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, M ms, X mode, 1 12-hour, 2 24-hou",
+    "outputProduced": "Local time · America/New_York · Hex HH:MM:SS 03:2E:0C Hours=03 · Minutes=2E · Seconds=0C Sunday, July 26, 2026 · Decimal 03:46:12 Hex clock settings Mode Hex HH:MM:SS Hex color Seconds Milliseconds 24-hour Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, M ms, X mode, 1 12-hour, 2 24-hour",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -13974,11 +13974,11 @@
     ],
     "defaultValues": [
       "text: My Event",
-      "datetime-local: 2026-07-21T20:14",
+      "datetime-local: 2026-07-26T04:46",
       "checkbox: checked",
       "select: My Event"
     ],
-    "outputProduced": "Target: Tue, Jul 21, 2026, 08:14 PM My Event 00:00:00 0:00 Start Reset New Duplicate Delete Fullscreen Adjust target Move the selected event target without editing the date field. -1h -2h -24h +1h +2h +24h Event setup Choose the saved event, target date, and countdown cues. Saved events My Event Eve",
+    "outputProduced": "Target: Sun, Jul 26, 2026, 04:46 AM My Event 00:00:00 0:00 Start Reset New Duplicate Delete Fullscreen Adjust target Move the selected event target without editing the date field. -1h -2h -24h +1h +2h +24h Event setup Choose the saved event, target date, and countdown cues. Saved events My Event Eve",
     "localStorageUse": {
       "implemented": true,
       "keys": [
@@ -14185,10 +14185,10 @@
     ],
     "defaultValues": [
       "text: Selected date",
-      "date: 2026-07-28",
+      "date: 2026-08-02",
       "time: 09:00"
     ],
-    "outputProduced": "Selected date 6d 13:45:04 Target: July 28, 2026, 09:00 6 days, 13 hours, 45 minutes, 4 seconds / Local timezone Target date and time Pick one local date and optional time. The countdown updates live without saved event management. Label Target date Target time Quick targets Tomorrow +7 days +30 days",
+    "outputProduced": "Selected date 7d 05:13:47 Target: August 2, 2026, 09:00 7 days, 5 hours, 13 minutes, 47 seconds / Local timezone Target date and time Pick one local date and optional time. The countdown updates live without saved event management. Label Target date Target time Quick targets Tomorrow +7 days +30 day",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -14363,7 +14363,7 @@
       "Fullscreen"
     ],
     "defaultValues": [],
-    "outputProduced": "Countdown to 2027 163d 05:45:04 Target: Friday, January 1, 2027 at 12:00 AM EST Local timezone: America/New_York Copy countdown Share Fullscreen Time left 163 days / 5 hours / 45 minutes / 4 seconds Shortcuts: C copy / S share / F fullscreen New Year Countdown",
+    "outputProduced": "Countdown to 2027 158d 21:13:47 Target: Friday, January 1, 2027 at 12:00 AM EST Local timezone: America/New_York Copy countdown Share Fullscreen Time left 158 days / 21 hours / 13 minutes / 47 seconds Shortcuts: C copy / S share / F fullscreen New Year Countdown",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -14531,7 +14531,7 @@
       "Fullscreen"
     ],
     "defaultValues": [],
-    "outputProduced": "Countdown to Christmas 2026 156d 05:45:04 Target: December 25, 2026 156 days, 5 hours, 45 minutes, 4 seconds / Local timezone Copy countdown Share Fullscreen Target year 2026 Target weekday Friday Timezone Local timezone Uses fixed December 25 local calendar targeting and your browser/device clock. ",
+    "outputProduced": "Countdown to Christmas 2026 151d 21:13:47 Target: December 25, 2026 151 days, 21 hours, 13 minutes, 47 seconds / Local timezone Copy countdown Share Fullscreen Target year 2026 Target weekday Friday Timezone Local timezone Uses fixed December 25 local calendar targeting and your browser/device clock",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -14682,8 +14682,8 @@
     "currentSitemapStatus": "HTML sitemap only",
     "primaryHeading": "Golden Hour Clock",
     "approximateVisibleSupportingWordCount": 334,
-    "approximateTotalMainWordCount": 468,
-    "functionalitySummary": "Golden Hour Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use GPS, Today, Sound, Final beeps, Date Tuesday, July 21, 2026, Latitude Range: -90 to 90, Longitude Range: -180 to 180.",
+    "approximateTotalMainWordCount": 469,
+    "functionalitySummary": "Golden Hour Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use GPS, Today, Sound, Final beeps, Date Sunday, July 26, 2026, Latitude Range: -90 to 90, Longitude Range: -180 to 180.",
     "distinctiveFeatures": [
       "browser audio",
       "fullscreen",
@@ -14695,7 +14695,7 @@
       "Today",
       "Sound",
       "Final beeps",
-      "Date Tuesday, July 21, 2026",
+      "Date Sunday, July 26, 2026",
       "Latitude Range: -90 to 90",
       "Longitude Range: -180 to 180",
       "Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes)",
@@ -14703,12 +14703,12 @@
     ],
     "defaultValues": [
       "checkbox: checked",
-      "date: 2026-07-21",
+      "date: 2026-07-26",
       "text: 40.7128",
       "text: -74.006",
       "select: Classic: 60 minutes"
     ],
-    "outputProduced": "Sound Final beeps Fullscreen Date Tuesday, July 21, 2026 Latitude Range: -90 to 90 Longitude Range: -180 to 180 Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes) Use GPS Today Shortcuts: F fullscreen · G GPS Next change 7:12 Evening golden hour starts : 7:22 PM",
+    "outputProduced": "Sound Final beeps Fullscreen Date Sunday, July 26, 2026 Latitude Range: -90 to 90 Longitude Range: -180 to 180 Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes) Use GPS Today Shortcuts: F fullscreen · G GPS Next change 2:03:14 Morning golden hour starts : 5:49 ",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -14825,7 +14825,7 @@
       "Use GPS",
       "Sound",
       "Final beeps",
-      "Date Tuesday, July 21, 2026",
+      "Date Sunday, July 26, 2026",
       "Latitude Range: -90 to 90",
       "Longitude Range: -180 to 180",
       "Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes)",
@@ -14869,11 +14869,11 @@
     ],
     "defaultValues": [
       "checkbox: checked",
-      "date: 2026-07-21",
+      "date: 2026-07-26",
       "number: 12",
       "number: 0"
     ],
-    "outputProduced": "Live Sound Final beeps Fullscreen Next major phase countdown Next: First Quarter • 12:12 AM 4:57:49 Status: Live Phase: First Quarter Illumination: 48 % Age: 7.2 days Date Hour Minute Quick Set to noon Now Editing date/time switches to Manual . Use Now for Live. Moon phase settings Date Hour Minute ",
+    "outputProduced": "Live Sound Final beeps Fullscreen Next major phase countdown Next: Full Moon • 9:23 AM 77:37:33 Status: Live Phase: Waxing Gibbous Illumination: 89 % Age: 11.5 days Date Hour Minute Quick Set to noon Now Editing date/time switches to Manual . Use Now for Live. Moon phase settings Date Hour Minute Li",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -15038,7 +15038,7 @@
     "defaultValues": [
       "select: Device (America/New_York)"
     ],
-    "outputProduced": "Use my location Clear location Time zone Device (America/New_York) UTC Toronto (America/Toronto) London (Europe/London) Los Angeles (America/Los_Angeles) Tokyo (Asia/Tokyo) Sydney (Australia/Sydney) Fullscreen Examples New York Toronto London Los Angeles Tokyo Sydney Sun Moon Location needed 19:14:5",
+    "outputProduced": "Use my location Clear location Time zone Device (America/New_York) UTC Toronto (America/Toronto) London (Europe/London) Los Angeles (America/Los_Angeles) Tokyo (Asia/Tokyo) Sydney (Australia/Sydney) Fullscreen Examples New York Toronto London Los Angeles Tokyo Sydney Sun Moon Location needed 03:46:1",
     "localStorageUse": {
       "implemented": true,
       "keys": [
@@ -15204,7 +15204,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "Unix Time (seconds) · Live 1784675696 Milliseconds 1784675696026 Local time Tue, Jul 21, 2026, 7:14:56 PM UTC time Tue, Jul 21, 2026, 23:14:56 UTC Shortcuts: Space live or freeze · C copy seconds · M copy milliseconds · N snap now · F fullscreen Timestamp settings Live timestamp Freeze Snap now Copy",
+    "outputProduced": "Unix Time (seconds) · Live 1785051972 Milliseconds 1785051972254 Local time Sun, Jul 26, 2026, 3:46:12 AM UTC time Sun, Jul 26, 2026, 07:46:12 UTC Shortcuts: Space live or freeze · C copy seconds · M copy milliseconds · N snap now · F fullscreen Timestamp settings Live timestamp Freeze Snap now Copy",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -15363,7 +15363,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "Live @010.37 BMT (UTC+1): 00:14:56 Internet time settings Live Freeze Snap Fullscreen Shortcuts: Space live/freeze, S snap, F fullscreen Swatch Internet Time (.beat) Clock",
+    "outputProduced": "Live @365.41 BMT (UTC+1): 08:46:12 Internet time settings Live Freeze Snap Fullscreen Shortcuts: Space live/freeze, S snap, F fullscreen Swatch Internet Time (.beat) Clock",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -15715,7 +15715,7 @@
       "text: 12:00",
       "text: 12:30"
     ],
-    "outputProduced": "Live Add block Copy Clear Fullscreen F fullscreen / C copy / A add block Live 19:14:56 Tue, Jul 21, 2026 No active block. Today's blocks Auto-sorted by start time Title Start End Notes Delete 09:00 - 11:00 Title Start End Notes Delete 11:00 - 11:45 Title Start End Notes Delete 12:00 - 12:30 Time Blo",
+    "outputProduced": "Live Add block Copy Clear Fullscreen F fullscreen / C copy / A add block Live 03:46:12 Sun, Jul 26, 2026 No active block. Today's blocks Auto-sorted by start time Title Start End Notes Delete 09:00 - 11:00 Title Start End Notes Delete 11:00 - 11:45 Title Start End Notes Delete 12:00 - 12:30 Time Blo",
     "localStorageUse": {
       "implemented": true,
       "keys": [
@@ -15862,7 +15862,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "19:14:56.058 Live Clock settings Live Milliseconds Freeze Hide ms Fullscreen Shortcuts: Space freeze/resume, M toggle ms, F fullscreen Atomic Clock (Device Time Display)",
+    "outputProduced": "03:46:12.289 Live Clock settings Live Milliseconds Freeze Hide ms Fullscreen Shortcuts: Space freeze/resume, M toggle ms, F fullscreen Atomic Clock (Device Time Display)",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -16034,8 +16034,8 @@
       "Seconds"
     ],
     "defaultValues": [
-      "date: 2026-07-21",
-      "text: 19:14",
+      "date: 2026-07-26",
+      "text: 03:46",
       "select: UTC"
     ],
     "outputProduced": "Common timezone pairs PT → ET ET → London London → Paris London → Tokyo ET → India PT → Tokyo UTC → ET UTC → Tokyo Date Time (HH:MM) From time zone New York (ET) Chicago (CT) Denver (MT) Los Angeles (PT) Phoenix (MST) Anchorage (AK) Honolulu (HST) Toronto Vancouver Mexico City Sao Paulo Buenos Aires",
@@ -16254,14 +16254,14 @@
       "Saved presets No presets saved"
     ],
     "defaultValues": [
-      "date: 2026-07-21",
+      "date: 2026-07-26",
       "number: 60",
       "number: 9",
       "number: 17",
       "select: Los Angeles ( America/Los_Angeles )",
       "select: No presets saved"
     ],
-    "outputProduced": "Best shared work window 13:00 UTC All 3 selected zones fit inside 9:00-17:00 local time for a 60-minute meeting. UTC Tue Jul 21, 13:00 Inside window New York Tue Jul 21, 09:00 Inside window London Tue Jul 21, 14:00 Inside window Meeting details The selected date is the UTC reference date for the can",
+    "outputProduced": "Best shared work window 13:00 UTC All 3 selected zones fit inside 9:00-17:00 local time for a 60-minute meeting. UTC Sun Jul 26, 13:00 Inside window New York Sun Jul 26, 09:00 Inside window London Sun Jul 26, 14:00 Inside window Meeting details The selected date is the UTC reference date for the can",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -16458,7 +16458,7 @@
       "checkbox: checked",
       "select: Local"
     ],
-    "outputProduced": "Local device time 19:14:56 Military format: 191456 Standard time: 7:14:56 PM EDT Tue, Jul 21, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC / Zulu Local mode uses your device clock and timezone. Copy military time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / ",
+    "outputProduced": "Local device time 03:46:12 Military format: 034612 Standard time: 3:46:12 AM EDT Sun, Jul 26, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC / Zulu Local mode uses your device clock and timezone. Copy military time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / ",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -16774,7 +16774,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "Copy Fullscreen Seconds 24-hour Use IIII Shortcuts: F fullscreen · C copy · S seconds · I IIII · 1 (12h) · 2 (24h) America/New_York · 12-hour · IIII · seconds VII : XIV : LVI PM 07:14:56 PM Tuesday, July 21, 2026 Roman clock settings Seconds 24-hour Use IIII Copy Fullscreen Shortcuts: F fullscreen, ",
+    "outputProduced": "Copy Fullscreen Seconds 24-hour Use IIII Shortcuts: F fullscreen · C copy · S seconds · I IIII · 1 (12h) · 2 (24h) America/New_York · 12-hour · IIII · seconds III : XLVI : XII AM 03:46:12 AM Sunday, July 26, 2026 Roman clock settings Seconds 24-hour Use IIII Copy Fullscreen Shortcuts: F fullscreen, ",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -16924,7 +16924,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "Seconds 24-hour Date Zen Copy Fullscreen 1 1 9 9 1 1 4 4 5 5 6 6 19:14:56 Tuesday, July 21, 2026 Local time · America/New_York · 24-hour · seconds on Exit (Esc) Retro Flip Clock 1 1 9 9 1 1 4 4 5 5 6 6 19:14:56 America/New_York · 24-hour · seconds on · Tuesday, July 21, 2026 Flip clock settings Disp",
+    "outputProduced": "Seconds 24-hour Date Zen Copy Fullscreen 0 0 3 3 4 4 6 6 1 1 2 2 03:46:12 Sunday, July 26, 2026 Local time · America/New_York · 24-hour · seconds on Exit (Esc) Retro Flip Clock 0 0 3 3 4 4 6 6 1 1 2 2 03:46:12 America/New_York · 24-hour · seconds on · Sunday, July 26, 2026 Flip clock settings Displa",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -17071,7 +17071,7 @@
     "defaultValues": [
       "checkbox: checked"
     ],
-    "outputProduced": "Local time · America/New_York · 24-hour · seconds on 19:14:56 Tuesday, July 21, 2026 Tip: click the card so shortcuts work Clock settings Minimal display options stay secondary to the clock face. Seconds 24-hour Date Zen Copy Fullscreen Shortcuts: F fullscreen, S seconds, T 12/24, D date, Z zen, C c",
+    "outputProduced": "Local time · America/New_York · 24-hour · seconds on 03:46:12 Sunday, July 26, 2026 Tip: click the card so shortcuts work Clock settings Minimal display options stay secondary to the clock face. Seconds 24-hour Date Zen Copy Fullscreen Shortcuts: F fullscreen, S seconds, T 12/24, D date, Z zen, C co",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -19161,9 +19161,9 @@
     ],
     "defaultValues": [
       "date: 2000-01-01",
-      "date: 2026-07-21"
+      "date: 2026-07-26"
     ],
-    "outputProduced": "Age 26y 6m 20d 26 years, 6 months, 20 days As of July 21, 2026 Birth date and age-on date Calculate age as of today or any selected calendar date. Birth date Age on date Copy result Today Reset Total days 9698 Completed months 318 Next birthday 164 days Birth weekday Saturday Date math helper only. ",
+    "outputProduced": "Age 26y 6m 25d 26 years, 6 months, 25 days As of July 26, 2026 Birth date and age-on date Calculate age as of today or any selected calendar date. Birth date Age on date Copy result Today Reset Total days 9703 Completed months 318 Next birthday 159 days Birth weekday Saturday Date math helper only. ",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -19339,10 +19339,10 @@
       "Target date"
     ],
     "defaultValues": [
-      "date: 2026-07-21",
-      "date: 2026-07-28"
+      "date: 2026-07-26",
+      "date: 2026-08-02"
     ],
-    "outputProduced": "Days until 7 days until July 21, 2026 to July 28, 2026 Target date is in the future Start and target date The start date defaults to today, and the target date can be any local calendar date. Start date Target date Presets New Year Christmas Today + 7 days Today + 30 days Copy result Today Reset Wee",
+    "outputProduced": "Days until 7 days until July 26, 2026 to August 2, 2026 Target date is in the future Start and target date The start date defaults to today, and the target date can be any local calendar date. Start date Target date Presets New Year Christmas Today + 7 days Today + 30 days Copy result Today Reset We",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -19517,9 +19517,9 @@
       "Date"
     ],
     "defaultValues": [
-      "date: 2026-07-21"
+      "date: 2026-07-26"
     ],
-    "outputProduced": "Weekday Tuesday July 21, 2026 Weekday Date Find the day of the week for one local calendar date. Date Copy result Today Reset Formatted date July 21, 2026 ISO date 2026-07-21 Type Weekday Local calendar date lookup. It does not add holiday or official calendar rules. Weekday Calculator",
+    "outputProduced": "Weekday Sunday July 26, 2026 Weekend Date Find the day of the week for one local calendar date. Date Copy result Today Reset Formatted date July 26, 2026 ISO date 2026-07-26 Type Weekend Local calendar date lookup. It does not add holiday or official calendar rules. Weekday Calculator",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -19687,9 +19687,9 @@
       "Date"
     ],
     "defaultValues": [
-      "date: 2026-07-21"
+      "date: 2026-07-26"
     ],
-    "outputProduced": "ISO week Week 30 ISO week-year 2026 Monday-start ISO week Date Find the ISO week number for one local calendar date. Date Copy result Today Reset Weekday Tuesday Week start 2026-07-20 Week end 2026-07-26 Calendar year 2026 ISO week-years can differ from calendar years near January 1. Week Number Cal",
+    "outputProduced": "ISO week Week 30 ISO week-year 2026 Monday-start ISO week Date Find the ISO week number for one local calendar date. Date Copy result Today Reset Weekday Sunday Week start 2026-07-20 Week end 2026-07-26 Calendar year 2026 ISO week-years can differ from calendar years near January 1. Week Number Calc",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -20207,9 +20207,9 @@
     ],
     "defaultValues": [
       "number: 7",
-      "number: 21"
+      "number: 26"
     ],
-    "outputProduced": "Next birthday Today Today is the selected birthday. Local calendar countdown Birthday Enter a birthday month and day. Birth year is optional and only adds turning-age context. Month Day Birth year (optional) Copy result Share result Today Reset Next birthday date 2026-07-21 Birthday weekday Tuesday ",
+    "outputProduced": "Next birthday Today Today is the selected birthday. Local calendar countdown Birthday Enter a birthday month and day. Birth year is optional and only adds turning-age context. Month Day Birth year (optional) Copy result Share result Today Reset Next birthday date 2026-07-26 Birthday weekday Sunday T",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -20386,8 +20386,8 @@
       "Target date and time"
     ],
     "defaultValues": [
-      "datetime-local: 2026-07-21T19:14",
-      "datetime-local: 2026-07-21T20:14"
+      "datetime-local: 2026-07-26T03:46",
+      "datetime-local: 2026-07-26T04:46"
     ],
     "outputProduced": "Hours until 1 hour 0d 1h 0m Target is in the future Start and target Compare a local start date/time with a local target date/time. Start date and time Target date and time Presets +1 hour +6 hours +12 hours +24 hours Tomorrow 09:00 Copy result Now Reset Decimal hours 1.00 Total minutes 60 Target lo",
     "localStorageUse": {
@@ -21442,12 +21442,12 @@
       "Unix milliseconds"
     ],
     "defaultValues": [
-      "text: 1784675696",
-      "datetime-local: 2026-07-21T23:14:56",
-      "text: 1784675696000",
+      "text: 1785051972",
+      "datetime-local: 2026-07-26T07:46:12",
+      "text: 1785051972000",
       "select: Auto-detect"
     ],
-    "outputProduced": "Unix timestamp converter 2026-07-21T23:14:56.000Z 2026-07-21 23:14:56 UTC / Local: Jul 21, 2026, 7:14:56 PM EDT Timestamp input Convert a Unix timestamp into UTC, local, ISO, seconds, and milliseconds values. Unix timestamp Auto mode uses the integer digit count. The selected interpretation is shown",
+    "outputProduced": "Unix timestamp converter 2026-07-26T07:46:12.000Z 2026-07-26 07:46:12 UTC / Local: Jul 26, 2026, 3:46:12 AM EDT Timestamp input Convert a Unix timestamp into UTC, local, ISO, seconds, and milliseconds values. Unix timestamp Auto mode uses the integer digit count. The selected interpretation is shown",
     "localStorageUse": {
       "implemented": false,
       "keys": []
@@ -22321,9 +22321,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -22437,9 +22436,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -22553,9 +22551,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -22669,9 +22666,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -22785,9 +22781,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -22901,9 +22896,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -23017,9 +23011,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -23133,9 +23126,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -23249,9 +23241,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -23365,9 +23356,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -23481,9 +23471,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -23597,9 +23586,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -23713,9 +23701,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -23829,9 +23816,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -23945,9 +23931,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -24061,9 +24046,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -24177,9 +24161,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -24212,10 +24195,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /online-timer and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /online-timer.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -24227,7 +24210,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -24293,9 +24276,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -24328,10 +24310,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /stopwatch and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /stopwatch.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -24343,7 +24325,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -24409,9 +24391,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -24444,10 +24425,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /kitchen-timer and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /kitchen-timer.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -24459,7 +24440,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -24525,9 +24506,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -24560,10 +24540,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /round-timer and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /round-timer.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -24575,7 +24555,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -24641,9 +24621,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "E",
     "finalStage3StatusLabel": "functionality consolidated, then permanent redirect",
@@ -24676,10 +24655,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /world-clock and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /world-clock.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -24691,7 +24670,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -24757,9 +24736,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "D",
     "finalStage3StatusLabel": "permanent redirect",
@@ -24792,10 +24770,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /analog-clock and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /analog-clock.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -24807,7 +24785,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -24873,9 +24851,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "E",
     "finalStage3StatusLabel": "functionality consolidated, then permanent redirect",
@@ -24908,10 +24885,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /analog-clock and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /analog-clock.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -24923,7 +24900,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -24989,9 +24966,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "E",
     "finalStage3StatusLabel": "functionality consolidated, then permanent redirect",
@@ -25024,10 +25000,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /analog-clock and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /analog-clock.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -25039,7 +25015,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -25105,9 +25081,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "E",
     "finalStage3StatusLabel": "functionality consolidated, then permanent redirect",
@@ -25140,10 +25115,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /digital-clock and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /digital-clock.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -25155,7 +25130,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -25221,9 +25196,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "E",
     "finalStage3StatusLabel": "functionality consolidated, then permanent redirect",
@@ -25256,10 +25230,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /digital-clock and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /digital-clock.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -25271,7 +25245,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -25337,9 +25311,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "E",
     "finalStage3StatusLabel": "functionality consolidated, then permanent redirect",
@@ -25372,10 +25345,10 @@
     "primaryHeading": null,
     "approximateVisibleSupportingWordCount": 0,
     "approximateTotalMainWordCount": 0,
-    "functionalitySummary": "Permanently redirects to /digital-clock and drops unsupported legacy query parameters.",
+    "functionalitySummary": "Preserves the query string and permanently redirects to /digital-clock.",
     "distinctiveFeatures": [
       "one-hop 301",
-      "unsupported-query removal"
+      "query-string preservation"
     ],
     "availableControls": [],
     "defaultValues": [],
@@ -25387,7 +25360,7 @@
     "urlParameterUse": {
       "implemented": true,
       "parameters": [
-        "unsupported legacy query parameters are removed"
+        "all existing query parameters are preserved"
       ]
     },
     "closestOverlaps": [
@@ -25453,9 +25426,8 @@
     "issues": [],
     "evidenceFiles": [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
-      "public/_redirects"
+      "public/_redirects",
+      "netlify.toml"
     ],
     "finalStage3Status": "E",
     "finalStage3StatusLabel": "functionality consolidated, then permanent redirect",

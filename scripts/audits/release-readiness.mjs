@@ -1,4 +1,4 @@
-import { spawn, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -6,10 +6,13 @@ import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
 import { RELATED_TOOL_LINKS } from "../../app/clients/config/relatedTools.js";
 import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
 import {
-  STAGE3_NEW_REDIRECTS,
   STAGE3_NOINDEX_ROUTE_SET,
   STAGE3_REDIRECT_SOURCE_SET,
 } from "../../app/config/routeArchitecture.js";
+import {
+  readStaticRedirectRules,
+  spawnStaticPreview,
+} from "../tests/preview-process.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const PORT = 3015;
@@ -334,11 +337,7 @@ for (const route of [
   check(footerRoutes.includes(route), `Trust route is missing from footer: ${route}`);
 }
 
-const server = spawn(process.execPath, ["server.js"], {
-  cwd: ROOT,
-  env: { ...process.env, NODE_ENV: "production", PORT: String(PORT) },
-  stdio: "ignore",
-});
+const server = spawnStaticPreview({ root: ROOT, port: PORT });
 const pageResults = [];
 
 try {
@@ -415,13 +414,10 @@ try {
     pageResults.push({ route, title: titles[0], description: descriptions[0], h1: h1s[0], main });
   }
 
+  const { permanent } = await readStaticRedirectRules(ROOT);
   for (const [source, destination] of Object.entries(PERMANENT_REDIRECTS)) {
-    const response = await fetch(`${BASE}${source}?release=1`, { redirect: "manual" });
-    check(response.status === 301, `${source} returned ${response.status}, expected 301.`);
-    const expectedLocation = Object.hasOwn(STAGE3_NEW_REDIRECTS, source)
-      ? destination
-      : `${destination}?release=1`;
-    check(response.headers.get("location") === expectedLocation, `${source} is not a one-hop redirect with the declared parameter policy.`);
+    check(permanent.get(source) === destination, `${source} is missing its static one-hop 301 mapping.`);
+    check(permanent.get(`${source}/`) === destination, `${source}/ is missing its static one-hop 301 mapping.`);
   }
 
   const unknown = await fetch(`${BASE}/release-readiness-unknown-route`, { redirect: "manual" });

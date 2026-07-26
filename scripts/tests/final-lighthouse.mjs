@@ -1,8 +1,9 @@
-import { spawn, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { spawnStaticPreview } from "./preview-process.mjs";
 
 const ROOT = path.resolve(import.meta.dirname, "../..");
 const PORT = Number(process.env.ILT_FINAL_LIGHTHOUSE_PORT || 3050);
@@ -11,6 +12,10 @@ const QUALITY_PATH = path.join(ROOT, "docs/final-performance-accessibility.json"
 const CHROME = process.env.ILT_BROWSER_PATH || path.join(
   os.homedir(),
   "AppData/Local/ms-playwright/chromium-1217/chrome-win64/chrome.exe",
+);
+const NPX_CLI = path.join(
+  path.dirname(process.execPath),
+  "node_modules/npm/bin/npx-cli.js",
 );
 const routes = [
   { family: "homepage", path: "/" },
@@ -40,11 +45,8 @@ function metric(report, id) {
 }
 
 if (!existsSync(CHROME)) throw new Error(`Chromium executable not found at ${CHROME}`);
-const server = spawn(process.execPath, ["server.js"], {
-  cwd: ROOT,
-  env: { ...process.env, NODE_ENV: "production", PORT: String(PORT) },
-  stdio: "ignore",
-});
+if (!existsSync(NPX_CLI)) throw new Error(`npx CLI not found at ${NPX_CLI}`);
+const server = spawnStaticPreview({ root: ROOT, port: PORT });
 
 const reuseReports = process.env.ILT_LIGHTHOUSE_REUSE_REPORTS === "1";
 const priorQuality = JSON.parse(await readFile(QUALITY_PATH, "utf8"));
@@ -79,7 +81,11 @@ try {
       let run = { status: 0, stderr: "" };
       if (!reusable) {
         console.log(`Lighthouse ${formFactor} ${route.path}`);
-        run = spawnSync("npx.cmd", args, { cwd: ROOT, encoding: "utf8", timeout: 3 * 60 * 1000, shell: process.platform === "win32" });
+        run = spawnSync(process.execPath, [NPX_CLI, ...args], {
+          cwd: ROOT,
+          encoding: "utf8",
+          timeout: 3 * 60 * 1000,
+        });
       } else {
         console.log(`Merging completed Lighthouse report ${formFactor} ${route.path}`);
       }
@@ -89,6 +95,13 @@ try {
       }
       if (run.status !== 0) cleanupWarnings.push(`${formFactor} ${route.path}: Lighthouse returned ${run.status} after writing a complete report; stderr was ${run.stderr || "not provided"}`);
       const report = JSON.parse(await readFile(output, "utf8"));
+      if (report.runtimeError) {
+        failures.push(
+          `${formFactor} ${route.path}: ${report.runtimeError.code ?? "Lighthouse runtime error"} — ${report.runtimeError.message ?? "No message provided"}`,
+        );
+        await rm(output, { force: true });
+        continue;
+      }
       const result = {
         family: route.family,
         route: route.path,
@@ -129,7 +142,7 @@ const poor = results.filter((result) => result.thresholdStatus === "poor thresho
 quality.performance.lighthouse = {
   status: failures.length === 0 && results.length === routes.length * 2 && poor.length === 0 ? "passed" : "failed",
   tool: `Lighthouse ${results[0]?.lighthouseVersion || "unknown"}`,
-  commandEnvironment: "Local React Router production server, bundled Chromium 1217, Lighthouse simulated mobile and desktop, no field data.",
+  commandEnvironment: "Local static build through Vite preview, bundled Chromium 1217, Lighthouse simulated mobile and desktop, no field data.",
   thresholds: {
     officialCoreWebVitalsGood: { lcpMilliseconds: 2500, cls: 0.1, inpMilliseconds: 200 },
     labResponsivenessProxy: { metric: "Total Blocking Time", goodMilliseconds: 200, poorMilliseconds: 600 },

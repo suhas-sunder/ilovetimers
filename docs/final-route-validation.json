@@ -1,8 +1,8 @@
 {
   "status": "passed",
-  "generatedAt": "2026-07-21T23:50:12.696Z",
+  "generatedAt": "2026-07-26T08:52:21.024Z",
   "environment": {
-    "server": "local React Router production build through server.js",
+    "server": "local static build through Vite preview",
     "browser": "Bundled Chromium 1217 through Playwright 1.61.1 on Windows",
     "originUnderTest": "http://127.0.0.1:3047",
     "metadataOrigin": "https://www.ilovetimers.com"
@@ -5004,6 +5004,9 @@
     "path": "/final-release-unknown-route",
     "status": 404,
     "h1Present": true,
+    "title": "Page Not Found | iLoveTimers",
+    "noindex": true,
+    "browserErrors": [],
     "passed": true
   },
   "limitations": [

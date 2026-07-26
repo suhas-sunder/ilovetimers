@@ -5,7 +5,6 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  redirect,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -25,7 +24,6 @@ import {
   useThemeMode,
 } from "./clients/hooks/useThemeMode";
 import { SITE_IDENTITY_JSON_LD } from "./clients/lib/siteIdentity";
-import { getPermanentRedirect } from "./config/redirects.js";
 import {
   STAGE3_NOINDEX_ROUTE_SET,
   STAGE3_REDIRECT_SOURCE_SET,
@@ -48,39 +46,6 @@ const themeInitScript = `
   }
 })();
 `;
-
-/* ---------- Trailing slash helpers (one place, app-level) ---------- */
-function needsStrip(pathname: string) {
-  if (pathname === "/") return false;
-  if (!/\/+$/.test(pathname)) return false;
-  const last = pathname.split("/").filter(Boolean).pop() ?? "";
-  const looksLikeFile = /\.[a-zA-Z0-9]+$/.test(last);
-  return !looksLikeFile;
-}
-function strip(pathname: string) {
-  return pathname.replace(/\/+$/, "") || "/";
-}
-
-/* ---------- Loader does the canonical 301 ---------- */
-export async function loader({ request }: Route.LoaderArgs) {
-  const url = new URL(request.url);
-  const normalizedPath = needsStrip(url.pathname)
-    ? strip(url.pathname)
-    : url.pathname;
-  const permanentDestination = getPermanentRedirect(normalizedPath);
-
-  if (permanentDestination) {
-    const preservedSearch = STAGE3_REDIRECT_SOURCE_SET.has(normalizedPath)
-      ? ""
-      : url.search;
-    return redirect(permanentDestination + preservedSearch, { status: 301 });
-  }
-
-  if (normalizedPath !== url.pathname) {
-    return redirect(normalizedPath + url.search, { status: 301 });
-  }
-  return null;
-}
 
 export const links: Route.LinksFunction = () => [];
 

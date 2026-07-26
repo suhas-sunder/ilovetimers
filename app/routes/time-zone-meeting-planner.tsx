@@ -109,9 +109,19 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export function loader() {
-  return json({ today: new Date().toISOString().slice(0, 10) });
+function currentUtcDate() {
+  return { today: new Date().toISOString().slice(0, 10) };
 }
+
+export function loader() {
+  return json(currentUtcDate());
+}
+
+export function clientLoader() {
+  return currentUtcDate();
+}
+
+clientLoader.hydrate = true as const;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));

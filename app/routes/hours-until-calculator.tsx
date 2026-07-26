@@ -13,6 +13,12 @@ export function loader() {
   return { now: nowDateTimeInputValue() };
 }
 
+export function clientLoader() {
+  return { now: nowDateTimeInputValue() };
+}
+
+clientLoader.hydrate = true as const;
+
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
     title: "Hours Until Calculator | Time Remaining to a Date",

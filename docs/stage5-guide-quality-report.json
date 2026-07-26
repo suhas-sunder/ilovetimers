@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T00:28:41.295Z",
+  "generatedAt": "2026-07-26T08:56:06.956Z",
   "stage": 5,
   "summary": {
     "guideIndexRoutes": 1,
@@ -296,107 +296,107 @@
     {
       "url": "https://developer.chrome.com/docs/web-platform/page-lifecycle-api",
       "status": 200,
-      "finalUrl": "https://developer.chrome.com/docs/web-platform/page-lifecycle-api?hl=fr",
+      "finalUrl": "https://developer.chrome.com/docs/web-platform/page-lifecycle-api",
       "reachable": true,
-      "checkedInMs": 479
+      "checkedInMs": 389
     },
     {
       "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout",
       "status": 200,
       "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout",
       "reachable": true,
-      "checkedInMs": 52
+      "checkedInMs": 57
     },
     {
       "url": "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API",
       "status": 200,
       "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API",
       "reachable": true,
-      "checkedInMs": 58
+      "checkedInMs": 188
     },
     {
       "url": "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay",
       "status": 200,
       "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay",
       "reachable": true,
-      "checkedInMs": 56
+      "checkedInMs": 116
     },
     {
       "url": "https://webaudio.github.io/web-audio-api/",
       "status": 200,
       "finalUrl": "https://webaudio.github.io/web-audio-api/",
       "reachable": true,
-      "checkedInMs": 35
+      "checkedInMs": 90
     },
     {
       "url": "https://www.w3.org/TR/hr-time-3/",
       "status": 200,
       "finalUrl": "https://www.w3.org/TR/hr-time-3/",
       "reachable": true,
-      "checkedInMs": 44
+      "checkedInMs": 59
     },
     {
       "url": "https://html.spec.whatwg.org/multipage/timers.html",
       "status": 200,
       "finalUrl": "https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html",
       "reachable": true,
-      "checkedInMs": 337
+      "checkedInMs": 352
     },
     {
       "url": "https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-objects",
       "status": 200,
       "finalUrl": "https://tc39.es/ecma262/multipage/numbers-and-dates.html",
       "reachable": true,
-      "checkedInMs": 58
+      "checkedInMs": 132
     },
     {
       "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime",
       "status": 200,
       "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime",
       "reachable": true,
-      "checkedInMs": 57
+      "checkedInMs": 107
     },
     {
       "url": "https://tc39.es/ecma402/#sec-iana-time-zone-database",
       "status": 200,
       "finalUrl": "https://tc39.es/ecma402/",
       "reachable": true,
-      "checkedInMs": 35
+      "checkedInMs": 163
     },
     {
       "url": "https://www.iana.org/time-zones",
       "status": 200,
       "finalUrl": "https://www.iana.org/time-zones",
       "reachable": true,
-      "checkedInMs": 69
+      "checkedInMs": 124
     },
     {
       "url": "https://tc39.es/proposal-temporal/docs/timezone.html",
       "status": 200,
       "finalUrl": "https://tc39.es/proposal-temporal/docs/timezone.html",
       "reachable": true,
-      "checkedInMs": 36
+      "checkedInMs": 154
     },
     {
       "url": "https://html.spec.whatwg.org/multipage/webstorage.html",
       "status": 200,
       "finalUrl": "https://html.spec.whatwg.org/multipage/webstorage.html",
       "reachable": true,
-      "checkedInMs": 240
+      "checkedInMs": 255
     },
     {
       "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage",
       "status": 200,
       "finalUrl": "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage",
       "reachable": true,
-      "checkedInMs": 57
+      "checkedInMs": 188
     },
     {
       "url": "https://storage.spec.whatwg.org/",
       "status": 200,
       "finalUrl": "https://storage.spec.whatwg.org/",
       "reachable": true,
-      "checkedInMs": 242
+      "checkedInMs": 304
     }
   ],
   "browserValidation": {

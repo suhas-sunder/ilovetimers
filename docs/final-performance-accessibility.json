@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "generatedAt": "2026-07-21T23:50:12.697Z",
+  "generatedAt": "2026-07-26T08:52:21.025Z",
   "environment": "Local production build on Windows; Playwright Chromium 1217 and bundled WebKit 2272 where available. Network and CPU were not throttled.",
   "accessibility": {
     "automatedCanonicalCoverage": 132,
@@ -28,14 +28,14 @@
       {
         "route": "/",
         "viewport": "mobile-320",
-        "lcp": 96,
+        "lcp": 80,
         "cls": 0,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 33,
-        "loadEvent": 39.29999998211861,
-        "transferBytes": 338097,
-        "decodedBytes": 804856,
+        "domContentLoaded": 66.39999997615814,
+        "loadEvent": 69.30000001192093,
+        "transferBytes": 351121,
+        "decodedBytes": 823230,
         "resourceCount": 13,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -46,14 +46,14 @@
       {
         "route": "/countdown-timer",
         "viewport": "mobile-320",
-        "lcp": 68,
+        "lcp": 48,
         "cls": 0.012456582031250002,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 40.099999994039536,
-        "loadEvent": 46.5,
-        "transferBytes": 32409,
-        "decodedBytes": 865182,
+        "domContentLoaded": 35.69999998807907,
+        "loadEvent": 40.69999998807907,
+        "transferBytes": 30428,
+        "decodedBytes": 89911,
         "resourceCount": 18,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -68,10 +68,10 @@
         "cls": 0.00991564453125,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 22.19999998807907,
-        "loadEvent": 35.29999998211861,
-        "transferBytes": 5439,
-        "decodedBytes": 807220,
+        "domContentLoaded": 26.399999976158142,
+        "loadEvent": 33.5,
+        "transferBytes": 9623,
+        "decodedBytes": 28682,
         "resourceCount": 15,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -82,14 +82,14 @@
       {
         "route": "/time-calculator",
         "viewport": "mobile-320",
-        "lcp": 72,
+        "lcp": 52,
         "cls": 0.000178828125,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 35,
-        "loadEvent": 38.19999998807907,
-        "transferBytes": 7950,
-        "decodedBytes": 813992,
+        "domContentLoaded": 25.400000035762787,
+        "loadEvent": 28,
+        "transferBytes": 11734,
+        "decodedBytes": 36405,
         "resourceCount": 15,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -100,14 +100,14 @@
       {
         "route": "/world-clock",
         "viewport": "mobile-320",
-        "lcp": 44,
+        "lcp": 28,
         "cls": 0,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 25,
-        "loadEvent": 36.900000005960464,
-        "transferBytes": 3941,
-        "decodedBytes": 841337,
+        "domContentLoaded": 21.600000023841858,
+        "loadEvent": 26.399999976158142,
+        "transferBytes": 8129,
+        "decodedBytes": 25222,
         "resourceCount": 15,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -118,14 +118,14 @@
       {
         "route": "/guides/how-browser-timers-measure-time",
         "viewport": "mobile-320",
-        "lcp": 72,
+        "lcp": 36,
         "cls": 0,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 35.900000005960464,
-        "loadEvent": 38.80000001192093,
-        "transferBytes": 11476,
-        "decodedBytes": 805144,
+        "domContentLoaded": 15.699999988079071,
+        "loadEvent": 30.599999964237213,
+        "transferBytes": 9843,
+        "decodedBytes": 29294,
         "resourceCount": 14,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -136,14 +136,14 @@
       {
         "route": "/sitemap",
         "viewport": "mobile-320",
-        "lcp": 52,
+        "lcp": 48,
         "cls": 0,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 38.099999994039536,
-        "loadEvent": 41.29999998211861,
-        "transferBytes": 7750,
-        "decodedBytes": 815055,
+        "domContentLoaded": 33.30000001192093,
+        "loadEvent": 35.59999996423721,
+        "transferBytes": 11255,
+        "decodedBytes": 40249,
         "resourceCount": 13,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -154,14 +154,14 @@
       {
         "route": "/1-minute-timer",
         "viewport": "mobile-320",
-        "lcp": 40,
+        "lcp": 28,
         "cls": 0.016303725585937498,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 29.5,
-        "loadEvent": 31.599999994039536,
-        "transferBytes": 9917,
-        "decodedBytes": 820987,
+        "domContentLoaded": 22.099999964237213,
+        "loadEvent": 26.30000001192093,
+        "transferBytes": 14022,
+        "decodedBytes": 42449,
         "resourceCount": 17,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -172,14 +172,14 @@
       {
         "route": "/",
         "viewport": "desktop",
-        "lcp": 112,
+        "lcp": 68,
         "cls": 0,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 37.900000005960464,
-        "loadEvent": 86.40000000596046,
-        "transferBytes": 338097,
-        "decodedBytes": 804856,
+        "domContentLoaded": 63.39999997615814,
+        "loadEvent": 66.09999996423721,
+        "transferBytes": 351121,
+        "decodedBytes": 823230,
         "resourceCount": 13,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -190,14 +190,14 @@
       {
         "route": "/countdown-timer",
         "viewport": "desktop",
-        "lcp": 56,
+        "lcp": 64,
         "cls": 0.0046052099033784015,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 20.100000023841858,
-        "loadEvent": 45.5,
-        "transferBytes": 32409,
-        "decodedBytes": 865182,
+        "domContentLoaded": 15.899999976158142,
+        "loadEvent": 41,
+        "transferBytes": 30428,
+        "decodedBytes": 89911,
         "resourceCount": 18,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -212,10 +212,10 @@
         "cls": 0.003815960677499139,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 19.69999998807907,
-        "loadEvent": 34.400000005960464,
-        "transferBytes": 5439,
-        "decodedBytes": 807220,
+        "domContentLoaded": 26,
+        "loadEvent": 33.69999998807907,
+        "transferBytes": 9623,
+        "decodedBytes": 28682,
         "resourceCount": 15,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -226,14 +226,14 @@
       {
         "route": "/time-calculator",
         "viewport": "desktop",
-        "lcp": 48,
+        "lcp": 52,
         "cls": 0.0013906515137284367,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 22,
-        "loadEvent": 35.80000001192093,
-        "transferBytes": 7950,
-        "decodedBytes": 813992,
+        "domContentLoaded": 30.799999952316284,
+        "loadEvent": 34.19999998807907,
+        "transferBytes": 11734,
+        "decodedBytes": 36405,
         "resourceCount": 15,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -244,14 +244,14 @@
       {
         "route": "/world-clock",
         "viewport": "desktop",
-        "lcp": 60,
+        "lcp": 44,
         "cls": 0,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 21.30000001192093,
-        "loadEvent": 36.099999994039536,
-        "transferBytes": 3941,
-        "decodedBytes": 841337,
+        "domContentLoaded": 22.100000023841858,
+        "loadEvent": 29.69999998807907,
+        "transferBytes": 8129,
+        "decodedBytes": 25222,
         "resourceCount": 15,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -262,14 +262,14 @@
       {
         "route": "/guides/how-browser-timers-measure-time",
         "viewport": "desktop",
-        "lcp": 60,
+        "lcp": 48,
         "cls": 0,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 18.900000005960464,
-        "loadEvent": 23.69999998807907,
-        "transferBytes": 11476,
-        "decodedBytes": 805144,
+        "domContentLoaded": 15.599999964237213,
+        "loadEvent": 20.899999976158142,
+        "transferBytes": 9843,
+        "decodedBytes": 29294,
         "resourceCount": 14,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -280,14 +280,14 @@
       {
         "route": "/sitemap",
         "viewport": "desktop",
-        "lcp": 60,
+        "lcp": 48,
         "cls": 0,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 24.80000001192093,
-        "loadEvent": 45,
-        "transferBytes": 7750,
-        "decodedBytes": 815055,
+        "domContentLoaded": 16.600000023841858,
+        "loadEvent": 22.399999976158142,
+        "transferBytes": 11255,
+        "decodedBytes": 40249,
         "resourceCount": 13,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -298,14 +298,14 @@
       {
         "route": "/1-minute-timer",
         "viewport": "desktop",
-        "lcp": 48,
+        "lcp": 44,
         "cls": 0.05729188548529207,
         "longTasks": 0,
         "longTaskDuration": 0,
-        "domContentLoaded": 22.80000001192093,
-        "loadEvent": 34.599999994039536,
-        "transferBytes": 9917,
-        "decodedBytes": 820987,
+        "domContentLoaded": 17.80000001192093,
+        "loadEvent": 29.30000001192093,
+        "transferBytes": 14022,
+        "decodedBytes": 42449,
         "resourceCount": 17,
         "scriptBytes": 0,
         "imageBytes": 0,
@@ -317,7 +317,7 @@
     "lighthouse": {
       "status": "passed",
       "tool": "Lighthouse 13.4.1",
-      "commandEnvironment": "Local React Router production server, bundled Chromium 1217, Lighthouse simulated mobile and desktop, no field data.",
+      "commandEnvironment": "Local static build through Vite preview, bundled Chromium 1217, Lighthouse simulated mobile and desktop, no field data.",
       "thresholds": {
         "officialCoreWebVitalsGood": {
           "lcpMilliseconds": 2500,
@@ -337,23 +337,23 @@
           "route": "/",
           "formFactor": "mobile",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:17:47.264Z",
+          "fetchTime": "2026-07-26T08:52:33.132Z",
           "scores": {
-            "performance": 97,
+            "performance": 91,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 2113.1495,
-              "displayValue": "2.1 s",
-              "score": 0.81
+              "value": 2709.6744579281867,
+              "displayValue": "2.7 s",
+              "score": 0.6
             },
             "largestContentfulPaint": {
-              "value": 2188.1495,
-              "displayValue": "2.2 s",
-              "score": 0.95
+              "value": 2784.6744579281867,
+              "displayValue": "2.8 s",
+              "score": 0.83
             },
             "cumulativeLayoutShift": {
               "value": 0,
@@ -366,14 +366,14 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 2113.1495,
-              "displayValue": "2.1 s",
-              "score": 0.99
+              "value": 2709.6744579281867,
+              "displayValue": "2.7 s",
+              "score": 0.96
             },
             "interactive": {
-              "value": 2195.6495000000004,
-              "displayValue": "2.2 s",
-              "score": 0.99
+              "value": 2792.1744579281867,
+              "displayValue": "2.8 s",
+              "score": 0.97
             }
           },
           "resources": [
@@ -381,37 +381,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 13,
-              "transferSize": 352231
+              "transferSize": 452873
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 9,
-              "transferSize": 150967
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 10,
+              "transferSize": 152452
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11421
+              "transferSize": 116784
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -422,6 +416,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -434,30 +434,30 @@
           ],
           "longTasks": 1,
           "thirdPartySummary": [],
-          "thresholdStatus": "good lab thresholds"
+          "thresholdStatus": "needs improvement but not a material poor-threshold regression"
         },
         {
           "family": "basic timer",
           "route": "/countdown-timer",
           "formFactor": "mobile",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:17:58.975Z",
+          "fetchTime": "2026-07-26T08:52:43.275Z",
           "scores": {
-            "performance": 95,
+            "performance": 91,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 2259.1848,
-              "displayValue": "2.3 s",
-              "score": 0.76
+              "value": 2708.298363240423,
+              "displayValue": "2.7 s",
+              "score": 0.6
             },
             "largestContentfulPaint": {
-              "value": 2523.7772,
-              "displayValue": "2.5 s",
-              "score": 0.89
+              "value": 2783.298363240423,
+              "displayValue": "2.8 s",
+              "score": 0.83
             },
             "cumulativeLayoutShift": {
               "value": 0.02137603978345152,
@@ -470,14 +470,14 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 2259.1848,
-              "displayValue": "2.3 s",
-              "score": 0.99
+              "value": 2708.298363240423,
+              "displayValue": "2.7 s",
+              "score": 0.96
             },
             "interactive": {
-              "value": 2531.2772000000004,
-              "displayValue": "2.5 s",
-              "score": 0.98
+              "value": 2790.798363240423,
+              "displayValue": "2.8 s",
+              "score": 0.97
             }
           },
           "resources": [
@@ -485,37 +485,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 18,
-              "transferSize": 375930
+              "transferSize": 461865
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 14,
-              "transferSize": 174749
+              "requestCount": 15,
+              "transferSize": 175030
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "transferSize": 166824
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11299
+              "transferSize": 103198
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5513
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -526,6 +520,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -545,23 +545,23 @@
           "route": "/interval-timer",
           "formFactor": "mobile",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:18:10.578Z",
+          "fetchTime": "2026-07-26T08:52:56.024Z",
           "scores": {
-            "performance": 96,
+            "performance": 93,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 2111.3781,
-              "displayValue": "2.1 s",
-              "score": 0.81
+              "value": 2557.131395866128,
+              "displayValue": "2.6 s",
+              "score": 0.65
             },
             "largestContentfulPaint": {
-              "value": 2374.06715,
-              "displayValue": "2.4 s",
-              "score": 0.92
+              "value": 2632.131395866128,
+              "displayValue": "2.6 s",
+              "score": 0.87
             },
             "cumulativeLayoutShift": {
               "value": 0.02309704880622827,
@@ -574,13 +574,13 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 2111.3781,
-              "displayValue": "2.1 s",
-              "score": 0.99
+              "value": 2557.131395866128,
+              "displayValue": "2.6 s",
+              "score": 0.97
             },
             "interactive": {
-              "value": 2381.56715,
-              "displayValue": "2.4 s",
+              "value": 2639.6313958661285,
+              "displayValue": "2.6 s",
               "score": 0.98
             }
           },
@@ -589,37 +589,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 15,
-              "transferSize": 356088
+              "transferSize": 442408
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 11,
-              "transferSize": 155181
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 12,
+              "transferSize": 156350
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11064
+              "transferSize": 102421
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -634,6 +628,12 @@
               "transferSize": 0
             },
             {
+              "resourceType": "other",
+              "label": "Other",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
               "resourceType": "third-party",
               "label": "Third-party",
               "requestCount": 0,
@@ -642,30 +642,30 @@
           ],
           "longTasks": 1,
           "thirdPartySummary": [],
-          "thresholdStatus": "good lab thresholds"
+          "thresholdStatus": "needs improvement but not a material poor-threshold regression"
         },
         {
           "family": "calculator",
           "route": "/time-calculator",
           "formFactor": "mobile",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:18:21.992Z",
+          "fetchTime": "2026-07-26T08:53:08.826Z",
           "scores": {
-            "performance": 96,
+            "performance": 93,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 2111.8017,
-              "displayValue": "2.1 s",
-              "score": 0.81
+              "value": 2556.8473632401924,
+              "displayValue": "2.6 s",
+              "score": 0.65
             },
             "largestContentfulPaint": {
-              "value": 2390.70255,
-              "displayValue": "2.4 s",
-              "score": 0.92
+              "value": 2631.8473632401924,
+              "displayValue": "2.6 s",
+              "score": 0.87
             },
             "cumulativeLayoutShift": {
               "value": 0.02298264311673005,
@@ -678,13 +678,13 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 2111.8017,
-              "displayValue": "2.1 s",
-              "score": 0.99
+              "value": 2556.8473632401924,
+              "displayValue": "2.6 s",
+              "score": 0.97
             },
             "interactive": {
-              "value": 2398.20255,
-              "displayValue": "2.4 s",
+              "value": 2639.347363240193,
+              "displayValue": "2.6 s",
               "score": 0.98
             }
           },
@@ -693,37 +693,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 15,
-              "transferSize": 357362
+              "transferSize": 440368
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 11,
-              "transferSize": 156502
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 12,
+              "transferSize": 157559
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11017
+              "transferSize": 99172
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -738,6 +732,12 @@
               "transferSize": 0
             },
             {
+              "resourceType": "other",
+              "label": "Other",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
               "resourceType": "third-party",
               "label": "Third-party",
               "requestCount": 0,
@@ -746,30 +746,30 @@
           ],
           "longTasks": 1,
           "thirdPartySummary": [],
-          "thresholdStatus": "good lab thresholds"
+          "thresholdStatus": "needs improvement but not a material poor-threshold regression"
         },
         {
           "family": "world time",
           "route": "/world-clock",
           "formFactor": "mobile",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:18:33.589Z",
+          "fetchTime": "2026-07-26T08:53:21.653Z",
           "scores": {
-            "performance": 96,
+            "performance": 93,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 2111.4151,
-              "displayValue": "2.1 s",
-              "score": 0.81
+              "value": 2558.0571882299014,
+              "displayValue": "2.6 s",
+              "score": 0.65
             },
             "largestContentfulPaint": {
-              "value": 2336.4151,
-              "displayValue": "2.3 s",
-              "score": 0.93
+              "value": 2633.0571882299014,
+              "displayValue": "2.6 s",
+              "score": 0.87
             },
             "cumulativeLayoutShift": {
               "value": 0,
@@ -782,14 +782,14 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 2111.4151,
-              "displayValue": "2.1 s",
-              "score": 0.99
+              "value": 2558.0571882299014,
+              "displayValue": "2.6 s",
+              "score": 0.97
             },
             "interactive": {
-              "value": 2343.9151,
-              "displayValue": "2.3 s",
-              "score": 0.99
+              "value": 2640.557188229902,
+              "displayValue": "2.6 s",
+              "score": 0.98
             }
           },
           "resources": [
@@ -797,37 +797,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 15,
-              "transferSize": 364853
+              "transferSize": 450282
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 11,
-              "transferSize": 164593
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 12,
+              "transferSize": 165534
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 10417
+              "transferSize": 101111
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -842,6 +836,12 @@
               "transferSize": 0
             },
             {
+              "resourceType": "other",
+              "label": "Other",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
               "resourceType": "third-party",
               "label": "Third-party",
               "requestCount": 0,
@@ -850,30 +850,30 @@
           ],
           "longTasks": 1,
           "thirdPartySummary": [],
-          "thresholdStatus": "good lab thresholds"
+          "thresholdStatus": "needs improvement but not a material poor-threshold regression"
         },
         {
           "family": "guide",
           "route": "/guides/how-browser-timers-measure-time",
           "formFactor": "mobile",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:18:45.112Z",
+          "fetchTime": "2026-07-26T08:53:34.518Z",
           "scores": {
-            "performance": 97,
+            "performance": 94,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 2112.7047,
-              "displayValue": "2.1 s",
-              "score": 0.81
+              "value": 2406.1941318506592,
+              "displayValue": "2.4 s",
+              "score": 0.7
             },
             "largestContentfulPaint": {
-              "value": 2187.7047,
-              "displayValue": "2.2 s",
-              "score": 0.95
+              "value": 2556.1941318506592,
+              "displayValue": "2.6 s",
+              "score": 0.88
             },
             "cumulativeLayoutShift": {
               "value": 0,
@@ -886,14 +886,14 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 2112.7047,
-              "displayValue": "2.1 s",
-              "score": 0.99
+              "value": 2406.1941318506592,
+              "displayValue": "2.4 s",
+              "score": 0.98
             },
             "interactive": {
-              "value": 2195.2047000000002,
-              "displayValue": "2.2 s",
-              "score": 0.99
+              "value": 2571.1941318506597,
+              "displayValue": "2.6 s",
+              "score": 0.98
             }
           },
           "resources": [
@@ -901,37 +901,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 14,
-              "transferSize": 354156
+              "transferSize": 435058
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 10,
-              "transferSize": 152749
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 11,
+              "transferSize": 154210
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11501
+              "transferSize": 97211
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5537
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -946,6 +940,12 @@
               "transferSize": 0
             },
             {
+              "resourceType": "other",
+              "label": "Other",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
               "resourceType": "third-party",
               "label": "Third-party",
               "requestCount": 0,
@@ -954,30 +954,30 @@
           ],
           "longTasks": 1,
           "thirdPartySummary": [],
-          "thresholdStatus": "good lab thresholds"
+          "thresholdStatus": "needs improvement but not a material poor-threshold regression"
         },
         {
           "family": "directory",
           "route": "/sitemap",
           "formFactor": "mobile",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:18:58.510Z",
+          "fetchTime": "2026-07-26T08:53:47.313Z",
           "scores": {
-            "performance": 96,
+            "performance": 88,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 100
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 2261.5393999999997,
-              "displayValue": "2.3 s",
-              "score": 0.76
+              "value": 3006.656985935893,
+              "displayValue": "3.0 s",
+              "score": 0.49
             },
             "largestContentfulPaint": {
-              "value": 2336.5393999999997,
-              "displayValue": "2.3 s",
-              "score": 0.93
+              "value": 3081.656985935893,
+              "displayValue": "3.1 s",
+              "score": 0.76
             },
             "cumulativeLayoutShift": {
               "value": 0,
@@ -990,14 +990,14 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 2261.5393999999997,
-              "displayValue": "2.3 s",
-              "score": 0.99
+              "value": 3006.656985935893,
+              "displayValue": "3.0 s",
+              "score": 0.94
             },
             "interactive": {
-              "value": 2344.0393999999997,
-              "displayValue": "2.3 s",
-              "score": 0.99
+              "value": 3089.1569859358933,
+              "displayValue": "3.1 s",
+              "score": 0.95
             }
           },
           "resources": [
@@ -1005,37 +1005,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 13,
-              "transferSize": 361492
-            },
-            {
-              "resourceType": "image",
-              "label": "Image",
-              "requestCount": 1,
-              "transferSize": 167047
-            },
-            {
-              "resourceType": "script",
-              "label": "Script",
-              "requestCount": 9,
-              "transferSize": 154100
+              "transferSize": 521083
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 17549
+              "transferSize": 181892
+            },
+            {
+              "resourceType": "image",
+              "label": "Image",
+              "requestCount": 1,
+              "transferSize": 166824
+            },
+            {
+              "resourceType": "script",
+              "label": "Script",
+              "requestCount": 10,
+              "transferSize": 155554
             },
             {
               "resourceType": "stylesheet",
               "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 17322
-            },
-            {
-              "resourceType": "other",
-              "label": "Other",
-              "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1050,6 +1044,12 @@
               "transferSize": 0
             },
             {
+              "resourceType": "other",
+              "label": "Other",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
               "resourceType": "third-party",
               "label": "Third-party",
               "requestCount": 0,
@@ -1058,30 +1058,30 @@
           ],
           "longTasks": 1,
           "thirdPartySummary": [],
-          "thresholdStatus": "good lab thresholds"
+          "thresholdStatus": "needs improvement but not a material poor-threshold regression"
         },
         {
           "family": "noindex utility",
           "route": "/1-minute-timer",
           "formFactor": "mobile",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:19:10.754Z",
+          "fetchTime": "2026-07-26T08:54:00.696Z",
           "scores": {
-            "performance": 95,
+            "performance": 92,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 69
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 2111.1428000000005,
-              "displayValue": "2.1 s",
-              "score": 0.81
+              "value": 2707.123122308404,
+              "displayValue": "2.7 s",
+              "score": 0.6
             },
             "largestContentfulPaint": {
-              "value": 2539.7142000000003,
-              "displayValue": "2.5 s",
-              "score": 0.89
+              "value": 2707.123122308404,
+              "displayValue": "2.7 s",
+              "score": 0.85
             },
             "cumulativeLayoutShift": {
               "value": 0.04663164938545661,
@@ -1094,14 +1094,14 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 2111.1428000000005,
-              "displayValue": "2.1 s",
-              "score": 0.99
+              "value": 2707.123122308404,
+              "displayValue": "2.7 s",
+              "score": 0.96
             },
             "interactive": {
-              "value": 2547.2142000000003,
-              "displayValue": "2.5 s",
-              "score": 0.98
+              "value": 2707.123122308404,
+              "displayValue": "2.7 s",
+              "score": 0.97
             }
           },
           "resources": [
@@ -1109,37 +1109,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 17,
-              "transferSize": 360496
+              "transferSize": 439622
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 13,
-              "transferSize": 160182
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 14,
+              "transferSize": 160840
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 10471
+              "transferSize": 95145
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1150,6 +1144,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -1169,7 +1169,7 @@
           "route": "/",
           "formFactor": "desktop",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:19:22.219Z",
+          "fetchTime": "2026-07-26T08:54:13.466Z",
           "scores": {
             "performance": 100,
             "accessibility": 100,
@@ -1178,13 +1178,13 @@
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 451.91769999999997,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 567.1700182169367,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "largestContentfulPaint": {
-              "value": 537.87655,
-              "displayValue": "0.5 s",
+              "value": 587.1700182169367,
+              "displayValue": "0.6 s",
               "score": 1
             },
             "cumulativeLayoutShift": {
@@ -1198,13 +1198,13 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 451.91769999999997,
-              "displayValue": "0.5 s",
+              "value": 567.1700182169367,
+              "displayValue": "0.6 s",
               "score": 1
             },
             "interactive": {
-              "value": 537.87655,
-              "displayValue": "0.5 s",
+              "value": 589.1700182169368,
+              "displayValue": "0.6 s",
               "score": 1
             }
           },
@@ -1213,37 +1213,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 13,
-              "transferSize": 352231
+              "transferSize": 452873
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 9,
-              "transferSize": 150967
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 10,
+              "transferSize": 152452
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11421
+              "transferSize": 116784
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1254,6 +1248,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -1273,7 +1273,7 @@
           "route": "/countdown-timer",
           "formFactor": "desktop",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:19:35.801Z",
+          "fetchTime": "2026-07-26T08:54:23.799Z",
           "scores": {
             "performance": 100,
             "accessibility": 100,
@@ -1282,14 +1282,14 @@
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 486.80819999999994,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 647.6660391428464,
+              "displayValue": "0.6 s",
+              "score": 0.98
             },
             "largestContentfulPaint": {
-              "value": 579.2122999999999,
+              "value": 647.6660391428464,
               "displayValue": "0.6 s",
-              "score": 1
+              "score": 0.99
             },
             "cumulativeLayoutShift": {
               "value": 0.005315383024387099,
@@ -1302,12 +1302,12 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 486.80819999999994,
-              "displayValue": "0.5 s",
+              "value": 647.6660391428464,
+              "displayValue": "0.6 s",
               "score": 1
             },
             "interactive": {
-              "value": 579.2122999999999,
+              "value": 647.6660391428466,
               "displayValue": "0.6 s",
               "score": 1
             }
@@ -1317,37 +1317,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 18,
-              "transferSize": 375930
+              "transferSize": 461865
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 14,
-              "transferSize": 174749
+              "requestCount": 15,
+              "transferSize": 175030
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "transferSize": 166824
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11299
+              "transferSize": 103198
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5513
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1358,6 +1352,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -1377,7 +1377,7 @@
           "route": "/interval-timer",
           "formFactor": "desktop",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:19:47.638Z",
+          "fetchTime": "2026-07-26T08:54:34.142Z",
           "scores": {
             "performance": 100,
             "accessibility": 100,
@@ -1386,14 +1386,14 @@
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 490.4359,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 607.4410303891817,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "largestContentfulPaint": {
-              "value": 547.6538499999999,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 607.4410303891817,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "cumulativeLayoutShift": {
               "value": 0.003959066825086858,
@@ -1406,13 +1406,13 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 490.4359,
-              "displayValue": "0.5 s",
+              "value": 607.4410303891817,
+              "displayValue": "0.6 s",
               "score": 1
             },
             "interactive": {
-              "value": 547.6538499999999,
-              "displayValue": "0.5 s",
+              "value": 607.4410303891817,
+              "displayValue": "0.6 s",
               "score": 1
             }
           },
@@ -1421,37 +1421,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 15,
-              "transferSize": 356088
+              "transferSize": 442408
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 11,
-              "transferSize": 155181
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 12,
+              "transferSize": 156350
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11064
+              "transferSize": 102421
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1462,6 +1456,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -1481,7 +1481,7 @@
           "route": "/time-calculator",
           "formFactor": "desktop",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:20:01.201Z",
+          "fetchTime": "2026-07-26T08:54:44.436Z",
           "scores": {
             "performance": 100,
             "accessibility": 100,
@@ -1490,14 +1490,14 @@
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 490.09839999999997,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 605.8093841016456,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "largestContentfulPaint": {
-              "value": 546.1476,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 605.8093841016456,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "cumulativeLayoutShift": {
               "value": 0.001514520905764758,
@@ -1510,13 +1510,13 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 490.09839999999997,
-              "displayValue": "0.5 s",
+              "value": 605.8093841016456,
+              "displayValue": "0.6 s",
               "score": 1
             },
             "interactive": {
-              "value": 546.1476,
-              "displayValue": "0.5 s",
+              "value": 605.8093841016457,
+              "displayValue": "0.6 s",
               "score": 1
             }
           },
@@ -1525,37 +1525,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 15,
-              "transferSize": 357362
+              "transferSize": 440368
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 11,
-              "transferSize": 156502
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 12,
+              "transferSize": 157559
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11017
+              "transferSize": 99172
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1566,6 +1560,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -1585,7 +1585,7 @@
           "route": "/world-clock",
           "formFactor": "desktop",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:20:13.104Z",
+          "fetchTime": "2026-07-26T08:54:57.409Z",
           "scores": {
             "performance": 100,
             "accessibility": 100,
@@ -1594,14 +1594,14 @@
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 490.8849,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 607.6044656201118,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "largestContentfulPaint": {
-              "value": 539.32735,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 607.6044656201118,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "cumulativeLayoutShift": {
               "value": 0,
@@ -1614,13 +1614,13 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 490.8849,
-              "displayValue": "0.5 s",
+              "value": 607.6044656201118,
+              "displayValue": "0.6 s",
               "score": 1
             },
             "interactive": {
-              "value": 539.32735,
-              "displayValue": "0.5 s",
+              "value": 607.6044656201118,
+              "displayValue": "0.6 s",
               "score": 1
             }
           },
@@ -1629,37 +1629,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 15,
-              "transferSize": 364853
+              "transferSize": 450282
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 11,
-              "transferSize": 164593
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 12,
+              "transferSize": 165534
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 10417
+              "transferSize": 101111
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1670,6 +1664,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -1689,7 +1689,7 @@
           "route": "/guides/how-browser-timers-measure-time",
           "formFactor": "desktop",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:20:24.972Z",
+          "fetchTime": "2026-07-26T08:55:07.599Z",
           "scores": {
             "performance": 100,
             "accessibility": 100,
@@ -1698,14 +1698,14 @@
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 492.88800000000003,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 606.1615191818348,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "largestContentfulPaint": {
-              "value": 492.88800000000003,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 606.1615191818348,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "cumulativeLayoutShift": {
               "value": 0,
@@ -1718,13 +1718,13 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 492.88800000000003,
-              "displayValue": "0.5 s",
+              "value": 606.1615191818348,
+              "displayValue": "0.6 s",
               "score": 1
             },
             "interactive": {
-              "value": 492.88800000000003,
-              "displayValue": "0.5 s",
+              "value": 606.1615191818348,
+              "displayValue": "0.6 s",
               "score": 1
             }
           },
@@ -1733,37 +1733,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 14,
-              "transferSize": 354156
+              "transferSize": 435058
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 10,
-              "transferSize": 152749
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 11,
+              "transferSize": 154210
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 11501
+              "transferSize": 97211
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5537
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1774,6 +1768,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -1793,7 +1793,7 @@
           "route": "/sitemap",
           "formFactor": "desktop",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:20:36.676Z",
+          "fetchTime": "2026-07-26T08:55:20.524Z",
           "scores": {
             "performance": 100,
             "accessibility": 100,
@@ -1802,14 +1802,14 @@
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 489.6434,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 647.3642095044681,
+              "displayValue": "0.6 s",
+              "score": 0.98
             },
             "largestContentfulPaint": {
-              "value": 509.64339999999993,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 647.3642095044681,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "cumulativeLayoutShift": {
               "value": 0,
@@ -1822,13 +1822,13 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 489.6434,
-              "displayValue": "0.5 s",
+              "value": 647.3642095044681,
+              "displayValue": "0.6 s",
               "score": 1
             },
             "interactive": {
-              "value": 511.64339999999993,
-              "displayValue": "0.5 s",
+              "value": 647.3642095044681,
+              "displayValue": "0.6 s",
               "score": 1
             }
           },
@@ -1837,37 +1837,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 13,
-              "transferSize": 361492
-            },
-            {
-              "resourceType": "image",
-              "label": "Image",
-              "requestCount": 1,
-              "transferSize": 167047
-            },
-            {
-              "resourceType": "script",
-              "label": "Script",
-              "requestCount": 9,
-              "transferSize": 154100
+              "transferSize": 521083
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 17549
+              "transferSize": 181892
+            },
+            {
+              "resourceType": "image",
+              "label": "Image",
+              "requestCount": 1,
+              "transferSize": 166824
+            },
+            {
+              "resourceType": "script",
+              "label": "Script",
+              "requestCount": 10,
+              "transferSize": 155554
             },
             {
               "resourceType": "stylesheet",
               "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 17322
-            },
-            {
-              "resourceType": "other",
-              "label": "Other",
-              "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1878,6 +1872,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -1897,23 +1897,23 @@
           "route": "/1-minute-timer",
           "formFactor": "desktop",
           "lighthouseVersion": "13.4.1",
-          "fetchTime": "2026-07-22T00:20:50.757Z",
+          "fetchTime": "2026-07-26T08:55:31.730Z",
           "scores": {
-            "performance": 100,
+            "performance": 99,
             "accessibility": 100,
             "best-practices": 100,
             "seo": 69
           },
           "metrics": {
             "firstContentfulPaint": {
-              "value": 489.9709000000001,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 607.015045936288,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "largestContentfulPaint": {
-              "value": 545.95635,
-              "displayValue": "0.5 s",
-              "score": 1
+              "value": 607.015045936288,
+              "displayValue": "0.6 s",
+              "score": 0.99
             },
             "cumulativeLayoutShift": {
               "value": 0.05737200779685207,
@@ -1926,13 +1926,13 @@
               "score": 1
             },
             "speedIndex": {
-              "value": 489.9709000000001,
-              "displayValue": "0.5 s",
+              "value": 607.015045936288,
+              "displayValue": "0.6 s",
               "score": 1
             },
             "interactive": {
-              "value": 545.95635,
-              "displayValue": "0.5 s",
+              "value": 607.0150459362881,
+              "displayValue": "0.6 s",
               "score": 1
             }
           },
@@ -1941,37 +1941,31 @@
               "resourceType": "total",
               "label": "Total",
               "requestCount": 17,
-              "transferSize": 360496
+              "transferSize": 439622
             },
             {
               "resourceType": "image",
               "label": "Image",
               "requestCount": 1,
-              "transferSize": 167047
+              "transferSize": 166824
             },
             {
               "resourceType": "script",
               "label": "Script",
-              "requestCount": 13,
-              "transferSize": 160182
-            },
-            {
-              "resourceType": "stylesheet",
-              "label": "Stylesheet",
-              "requestCount": 1,
-              "transferSize": 17322
+              "requestCount": 14,
+              "transferSize": 160840
             },
             {
               "resourceType": "document",
               "label": "Document",
               "requestCount": 1,
-              "transferSize": 10471
+              "transferSize": 95145
             },
             {
-              "resourceType": "other",
-              "label": "Other",
+              "resourceType": "stylesheet",
+              "label": "Stylesheet",
               "requestCount": 1,
-              "transferSize": 5474
+              "transferSize": 16813
             },
             {
               "resourceType": "media",
@@ -1982,6 +1976,12 @@
             {
               "resourceType": "font",
               "label": "Font",
+              "requestCount": 0,
+              "transferSize": 0
+            },
+            {
+              "resourceType": "other",
+              "label": "Other",
               "requestCount": 0,
               "transferSize": 0
             },
@@ -2000,18 +2000,13 @@
       "poorThresholdResults": [],
       "failures": [],
       "cleanupWarnings": [
-        "mobile /: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.96550672 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.96550672'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.96550672 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.96550672'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "mobile /countdown-timer: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.11537715 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.11537715'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.11537715 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.11537715'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "mobile /interval-timer: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.25238061 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.25238061'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.25238061 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.25238061'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "mobile /time-calculator: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78008346 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78008346'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78008346 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78008346'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "mobile /world-clock: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.22313572 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.22313572'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.22313572 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.22313572'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "mobile /sitemap: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78235359 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78235359'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78235359 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78235359'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "mobile /1-minute-timer: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.17288977 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.17288977'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.17288977 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.17288977'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "desktop /countdown-timer: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.73972377 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.73972377'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.73972377 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.73972377'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "desktop /time-calculator: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.37534402 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.37534402'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.37534402 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.37534402'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "desktop /world-clock: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.93009023 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.93009023'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.93009023 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.93009023'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "desktop /guides/how-browser-timers-measure-time: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.23554515 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.23554515'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.23554515 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.23554515'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
-        "desktop /1-minute-timer: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.23915884 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.23915884'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.23915884 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.23915884'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n"
+        "mobile /: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.46490016 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.46490016'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.46490016 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.46490016'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
+        "desktop /: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.62012813 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.62012813'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.62012813 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.62012813'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
+        "desktop /countdown-timer: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.99036295 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.99036295'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.99036295 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.99036295'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
+        "desktop /interval-timer: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.65103496 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.65103496'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.65103496 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.65103496'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
+        "desktop /world-clock: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.52078976 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.52078976'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.52078976 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.52078976'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
+        "desktop /sitemap: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.65990796 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.65990796'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.65990796 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.65990796'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n",
+        "desktop /1-minute-timer: Lighthouse returned 1 after writing a complete report; stderr was Runtime error encountered: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78204146 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78204146'\nError: EPERM, Permission denied: \\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78204146 '\\\\?\\C:\\Users\\Suhas\\AppData\\Local\\Temp\\lighthouse.78204146'\n    at rmSync (node:fs:1206:18)\n    at Launcher.destroyTmp (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:367:9)\n    at Launcher.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:349:14)\n    at Object.kill (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/chrome-launcher/dist/chrome-launcher.js:39:18)\n    at runLighthouse (file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/run.js:217:21)\n    at async file:///C:/Users/Suhas/AppData/Local/npm-cache/_npx/0f94ee7615faf582/node_modules/lighthouse/cli/index.js:10:1\n"
       ]
     },
     "adLayoutShift": "Homepage ad placeholders reserve fixed responsive dimensions; route sweep found no horizontal overflow and CLS measurements are recorded above."

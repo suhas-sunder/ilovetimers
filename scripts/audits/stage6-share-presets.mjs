@@ -1,7 +1,7 @@
-import { spawn } from "node:child_process";
 import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnStaticPreview } from "../tests/preview-process.mjs";
 import {
   SHARE_SCHEMAS,
   SHARE_URL_MAX_LENGTH,
@@ -239,11 +239,7 @@ for (const absolute of appFiles) {
 let server;
 const renderedMetadata = [];
 try {
-  server = spawn(process.execPath, ["server.js"], {
-    cwd: ROOT,
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: "production" },
-    stdio: "ignore",
-  });
+  server = spawnStaticPreview({ root: ROOT, port: PORT });
   await waitForServer();
   for (const pathName of sharePaths) {
     for (const [kind, query] of [["valid", validQueries[pathName]], ["invalid", invalidQueries[pathName]]]) {

@@ -1,7 +1,7 @@
-import { spawn } from "node:child_process";
 import { access, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnStaticPreview } from "../tests/preview-process.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const PORT = Number(process.env.ILT_STAGE4_PORT || 3026);
@@ -454,11 +454,7 @@ for (const route of routes) bundles.set(route.path, await sourceBundle(route.fil
 let server;
 let pages;
 try {
-  server = spawn(process.execPath, ["server.js"], {
-    cwd: ROOT,
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: "production" },
-    stdio: "ignore",
-  });
+  server = spawnStaticPreview({ root: ROOT, port: PORT });
   await waitForServer();
   pages = await batches(routes, 10, async (route) => {
     const response = await fetch(`${BASE}${route.path}`, { redirect: "manual" });

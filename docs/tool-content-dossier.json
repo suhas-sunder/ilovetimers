@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T00:28:40.212Z",
+  "generatedAt": "2026-07-26T08:56:04.959Z",
   "baseline": {
     "capturedFrom": "docs/adsense-route-inventory.json and docs/content-repetition-report.json before Stage 4 rewrites",
     "canonicalPages": 125,
@@ -696,7 +696,7 @@
       "formulaOrSchedulingMethod": "not applicable",
       "outputProduced": "Focused explanations of the browser behavior behind iLoveTimers tools, written from the production implementation and checked against browser standards and documentation. Choose the question you need to answer These are not generic articles about time. Each guide starts with a practical question, explains the relevant ",
       "closestRetainedAlternatives": [],
-      "distinctiveUserValue": "Editorial guide index for the six production browser-timing and data guides.",
+      "distinctiveUserValue": "Guides to Browser Timing, Timezones, and Local Data is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -762,7 +762,7 @@
       "formulaOrSchedulingMethod": "monotonic performance clock",
       "outputProduced": "Understand what can happen to a browser timer when its tab is hidden, a phone is locked, the browser freezes the page, or the tab is closed. Will a browser timer keep working in a background tab, on a locked phone, or after I close the tab? Short answer: a hidden desktop tab often keeps enough state for an elapsed-time",
       "closestRetainedAlternatives": [],
-      "distinctiveUserValue": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+      "distinctiveUserValue": "Browser Timers in Background Tabs, Locked Phones, and Closed Tabs is implemented as a timer. It implements client-side calculation or live reconciliation.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -828,7 +828,7 @@
       "formulaOrSchedulingMethod": "state-driven browser implementation",
       "outputProduced": "Troubleshoot browser timer and alarm sound, including autoplay rules, muted output, suspended audio, background pages, and device sleep. Why did my browser timer finish without making a sound? Short answer: a timer can reach zero correctly while its sound is blocked, muted, suspended, interrupted, delayed, or routed to",
       "closestRetainedAlternatives": [],
-      "distinctiveUserValue": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+      "distinctiveUserValue": "Why a Browser Timer or Alarm May Stay Silent is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -894,7 +894,7 @@
       "formulaOrSchedulingMethod": "monotonic performance clock",
       "outputProduced": "Learn why accurate browser timers measure elapsed or target time instead of assuming every callback arrives on schedule. How can a browser timer stay accurate when animation frames and timer callbacks are delayed? Short answer: a reliable browser timer treats callbacks as opportunities to update the screen, not as the ",
       "closestRetainedAlternatives": [],
-      "distinctiveUserValue": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+      "distinctiveUserValue": "How Browser Timers Measure Elapsed Time and Handle Delays is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -960,7 +960,7 @@
       "formulaOrSchedulingMethod": "not applicable",
       "outputProduced": "Distinguish Unix timestamp seconds, milliseconds, and microseconds, recognize common digit lengths, and avoid 1,000-times unit errors. Is this Unix timestamp in seconds, milliseconds, or microseconds? Short answer: for dates near the present, a Unix timestamp with about 10 digits is usually seconds, 13 digits is usuall",
       "closestRetainedAlternatives": [],
-      "distinctiveUserValue": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+      "distinctiveUserValue": "Unix Timestamps in Seconds, Milliseconds, and Microseconds is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -1026,7 +1026,7 @@
       "formulaOrSchedulingMethod": "not applicable",
       "outputProduced": "Understand nonexistent spring-forward times, repeated fall-back times, date-specific offsets, and how iLoveTimers resolves timezone input. Why can a local time be nonexistent or occur twice during a timezone conversion? Short answer: a named timezone is a set of date-specific civil-time rules, not one permanent UTC off",
       "closestRetainedAlternatives": [],
-      "distinctiveUserValue": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+      "distinctiveUserValue": "Daylight-Saving Gaps, Repeated Times, and Timezone Conversions is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -1092,7 +1092,7 @@
       "formulaOrSchedulingMethod": "not applicable",
       "outputProduced": "See which iLoveTimers preferences and tool data use local browser storage, what is session-only, and how clearing site data affects them. What does iLoveTimers save in my browser, and what is not saved? Short answer: iLoveTimers uses this site's origin-scoped localStorage for the selected theme, analytics consent, and ",
       "closestRetainedAlternatives": [],
-      "distinctiveUserValue": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+      "distinctiveUserValue": "What iLoveTimers Stores in Your Browser is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -1210,7 +1210,7 @@
         "/alarm-timer",
         "/seconds-timer"
       ],
-      "distinctiveUserValue": "Countdown Timer is implemented as a date or event countdown. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, +1:00, -0:10, 1 m, 5 m, 10 m, 15 m.",
+      "distinctiveUserValue": "Countdown Timer is implemented as a date or event countdown. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, +1:00, -0:10, 1 m, 5 m, 10 m, 15 m.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -1486,7 +1486,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall-clock target/reference with scheduled rendering",
-      "outputProduced": "Local time 7:14:55 PM Countdown / Ready 00:05:00 Start Reset Countdown presets Choose a common duration or set hours, minutes, and seconds. 1 m 5 m 10 m 15 m 30 m Set countdown Pause before changing the selected duration. Hours Minutes Seconds Apply Completion sound Fullscreen Shortcuts: Space start",
+      "outputProduced": "Local time 3:46:11 AM Countdown / Ready 00:05:00 Start Reset Countdown presets Choose a common duration or set hours, minutes, and seconds. 1 m 5 m 10 m 15 m 30 m Set countdown Pause before changing the selected duration. Hours Minutes Seconds Apply Completion sound Fullscreen Shortcuts: Space start",
       "closestRetainedAlternatives": [
         "/meeting-timer",
         "/meeting-agenda-timer",
@@ -1842,7 +1842,7 @@
         "/study-stopwatch",
         "/break-timer"
       ],
-      "distinctiveUserValue": "Pomodoro Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Fullscreen, Work (minutes), Break (minutes), Cycles, Sound.",
+      "distinctiveUserValue": "Pomodoro Timer is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Share setup, Save preset, Load preset, Rename, Delete.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -2043,7 +2043,7 @@
         "/rest-timer",
         "/emom-timer"
       ],
-      "distinctiveUserValue": "HIIT Timer (Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6, Fullscreen, Warm-up seconds 0 = skip.",
+      "distinctiveUserValue": "HIIT Timer (Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6, Share setup, Save preset.",
       "existingContentProblems": [],
       "appropriateContentScope": "moderate",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -5519,7 +5519,7 @@
         "Sound"
       ],
       "defaultSettings": [
-        "time: 19:19",
+        "time: 03:51",
         "checkbox: checked"
       ],
       "validInputRanges": [],
@@ -5555,7 +5555,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Current time 7:14:55 PM Alarm time: 7:19 PM / Today Next occurrence: Tue, Jul 21, 7:19 PM / America/New_York Set alarm Reset Alarm settings Choose a clock time. If that time has already passed today, the next occurrence is tomorrow. Alarm time Sound Browser audio may require interaction before it ca",
+      "outputProduced": "Current time 3:46:11 AM Alarm time: 3:51 AM / Today Next occurrence: Sun, Jul 26, 3:51 AM / America/New_York Set alarm Reset Alarm settings Choose a clock time. If that time has already passed today, the next occurrence is tomorrow. Alarm time Sound Browser audio may require interaction before it ca",
       "closestRetainedAlternatives": [],
       "distinctiveUserValue": "Online Alarm Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Set alarm, Reset, Test sound, Fullscreen, Alarm time, Sound.",
       "existingContentProblems": [],
@@ -8272,7 +8272,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Fullscreen Ready 19:14:55 Date Tuesday, July 21, 2026 Manual location · America/New_York Today Sunrise -- Sunset -- Lat 40.71 · Lng -74.01 Next event Unavailable At -- --:-- Time until next event Progress --% Sunrise and sunset are fetched as UTC timestamps and displayed in the time zone you entered",
+      "outputProduced": "Fullscreen Ready 03:46:12 Date Sunday, July 26, 2026 Manual location · America/New_York Today Sunrise -- Sunset -- Lat 40.71 · Lng -74.01 Next event Unavailable At -- --:-- Time until next event Progress --% Sunrise and sunset are fetched as UTC timestamps and displayed in the time zone you entered.",
       "closestRetainedAlternatives": [
         "/golden-hour-clock",
         "/moon-phase-clock",
@@ -8340,8 +8340,8 @@
       "defaultSettings": [
         "number: 5000",
         "number: 0",
-        "date: 2026-07-21",
-        "date: 2027-01-21",
+        "date: 2026-07-26",
+        "date: 2027-01-26",
         "select: USD"
       ],
       "validInputRanges": [
@@ -8643,7 +8643,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Local time 19:14:55 Morse output 1 9 : 1 4 : 5 5 Morse clock settings 24-hour Seconds Text view Copy Fullscreen Shortcuts: F fullscreen, T 24-hour, S seconds, V view, C copy Morse Code Clock",
+      "outputProduced": "Local time 03:46:12 Morse output 0 3 : 4 6 : 1 2 Morse clock settings 24-hour Seconds Text view Copy Fullscreen Shortcuts: F fullscreen, T 24-hour, S seconds, V view, C copy Morse Code Clock",
       "closestRetainedAlternatives": [
         "/binary-clock",
         "/hexadecimal-clock",
@@ -8764,7 +8764,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "19:14:55 Your local time 5 selected 19:14:55 Toronto America/Toronto Remove 19:14:55 New York America/New_York Remove 16:14:55 Los Angeles America/Los_Angeles Remove 00:14:55 London Europe/London Remove 08:14:55 Tokyo Asia/Tokyo Remove Cities and time zones Search, add, or remove cities. Selected ci",
+      "outputProduced": "03:46:12 Your local time 5 selected 03:46:12 Toronto America/Toronto Remove 03:46:12 New York America/New_York Remove 00:46:12 Los Angeles America/Los_Angeles Remove 08:46:12 London Europe/London Remove 16:46:12 Tokyo Asia/Tokyo Remove Cities and time zones Search, add, or remove cities. Selected ci",
       "closestRetainedAlternatives": [
         "/world-clock-with-milliseconds",
         "/utc-clock",
@@ -8881,7 +8881,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "19:14:55.889 Local time America/New_York / Tue, Jul 21 23:14:55.889 UTC Remove UTC / Tue, Jul 21 19:14:55.889 New York Remove America/New_York / Tue, Jul 21 00:14:55.889 London Remove Europe/London / Wed, Jul 22 08:14:55.889 Tokyo Remove Asia/Tokyo / Wed, Jul 22 World clock settings Milliseconds upd",
+      "outputProduced": "03:46:12.083 Local time America/New_York / Sun, Jul 26 07:46:12.083 UTC Remove UTC / Sun, Jul 26 03:46:12.083 New York Remove America/New_York / Sun, Jul 26 08:46:12.083 London Remove Europe/London / Sun, Jul 26 16:46:12.083 Tokyo Remove Asia/Tokyo / Sun, Jul 26 World clock settings Milliseconds upd",
       "closestRetainedAlternatives": [
         "/world-clock",
         "/utc-clock",
@@ -9065,12 +9065,12 @@
         "Toronto",
         "New York",
         "London",
-        "Vancouver 04:14 PM",
-        "Toronto 07:14 PM",
-        "New York 07:14 PM",
-        "London 12:14 AM",
-        "Milan 01:14 AM",
-        "Beijing 07:14 AM",
+        "Vancouver 12:46 AM",
+        "Toronto 03:46 AM",
+        "New York 03:46 AM",
+        "London 08:46 AM",
+        "Milan 09:46 AM",
+        "Beijing 03:46 PM",
         "Seconds",
         "24-hour"
       ],
@@ -9084,12 +9084,12 @@
         "Toronto",
         "New York",
         "London",
-        "Vancouver 04:14 PM",
-        "Toronto 07:14 PM",
-        "New York 07:14 PM",
-        "London 12:14 AM",
-        "Milan 01:14 AM",
-        "Beijing 07:14 AM",
+        "Vancouver 12:46 AM",
+        "Toronto 03:46 AM",
+        "New York 03:46 AM",
+        "London 08:46 AM",
+        "Milan 09:46 AM",
+        "Beijing 03:46 PM",
         "Seconds",
         "24-hour"
       ],
@@ -9121,7 +9121,7 @@
       "backgroundTabLimitations": "not applicable",
       "deviceSleepLimitations": "No special device-sleep behavior.",
       "formulaOrSchedulingMethod": "not applicable",
-      "outputProduced": "Local time now · America/New_York 07:14:55 PM Tuesday, July 21, 2026 , week 30 Clock settings Seconds 24-hour Copy Fullscreen Quick compare Local Toronto New York London Vancouver 04:14 PM Toronto 07:14 PM New York 07:14 PM London 12:14 AM Milan 01:14 AM Beijing 07:14 AM Shortcuts: F fullscreen, C c",
+      "outputProduced": "Local time now · America/New_York 03:46:12 AM Sunday, July 26, 2026 , week 30 Clock settings Seconds 24-hour Copy Fullscreen Quick compare Local Toronto New York London Vancouver 12:46 AM Toronto 03:46 AM New York 03:46 AM London 08:46 AM Milan 09:46 AM Beijing 03:46 PM Shortcuts: F fullscreen, C co",
       "closestRetainedAlternatives": [
         "/digital-clock",
         "/clock-with-milliseconds",
@@ -9129,7 +9129,7 @@
         "/12-hour-clock",
         "/24-hour-clock"
       ],
-      "distinctiveUserValue": "Current Local Time is implemented as a specialty time tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Local, Toronto, New York, London, Vancouver 01:21 PM, Toronto 04:21 PM.",
+      "distinctiveUserValue": "Current Local Time is implemented as a specialty time tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Local, Toronto, New York, London, Vancouver 12:46 AM, Toronto 03:46 AM.",
       "existingContentProblems": [],
       "appropriateContentScope": "concise",
       "examplesRequired": "one concise example when useful",
@@ -9141,12 +9141,12 @@
         "Toronto",
         "New York",
         "London",
-        "Vancouver 04:14 PM",
-        "Toronto 07:14 PM",
-        "New York 07:14 PM",
-        "London 12:14 AM",
-        "Milan 01:14 AM",
-        "Beijing 07:14 AM",
+        "Vancouver 12:46 AM",
+        "Toronto 03:46 AM",
+        "New York 03:46 AM",
+        "London 08:46 AM",
+        "Milan 09:46 AM",
+        "Beijing 03:46 PM",
         "Seconds",
         "24-hour"
       ],
@@ -9189,14 +9189,14 @@
         "Toronto",
         "New York",
         "London",
-        "Local (America/New_York) 19:14",
-        "UTC 23:14",
-        "Vancouver 16:14",
-        "Toronto 19:14",
-        "New York 19:14",
-        "London 00:14",
-        "Milan 01:14",
-        "Beijing 07:14",
+        "Local (America/New_York) 03:46",
+        "UTC 07:46",
+        "Vancouver 00:46",
+        "Toronto 03:46",
+        "New York 03:46",
+        "London 08:46",
+        "Milan 09:46",
+        "Beijing 15:46",
         "Seconds",
         "24-hour"
       ],
@@ -9211,14 +9211,14 @@
         "Toronto",
         "New York",
         "London",
-        "Local (America/New_York) 19:14",
-        "UTC 23:14",
-        "Vancouver 16:14",
-        "Toronto 19:14",
-        "New York 19:14",
-        "London 00:14",
-        "Milan 01:14",
-        "Beijing 07:14",
+        "Local (America/New_York) 03:46",
+        "UTC 07:46",
+        "Vancouver 00:46",
+        "Toronto 03:46",
+        "New York 03:46",
+        "London 08:46",
+        "Milan 09:46",
+        "Beijing 15:46",
         "Seconds",
         "24-hour"
       ],
@@ -9250,14 +9250,14 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "UTC time now 23:14:55 UTC Tuesday, July 21, 2026 , week 30 ISO timestamp: 2026-07-21T23:14:55.907Z Clock settings Seconds 24-hour Copy Fullscreen Quick compare UTC Local Toronto New York London Local (America/New_York) 19:14 UTC 23:14 Vancouver 16:14 Toronto 19:14 New York 19:14 London 00:14 Milan 0",
+      "outputProduced": "UTC time now 07:46:12 UTC Sunday, July 26, 2026 , week 30 ISO timestamp: 2026-07-26T07:46:12.118Z Clock settings Seconds 24-hour Copy Fullscreen Quick compare UTC Local Toronto New York London Local (America/New_York) 03:46 UTC 07:46 Vancouver 00:46 Toronto 03:46 New York 03:46 London 08:46 Milan 09",
       "closestRetainedAlternatives": [
         "/world-clock",
         "/world-clock-with-milliseconds",
         "/time-zone-converter",
         "/time-zone-meeting-planner"
       ],
-      "distinctiveUserValue": "UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 16:21.",
+      "distinctiveUserValue": "UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 03:46.",
       "existingContentProblems": [],
       "appropriateContentScope": "methodology-heavy",
       "examplesRequired": "at least one concrete supported example when applicable",
@@ -9270,14 +9270,14 @@
         "Toronto",
         "New York",
         "London",
-        "Local (America/New_York) 19:14",
-        "UTC 23:14",
-        "Vancouver 16:14",
-        "Toronto 19:14",
-        "New York 19:14",
-        "London 00:14",
-        "Milan 01:14",
-        "Beijing 07:14",
+        "Local (America/New_York) 03:46",
+        "UTC 07:46",
+        "Vancouver 00:46",
+        "Toronto 03:46",
+        "New York 03:46",
+        "London 08:46",
+        "Milan 09:46",
+        "Beijing 15:46",
         "Seconds",
         "24-hour"
       ],
@@ -9357,7 +9357,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Local device time 19:14:55 12-hour equivalent: 7:14:55 PM EDT Tuesday, July 21, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC Local mode uses your device clock and timezone. UTC mode formats that same instant as UTC. Copy 24-hour time Fullscreen Shortcuts: F fullscreen / ",
+      "outputProduced": "Local device time 03:46:12 12-hour equivalent: 3:46:12 AM EDT Sunday, July 26, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC Local mode uses your device clock and timezone. UTC mode formats that same instant as UTC. Copy 24-hour time Fullscreen Shortcuts: F fullscreen / C",
       "closestRetainedAlternatives": [
         "/current-local-time",
         "/digital-clock",
@@ -9446,7 +9446,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Local AM/PM time 7:14:55 PM 24-hour equivalent: 19:14:55 Tuesday, July 21, 2026 / America/New_York Clock settings Seconds Date 24-hour comparison Copy 12-hour time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / D date / H comparison 12 Hour Clock",
+      "outputProduced": "Local AM/PM time 3:46:12 AM 24-hour equivalent: 03:46:12 Sunday, July 26, 2026 / America/New_York Clock settings Seconds Date 24-hour comparison Copy 12-hour time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / D date / H comparison 12 Hour Clock",
       "closestRetainedAlternatives": [
         "/current-local-time",
         "/digital-clock",
@@ -9630,7 +9630,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "19:14:55 Local time · America/New_York Tuesday, July 21, 2026 Clock settings Seconds 24-hour Date Minimal Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, D date, M minimal, 1 12-hour, 2 24-hour Digital Clock",
+      "outputProduced": "03:46:12 Local time · America/New_York Sunday, July 26, 2026 Clock settings Seconds 24-hour Date Minimal Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, D date, M minimal, 1 12-hour, 2 24-hour Digital Clock",
       "closestRetainedAlternatives": [
         "/current-local-time",
         "/clock-with-milliseconds",
@@ -9727,7 +9727,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Milliseconds visible / Local 19:14:55.946 Local device time / America/New_York Tuesday, July 21, 2026 Clock settings The display uses your browser and device clock. UTC mode formats the same instant against UTC. 24-hour time Milliseconds UTC mode Date Copy current time Fullscreen Shortcuts: F fullsc",
+      "outputProduced": "Milliseconds visible / Local 03:46:12.163 Local device time / America/New_York Sunday, July 26, 2026 Clock settings The display uses your browser and device clock. UTC mode formats the same instant against UTC. 24-hour time Milliseconds UTC mode Date Copy current time Fullscreen Shortcuts: F fullscr",
       "closestRetainedAlternatives": [
         "/current-local-time",
         "/digital-clock",
@@ -9822,7 +9822,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Local time · America/New_York · BCD digits 19:14:55 HH MM SS Hours 0 0 0 1 1 1 0 0 1 9 0001 1001 Minutes 0 0 0 1 1 0 1 0 0 4 0001 0100 Seconds 0 1 0 1 5 0 1 0 1 5 0101 0101 BCD shows each decimal digit as 4 binary bits. Tuesday, July 21, 2026 Copy preview 19:14:55 -> 0001 1001 0001 0100 0101 0101 Bi",
+      "outputProduced": "Local time · America/New_York · BCD digits 03:46:12 HH MM SS Hours 0 0 0 0 0 0 0 1 1 3 0000 0011 Minutes 0 1 0 0 4 0 1 1 0 6 0100 0110 Seconds 0 0 0 1 1 0 0 1 0 2 0001 0010 BCD shows each decimal digit as 4 binary bits. Sunday, July 26, 2026 Copy preview 03:46:12 -> 0000 0011 0100 0110 0001 0010 Bin",
       "closestRetainedAlternatives": [
         "/hexadecimal-clock",
         "/morse-code-clock",
@@ -9920,7 +9920,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Local time · America/New_York · Hex HH:MM:SS 13:0E:37 Hours=13 · Minutes=0E · Seconds=37 Tuesday, July 21, 2026 · Decimal 19:14:55 Hex clock settings Mode Hex HH:MM:SS Hex color Seconds Milliseconds 24-hour Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, M ms, X mode, 1 12-hour, 2 24-hou",
+      "outputProduced": "Local time · America/New_York · Hex HH:MM:SS 03:2E:0C Hours=03 · Minutes=2E · Seconds=0C Sunday, July 26, 2026 · Decimal 03:46:12 Hex clock settings Mode Hex HH:MM:SS Hex color Seconds Milliseconds 24-hour Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, M ms, X mode, 1 12-hour, 2 24-hour",
       "closestRetainedAlternatives": [
         "/binary-clock",
         "/morse-code-clock",
@@ -9993,7 +9993,7 @@
       ],
       "defaultSettings": [
         "text: My Event",
-        "datetime-local: 2026-07-21T20:14",
+        "datetime-local: 2026-07-26T04:46",
         "checkbox: checked",
         "select: My Event"
       ],
@@ -10042,7 +10042,7 @@
       "backgroundTabLimitations": "no explicit target-time reconciliation was detected; browser throttling can delay updates",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "interval-driven scheduled updates",
-      "outputProduced": "Target: Tue, Jul 21, 2026, 08:14 PM My Event 00:00:00 0:00 Start Reset New Duplicate Delete Fullscreen Adjust target Move the selected event target without editing the date field. -1h -2h -24h +1h +2h +24h Event setup Choose the saved event, target date, and countdown cues. Saved events My Event Eve",
+      "outputProduced": "Target: Sun, Jul 26, 2026, 04:46 AM My Event 00:00:00 0:00 Start Reset New Duplicate Delete Fullscreen Adjust target Move the selected event target without editing the date field. -1h -2h -24h +1h +2h +24h Event setup Choose the saved event, target date, and countdown cues. Saved events My Event Eve",
       "closestRetainedAlternatives": [
         "/countdown-to-date",
         "/new-year-countdown",
@@ -10128,7 +10128,7 @@
       ],
       "defaultSettings": [
         "text: Selected date",
-        "date: 2026-07-28",
+        "date: 2026-08-02",
         "time: 09:00"
       ],
       "validInputRanges": [],
@@ -10166,7 +10166,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Selected date 6d 13:45:04 Target: July 28, 2026, 09:00 6 days, 13 hours, 45 minutes, 4 seconds / Local timezone Target date and time Pick one local date and optional time. The countdown updates live without saved event management. Label Target date Target time Quick targets Tomorrow +7 days +30 days",
+      "outputProduced": "Selected date 7d 05:13:47 Target: August 2, 2026, 09:00 7 days, 5 hours, 13 minutes, 47 seconds / Local timezone Target date and time Pick one local date and optional time. The countdown updates live without saved event management. Label Target date Target time Quick targets Tomorrow +7 days +30 day",
       "closestRetainedAlternatives": [
         "/event-countdown",
         "/new-year-countdown",
@@ -10258,7 +10258,7 @@
       "backgroundTabLimitations": "no explicit target-time reconciliation was detected; browser throttling can delay updates",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "interval-driven scheduled updates",
-      "outputProduced": "Countdown to 2027 163d 05:45:04 Target: Friday, January 1, 2027 at 12:00 AM EST Local timezone: America/New_York Copy countdown Share Fullscreen Time left 163 days / 5 hours / 45 minutes / 4 seconds Shortcuts: C copy / S share / F fullscreen New Year Countdown",
+      "outputProduced": "Countdown to 2027 158d 21:13:47 Target: Friday, January 1, 2027 at 12:00 AM EST Local timezone: America/New_York Copy countdown Share Fullscreen Time left 158 days / 21 hours / 13 minutes / 47 seconds Shortcuts: C copy / S share / F fullscreen New Year Countdown",
       "closestRetainedAlternatives": [
         "/event-countdown",
         "/countdown-to-date",
@@ -10344,7 +10344,7 @@
       "backgroundTabLimitations": "no explicit target-time reconciliation was detected; browser throttling can delay updates",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "interval-driven scheduled updates",
-      "outputProduced": "Countdown to Christmas 2026 156d 05:45:04 Target: December 25, 2026 156 days, 5 hours, 45 minutes, 4 seconds / Local timezone Copy countdown Share Fullscreen Target year 2026 Target weekday Friday Timezone Local timezone Uses fixed December 25 local calendar targeting and your browser/device clock. ",
+      "outputProduced": "Countdown to Christmas 2026 151d 21:13:47 Target: December 25, 2026 151 days, 21 hours, 13 minutes, 47 seconds / Local timezone Copy countdown Share Fullscreen Target year 2026 Target weekday Friday Timezone Local timezone Uses fixed December 25 local calendar targeting and your browser/device clock",
       "closestRetainedAlternatives": [
         "/event-countdown",
         "/countdown-to-date",
@@ -10400,7 +10400,7 @@
         "Today",
         "Sound",
         "Final beeps",
-        "Date Tuesday, July 21, 2026",
+        "Date Sunday, July 26, 2026",
         "Latitude Range: -90 to 90",
         "Longitude Range: -180 to 180",
         "Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes)",
@@ -10408,7 +10408,7 @@
       ],
       "defaultSettings": [
         "checkbox: checked",
-        "date: 2026-07-21",
+        "date: 2026-07-26",
         "text: 40.7128",
         "text: -74.006",
         "select: Classic: 60 minutes"
@@ -10419,7 +10419,7 @@
         "Use GPS",
         "Sound",
         "Final beeps",
-        "Date Tuesday, July 21, 2026",
+        "Date Sunday, July 26, 2026",
         "Latitude Range: -90 to 90",
         "Longitude Range: -180 to 180",
         "Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes)",
@@ -10449,13 +10449,13 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Sound Final beeps Fullscreen Date Tuesday, July 21, 2026 Latitude Range: -90 to 90 Longitude Range: -180 to 180 Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes) Use GPS Today Shortcuts: F fullscreen · G GPS Next change 7:12 Evening golden hour starts : 7:22 PM",
+      "outputProduced": "Sound Final beeps Fullscreen Date Sunday, July 26, 2026 Latitude Range: -90 to 90 Longitude Range: -180 to 180 Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes) Use GPS Today Shortcuts: F fullscreen · G GPS Next change 2:03:14 Morning golden hour starts : 5:49 ",
       "closestRetainedAlternatives": [
         "/sunrise-sunset-clock",
         "/moon-phase-clock",
         "/astronomical-clock"
       ],
-      "distinctiveUserValue": "Golden Hour Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use GPS, Today, Sound, Final beeps, Date Tuesday, July 21, 2026, Latitude Range: -90 to 90, Longitude Range: -180 to 180.",
+      "distinctiveUserValue": "Golden Hour Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use GPS, Today, Sound, Final beeps, Date Sunday, July 26, 2026, Latitude Range: -90 to 90, Longitude Range: -180 to 180.",
       "existingContentProblems": [],
       "appropriateContentScope": "methodology-heavy",
       "examplesRequired": "one concise example when useful",
@@ -10466,7 +10466,7 @@
         "Use GPS",
         "Sound",
         "Final beeps",
-        "Date Tuesday, July 21, 2026",
+        "Date Sunday, July 26, 2026",
         "Latitude Range: -90 to 90",
         "Longitude Range: -180 to 180",
         "Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes)",
@@ -10519,7 +10519,7 @@
       ],
       "defaultSettings": [
         "checkbox: checked",
-        "date: 2026-07-21",
+        "date: 2026-07-26",
         "number: 12",
         "number: 0"
       ],
@@ -10587,7 +10587,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Live Sound Final beeps Fullscreen Next major phase countdown Next: First Quarter • 12:12 AM 4:57:49 Status: Live Phase: First Quarter Illumination: 48 % Age: 7.2 days Date Hour Minute Quick Set to noon Now Editing date/time switches to Manual . Use Now for Live. Moon phase settings Date Hour Minute ",
+      "outputProduced": "Live Sound Final beeps Fullscreen Next major phase countdown Next: Full Moon • 9:23 AM 77:37:33 Status: Live Phase: Waxing Gibbous Illumination: 89 % Age: 11.5 days Date Hour Minute Quick Set to noon Now Editing date/time switches to Manual . Use Now for Live. Moon phase settings Date Hour Minute Li",
       "closestRetainedAlternatives": [
         "/sunrise-sunset-clock",
         "/golden-hour-clock",
@@ -10733,7 +10733,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Use my location Clear location Time zone Device (America/New_York) UTC Toronto (America/Toronto) London (Europe/London) Los Angeles (America/Los_Angeles) Tokyo (Asia/Tokyo) Sydney (Australia/Sydney) Fullscreen Examples New York Toronto London Los Angeles Tokyo Sydney Sun Moon Location needed 19:14:5",
+      "outputProduced": "Use my location Clear location Time zone Device (America/New_York) UTC Toronto (America/Toronto) London (Europe/London) Los Angeles (America/Los_Angeles) Tokyo (Asia/Tokyo) Sydney (Australia/Sydney) Fullscreen Examples New York Toronto London Los Angeles Tokyo Sydney Sun Moon Location needed 03:46:1",
       "closestRetainedAlternatives": [
         "/sunrise-sunset-clock",
         "/golden-hour-clock",
@@ -10840,7 +10840,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Unix Time (seconds) · Live 1784675696 Milliseconds 1784675696026 Local time Tue, Jul 21, 2026, 7:14:56 PM UTC time Tue, Jul 21, 2026, 23:14:56 UTC Shortcuts: Space live or freeze · C copy seconds · M copy milliseconds · N snap now · F fullscreen Timestamp settings Live timestamp Freeze Snap now Copy",
+      "outputProduced": "Unix Time (seconds) · Live 1785051972 Milliseconds 1785051972254 Local time Sun, Jul 26, 2026, 3:46:12 AM UTC time Sun, Jul 26, 2026, 07:46:12 UTC Shortcuts: Space live or freeze · C copy seconds · M copy milliseconds · N snap now · F fullscreen Timestamp settings Live timestamp Freeze Snap now Copy",
       "closestRetainedAlternatives": [
         "/unix-timestamp-converter",
         "/milliseconds-converter",
@@ -10937,7 +10937,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Live @010.37 BMT (UTC+1): 00:14:56 Internet time settings Live Freeze Snap Fullscreen Shortcuts: Space live/freeze, S snap, F fullscreen Swatch Internet Time (.beat) Clock",
+      "outputProduced": "Live @365.41 BMT (UTC+1): 08:46:12 Internet time settings Live Freeze Snap Fullscreen Shortcuts: Space live/freeze, S snap, F fullscreen Swatch Internet Time (.beat) Clock",
       "closestRetainedAlternatives": [
         "/binary-clock",
         "/hexadecimal-clock",
@@ -11200,7 +11200,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Live Add block Copy Clear Fullscreen F fullscreen / C copy / A add block Live 19:14:56 Tue, Jul 21, 2026 No active block. Today's blocks Auto-sorted by start time Title Start End Notes Delete 09:00 - 11:00 Title Start End Notes Delete 11:00 - 11:45 Title Start End Notes Delete 12:00 - 12:30 Time Blo",
+      "outputProduced": "Live Add block Copy Clear Fullscreen F fullscreen / C copy / A add block Live 03:46:12 Sun, Jul 26, 2026 No active block. Today's blocks Auto-sorted by start time Title Start End Notes Delete 09:00 - 11:00 Title Start End Notes Delete 11:00 - 11:45 Title Start End Notes Delete 12:00 - 12:30 Time Blo",
       "closestRetainedAlternatives": [],
       "distinctiveUserValue": "Time Blocking Clock (Daily Schedule) is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Add block, Copy, Clear, Fullscreen, Delete, Live, Title, Start.",
       "existingContentProblems": [
@@ -11288,7 +11288,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "19:14:56.058 Live Clock settings Live Milliseconds Freeze Hide ms Fullscreen Shortcuts: Space freeze/resume, M toggle ms, F fullscreen Atomic Clock (Device Time Display)",
+      "outputProduced": "03:46:12.289 Live Clock settings Live Milliseconds Freeze Hide ms Fullscreen Shortcuts: Space freeze/resume, M toggle ms, F fullscreen Atomic Clock (Device Time Display)",
       "closestRetainedAlternatives": [
         "/current-local-time",
         "/digital-clock",
@@ -11362,8 +11362,8 @@
         "Seconds"
       ],
       "defaultSettings": [
-        "date: 2026-07-21",
-        "text: 19:14",
+        "date: 2026-07-26",
+        "text: 03:46",
         "select: UTC"
       ],
       "validInputRanges": [],
@@ -11515,7 +11515,7 @@
         "Saved presets No presets saved"
       ],
       "defaultSettings": [
-        "date: 2026-07-21",
+        "date: 2026-07-26",
         "number: 60",
         "number: 9",
         "number: 17",
@@ -11588,14 +11588,14 @@
       "backgroundTabLimitations": "not applicable",
       "deviceSleepLimitations": "No special device-sleep behavior.",
       "formulaOrSchedulingMethod": "not applicable",
-      "outputProduced": "Best shared work window 13:00 UTC All 3 selected zones fit inside 9:00-17:00 local time for a 60-minute meeting. UTC Tue Jul 21, 13:00 Inside window New York Tue Jul 21, 09:00 Inside window London Tue Jul 21, 14:00 Inside window Meeting details The selected date is the UTC reference date for the can",
+      "outputProduced": "Best shared work window 13:00 UTC All 3 selected zones fit inside 9:00-17:00 local time for a 60-minute meeting. UTC Sun Jul 26, 13:00 Inside window New York Sun Jul 26, 09:00 Inside window London Sun Jul 26, 14:00 Inside window Meeting details The selected date is the UTC reference date for the can",
       "closestRetainedAlternatives": [
         "/world-clock",
         "/world-clock-with-milliseconds",
         "/utc-clock",
         "/time-zone-converter"
       ],
-      "distinctiveUserValue": "Time Zone Meeting Planner is implemented as a specialty time tool. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Copy meeting summary, Share summary, Reset planner.",
+      "distinctiveUserValue": "Time Zone Meeting Planner is implemented as a specialty time tool. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Share setup, Save preset, Load preset.",
       "existingContentProblems": [
         "Live timing depends on browser scheduling, but the page lacks a clear background-tab or sleep limitation."
       ],
@@ -11712,7 +11712,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Local device time 19:14:56 Military format: 191456 Standard time: 7:14:56 PM EDT Tue, Jul 21, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC / Zulu Local mode uses your device clock and timezone. Copy military time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / ",
+      "outputProduced": "Local device time 03:46:12 Military format: 034612 Standard time: 3:46:12 AM EDT Sun, Jul 26, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC / Zulu Local mode uses your device clock and timezone. Copy military time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / ",
       "closestRetainedAlternatives": [
         "/current-local-time",
         "/digital-clock",
@@ -11914,7 +11914,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Copy Fullscreen Seconds 24-hour Use IIII Shortcuts: F fullscreen · C copy · S seconds · I IIII · 1 (12h) · 2 (24h) America/New_York · 12-hour · IIII · seconds VII : XIV : LVI PM 07:14:56 PM Tuesday, July 21, 2026 Roman clock settings Seconds 24-hour Use IIII Copy Fullscreen Shortcuts: F fullscreen, ",
+      "outputProduced": "Copy Fullscreen Seconds 24-hour Use IIII Shortcuts: F fullscreen · C copy · S seconds · I IIII · 1 (12h) · 2 (24h) America/New_York · 12-hour · IIII · seconds III : XLVI : XII AM 03:46:12 AM Sunday, July 26, 2026 Roman clock settings Seconds 24-hour Use IIII Copy Fullscreen Shortcuts: F fullscreen, ",
       "closestRetainedAlternatives": [
         "/binary-clock",
         "/hexadecimal-clock",
@@ -12007,7 +12007,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Seconds 24-hour Date Zen Copy Fullscreen 1 1 9 9 1 1 4 4 5 5 6 6 19:14:56 Tuesday, July 21, 2026 Local time · America/New_York · 24-hour · seconds on Exit (Esc) Retro Flip Clock 1 1 9 9 1 1 4 4 5 5 6 6 19:14:56 America/New_York · 24-hour · seconds on · Tuesday, July 21, 2026 Flip clock settings Disp",
+      "outputProduced": "Seconds 24-hour Date Zen Copy Fullscreen 0 0 3 3 4 4 6 6 1 1 2 2 03:46:12 Sunday, July 26, 2026 Local time · America/New_York · 24-hour · seconds on Exit (Esc) Retro Flip Clock 0 0 3 3 4 4 6 6 1 1 2 2 03:46:12 America/New_York · 24-hour · seconds on · Sunday, July 26, 2026 Flip clock settings Displa",
       "closestRetainedAlternatives": [
         "/binary-clock",
         "/hexadecimal-clock",
@@ -12100,7 +12100,7 @@
       "backgroundTabLimitations": "time is derived from a target/reference or fresh clock read, so the display can reconcile when callbacks resume; background throttling can delay visual updates and completion side effects",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "device wall clock read on scheduled updates",
-      "outputProduced": "Local time · America/New_York · 24-hour · seconds on 19:14:56 Tuesday, July 21, 2026 Tip: click the card so shortcuts work Clock settings Minimal display options stay secondary to the clock face. Seconds 24-hour Date Zen Copy Fullscreen Shortcuts: F fullscreen, S seconds, T 12/24, D date, Z zen, C c",
+      "outputProduced": "Local time · America/New_York · 24-hour · seconds on 03:46:12 Sunday, July 26, 2026 Tip: click the card so shortcuts work Clock settings Minimal display options stay secondary to the clock face. Seconds 24-hour Date Zen Copy Fullscreen Shortcuts: F fullscreen, S seconds, T 12/24, D date, Z zen, C co",
       "closestRetainedAlternatives": [
         "/current-local-time",
         "/digital-clock",
@@ -13513,7 +13513,7 @@
       ],
       "defaultSettings": [
         "date: 2000-01-01",
-        "date: 2026-07-21"
+        "date: 2026-07-26"
       ],
       "validInputRanges": [],
       "validationAndClamping": "Source clamps or normalizes numeric input. Source includes explicit invalid-input handling.",
@@ -13546,7 +13546,7 @@
       "backgroundTabLimitations": "not applicable",
       "deviceSleepLimitations": "No special device-sleep behavior.",
       "formulaOrSchedulingMethod": "not applicable",
-      "outputProduced": "Age 26y 6m 20d 26 years, 6 months, 20 days As of July 21, 2026 Birth date and age-on date Calculate age as of today or any selected calendar date. Birth date Age on date Copy result Today Reset Total days 9698 Completed months 318 Next birthday 164 days Birth weekday Saturday Date math helper only. ",
+      "outputProduced": "Age 26y 6m 25d 26 years, 6 months, 25 days As of July 26, 2026 Birth date and age-on date Calculate age as of today or any selected calendar date. Birth date Age on date Copy result Today Reset Total days 9703 Completed months 318 Next birthday 159 days Birth weekday Saturday Date math helper only. ",
       "closestRetainedAlternatives": [
         "/date-calculator",
         "/date-duration-calculator",
@@ -13615,8 +13615,8 @@
         "Target date"
       ],
       "defaultSettings": [
-        "date: 2026-07-21",
-        "date: 2026-07-28"
+        "date: 2026-07-26",
+        "date: 2026-08-02"
       ],
       "validInputRanges": [],
       "validationAndClamping": "Source clamps or normalizes numeric input. Source includes explicit invalid-input handling.",
@@ -13653,7 +13653,7 @@
       "backgroundTabLimitations": "not applicable",
       "deviceSleepLimitations": "No special device-sleep behavior.",
       "formulaOrSchedulingMethod": "not applicable",
-      "outputProduced": "Days until 7 days until July 21, 2026 to July 28, 2026 Target date is in the future Start and target date The start date defaults to today, and the target date can be any local calendar date. Start date Target date Presets New Year Christmas Today + 7 days Today + 30 days Copy result Today Reset Wee",
+      "outputProduced": "Days until 7 days until July 26, 2026 to August 2, 2026 Target date is in the future Start and target date The start date defaults to today, and the target date can be any local calendar date. Start date Target date Presets New Year Christmas Today + 7 days Today + 30 days Copy result Today Reset We",
       "closestRetainedAlternatives": [
         "/event-countdown",
         "/countdown-to-date",
@@ -13715,7 +13715,7 @@
         "Date"
       ],
       "defaultSettings": [
-        "date: 2026-07-21"
+        "date: 2026-07-26"
       ],
       "validInputRanges": [],
       "validationAndClamping": "Source clamps or normalizes numeric input. Source includes explicit invalid-input handling.",
@@ -13747,7 +13747,7 @@
       "backgroundTabLimitations": "not applicable",
       "deviceSleepLimitations": "No special device-sleep behavior.",
       "formulaOrSchedulingMethod": "not applicable",
-      "outputProduced": "Weekday Tuesday July 21, 2026 Weekday Date Find the day of the week for one local calendar date. Date Copy result Today Reset Formatted date July 21, 2026 ISO date 2026-07-21 Type Weekday Local calendar date lookup. It does not add holiday or official calendar rules. Weekday Calculator",
+      "outputProduced": "Weekday Sunday July 26, 2026 Weekend Date Find the day of the week for one local calendar date. Date Copy result Today Reset Formatted date July 26, 2026 ISO date 2026-07-26 Type Weekend Local calendar date lookup. It does not add holiday or official calendar rules. Weekday Calculator",
       "closestRetainedAlternatives": [
         "/date-calculator",
         "/date-duration-calculator",
@@ -13804,7 +13804,7 @@
         "Date"
       ],
       "defaultSettings": [
-        "date: 2026-07-21"
+        "date: 2026-07-26"
       ],
       "validInputRanges": [],
       "validationAndClamping": "Source clamps or normalizes numeric input. Source includes explicit invalid-input handling.",
@@ -13836,7 +13836,7 @@
       "backgroundTabLimitations": "not applicable",
       "deviceSleepLimitations": "No special device-sleep behavior.",
       "formulaOrSchedulingMethod": "not applicable",
-      "outputProduced": "ISO week Week 30 ISO week-year 2026 Monday-start ISO week Date Find the ISO week number for one local calendar date. Date Copy result Today Reset Weekday Tuesday Week start 2026-07-20 Week end 2026-07-26 Calendar year 2026 ISO week-years can differ from calendar years near January 1. Week Number Cal",
+      "outputProduced": "ISO week Week 30 ISO week-year 2026 Monday-start ISO week Date Find the ISO week number for one local calendar date. Date Copy result Today Reset Weekday Sunday Week start 2026-07-20 Week end 2026-07-26 Calendar year 2026 ISO week-years can differ from calendar years near January 1. Week Number Calc",
       "closestRetainedAlternatives": [
         "/date-calculator",
         "/date-duration-calculator",
@@ -14085,7 +14085,7 @@
       ],
       "defaultSettings": [
         "number: 7",
-        "number: 21"
+        "number: 26"
       ],
       "validInputRanges": [
         {
@@ -14100,7 +14100,7 @@
           "min": "1",
           "max": "31",
           "step": null,
-          "value": "21"
+          "value": "26"
         },
         {
           "type": "number",
@@ -14142,7 +14142,7 @@
       "backgroundTabLimitations": "no explicit target-time reconciliation was detected; browser throttling can delay updates",
       "deviceSleepLimitations": "No Wake Lock or background service is implemented; device sleep can suspend display, audio, and completion behavior.",
       "formulaOrSchedulingMethod": "interval-driven scheduled updates",
-      "outputProduced": "Next birthday Today Today is the selected birthday. Local calendar countdown Birthday Enter a birthday month and day. Birth year is optional and only adds turning-age context. Month Day Birth year (optional) Copy result Share result Today Reset Next birthday date 2026-07-21 Birthday weekday Tuesday ",
+      "outputProduced": "Next birthday Today Today is the selected birthday. Local calendar countdown Birthday Enter a birthday month and day. Birth year is optional and only adds turning-age context. Month Day Birth year (optional) Copy result Share result Today Reset Next birthday date 2026-07-26 Birthday weekday Sunday T",
       "closestRetainedAlternatives": [
         "/event-countdown",
         "/countdown-to-date",
@@ -14210,8 +14210,8 @@
         "Target date and time"
       ],
       "defaultSettings": [
-        "datetime-local: 2026-07-21T19:14",
-        "datetime-local: 2026-07-21T20:14"
+        "datetime-local: 2026-07-26T03:46",
+        "datetime-local: 2026-07-26T04:46"
       ],
       "validInputRanges": [],
       "validationAndClamping": "Source clamps or normalizes numeric input. Source includes explicit invalid-input handling.",
@@ -14982,9 +14982,9 @@
         "Unix milliseconds"
       ],
       "defaultSettings": [
-        "text: 1784675696",
-        "datetime-local: 2026-07-21T23:14:56",
-        "text: 1784675696000",
+        "text: 1785051972",
+        "datetime-local: 2026-07-26T07:46:12",
+        "text: 1785051972000",
         "select: Auto-detect"
       ],
       "validInputRanges": [
@@ -14993,7 +14993,7 @@
           "min": null,
           "max": null,
           "step": "1",
-          "value": "2026-07-22T00:28:37"
+          "value": "2026-07-26T08:55:58"
         }
       ],
       "validationAndClamping": "Rendered numeric limits and steps are recorded in validInputRanges. Source clamps or normalizes numeric input. Source includes explicit invalid-input handling.",
@@ -15032,7 +15032,7 @@
       "backgroundTabLimitations": "not applicable",
       "deviceSleepLimitations": "No special device-sleep behavior.",
       "formulaOrSchedulingMethod": "not applicable",
-      "outputProduced": "Unix timestamp converter 2026-07-21T23:14:56.000Z 2026-07-21 23:14:56 UTC / Local: Jul 21, 2026, 7:14:56 PM EDT Timestamp input Convert a Unix timestamp into UTC, local, ISO, seconds, and milliseconds values. Unix timestamp Auto mode uses the integer digit count. The selected interpretation is shown",
+      "outputProduced": "Unix timestamp converter 2026-07-26T07:46:12.000Z 2026-07-26 07:46:12 UTC / Local: Jul 26, 2026, 3:46:12 AM EDT Timestamp input Convert a Unix timestamp into UTC, local, ISO, seconds, and milliseconds values. Unix timestamp Auto mode uses the integer digit count. The selected interpretation is shown",
       "closestRetainedAlternatives": [
         "/epoch-unix-time-clock",
         "/milliseconds-converter",
@@ -15240,7 +15240,7 @@
       "formulaOrSchedulingMethod": "not applicable",
       "outputProduced": "Privacy Policy",
       "closestRetainedAlternatives": [],
-      "distinctiveUserValue": "Privacy Policy informational page with 9 supporting subsections.",
+      "distinctiveUserValue": "Privacy Policy informational page with 10 supporting subsections.",
       "existingContentProblems": [],
       "appropriateContentScope": "concise",
       "examplesRequired": "not applicable",
@@ -15435,7 +15435,7 @@
       "formulaOrSchedulingMethod": "not applicable",
       "outputProduced": "132 pages. Updated July 15, 2026 HTML Sitemap",
       "closestRetainedAlternatives": [],
-      "distinctiveUserValue": "HTML Sitemap informational page with 142 supporting subsections.",
+      "distinctiveUserValue": "HTML Sitemap informational page with 150 supporting subsections.",
       "existingContentProblems": [],
       "appropriateContentScope": "concise",
       "examplesRequired": "not applicable",

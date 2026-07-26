@@ -26,7 +26,7 @@ Lighthouse 13.4.1 produced 16 production-build reports across the required eight
 - Wrapped previously unguarded localStorage reads on Event Countdown, Multiple Timers, and Billable Hours Clock so restricted storage cannot crash those tools.
 - Removed the render-blocking Google Fonts request and retained the existing system-font stack, eliminating an undeclared default third-party request.
 - Changed PostHog to a consent-gated dynamic import. When no production key exists, or analytics is not allowed, visitors no longer download the 175 kB SDK chunk.
-- Added matching `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and `Permissions-Policy` headers for Express and Netlify.
+- Added `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and `Permissions-Policy` through static Netlify headers.
 - Declared the supported Node runtime range as Node 20 through 25, consistent with the Node 20 Dockerfile and the verified Node 25 local test runtime.
 
 ## Advertising and Google-policy readiness

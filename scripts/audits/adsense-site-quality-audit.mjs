@@ -1,4 +1,3 @@
-import { spawn } from "node:child_process";
 import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -10,6 +9,7 @@ import {
   STAGE3_NOINDEX_ROUTE_SET,
   STAGE3_REDIRECT_SOURCE_SET,
 } from "../../app/config/routeArchitecture.js";
+import { spawnStaticPreview } from "../tests/preview-process.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const APP_DIR = path.join(ROOT, "app");
@@ -1616,13 +1616,9 @@ for (const [sourceRoute, destinations] of contextualOutgoing) {
 }
 for (const values of contextualIncoming.values()) values.sort();
 
-const server = spawn(process.execPath, ["server.js"], {
-  cwd: ROOT,
-  env: {
-    ...process.env,
-    NODE_ENV: "production",
-    PORT: String(PORT),
-  },
+const server = spawnStaticPreview({
+  root: ROOT,
+  port: PORT,
   stdio: ["ignore", "pipe", "pipe"],
 });
 let serverStdout = "";
@@ -1841,23 +1837,15 @@ const redirectInventory = Object.entries(PERMANENT_REDIRECTS).map(
     primaryHeading: null,
     approximateVisibleSupportingWordCount: 0,
     approximateTotalMainWordCount: 0,
-    functionalitySummary: Object.hasOwn(STAGE3_NEW_REDIRECTS, source)
-      ? `Permanently redirects to ${destination} and drops unsupported legacy query parameters.`
-      : `Preserves the query string and permanently redirects to ${destination}.`,
-    distinctiveFeatures: Object.hasOwn(STAGE3_NEW_REDIRECTS, source)
-      ? ["one-hop 301", "unsupported-query removal"]
-      : ["one-hop 301", "query-string preservation"],
+    functionalitySummary: `Preserves the query string and permanently redirects to ${destination}.`,
+    distinctiveFeatures: ["one-hop 301", "query-string preservation"],
     availableControls: [],
     defaultValues: [],
     outputProduced: `HTTP 301 Location: ${destination}`,
     localStorageUse: { implemented: false, keys: [] },
     urlParameterUse: {
       implemented: true,
-      parameters: [
-        Object.hasOwn(STAGE3_NEW_REDIRECTS, source)
-          ? "unsupported legacy query parameters are removed"
-          : "all existing query parameters are preserved",
-      ],
+      parameters: ["all existing query parameters are preserved"],
     },
     closestOverlaps: [destination],
     internalLinksPointingToIt: {
@@ -1911,9 +1899,8 @@ const redirectInventory = Object.entries(PERMANENT_REDIRECTS).map(
     issues: [],
     evidenceFiles: [
       "app/config/redirects.js",
-      "app/root.tsx",
-      "server.js",
       "public/_redirects",
+      "netlify.toml",
     ],
   }),
 );

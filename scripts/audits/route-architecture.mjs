@@ -1,4 +1,3 @@
-import { spawn } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -13,6 +12,10 @@ import {
   RELATED_TOOL_LINKS,
 } from "../../app/clients/config/relatedTools.js";
 import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
+import {
+  readStaticRedirectRules,
+  spawnStaticPreview,
+} from "../tests/preview-process.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SITE_ORIGIN = "https://www.ilovetimers.com";
@@ -496,9 +499,9 @@ for (const routePath of indexableTools) {
 
 let server;
 try {
-  server = spawn(process.execPath, ["server.js"], {
-    cwd: ROOT,
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: "production" },
+  server = spawnStaticPreview({
+    root: ROOT,
+    port: PORT,
     stdio: ["ignore", "pipe", "pipe"],
   });
   await waitForServer();
@@ -541,17 +544,13 @@ try {
     }
   });
 
-  await runBatches(redirectSources, async (source) => {
-    const response = await fetch(`${BASE}${source}?obsolete=1`, { redirect: "manual" });
-    check(response.status === 301, `${source} did not return HTTP 301.`);
-    const location = response.headers.get("location") ?? "";
-    const resolved = new URL(location, BASE);
-    check(resolved.pathname === PERMANENT_REDIRECTS[source], `${source} redirects to ${resolved.pathname}, expected ${PERMANENT_REDIRECTS[source]}.`);
-    check(!redirectSourceSet.has(resolved.pathname), `${source} begins a redirect chain.`);
-    if (Object.hasOwn(STAGE3_NEW_REDIRECTS, source)) {
-      check(!resolved.search, `${source} preserved unsupported query parameters.`);
-    }
-  });
+  const { permanent } = await readStaticRedirectRules(ROOT);
+  for (const source of redirectSources) {
+    const destination = PERMANENT_REDIRECTS[source];
+    check(permanent.get(source) === destination, `${source} is missing its static one-hop 301 mapping.`);
+    check(permanent.get(`${source}/`) === destination, `${source}/ is missing its static one-hop 301 mapping.`);
+    check(!redirectSourceSet.has(destination), `${source} begins a redirect chain.`);
+  }
 } finally {
   server?.kill("SIGTERM");
 }

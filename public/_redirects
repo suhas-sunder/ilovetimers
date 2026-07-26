@@ -32,4 +32,29 @@
 /utc-time-now/  /utc-clock  301
 /current-unix-timestamp  /epoch-unix-time-clock  301
 /current-unix-timestamp/  /epoch-unix-time-clock  301
-/*  /index.html  200
+/fullscreen-timer  /online-timer  301
+/fullscreen-timer/  /online-timer  301
+/count-up-timer  /stopwatch  301
+/count-up-timer/  /stopwatch  301
+/cooking-timer  /kitchen-timer  301
+/cooking-timer/  /kitchen-timer  301
+/boxing-timer  /round-timer  301
+/boxing-timer/  /round-timer  301
+/world-clock-with-seconds  /world-clock  301
+/world-clock-with-seconds/  /world-clock  301
+/analog-clock-with-second-hand  /analog-clock  301
+/analog-clock-with-second-hand/  /analog-clock  301
+/full-screen-analog-clock  /analog-clock  301
+/full-screen-analog-clock/  /analog-clock  301
+/smooth-second-hand-clock  /analog-clock  301
+/smooth-second-hand-clock/  /analog-clock  301
+/full-screen-clock  /digital-clock  301
+/full-screen-clock/  /digital-clock  301
+/big-digital-clock  /digital-clock  301
+/big-digital-clock/  /digital-clock  301
+/clock-with-seconds  /digital-clock  301
+/clock-with-seconds/  /digital-clock  301
+
+# All canonical routes are prerendered. Unknown paths render the static
+# React Router error boundary with a real 404 instead of a generic SPA shell.
+/*  /__spa-fallback.html  404

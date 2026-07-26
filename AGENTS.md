@@ -927,7 +927,7 @@ For code changes, run:
 
 - `npm run typecheck`
 - `npm run build`
-- `node --check server.js`
+- `npm run audit:static-deployment`
 - `git diff --check`
 
 Run tests if present:

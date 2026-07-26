@@ -1,24 +1,24 @@
 {
   "status": "reconciled",
-  "generatedAt": "2026-07-22T00:28:47.056Z",
+  "generatedAt": "2026-07-26T08:56:14.995Z",
   "repository": "ilovetimers",
-  "stage7StartingSummary": {
-    "modified": 246,
-    "deleted": 11,
-    "untracked": 36,
-    "total": 293
+  "migrationStartingSummary": {
+    "modified": 0,
+    "deleted": 0,
+    "untracked": 0,
+    "total": 0
   },
   "currentSummary": {
-    "modified": 269,
-    "deleted": 11,
-    "untracked": 47,
-    "total": 327,
-    "shouldCommit": 327,
+    "modified": 45,
+    "deleted": 5,
+    "untracked": 3,
+    "total": 53,
+    "shouldCommit": 53,
     "requiresOwnerReview": 0
   },
   "entries": [
     {
-      "path": "app/clients/components/alarm-timer/HowItWorks.tsx",
+      "path": ".gitignore",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
@@ -28,7 +28,17 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "app/clients/components/alarm-timer/PopularUseCases.tsx",
+      "path": ".netlify/v1/functions/react-router-server.mjs",
+      "gitStatus": " D",
+      "stageIntroduced": "Stages 1-7 accumulated release candidate",
+      "classification": "generated runtime function intentionally removed",
+      "reason": "The static deployment no longer uses or publishes a generated Netlify Function.",
+      "productionImpact": "Removes the tracked runtime function artifact so Netlify serves only prerendered static files.",
+      "shouldCommit": true,
+      "requiresOwnerReview": false
+    },
+    {
+      "path": "AGENTS.md",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
@@ -38,1628 +48,8 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "app/clients/components/amrap-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/amrap-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/analog-clock/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/analog-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/astronomical-clock/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/astronomical-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/atomic-clock/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/atomic-clock/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/atomic-clock/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/atomic-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/billable-hours-calculator/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/billable-hours-calculator/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/billable-hours-calculator/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/billable-hours-clock/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/billable-hours-clock/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/billable-hours-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/binary-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/binary-stopwatch/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/binary-stopwatch/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/binary-stopwatch/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/bpm-tapper/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/bpm-tapper/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/bpm-tapper/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/break-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/break-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/breathing-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/breathing-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/breathing-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/chaos-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/chaos-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/chaos-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/classroom-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/classroom-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/classroom-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/clock-discovery/ClockDiscoveryPages.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/content/Stage4RouteContent.tsx",
+      "path": "app/entry.client.tsx",
       "gitStatus": "??",
-      "stageIntroduced": "Stage 4",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/cooking-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/cooking-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/cooking-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/count-up-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/count-up-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/count-up-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/countdown-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/current-local-time/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/current-local-time/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/date-calculators/CountdownWorkdayUtilityPages.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/date-calculators/DateCalculatorPages.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/date-calculators/MoreDateTimeCalculatorPages.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/debt-clock/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/debt-clock/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/debt-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/debt-repayment-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/debt-repayment-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/digital-clock/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/digital-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/drink-water-reminder-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/drink-water-reminder-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/drink-water-reminder-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/egg-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/egg-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/egg-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/emom-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/emom-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/epoch-unix-time-clock/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/epoch-unix-time-clock/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/epoch-unix-time-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/event-countdown/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/event-countdown/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/event-countdown/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/event-countdown/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/exam-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/exam-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/exam-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/exam-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/focus-session-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/focus-session-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/focus-session-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/focus-session-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/fullscreen-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/fullscreen-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/golden-hour-clock/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/golden-hour-clock/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/golden-hour-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/guides/GuidePage.tsx",
-      "gitStatus": "??",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/hexadecimal-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/hiit-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/hiit-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/hiit-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/hiit-timer/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/hiit-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/lab-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/lab-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/lab-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/lab-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meditation-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meditation-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meditation-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meditation-timer/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meditation-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meeting-count-up-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meeting-count-up-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meeting-count-up-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meeting-count-up-timer/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meeting-count-up-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meeting-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meeting-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meeting-timer/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/meeting-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/metronome/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/metronome/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/metronome/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/metronome/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/metronome/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/military-time-converter/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/minimalist-clock/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/minimalist-clock/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/minimalist-clock/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/minimalist-clock/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/minimalist-clock/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/moon-phase-clock/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/multiple-timers/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/multiple-timers/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/multiple-timers/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/multiple-timers/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/navigation/Footer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/online-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/online-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/online-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/online-timer/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/online-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pace-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pace-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pace-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pace-timer/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pace-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pizza-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pizza-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pizza-timer/HowItWorks.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pizza-timer/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pizza-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pomodoro-timer/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pomodoro-timer/FAQ.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pomodoro-timer/KeyboardShortcuts.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/pomodoro-timer/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/preset-duration-timer/PresetDurationTimerPage.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/share/SharePresetPanel.tsx",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 6",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/stopwatch/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/stopwatch/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/time-zone-converter/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/trust/ToolTrust.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/work-hours-calculator/PopularUseCases.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/components/world-clock/Disclaimer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/config/guides.ts",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/config/relatedTools.js",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/config/siteDirectory.js",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/config/technicalSources.ts",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/lib/analytics.ts",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/lib/localPresetStore.ts",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 6",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/lib/shareConfigurations.ts",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 6",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/clients/lib/technicalTimeMath.js",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/config/redirects.js",
-      "gitStatus": " M",
-      "stageIntroduced": "Stage 3",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/config/routeArchitecture.js",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 3",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/provider.tsx",
-      "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
       "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
@@ -1678,7 +68,7 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "app/routes.ts",
+      "path": "app/routes/age-calculator.tsx",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
@@ -1688,7 +78,7 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "app/routes/12-hour-clock.tsx",
+      "path": "app/routes/birthday-countdown.tsx",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
@@ -1698,7 +88,7 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "app/routes/24-hour-clock.tsx",
+      "path": "app/routes/days-until-calculator.tsx",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
@@ -1708,977 +98,7 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "app/routes/alarm-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/amrap-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/analog-clock-with-second-hand.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/analog-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/astronomical-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/atomic-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/big-digital-clock.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/billable-hours-calculator.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/billable-hours-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/binary-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/binary-stopwatch.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/boxing-timer.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/bpm-tapper.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/break-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/breathing-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/chaos-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/classroom-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/clock-with-milliseconds.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/clock-with-seconds.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/contact.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/cookies.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/cooking-timer.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/count-up-timer.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/countdown-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/current-local-time.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/debt-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/debt-repayment-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/digital-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/drink-water-reminder-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/egg-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/emom-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/epoch-unix-time-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/event-countdown.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/exam-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/fibonacci-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/focus-session-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/free-online-timers.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/full-screen-analog-clock.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/full-screen-clock.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/fullscreen-timer.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/golden-hour-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/guides.browser-storage.tsx",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/guides.browser-timer-alarm-silent.tsx",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/guides.browser-timers-background-tabs.tsx",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/guides.daylight-saving-time-zone-conversions.tsx",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/guides.how-browser-timers-measure-time.tsx",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/guides.tsx",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/guides.unix-timestamps-seconds-milliseconds-microseconds.tsx",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 5",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/hexadecimal-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/hiit-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/home.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/how-ilovetimers-is-made.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/interval-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/kitchen-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/lab-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/meditation-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/meeting-count-up-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/meeting-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/metronome.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/military-time-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/military-time-converter.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/milliseconds-converter.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/minimalist-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/moon-phase-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/morse-code-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/multiple-timers.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/new-year-countdown.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/online-alarm-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/online-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/pace-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/pizza-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/pomodoro-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/presentation-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/privacy.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/productivity-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/reaction-time-test.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/rest-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/retro-flip-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/roman-numeral-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/round-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/silent-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/sitemap.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/sleep-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/smooth-second-hand-clock.tsx",
-      "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/speech-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/speedcubing-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/speedrun-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/stopwatch-with-milliseconds.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/stopwatch.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/stretch-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/study-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/sunrise-sunset-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/swatch-internet-time-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/tabata-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/tea-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/time-blocking-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/time-calculator.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/time-zone-converter.tsx",
+      "path": "app/routes/hours-until-calculator.tsx",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
@@ -2698,7 +118,7 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "app/routes/timer-clock.tsx",
+      "path": "app/routes/week-number-calculator.tsx",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
@@ -2708,7 +128,7 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "app/routes/unix-timestamp-converter.tsx",
+      "path": "app/routes/weekday-calculator.tsx",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
@@ -2718,88 +138,18 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "app/routes/utc-clock.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/video-game-challenge-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/visual-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/work-hours-calculator.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/workout-timer.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/world-clock-with-milliseconds.tsx",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional production change",
-      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/world-clock-with-seconds.tsx",
+      "path": "Dockerfile",
       "gitStatus": " D",
-      "stageIntroduced": "Stage 3",
-      "classification": "obsolete source intentionally removed",
-      "reason": "The public path was consolidated into the recorded canonical destination and is now covered by a direct permanent redirect.",
-      "productionImpact": "Removes duplicate source while preserving the public request through a one-hop 301.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "app/routes/world-clock.tsx",
-      "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
       "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
-      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
+      "productionImpact": "Removes superseded production source.",
       "shouldCommit": true,
       "requiresOwnerReview": false
     },
     {
       "path": "docs/adsense-route-inventory.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 2",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2809,7 +159,7 @@
     },
     {
       "path": "docs/adsense-site-quality-audit.md",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 2",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2818,18 +168,8 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "docs/audits/adsense-readiness.md",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
       "path": "docs/content-repetition-report.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 4",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2838,18 +178,8 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "docs/final-google-policy-evidence.json",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 7",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
       "path": "docs/final-performance-accessibility.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 7",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2859,7 +189,7 @@
     },
     {
       "path": "docs/final-release-gate.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 7",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2869,7 +199,7 @@
     },
     {
       "path": "docs/final-release-readiness.md",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 7",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2879,7 +209,7 @@
     },
     {
       "path": "docs/final-route-validation.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 7",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2889,27 +219,7 @@
     },
     {
       "path": "docs/final-worktree-inventory.json",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 7",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "docs/post-deployment-smoke-tests.json",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 7",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "docs/rollback-plan.md",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 7",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2919,7 +229,7 @@
     },
     {
       "path": "docs/route-architecture-manifest.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 3",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2929,7 +239,7 @@
     },
     {
       "path": "docs/stage4-content-quality-report.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 4",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2939,7 +249,7 @@
     },
     {
       "path": "docs/stage5-guide-evidence.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 5",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2949,7 +259,7 @@
     },
     {
       "path": "docs/stage5-guide-quality-report.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 5",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2958,28 +268,8 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "docs/stage6-browser-validation.json",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 6",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
       "path": "docs/stage6-feature-quality-report.json",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 6",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "docs/stage6-share-preset-evidence.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 6",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -2989,7 +279,7 @@
     },
     {
       "path": "docs/tool-content-dossier.json",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 4",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -3038,28 +328,38 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "public/sitemap.xml",
+      "path": "react-router.config.ts",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "generated file that should remain tracked",
-      "reason": "This generated public routing/indexing artifact is synchronized with the canonical route architecture.",
-      "productionImpact": "Controls crawler discovery or hosting redirects.",
+      "classification": "intentional production change",
+      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
+      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
       "shouldCommit": true,
       "requiresOwnerReview": false
     },
     {
-      "path": "scripts/audits/accessibility.mjs",
+      "path": "README.md",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
+      "classification": "intentional production change",
+      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
+      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
+      "shouldCommit": true,
+      "requiresOwnerReview": false
+    },
+    {
+      "path": "remixconfig.js",
+      "gitStatus": " D",
+      "stageIntroduced": "Stages 1-7 accumulated release candidate",
+      "classification": "intentional production change",
+      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
+      "productionImpact": "Removes superseded production source.",
       "shouldCommit": true,
       "requiresOwnerReview": false
     },
     {
       "path": "scripts/audits/adsense-site-quality-audit.mjs",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 2",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -3068,39 +368,9 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "scripts/audits/calculators.mjs",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
       "path": "scripts/audits/final-release-gate.mjs",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 7",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "scripts/audits/internal-links.mjs",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "scripts/audits/preset-timers.mjs",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
       "productionImpact": "No direct runtime output; protects release verification and maintenance.",
@@ -3119,7 +389,7 @@
     },
     {
       "path": "scripts/audits/route-architecture.mjs",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 3",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -3138,28 +408,8 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "scripts/audits/specialty-tools.mjs",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "scripts/audits/stage2-accuracy.mjs",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 2",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
       "path": "scripts/audits/stage4-content-quality.mjs",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 4",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -3169,7 +419,7 @@
     },
     {
       "path": "scripts/audits/stage5-guides.mjs",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 5",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -3179,7 +429,7 @@
     },
     {
       "path": "scripts/audits/stage6-share-presets.mjs",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 6",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -3188,18 +438,8 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "scripts/audits/time-tools.mjs",
-      "gitStatus": " M",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "scripts/audits/ui-integrity.mjs",
-      "gitStatus": " M",
+      "path": "scripts/audits/static-deployment.mjs",
+      "gitStatus": "??",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -3209,7 +449,7 @@
     },
     {
       "path": "scripts/tests/final-browser-validation.mjs",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 7",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
@@ -3219,6 +459,16 @@
     },
     {
       "path": "scripts/tests/final-lighthouse.mjs",
+      "gitStatus": " M",
+      "stageIntroduced": "Stages 1-7 accumulated release candidate",
+      "classification": "intentional audit or documentation artifact",
+      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
+      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
+      "shouldCommit": true,
+      "requiresOwnerReview": false
+    },
+    {
+      "path": "scripts/tests/preview-process.mjs",
       "gitStatus": "??",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional audit or documentation artifact",
@@ -3239,28 +489,8 @@
     },
     {
       "path": "scripts/tests/stage6-browser.mjs",
-      "gitStatus": "??",
+      "gitStatus": " M",
       "stageIntroduced": "Stage 6",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "scripts/tests/stage6-share-presets.mjs",
-      "gitStatus": "??",
-      "stageIntroduced": "Stage 6",
-      "classification": "intentional audit or documentation artifact",
-      "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
-      "productionImpact": "No direct runtime output; protects release verification and maintenance.",
-      "shouldCommit": true,
-      "requiresOwnerReview": false
-    },
-    {
-      "path": "scripts/tests/technical-time.mjs",
-      "gitStatus": "??",
-      "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional audit or documentation artifact",
       "reason": "Release evidence, repeatable validation, or owner handoff documentation produced by the staged workstream.",
       "productionImpact": "No direct runtime output; protects release verification and maintenance.",
@@ -3269,8 +499,28 @@
     },
     {
       "path": "server.js",
-      "gitStatus": " M",
+      "gitStatus": " D",
       "stageIntroduced": "Stage 7",
+      "classification": "intentional production change",
+      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
+      "productionImpact": "Removes superseded production source.",
+      "shouldCommit": true,
+      "requiresOwnerReview": false
+    },
+    {
+      "path": "server/app.ts",
+      "gitStatus": " D",
+      "stageIntroduced": "Stages 1-7 accumulated release candidate",
+      "classification": "intentional production change",
+      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
+      "productionImpact": "Removes superseded production source.",
+      "shouldCommit": true,
+      "requiresOwnerReview": false
+    },
+    {
+      "path": "tsconfig.node.json",
+      "gitStatus": " M",
+      "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",
       "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
       "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
@@ -3278,7 +528,17 @@
       "requiresOwnerReview": false
     },
     {
-      "path": "tsconfig.node.json",
+      "path": "tsconfig.vite.json",
+      "gitStatus": " M",
+      "stageIntroduced": "Stages 1-7 accumulated release candidate",
+      "classification": "intentional production change",
+      "reason": "Application, configuration, public asset, or dependency metadata changed intentionally in the accumulated production workstream.",
+      "productionImpact": "Affects the built application, public metadata, runtime behavior, or hosting configuration.",
+      "shouldCommit": true,
+      "requiresOwnerReview": false
+    },
+    {
+      "path": "vite.config.ts",
       "gitStatus": " M",
       "stageIntroduced": "Stages 1-7 accumulated release candidate",
       "classification": "intentional production change",

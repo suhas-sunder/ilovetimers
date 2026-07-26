@@ -144,7 +144,7 @@
       "Controls: Copy 12-hour time, Fullscreen, Seconds, Date, 24-hour comparison",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy, visible FAQ with FAQ schema",
-      "Output: Local AM/PM time 4:21:33 PM 24-hour equivalent: 16:21:33 Tuesday, July 21, 2026 / America/New_York Clock settings Seconds Date 24-hour comparison Copy 12-hour time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / D date / H compari"
+      "Output: Local AM/PM time 3:46:12 AM 24-hour equivalent: 03:46:12 Sunday, July 26, 2026 / America/New_York Clock settings Seconds Date 24-hour comparison Copy 12-hour time Fullscreen Shortcuts: F fullscreen / C copy / S seconds / D date / H comparis"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -228,7 +228,7 @@
       "Controls: Copy 24-hour time, Fullscreen, Seconds, Date, Time source Local UTC",
       "Defaults: checkbox: checked, select: Local",
       "Distinctive features: fullscreen, copy, visible FAQ with FAQ schema",
-      "Output: Local device time 16:21:33 12-hour equivalent: 4:21:33 PM EDT Tuesday, July 21, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC Local mode uses your device clock and timezone. UTC mode formats that same instant as "
+      "Output: Local device time 03:46:12 12-hour equivalent: 3:46:12 AM EDT Sunday, July 26, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC Local mode uses your device clock and timezone. UTC mode formats that same instant as U"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -391,9 +391,9 @@
     "functionalEvidence": [
       "Age Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Birth date, Age on date.",
       "Controls: Copy result, Today, Reset, Birth date, Age on date",
-      "Defaults: date: 2000-01-01, date: 2026-07-21",
+      "Defaults: date: 2000-01-01, date: 2026-07-26",
       "Distinctive features: copy, share, visible FAQ with FAQ schema",
-      "Output: Age 26y 6m 20d 26 years, 6 months, 20 days As of July 21, 2026 Birth date and age-on date Calculate age as of today or any selected calendar date. Birth date Age on date Copy result Today Reset Total days 9698 Completed months 318 Next birt"
+      "Output: Age 26y 6m 25d 26 years, 6 months, 25 days As of July 26, 2026 Birth date and age-on date Calculate age as of today or any selected calendar date. Birth date Age on date Copy result Today Reset Total days 9703 Completed months 318 Next birt"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -557,8 +557,8 @@
     "retainedDistinctiveFunctionality": "Useful capability retained on /analog-clock before redirecting.",
     "reason": "Second-hand visibility was consolidated into Analog Clock as a setting.",
     "functionalEvidence": [
-      "Permanently redirects to /analog-clock and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /analog-clock.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /analog-clock"
     ],
     "implementationEvidence": [
@@ -687,7 +687,7 @@
       "Controls: Freeze, Hide ms, Fullscreen, Live, Milliseconds",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen",
-      "Output: 16:21:33.995 Live Clock settings Live Milliseconds Freeze Hide ms Fullscreen Shortcuts: Space freeze/resume, M toggle ms, F fullscreen Atomic Clock (Device Time Display)"
+      "Output: 03:46:12.289 Live Clock settings Live Milliseconds Freeze Hide ms Fullscreen Shortcuts: Space freeze/resume, M toggle ms, F fullscreen Atomic Clock (Device Time Display)"
     ],
     "implementationEvidence": [
       "rendered robots metadata is noindex,follow",
@@ -764,8 +764,8 @@
     "retainedDistinctiveFunctionality": "Useful capability retained on /digital-clock before redirecting.",
     "reason": "Digital Clock provides the same large responsive display and fullscreen workflow.",
     "functionalEvidence": [
-      "Permanently redirects to /digital-clock and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /digital-clock.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /digital-clock"
     ],
     "implementationEvidence": [
@@ -894,7 +894,7 @@
       "Controls: Copy, Fullscreen, Seconds, 24-hour, Mode BCD digits Pure binary",
       "Defaults: checkbox: checked, select: BCD digits",
       "Distinctive features: fullscreen, copy",
-      "Output: Local time · America/New_York · BCD digits 16:21:33 HH MM SS Hours 0 0 0 1 1 0 1 1 0 6 0001 0110 Minutes 0 0 1 0 2 0 0 0 1 1 0010 0001 Seconds 0 0 1 1 3 0 0 1 1 3 0011 0011 BCD shows each decimal digit as 4 binary bits. Tuesday, July 21, 20"
+      "Output: Local time · America/New_York · BCD digits 03:46:12 HH MM SS Hours 0 0 0 0 0 0 0 1 1 3 0000 0011 Minutes 0 1 0 0 4 0 1 1 0 6 0100 0110 Seconds 0 0 0 1 1 0 0 1 0 2 0001 0010 BCD shows each decimal digit as 4 binary bits. Sunday, July 26, 202"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -976,7 +976,7 @@
     "functionalEvidence": [
       "Birthday Countdown is implemented as a date or event countdown. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Share result, Today, Reset, Month, Day, Birth year (optional).",
       "Controls: Copy result, Share result, Today, Reset, Month, Day",
-      "Defaults: number: 7, number: 21",
+      "Defaults: number: 7, number: 26",
       "Distinctive features: copy, share, visible FAQ with FAQ schema",
       "Output: Next birthday Today Today is the selected birthday. Local calendar countdown Birthday Enter a birthday month and day. Birth year is optional and only adds turning-age context. Month Day Birth year (optional) Copy result Share result Today R"
     ],
@@ -1016,8 +1016,8 @@
     "retainedDistinctiveFunctionality": "Useful capability retained on /round-timer before redirecting.",
     "reason": "Boxing presets were added to Round Timer, which already uses the same prep, round, rest, sound, and round-count state model.",
     "functionalEvidence": [
-      "Permanently redirects to /round-timer and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /round-timer.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /round-timer"
     ],
     "implementationEvidence": [
@@ -1313,7 +1313,7 @@
       "Christmas Countdown is implemented as a date or event countdown. It implements fullscreen, copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy countdown, Share, Fullscreen.",
       "Controls: Copy countdown, Share, Fullscreen",
       "Distinctive features: fullscreen, copy, share, visible FAQ with FAQ schema",
-      "Output: Countdown to Christmas 2026 156d 08:38:26 Target: December 25, 2026 156 days, 8 hours, 38 minutes, 26 seconds / Local timezone Copy countdown Share Fullscreen Target year 2026 Target weekday Friday Timezone Local timezone Uses fixed Decembe"
+      "Output: Countdown to Christmas 2026 151d 21:13:47 Target: December 25, 2026 151 days, 21 hours, 13 minutes, 47 seconds / Local timezone Copy countdown Share Fullscreen Target year 2026 Target weekday Friday Timezone Local timezone Uses fixed Decemb"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -1439,7 +1439,7 @@
       "Controls: Copy current time, Fullscreen, 24-hour time, Milliseconds, UTC mode, Date",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy",
-      "Output: Milliseconds visible / Local 16:21:33.912 Local device time / America/New_York Tuesday, July 21, 2026 Clock settings The display uses your browser and device clock. UTC mode formats the same instant against UTC. 24-hour time Milliseconds UT"
+      "Output: Milliseconds visible / Local 03:46:12.163 Local device time / America/New_York Sunday, July 26, 2026 Clock settings The display uses your browser and device clock. UTC mode formats the same instant against UTC. 24-hour time Milliseconds UTC"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -1477,8 +1477,8 @@
     "retainedDistinctiveFunctionality": "Useful capability retained on /digital-clock before redirecting.",
     "reason": "Seconds visibility is already a setting on Digital Clock, which now also preserves the useful date and minimal-display choices.",
     "functionalEvidence": [
-      "Permanently redirects to /digital-clock and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /digital-clock.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /digital-clock"
     ],
     "implementationEvidence": [
@@ -1597,8 +1597,8 @@
     "retainedDistinctiveFunctionality": "No independent interface or state is retained at the alias.",
     "reason": "Its general kitchen countdown task and presets overlap the broader Kitchen Timer.",
     "functionalEvidence": [
-      "Permanently redirects to /kitchen-timer and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /kitchen-timer.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /kitchen-timer"
     ],
     "implementationEvidence": [
@@ -1678,8 +1678,8 @@
     "retainedDistinctiveFunctionality": "No independent interface or state is retained at the alias.",
     "reason": "Its zero-based elapsed-time workflow is functionally equivalent to the standard stopwatch.",
     "functionalEvidence": [
-      "Permanently redirects to /stopwatch and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /stopwatch.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /stopwatch"
     ],
     "implementationEvidence": [
@@ -1759,14 +1759,14 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Timers",
-    "retainedDistinctiveFunctionality": "Countdown Timer is implemented as a date or event countdown. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, +1:00, -0:10, 1 m, 5 m, 10 m, 15 m.",
-    "reason": "Retained because the implemented timers interface provides a distinct user task, calculation, output, representation, or state model. Countdown Timer is implemented as a date or event countdown. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, +1:00, -0:10, 1 m, 5 m, 10 m, 15 m.",
+    "retainedDistinctiveFunctionality": "Countdown Timer is implemented as a date or event countdown. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, +1:00, -0:10, 1 m, 5 m, 10 m, 15 m.",
+    "reason": "Retained because the implemented timers interface provides a distinct user task, calculation, output, representation, or state model. Countdown Timer is implemented as a date or event countdown. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, +1:00, -0:10, 1 m, 5 m, 10 m, 15 m.",
     "functionalEvidence": [
-      "Countdown Timer is implemented as a date or event countdown. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, +1:00, -0:10, 1 m, 5 m, 10 m, 15 m.",
+      "Countdown Timer is implemented as a date or event countdown. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, +1:00, -0:10, 1 m, 5 m, 10 m, 15 m.",
       "Controls: Start, Reset, +1:00, -0:10, 1 m, 5 m",
-      "Defaults: text: 5, text: 0",
-      "Distinctive features: fullscreen",
-      "Output: Start Reset +1:00 -0:10 Quick presets Choose a common duration or enter a custom value below. 1 m 5 m 10 m 15 m 30 m Set countdown Minutes and seconds. Seconds are clamped to 0-59. Minutes Seconds 0-59 Apply Fullscreen Shortcuts: Space star"
+      "Defaults: text: 5, text: 0, select: No presets saved",
+      "Distinctive features: fullscreen, copy, URL configuration",
+      "Output: Start Reset +1:00 -0:10 Quick presets Choose a common duration or enter a custom value below. 1 m 5 m 10 m 15 m 30 m Set countdown Minutes and seconds. Seconds are clamped to 0-59. Minutes Seconds 0-59 Apply Share and reuse this setup Share"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -1817,9 +1817,9 @@
     "functionalEvidence": [
       "Countdown To Date is implemented as a date or event countdown. It implements fullscreen, copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Tomorrow, +7 days, +30 days, Copy countdown, Share, Fullscreen, Reset, Label.",
       "Controls: Tomorrow, +7 days, +30 days, Copy countdown, Share, Fullscreen",
-      "Defaults: text: Selected date, date: 2026-07-28, time: 09:00",
+      "Defaults: text: Selected date, date: 2026-08-02, time: 09:00",
       "Distinctive features: fullscreen, copy, share, visible FAQ with FAQ schema",
-      "Output: Selected date 6d 16:38:26 Target: July 28, 2026, 09:00 6 days, 16 hours, 38 minutes, 26 seconds / Local timezone Target date and time Pick one local date and optional time. The countdown updates live without saved event management. Label Ta"
+      "Output: Selected date 7d 05:13:47 Target: August 2, 2026, 09:00 7 days, 5 hours, 13 minutes, 47 seconds / Local timezone Target date and time Pick one local date and optional time. The countdown updates live without saved event management. Label Ta"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -1854,14 +1854,14 @@
     "robots": "noindex,follow",
     "redirectDestination": null,
     "overlapGroup": "Digital and local clocks",
-    "retainedDistinctiveFunctionality": "Current Local Time is implemented as a specialty time tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Local, Toronto, New York, London, Vancouver 01:21 PM, Toronto 04:21 PM.",
+    "retainedDistinctiveFunctionality": "Current Local Time is implemented as a specialty time tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Local, Toronto, New York, London, Vancouver 12:46 AM, Toronto 03:46 AM.",
     "reason": "The route remains a useful direct local-time reference, but its comparison output is too minor to compete independently with the retained digital clock.",
     "functionalEvidence": [
-      "Current Local Time is implemented as a specialty time tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Local, Toronto, New York, London, Vancouver 01:21 PM, Toronto 04:21 PM.",
+      "Current Local Time is implemented as a specialty time tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Local, Toronto, New York, London, Vancouver 12:46 AM, Toronto 03:46 AM.",
       "Controls: Copy, Fullscreen, Local, Toronto, New York, London",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy",
-      "Output: Local time now · America/New_York 04:21:33 PM Tuesday, July 21, 2026 , week 30 Clock settings Seconds 24-hour Copy Fullscreen Quick compare Local Toronto New York London Vancouver 01:21 PM Toronto 04:21 PM New York 04:21 PM London 09:21 PM "
+      "Output: Local time now · America/New_York 03:46:12 AM Sunday, July 26, 2026 , week 30 Clock settings Seconds 24-hour Copy Fullscreen Quick compare Local Toronto New York London Vancouver 12:46 AM Toronto 03:46 AM New York 03:46 AM London 08:46 AM M"
     ],
     "implementationEvidence": [
       "rendered robots metadata is noindex,follow",
@@ -2027,9 +2027,9 @@
     "functionalEvidence": [
       "Days Until Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include New Year, Christmas, Today + 7 days, Today + 30 days, Copy result, Today, Reset, Start date.",
       "Controls: New Year, Christmas, Today + 7 days, Today + 30 days, Copy result, Today",
-      "Defaults: date: 2026-07-21, date: 2026-07-28",
+      "Defaults: date: 2026-07-26, date: 2026-08-02",
       "Distinctive features: copy, share, visible FAQ with FAQ schema",
-      "Output: Days until 7 days until July 21, 2026 to July 28, 2026 Target date is in the future Start and target date The start date defaults to today, and the target date can be any local calendar date. Start date Target date Presets New Year Christma"
+      "Output: Days until 7 days until July 26, 2026 to August 2, 2026 Target date is in the future Start and target date The start date defaults to today, and the target date can be any local calendar date. Start date Target date Presets New Year Christm"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -2111,7 +2111,7 @@
     "functionalEvidence": [
       "Debt Repayment Timer is implemented as a timer. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Payoff date, Duration (days), Start, Reset, Currency USD CAD EUR GBP AUD NZD JPY, Starting balance, Target balance.",
       "Controls: Fullscreen, Payoff date, Duration (days), Start, Reset, Currency USD CAD EUR GBP AUD NZD JPY",
-      "Defaults: number: 5000, number: 0, date: 2026-07-21, date: 2027-01-21, select: USD",
+      "Defaults: number: 5000, number: 0, date: 2026-07-26, date: 2027-01-26, select: USD",
       "Distinctive features: fullscreen",
       "Output: Fullscreen Payoff mode Payoff date Duration (days) Debt estimate inputs These estimates use the balances, dates, and currency you enter. Currency USD CAD EUR GBP AUD NZD JPY Starting balance Target balance Start date Payoff date Start Reset"
     ],
@@ -2155,7 +2155,7 @@
       "Controls: Copy, Fullscreen, Seconds, 24-hour, Date, Minimal",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy",
-      "Output: 16:21:33 Local time · America/New_York Tuesday, July 21, 2026 Clock settings Seconds 24-hour Date Minimal Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, D date, M minimal, 1 12-hour, 2 24-hour Digital Clock"
+      "Output: 03:46:12 Local time · America/New_York Sunday, July 26, 2026 Clock settings Seconds 24-hour Date Minimal Copy Fullscreen Shortcuts: F fullscreen, C copy, S seconds, D date, M minimal, 1 12-hour, 2 24-hour Digital Clock"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -2323,7 +2323,7 @@
       "Controls: Freeze, Snap now, Copy seconds, Copy milliseconds, Fullscreen, Live timestamp",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy",
-      "Output: Unix Time (seconds) · Live 1784665293 Milliseconds 1784665293971 Local time Tue, Jul 21, 2026, 4:21:33 PM UTC time Tue, Jul 21, 2026, 20:21:33 UTC Shortcuts: Space live or freeze · C copy seconds · M copy milliseconds · N snap now · F fulls"
+      "Output: Unix Time (seconds) · Live 1785051972 Milliseconds 1785051972254 Local time Sun, Jul 26, 2026, 3:46:12 AM UTC time Sun, Jul 26, 2026, 07:46:12 UTC Shortcuts: Space live or freeze · C copy seconds · M copy milliseconds · N snap now · F fulls"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -2363,9 +2363,9 @@
     "functionalEvidence": [
       "Event Countdown (Countdown to Date & Time) is implemented as a date or event countdown. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, New, Duplicate, Delete, Fullscreen, -1h, -2h.",
       "Controls: Start, Reset, New, Duplicate, Delete, Fullscreen",
-      "Defaults: text: My Event, datetime-local: 2026-07-21T17:21, checkbox: checked, select: My Event",
+      "Defaults: text: My Event, datetime-local: 2026-07-26T04:46, checkbox: checked, select: My Event",
       "Distinctive features: browser audio, fullscreen, local persistence",
-      "Output: Target: Tue, Jul 21, 2026, 05:21 PM My Event 00:00:00 0:00 Start Reset New Duplicate Delete Fullscreen Adjust target Move the selected event target without editing the date field. -1h -2h -24h +1h +2h +24h Event setup Choose the saved event"
+      "Output: Target: Sun, Jul 26, 2026, 04:46 AM My Event 00:00:00 0:00 Start Reset New Duplicate Delete Fullscreen Adjust target Move the selected event target without editing the date field. -1h -2h -24h +1h +2h +24h Event setup Choose the saved event"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -2622,8 +2622,8 @@
     "retainedDistinctiveFunctionality": "Useful capability retained on /analog-clock before redirecting.",
     "reason": "Analog Clock already supports fullscreen and now carries the consolidated display controls.",
     "functionalEvidence": [
-      "Permanently redirects to /analog-clock and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /analog-clock.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /analog-clock"
     ],
     "implementationEvidence": [
@@ -2664,8 +2664,8 @@
     "retainedDistinctiveFunctionality": "Useful capability retained on /digital-clock before redirecting.",
     "reason": "Digital Clock already supports fullscreen and now carries the consolidated date and minimal-display settings.",
     "functionalEvidence": [
-      "Permanently redirects to /digital-clock and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /digital-clock.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /digital-clock"
     ],
     "implementationEvidence": [
@@ -2706,8 +2706,8 @@
     "retainedDistinctiveFunctionality": "No independent interface or state is retained at the alias.",
     "reason": "Its timer, sound, looping, and fullscreen task are satisfied by the stronger Online Timer without loss of state or controls.",
     "functionalEvidence": [
-      "Permanently redirects to /online-timer and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /online-timer.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /online-timer"
     ],
     "implementationEvidence": [
@@ -2745,14 +2745,14 @@
     "robots": "noindex,follow",
     "redirectDestination": null,
     "overlapGroup": "Novelty and experimental tools",
-    "retainedDistinctiveFunctionality": "Golden Hour Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use GPS, Today, Sound, Final beeps, Date Tuesday, July 21, 2026, Latitude Range: -90 to 90, Longitude Range: -180 to 180.",
+    "retainedDistinctiveFunctionality": "Golden Hour Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use GPS, Today, Sound, Final beeps, Date Sunday, July 26, 2026, Latitude Range: -90 to 90, Longitude Range: -180 to 180.",
     "reason": "The disclosed local solar approximation remains useful, but representative broad validation is insufficient for an independent search landing page.",
     "functionalEvidence": [
-      "Golden Hour Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use GPS, Today, Sound, Final beeps, Date Tuesday, July 21, 2026, Latitude Range: -90 to 90, Longitude Range: -180 to 180.",
-      "Controls: Fullscreen, Use GPS, Today, Sound, Final beeps, Date Tuesday, July 21, 2026",
-      "Defaults: checkbox: checked, date: 2026-07-21, text: 40.7128, text: -74.006, select: Classic: 60 minutes",
+      "Golden Hour Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use GPS, Today, Sound, Final beeps, Date Sunday, July 26, 2026, Latitude Range: -90 to 90, Longitude Range: -180 to 180.",
+      "Controls: Fullscreen, Use GPS, Today, Sound, Final beeps, Date Sunday, July 26, 2026",
+      "Defaults: checkbox: checked, date: 2026-07-26, text: 40.7128, text: -74.006, select: Classic: 60 minutes",
       "Distinctive features: browser audio, fullscreen, geolocation",
-      "Output: Sound Final beeps Fullscreen Date Tuesday, July 21, 2026 Latitude Range: -90 to 90 Longitude Range: -180 to 180 Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes) Use GPS Today Shortcuts: F fullscreen ·"
+      "Output: Sound Final beeps Fullscreen Date Sunday, July 26, 2026 Latitude Range: -90 to 90 Longitude Range: -180 to 180 Definition Classic: 60 minutes Solar-angle: 0° to 6° Classic (first and last 60 minutes) Use GPS Today Shortcuts: F fullscreen · "
     ],
     "implementationEvidence": [
       "rendered robots metadata is noindex,follow",
@@ -2788,11 +2788,10 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Guides",
-    "retainedDistinctiveFunctionality": "Editorial guide index for the six production browser-timing and data guides.",
-    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Editorial guide index for the six production browser-timing and data guides.",
+    "retainedDistinctiveFunctionality": "Guides to Browser Timing, Timezones, and Local Data is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
+    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Guides to Browser Timing, Timezones, and Local Data is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
     "functionalEvidence": [
-      "Editorial guide index for the six production browser-timing and data guides.",
-      "Distinctive features: visible external citations, TechArticle or CollectionPage structured data",
+      "Guides to Browser Timing, Timezones, and Local Data is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
       "Output: Focused explanations of the browser behavior behind iLoveTimers tools, written from the production implementation and checked against browser standards and documentation. Choose the question you need to answer These are not generic articles"
     ],
     "implementationEvidence": [
@@ -2828,11 +2827,10 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Guides",
-    "retainedDistinctiveFunctionality": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+    "retainedDistinctiveFunctionality": "What iLoveTimers Stores in Your Browser is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
+    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. What iLoveTimers Stores in Your Browser is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
     "functionalEvidence": [
-      "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-      "Distinctive features: visible external citations, TechArticle or CollectionPage structured data",
+      "What iLoveTimers Stores in Your Browser is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
       "Output: See which iLoveTimers preferences and tool data use local browser storage, what is session-only, and how clearing site data affects them. What does iLoveTimers save in my browser, and what is not saved? Short answer: iLoveTimers uses this s"
     ],
     "implementationEvidence": [
@@ -2868,11 +2866,11 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Guides",
-    "retainedDistinctiveFunctionality": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+    "retainedDistinctiveFunctionality": "Why a Browser Timer or Alarm May Stay Silent is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
+    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Why a Browser Timer or Alarm May Stay Silent is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
     "functionalEvidence": [
-      "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-      "Distinctive features: visible external citations, TechArticle or CollectionPage structured data",
+      "Why a Browser Timer or Alarm May Stay Silent is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
+      "Distinctive features: browser audio",
       "Output: Troubleshoot browser timer and alarm sound, including autoplay rules, muted output, suspended audio, background pages, and device sleep. Why did my browser timer finish without making a sound? Short answer: a timer can reach zero correctly "
     ],
     "implementationEvidence": [
@@ -2908,11 +2906,11 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Guides",
-    "retainedDistinctiveFunctionality": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+    "retainedDistinctiveFunctionality": "Browser Timers in Background Tabs, Locked Phones, and Closed Tabs is implemented as a timer. It implements client-side calculation or live reconciliation.",
+    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Browser Timers in Background Tabs, Locked Phones, and Closed Tabs is implemented as a timer. It implements client-side calculation or live reconciliation.",
     "functionalEvidence": [
-      "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-      "Distinctive features: visible external citations, TechArticle or CollectionPage structured data",
+      "Browser Timers in Background Tabs, Locked Phones, and Closed Tabs is implemented as a timer. It implements client-side calculation or live reconciliation.",
+      "Distinctive features: visibility reconciliation",
       "Output: Understand what can happen to a browser timer when its tab is hidden, a phone is locked, the browser freezes the page, or the tab is closed. Will a browser timer keep working in a background tab, on a locked phone, or after I close the tab?"
     ],
     "implementationEvidence": [
@@ -2948,11 +2946,10 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Guides",
-    "retainedDistinctiveFunctionality": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+    "retainedDistinctiveFunctionality": "Daylight-Saving Gaps, Repeated Times, and Timezone Conversions is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
+    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Daylight-Saving Gaps, Repeated Times, and Timezone Conversions is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
     "functionalEvidence": [
-      "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-      "Distinctive features: visible external citations, TechArticle or CollectionPage structured data",
+      "Daylight-Saving Gaps, Repeated Times, and Timezone Conversions is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
       "Output: Understand nonexistent spring-forward times, repeated fall-back times, date-specific offsets, and how iLoveTimers resolves timezone input. Why can a local time be nonexistent or occur twice during a timezone conversion? Short answer: a name"
     ],
     "implementationEvidence": [
@@ -2988,11 +2985,11 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Guides",
-    "retainedDistinctiveFunctionality": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+    "retainedDistinctiveFunctionality": "How Browser Timers Measure Elapsed Time and Handle Delays is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
+    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. How Browser Timers Measure Elapsed Time and Handle Delays is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
     "functionalEvidence": [
-      "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-      "Distinctive features: visible external citations, TechArticle or CollectionPage structured data",
+      "How Browser Timers Measure Elapsed Time and Handle Delays is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
+      "Distinctive features: browser audio",
       "Output: Learn why accurate browser timers measure elapsed or target time instead of assuming every callback arrives on schedule. How can a browser timer stay accurate when animation frames and timer callbacks are delayed? Short answer: a reliable b"
     ],
     "implementationEvidence": [
@@ -3028,11 +3025,10 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Guides",
-    "retainedDistinctiveFunctionality": "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
+    "retainedDistinctiveFunctionality": "Unix Timestamps in Seconds, Milliseconds, and Microseconds is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
+    "reason": "Retained because the implemented guides interface provides a distinct user task, calculation, output, representation, or state model. Unix Timestamps in Seconds, Milliseconds, and Microseconds is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
     "functionalEvidence": [
-      "Implementation-backed technical guide with visible authorship, review date, citations, and route-specific examples.",
-      "Distinctive features: visible external citations, TechArticle or CollectionPage structured data",
+      "Unix Timestamps in Seconds, Milliseconds, and Microseconds is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
       "Output: Distinguish Unix timestamp seconds, milliseconds, and microseconds, recognize common digit lengths, and avoid 1,000-times unit errors. Is this Unix timestamp in seconds, milliseconds, or microseconds? Short answer: for dates near the presen"
     ],
     "implementationEvidence": [
@@ -3075,7 +3071,7 @@
       "Controls: Copy, Fullscreen, Mode Hex HH:MM:SS Hex color, Seconds, Milliseconds, 24-hour",
       "Defaults: checkbox: checked, select: Hex HH:MM:SS",
       "Distinctive features: fullscreen, copy",
-      "Output: Local time · America/New_York · Hex HH:MM:SS 10:15:21 Hours=10 · Minutes=15 · Seconds=21 Tuesday, July 21, 2026 · Decimal 16:21:33 Hex clock settings Mode Hex HH:MM:SS Hex color Seconds Milliseconds 24-hour Copy Fullscreen Shortcuts: F full"
+      "Output: Local time · America/New_York · Hex HH:MM:SS 03:2E:0C Hours=03 · Minutes=2E · Seconds=0C Sunday, July 26, 2026 · Decimal 03:46:12 Hex clock settings Mode Hex HH:MM:SS Hex color Seconds Milliseconds 24-hour Copy Fullscreen Shortcuts: F fulls"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -3110,13 +3106,13 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Fitness timers",
-    "retainedDistinctiveFunctionality": "HIIT Timer (Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6, Fullscreen, Warm-up seconds 0 = skip.",
-    "reason": "Retained because the implemented fitness timers interface provides a distinct user task, calculation, output, representation, or state model. HIIT Timer (Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6, Fullscreen, Warm-up seconds 0 = skip.",
+    "retainedDistinctiveFunctionality": "HIIT Timer (Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6, Share setup, Save preset.",
+    "reason": "Retained because the implemented fitness timers interface provides a distinct user task, calculation, output, representation, or state model. HIIT Timer (Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6, Share setup, Save preset.",
     "functionalEvidence": [
-      "HIIT Timer (Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6, Fullscreen, Warm-up seconds 0 = skip.",
+      "HIIT Timer (Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6, Share setup, Save preset.",
       "Controls: Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6",
       "Defaults: number: 30, number: 20, number: 10, number: 8, checkbox: checked",
-      "Distinctive features: browser audio, fullscreen",
+      "Distinctive features: browser audio, fullscreen, copy, URL configuration",
       "Output: 0:30 Warm-up Get ready Paused Start Reset Next HIIT presets Load a common work/rest pattern, then fine-tune the timing below. Tabata 20/10 x 8 Intervals 40/20 x 10 Boxing 3:00/1:00 x 6 Interval settings Set warm-up, work, rest, rounds, cool"
     ],
     "implementationEvidence": [
@@ -3174,7 +3170,7 @@
     "functionalEvidence": [
       "Hours Until Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include +1 hour, +6 hours, +12 hours, +24 hours, Tomorrow 09:00, Copy result, Now, Reset.",
       "Controls: +1 hour, +6 hours, +12 hours, +24 hours, Tomorrow 09:00, Copy result",
-      "Defaults: datetime-local: 2026-07-21T16:21, datetime-local: 2026-07-21T17:21",
+      "Defaults: datetime-local: 2026-07-26T03:46, datetime-local: 2026-07-26T04:46",
       "Distinctive features: copy, share, visible FAQ with FAQ schema",
       "Output: Hours until 1 hour 0d 1h 0m Target is in the future Start and target Compare a local start date/time with a local target date/time. Start date and time Target date and time Presets +1 hour +6 hours +12 hours +24 hours Tomorrow 09:00 Copy re"
     ],
@@ -3653,7 +3649,7 @@
       "Controls: Copy military time, Fullscreen, Seconds, Date, Time source Local UTC / Zulu",
       "Defaults: checkbox: checked, select: Local",
       "Distinctive features: fullscreen, copy",
-      "Output: Local device time 16:21:34 Military format: 162134 Standard time: 4:21:34 PM EDT Tue, Jul 21, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC / Zulu Local mode uses your device clock and timezone. Copy military tim"
+      "Output: Local device time 03:46:12 Military format: 034612 Standard time: 3:46:12 AM EDT Sun, Jul 26, 2026 / America/New_York Clock settings Seconds Date Time source Local UTC / Zulu Local mode uses your device clock and timezone. Copy military tim"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -3905,7 +3901,7 @@
       "Controls: Copy, Fullscreen, Seconds, 24-hour, Date, Zen",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy",
-      "Output: Local time · America/New_York · 24-hour · seconds on 16:21:34 Tuesday, July 21, 2026 Tip: click the card so shortcuts work Clock settings Minimal display options stay secondary to the clock face. Seconds 24-hour Date Zen Copy Fullscreen Sho"
+      "Output: Local time · America/New_York · 24-hour · seconds on 03:46:12 Sunday, July 26, 2026 Tip: click the card so shortcuts work Clock settings Minimal display options stay secondary to the clock face. Seconds 24-hour Date Zen Copy Fullscreen Shor"
     ],
     "implementationEvidence": [
       "rendered robots metadata is noindex,follow",
@@ -3987,9 +3983,9 @@
     "functionalEvidence": [
       "Moon Phase Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Set to noon, Now, Live, Sound, Final beeps, Date, Hour.",
       "Controls: Fullscreen, Set to noon, Now, Live, Sound, Final beeps",
-      "Defaults: checkbox: checked, date: 2026-07-21, number: 12, number: 0",
+      "Defaults: checkbox: checked, date: 2026-07-26, number: 12, number: 0",
       "Distinctive features: browser audio, fullscreen",
-      "Output: Live Sound Final beeps Fullscreen Next major phase countdown Next: First Quarter • 12:12 AM 7:51:11 Status: Live Phase: First Quarter Illumination: 47 % Age: 7.1 days Date Hour Minute Quick Set to noon Now Editing date/time switches to Manu"
+      "Output: Live Sound Final beeps Fullscreen Next major phase countdown Next: Full Moon • 9:23 AM 77:37:33 Status: Live Phase: Waxing Gibbous Illumination: 89 % Age: 11.5 days Date Hour Minute Quick Set to noon Now Editing date/time switches to Manual"
     ],
     "implementationEvidence": [
       "rendered robots metadata is noindex,follow",
@@ -4031,7 +4027,7 @@
       "Controls: Text view, Copy, Fullscreen, 24-hour, Seconds",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy",
-      "Output: Local time 16:21:33 Morse output 1 6 : 2 1 : 3 3 Morse clock settings 24-hour Seconds Text view Copy Fullscreen Shortcuts: F fullscreen, T 24-hour, S seconds, V view, C copy Morse Code Clock"
+      "Output: Local time 03:46:12 Morse output 0 3 : 4 6 : 1 2 Morse clock settings 24-hour Seconds Text view Copy Fullscreen Shortcuts: F fullscreen, T 24-hour, S seconds, V view, C copy Morse Code Clock"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -4165,7 +4161,7 @@
       "New Year Countdown is implemented as a date or event countdown. It implements fullscreen, copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy countdown, Share, Fullscreen.",
       "Controls: Copy countdown, Share, Fullscreen",
       "Distinctive features: fullscreen, copy, share, visible FAQ with FAQ schema",
-      "Output: Countdown to 2027 163d 08:38:26 Target: Friday, January 1, 2027 at 12:00 AM EST Local timezone: America/New_York Copy countdown Share Fullscreen Time left 163 days / 8 hours / 38 minutes / 26 seconds Shortcuts: C copy / S share / F fullscre"
+      "Output: Countdown to 2027 158d 21:13:47 Target: Friday, January 1, 2027 at 12:00 AM EST Local timezone: America/New_York Copy countdown Share Fullscreen Time left 158 days / 21 hours / 13 minutes / 47 seconds Shortcuts: C copy / S share / F fullscr"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -4205,9 +4201,9 @@
     "functionalEvidence": [
       "Online Alarm Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Set alarm, Reset, Test sound, Fullscreen, Alarm time, Sound.",
       "Controls: Set alarm, Reset, Test sound, Fullscreen, Alarm time, Sound",
-      "Defaults: time: 16:26, checkbox: checked",
+      "Defaults: time: 03:51, checkbox: checked",
       "Distinctive features: browser audio, fullscreen, visible FAQ with FAQ schema",
-      "Output: Current time 4:21:33 PM Alarm time: 4:26 PM / Today Next occurrence: Tue, Jul 21, 4:26 PM / America/New_York Set alarm Reset Alarm settings Choose a clock time. If that time has already passed today, the next occurrence is tomorrow. Alarm t"
+      "Output: Current time 3:46:11 AM Alarm time: 3:51 AM / Today Next occurrence: Sun, Jul 26, 3:51 AM / America/New_York Set alarm Reset Alarm settings Choose a clock time. If that time has already passed today, the next occurrence is tomorrow. Alarm t"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -4452,13 +4448,13 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Study and focus",
-    "retainedDistinctiveFunctionality": "Pomodoro Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Fullscreen, Work (minutes), Break (minutes), Cycles, Sound.",
-    "reason": "Retained because the implemented study and focus interface provides a distinct user task, calculation, output, representation, or state model. Pomodoro Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Fullscreen, Work (minutes), Break (minutes), Cycles, Sound.",
+    "retainedDistinctiveFunctionality": "Pomodoro Timer is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Share setup, Save preset, Load preset, Rename, Delete.",
+    "reason": "Retained because the implemented study and focus interface provides a distinct user task, calculation, output, representation, or state model. Pomodoro Timer is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Share setup, Save preset, Load preset, Rename, Delete.",
     "functionalEvidence": [
-      "Pomodoro Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Fullscreen, Work (minutes), Break (minutes), Cycles, Sound.",
-      "Controls: Start, Next, Reset, Fullscreen, Work (minutes), Break (minutes)",
+      "Pomodoro Timer is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Share setup, Save preset, Load preset, Rename, Delete.",
+      "Controls: Start, Next, Reset, Share setup, Save preset, Load preset",
       "Defaults: number: 25, number: 5, number: 4, checkbox: checked, number: 15",
-      "Distinctive features: browser audio, fullscreen",
+      "Distinctive features: browser audio, fullscreen, copy, URL configuration",
       "Output: 25:00 Work Work 1/4 Paused Start Next Reset Pomodoro settings Set the work block, break length, cycle count, and optional cues. Work (minutes) Break (minutes) Cycles Sound Auto Final 3-2-1 beeps Long break after last cycle Long break (minut"
     ],
     "implementationEvidence": [
@@ -4554,10 +4550,10 @@
     "robots": "noindex,follow",
     "redirectDestination": null,
     "overlapGroup": "Trust and site information",
-    "retainedDistinctiveFunctionality": "Privacy Policy informational page with 9 supporting subsections.",
+    "retainedDistinctiveFunctionality": "Privacy Policy informational page with 10 supporting subsections.",
     "reason": "The policy remains public and self-canonical but is intentionally excluded from search indexing and the XML sitemap.",
     "functionalEvidence": [
-      "Privacy Policy informational page with 9 supporting subsections.",
+      "Privacy Policy informational page with 10 supporting subsections.",
       "Output: Privacy Policy"
     ],
     "implementationEvidence": [
@@ -4726,7 +4722,7 @@
       "Controls: Copy, Fullscreen, Exit (Esc), Seconds, 24-hour, Date",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy",
-      "Output: Seconds 24-hour Date Zen Copy Fullscreen 1 1 6 6 2 2 1 1 3 3 4 4 16:21:34 Tuesday, July 21, 2026 Local time · America/New_York · 24-hour · seconds on Exit (Esc) Retro Flip Clock 1 1 6 6 2 2 1 1 3 3 4 4 16:21:34 America/New_York · 24-hour · "
+      "Output: Seconds 24-hour Date Zen Copy Fullscreen 0 0 3 3 4 4 6 6 1 1 2 2 03:46:12 Sunday, July 26, 2026 Local time · America/New_York · 24-hour · seconds on Exit (Esc) Retro Flip Clock 0 0 3 3 4 4 6 6 1 1 2 2 03:46:12 America/New_York · 24-hour · s"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -4768,7 +4764,7 @@
       "Controls: Copy, Fullscreen, Seconds, 24-hour, Use IIII",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy",
-      "Output: Copy Fullscreen Seconds 24-hour Use IIII Shortcuts: F fullscreen · C copy · S seconds · I IIII · 1 (12h) · 2 (24h) America/New_York · 12-hour · IIII · seconds IIII : XXI : XXXIV PM 04:21:34 PM Tuesday, July 21, 2026 Roman clock settings Sec"
+      "Output: Copy Fullscreen Seconds 24-hour Use IIII Shortcuts: F fullscreen · C copy · S seconds · I IIII · 1 (12h) · 2 (24h) America/New_York · 12-hour · IIII · seconds III : XLVI : XII AM 03:46:12 AM Sunday, July 26, 2026 Roman clock settings Second"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -4929,11 +4925,11 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Trust and site information",
-    "retainedDistinctiveFunctionality": "HTML Sitemap informational page with 142 supporting subsections.",
-    "reason": "Retained because the implemented trust and site information interface provides a distinct user task, calculation, output, representation, or state model. HTML Sitemap informational page with 142 supporting subsections.",
+    "retainedDistinctiveFunctionality": "HTML Sitemap informational page with 150 supporting subsections.",
+    "reason": "Retained because the implemented trust and site information interface provides a distinct user task, calculation, output, representation, or state model. HTML Sitemap informational page with 150 supporting subsections.",
     "functionalEvidence": [
-      "HTML Sitemap informational page with 142 supporting subsections.",
-      "Output: 125 pages. Updated July 15, 2026 HTML Sitemap"
+      "HTML Sitemap informational page with 150 supporting subsections.",
+      "Output: 132 pages. Updated July 15, 2026 HTML Sitemap"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -5013,8 +5009,8 @@
     "retainedDistinctiveFunctionality": "Useful capability retained on /analog-clock before redirecting.",
     "reason": "Smooth versus ticking second-hand motion is now a setting on Analog Clock.",
     "functionalEvidence": [
-      "Permanently redirects to /analog-clock and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /analog-clock.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /analog-clock"
     ],
     "implementationEvidence": [
@@ -5560,7 +5556,7 @@
       "Controls: Fullscreen, Time zone (display) Use your device zone or enter one like Europe/Berlin, UTC, Asia/Tokyo., Location mode Use my device location Manual latitude/longitude Enter coordinates for any place on Earth., Latitude, Longitude, Seconds",
       "Defaults: text: America/New_York, number: 40.7128, number: -74.006, checkbox: checked, select: Manual latitude/longitude",
       "Distinctive features: fullscreen, geolocation",
-      "Output: Fullscreen Ready 16:21:33 Date Tuesday, July 21, 2026 Manual location · America/New_York Today Sunrise -- Sunset -- Lat 40.71 · Lng -74.01 Next event Unavailable At -- --:-- Time until next event Progress --% Sunrise and sunset are fetched "
+      "Output: Fullscreen Ready 03:46:12 Date Sunday, July 26, 2026 Manual location · America/New_York Today Sunrise -- Sunset -- Lat 40.71 · Lng -74.01 Next event Unavailable At -- --:-- Time until next event Progress --% Sunrise and sunset are fetched a"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -5602,7 +5598,7 @@
       "Controls: Freeze, Snap, Fullscreen, Live",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen",
-      "Output: Live @889.97 BMT (UTC+1): 21:21:33 Internet time settings Live Freeze Snap Fullscreen Shortcuts: Space live/freeze, S snap, F fullscreen Swatch Internet Time (.beat) Clock"
+      "Output: Live @365.41 BMT (UTC+1): 08:46:12 Internet time settings Live Freeze Snap Fullscreen Shortcuts: Space live/freeze, S snap, F fullscreen Swatch Internet Time (.beat) Clock"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -5767,7 +5763,7 @@
       "Controls: Add block, Copy, Clear, Fullscreen, Delete, Live",
       "Defaults: checkbox: checked, text: Deep Work, text: 09:00, text: 11:00, text: Admin",
       "Distinctive features: fullscreen, copy, local persistence",
-      "Output: Live Add block Copy Clear Fullscreen F fullscreen / C copy / A add block Live 16:21:33 Tue, Jul 21, 2026 No active block. Today's blocks Auto-sorted by start time Title Start End Notes Delete 09:00 - 11:00 Title Start End Notes Delete 11:00"
+      "Output: Live Add block Copy Clear Fullscreen F fullscreen / C copy / A add block Live 03:46:12 Sun, Jul 26, 2026 No active block. Today's blocks Auto-sorted by start time Title Start End Notes Delete 09:00 - 11:00 Title Start End Notes Delete 11:00"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -5933,7 +5929,7 @@
     "functionalEvidence": [
       "Time Zone Converter is implemented as a converter. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include PT → ET, ET → London, London → Paris, London → Tokyo, ET → India, PT → Tokyo, UTC → ET, UTC → Tokyo.",
       "Controls: PT → ET, ET → London, London → Paris, London → Tokyo, ET → India, PT → Tokyo",
-      "Defaults: date: 2026-07-21, text: 16:21, select: UTC",
+      "Defaults: date: 2026-07-26, text: 03:46, select: UTC",
       "Distinctive features: fullscreen, copy, local persistence, URL configuration",
       "Output: Common timezone pairs PT → ET ET → London London → Paris London → Tokyo ET → India PT → Tokyo UTC → ET UTC → Tokyo Date Time (HH:MM) From time zone New York (ET) Chicago (CT) Denver (MT) Los Angeles (PT) Phoenix (MST) Anchorage (AK) Honolul"
     ],
@@ -5986,14 +5982,14 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "World time and time zones",
-    "retainedDistinctiveFunctionality": "Time Zone Meeting Planner is implemented as a specialty time tool. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Copy meeting summary, Share summary, Reset planner.",
-    "reason": "Retained because the implemented world time and time zones interface provides a distinct user task, calculation, output, representation, or state model. Time Zone Meeting Planner is implemented as a specialty time tool. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Copy meeting summary, Share summary, Reset planner.",
+    "retainedDistinctiveFunctionality": "Time Zone Meeting Planner is implemented as a specialty time tool. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Share setup, Save preset, Load preset.",
+    "reason": "Retained because the implemented world time and time zones interface provides a distinct user task, calculation, output, representation, or state model. Time Zone Meeting Planner is implemented as a specialty time tool. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Share setup, Save preset, Load preset.",
     "functionalEvidence": [
-      "Time Zone Meeting Planner is implemented as a specialty time tool. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Copy meeting summary, Share summary, Reset planner.",
-      "Controls: Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Copy meeting summary",
-      "Defaults: date: 2026-07-21, number: 60, number: 9, number: 17, select: Los Angeles ( America/Los_Angeles )",
-      "Distinctive features: copy",
-      "Output: Best shared work window 13:00 UTC All 3 selected zones fit inside 9:00-17:00 local time for a 60-minute meeting. UTC Tue Jul 21, 13:00 Inside window New York Tue Jul 21, 09:00 Inside window London Tue Jul 21, 14:00 Inside window Meeting det"
+      "Time Zone Meeting Planner is implemented as a specialty time tool. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Share setup, Save preset, Load preset.",
+      "Controls: Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Share setup",
+      "Defaults: date: 2026-07-26, number: 60, number: 9, number: 17, select: Los Angeles ( America/Los_Angeles )",
+      "Distinctive features: copy, URL configuration",
+      "Output: Best shared work window 13:00 UTC All 3 selected zones fit inside 9:00-17:00 local time for a 60-minute meeting. UTC Sun Jul 26, 13:00 Inside window New York Sun Jul 26, 09:00 Inside window London Sun Jul 26, 14:00 Inside window Meeting det"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -6093,7 +6089,7 @@
       "Controls: Start, Reset, 1 m, 5 m, 10 m, 15 m",
       "Defaults: number: 0, number: 5, checkbox: checked",
       "Distinctive features: browser audio, fullscreen, visible FAQ with FAQ schema",
-      "Output: Local time 4:21:33 PM Countdown / Ready 00:05:00 Start Reset Countdown presets Choose a common duration or set hours, minutes, and seconds. 1 m 5 m 10 m 15 m 30 m Set countdown Pause before changing the selected duration. Hours Minutes Seco"
+      "Output: Local time 3:46:11 AM Countdown / Ready 00:05:00 Start Reset Countdown presets Choose a common duration or set hours, minutes, and seconds. 1 m 5 m 10 m 15 m 30 m Set countdown Pause before changing the selected duration. Hours Minutes Seco"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -6175,9 +6171,9 @@
     "functionalEvidence": [
       "Unix Timestamp Converter is implemented as a converter. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Set now, Reset, Copy ISO, Copy seconds, Copy milliseconds, Unix timestamp Auto mode uses the integer digit count. The selected interpretation is shown beside this field., Timestamp unit Auto-detect Seconds Milliseconds Microseconds Interpreting as: seconds, UTC date and time This input is interpreted as UTC, not your local timezone..",
       "Controls: Set now, Reset, Copy ISO, Copy seconds, Copy milliseconds, Unix timestamp Auto mode uses the integer digit count. The selected interpretation is shown beside this field.",
-      "Defaults: text: 1784665294, datetime-local: 2026-07-21T20:21:34, text: 1784665294000, select: Auto-detect",
+      "Defaults: text: 1785051972, datetime-local: 2026-07-26T07:46:12, text: 1785051972000, select: Auto-detect",
       "Distinctive features: copy",
-      "Output: Unix timestamp converter 2026-07-21T20:21:34.000Z 2026-07-21 20:21:34 UTC / Local: Jul 21, 2026, 4:21:34 PM EDT Timestamp input Convert a Unix timestamp into UTC, local, ISO, seconds, and milliseconds values. Unix timestamp Auto mode uses t"
+      "Output: Unix timestamp converter 2026-07-26T07:46:12.000Z 2026-07-26 07:46:12 UTC / Local: Jul 26, 2026, 3:46:12 AM EDT Timestamp input Convert a Unix timestamp into UTC, local, ISO, seconds, and milliseconds values. Unix timestamp Auto mode uses t"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -6212,14 +6208,14 @@
     "robots": "index,follow",
     "redirectDestination": null,
     "overlapGroup": "Millisecond, UTC, Unix, and exact-style displays",
-    "retainedDistinctiveFunctionality": "UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 16:21.",
-    "reason": "Retained because the implemented millisecond, utc, unix, and exact-style displays interface provides a distinct user task, calculation, output, representation, or state model. UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 16:21.",
+    "retainedDistinctiveFunctionality": "UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 03:46.",
+    "reason": "Retained because the implemented millisecond, utc, unix, and exact-style displays interface provides a distinct user task, calculation, output, representation, or state model. UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 03:46.",
     "functionalEvidence": [
-      "UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 16:21.",
+      "UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 03:46.",
       "Controls: Copy, Fullscreen, UTC, Local, Toronto, New York",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy, visible FAQ with FAQ schema",
-      "Output: UTC time now 20:21:33 UTC Tuesday, July 21, 2026 , week 30 ISO timestamp: 2026-07-21T20:21:33.877Z Clock settings Seconds 24-hour Copy Fullscreen Quick compare UTC Local Toronto New York London Local (America/New_York) 16:21 UTC 20:21 Vanco"
+      "Output: UTC time now 07:46:12 UTC Sunday, July 26, 2026 , week 30 ISO timestamp: 2026-07-26T07:46:12.118Z Clock settings Seconds 24-hour Copy Fullscreen Quick compare UTC Local Toronto New York London Local (America/New_York) 03:46 UTC 07:46 Vancou"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -6385,9 +6381,9 @@
     "functionalEvidence": [
       "Week Number Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Date.",
       "Controls: Copy result, Today, Reset, Date",
-      "Defaults: date: 2026-07-21",
+      "Defaults: date: 2026-07-26",
       "Distinctive features: copy, share, visible FAQ with FAQ schema",
-      "Output: ISO week Week 30 ISO week-year 2026 Monday-start ISO week Date Find the ISO week number for one local calendar date. Date Copy result Today Reset Weekday Tuesday Week start 2026-07-20 Week end 2026-07-26 Calendar year 2026 ISO week-years ca"
+      "Output: ISO week Week 30 ISO week-year 2026 Monday-start ISO week Date Find the ISO week number for one local calendar date. Date Copy result Today Reset Weekday Sunday Week start 2026-07-20 Week end 2026-07-26 Calendar year 2026 ISO week-years can"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -6427,9 +6423,9 @@
     "functionalEvidence": [
       "Weekday Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Date.",
       "Controls: Copy result, Today, Reset, Date",
-      "Defaults: date: 2026-07-21",
+      "Defaults: date: 2026-07-26",
       "Distinctive features: copy, share, visible FAQ with FAQ schema",
-      "Output: Weekday Tuesday July 21, 2026 Weekday Date Find the day of the week for one local calendar date. Date Copy result Today Reset Formatted date July 21, 2026 ISO date 2026-07-21 Type Weekday Local calendar date lookup. It does not add holiday "
+      "Output: Weekday Sunday July 26, 2026 Weekend Date Find the day of the week for one local calendar date. Date Copy result Today Reset Formatted date July 26, 2026 ISO date 2026-07-26 Type Weekend Local calendar date lookup. It does not add holiday o"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -6681,7 +6677,7 @@
       "Controls: Remove, Toronto, New York, Los Angeles, London, Paris",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy",
-      "Output: 16:21:33 Your local time 5 selected 16:21:33 Toronto America/Toronto Remove 16:21:33 New York America/New_York Remove 13:21:33 Los Angeles America/Los_Angeles Remove 21:21:33 London Europe/London Remove 05:21:33 Tokyo Asia/Tokyo Remove Citi"
+      "Output: 03:46:12 Your local time 5 selected 03:46:12 Toronto America/Toronto Remove 03:46:12 New York America/New_York Remove 00:46:12 Los Angeles America/Los_Angeles Remove 08:46:12 London Europe/London Remove 16:46:12 Tokyo Asia/Tokyo Remove Citi"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -6732,7 +6728,7 @@
       "Controls: Remove, Add city, Reset defaults, Copy summary, Fullscreen, 24-hour",
       "Defaults: checkbox: checked",
       "Distinctive features: fullscreen, copy, visible FAQ with FAQ schema",
-      "Output: 16:21:33.859 Local time America/New_York / Tue, Jul 21 20:21:33.859 UTC Remove UTC / Tue, Jul 21 16:21:33.859 New York Remove America/New_York / Tue, Jul 21 21:21:33.859 London Remove Europe/London / Tue, Jul 21 05:21:33.859 Tokyo Remove As"
+      "Output: 03:46:12.083 Local time America/New_York / Sun, Jul 26 07:46:12.083 UTC Remove UTC / Sun, Jul 26 03:46:12.083 New York Remove America/New_York / Sun, Jul 26 08:46:12.083 London Remove Europe/London / Sun, Jul 26 16:46:12.083 Tokyo Remove As"
     ],
     "implementationEvidence": [
       "configured canonical route in app/routes.ts",
@@ -6770,8 +6766,8 @@
     "retainedDistinctiveFunctionality": "No independent interface or state is retained at the alias.",
     "reason": "The World Clock already renders seconds and adds city search, multiple saved rows, and a stronger comparison workflow.",
     "functionalEvidence": [
-      "Permanently redirects to /world-clock and drops unsupported legacy query parameters.",
-      "Distinctive features: one-hop 301, unsupported-query removal",
+      "Preserves the query string and permanently redirects to /world-clock.",
+      "Distinctive features: one-hop 301, query-string preservation",
       "Output: HTTP 301 Location: /world-clock"
     ],
     "implementationEvidence": [

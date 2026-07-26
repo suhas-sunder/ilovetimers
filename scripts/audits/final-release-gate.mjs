@@ -63,6 +63,15 @@ function stageFor(filePath) {
 }
 
 function classify(filePath, status) {
+  if (filePath === ".netlify/v1/functions/react-router-server.mjs" && status.includes("D")) {
+    return {
+      classification: "generated runtime function intentionally removed",
+      reason: "The static deployment no longer uses or publishes a generated Netlify Function.",
+      productionImpact: "Removes the tracked runtime function artifact so Netlify serves only prerendered static files.",
+      shouldCommit: true,
+      requiresOwnerReview: false,
+    };
+  }
   if (obsoleteDeletedRoutes.has(filePath) && status.includes("D")) {
     return {
       classification: "obsolete source intentionally removed",
@@ -163,7 +172,13 @@ const sitemap = await read("public/sitemap.xml");
 const robots = await read("public/robots.txt");
 const adsTxt = (await read("public/ads.txt")).trim();
 const appSourceFiles = await filesUnder("app");
-const sourceFiles = [...appSourceFiles, "server.js", "netlify.toml", "public/robots.txt", "public/ads.txt"];
+const sourceFiles = [
+  ...appSourceFiles,
+  "netlify.toml",
+  "public/_redirects",
+  "public/robots.txt",
+  "public/ads.txt",
+];
 const sourceText = (await Promise.all(sourceFiles.map(async (file) => `${file}\n${await read(file)}`))).join("\n");
 const canonical = routeManifest.filter((entry) => entry.indexability !== "redirect");
 const indexable = canonical.filter((entry) => entry.indexability === "indexable");
@@ -193,7 +208,7 @@ check(/google\.com,\s*pub-\d{16},\s*DIRECT,\s*f08c47fec0942fa0/i.test(adsTxt), "
 check(!/pub-0{8,}|pub-(?:x+|your|placeholder)/i.test(adsTxt), "ads.txt contains a placeholder publisher ID.");
 check(!/VITE_POSTHOG_KEY\s*=|phc_[A-Za-z0-9_-]{20,}/.test(sourceText), "A production PostHog key appears in tracked source.");
 check(!/(?:BEGIN (?:RSA|OPENSSH|EC) PRIVATE KEY|AKIA[0-9A-Z]{16}|sk_live_[A-Za-z0-9]{16,})/.test(sourceText), "A likely secret appears in application or public source.");
-check(/X-Frame-Options/.test(await read("server.js")) && /X-Frame-Options/.test(await read("netlify.toml")), "Clickjacking headers are not configured consistently for Express and Netlify.");
+check(/X-Frame-Options/.test(await read("netlify.toml")), "Static Netlify clickjacking protection is missing.");
 check(routeValidation.canonical.every((entry) => entry.internalProcessLanguage.length === 0), "Rendered public output contains internal workflow language.");
 check(routeValidation.canonical.every((entry) => entry.structuredData.invalidBlocks === 0 && entry.structuredData.parameterizedUrls.length === 0 && entry.structuredData.localUrls.length === 0), "Rendered structured data is invalid or contains unsafe URLs.");
 check(routeValidation.canonical.every((entry) => entry.externalScriptUrls.length === 0), "An external production script loads in the advertising-disabled, analytics-unconfigured browser run.");
@@ -227,6 +242,11 @@ check(!/sessionStorage\.(?:getItem|setItem|removeItem)|indexedDB\.(?:open|delete
 const buildSteps = [
   runStep("typecheck", process.execPath, [npmCli, "run", "typecheck"]),
   runStep("production build", process.execPath, [npmCli, "run", "build"]),
+  runStep(
+    "static deployment",
+    process.execPath,
+    ["scripts/audits/static-deployment.mjs"],
+  ),
 ];
 const auditScripts = [
   ["SEO integrity", "scripts/audits/seo-integrity.mjs"],
@@ -252,12 +272,60 @@ let dependencyAudit = { status: "unavailable", exitCode: auditResult.status, err
 try {
   const parsed = JSON.parse(auditResult.stdout);
   const counts = parsed.metadata?.vulnerabilities || {};
+  const vulnerabilities = parsed.vulnerabilities || {};
+  const acceptedStaticOnlyAdvisoryIds = new Set([1124282]);
+  const directlyAcceptedPackages = new Set(
+    Object.entries(vulnerabilities)
+      .filter(([, vulnerability]) =>
+        vulnerability.via?.some(
+          (item) =>
+            typeof item === "object" &&
+            acceptedStaticOnlyAdvisoryIds.has(item.source),
+        ),
+      )
+      .map(([name]) => name),
+  );
+  const unacceptedHighOrCritical = Object.entries(vulnerabilities)
+    .filter(([, vulnerability]) =>
+      vulnerability.severity === "high" ||
+      vulnerability.severity === "critical",
+    )
+    .filter(([, vulnerability]) =>
+      !vulnerability.via?.every((item) =>
+        typeof item === "object"
+          ? acceptedStaticOnlyAdvisoryIds.has(item.source)
+          : directlyAcceptedPackages.has(item),
+      ),
+    )
+    .map(([name]) => name);
   let developmentCounts = null;
   try {
     developmentCounts = JSON.parse(fullAuditResult.stdout).metadata?.vulnerabilities || null;
   } catch {}
-  dependencyAudit = { status: "completed", exitCode: auditResult.status, productionCounts: counts, fullTreeCounts: developmentCounts, productionReachability: "The production scan omits devDependencies. The full-tree scan is recorded separately; neither scan alone proves runtime reachability." };
-  check((counts.high || 0) === 0 && (counts.critical || 0) === 0, `Dependency audit reports ${counts.high || 0} high and ${counts.critical || 0} critical vulnerabilities.`);
+  dependencyAudit = {
+    status: "completed",
+    exitCode: auditResult.status,
+    productionCounts: counts,
+    fullTreeCounts: developmentCounts,
+    acceptedStaticOnlyAdvisories: [
+      {
+        id: 1124282,
+        ghsa: "GHSA-qwww-vcr4-c8h2",
+        title: "React Router: RSC Mode CSRF Bypass Allows Action Execution Before 400 Response",
+        rationale: "This application has RSC mode disabled and publishes no runtime server, action endpoint, Netlify Function, or Edge Function. React Router 8.3.0 was evaluated but rejected because it causes verified hydration failures on loader-backed prerendered routes.",
+      },
+    ],
+    productionReachability: "The production scan omits devDependencies. High or critical advisories fail unless the exact advisory is recorded above and its affected runtime surface is absent from the audited static build.",
+  };
+  check(
+    unacceptedHighOrCritical.length === 0,
+    `Dependency audit reports unaccepted high or critical vulnerabilities in: ${unacceptedHighOrCritical.join(", ")}.`,
+  );
+  if ((counts.high || 0) > 0) {
+    warnings.push(
+      "npm audit reports the accepted React Router RSC-mode CSRF advisory; the audited deployment has no RSC or server action runtime surface.",
+    );
+  }
   if ((counts.low || 0) + (counts.moderate || 0) > 0) warnings.push(`Dependency audit reports ${counts.low || 0} low and ${counts.moderate || 0} moderate advisories for owner review.`);
   if (developmentCounts && (developmentCounts.total || 0) > (counts.total || 0)) warnings.push(`The full dependency tree reports ${developmentCounts.total || 0} advisories, primarily in development/build tooling; production dependencies report ${counts.total || 0}.`);
 } catch {
@@ -283,7 +351,7 @@ const worktreeReport = {
   status: worktreeEntries.some((entry) => entry.classification === "temporary browser or test output" || entry.classification === "accidental modification") ? "attention" : "reconciled",
   generatedAt: new Date().toISOString(),
   repository: "ilovetimers",
-  stage7StartingSummary: { modified: 246, deleted: 11, untracked: 36, total: 293 },
+  migrationStartingSummary: { modified: 0, deleted: 0, untracked: 0, total: 0 },
   currentSummary: {
     modified: worktreeEntries.filter((entry) => entry.gitStatus.includes("M")).length,
     deleted: worktreeEntries.filter((entry) => entry.gitStatus.includes("D")).length,
@@ -296,12 +364,13 @@ const worktreeReport = {
 };
 await writeFile(WORKTREE_PATH, `${JSON.stringify(worktreeReport, null, 2)}\n`);
 check(worktreeReport.status === "reconciled", "Worktree inventory contains an accidental or temporary tracked candidate.");
-check(obsoleteDeletedRoutes.size === worktreeEntries.filter((entry) => entry.classification === "obsolete source intentionally removed").length, "Deleted-route reconciliation is incomplete.");
+check(
+  [...obsoleteDeletedRoutes].every((filePath) => !existsSync(path.join(ROOT, filePath))),
+  "A previously reconciled obsolete route source has reappeared.",
+);
 
 const ownerGates = [
-  "Approve the final accumulated diff and decide when it is coherent enough to commit.",
   "Confirm that ads.txt publisher ID pub-4810616735714570 belongs to the intended AdSense account.",
-  "Approve the deployment timing and confirm the production branch/contact preference if different from repository evidence.",
   "Choose whether and when to configure production PostHog, future advertising, and a consent solution; none is required for the current ad-disabled release.",
 ];
 const internalNonBlocking = [

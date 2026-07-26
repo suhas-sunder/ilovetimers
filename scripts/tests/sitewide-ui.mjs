@@ -1,9 +1,11 @@
-import { spawn } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
-import { STAGE3_NEW_REDIRECTS } from "../../app/config/routeArchitecture.js";
+import {
+  readStaticRedirectRules,
+  spawnStaticPreview,
+} from "./preview-process.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const routeSource = await readFile(path.join(ROOT, "app/routes.ts"), "utf8");
@@ -24,11 +26,7 @@ const informationalRoutes = new Set([
 const failures = [];
 const PORT = 3013;
 const base = `http://127.0.0.1:${PORT}`;
-const server = spawn(process.execPath, ["server.js"], {
-  cwd: ROOT,
-  env: { ...process.env, NODE_ENV: "production", PORT: String(PORT) },
-  stdio: "ignore",
-});
+const server = spawnStaticPreview({ root: ROOT, port: PORT });
 
 const check = (condition, message) => {
   if (!condition) failures.push(message);
@@ -76,13 +74,10 @@ try {
     }
   }
 
+  const { permanent } = await readStaticRedirectRules(ROOT);
   for (const [source, destination] of Object.entries(PERMANENT_REDIRECTS)) {
-    const response = await fetch(`${base}${source}?qa=1`, { redirect: "manual" });
-    check(response.status === 301, `${source} returned ${response.status}, expected 301.`);
-    const expectedLocation = Object.hasOwn(STAGE3_NEW_REDIRECTS, source)
-      ? destination
-      : `${destination}?qa=1`;
-    check(response.headers.get("location") === expectedLocation, `${source} does not follow its declared one-hop query policy.`);
+    check(permanent.get(source) === destination, `${source} is missing its static one-hop 301 mapping.`);
+    check(permanent.get(`${source}/`) === destination, `${source}/ is missing its static one-hop 301 mapping.`);
     const destinationResponse = await fetch(`${base}${destination}`, { redirect: "manual" });
     check(destinationResponse.status === 200, `Redirect destination ${destination} returned ${destinationResponse.status}.`);
   }

@@ -1,88 +1,61 @@
-# ILoveTimers
+# iLoveTimers
 
-Live On: https://www.ilovetimers.com
+Production: https://www.ilovetimers.com
 
-A modern, production-ready template for building full-stack React applications using React Router.
+iLoveTimers is a browser-based collection of timers, stopwatches, clocks,
+countdowns, converters, and date/time calculators built with React Router.
 
-## Features
+## Requirements
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- Node.js 20.19 or newer (including current 22 and 25 releases)
+- npm
 
-## Getting Started
+## Local development
 
-### Installation
-
-Install the dependencies:
+Install dependencies and start the React Router development server:
 
 ```bash
 npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+The development server prints its local URL when it starts.
 
-## Building for Production
+## Production build
 
-Create a production build:
+Create the fully static production output:
 
 ```bash
 npm run build
 ```
 
-## Deployment
+React Router prerenders every static route declared in `app/routes.ts`. The
+deployable output is written to `build/client`; no runtime server bundle,
+Netlify Function, or Netlify Edge Function is required.
 
-### Docker Deployment
-
-To build and run using Docker:
+Preview the completed static build locally:
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+npm start
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+## Netlify
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+`netlify.toml` publishes only `build/client`. Permanent redirects live in
+`public/_redirects`, while security and cache headers live in `netlify.toml`.
+Netlify deployment is performed by the repository's normal continuous
+deployment workflow; do not run a manual deploy for ordinary changes.
 
-### DIY Deployment
+## Validation
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+Run the core checks:
 
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── server.js
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+```bash
+npm run typecheck
+npm run build
+npm run audit:static-deployment
+npm run test --if-present
 ```
 
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+Additional product, SEO, accessibility, browser, and release audits are
+available through the scripts declared in `package.json`.

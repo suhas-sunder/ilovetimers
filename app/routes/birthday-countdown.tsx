@@ -11,6 +11,12 @@ export function loader() {
   return { today: todayInputValue() };
 }
 
+export function clientLoader() {
+  return { today: todayInputValue() };
+}
+
+clientLoader.hydrate = true as const;
+
 export function meta({}: Route.MetaArgs) {
   return createDateToolMeta({
     title: "Birthday Countdown (Days Until My Birthday)",

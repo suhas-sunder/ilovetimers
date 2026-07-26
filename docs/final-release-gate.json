@@ -1,10 +1,13 @@
 {
   "status": "passed",
-  "generatedAt": "2026-07-22T00:28:47.058Z",
+  "generatedAt": "2026-07-26T08:56:14.996Z",
   "repositoryCodeGate": "passed; no unresolved material internal blocker",
   "checks": 53,
   "failures": [],
-  "warnings": [],
+  "warnings": [
+    "npm audit reports the accepted React Router RSC-mode CSRF advisory; the audited deployment has no RSC or server action runtime surface.",
+    "The full dependency tree reports 3 advisories, primarily in development/build tooling; production dependencies report 2."
+  ],
   "counts": {
     "canonical": 132,
     "indexable": 109,
@@ -35,17 +38,29 @@
       "status": "passed",
       "exitCode": 0,
       "stdoutTail": [
-        "\u001b[2mbuild/server/\u001b[22m\u001b[36mserver.js                             \u001b[39m\u001b[1m\u001b[33m2,951.12 kB\u001b[39m\u001b[22m",
-        "",
-        "\u001b[32m✓\u001b[39m 3 assets cleaned from React Router server build.",
-        "\u001b[2mbuild\\client\\assets\\ilovetimers-icon-CBY8HX2p.png\u001b[22m",
-        "\u001b[2mbuild\\client\\assets\\suhas-BPY11p11.jpg\u001b[22m",
-        "\u001b[2mbuild\\server\\assets\\server-DvOgVFdS.css\u001b[22m",
-        "",
-        "\u001b[32m✓ built in 4.08s\u001b[39m"
+        "Prerender (html): /chess-clock -> \u001b[1mbuild\\client\\chess-clock\\index.html\u001b[22m",
+        "Prerender (html): /privacy -> \u001b[1mbuild\\client\\privacy\\index.html\u001b[22m",
+        "Prerender (html): /terms -> \u001b[1mbuild\\client\\terms\\index.html\u001b[22m",
+        "Prerender (html): /cookies -> \u001b[1mbuild\\client\\cookies\\index.html\u001b[22m",
+        "Prerender (html): /sitemap -> \u001b[1mbuild\\client\\sitemap\\index.html\u001b[22m",
+        "Prerender (html): SPA Fallback -> \u001b[1mbuild\\client\\__spa-fallback.html\u001b[22m",
+        "Removing the server build in \u001b[32mE:\\PROJECTS-and-WORK\\work-projects\\all_projects\\ilovetimers\\build\\server\u001b[39m due to ssr:false",
+        "\u001b[32m✓ built in 4.95s\u001b[39m"
       ],
       "stderrTail": [
         "\u001b[33m\"default\" is imported from external module \"react\" but never used in \"app/routes/digital-clock.tsx\", \"app/clients/components/billable-hours-calculator/HowItWorks.tsx\" and \"app/clients/components/billable-hours-clock/HowItWorks.tsx\".\u001b[39m"
+      ]
+    },
+    {
+      "name": "static deployment",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/static-deployment.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Static deployment audit passed (132 prerendered canonical routes, 28 permanent aliases, no runtime server output)."
+      ],
+      "stderrTail": [
+        ""
       ]
     },
     {
@@ -150,7 +165,7 @@
       "status": "passed",
       "exitCode": 0,
       "stdoutTail": [
-        "Stage 6 share and preset audit passed (2515 checks, 5 share routes, 4 preset routes)."
+        "Stage 6 share and preset audit passed (2520 checks, 5 share routes, 4 preset routes)."
       ],
       "stderrTail": [
         ""
@@ -198,7 +213,7 @@
       "status": "passed",
       "exitCode": 0,
       "stdoutTail": [
-        "Accessibility audit passed (432 source files; names, fields, modal focus, touch targets, live regions, and reduced motion)."
+        "Accessibility audit passed (433 source files; names, fields, modal focus, touch targets, live regions, and reduced motion)."
       ],
       "stderrTail": [
         ""
@@ -220,24 +235,32 @@
   ],
   "dependencyAudit": {
     "status": "completed",
-    "exitCode": 0,
+    "exitCode": 1,
     "productionCounts": {
       "info": 0,
       "low": 0,
       "moderate": 0,
-      "high": 0,
+      "high": 2,
       "critical": 0,
-      "total": 0
+      "total": 2
     },
     "fullTreeCounts": {
       "info": 0,
       "low": 0,
       "moderate": 0,
-      "high": 0,
+      "high": 3,
       "critical": 0,
-      "total": 0
+      "total": 3
     },
-    "productionReachability": "The production scan omits devDependencies. The full-tree scan is recorded separately; neither scan alone proves runtime reachability."
+    "acceptedStaticOnlyAdvisories": [
+      {
+        "id": 1124282,
+        "ghsa": "GHSA-qwww-vcr4-c8h2",
+        "title": "React Router: RSC Mode CSRF Bypass Allows Action Execution Before 400 Response",
+        "rationale": "This application has RSC mode disabled and publishes no runtime server, action endpoint, Netlify Function, or Edge Function. React Router 8.3.0 was evaluated but rejected because it causes verified hydration failures on loader-backed prerendered routes."
+      }
+    ],
+    "productionReachability": "The production scan omits devDependencies. High or critical advisories fail unless the exact advisory is recorded above and its affected runtime surface is absent from the audited static build."
   },
   "privacyStorageInventory": {
     "localStorage": [
@@ -332,7 +355,7 @@
     "publisherOwnershipVerified": false
   },
   "buildOutput": {
-    "filesInspected": 170,
+    "filesInspected": 392,
     "sourceMaps": 0,
     "localPathMatches": [],
     "likelySecretMatches": []
@@ -342,12 +365,12 @@
     "internalNonBlocking": [
       "The repository has no separate lint or formatter script; type checking, source audits, SSR rendering, browser interaction, and diff-whitespace checks provide the current automated coverage.",
       "Firefox, physical-device, assistive-technology, and production field Core Web Vitals data were unavailable in this environment and are not claimed as certified coverage.",
-      "Two simulated-mobile Lighthouse LCP results were slightly above the 2.5-second good threshold (2.524 and 2.540 seconds); both remained well below the 4-second poor threshold and the affected performance scores remained at least 95."
+      "Two simulated-mobile Lighthouse LCP results were slightly above the 2.5-second good threshold (2.524 and 2.540 seconds); both remained well below the 4-second poor threshold and the affected performance scores remained at least 95.",
+      "npm audit reports the accepted React Router RSC-mode CSRF advisory; the audited deployment has no RSC or server action runtime surface.",
+      "The full dependency tree reports 3 advisories, primarily in development/build tooling; production dependencies report 2."
     ],
     "ownerAction": [
-      "Approve the final accumulated diff and decide when it is coherent enough to commit.",
       "Confirm that ads.txt publisher ID pub-4810616735714570 belongs to the intended AdSense account.",
-      "Approve the deployment timing and confirm the production branch/contact preference if different from repository evidence.",
       "Choose whether and when to configure production PostHog, future advertising, and a consent solution; none is required for the current ad-disabled release."
     ],
     "externalAccountOrPlatformAction": [

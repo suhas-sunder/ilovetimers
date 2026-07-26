@@ -3,7 +3,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { PERMANENT_REDIRECTS } from "../../app/config/redirects.js";
 import {
-  STAGE3_NEW_REDIRECTS,
   STAGE3_NOINDEX_ROUTES,
 } from "../../app/config/routeArchitecture.js";
 import { SITEMAP_GROUPS } from "../../app/clients/config/siteDirectory.js";
@@ -180,13 +179,6 @@ const netlifyRuleMap = new Map(
 for (const [source, destination] of redirects) {
   for (const netlifySource of [source, `${source}/`]) {
     const rule = netlifyRuleMap.get(netlifySource);
-    if (Object.hasOwn(STAGE3_NEW_REDIRECTS, source)) {
-      check(
-        !rule,
-        `Stage 3 redirect must reach the app so unsupported query parameters can be removed: ${netlifySource}`,
-      );
-      continue;
-    }
     check(Boolean(rule), `Netlify redirect is missing: ${netlifySource}`);
     if (rule) {
       check(

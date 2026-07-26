@@ -1,7 +1,7 @@
-import { spawn } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnStaticPreview } from "../tests/preview-process.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const PORT = Number(process.env.ILT_STAGE5_PORT || 3028);
@@ -576,11 +576,7 @@ const browserValidation = priorQuality?.browserValidation ?? {
 let server;
 let pageReports = [];
 try {
-  server = spawn(process.execPath, ["server.js"], {
-    cwd: ROOT,
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: "production" },
-    stdio: "ignore",
-  });
+  server = spawnStaticPreview({ root: ROOT, port: PORT });
   await waitForServer();
 
   for (const guidePath of guidePaths) {

@@ -5,14 +5,13 @@ import {
   ContentPage,
   ContentSection,
 } from "~/clients/components/ui/foundation";
-import { AnalyticsPreferenceControls } from "~/clients/components/analytics/AnalyticsConsent";
 
 export const meta: MetaFunction = () => {
   const canonical = "https://www.ilovetimers.com/cookies";
 
   const title = "Cookie Policy | iLoveTimers";
   const description =
-    "Read how iLoveTimers uses browser storage, analytics consent, and PostHog persistence when analytics is allowed.";
+    "Read how iLoveTimers uses local browser storage and cookieless PostHog analytics without analytics cookies or persistent identifiers.";
 
   const ogImage = "https://www.ilovetimers.com/og-image.png";
 
@@ -44,7 +43,7 @@ export default function CookiesPolicy() {
   return (
     <ContentPage
       title="Cookie Policy"
-      description="Last reviewed July 14, 2026"
+      description="Last reviewed July 29, 2026"
       className="ilt-legal-doc"
     >
       <ContentSection title="Overview">
@@ -60,36 +59,25 @@ export default function CookiesPolicy() {
           Many iLoveTimers features use localStorage or similar browser storage
           so preferences can persist on the same browser. This can include the
           theme choice, timer settings, saved sessions or history on tools that
-          support them, and the analytics consent choice.
-        </p>
-        <p>
-          The analytics consent choice is stored under{" "}
-          <code>ilt-analytics-consent</code> with an explicit value of{" "}
-          <code>allowed</code> or <code>declined</code>. Missing or invalid
-          values are treated safely and do not enable analytics.
+          support them, and named presets on tools that provide that feature.
         </p>
       </ContentSection>
 
-      <ContentSection title="PostHog analytics storage">
+      <ContentSection title="Cookieless PostHog analytics">
         <p>
-          PostHog analytics is initialized only when analytics is configured and
-          your saved choice allows analytics. In that allowed state, PostHog may
-          use localStorage persistence for analytics identifiers and consent
-          status. iLoveTimers configures PostHog to avoid cookie-based
-          persistence where supported by the SDK.
+          When analytics is configured, iLoveTimers runs PostHog in its always-on
+          cookieless mode with in-memory-only, disabled persistence. This setup
+          does not create PostHog cookies or PostHog entries in localStorage,
+          sessionStorage, or IndexedDB. It also does not store an analytics
+          consent choice or show a PostHog consent banner.
         </p>
         <p>
-          If you decline analytics, PostHog capture is stopped and the timers,
-          stopwatches, clocks, alarms, and calculators continue to work.
+          Analytics is limited in code to manual page views and a restricted set
+          of tool events. Query strings, URL fragments, typed labels, notes,
+          dates, durations, timesheet values, and other user-entered values are
+          not intentionally included. Analytics failures do not disable the
+          timers, stopwatches, clocks, alarms, or calculators.
         </p>
-      </ContentSection>
-
-      <ContentSection title="Analytics preferences">
-        <p>
-          You can change your analytics choice here. Clearing browser storage
-          may reset this preference and other saved tool settings.
-        </p>
-        <AnalyticsPreferenceControls />
       </ContentSection>
 
       <ContentSection title="Advertising cookies">
@@ -105,8 +93,7 @@ export default function CookiesPolicy() {
         <p>
           You can clear or block cookies and site storage through your browser
           settings. Doing so may reset theme preferences, saved timer/tool state,
-          or analytics preferences, but the core tools are designed to remain
-          usable.
+          or named presets, but the core tools are designed to remain usable.
         </p>
       </ContentSection>
 

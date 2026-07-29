@@ -6,7 +6,6 @@ import {
   ContentPage,
   ContentSection,
 } from "~/clients/components/ui/foundation";
-import { AnalyticsPreferenceControls } from "~/clients/components/analytics/AnalyticsConsent";
 
 export const meta: Route.MetaFunction = () => {
   const canonical = "https://www.ilovetimers.com/privacy";
@@ -45,7 +44,7 @@ export default function PrivacyPolicy() {
   return (
     <ContentPage
       title="Privacy Policy"
-      description="Last reviewed July 21, 2026"
+      description="Last reviewed July 29, 2026"
       className="ilt-legal-doc"
     >
       <ContentSection title="Overview">
@@ -76,13 +75,13 @@ export default function PrivacyPolicy() {
         <p>
           iLoveTimers uses browser storage such as localStorage for preferences
           and tool state. Examples include the light/dark theme choice, timer
-          settings, saved tool sessions on pages that support them, and the
-          analytics consent choice.
+          settings, saved tool sessions on pages that support them, and named
+          presets.
         </p>
         <p>
-          Clearing browser storage may reset those preferences. Declining
-          analytics does not disable the timers, stopwatches, clocks, alarms,
-          or calculators.
+          Clearing browser storage may reset those preferences. PostHog
+          analytics is configured not to create cookies, localStorage entries,
+          sessionStorage entries, or IndexedDB entries.
         </p>
       </ContentSection>
 
@@ -144,18 +143,19 @@ export default function PrivacyPolicy() {
 
       <ContentSection title="PostHog analytics">
         <p>
-          iLoveTimers uses PostHog analytics only after the applicable analytics
-          consent choice allows it and only when analytics is configured for the
-          environment. Analytics is used to understand high-level site usage,
-          such as which pages are viewed and whether privacy-safe tool actions
-          like starting a timer or opening fullscreen are working.
+          When analytics is configured for the environment, iLoveTimers uses
+          PostHog in always-on cookieless mode to understand high-level site
+          usage, such as which pages are viewed and whether privacy-safe tool
+          actions like starting a timer or opening fullscreen are working.
         </p>
         <p>
           The current implementation manually tracks page views with the route
           path only. Query strings and URL fragments are not intentionally sent.
-          Autocapture, session recording, surveys, product tours, performance
-          capture, person profiles, and external PostHog dependency loading are
-          disabled in code.
+          Autocapture, session recording, surveys, product tours, feature flags,
+          experiments, performance capture, person profiles, and external
+          PostHog dependency loading are disabled in code. Analytics state is
+          held in memory for the current page rather than persisted in browser
+          storage.
         </p>
         <p>
           PostHog may still receive ordinary technical request information
@@ -164,15 +164,12 @@ export default function PrivacyPolicy() {
           infrastructure. iLoveTimers does not claim that analytics is
           anonymous.
         </p>
-      </ContentSection>
-
-      <ContentSection title="Analytics choice">
         <p>
-          You can allow or decline analytics. If you decline, tools remain fully
-          usable and analytics capture is stopped. You can change the choice
-          here or from the Cookies page or footer.
+          If the PostHog library or analytics endpoint is blocked, unavailable,
+          or fails, the application continues to work. See the{" "}
+          <Link to="/cookies">Cookie Policy</Link> for the browser-storage
+          details of this cookieless configuration.
         </p>
-        <AnalyticsPreferenceControls />
       </ContentSection>
 
       <ContentSection title="Advertising">

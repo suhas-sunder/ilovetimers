@@ -131,8 +131,8 @@ export default function TermsOfService() {
         <p>
           Please read the <Link to="/privacy">Privacy Policy</Link> and{" "}
           <Link to="/cookies">Cookie Policy</Link> for information about
-          browser storage, analytics consent, and PostHog analytics. The tools
-          remain usable when analytics is declined.
+          browser storage and cookieless PostHog analytics. Analytics failures
+          do not prevent the tools from working.
         </p>
       </ContentSection>
 

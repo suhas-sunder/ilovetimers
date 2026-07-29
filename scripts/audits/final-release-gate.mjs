@@ -216,8 +216,6 @@ check(["/about", "/author/suhas-sunder", "/contact", "/how-ilovetimers-is-made",
 
 const storageInventory = [
   { key: "ilt-theme-mode", feature: "theme preference" },
-  { key: "ilt-analytics-consent", feature: "analytics choice" },
-  { key: "ilt-posthog-capture-consent", feature: "PostHog SDK consent persistence when configured and allowed" },
   { key: "astroClockPrefs", feature: "astronomical clock coordinates and timezone" },
   { key: "bpmTapper.settings.v1", feature: "BPM tapper settings" },
   { key: "bpmTapper.history.v1", feature: "BPM tapper recent results" },
@@ -236,7 +234,7 @@ const storageInventory = [
   { key: "ilovetimers:presets:time-zone-meeting-planner:v1", feature: "Time Zone Meeting Planner named presets" },
 ];
 const storageGuide = await read("app/routes/guides.browser-storage.tsx");
-for (const item of storageInventory.filter((item) => !item.key.startsWith("ilt-posthog"))) check(storageGuide.includes(item.key), `Browser-storage guide omits ${item.key}.`);
+for (const item of storageInventory) check(storageGuide.includes(item.key), `Browser-storage guide omits ${item.key}.`);
 check(!/sessionStorage\.(?:getItem|setItem|removeItem)|indexedDB\.(?:open|deleteDatabase)/.test(sourceText), "Unexpected sessionStorage or IndexedDB persistence exists outside the documented inventory.");
 
 const buildSteps = [
@@ -371,7 +369,7 @@ check(
 
 const ownerGates = [
   "Confirm that ads.txt publisher ID pub-4810616735714570 belongs to the intended AdSense account.",
-  "Choose whether and when to configure production PostHog, future advertising, and a consent solution; none is required for the current ad-disabled release.",
+  "Confirm the production PostHog project accepts cookieless events and that its public project key and host are configured in the hosting provider.",
 ];
 const internalNonBlocking = [
   "The repository has no separate lint or formatter script; type checking, source audits, SSR rendering, browser interaction, and diff-whitespace checks provide the current automated coverage.",
@@ -388,7 +386,7 @@ const postDeploymentGates = [
   "Run docs/post-deployment-smoke-tests.json against the exact published deploy and record the deploy ID and Git revision.",
   "Verify production response headers, MIME types, compression/CDN caching, canonical/robots behavior, 404 status, assets, console, and mobile physical-device layout.",
   "Verify /ads.txt over HTTPS and its AdSense account status before enabling advertising.",
-  "If analytics is configured, verify no request before consent and inspect actual production event properties after consent.",
+  "If analytics is configured, confirm the PostHog project accepts cookieless events and inspect production event properties.",
 ];
 
 const gate = {
@@ -401,7 +399,7 @@ const gate = {
   counts: { canonical: canonical.length, indexable: indexable.length, noindex: noindex.length, redirects: redirectEntries.length, sitemap: sitemapUrls.length, shareRoutes: 5, presetRoutes: 4, guides: 7 },
   buildAndPriorAudits: [...buildSteps, ...auditSteps],
   dependencyAudit,
-  privacyStorageInventory: { localStorage: storageInventory, sessionStorage: [], indexedDB: [], notes: ["PostHog SDK-managed local persistence exists only when a production key is configured and the user explicitly allows analytics.", "Share configurations are URL-carried rather than browser storage; preset names are excluded from URLs."] },
+  privacyStorageInventory: { localStorage: storageInventory, sessionStorage: [], indexedDB: [], notes: ["PostHog runs in always-on cookieless mode with persistence disabled and does not create browser-storage entries.", "Share configurations are URL-carried rather than browser storage; preset names are excluded from URLs."] },
   advertising: { mode: "disabled; homepage placeholder-only", liveNetworkScript: false, publisherRecordPresent: true, publisherOwnershipVerified: false },
   buildOutput: { filesInspected: buildFiles.length, sourceMaps: 0, localPathMatches: buildLocalPathMatches, likelySecretMatches: buildSecretMatches },
   blockerClassification: { internalBlocking: failures, internalNonBlocking: [...internalNonBlocking, ...warnings], ownerAction: ownerGates, externalAccountOrPlatformAction: externalGates, postDeploymentVerification: postDeploymentGates },

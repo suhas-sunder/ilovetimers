@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import { AnalyticsPreferencesButton } from "~/clients/components/analytics/AnalyticsConsent";
 
 type TimerMenuLink = { to: string; label: string };
 type TimerMenuSection = {
@@ -381,7 +380,6 @@ export default function Footer() {
             <Link to="/pomodoro-timer" className={footerPillClass}>
               Pomodoro
             </Link>
-            <AnalyticsPreferencesButton className={footerPillClass} />
           </nav>
         </div>
 

@@ -315,12 +315,18 @@ check(monetizationSource.includes('path: "/"'), "Homepage monetization entry is 
 check(monetizationSource.includes("allowedSlots: HOMEPAGE_AD_SLOTS"), "Homepage placeholder slots are not configured.");
 check(monetizationSource.includes("allowedSlots: NO_AD_SLOTS"), "Ad-free route configuration is missing.");
 
-check(appProviderSource.includes("consent !== \"allowed\""), "Analytics is not gated on allowed consent.");
+check(appProviderSource.includes('cookieless_mode: "always"'), "PostHog always-on cookieless mode is missing.");
+check(appProviderSource.includes('persistence: "memory"'), "PostHog memory-only persistence is missing.");
+check(appProviderSource.includes("disable_persistence: true"), "PostHog persistence is not disabled.");
 check(appProviderSource.includes("capture_pageview: false"), "Automatic pageview capture is not disabled.");
 check(appProviderSource.includes("autocapture: false"), "PostHog autocapture is not disabled.");
 check(appProviderSource.includes("disable_session_recording: true"), "Session recording is not disabled.");
 check(appProviderSource.includes("disable_surveys: true"), "PostHog surveys are not disabled.");
+check(appProviderSource.includes("advanced_disable_feature_flags: true"), "PostHog feature flags are not disabled.");
+check(appProviderSource.includes("disable_web_experiments: true"), "PostHog web experiments are not disabled.");
 check(appProviderSource.includes('person_profiles: "never"'), "PostHog person profiles are not disabled.");
+check(!appProviderSource.includes("AnalyticsConsentBanner"), "The PostHog consent banner is still rendered.");
+check(!analyticsSource.includes("localStorage.setItem"), "Analytics still writes to localStorage.");
 check(analyticsSource.includes("window.location.pathname"), "Manual analytics path sanitization is missing.");
 
 for (const route of [

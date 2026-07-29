@@ -98,7 +98,6 @@ const toolGuideLinks = {
 
 const storageInventory = [
   { feature: "theme", keys: ["ilt-theme-mode"], evidence: "app/clients/hooks/useThemeMode.ts" },
-  { feature: "analytics consent", keys: ["ilt-analytics-consent"], evidence: "app/clients/lib/analytics.ts" },
   { feature: "astronomical clock preferences", keys: ["astroClockPrefs"], evidence: "app/routes/astronomical-clock.tsx" },
   { feature: "BPM tapper settings and history", keys: ["bpmTapper.settings.v1", "bpmTapper.history.v1"], evidence: "app/routes/bpm-tapper.tsx" },
   { feature: "billable-hours clock", keys: ["ilovetimers:billable-hours-clock:v1"], evidence: "app/routes/billable-hours-clock.tsx" },
@@ -313,7 +312,7 @@ const guideEvidenceDetails = {
     ],
     browserApis: ["localStorage", "in-memory React state"],
     externalServices: [
-      "PostHog can receive consented, path-only analytics when configured; user-entered tool values are not intentionally captured.",
+      "PostHog can receive cookieless, path-only analytics when configured; user-entered tool values are not intentionally captured.",
     ],
     verifiedClaims: [
       "The evidence inventory records eleven production storage categories and their exact keys.",
@@ -327,7 +326,7 @@ const guideEvidenceDetails = {
     claimsExcluded: [
       "All browser profiles retain localStorage indefinitely",
       "Stored values are synchronized across devices",
-      "No external service ever receives site usage data after consent",
+      "No external service ever receives site usage data",
     ],
     relatedTools: ["/speedcubing-timer", "/multiple-timers", "/astronomical-clock", "/bpm-tapper", "/privacy"],
     manualTests: [

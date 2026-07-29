@@ -51,11 +51,11 @@ export default function BrowserStorageGuide() {
     >
       <p>
         <strong>Short answer:</strong> iLoveTimers uses this site's
-        origin-scoped <code>localStorage</code> for the selected theme, analytics
-        consent, and saved data on a limited set of tools. Many timer values,
-        stopwatch laps, and session results exist only in page memory. The site
-        does not require an account, and locally saved tool data is not the same
-        as a cloud backup.
+        origin-scoped <code>localStorage</code> for the selected theme and saved
+        data on a limited set of tools. Many timer values, stopwatch laps, and
+        session results exist only in page memory. Cookieless analytics does not
+        add browser-storage entries. The site does not require an account, and
+        locally saved tool data is not the same as a cloud backup.
       </p>
       <p>
         Local storage usually survives a reload and later browser session on the
@@ -83,14 +83,6 @@ export default function BrowserStorageGuide() {
                 <th className="px-3 py-2 align-top font-semibold">Theme</th>
                 <td className="px-3 py-2 align-top font-mono">ilt-theme-mode</td>
                 <td className="px-3 py-2 align-top">Light or dark choice</td>
-              </tr>
-              <tr className="bg-[var(--ilt-bg-subtle)]/50">
-                <th className="px-3 py-2 align-top font-semibold">Analytics preference</th>
-                <td className="px-3 py-2 align-top font-mono">ilt-analytics-consent</td>
-                <td className="px-3 py-2 align-top">
-                  Allowed or declined; consented analytics can also use
-                  vendor-managed local persistence
-                </td>
               </tr>
               <tr>
                 <th className="px-3 py-2 align-top font-semibold">Astronomical clock</th>
@@ -256,11 +248,11 @@ export default function BrowserStorageGuide() {
       <GuideSection title="What happens when storage is missing or corrupt">
         <p>
           Storage APIs can throw when persistence is disabled, restricted, or out
-          of quota. The theme, consent, and tool implementations wrap reads and
-          writes in error handling. Missing or invalid theme data defaults to
-          light. Several JSON-backed tools validate a version and expected fields
-          before restoring; malformed data is ignored or replaced with safe
-          defaults. The astronomical clock removes a corrupt preference entry.
+          of quota. The theme and tool implementations wrap reads and writes in
+          error handling. Missing or invalid theme data defaults to light.
+          Several JSON-backed tools validate a version and expected fields before
+          restoring; malformed data is ignored or replaced with safe defaults.
+          The astronomical clock removes a corrupt preference entry.
           Named preset stores validate the root version, tool identifier, schema
           version, name length, timestamps, and route-owned configuration. A bad
           record is ignored without discarding valid sibling records. Older
@@ -276,18 +268,17 @@ export default function BrowserStorageGuide() {
         </p>
       </GuideSection>
 
-      <GuideSection title="Analytics storage is consent-controlled">
+      <GuideSection title="Cookieless analytics does not persist browser state">
         <p>
-          iLoveTimers stores the analytics choice as allowed or declined. When
-          analytics is not configured or consent is not allowed, capture remains
-          stopped. If the user allows configured analytics, the PostHog client is
-          initialized with local-storage persistence, no session recording, no
-          autocapture, masked text and element attributes, no person profile, and
-          a restricted manual-event property list. Declining stops capture and
-          resets analytics state.
+          When analytics is configured, the PostHog client starts in always-on
+          cookieless mode with persistence disabled and memory selected as its
+          only storage backend. It does not create PostHog cookies or entries in
+          localStorage, sessionStorage, or IndexedDB. Session recording,
+          autocapture, surveys, feature flags, experiments, and person profiles
+          are disabled, and manual events use a restricted property list.
         </p>
         <p>
-          The current data-handling statement and controls are on the{" "}
+          The current data-handling statement is on the{" "}
           <Link to="/privacy" className={guideLinkClass}>
             Privacy Policy
           </Link>{" "}
@@ -295,8 +286,8 @@ export default function BrowserStorageGuide() {
           <Link to="/cookies" className={guideLinkClass}>
             Cookies Policy
           </Link>
-          . The footer's Analytics preferences control lets a user revisit the
-          choice.
+          . The previous analytics consent and PostHog consent entries are
+          removed during startup when found.
         </p>
       </GuideSection>
 
@@ -312,8 +303,8 @@ export default function BrowserStorageGuide() {
             local preferences and saved tool state for that origin.
           </li>
           <li className={guideListItemClass}>
-            Expect theme, consent, event, agenda, timer, timezone, and other
-            locally saved choices to return to defaults after a full clear.
+            Expect theme, event, agenda, timer, timezone, and other locally saved
+            choices to return to defaults after a full clear.
           </li>
           <li className={guideListItemClass}>
             Copy or export information you need before clearing. Local storage is

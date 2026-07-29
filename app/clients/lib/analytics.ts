@@ -1,13 +1,12 @@
-import type { PostHog, Properties } from "posthog-js";
+import type { BeforeSendFn, PostHog, Properties } from "posthog-js";
 
 type AnalyticsValue = string | number | boolean | null | undefined;
 export type AnalyticsProperties = Record<string, AnalyticsValue>;
-export type AnalyticsConsent = "allowed" | "declined";
 
-export const ANALYTICS_CONSENT_STORAGE_KEY = "ilt-analytics-consent";
-export const ANALYTICS_CONSENT_CHANGED_EVENT = "ilt-analytics-consent-changed";
-export const ANALYTICS_PREFERENCES_REQUEST_EVENT =
-  "ilt-analytics-preferences-requested";
+const LEGACY_ANALYTICS_STORAGE_KEYS = [
+  "ilt-analytics-consent",
+  "ilt-posthog-capture-consent",
+] as const;
 
 let analyticsReady = false;
 let analyticsClient: PostHog | null = null;
@@ -33,6 +32,8 @@ const safeEventPropertyKeys = new Set([
 
 const privatePropertyPattern =
   /(name|label|note|text|input|date|time|timezone|zone|start|end|break_|duration|seconds|minutes|hours|amount|rate|entry|row|value|url|query|fragment|share|link|email|phone|address)/i;
+const safeEventNamePattern = /^[a-z][a-z0-9_]{0,63}$/;
+const safeStringValuePattern = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
 
 export function canUseBrowser() {
   return typeof window !== "undefined";
@@ -79,6 +80,59 @@ function stripUrlToPath(value: unknown) {
   }
 }
 
+function postHogPersistencePrefix(key: string) {
+  const safeKey = key
+    .replace(/\+/g, "PL")
+    .replace(/\//g, "SL")
+    .replace(/=/g, "EQ");
+  return `ph_${safeKey}_posthog`;
+}
+
+function legacyAnalyticsKeyNames() {
+  const names = new Set<string>(LEGACY_ANALYTICS_STORAGE_KEYS);
+  const key = getPostHogKey();
+
+  if (key) {
+    names.add(`__ph_opt_in_out_${key}`);
+    names.add(postHogPersistencePrefix(key));
+  }
+
+  return names;
+}
+
+function isLegacyAnalyticsKey(name: string, names: Set<string>) {
+  if (names.has(name)) return true;
+  const key = getPostHogKey();
+  return Boolean(key && name.startsWith(`${postHogPersistencePrefix(key)}__`));
+}
+
+export function clearLegacyAnalyticsStorage() {
+  if (!canUseBrowser()) return;
+  const names = legacyAnalyticsKeyNames();
+
+  try {
+    for (let index = window.localStorage.length - 1; index >= 0; index -= 1) {
+      const name = window.localStorage.key(index);
+      if (name && isLegacyAnalyticsKey(name, names)) {
+        window.localStorage.removeItem(name);
+      }
+    }
+  } catch {
+    // Restricted storage should never block the site or its tools.
+  }
+
+  try {
+    for (const entry of document.cookie.split(";")) {
+      const name = decodeURIComponent(entry.split("=", 1)[0]?.trim() || "");
+      if (name && isLegacyAnalyticsKey(name, names)) {
+        document.cookie = `${encodeURIComponent(name)}=; Max-Age=0; Path=/; SameSite=Lax`;
+      }
+    }
+  } catch {
+    // Cookie access may be unavailable under browser privacy restrictions.
+  }
+}
+
 export function markAnalyticsReady() {
   analyticsReady = true;
 }
@@ -89,55 +143,6 @@ export function setAnalyticsClient(client: PostHog) {
 
 export function markAnalyticsStopped() {
   analyticsReady = false;
-}
-
-export function readStoredAnalyticsConsent(): AnalyticsConsent | null {
-  if (!canUseBrowser()) return null;
-
-  try {
-    const value = window.localStorage.getItem(ANALYTICS_CONSENT_STORAGE_KEY);
-    if (value === "allowed" || value === "declined") return value;
-    if (value !== null) {
-      window.localStorage.removeItem(ANALYTICS_CONSENT_STORAGE_KEY);
-    }
-  } catch {
-    return null;
-  }
-
-  return null;
-}
-
-export function writeStoredAnalyticsConsent(consent: AnalyticsConsent) {
-  if (!canUseBrowser()) return;
-
-  try {
-    window.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, consent);
-  } catch {
-    // Restricted storage should never block the site or its tools.
-  }
-
-  window.dispatchEvent(
-    new CustomEvent(ANALYTICS_CONSENT_CHANGED_EVENT, {
-      detail: { consent },
-    }),
-  );
-}
-
-export function requestAnalyticsPreferences() {
-  if (!canUseBrowser()) return;
-  window.dispatchEvent(new Event(ANALYTICS_PREFERENCES_REQUEST_EVENT));
-}
-
-export function stopAnalyticsCapture() {
-  markAnalyticsStopped();
-  if (!canUseBrowser()) return;
-
-  try {
-    analyticsClient?.opt_out_capturing();
-    analyticsClient?.reset(true);
-  } catch {
-    // If PostHog was never initialized, declining analytics should remain inert.
-  }
 }
 
 export function sanitizeAnalyticsProperties(
@@ -158,6 +163,14 @@ export function sanitizeAnalyticsProperties(
   return next;
 }
 
+export const sanitizeAnalyticsEvent: BeforeSendFn = (event) => {
+  if (!event) return null;
+  return {
+    ...event,
+    properties: sanitizeAnalyticsProperties(event.properties),
+  };
+};
+
 function sanitizeManualEventProperties(
   properties: AnalyticsProperties,
 ): AnalyticsProperties {
@@ -166,8 +179,9 @@ function sanitizeManualEventProperties(
   for (const [key, value] of Object.entries(properties)) {
     if (!safeEventPropertyKeys.has(key)) continue;
     if (privatePropertyPattern.test(key)) continue;
-    if (
-      typeof value === "string" ||
+    if (typeof value === "string" && safeStringValuePattern.test(value)) {
+      next[key] = value;
+    } else if (
       typeof value === "number" ||
       typeof value === "boolean" ||
       value === null
@@ -183,11 +197,15 @@ export function trackPageview(pathname = currentPathname()) {
   if (!analyticsReady || !canUseBrowser()) return;
 
   const routePath = cleanPathname(pathname);
-  analyticsClient?.capture("$pageview", {
-    $current_url: canonicalUrlForPath(routePath),
-    $pathname: routePath,
-    route_path: routePath,
-  });
+  try {
+    analyticsClient?.capture("$pageview", {
+      $current_url: canonicalUrlForPath(routePath),
+      $pathname: routePath,
+      route_path: routePath,
+    });
+  } catch {
+    // Analytics failures must never interfere with the timing tools.
+  }
 }
 
 export function trackEvent(
@@ -195,10 +213,15 @@ export function trackEvent(
   properties: AnalyticsProperties = {},
 ) {
   if (!analyticsReady || !canUseBrowser()) return;
+  if (!safeEventNamePattern.test(eventName)) return;
 
   const routePath = currentPathname();
-  analyticsClient?.capture(eventName, {
-    route_path: routePath,
-    ...sanitizeManualEventProperties(properties),
-  });
+  try {
+    analyticsClient?.capture(eventName, {
+      route_path: routePath,
+      ...sanitizeManualEventProperties(properties),
+    });
+  } catch {
+    // Analytics failures must never interfere with the timing tools.
+  }
 }

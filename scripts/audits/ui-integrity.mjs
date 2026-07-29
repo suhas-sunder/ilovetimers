@@ -10,13 +10,12 @@ const check = (condition, message) => {
   if (!condition) failures.push(message);
 };
 
-const [routes, foundation, root, footer, consent, fitText, css, archived, billable] =
+const [routes, foundation, root, footer, fitText, css, archived, billable] =
   await Promise.all([
     read("app/routes.ts"),
     read("app/clients/components/ui/foundation.tsx"),
     read("app/root.tsx"),
     read("app/clients/components/navigation/Footer.tsx"),
-    read("app/clients/components/analytics/AnalyticsConsent.tsx"),
     read("app/clients/hooks/useFitDisplayText.ts"),
     read("app/app.css"),
     read("app/routes/free-online-timers.tsx"),
@@ -48,7 +47,6 @@ check(/role="alert"/.test(foundation), "Field errors do not use an alert role.")
 check(/h-11 w-11/.test(root), "Theme control no longer has a 44px hit area.");
 check(/aria-label=\{open \? "Close menu" : "Open menu"\}/.test(root), "Mobile menu button label does not reflect its state.");
 check(/keepFocusInside/.test(root) && /closeMobileMenu/.test(root), "Mobile modal navigation lost focus containment or restoration.");
-check(/min-h-11/.test(consent), "Analytics preference control no longer has a 44px hit area.");
 check(/min-h-11/.test(footer), "Footer mobile controls no longer have a 44px hit area.");
 
 check(/Math\.max\(\s*16,[\s\S]*Math\.min\(/.test(fitText), "Display fitting no longer permits narrow-screen overflow prevention.");

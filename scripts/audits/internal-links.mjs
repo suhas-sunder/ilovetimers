@@ -167,7 +167,7 @@ check(
     footerSource.includes("Built and maintained by"),
   "Footer ownership attribution no longer links to the author page.",
 );
-check(footerSource.includes("AnalyticsPreferencesButton"), "Footer lost the analytics-preference control.");
+check(!footerSource.includes("AnalyticsPreferencesButton"), "Footer still renders the removed PostHog preference control.");
 
 const sitemapRoutes = SITEMAP_GROUPS.flatMap((section) => section.routes);
 check(new Set(sitemapRoutes).size === sitemapRoutes.length, "HTML sitemap groups contain a duplicate route.");

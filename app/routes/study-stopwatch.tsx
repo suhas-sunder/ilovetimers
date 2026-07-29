@@ -46,7 +46,7 @@ const FAQ_ITEMS = [
   {
     question: "Is study information sent to analytics?",
     answer:
-      "No marker content or elapsed value is sent by this tool. Markers stay in this page's memory and are cleared by reset or reload. Consent-gated analytics may record the canonical page path only.",
+      "No marker content or elapsed value is sent by this tool. Markers stay in this page's memory and are cleared by reset or reload. Cookieless analytics may record the canonical page path only.",
   },
 ] as const;
 

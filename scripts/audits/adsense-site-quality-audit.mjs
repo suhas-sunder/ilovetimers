@@ -818,9 +818,7 @@ function storageKeysFromSource(source) {
     keys.push(match[2] || constants.get(raw) || raw);
   }
   const globalKeys = new Set([
-    "ilt-analytics-consent",
     "ilt-theme-mode",
-    "ilt-posthog-capture-consent",
   ]);
   return unique(keys).filter(
     (key) => !key.includes("STORAGE_KEY") && !globalKeys.has(key),

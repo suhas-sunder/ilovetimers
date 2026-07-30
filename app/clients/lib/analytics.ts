@@ -69,6 +69,11 @@ function canonicalUrlForPath(pathname: string) {
   return `${window.location.origin}${cleanPathname(pathname)}`;
 }
 
+function currentHost() {
+  if (!canUseBrowser()) return "";
+  return window.location.host;
+}
+
 function stripUrlToPath(value: unknown) {
   if (typeof value !== "string" || !value) return value;
 
@@ -77,6 +82,29 @@ function stripUrlToPath(value: unknown) {
     return `${url.origin}${cleanPathname(url.pathname)}`;
   } catch {
     return value;
+  }
+}
+
+function stripToPathname(value: unknown) {
+  if (typeof value !== "string" || !value) return value;
+
+  try {
+    const url = new URL(value, canUseBrowser() ? window.location.origin : undefined);
+    return cleanPathname(url.pathname);
+  } catch {
+    return cleanPathname(value.split(/[?#]/, 1)[0] || "/");
+  }
+}
+
+function stripToHost(value: unknown) {
+  if (typeof value !== "string" || !value) return value;
+
+  try {
+    return new URL(
+      value.includes("://") ? value : `https://${value}`,
+    ).host;
+  } catch {
+    return "";
   }
 }
 
@@ -160,6 +188,14 @@ export function sanitizeAnalyticsProperties(
     if (key in next) next[key] = stripUrlToPath(next[key]);
   }
 
+  for (const key of ["$pathname", "$session_entry_pathname"]) {
+    if (key in next) next[key] = stripToPathname(next[key]);
+  }
+
+  for (const key of ["$host", "$session_entry_host"]) {
+    if (key in next) next[key] = stripToHost(next[key]);
+  }
+
   return next;
 }
 
@@ -200,6 +236,7 @@ export function trackPageview(pathname = currentPathname()) {
   try {
     analyticsClient?.capture("$pageview", {
       $current_url: canonicalUrlForPath(routePath),
+      $host: currentHost(),
       $pathname: routePath,
       route_path: routePath,
     });

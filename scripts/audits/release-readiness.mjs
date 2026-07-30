@@ -328,6 +328,15 @@ check(appProviderSource.includes('person_profiles: "never"'), "PostHog person pr
 check(!appProviderSource.includes("AnalyticsConsentBanner"), "The PostHog consent banner is still rendered.");
 check(!analyticsSource.includes("localStorage.setItem"), "Analytics still writes to localStorage.");
 check(analyticsSource.includes("window.location.pathname"), "Manual analytics path sanitization is missing.");
+check(analyticsSource.includes("$current_url: canonicalUrlForPath(routePath)"), "PostHog Web Analytics URL is missing.");
+check(analyticsSource.includes("$pathname: routePath"), "PostHog Web Analytics pathname is missing.");
+check(analyticsSource.includes("$host: currentHost()"), "PostHog Web Analytics host is missing.");
+for (const property of ["$current_url", "$pathname", "$host"]) {
+  check(
+    !new RegExp(`property_denylist:[\\s\\S]*?[\"']\\${property}[\"']`).test(appProviderSource),
+    `PostHog Web Analytics property ${property} is denied.`,
+  );
+}
 
 for (const route of [
   "/about",

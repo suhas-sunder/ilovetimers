@@ -277,7 +277,20 @@ try {
     expectedPaths,
     "Pageview route sequence is incorrect.",
   );
-
+  assert.deepEqual(
+    pageviews().map((event) => event.properties?.$pathname),
+    expectedPaths,
+    "PostHog Web Analytics pathname sequence is incorrect.",
+  );
+  assert.deepEqual(
+    pageviews().map((event) => event.properties?.$current_url),
+    expectedPaths.map((pathname) => `${BASE}${pathname}`),
+    "PostHog Web Analytics URL sequence is incorrect.",
+  );
+  assert.ok(
+    pageviews().every((event) => event.properties?.$host === new URL(BASE).host),
+    "PostHog Web Analytics host is missing or incorrect.",
+  );
   const allPayloadText = JSON.stringify(capturedEvents());
   for (const privateValue of [
     PRIVATE_QUERY_VALUE,
@@ -295,8 +308,16 @@ try {
   for (const event of pageviews()) {
     assert.equal(event.properties?.$cookieless_mode, true, "Pageview is not marked cookieless.");
     assert.equal(event.properties?.$process_person_profile, false, "Person-profile processing is enabled.");
-    assert.ok(!("$current_url" in event.properties), "Pageview payload contains $current_url.");
-    assert.ok(!("$pathname" in event.properties), "Pageview payload contains SDK pathname data.");
+    assert.ok(event.properties?.$current_url, "Pageview payload omits $current_url.");
+    assert.ok(event.properties?.$pathname, "Pageview payload omits $pathname.");
+    assert.ok(event.properties?.$host, "Pageview payload omits $host.");
+    for (const key of ["$current_url", "$initial_current_url", "$session_entry_url"]) {
+      const value = event.properties?.[key];
+      if (typeof value !== "string") continue;
+      const parsed = new URL(value);
+      assert.equal(parsed.search, "", `${key} contains a query string.`);
+      assert.equal(parsed.hash, "", `${key} contains a fragment.`);
+    }
   }
   assert.ok(
     requests.every((request) => !/flags|decide|survey|session_recording/i.test(request.url)),
@@ -357,7 +378,7 @@ try {
   console.log("Cookieless PostHog browser test passed.");
   console.log("- storage: 0 PostHog cookies, localStorage entries, sessionStorage entries, or IndexedDB databases");
   console.log("- pageviews: direct=1, client navigation=1, Back=1, Forward=1, duplicates=0");
-  console.log("- privacy: path-only payloads; query, fragment, and test user value absent");
+  console.log("- privacy: sanitized Web Analytics paths; query, fragment, and test user value absent");
   console.log("- disabled: autocapture, recording, surveys, flags, experiments, and person profiles");
   console.log("- resilience: application navigation remained functional with analytics returning HTTP 503");
 } finally {

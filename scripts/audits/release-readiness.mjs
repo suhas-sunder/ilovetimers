@@ -326,6 +326,12 @@ check(appProviderSource.includes("advanced_disable_feature_flags: true"), "PostH
 check(appProviderSource.includes("disable_web_experiments: true"), "PostHog web experiments are not disabled.");
 check(appProviderSource.includes('person_profiles: "never"'), "PostHog person profiles are not disabled.");
 check(!appProviderSource.includes("AnalyticsConsentBanner"), "The PostHog consent banner is still rendered.");
+check(
+  /export const POSTHOG_PROJECT_TOKEN = "phc_[A-Za-z0-9_-]{20,}";/.test(analyticsSource),
+  "The public PostHog project token is not defined in analytics source.",
+);
+check(!analyticsSource.includes("VITE_POSTHOG_KEY"), "Production PostHog still depends on VITE_POSTHOG_KEY.");
+check(!appProviderSource.includes("isAnalyticsConfigured"), "PostHog initialization still has an environment-dependent gate.");
 check(!analyticsSource.includes("localStorage.setItem"), "Analytics still writes to localStorage.");
 check(analyticsSource.includes("window.location.pathname"), "Manual analytics path sanitization is missing.");
 check(analyticsSource.includes("$current_url: canonicalUrlForPath(routePath)"), "PostHog Web Analytics URL is missing.");

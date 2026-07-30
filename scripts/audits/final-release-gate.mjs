@@ -206,8 +206,10 @@ check(existsSync(path.join(ROOT, "docs/rollback-plan.md")), "Rollback plan is mi
 check(!/googlesyndication|doubleclick|adsbygoogle|pagead2/i.test(sourceText), "Live Google advertising code or network hosts are present.");
 check(/google\.com,\s*pub-\d{16},\s*DIRECT,\s*f08c47fec0942fa0/i.test(adsTxt), "ads.txt record is malformed.");
 check(!/pub-0{8,}|pub-(?:x+|your|placeholder)/i.test(adsTxt), "ads.txt contains a placeholder publisher ID.");
-check(!/VITE_POSTHOG_KEY\s*=|phc_[A-Za-z0-9_-]{20,}/.test(sourceText), "A production PostHog key appears in tracked source.");
-check(!/(?:BEGIN (?:RSA|OPENSSH|EC) PRIVATE KEY|AKIA[0-9A-Z]{16}|sk_live_[A-Za-z0-9]{16,})/.test(sourceText), "A likely secret appears in application or public source.");
+const posthogProjectTokens = [...new Set(sourceText.match(/phc_[A-Za-z0-9_-]{20,}/g) || [])];
+check(posthogProjectTokens.length === 1, "Application source must contain exactly one public PostHog project token.");
+check(!sourceText.includes("VITE_POSTHOG_KEY"), "Production PostHog still depends on VITE_POSTHOG_KEY.");
+check(!/(?:BEGIN (?:RSA|OPENSSH|EC) PRIVATE KEY|AKIA[0-9A-Z]{16}|sk_live_[A-Za-z0-9]{16,}|phx_[A-Za-z0-9_-]{20,})/.test(sourceText), "A likely secret or personal API key appears in application or public source.");
 check(/X-Frame-Options/.test(await read("netlify.toml")), "Static Netlify clickjacking protection is missing.");
 check(routeValidation.canonical.every((entry) => entry.internalProcessLanguage.length === 0), "Rendered public output contains internal workflow language.");
 check(routeValidation.canonical.every((entry) => entry.structuredData.invalidBlocks === 0 && entry.structuredData.parameterizedUrls.length === 0 && entry.structuredData.localUrls.length === 0), "Rendered structured data is invalid or contains unsafe URLs.");
@@ -333,15 +335,18 @@ try {
 const buildFiles = await filesUnder("build");
 let buildLocalPathMatches = [];
 let buildSecretMatches = [];
+let buildPostHogProjectTokenFiles = [];
 for (const file of buildFiles) {
   const info = await stat(path.join(ROOT, file));
   if (info.size > 5_000_000 || /\.(?:png|ico|woff2?|jpg|jpeg|gif|webp)$/.test(file)) continue;
   const contents = await read(file).catch(() => "");
   if (/C:\\Users\\Suhas|E:\\PROJECTS-and-WORK|file:\/\/\//i.test(contents)) buildLocalPathMatches.push(file);
-  if (/(?:BEGIN (?:RSA|OPENSSH|EC) PRIVATE KEY|AKIA[0-9A-Z]{16}|sk_live_[A-Za-z0-9]{16,}|phc_[A-Za-z0-9_-]{20,})/.test(contents)) buildSecretMatches.push(file);
+  if (posthogProjectTokens.some((token) => contents.includes(token))) buildPostHogProjectTokenFiles.push(file);
+  if (/(?:BEGIN (?:RSA|OPENSSH|EC) PRIVATE KEY|AKIA[0-9A-Z]{16}|sk_live_[A-Za-z0-9]{16,}|phx_[A-Za-z0-9_-]{20,})/.test(contents)) buildSecretMatches.push(file);
 }
 check(buildLocalPathMatches.length === 0, `Build output exposes local paths in: ${buildLocalPathMatches.join(", ")}`);
 check(buildSecretMatches.length === 0, `Build output exposes likely secrets in: ${buildSecretMatches.join(", ")}`);
+check(buildPostHogProjectTokenFiles.length > 0, "Production build omits the public PostHog project token.");
 check(!buildFiles.some((file) => file.endsWith(".map")), "Production build contains source maps contrary to the current no-source-map output policy.");
 
 const worktreeEntries = collectWorktree();
@@ -369,7 +374,7 @@ check(
 
 const ownerGates = [
   "Confirm that ads.txt publisher ID pub-4810616735714570 belongs to the intended AdSense account.",
-  "Confirm the production PostHog project accepts cookieless events and that its public project key and host are configured in the hosting provider.",
+  "Confirm the production PostHog project accepts cookieless events.",
 ];
 const internalNonBlocking = [
   "The repository has no separate lint or formatter script; type checking, source audits, SSR rendering, browser interaction, and diff-whitespace checks provide the current automated coverage.",
@@ -401,7 +406,7 @@ const gate = {
   dependencyAudit,
   privacyStorageInventory: { localStorage: storageInventory, sessionStorage: [], indexedDB: [], notes: ["PostHog runs in always-on cookieless mode with persistence disabled and does not create browser-storage entries.", "Share configurations are URL-carried rather than browser storage; preset names are excluded from URLs."] },
   advertising: { mode: "disabled; homepage placeholder-only", liveNetworkScript: false, publisherRecordPresent: true, publisherOwnershipVerified: false },
-  buildOutput: { filesInspected: buildFiles.length, sourceMaps: 0, localPathMatches: buildLocalPathMatches, likelySecretMatches: buildSecretMatches },
+  buildOutput: { filesInspected: buildFiles.length, sourceMaps: 0, localPathMatches: buildLocalPathMatches, likelySecretMatches: buildSecretMatches, posthogProjectTokenFiles: buildPostHogProjectTokenFiles },
   blockerClassification: { internalBlocking: failures, internalNonBlocking: [...internalNonBlocking, ...warnings], ownerAction: ownerGates, externalAccountOrPlatformAction: externalGates, postDeploymentVerification: postDeploymentGates },
   artifactsVerified: [
     "docs/final-worktree-inventory.json",

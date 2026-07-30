@@ -3,6 +3,8 @@ import type { BeforeSendFn, PostHog, Properties } from "posthog-js";
 type AnalyticsValue = string | number | boolean | null | undefined;
 export type AnalyticsProperties = Record<string, AnalyticsValue>;
 
+export const POSTHOG_PROJECT_TOKEN = "phc_sTkyKGskHghe6Fec7zS3hSI5KhPLr9NjQ2KCDObL22W";
+
 const LEGACY_ANALYTICS_STORAGE_KEYS = [
   "ilt-analytics-consent",
   "ilt-posthog-capture-consent",
@@ -39,12 +41,8 @@ export function canUseBrowser() {
   return typeof window !== "undefined";
 }
 
-export function isAnalyticsConfigured() {
-  return Boolean(import.meta.env.VITE_POSTHOG_KEY);
-}
-
 export function getPostHogKey() {
-  return import.meta.env.VITE_POSTHOG_KEY as string | undefined;
+  return POSTHOG_PROJECT_TOKEN;
 }
 
 export function getPostHogHost() {

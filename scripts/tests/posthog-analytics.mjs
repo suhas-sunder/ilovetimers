@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { createServer } from "node:http";
 import os from "node:os";
 import path from "node:path";
@@ -11,7 +11,21 @@ import { spawnStaticPreview } from "./preview-process.mjs";
 const ROOT = path.resolve(import.meta.dirname, "../..");
 const PREVIEW_PORT = Number(process.env.ILT_ANALYTICS_TEST_PORT || 3061);
 const BASE = `http://127.0.0.1:${PREVIEW_PORT}`;
-const TEST_KEY = "phc_cookieless_browser_test_key";
+const analyticsSource = readFileSync(
+  path.join(ROOT, "app/clients/lib/analytics.ts"),
+  "utf8",
+);
+const projectTokenMatches = analyticsSource.match(/phc_[A-Za-z0-9_-]{20,}/g) || [];
+assert.equal(
+  projectTokenMatches.length,
+  1,
+  "Analytics source must contain exactly one public PostHog project token.",
+);
+assert.ok(
+  !analyticsSource.includes("VITE_POSTHOG_KEY"),
+  "Production analytics still depends on VITE_POSTHOG_KEY.",
+);
+const PROJECT_TOKEN = projectTokenMatches[0];
 const PRIVATE_QUERY_VALUE = "private.user@example.test";
 const PRIVATE_FRAGMENT_VALUE = "private-fragment-value";
 const BROWSER_USER_AGENT =
@@ -78,14 +92,16 @@ const collectorHost = `http://127.0.0.1:${collectorAddress.port}`;
 const npmCli = process.env.npm_execpath;
 assert.ok(npmCli, "npm_execpath is required; run this test through npm.");
 
+const buildEnvironment = {
+  ...process.env,
+  NODE_ENV: "production",
+  VITE_POSTHOG_HOST: collectorHost,
+};
+delete buildEnvironment.VITE_POSTHOG_KEY;
+
 const build = spawnSync(process.execPath, [npmCli, "run", "build"], {
   cwd: ROOT,
-  env: {
-    ...process.env,
-    NODE_ENV: "production",
-    VITE_POSTHOG_KEY: TEST_KEY,
-    VITE_POSTHOG_HOST: collectorHost,
-  },
+  env: buildEnvironment,
   encoding: "utf8",
   timeout: 240_000,
 });
@@ -96,6 +112,36 @@ if (build.status !== 0) {
   process.stderr.write(build.stderr || "");
   throw new Error(`Analytics fixture build failed with exit code ${build.status}.`);
 }
+
+const builtAssetDirectory = path.join(ROOT, "build/client/assets");
+const builtJavaScript = readdirSync(builtAssetDirectory)
+  .filter((file) => file.endsWith(".js"))
+  .map((file) => ({
+    file,
+    contents: readFileSync(path.join(builtAssetDirectory, file), "utf8"),
+  }));
+const initializationAsset = builtJavaScript.find(({ contents }) =>
+  contents.includes(PROJECT_TOKEN),
+);
+assert.ok(initializationAsset, "The production browser bundle omits the PostHog project token.");
+const builtJavaScriptText = builtJavaScript.map(({ contents }) => contents).join("\n");
+assert.ok(
+  builtJavaScriptText.includes("cookieless_mode"),
+  "The PostHog initialization bundle omits cookieless mode.",
+);
+assert.ok(
+  builtJavaScriptText.includes("PostHog analytics initialization failed."),
+  "The production bundle omits the application PostHog initialization path.",
+);
+assert.ok(
+  builtJavaScriptText.includes("disable_persistence"),
+  "The production bundle omits the PostHog persistence restriction.",
+);
+assert.doesNotMatch(
+  builtJavaScriptText,
+  /(?:phx_[A-Za-z0-9_-]{20,}|BEGIN (?:RSA|OPENSSH|EC) PRIVATE KEY|AKIA[0-9A-Z]{16}|sk_live_[A-Za-z0-9]{16,})/,
+  "The production browser bundle contains a personal API key or likely secret.",
+);
 
 function decodeRequestBody(request) {
   if (!request.body.length) return null;
@@ -190,7 +236,7 @@ try {
   await context.addCookies([
     { name: "ilt-analytics-consent", value: "allowed", url: BASE },
     { name: "ilt-posthog-capture-consent", value: "1", url: BASE },
-    { name: `ph_${TEST_KEY}_posthog`, value: "legacy", url: BASE },
+    { name: `ph_${PROJECT_TOKEN}_posthog`, value: "legacy", url: BASE },
   ]);
 
   const page = await context.newPage();
@@ -213,7 +259,7 @@ try {
     window.localStorage.setItem("ilt-posthog-capture-consent", "1");
     window.localStorage.setItem(`ph_${key}_posthog`, "legacy");
     window.localStorage.setItem(`ph_${key}_posthog__flags`, "legacy");
-  }, { key: TEST_KEY });
+  }, { key: PROJECT_TOKEN });
 
   await page.goto(
     `${BASE}/?private_email=${encodeURIComponent(PRIVATE_QUERY_VALUE)}#${PRIVATE_FRAGMENT_VALUE}`,
@@ -376,6 +422,7 @@ try {
   await failureContext.close();
 
   console.log("Cookieless PostHog browser test passed.");
+  console.log("- bundle: public project token and initialization present without VITE_POSTHOG_KEY");
   console.log("- storage: 0 PostHog cookies, localStorage entries, sessionStorage entries, or IndexedDB databases");
   console.log("- pageviews: direct=1, client navigation=1, Back=1, Forward=1, duplicates=0");
   console.log("- privacy: sanitized Web Analytics paths; query, fragment, and test user value absent");

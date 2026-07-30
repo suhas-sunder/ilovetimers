@@ -5,7 +5,6 @@ import {
   clearLegacyAnalyticsStorage,
   getPostHogHost,
   getPostHogKey,
-  isAnalyticsConfigured,
   markAnalyticsReady,
   markAnalyticsStopped,
   sanitizeAnalyticsEvent,
@@ -98,12 +97,6 @@ export function PHProvider({ children }: { children: ReactNode }) {
 
     async function startAnalytics() {
       clearLegacyAnalyticsStorage();
-      if (!isAnalyticsConfigured()) {
-        markAnalyticsStopped();
-        setAnalyticsEnabled(false);
-        return;
-      }
-
       const posthog = await initializePostHog();
       if (disposed) return;
       if (!posthog) {

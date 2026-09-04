@@ -23,6 +23,18 @@ const informationalRoutes = new Set([
   "/sitemap",
   ...routes.filter((route) => route === "/guides" || route.startsWith("/guides/")),
 ]);
+const adFreeRoutes = new Set([
+  "/free-online-timers",
+  "/about",
+  "/author/suhas-sunder",
+  "/contact",
+  "/how-ilovetimers-is-made",
+  "/copyright",
+  "/privacy",
+  "/terms",
+  "/cookies",
+  "/sitemap",
+]);
 const failures = [];
 const PORT = 3013;
 const base = `http://127.0.0.1:${PORT}`;
@@ -66,7 +78,12 @@ try {
     const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
     check(duplicates.length === 0, `${route} renders duplicate SSR IDs: ${duplicates.join(", ")}.`);
     check(!/unexpected application error|application error|something went wrong/i.test(html), `${route} renders a fatal error state.`);
-    if (route !== "/") check(!html.includes('aria-label="Advertisements"'), `${route} renders an ad placeholder outside the homepage.`);
+    const adCount = (html.match(/aria-label="Advertisements"/g) ?? []).length;
+    if (adFreeRoutes.has(route)) {
+      check(adCount === 0, `${route} must stay ad-free (${adCount} slots).`);
+    } else {
+      check(adCount === 4, `${route} must render all four non-sidebar ad placements (${adCount}).`);
+    }
 
     if (!informationalRoutes.has(route)) {
       const main = html.match(/<main\b[\s\S]*?<\/main>/)?.[0] ?? "";

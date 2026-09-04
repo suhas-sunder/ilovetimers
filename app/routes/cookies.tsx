@@ -11,7 +11,7 @@ export const meta: MetaFunction = () => {
 
   const title = "Cookie Policy | iLoveTimers";
   const description =
-    "Read how iLoveTimers uses local browser storage and cookieless PostHog analytics without analytics cookies or persistent identifiers.";
+    "Read how iLoveTimers uses local browser storage, cookieless PostHog analytics, and Google advertising cookies on eligible pages.";
 
   const ogImage = "https://www.ilovetimers.com/og-image.png";
 
@@ -43,7 +43,7 @@ export default function CookiesPolicy() {
   return (
     <ContentPage
       title="Cookie Policy"
-      description="Last reviewed July 29, 2026"
+      description="Last reviewed September 3, 2026"
       className="ilt-legal-doc"
     >
       <ContentSection title="Overview">
@@ -82,10 +82,28 @@ export default function CookiesPolicy() {
 
       <ContentSection title="Advertising cookies">
         <p>
-          iLoveTimers does not currently install live advertising code or
-          third-party advertising scripts. The homepage may contain quiet
-          "Advertisements" placeholders, but those placeholders are not live ads
-          and do not set advertising cookies.
+          On eligible tool, guide, and homepage routes, iLoveTimers uses Google
+          AdSense. Google and its advertising partners may place or read cookies,
+          use web beacons, and process IP addresses or similar request information
+          to deliver, limit, personalize where permitted, and measure ads.
+          AdSense is not loaded on trust, legal, contact, sitemap, or the archived
+          four-timer route.
+        </p>
+        <p>
+          Google may use advertising cookies to serve ads based on visits to this
+          site and other sites. You can manage personalized advertising in{" "}
+          <a href="https://adssettings.google.com/">Google Ads Settings</a>{" "}
+          and read{" "}
+          <a href="https://policies.google.com/technologies/partner-sites">
+            how Google uses information from partner sites
+          </a>
+          . Where required, Google Privacy &amp; Messaging may present a regional
+          consent or opt-out message before eligible advertising is served.
+        </p>
+        <p>
+          When every ad unit is confirmed unfilled, the page may display static,
+          non-interactive placeholders labeled "Advertisements." Those fallback
+          elements do not themselves make an advertising request or store data.
         </p>
       </ContentSection>
 

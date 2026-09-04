@@ -1,35 +1,38 @@
-import type { AdSlotType } from "~/clients/components/ui/foundation";
+import type { AdSensePlacement } from "~/clients/components/ads/AdSense";
+import { SITEMAP_GROUPS } from "~/clients/config/siteDirectory.js";
 
-export type MonetizationEligibility =
-  | "homepage-placeholder-only"
-  | "ad-free";
+export type MonetizationEligibility = "live-ads" | "ad-free";
 
 export type RouteMonetizationConfig = {
   path: string;
   eligibility: MonetizationEligibility;
   reason: string;
-  allowedSlots: readonly AdSlotType[];
+  allowedSlots: readonly AdSensePlacement[];
   contentExpansionNeeded: boolean;
   notes?: string;
 };
 
-export const HOMEPAGE_AD_SLOTS = [
-  "in-content-square",
-  "bottom-banner",
-] as const satisfies readonly AdSlotType[];
+export const LIVE_AD_SLOTS = [
+  "top-banner",
+  "sidebar-left",
+  "sidebar-right",
+  "below-header-banner",
+  "seo-section-square",
+  "above-footer-banner",
+] as const satisfies readonly AdSensePlacement[];
 
-export const NO_AD_SLOTS = [] as const satisfies readonly AdSlotType[];
+export const NO_AD_SLOTS = [] as const satisfies readonly AdSensePlacement[];
 
 export const routeMonetization = [
   {
     path: "/",
-    eligibility: "homepage-placeholder-only",
-    allowedSlots: HOMEPAGE_AD_SLOTS,
+    eligibility: "live-ads",
+    allowedSlots: LIVE_AD_SLOTS,
     contentExpansionNeeded: false,
     reason:
-      "The homepage may show up to two quiet placeholders between explanatory sections.",
+      "The homepage has substantial navigation and explanatory content for shared live placements.",
     notes:
-      "No live ad code is installed. Tool, trust, legal, sitemap, and archive routes stay ad-free.",
+      "AdSense fallbacks remain hidden until every requested unit is confirmed unfilled.",
   },
   {
     path: "/free-online-timers",
@@ -108,6 +111,35 @@ export const routeMonetization = [
 export const routeMonetizationByPath: Readonly<Record<string, RouteMonetizationConfig>> =
   Object.fromEntries(routeMonetization.map((entry) => [entry.path, entry]));
 
+const CANONICAL_PUBLIC_ROUTE_SET = new Set(
+  SITEMAP_GROUPS.flatMap((group) => group.routes),
+);
+
 export function getRouteMonetization(path: string) {
-  return routeMonetizationByPath[path];
+  const normalizedPath =
+    path.length > 1 ? path.replace(/\/+$/, "") : path;
+  const explicitConfig = routeMonetizationByPath[normalizedPath];
+  if (explicitConfig) return explicitConfig;
+
+  if (CANONICAL_PUBLIC_ROUTE_SET.has(normalizedPath)) {
+    return {
+      path: normalizedPath,
+      eligibility: "live-ads" as const,
+      reason: "Canonical tool and guide route with substantive user-facing content.",
+      allowedSlots: LIVE_AD_SLOTS,
+      contentExpansionNeeded: false,
+    };
+  }
+
+  return {
+    path: normalizedPath,
+    eligibility: "ad-free" as const,
+    reason: "Unknown, fallback, or noncanonical route; no advertising requests.",
+    allowedSlots: NO_AD_SLOTS,
+    contentExpansionNeeded: false,
+  };
+}
+
+export function isLiveAdRoute(path: string) {
+  return getRouteMonetization(path).eligibility === "live-ads";
 }

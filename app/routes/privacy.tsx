@@ -12,7 +12,7 @@ export const meta: Route.MetaFunction = () => {
 
   const title = "Privacy Policy | iLoveTimers";
   const description =
-    "Read how iLoveTimers handles browser-stored preferences, privacy-limited analytics, contact messages, and user-entered timer or calculator data.";
+    "Read how iLoveTimers handles browser-stored preferences, privacy-limited analytics, Google advertising, contact messages, and tool data.";
 
   const ogImage = "https://www.ilovetimers.com/og-image.png";
 
@@ -44,7 +44,7 @@ export default function PrivacyPolicy() {
   return (
     <ContentPage
       title="Privacy Policy"
-      description="Last reviewed July 29, 2026"
+      description="Last reviewed September 3, 2026"
       className="ilt-legal-doc"
     >
       <ContentSection title="Overview">
@@ -174,10 +174,30 @@ export default function PrivacyPolicy() {
 
       <ContentSection title="Advertising">
         <p>
-          iLoveTimers does not currently install live advertising code or
-          third-party advertising scripts. The homepage may show quiet
-          "Advertisements" placeholders to reserve possible future ad space, but
-          those placeholders are not live ads and do not set advertising cookies.
+          Eligible tool, guide, and homepage routes use Google AdSense to request,
+          deliver, and measure advertising. Trust, legal, contact, sitemap, and
+          the archived four-timer page do not load the AdSense tag. If every ad
+          request on an eligible page is unfilled, the site may show a quiet,
+          non-interactive space labeled "Advertisements" instead.
+        </p>
+        <p>
+          Google and participating advertising vendors may use cookies, web
+          beacons, IP addresses, and other device or request information to serve
+          and measure ads. Depending on your region, choices, and applicable law,
+          ads may be personalized using prior visits to this site or other sites.
+          Read{" "}
+          <a href="https://policies.google.com/technologies/partner-sites">
+            how Google uses information from partner sites
+          </a>{" "}
+          and use{" "}
+          <a href="https://adssettings.google.com/">Google Ads Settings</a>{" "}
+          to manage personalized advertising choices.
+        </p>
+        <p>
+          Where required, a consent message supplied through Google Privacy &amp;
+          Messaging may ask for advertising choices before eligible ads are
+          served. Consent availability and the exact options shown can vary by
+          region and Google configuration.
         </p>
       </ContentSection>
 

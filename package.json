@@ -34,6 +34,7 @@
     "test:ui-regressions": "node scripts/tests/ui-regressions.mjs",
     "test:sitewide-ui": "node scripts/tests/sitewide-ui.mjs",
     "test:analytics": "node scripts/tests/posthog-analytics.mjs",
+    "test:adsense": "node scripts/tests/adsense-integration.mjs",
     "audit:final-release": "node scripts/audits/final-release-gate.mjs"
   },
   "dependencies": {

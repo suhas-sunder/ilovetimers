@@ -250,14 +250,20 @@ Do not add real ad code unless explicitly asked.
 
 Before adding real AdSense code, verify the current official Google AdSense placement policies.
 
-Ad placeholders are allowed only where requested. Current intent:
+Current implementation:
 
-- homepage-only placeholders
-- no real scripts
-- no third-party ad code
+- manual Google AdSense units use the shared `AdSense` components and route monetization config
+- canonical tool, calculator, clock, guide, and homepage routes may show live ads
+- trust, legal, sitemap, archive, unknown, and redirect routes remain ad-free
+- the AdSense loader is added once per eligible page and is not requested on ad-free routes
+- the top banner uses approved exact sizes: 320x50, 468x60, and 728x90
+- sidebars mount only on naturally wide desktop layouts; other units are responsive
+- placeholders remain hidden while any unit is pending
+- placeholders appear only after every mounted unit reports `unfilled` or `unfill-optimized`, or the AdSense script fails
+- if any unit reports `filled`, every placeholder on the page stays hidden
 - no sticky ads
 - no intrusive ads
-- no ads inside active timer tool pages unless explicitly requested later
+- no ads inside controls or interactive tool surfaces
 
 AdSense-conscious placement rules:
 
@@ -1068,11 +1074,12 @@ For trust/E-E-A-T tasks, report:
 
 For AdSense/ad placeholder tasks, report:
 
-- no real ad code added
-- no third-party ad scripts added
+- whether real ad code or placeholder behavior changed
+- whether the AdSense loader remains single-instance and route-gated
 - ad placement safeguards
-- which pages show placeholders
-- confirmation placeholders do not appear on tool pages unless requested
+- which route groups are ad-enabled and ad-free
+- confirmation that pending ads and placeholders cannot be visible together
+- confirmation that one filled unit suppresses every placeholder
 
 For dark mode tasks, report:
 

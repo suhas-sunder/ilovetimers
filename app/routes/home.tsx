@@ -1,9 +1,12 @@
 import type { Route } from "./+types/home";
 import {
-  AdPlaceholder,
   ButtonLink,
   PageShell,
 } from "~/clients/components/ui/foundation";
+import {
+  BelowHeaderAd,
+  SeoSectionAd,
+} from "~/clients/components/ads/AdSense";
 
 const SITE_URL = "https://www.ilovetimers.com";
 
@@ -502,6 +505,8 @@ export default function Home() {
         </div>
       </section>
 
+      <BelowHeaderAd />
+
       <section className="bg-[var(--ilt-bg-content)] px-[var(--ilt-page-x)] py-11 sm:py-12">
         <div className="mx-auto max-w-[90rem]">
           <div className="grid gap-y-10 lg:grid-cols-[minmax(0,70ch)_300px] lg:items-start lg:gap-x-16 xl:gap-x-24">
@@ -547,7 +552,7 @@ export default function Home() {
             </section>
 
             <div className="lg:pt-12">
-              <AdPlaceholder slot="in-content-square" />
+              <SeoSectionAd />
             </div>
           </div>
         </div>
@@ -575,11 +580,6 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="px-[var(--ilt-page-x)] pb-12 pt-1">
-        <div className="mx-auto max-w-[90rem]">
-          <AdPlaceholder slot="bottom-banner" />
-        </div>
-      </div>
     </PageShell>
   );
 }

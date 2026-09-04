@@ -5,6 +5,10 @@ import {
   ContentSection,
 } from "~/clients/components/ui/foundation";
 import {
+  BelowHeaderAd,
+  SeoSectionAd,
+} from "~/clients/components/ads/AdSense";
+import {
   GUIDE_REVIEW_DATE,
   GUIDE_REVIEW_DATE_LABEL,
   GUIDES,
@@ -133,9 +137,14 @@ export function GuidePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <ContentSection title={guide.directQuestion}>
-        {children}
-      </ContentSection>
+      <BelowHeaderAd />
+
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-12">
+        <ContentSection title={guide.directQuestion}>
+          {children}
+        </ContentSection>
+        <SeoSectionAd />
+      </div>
 
       <ContentSection title="Related iLoveTimers guides">
         <ul className={guideListClass}>

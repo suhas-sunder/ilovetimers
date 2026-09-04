@@ -14,19 +14,19 @@ Use the route-opt-in visual stack classes in `app.css` for family rhythm. `timer
 
 Use `SettingsPanel` and `SettingsDrawer` for compact setup areas, `SeoBand` for explanatory content below the tool experience, and `ContentPage`, `ContentSection`, or `ContentPanel` for non-tool informational pages. Content primitives should create readable rhythm without boxed sections by default.
 
-Use `AdPlaceholder` only for quiet homepage reserved ad areas. It is a visual placeholder, not an ad integration, and it should stay out of active timer tool surfaces unless a dedicated ad-placement pass calls for it. It supports these slot names: `top-banner`, `in-content-square`, and `bottom-banner`. The label should stay policy-safe as `Advertisements`, with no fake calls to action or misleading surrounding headings.
+Live advertising is centralized in `clients/components/ads/AdSense.tsx`. The AdSense loader belongs in the document head once, and `AdSenseUnit` owns individual requests. Actual ad units must remain visible while requesting. Fallback placeholders start hidden and become visible only when every requested unit on the page is confirmed `data-ad-status="unfilled"` or `data-ad-status="unfill-optimized"`; if any unit is `filled`, every fallback stays hidden. The only fallback label is `Advertisements`.
 
 The final monetized tool-page contract is:
 
 1. Site nav/header.
-2. Optional desktop `top-banner` ad placeholder below nav with enough breathing room from navigation.
-3. Utility header: display first, primary controls below display, then presets, settings, and secondary actions. On mobile-header viewports, the `top-banner` placeholder belongs after this utility/settings stack and before the page title, not above the timer display. No SEO copy, duplicated page title, marketing text, or ad inside controls.
+2. Fixed-size-per-breakpoint `top-banner` below nav with enough breathing room from navigation. It uses Google's approved 320x50, 468x60, and 728x90 exact responsive sizes and cannot expand vertically.
+3. Utility header: display first, primary controls below display, then presets, settings, and secondary actions. No SEO copy, duplicated page title, marketing text, or ad inside controls.
 4. Page title section with one visible H1 and one short description.
-5. No banner placeholder directly after the page title/header section.
-6. SEO/content section with route-specific body content, related tools, FAQ, notes, or disclaimer. `in-content-square` may appear only inside this content area, after useful introductory content, with deliberate spacing from links and controls.
-7. Optional `bottom-banner` after FAQ or related content.
+5. Responsive `below-header-banner` after the utility/title area and before the SEO band.
+6. SEO/content section with route-specific body content, related tools, FAQ, notes, or disclaimer. `seo-section-square` appears alongside introductory content on wide screens and between useful content sections on narrow screens, with deliberate spacing from links and controls.
+7. Responsive `above-footer-banner` after route content and contextual related tools, before the footer.
 
-Current placeholder policy is homepage-only. `/free-online-timers`, tool routes, trust pages, legal pages, and `/sitemap` are ad-free. Route-level placeholder policy lives in `app/clients/config/monetization.ts`; add future slots from that map instead of improvising in individual routes.
+Canonical tool, guide, and homepage routes use the shared live placements. `/free-online-timers`, trust pages, legal pages, contact, and `/sitemap` remain ad-free to preserve the archived experience and avoid high-risk or inappropriate placements. Route eligibility lives in `app/clients/config/monetization.ts`; do not improvise route-local units.
 
 The site supports light and dark mode. Light is the default, and the user's explicit choice is stored in localStorage. Theme compatibility comes from the semantic `--ilt-*` tokens in `app.css`. Use shared primitives or token-backed classes for page backgrounds, surfaces, text, controls, inputs, panels, fullscreen bars, SEO bands, and ad placeholders. Avoid route-level hard-coded surface and text colors unless the component is a unique visual renderer.
 

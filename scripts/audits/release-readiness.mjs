@@ -138,6 +138,7 @@ const [
   analyticsSource,
   monetizationSource,
   homepageSource,
+  adSenseSource,
   searchIntentReport,
   readinessReport,
 ] = await Promise.all([
@@ -150,6 +151,7 @@ const [
   read("app/clients/lib/analytics.ts"),
   read("app/clients/config/monetization.ts"),
   read("app/routes/home.tsx"),
+  read("app/clients/components/ads/AdSense.tsx"),
   read("docs/audits/search-intent-map.md"),
   read("docs/audits/adsense-readiness.md"),
 ]);
@@ -306,13 +308,19 @@ check(
   "Source must contain one root-owned WebSite emitter.",
 );
 
+check(!homepageSource.includes("<AdPlaceholder"), "Legacy homepage placeholders are still rendered.");
+check(rootSource.includes("getAdSenseLoaderScript"), "The shared AdSense loader is missing from the document head.");
 check(
-  (homepageSource.match(/<AdPlaceholder\s+slot=/g) ?? []).length === 2,
-  "Homepage must render exactly two declared placeholders.",
+  (adSenseSource.match(/ca-pub-4810616735714570/g) ?? []).length === 1,
+  "The AdSense publisher ID must be centralized exactly once.",
 );
-check(!/adsbygoogle|googlesyndication/i.test(appSource), "Live Google advertising code exists in app source.");
+for (const slot of ["9536165504", "9216706505", "8773853377", "3573392380", "7903624833", "5957836976"]) {
+  check(adSenseSource.includes(slot), `AdSense slot ${slot} is missing.`);
+}
+check(adSenseSource.includes("resolveAdSensePageStatus"), "Shared AdSense status handling is missing.");
+check(adSenseSource.includes("MutationObserver"), "AdSense status observation is missing.");
 check(monetizationSource.includes('path: "/"'), "Homepage monetization entry is missing.");
-check(monetizationSource.includes("allowedSlots: HOMEPAGE_AD_SLOTS"), "Homepage placeholder slots are not configured.");
+check(monetizationSource.includes("allowedSlots: LIVE_AD_SLOTS"), "Homepage live ad slots are not configured.");
 check(monetizationSource.includes("allowedSlots: NO_AD_SLOTS"), "Ad-free route configuration is missing.");
 
 check(appProviderSource.includes('cookieless_mode: "always"'), "PostHog always-on cookieless mode is missing.");
@@ -360,6 +368,18 @@ for (const route of [
 
 const server = spawnStaticPreview({ root: ROOT, port: PORT });
 const pageResults = [];
+const adFreeRoutes = new Set([
+  "/free-online-timers",
+  "/about",
+  "/author/suhas-sunder",
+  "/contact",
+  "/how-ilovetimers-is-made",
+  "/copyright",
+  "/privacy",
+  "/terms",
+  "/cookies",
+  "/sitemap",
+]);
 
 try {
   await waitForServer();
@@ -376,6 +396,9 @@ try {
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
     const duplicateIds = duplicateValues(ids).map(([id]) => id);
     const adCount = (html.match(/aria-label="Advertisements"/g) ?? []).length;
+    const adSenseLoaderCount = (
+      html.match(/getAdSenseLoaderScript|data-ilt-adsense-loader/g) ?? []
+    ).length;
     const jsonLd = [...html.matchAll(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map(
       (match) => match[1],
     );
@@ -413,7 +436,13 @@ try {
     check(main.length > 500, `${route} has no substantial SSR main content.`);
     check(duplicateIds.length === 0, `${route} has duplicate IDs: ${duplicateIds.join(", ")}.`);
     check(!/under construction|coming soon|unexpected application error|something went wrong/i.test(main), `${route} renders an empty, unfinished, or fatal state.`);
-    check((route === "/" && adCount === 2) || (route !== "/" && adCount === 0), `${route} violates the placeholder policy (${adCount} slots).`);
+    if (adFreeRoutes.has(route)) {
+      check(adCount === 0, `${route} must stay ad-free (${adCount} slots).`);
+      check(adSenseLoaderCount === 0, `${route} unexpectedly loads AdSense.`);
+    } else {
+      check(adCount === 4, `${route} must render all four non-sidebar ad placements (${adCount}).`);
+      check(adSenseLoaderCount === 1, `${route} must load AdSense exactly once.`);
+    }
     check(schemaNodes.filter((node) => node["@type"] === "WebSite").length === 1, `${route} must render one WebSite entity.`);
     check(schemaNodes.filter((node) => node["@type"] === "SoftwareApplication").length <= 1, `${route} renders conflicting application objects.`);
     check(faqPages.length <= 1, `${route} renders ${faqPages.length} FAQPage objects.`);
@@ -442,7 +471,12 @@ try {
   }
 
   const unknown = await fetch(`${BASE}/release-readiness-unknown-route`, { redirect: "manual" });
+  const unknownHtml = await unknown.text();
   check(unknown.status === 404, `Unknown route returned ${unknown.status}, expected 404.`);
+  check(
+    !/<script\b[^>]*src="https:\/\/pagead2\.googlesyndication\.com/i.test(unknownHtml),
+    "Unknown route unexpectedly loads the external AdSense script.",
+  );
 } finally {
   server.kill();
 }

@@ -1,5 +1,50 @@
 @import "tailwindcss";
 
+.ilt-ad-unit {
+  position: relative;
+  overflow: hidden;
+}
+
+.ilt-adsense-responsive {
+  display: block;
+  width: 100%;
+  min-height: 90px;
+}
+
+.ilt-ad-fallback {
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ilt-ad-border);
+  border-radius: 2px;
+  background: var(--ilt-ad-bg);
+  padding: 0.75rem;
+  text-align: center;
+  color: var(--ilt-text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.ilt-ad-fallback:not([hidden]) {
+  display: flex;
+}
+
+.ilt-ad-unit[data-ad-fallback-visible="true"] > ins.adsbygoogle {
+  display: none !important;
+}
+
+[data-adsense-page-status="filled"] [data-ad-placeholder] {
+  display: none !important;
+}
+
+.ilt-ad-unit[data-ad-placement="sidebar-left"] > ins,
+.ilt-ad-unit[data-ad-placement="sidebar-right"] > ins {
+  min-height: 600px;
+}
+
+.ilt-ad-unit[data-ad-placement="seo-section-square"] > ins {
+  min-height: 250px;
+}
+
 @theme inline {
   --color-ilt-page: var(--ilt-bg-page);
   --color-ilt-utility: var(--ilt-bg-utility);

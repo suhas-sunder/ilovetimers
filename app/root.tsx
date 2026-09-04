@@ -5,6 +5,8 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
+  useMatches,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -14,6 +16,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import RelatedTools from "./clients/components/navigation/RelatedTools";
 import { PHProvider } from "./provider";
 import Footer from "./clients/components/navigation/Footer";
+import {
+  ADSENSE_CLIENT,
+  ADSENSE_TOP_BANNER_STYLE,
+  AboveFooterAd,
+  AdSensePageProvider,
+  SitewideAdLayout,
+  getAdSenseLoaderScript,
+} from "./clients/components/ads/AdSense";
+import { isLiveAdRoute } from "./clients/config/monetization";
 import {
   MoonIcon,
   SearchIcon,
@@ -1425,6 +1436,12 @@ function SiteHeader() {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+  const matches = useMatches();
+  const liveAdsEnabled = matches.length > 1 && isLiveAdRoute(pathname);
+  const normalizedPathname =
+    pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -1432,6 +1449,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="color-scheme" content="light dark" />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {liveAdsEnabled ? (
+          <>
+            <meta name="google-adsense-account" content={ADSENSE_CLIENT} />
+            <style dangerouslySetInnerHTML={{ __html: ADSENSE_TOP_BANNER_STYLE }} />
+          </>
+        ) : null}
+        {import.meta.env.PROD && liveAdsEnabled ? (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: getAdSenseLoaderScript(normalizedPathname),
+            }}
+          />
+        ) : null}
         <Meta />
         <Links />
         <script
@@ -1444,9 +1474,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body className="bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)] antialiased">
         <PHProvider>
           <SiteHeader />
-          {children}
-
-          <RelatedTools />
+          <AdSensePageProvider key={pathname} enabled={liveAdsEnabled}>
+            <SitewideAdLayout>{children}</SitewideAdLayout>
+            <RelatedTools />
+            <AboveFooterAd />
+          </AdSensePageProvider>
           <ScrollRestoration />
           <Scripts />
           <Footer />

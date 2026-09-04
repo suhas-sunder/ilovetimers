@@ -251,6 +251,8 @@ try {
     browserDiagnostics.push(`request failed: ${request.url()} (${request.failure()?.errorText || "unknown"})`);
   });
   await page.addInitScript(({ key }) => {
+    if (window.top !== window) return;
+
     Object.defineProperty(window.navigator, "webdriver", {
       configurable: true,
       get: () => false,

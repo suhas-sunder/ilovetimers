@@ -9,6 +9,10 @@ import type {
   SelectHTMLAttributes,
 } from "react";
 import { cx } from "./utils";
+import {
+  BelowHeaderAd,
+  SeoSectionAd,
+} from "~/clients/components/ads/AdSense";
 
 type DivProps = ComponentPropsWithoutRef<"div">;
 type SectionProps = ComponentPropsWithoutRef<"section">;
@@ -369,26 +373,33 @@ export function SeoBand({
 }) {
   const contentChildren = Children.toArray(children);
 
+  const firstChild = contentChildren[0];
+  const remainingChildren = contentChildren.slice(1);
+
   return (
-    <section className={cx("w-full bg-[var(--ilt-bg-content)] py-10", className)}>
-      <div className="mx-auto w-full max-w-[var(--ilt-seo-band-max)] px-[var(--ilt-page-x)]">
-        <div className="ilt-seo-prose">
-          {title ? (
-            <h2 className="text-2xl font-bold tracking-tight text-[var(--ilt-text-primary)]">
-              {title}
-            </h2>
-          ) : null}
-          <div className={cx(title ? "mt-4" : "", "space-y-4 leading-7 text-[var(--ilt-text-secondary)]")}>
-            {contentChildren.length > 0 ? (
-              <>
-                {contentChildren[0]}
-                {contentChildren.slice(1)}
-              </>
+    <>
+      <BelowHeaderAd />
+      <section className={cx("w-full bg-[var(--ilt-bg-content)] py-10", className)}>
+        <div className="mx-auto grid w-full max-w-[var(--ilt-seo-band-max)] gap-10 px-[var(--ilt-page-x)] lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-12">
+          <div className="ilt-seo-prose min-w-0">
+            {title ? (
+              <h2 className="text-2xl font-bold tracking-tight text-[var(--ilt-text-primary)]">
+                {title}
+              </h2>
             ) : null}
+            <div className={cx(title ? "mt-4" : "", "space-y-4 leading-7 text-[var(--ilt-text-secondary)]")}>
+              {firstChild ?? null}
+            </div>
           </div>
+          <SeoSectionAd />
+          {remainingChildren.length > 0 ? (
+            <div className="ilt-seo-prose min-w-0 space-y-4 leading-7 text-[var(--ilt-text-secondary)] lg:col-start-1">
+              {remainingChildren}
+            </div>
+          ) : null}
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
 

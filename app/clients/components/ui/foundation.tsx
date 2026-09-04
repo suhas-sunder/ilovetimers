@@ -372,15 +372,18 @@ export function SeoBand({
   className?: string;
 }) {
   const contentChildren = Children.toArray(children);
-
-  const firstChild = contentChildren[0];
-  const remainingChildren = contentChildren.slice(1);
+  const adIndex = Math.min(
+    contentChildren.length,
+    Math.max(1, Math.ceil(contentChildren.length / 2)),
+  );
+  const contentBeforeAd = contentChildren.slice(0, adIndex);
+  const contentAfterAd = contentChildren.slice(adIndex);
 
   return (
     <>
       <BelowHeaderAd />
-      <section className={cx("w-full bg-[var(--ilt-bg-content)] py-10", className)}>
-        <div className="mx-auto grid w-full max-w-[var(--ilt-seo-band-max)] gap-10 px-[var(--ilt-page-x)] lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-12">
+      <section className={cx("w-full py-10", className)}>
+        <div className="mx-auto w-full max-w-[var(--ilt-seo-band-max)] px-[var(--ilt-page-x)]">
           <div className="ilt-seo-prose min-w-0">
             {title ? (
               <h2 className="text-2xl font-bold tracking-tight text-[var(--ilt-text-primary)]">
@@ -388,13 +391,17 @@ export function SeoBand({
               </h2>
             ) : null}
             <div className={cx(title ? "mt-4" : "", "space-y-4 leading-7 text-[var(--ilt-text-secondary)]")}>
-              {firstChild ?? null}
+              {contentBeforeAd}
             </div>
           </div>
-          <SeoSectionAd />
-          {remainingChildren.length > 0 ? (
-            <div className="ilt-seo-prose min-w-0 space-y-4 leading-7 text-[var(--ilt-text-secondary)] lg:col-start-1">
-              {remainingChildren}
+
+          <div className="py-10 sm:py-12">
+            <SeoSectionAd />
+          </div>
+
+          {contentAfterAd.length > 0 ? (
+            <div className="ilt-seo-prose min-w-0 space-y-4 leading-7 text-[var(--ilt-text-secondary)]">
+              {contentAfterAd}
             </div>
           ) : null}
         </div>

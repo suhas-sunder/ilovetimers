@@ -10,6 +10,14 @@ const adSource = await readFile(
   "utf8",
 );
 const cssSource = await readFile(path.join(root, "app/app.css"), "utf8");
+const foundationSource = await readFile(
+  path.join(root, "app/clients/components/ui/foundation.tsx"),
+  "utf8",
+);
+const guideSource = await readFile(
+  path.join(root, "app/clients/components/guides/GuidePage.tsx"),
+  "utf8",
+);
 
 assert.equal(resolveAdSensePageStatus([]), "pending");
 assert.equal(resolveAdSensePageStatus([null, "unfilled"]), "pending");
@@ -57,5 +65,10 @@ assert.ok(
 assert.match(adSource, /width: 320px; height: 50px/);
 assert.match(adSource, /width: 468px; height: 60px/);
 assert.match(adSource, /width: 728px; height: 90px/);
+assert.ok(foundationSource.includes("contentBeforeAd"));
+assert.ok(foundationSource.includes("contentAfterAd"));
+assert.ok(!foundationSource.includes("lg:grid-cols-[minmax(0,1fr)_300px]"));
+assert.ok(guideSource.includes("guideSections.slice(0, adIndex)"));
+assert.ok(guideSource.includes("guideSections.slice(adIndex)"));
 
 console.log("AdSense integration tests passed.");

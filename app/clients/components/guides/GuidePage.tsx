@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Children, type ReactNode } from "react";
 import { Link } from "react-router";
 import {
   ContentPage,
@@ -62,6 +62,11 @@ export function GuidePage({
   const relatedGuides = relatedPaths
     .map((path) => GUIDES.find((candidate) => candidate.path === path))
     .filter((candidate): candidate is (typeof GUIDES)[number] => Boolean(candidate));
+  const guideSections = Children.toArray(children);
+  const adIndex = Math.min(
+    guideSections.length,
+    Math.max(1, Math.ceil(guideSections.length / 2)),
+  );
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -139,12 +144,13 @@ export function GuidePage({
 
       <BelowHeaderAd />
 
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-12">
-        <ContentSection title={guide.directQuestion}>
-          {children}
-        </ContentSection>
-        <SeoSectionAd />
-      </div>
+      <ContentSection title={guide.directQuestion}>
+        {guideSections.slice(0, adIndex)}
+        <div className="py-8 sm:py-10">
+          <SeoSectionAd />
+        </div>
+        {guideSections.slice(adIndex)}
+      </ContentSection>
 
       <ContentSection title="Related iLoveTimers guides">
         <ul className={guideListClass}>

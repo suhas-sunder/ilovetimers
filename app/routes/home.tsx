@@ -507,56 +507,54 @@ export default function Home() {
 
       <BelowHeaderAd />
 
-      <section className="bg-[var(--ilt-bg-content)] px-[var(--ilt-page-x)] py-11 sm:py-12">
+      <section className="px-[var(--ilt-page-x)] py-11 sm:py-12">
         <div className="mx-auto max-w-[90rem]">
-          <div className="grid gap-y-10 lg:grid-cols-[minmax(0,70ch)_300px] lg:items-start lg:gap-x-16 xl:gap-x-24">
-            <section>
-              <h2 className="text-2xl font-extrabold tracking-tight text-[var(--ilt-text-primary)] sm:text-3xl">
-                Timers that stay out of the way
-              </h2>
-              <div className="mt-4 space-y-4 leading-7 text-[var(--ilt-text-secondary)]">
-                <p>
-                  I Love Timers is a collection of simple browser-based timers,
-                  stopwatches, clocks, calculators, and converters. Each page keeps
-                  the main display first, then places controls and settings where
-                  they support the task.
-                </p>
-                <p>
-                  Large displays matter when a timer is used across a room, in a
-                  kitchen, during a class, or beside a workout. Fullscreen support
-                  helps the active time stay readable without turning the page into
-                  a presentation deck.
-                </p>
-                <p>
-                  Different tasks need different tools. A Pomodoro session, a
-                  meeting agenda, a speedcubing solve, a time zone conversion, and a
-                  cooking timer should not all feel like the same crowded control
-                  panel.
-                </p>
-                <p>
-                  The goal is plain: quick setup, readable time, predictable
-                  controls, and no unnecessary popups or intrusive distractions.
-                </p>
-                <p>
-                  Prefer the older combined page? The original four-timer
-                  homepage is still available at{" "}
-                  <a
-                    href="/free-online-timers"
-                    className="ilt-focus-ring cursor-pointer font-bold text-[var(--ilt-text-primary)] underline decoration-[var(--ilt-accent)] decoration-1 underline-offset-4 transition hover:text-[var(--ilt-accent-hover)] hover:decoration-[var(--ilt-accent-hover)]"
-                  >
-                    /free-online-timers
-                  </a>
-                  .
-                </p>
-              </div>
-            </section>
-
-            <div className="lg:pt-12">
-              <SeoSectionAd />
+          <section className="max-w-[70ch]">
+            <h2 className="text-2xl font-extrabold tracking-tight text-[var(--ilt-text-primary)] sm:text-3xl">
+              Timers that stay out of the way
+            </h2>
+            <div className="mt-4 space-y-4 leading-7 text-[var(--ilt-text-secondary)]">
+              <p>
+                I Love Timers is a collection of simple browser-based timers,
+                stopwatches, clocks, calculators, and converters. Each page keeps
+                the main display first, then places controls and settings where
+                they support the task.
+              </p>
+              <p>
+                Large displays matter when a timer is used across a room, in a
+                kitchen, during a class, or beside a workout. Fullscreen support
+                helps the active time stay readable without turning the page into
+                a presentation deck.
+              </p>
+              <p>
+                Different tasks need different tools. A Pomodoro session, a
+                meeting agenda, a speedcubing solve, a time zone conversion, and a
+                cooking timer should not all feel like the same crowded control
+                panel.
+              </p>
+              <p>
+                The goal is plain: quick setup, readable time, predictable
+                controls, and no unnecessary popups or intrusive distractions.
+              </p>
+              <p>
+                Prefer the older combined page? The original four-timer
+                homepage is still available at{" "}
+                <a
+                  href="/free-online-timers"
+                  className="ilt-focus-ring cursor-pointer font-bold text-[var(--ilt-text-primary)] underline decoration-[var(--ilt-accent)] decoration-1 underline-offset-4 transition hover:text-[var(--ilt-accent-hover)] hover:decoration-[var(--ilt-accent-hover)]"
+                >
+                  /free-online-timers
+                </a>
+                .
+              </p>
             </div>
-          </div>
+          </section>
         </div>
       </section>
+
+      <div className="px-[var(--ilt-page-x)] py-10 sm:py-12">
+        <SeoSectionAd />
+      </div>
 
       <section className="px-[var(--ilt-page-x)] py-9 sm:py-11">
         <div className="mx-auto max-w-[90rem]">

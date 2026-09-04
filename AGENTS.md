@@ -258,6 +258,8 @@ Current implementation:
 - the AdSense loader is added once per eligible page and is not requested on ad-free routes
 - the top banner uses approved exact sizes: 320x50, 468x60, and 728x90
 - sidebars mount only on naturally wide desktop layouts; other units are responsive
+- the SEO square is centered within the reading flow, normally near the midpoint of meaningful SEO content
+- do not place the SEO square in a side column or inside a visibly filled, bordered, or panel-like content container
 - placeholders remain hidden while any unit is pending
 - placeholders appear only after every mounted unit reports `unfilled` or `unfill-optimized`, or the AdSense script fails
 - if any unit reports `filled`, every placeholder on the page stays hidden

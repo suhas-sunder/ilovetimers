@@ -117,33 +117,34 @@ export default function GuidesIndex() {
 
       <BelowHeaderAd />
 
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-12">
-        <ContentSection title="Choose the question you need to answer">
-          <p>
-            These are not generic articles about time. Each guide starts with a
-            practical question, explains the relevant browser behavior, and then
-            states what the current iLoveTimers implementation does. The guides
-            also identify limits that cannot be removed by page code, such as a
-            closed tab, device sleep, browser audio policy, or timezone data on the
-            device.
-          </p>
+      <ContentSection title="Choose the question you need to answer">
+        <p>
+          These are not generic articles about time. Each guide starts with a
+          practical question, explains the relevant browser behavior, and then
+          states what the current iLoveTimers implementation does. The guides
+          also identify limits that cannot be removed by page code, such as a
+          closed tab, device sleep, browser audio policy, or timezone data on the
+          device.
+        </p>
 
-          <ol className="space-y-6 pl-5">
-            {GUIDES.map((guide) => (
-              <li key={guide.path} className="list-decimal pl-2">
-                <h2 className="text-lg font-bold tracking-tight text-[var(--ilt-text-primary)] sm:text-xl">
-                  <Link to={guide.path} className={guideLinkClass}>
-                    {guide.title}
-                  </Link>
-                </h2>
-                <p className="mt-1 max-w-3xl">{guide.description}</p>
-                <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
-                  Direct question: {guide.directQuestion}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </ContentSection>
+        <ol className="space-y-6 pl-5">
+          {GUIDES.map((guide) => (
+            <li key={guide.path} className="list-decimal pl-2">
+              <h2 className="text-lg font-bold tracking-tight text-[var(--ilt-text-primary)] sm:text-xl">
+                <Link to={guide.path} className={guideLinkClass}>
+                  {guide.title}
+                </Link>
+              </h2>
+              <p className="mt-1 max-w-3xl">{guide.description}</p>
+              <p className="mt-1 text-sm text-[var(--ilt-text-muted)]">
+                Direct question: {guide.directQuestion}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </ContentSection>
+
+      <div className="py-8 sm:py-10">
         <SeoSectionAd />
       </div>
 

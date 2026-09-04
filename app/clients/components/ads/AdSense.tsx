@@ -301,7 +301,7 @@ export function SeoSectionAd() {
   return (
     <AdSenseUnit
       placement="seo-section-square"
-      className="mx-auto w-full max-w-[300px] lg:mx-0"
+      className="mx-auto w-full max-w-[300px]"
     />
   );
 }

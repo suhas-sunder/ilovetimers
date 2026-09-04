@@ -23,7 +23,7 @@ The final monetized tool-page contract is:
 3. Utility header: display first, primary controls below display, then presets, settings, and secondary actions. No SEO copy, duplicated page title, marketing text, or ad inside controls.
 4. Page title section with one visible H1 and one short description.
 5. Responsive `below-header-banner` after the utility/title area and before the SEO band.
-6. SEO/content section with route-specific body content, related tools, FAQ, notes, or disclaimer. `seo-section-square` appears alongside introductory content on wide screens and between useful content sections on narrow screens, with deliberate spacing from links and controls.
+6. SEO/content section with route-specific body content, related tools, FAQ, notes, or disclaimer. `seo-section-square` stays centered in the reading flow near the midpoint of meaningful content, with deliberate spacing from links and controls. It must not sit in a side column or appear enclosed by a distinct filled, bordered, or panel-like SEO container.
 7. Responsive `above-footer-banner` after route content and contextual related tools, before the footer.
 
 Canonical tool, guide, and homepage routes use the shared live placements. `/free-online-timers`, trust pages, legal pages, contact, and `/sitemap` remain ad-free to preserve the archived experience and avoid high-risk or inappropriate placements. Route eligibility lives in `app/clients/config/monetization.ts`; do not improvise route-local units.

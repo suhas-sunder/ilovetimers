@@ -32,6 +32,7 @@
     "audit:a11y": "node scripts/audits/accessibility.mjs",
     "audit:release": "node scripts/audits/release-readiness.mjs",
     "test:ui-regressions": "node scripts/tests/ui-regressions.mjs",
+    "test:display-stability": "node scripts/tests/display-stability.mjs",
     "test:sitewide-ui": "node scripts/tests/sitewide-ui.mjs",
     "test:analytics": "node scripts/tests/posthog-analytics.mjs",
     "test:adsense": "node scripts/tests/adsense-integration.mjs",

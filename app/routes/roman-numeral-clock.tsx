@@ -290,11 +290,16 @@ function RomanNumeralClockCard({ initialNowISO }: { initialNowISO: string }) {
   const romanFontPx = useFitText({
     containerRef: romanBoxRef,
     textRef: romanSpanRef,
-    deps: [romanText, isFs, use24, showSeconds, useIIII],
+    // Fit once against the longest representative Roman clock value. Using
+    // the live numeral length here makes the display resize as seconds change.
+    deps: [
+      showSeconds ? "XXIII:XXXVIII:XXXVIII" : "XXIII:XXXVIII",
+      isFs,
+    ],
     minPx: 34,
     maxPx: isFs ? 220 : 140,
     paddingAllowancePx: isFs ? 40 : 56,
-    initialScale: isFs ? 1 : 0.97,
+    initialScale: 0.84,
   });
 
   const timeFontPx = useFitText({

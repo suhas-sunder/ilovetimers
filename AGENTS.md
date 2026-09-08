@@ -500,6 +500,7 @@ Do not rename state variables, calculation helpers, or exported route functions 
 - Preserve storage keys.
 - Do not use broad `suppressHydrationWarning` as a shortcut.
 - JSON-LD should be deterministic between SSR and first client render.
+- Large fitted timer and clock values use deterministic container-relative CSS. Do not reintroduce post-hydration text measurement, delayed font resizing, or per-tick fitting; those patterns cause visible display vibration on document navigation.
 - Fix invalid HTML nesting instead of suppressing warnings.
 - After changes involving time, localStorage, theme, or browser APIs, check for hydration errors in the browser.
 

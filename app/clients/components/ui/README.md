@@ -8,7 +8,7 @@ Use `DisplayStage` or `ToolFrame` for the primary display area. `ToolFrame` may 
 
 Timer controls should follow one shared rhythm. Put main Start, Pause, Resume, Lap, Next, Stop, and Reset actions in `ControlGroup` directly below the display. Put common duration or mode choices in `PresetGroup` below primary controls. Put custom fields, selects, toggles, and secondary setup in `SettingGroup` and `SettingRow`. Put fullscreen, copy, share, print, clear, sound test, add, and remove actions in `SecondaryActionRow` unless one is the route's primary action. Keep keyboard hints compact with `ShortcutHint`, and keep laps, results, summaries, or status rows secondary with `UtilityResultRow`.
 
-Display text should start close to its settled size. `DisplayStage` carries the stable `ilt-display-stage` sizing contract, and `useFitDisplayText` should be used for large single-line timer or clock values that need width fitting without a visible hydration shrink.
+Display text must use the same size at server paint and after hydration. `DisplayStage` carries the stable `ilt-display-stage` container-sizing contract, and `useFitDisplayText` returns deterministic container-relative CSS for large single-line timer or clock values. Do not add live-element measurement, delayed resize passes, or per-tick font updates back to this hook.
 
 Use the route-opt-in visual stack classes in `app.css` for family rhythm. `timer-interaction-stack` is for specialty interaction and audio tools where the tap target, reaction state, beat display, or random timer state is the primary action surface; keep secondary stats, history, shortcuts, and settings visually quiet around that stage.
 

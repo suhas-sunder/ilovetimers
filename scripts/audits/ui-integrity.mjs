@@ -49,10 +49,11 @@ check(/aria-label=\{open \? "Close menu" : "Open menu"\}/.test(root), "Mobile me
 check(/keepFocusInside/.test(root) && /closeMobileMenu/.test(root), "Mobile modal navigation lost focus containment or restoration.");
 check(/min-h-11/.test(footer), "Footer mobile controls no longer have a 44px hit area.");
 
-check(/Math\.max\(\s*16,[\s\S]*Math\.min\(/.test(fitText), "Display fitting no longer permits narrow-screen overflow prevention.");
+check(/Math\.max\(\s*16/.test(fitText), "Display fitting no longer permits a narrow-screen safety floor.");
 check(/mobileContainerWidth = 256/.test(fitText) && /clamp\(16px/.test(fitText), "Deterministic display sizing is not safe for a 320px first render.");
-check(/rangeRect\.width/.test(fitText) && /currentText\.scrollWidth/.test(fitText), "Display fitting ignores intrinsic text overflow.");
-check(/getComputedStyle\(currentText\)\.fontSize/.test(fitText), "Display fitting no longer derives its scale from rendered text.");
+check(/replace\(\/\\d\/g, "0"\)/.test(fitText), "Display fitting no longer stabilizes tabular timer geometry across ticks.");
+check(/cqw/.test(fitText) && /useMemo/.test(fitText), "Display fitting no longer uses deterministic container-relative CSS sizing.");
+check(!/useLayoutEffect|useState|ResizeObserver|requestAnimationFrame|getComputedStyle|setInterval|setTimeout/.test(fitText), "Display fitting reintroduced client-side measurement or delayed resizing.");
 check(/prefers-reduced-motion:\s*reduce/.test(css), "Reduced-motion handling is missing.");
 check(/animation-duration:\s*0\.01ms\s*!important/.test(css), "Reduced-motion handling does not suppress long animations.");
 check(/flex flex-col items-start gap-3 sm:flex-row/.test(archived), "Archived timer header can regress to 320px overflow.");

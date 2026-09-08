@@ -408,6 +408,13 @@ function TimerClockTool({ initialNowISO }: { initialNowISO: string }) {
                   value={hoursInput}
                   disabled={status === "running"}
                   onChange={(event) => setHoursInput(event.target.value)}
+                  onBlur={applyInputs}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                 />
                 <Field
                   label="Minutes"
@@ -417,6 +424,13 @@ function TimerClockTool({ initialNowISO }: { initialNowISO: string }) {
                   value={minutesInput}
                   disabled={status === "running"}
                   onChange={(event) => setMinutesInput(event.target.value)}
+                  onBlur={applyInputs}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                 />
                 <Field
                   label="Seconds"
@@ -426,6 +440,13 @@ function TimerClockTool({ initialNowISO }: { initialNowISO: string }) {
                   value={secondsInput}
                   disabled={status === "running"}
                   onChange={(event) => setSecondsInput(event.target.value)}
+                  onBlur={applyInputs}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                 />
                 <div className="flex items-end justify-center sm:justify-start">
                   <Button
@@ -510,7 +531,7 @@ export default function TimerClockPage({
         url: ROUTE_URL,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web browser",
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "A browser-based utility that displays current local device time beside an independently controlled countdown timer.",
       },

@@ -418,6 +418,12 @@ function CountUpTimerCard() {
                   value={minsInput}
                   onChange={(e) => setMinsInput(e.target.value)}
                   onBlur={applyInputsToTotal}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                   inputMode="numeric"
                   disabled={running}
                 />
@@ -428,6 +434,12 @@ function CountUpTimerCard() {
                   value={secsInput}
                   onChange={(e) => setSecsInput(e.target.value)}
                   onBlur={applyInputsToTotal}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                   inputMode="numeric"
                   disabled={running}
                 />

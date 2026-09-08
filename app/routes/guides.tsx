@@ -55,7 +55,7 @@ export default function GuidesIndex() {
         description:
           "Implementation-backed guides to browser timing, audio, timezones, Unix timestamps, and local browser storage.",
         url: PAGE_URL,
-        dateModified: GUIDE_REVIEW_DATE,
+        dateModified: `${GUIDE_REVIEW_DATE}T00:00:00Z`,
         author: { "@id": SUHAS_SUNDER_PERSON_ID },
         isPartOf: { "@id": WEBSITE_ID },
         mainEntity: {

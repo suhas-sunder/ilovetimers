@@ -688,7 +688,7 @@ export default function UtcClockPage({
         "@type": "WebPage",
         name: "UTC Clock",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Display current Coordinated Universal Time derived from the device system clock, with seconds, ISO timestamp, copy, and fullscreen controls.",
       },

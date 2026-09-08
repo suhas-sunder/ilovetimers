@@ -13,7 +13,10 @@ type RelatedToolGroup = {
 
 export default function RelatedTools() {
   const { pathname } = useLocation();
-  const group = (RELATED_TOOL_LINKS as Record<string, RelatedToolGroup>)[pathname];
+  const normalizedPathname =
+    pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
+  const group =
+    (RELATED_TOOL_LINKS as Record<string, RelatedToolGroup>)[normalizedPathname];
 
   if (!group) return null;
 

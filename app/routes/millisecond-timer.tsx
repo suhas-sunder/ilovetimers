@@ -334,6 +334,13 @@ function MillisecondTimerTool() {
                   value={minutesInput}
                   disabled={running}
                   onChange={(event) => setMinutesInput(event.currentTarget.value)}
+                  onBlur={applyCustomInputs}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                 />
                 <Field
                   label="Seconds"
@@ -343,6 +350,13 @@ function MillisecondTimerTool() {
                   value={secondsInput}
                   disabled={running}
                   onChange={(event) => setSecondsInput(event.currentTarget.value)}
+                  onBlur={applyCustomInputs}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                 />
                 <Field
                   label="Milliseconds"
@@ -352,6 +366,13 @@ function MillisecondTimerTool() {
                   value={millisecondsInput}
                   disabled={running}
                   onChange={(event) => setMillisecondsInput(event.currentTarget.value)}
+                  onBlur={applyCustomInputs}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                 />
               </SettingRow>
             </SettingGroup>

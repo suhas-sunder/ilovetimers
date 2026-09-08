@@ -589,6 +589,13 @@ function TimerStopwatchTool() {
                       inputMode="numeric"
                       disabled={countdownRunning}
                       onChange={(event) => setHoursInput(event.currentTarget.value)}
+                      onBlur={applyDurationInputs}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          event.currentTarget.blur();
+                        }
+                      }}
                     />
                     <Field
                       label="Minutes"
@@ -597,6 +604,13 @@ function TimerStopwatchTool() {
                       inputMode="numeric"
                       disabled={countdownRunning}
                       onChange={(event) => setMinutesInput(event.currentTarget.value)}
+                      onBlur={applyDurationInputs}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          event.currentTarget.blur();
+                        }
+                      }}
                     />
                     <Field
                       label="Seconds"
@@ -605,6 +619,13 @@ function TimerStopwatchTool() {
                       inputMode="numeric"
                       disabled={countdownRunning}
                       onChange={(event) => setSecondsInput(event.currentTarget.value)}
+                      onBlur={applyDurationInputs}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          event.currentTarget.blur();
+                        }
+                      }}
                     />
                     <div className="flex items-end justify-center">
                       <Button
@@ -734,7 +755,7 @@ export default function TimerStopwatchPage() {
         url: ROUTE_URL,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web browser",
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "A browser-based countdown timer and stopwatch with safe mode switching, laps, completion sound, and fullscreen controls.",
       },

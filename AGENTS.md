@@ -256,7 +256,15 @@ Current implementation:
 - canonical tool, calculator, clock, guide, and homepage routes may show live ads
 - trust, legal, sitemap, archive, unknown, and redirect routes remain ad-free
 - the AdSense loader is added once per eligible page and is not requested on ad-free routes
+- the loader is inserted only after React hydration so third-party DOM changes
+  cannot trigger a hydration rebuild or visible page vibration
 - the top banner uses approved exact sizes: 320x50, 468x60, and 728x90
+- every ad slot reserves a CSS-defined size before its request so asynchronous
+  fills and creative refreshes do not shift or vibrate surrounding content
+- after any unit fills, the page-level filled state is latched for that route;
+  transient later status changes never reveal placeholders
+- shared route lookups normalize trailing slashes so canonical and slash-suffixed
+  URLs hydrate to the same structure without rebuilding the page
 - sidebars mount only on naturally wide desktop layouts; other units are responsive
 - the SEO square is centered within the reading flow, normally near the midpoint of meaningful SEO content
 - do not place the SEO square in a side column or inside a visibly filled, bordered, or panel-like content container
@@ -686,7 +694,7 @@ Rules:
 - `SoftwareApplication` may be used for real tool pages when the main content is the interactive tool.
 - `FAQPage` may be used only when the same FAQ is visibly rendered.
 - `BreadcrumbList` must reflect visible or valid navigational structure.
-- `dateModified` must match a visible manual date where used.
+- `dateModified` must match a visible manual date where used and should be serialized as a complete ISO 8601 datetime with an explicit timezone.
 - Do not add fake ratings.
 - Do not add fake reviews.
 - Do not add `aggregateRating` unless the site has a real visible review system.
@@ -705,7 +713,7 @@ Use dates carefully.
 - Do not automatically refresh dates.
 - Do not change dates for insignificant edits.
 - Update review dates only after meaningful content, tool behavior, examples, FAQs, assumptions, or limitation notes were reviewed.
-- If structured data uses `dateModified`, the visible date must match.
+- If structured data uses `dateModified`, the visible date must match. Direct custom duration inputs should commit on blur or Enter as well as an explicit Apply action so typed values cannot remain detached from the timer state.
 - Do not show a date if it cannot be maintained honestly.
 - Do not add “reviewed by” unless there is a real separate reviewer.
 

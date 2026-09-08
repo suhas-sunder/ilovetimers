@@ -357,7 +357,7 @@ export default function ClockWithMillisecondsPage({
         url: ROUTE_URL,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web browser",
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "A browser-based local and UTC clock with millisecond digits, copy, fullscreen, and clear device-clock and rendering limitations.",
       },

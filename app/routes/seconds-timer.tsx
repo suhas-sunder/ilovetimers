@@ -363,6 +363,13 @@ function SecondsTimerTool() {
                   value={secondsInput}
                   disabled={running}
                   onChange={(event) => setSecondsInput(event.currentTarget.value)}
+                  onBlur={applyCustom}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                 />
                 <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                   <Toggle

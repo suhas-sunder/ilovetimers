@@ -36,13 +36,44 @@ assert.deepEqual(calculateTapTempo([0, 50, 550, 1050, 1550]), {
 });
 assert.equal(calculateTapTempo([0, 400, 900, 1300]).bpm, 150);
 
-const [css, pizza, reaction, silent, metronome, bpm] = await Promise.all([
+const [
+  css,
+  pizza,
+  reaction,
+  silent,
+  metronome,
+  bpm,
+  relatedTools,
+  rootSource,
+  author,
+  millisecondTimer,
+  kitchenTimer,
+  secondsTimer,
+  timerClock,
+  timerStopwatch,
+  countdownTimer,
+  onlineTimer,
+  silentTimer,
+  freeOnlineTimers,
+] = await Promise.all([
   read("app/app.css"),
   read("app/routes/pizza-timer.tsx"),
   read("app/routes/reaction-time-test.tsx"),
   read("app/routes/silent-timer.tsx"),
   read("app/routes/metronome.tsx"),
   read("app/routes/bpm-tapper.tsx"),
+  read("app/clients/components/navigation/RelatedTools.tsx"),
+  read("app/root.tsx"),
+  read("app/routes/author.suhas-sunder.tsx"),
+  read("app/routes/millisecond-timer.tsx"),
+  read("app/routes/kitchen-timer.tsx"),
+  read("app/routes/seconds-timer.tsx"),
+  read("app/routes/timer-clock.tsx"),
+  read("app/routes/timer-stopwatch.tsx"),
+  read("app/routes/countdown-timer.tsx"),
+  read("app/routes/online-timer.tsx"),
+  read("app/routes/silent-timer.tsx"),
+  read("app/routes/free-online-timers.tsx"),
 ]);
 
 const controlsRule = css.match(/\.timer-controls-row\s*\{([\s\S]*?)\}/)?.[1] ?? "";
@@ -73,4 +104,25 @@ assert.match(bpm, /onPointerDownCapture=\{onStagePointerDownCapture\}/);
 assert.doesNotMatch(bpm, /onClick=\{registerTap\}/);
 assert.match(bpm, /activeRef\.current \? tapsRef\.current : \[\]/);
 
-console.log("Targeted UI regression checks passed (alarm rollover, tap-tempo filtering, control stacking, stable reaction layout, silent audio removal, metronome loop guard, and single-path BPM input).");
+assert.match(relatedTools, /pathname\.replace\(\/\\\/\+\$\//);
+assert.match(rootSource, /key=\{normalizedPathname\}/);
+assert.doesNotMatch(rootSource, /getAdSenseLoaderScript/);
+
+assert.match(author, /const UPDATED_DATETIME = `\$\{UPDATED_DATE\}T00:00:00Z`;/);
+assert.match(author, /dateModified: UPDATED_DATETIME/);
+for (const [name, source] of [
+  ["millisecond timer", millisecondTimer],
+  ["kitchen timer", kitchenTimer],
+  ["seconds timer", secondsTimer],
+  ["timer clock", timerClock],
+  ["timer stopwatch", timerStopwatch],
+  ["countdown timer", countdownTimer],
+  ["online timer", onlineTimer],
+  ["silent timer", silentTimer],
+  ["free online timers", freeOnlineTimers],
+]) {
+  assert.match(source, /onBlur=\{(?:applyCustomInputs|applyCustom|applyInputs|applyInputsToTotal|applyDurationInputs|onSet)\}/, `${name} should apply typed duration values when an input loses focus`);
+  assert.match(source, /event\.key === "Enter"/, `${name} should apply typed duration values on Enter`);
+}
+
+console.log("Targeted UI regression checks passed (alarm rollover, tap-tempo filtering, control stacking, stable reaction layout, silent audio removal, metronome loop guard, single-path BPM input, trailing-slash hydration stability, ISO dateModified output, and deferred custom duration commits across timer routes).");

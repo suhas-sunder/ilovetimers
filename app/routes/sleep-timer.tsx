@@ -533,7 +533,7 @@ export default function SleepTimerPage({
         "@type": "WebPage",
         name: "Sleep Timer",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Online sleep timer with countdown, dim mode, fullscreen, and optional soft alarm.",
       },

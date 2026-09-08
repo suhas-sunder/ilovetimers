@@ -15,35 +15,22 @@ export const ADSENSE_TOP_BANNER_STYLE = `
 .ilt-ad-size-top { display: block; width: 320px; height: 50px; max-width: 100%; }
 @media (min-width: 500px) { .ilt-ad-size-top { width: 468px; height: 60px; } }
 @media (min-width: 800px) { .ilt-ad-size-top { width: 728px; height: 90px; } }
+.ilt-ad-size-banner { display: block; width: 320px; height: 50px; max-width: 100%; }
+@media (min-width: 500px) { .ilt-ad-size-banner { width: 468px; height: 60px; } }
+@media (min-width: 800px) { .ilt-ad-size-banner { width: 728px; height: 90px; } }
+@media (min-width: 1100px) { .ilt-ad-size-banner { width: 970px; height: 90px; } }
+.ilt-ad-size-square { display: block; width: 250px; height: 250px; max-width: 100%; }
+@media (min-width: 360px) { .ilt-ad-size-square { width: 300px; height: 250px; } }
+.ilt-ad-size-sidebar { display: block; width: 160px; height: 600px; max-width: 100%; }
+@media (min-width: 1900px) { .ilt-ad-size-sidebar { width: 300px; height: 600px; } }
 `;
-
-export function getAdSenseLoaderScript(expectedPath: string) {
-  return `
-(function () {
-  var currentPath = window.location.pathname;
-  while (currentPath.length > 1 && currentPath.endsWith('/')) {
-    currentPath = currentPath.slice(0, -1);
-  }
-  if (currentPath !== ${JSON.stringify(expectedPath)}) return;
-  if (document.querySelector('script[data-ilt-adsense-loader]')) return;
-  var script = document.createElement('script');
-  script.async = true;
-  script.src = ${JSON.stringify(ADSENSE_SCRIPT_SRC)};
-  script.crossOrigin = 'anonymous';
-  script.dataset.iltAdsenseLoader = 'true';
-  script.onerror = function () {
-    window.__iltAdSenseFailed = true;
-    window.dispatchEvent(new Event('ilt:adsense-error'));
-  };
-  document.head.appendChild(script);
-})();
-`;
-}
 
 function ensureAdSenseLoader() {
   if (
     !import.meta.env.PROD ||
-    document.querySelector("script[data-ilt-adsense-loader]")
+    Array.from(document.scripts).some(
+      (candidate) => candidate.src === ADSENSE_SCRIPT_SRC,
+    )
   ) {
     return;
   }
@@ -52,7 +39,6 @@ function ensureAdSenseLoader() {
   script.async = true;
   script.src = ADSENSE_SCRIPT_SRC;
   script.crossOrigin = "anonymous";
-  script.dataset.iltAdsenseLoader = "true";
   script.onerror = () => {
     window.__iltAdSenseFailed = true;
     window.dispatchEvent(new Event("ilt:adsense-error"));
@@ -108,11 +94,13 @@ export function AdSensePageProvider({
   children: ReactNode;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const filledOnceRef = useRef(false);
   const [pageStatus, setPageStatus] = useState<AdSensePageStatus>("pending");
 
   useEffect(() => {
     const root = rootRef.current;
     if (!enabled || !root) {
+      filledOnceRef.current = false;
       setPageStatus("pending");
       return;
     }
@@ -121,12 +109,30 @@ export function AdSensePageProvider({
 
     const evaluate = () => {
       const nextStatus = readPageStatus(root);
-      root.dataset.adsensePageStatus = nextStatus;
-      setPageStatus(nextStatus);
+      if (nextStatus === "filled") {
+        filledOnceRef.current = true;
+      }
+
+      // A filled page must never fall back to placeholders later in its
+      // lifetime. AdSense may update unit status attributes while refreshing
+      // creatives; treating those transient states as empty makes every slot
+      // on the page reflow together.
+      const stableStatus = filledOnceRef.current ? "filled" : nextStatus;
+      if (root.dataset.adsensePageStatus !== stableStatus) {
+        root.dataset.adsensePageStatus = stableStatus;
+      }
+      setPageStatus((currentStatus) =>
+        currentStatus === stableStatus ? currentStatus : stableStatus,
+      );
     };
     const handleScriptError = () => {
-      root.dataset.adsensePageStatus = "empty";
-      setPageStatus("empty");
+      if (filledOnceRef.current) return;
+      if (root.dataset.adsensePageStatus !== "empty") {
+        root.dataset.adsensePageStatus = "empty";
+      }
+      setPageStatus((currentStatus) =>
+        currentStatus === "empty" ? currentStatus : "empty",
+      );
     };
 
     const observer = new MutationObserver(evaluate);
@@ -162,17 +168,17 @@ export function AdSensePageProvider({
   );
 }
 
-function fallbackClass(placement: AdSensePlacement) {
+function adSizeClass(placement: AdSensePlacement) {
   switch (placement) {
     case "top-banner":
       return "ilt-ad-size-top";
     case "sidebar-left":
     case "sidebar-right":
-      return "min-h-[600px] w-full";
+      return "ilt-ad-size-sidebar";
     case "seo-section-square":
-      return "h-[250px] w-[min(100%,300px)]";
+      return "ilt-ad-size-square";
     default:
-      return "min-h-[90px] w-full";
+      return "ilt-ad-size-banner";
   }
 }
 
@@ -206,37 +212,27 @@ export function AdSenseUnit({
 
   if (!enabled) return null;
 
-  const isTopBanner = placement === "top-banner";
   const showFallback = pageStatus === "empty";
-  const responsiveFormat =
-    placement === "seo-section-square"
-      ? "rectangle"
-      : placement === "sidebar-left" || placement === "sidebar-right"
-        ? "vertical"
-        : "horizontal";
+  const sizeClass = adSizeClass(placement);
 
   return (
     <aside
       aria-label="Advertisements"
       data-ad-placement={placement}
       data-ad-fallback-visible={showFallback ? "true" : "false"}
-      className={`ilt-ad-unit ${className}`.trim()}
+      className={`ilt-ad-unit ${sizeClass} ${className}`.trim()}
     >
       <ins
         ref={unitRef}
-        className={`adsbygoogle ${
-          isTopBanner ? "ilt-ad-size-top" : "ilt-adsense-responsive"
-        }`}
+        className={`adsbygoogle ${sizeClass}`}
         data-ilt-ad-unit="true"
         data-ad-client={ADSENSE_CLIENT}
         data-ad-slot={AD_SLOTS[placement]}
-        data-ad-format={isTopBanner ? undefined : responsiveFormat}
-        data-full-width-responsive={isTopBanner ? undefined : "true"}
       />
       <div
         hidden={!showFallback}
         data-ad-placeholder
-        className={`ilt-ad-fallback ${fallbackClass(placement)}`}
+        className={`ilt-ad-fallback ${sizeClass}`}
       >
         <span>Advertisements</span>
       </div>
@@ -270,7 +266,7 @@ export function SitewideAdLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <div className="px-0 pb-6 pt-5 sm:pb-8 sm:pt-6">
-        <AdSenseUnit placement="top-banner" className="mx-auto w-fit max-w-full" />
+        <AdSenseUnit placement="top-banner" className="mx-auto" />
       </div>
 
       <div className="mx-auto grid w-full min-w-0 max-w-[124rem] grid-cols-1 2xl:grid-cols-[160px_minmax(0,1fr)_160px] 2xl:gap-6 min-[1900px]:grid-cols-[300px_minmax(0,1fr)_300px] min-[1900px]:gap-8">
@@ -288,10 +284,10 @@ export function SitewideAdLayout({ children }: { children: ReactNode }) {
 
 export function BelowHeaderAd() {
   return (
-    <div className="px-[var(--ilt-page-x)] pb-8 pt-4 sm:pb-10 sm:pt-6">
+    <div className="px-0 pb-8 pt-4 sm:pb-10 sm:pt-6">
       <AdSenseUnit
         placement="below-header-banner"
-        className="mx-auto w-full max-w-[970px]"
+        className="mx-auto"
       />
     </div>
   );
@@ -301,17 +297,17 @@ export function SeoSectionAd() {
   return (
     <AdSenseUnit
       placement="seo-section-square"
-      className="mx-auto w-full max-w-[300px]"
+      className="mx-auto"
     />
   );
 }
 
 export function AboveFooterAd() {
   return (
-    <div className="px-[var(--ilt-page-x)] pb-10 pt-8 sm:pb-12 sm:pt-10">
+    <div className="px-0 pb-10 pt-8 sm:pb-12 sm:pt-10">
       <AdSenseUnit
         placement="above-footer-banner"
-        className="mx-auto w-full max-w-[970px]"
+        className="mx-auto"
       />
     </div>
   );

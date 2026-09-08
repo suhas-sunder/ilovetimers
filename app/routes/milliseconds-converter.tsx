@@ -461,7 +461,7 @@ export default function MillisecondsConverterPage({}: Route.ComponentProps) {
         "@type": "WebPage",
         name: "Milliseconds Converter",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Convert milliseconds to seconds, minutes, hours, and days, or convert seconds back to milliseconds using decimal-string arithmetic.",
       },

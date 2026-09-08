@@ -309,7 +309,11 @@ check(
 );
 
 check(!homepageSource.includes("<AdPlaceholder"), "Legacy homepage placeholders are still rendered.");
-check(rootSource.includes("getAdSenseLoaderScript"), "The shared AdSense loader is missing from the document head.");
+check(
+  adSenseSource.includes("function ensureAdSenseLoader()") &&
+    adSenseSource.includes("useEffect(() =>"),
+  "The shared AdSense loader must be scheduled after hydration.",
+);
 check(
   (adSenseSource.match(/ca-pub-4810616735714570/g) ?? []).length === 1,
   "The AdSense publisher ID must be centralized exactly once.",
@@ -396,6 +400,9 @@ try {
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
     const duplicateIds = duplicateValues(ids).map(([id]) => id);
     const adCount = (html.match(/aria-label="Advertisements"/g) ?? []).length;
+    // The loader is intentionally absent from SSR HTML. It is appended once
+    // from the hydrated AdSense provider so third-party DOM work cannot race
+    // React hydration and rebuild the page.
     const adSenseLoaderCount = (
       html.match(/getAdSenseLoaderScript|data-ilt-adsense-loader/g) ?? []
     ).length;
@@ -441,7 +448,10 @@ try {
       check(adSenseLoaderCount === 0, `${route} unexpectedly loads AdSense.`);
     } else {
       check(adCount === 4, `${route} must render all four non-sidebar ad placements (${adCount}).`);
-      check(adSenseLoaderCount === 1, `${route} must load AdSense exactly once.`);
+      check(
+        adSenseLoaderCount === 0,
+        `${route} must defer AdSense loading until after hydration.`,
+      );
     }
     check(schemaNodes.filter((node) => node["@type"] === "WebSite").length === 1, `${route} must render one WebSite entity.`);
     check(schemaNodes.filter((node) => node["@type"] === "SoftwareApplication").length <= 1, `${route} renders conflicting application objects.`);

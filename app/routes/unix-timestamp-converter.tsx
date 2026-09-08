@@ -320,7 +320,7 @@ export default function UnixTimestampConverterPage({
         url: ROUTE_URL,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web browser",
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Convert Unix timestamps supplied in seconds, milliseconds, or microseconds to UTC, local time, and ISO output, and convert UTC dates back to epoch values.",
       },

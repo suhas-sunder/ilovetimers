@@ -541,6 +541,12 @@ function CountdownTimer() {
                     setInputStr(e.target.value);
                   }}
                   onBlur={onSet}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                   placeholder="mm:ss or ss"
                   className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                 />
@@ -596,6 +602,12 @@ function CountdownTimer() {
                     setInputStr(e.target.value);
                   }}
                   onBlur={onSet}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                   placeholder="mm:ss or ss"
                   className="w-40 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
                 />

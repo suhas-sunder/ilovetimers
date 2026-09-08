@@ -1847,7 +1847,7 @@ export function WorldClockWithMillisecondsPage({
         routePath="/world-clock-with-milliseconds"
         description="A browser-based world clock with live milliseconds for local time and a modest set of selected timezone rows."
         faqItems={WORLD_MILLISECONDS_FAQ}
-        dateModified={REVIEW_DATE.iso}
+        dateModified={`${REVIEW_DATE.iso}T00:00:00Z`}
       />
 
       <ToolHero

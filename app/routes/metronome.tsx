@@ -877,7 +877,7 @@ export default function MetronomePage({
         "@type": "WebPage",
         name: "Online Metronome",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Online metronome and tempo timer with BPM control, tap tempo, time signatures, accents, subdivisions, audio scheduling, and fullscreen.",
       },

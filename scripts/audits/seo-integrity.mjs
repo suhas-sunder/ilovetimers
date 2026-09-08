@@ -231,7 +231,7 @@ for (const { route, file, h1 } of newToolRoutes) {
     `FAQ schema and visible FAQ data are not paired on ${route}`,
   );
   check(
-    source.includes('dateModified: REVIEW_DATE.iso') &&
+    /dateModified:\s*(?:REVIEW_DATE\.iso|`\$\{REVIEW_DATE\.iso\}T00:00:00Z`)/.test(source) &&
       source.includes('<ToolTrustNote reviewDate={REVIEW_DATE}>') &&
       source.includes('iso: "2026-07-15"') &&
       source.includes('label: "July 15, 2026"'),

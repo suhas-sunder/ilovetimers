@@ -817,7 +817,7 @@ export default function MilitaryTimeConverterPage({}: Route.ComponentProps) {
         "@type": "WebPage",
         name: "Military Time Converter",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Convert supplied military-style 24-hour times to standard AM/PM time and convert AM/PM values back, including midnight and noon handling.",
       },

@@ -1046,7 +1046,7 @@ export default function TimeZoneConverterPage({
         "@type": "WebPage",
         name: "Time Zone Converter",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Convert a selected wall time between browser-supported IANA time zones with date-aware DST offsets, copy output, versioned setup links, and fullscreen display.",
       },

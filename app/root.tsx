@@ -22,7 +22,6 @@ import {
   AboveFooterAd,
   AdSensePageProvider,
   SitewideAdLayout,
-  getAdSenseLoaderScript,
 } from "./clients/components/ads/AdSense";
 import { isLiveAdRoute } from "./clients/config/monetization";
 import {
@@ -1455,13 +1454,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <style dangerouslySetInnerHTML={{ __html: ADSENSE_TOP_BANNER_STYLE }} />
           </>
         ) : null}
-        {import.meta.env.PROD && liveAdsEnabled ? (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: getAdSenseLoaderScript(normalizedPathname),
-            }}
-          />
-        ) : null}
         <Meta />
         <Links />
         <script
@@ -1474,7 +1466,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body className="bg-[var(--ilt-bg-page)] text-[var(--ilt-text-primary)] antialiased">
         <PHProvider>
           <SiteHeader />
-          <AdSensePageProvider key={pathname} enabled={liveAdsEnabled}>
+          <AdSensePageProvider key={normalizedPathname} enabled={liveAdsEnabled}>
             <SitewideAdLayout>{children}</SitewideAdLayout>
             <RelatedTools />
             <AboveFooterAd />

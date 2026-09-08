@@ -539,7 +539,7 @@ export default function TimeZoneMeetingPlannerPage({
         url: ROUTE_URL,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web browser",
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "A browser-based planner for comparing local work windows across time zones using a UTC reference date, duration, candidate times, a copyable summary, and a shareable setup.",
       },

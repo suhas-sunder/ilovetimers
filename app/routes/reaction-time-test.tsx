@@ -864,7 +864,7 @@ export default function ReactionTimeTestPage({}: Route.ComponentProps) {
         "@type": "WebPage",
         name: "Reaction Time Test",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Casual reaction time test. Tap to start, wait for the signal, then respond and review valid results, false starts, best, average, and median. Fullscreen supported.",
       },

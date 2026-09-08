@@ -188,7 +188,10 @@ for (const file of reviewedRouteFiles) {
     source.includes('iso: "2026-07-15"') && source.includes('label: "July 15, 2026"'),
     `/${file} does not use the reviewed July 15 date pair.`,
   );
-  check(source.includes("dateModified: REVIEW_DATE.iso"), `/${file} schema date is not tied to its visible review date.`);
+  check(
+    /dateModified:\s*(?:REVIEW_DATE\.iso|`\$\{REVIEW_DATE\.iso\}T00:00:00Z`)/.test(source),
+    `/${file} schema date is not tied to its visible review date.`,
+  );
 }
 for (const file of stage2ReviewedRouteFiles) {
   const source = await read(`app/routes/${file}.tsx`);
@@ -196,7 +199,10 @@ for (const file of stage2ReviewedRouteFiles) {
     source.includes('iso: "2026-07-18"') && source.includes('label: "July 18, 2026"'),
     `/${file} does not use the reviewed July 18 date pair.`,
   );
-  check(source.includes("dateModified: REVIEW_DATE.iso"), `/${file} schema date is not tied to its visible review date.`);
+  check(
+    /dateModified:\s*(?:REVIEW_DATE\.iso|`\$\{REVIEW_DATE\.iso\}T00:00:00Z`)/.test(source),
+    `/${file} schema date is not tied to its visible review date.`,
+  );
 }
 for (const file of stage6ReviewedRouteFiles) {
   const source = await read(`app/routes/${file}.tsx`);
@@ -204,12 +210,16 @@ for (const file of stage6ReviewedRouteFiles) {
     source.includes('iso: "2026-07-21"') && source.includes('label: "July 21, 2026"'),
     `/${file} does not use the Stage 6 reviewed July 21 date pair.`,
   );
-  check(source.includes("dateModified: REVIEW_DATE.iso"), `/${file} schema date is not tied to its visible review date.`);
+  check(
+    /dateModified:\s*(?:REVIEW_DATE\.iso|`\$\{REVIEW_DATE\.iso\}T00:00:00Z`)/.test(source),
+    `/${file} schema date is not tied to its visible review date.`,
+  );
 }
 check(
   discoverySource.includes('iso: "2026-07-15"') &&
     discoverySource.includes('label: "July 15, 2026"') &&
-    discoverySource.includes("dateModified={REVIEW_DATE.iso}"),
+    (discoverySource.includes("dateModified={REVIEW_DATE.iso}") ||
+      discoverySource.includes('dateModified={`${REVIEW_DATE.iso}T00:00:00Z`}')),
   "/world-clock-with-milliseconds review and schema dates are not aligned.",
 );
 

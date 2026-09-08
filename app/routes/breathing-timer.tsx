@@ -707,7 +707,7 @@ export default function BreathingTimerPage({
         "@type": "WebPage",
         name: "Breathing Timer",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Breathing timer for box breathing, 4-7-8 breathing, and custom inhale/hold/exhale cycles with fullscreen mode.",
       },

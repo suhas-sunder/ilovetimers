@@ -376,7 +376,7 @@ export default function StudyStopwatchPage() {
         url: ROUTE_URL,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web browser",
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "A quiet browser-based stopwatch for open-ended study sessions with pause, resume, session markers, and fullscreen controls.",
       },

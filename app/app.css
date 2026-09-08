@@ -5,12 +5,6 @@
   overflow: hidden;
 }
 
-.ilt-adsense-responsive {
-  display: block;
-  width: 100%;
-  min-height: 90px;
-}
-
 .ilt-ad-fallback {
   align-items: center;
   justify-content: center;
@@ -34,15 +28,6 @@
 
 [data-adsense-page-status="filled"] [data-ad-placeholder] {
   display: none !important;
-}
-
-.ilt-ad-unit[data-ad-placement="sidebar-left"] > ins,
-.ilt-ad-unit[data-ad-placement="sidebar-right"] > ins {
-  min-height: 600px;
-}
-
-.ilt-ad-unit[data-ad-placement="seo-section-square"] > ins {
-  min-height: 250px;
 }
 
 @theme inline {

@@ -399,7 +399,7 @@ export default function AtomicClockPage({
         "@type": "WebPage",
         name: "Atomic Clock",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Atomic-style display of the browser device clock with optional milliseconds and fullscreen mode. It does not connect to an atomic clock or official time server.",
       },

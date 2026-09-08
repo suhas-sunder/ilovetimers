@@ -472,7 +472,7 @@ export default function StopwatchWithMillisecondsPage() {
         url: ROUTE_URL,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web browser",
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "A browser-based stopwatch with milliseconds visible by default, precision options, laps, copy, and fullscreen support.",
       },

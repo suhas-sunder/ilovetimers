@@ -412,6 +412,13 @@ function KitchenTimerTool() {
                   value={minutesInput}
                   disabled={running}
                   onChange={(event) => setMinutesInput(event.currentTarget.value)}
+                  onBlur={applyCustom}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                 />
                 <Field
                   label="Seconds"
@@ -421,6 +428,13 @@ function KitchenTimerTool() {
                   value={secondsInput}
                   disabled={running}
                   onChange={(event) => setSecondsInput(event.currentTarget.value)}
+                  onBlur={applyCustom}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
                 />
                 <Toggle
                   label="Sound"

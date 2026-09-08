@@ -17,6 +17,7 @@ const PROFILE_IMAGE_URL = `${SITE_URL}${suhasImageUrl}`;
 const CREATOR_PORTFOLIO_URL = "https://www.suhassunder.com/";
 const CREATOR_LINKEDIN_URL = "https://www.linkedin.com/in/s-sunder/";
 const UPDATED_DATE = "2026-07-14";
+const UPDATED_DATETIME = `${UPDATED_DATE}T00:00:00Z`;
 const UPDATED_LABEL = "July 14, 2026";
 
 const linkClass =
@@ -57,7 +58,7 @@ export default function SuhasSunderAuthorPage() {
     "@id": `${PAGE_URL}#profile-page`,
     name: "Suhas Sunder | Creator of iLoveTimers",
     url: PAGE_URL,
-    dateModified: UPDATED_DATE,
+    dateModified: UPDATED_DATETIME,
     isPartOf: {
       "@id": WEBSITE_ID,
     },

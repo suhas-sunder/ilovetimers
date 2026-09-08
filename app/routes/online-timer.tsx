@@ -520,6 +520,12 @@ function OnlineTimerCard() {
                         setInputStr(e.target.value);
                       }}
                       onBlur={onSet}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          event.currentTarget.blur();
+                        }
+                      }}
                       placeholder="mm:ss or ss"
                     />
                     <Btn kind="ghost" onClick={onSet}>

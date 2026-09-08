@@ -444,7 +444,7 @@ export default function EpochUnixTimeClockPage({
         "@type": "WebPage",
         name: "Unix Time Clock",
         url,
-        dateModified: REVIEW_DATE.iso,
+        dateModified: `${REVIEW_DATE.iso}T00:00:00Z`,
         description:
           "Show the device-derived current Unix timestamp in seconds and milliseconds with matching local and UTC date-time displays.",
       },

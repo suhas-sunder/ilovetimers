@@ -93,7 +93,15 @@ function installFrameSampler({ expectedPath, duration }) {
         const state = window.__iltDisplayStability;
         if (!state) return;
         if (window.location.pathname === expectedPath) {
-          const candidates = [
+          const primaryCandidates = [
+            ...document.querySelectorAll(
+              "[data-display-stage] [data-primary-display-value]",
+            ),
+          ].filter((node) => {
+            const rect = node.getBoundingClientRect();
+            return rect.width > 0 && rect.height > 0;
+          });
+          const fallbackCandidates = [
             ...document.querySelectorAll(
               '[data-display-stage] [style*="font-size"], .timer-display-surface [style*="font-size"]',
             ),
@@ -101,6 +109,9 @@ function installFrameSampler({ expectedPath, duration }) {
             const rect = node.getBoundingClientRect();
             return rect.width > 0 && rect.height > 0;
           });
+          const candidates = primaryCandidates.length > 0
+            ? primaryCandidates
+            : fallbackCandidates;
           const target = candidates.sort(
             (left, right) =>
               Number.parseFloat(getComputedStyle(right).fontSize) -
@@ -116,6 +127,8 @@ function installFrameSampler({ expectedPath, duration }) {
             state.samples.push({
               at: performance.now() - startedAt,
               fontSize: Number.parseFloat(targetStyle.fontSize),
+              inlineFontSize: target.style.fontSize,
+              text: target.textContent?.trim() ?? "",
               monospace: targetStyle.fontFamily.toLowerCase().includes("mono"),
               width: rect.width,
               height: rect.height,
@@ -125,6 +138,7 @@ function installFrameSampler({ expectedPath, duration }) {
               bottom: rect.bottom,
               stageLeft: stageRect.left,
               stageRight: stageRect.right,
+              stageWidth: stageRect.width,
               stageTop: stageRect.top,
               stageBottom: stageRect.bottom,
             });
@@ -182,7 +196,7 @@ async function runRouteCase(browser, routePath, viewport) {
     const heightSpread = spread(samples.map(({ height }) => height));
     assert.ok(
       fontSpread <= 0.1,
-      `${routePath} at ${viewport.width}px changed font size by ${fontSpread.toFixed(2)}px after route entry (${Math.min(...samples.map(({ fontSize }) => fontSize)).toFixed(2)}px to ${Math.max(...samples.map(({ fontSize }) => fontSize)).toFixed(2)}px).`,
+      `${routePath} at ${viewport.width}px changed font size by ${fontSpread.toFixed(2)}px after route entry (${Math.min(...samples.map(({ fontSize }) => fontSize)).toFixed(2)}px to ${Math.max(...samples.map(({ fontSize }) => fontSize)).toFixed(2)}px): ${JSON.stringify(samples.filter((sample, index) => index === 0 || sample.fontSize !== samples[index - 1].fontSize).slice(0, 8))}`,
     );
     assert.ok(
       !samples[0].monospace || widthSpread <= 1,
@@ -218,12 +232,16 @@ async function runRouteCase(browser, routePath, viewport) {
     );
     if (
       SCREENSHOT_DIR &&
-      (routeOverride || routePath === "/pizza-timer") &&
-      (viewport.width === 320 || viewport.width === 1365)
+      ((routeOverride && widthOverride) ||
+        (routePath === "/pizza-timer" &&
+          (viewport.width === 320 || viewport.width === 1365)))
     ) {
       mkdirSync(SCREENSHOT_DIR, { recursive: true });
       await page.screenshot({
-        path: path.join(SCREENSHOT_DIR, `pizza-${viewport.width}.png`),
+        path: path.join(
+          SCREENSHOT_DIR,
+          `${routePath.replace(/^\//, "").replaceAll("/", "-")}-${viewport.width}.png`,
+        ),
         fullPage: true,
       });
     }

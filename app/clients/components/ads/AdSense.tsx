@@ -22,7 +22,7 @@ export const ADSENSE_TOP_BANNER_STYLE = `
 .ilt-ad-size-square { display: block; width: 250px; height: 250px; max-width: 100%; }
 @media (min-width: 360px) { .ilt-ad-size-square { width: 300px; height: 250px; } }
 .ilt-ad-size-sidebar { display: block; width: 160px; height: 600px; max-width: 100%; }
-@media (min-width: 1900px) { .ilt-ad-size-sidebar { width: 300px; height: 600px; } }
+@media (min-width: 1800px) { .ilt-ad-size-sidebar { width: 300px; height: 600px; } }
 `;
 
 function ensureAdSenseLoader() {
@@ -269,7 +269,7 @@ export function SitewideAdLayout({ children }: { children: ReactNode }) {
         <AdSenseUnit placement="top-banner" className="mx-auto" />
       </div>
 
-      <div className="mx-auto grid w-full min-w-0 max-w-[124rem] grid-cols-1 2xl:grid-cols-[160px_minmax(0,1fr)_160px] 2xl:gap-6 min-[1900px]:grid-cols-[300px_minmax(0,1fr)_300px] min-[1900px]:gap-8">
+      <div className="mx-auto grid w-full min-w-0 max-w-[124rem] grid-cols-1 2xl:grid-cols-[160px_minmax(0,1fr)_160px] 2xl:gap-6 min-[1800px]:grid-cols-[300px_minmax(0,1fr)_300px] min-[1800px]:gap-8">
         <div className="hidden pt-6 2xl:block">
           <ResponsiveSidebarAd placement="sidebar-left" />
         </div>

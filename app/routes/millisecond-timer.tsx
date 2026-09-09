@@ -1,6 +1,7 @@
 // app/routes/millisecond-timer.tsx
 import type { Route } from "./+types/millisecond-timer";
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { Copy, Maximize2, Pause, Play, RotateCcw } from "lucide-react";
 import {
   Button as Btn,
   ContentSection,
@@ -234,6 +235,8 @@ function MillisecondTimerTool() {
     }
   };
 
+  const startPauseIcon = running ? <Pause /> : <Play />;
+
   return (
     <Card
       cardRef={cardRef}
@@ -247,10 +250,10 @@ function MillisecondTimerTool() {
         onExit={() => void fullscreen.exit()}
         right={
           <div className="flex items-center gap-2">
-            <Btn kind="solid" size="sm" onClick={startPause}>
+            <Btn kind="solid" size="sm" onClick={startPause} leadingIcon={startPauseIcon}>
               {running ? "Pause" : remainingMs < totalMs && remainingMs > 0 ? "Resume" : "Start"}
             </Btn>
-            <Btn kind="ghost" size="sm" onClick={reset}>
+            <Btn kind="ghost" size="sm" onClick={reset} leadingIcon={<RotateCcw />}>
               Reset
             </Btn>
           </div>
@@ -297,10 +300,10 @@ function MillisecondTimerTool() {
         {!isFs ? (
           <>
             <ControlGroup>
-              <Btn kind="solid" onClick={startPause}>
+              <Btn kind="solid" onClick={startPause} leadingIcon={startPauseIcon}>
                 {running ? "Pause" : remainingMs < totalMs && remainingMs > 0 ? "Resume" : "Start"}
               </Btn>
-              <Btn kind="ghost" onClick={reset}>
+              <Btn kind="ghost" onClick={reset} leadingIcon={<RotateCcw />}>
                 Reset
               </Btn>
             </ControlGroup>
@@ -381,10 +384,10 @@ function MillisecondTimerTool() {
               <Btn kind="ghost" onClick={applyCustomInputs} disabled={running}>
                 Apply duration
               </Btn>
-              <Btn kind="ghost" onClick={() => void copyRemaining()}>
+              <Btn kind="ghost" onClick={() => void copyRemaining()} leadingIcon={<Copy />}>
                 {copied ? "Copied" : "Copy remaining"}
               </Btn>
-              <Btn kind="ghost" onClick={() => void fullscreen.toggle()}>
+              <Btn kind="ghost" onClick={() => void fullscreen.toggle()} leadingIcon={<Maximize2 />}>
                 Fullscreen
               </Btn>
             </SecondaryActionRow>

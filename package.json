@@ -41,6 +41,7 @@
   "dependencies": {
     "@react-router/node": "7.18.1",
     "isbot": "^5.1.27",
+    "lucide-react": "1.43.0",
     "posthog-js": "^1.328.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",

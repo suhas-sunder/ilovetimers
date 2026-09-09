@@ -75,6 +75,7 @@ const PRIMARY_TIMER_HREFS = new Set([
   "/sleep-timer",
   "/egg-timer",
   "/pizza-timer",
+  "/millisecond-timer",
 ]);
 
 const TIMER_DIRECTORY: TimerDirectoryItem[] = [
@@ -1034,12 +1035,21 @@ function TimerDirectoryMenu({
       ].join(" ")}
     >
       <div className="flex flex-col gap-1">
-        <label
-          htmlFor={searchId}
-          className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--ilt-text-muted)]"
-        >
-          Find a timer
-        </label>
+        <div className="flex items-center justify-between gap-3">
+          <label
+            htmlFor={searchId}
+            className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--ilt-text-muted)]"
+          >
+            Find a timer
+          </label>
+          <a
+            href="/guides"
+            onClick={onNavigate}
+            className="ilt-focus-ring cursor-pointer rounded-full px-3 py-1 text-sm font-semibold text-[var(--ilt-text-primary)] underline decoration-[var(--ilt-border-strong)] underline-offset-4 transition-colors hover:bg-[var(--ilt-bg-hover)]"
+          >
+            Guides
+          </a>
+        </div>
         <div className="relative">
           <SearchIcon
             size={16}
@@ -1248,8 +1258,8 @@ function SiteHeader() {
             <a href="/pizza-timer" className={desktopLink}>
               Pizza
             </a>
-            <a href="/guides" className={desktopLink}>
-              Guides
+            <a href="/millisecond-timer" className={desktopLink}>
+              Millisecond
             </a>
 
             <div className="relative">
@@ -1421,8 +1431,12 @@ function SiteHeader() {
                   <a href="/pizza-timer" onClick={close} className={mobileLink}>
                     Pizza Timer
                   </a>
-                  <a href="/guides" onClick={close} className={mobileLink}>
-                    Guides
+                  <a
+                    href="/millisecond-timer"
+                    onClick={close}
+                    className={mobileLink}
+                  >
+                    Millisecond Timer
                   </a>
                 </div>
               </div>

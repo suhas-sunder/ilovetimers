@@ -8,6 +8,29 @@ import type {
   ReactNode,
   SelectHTMLAttributes,
 } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  ChevronDown,
+  Copy,
+  Download,
+  Flag,
+  Maximize2,
+  Minimize2,
+  Pause,
+  Play,
+  Plus,
+  Printer,
+  RotateCcw,
+  Settings,
+  Share2,
+  Square,
+  Trash2,
+  Volume2,
+  VolumeX,
+  X,
+} from "lucide-react";
 import { cx } from "./utils";
 import {
   BelowHeaderAd,
@@ -157,7 +180,12 @@ export function FullscreenTopBar({
         </div>
         <div className="flex items-center gap-2">
           {right}
-          <Button variant="secondary" size="sm" onClick={onExit}>
+          <Button
+            variant="secondary"
+            size="sm"
+            semanticIcon="exitFullscreen"
+            onClick={onExit}
+          >
             Exit (Esc)
           </Button>
         </div>
@@ -352,10 +380,15 @@ export function SettingsDrawer({
       open={defaultOpen}
     >
       <summary className="ilt-focus-ring flex cursor-pointer list-none items-center justify-between gap-3 rounded-[var(--ilt-radius-control)] px-3 py-2 text-sm font-bold text-[var(--ilt-text-primary)] hover:bg-[var(--ilt-bg-hover)]">
-        <span>{title}</span>
-        <span aria-hidden="true" className="text-xs text-[var(--ilt-text-muted)]">
-          v
+        <span className="flex min-w-0 items-center gap-2">
+          <Settings aria-hidden="true" size={16} className="shrink-0" />
+          <span>{title}</span>
         </span>
+        <ChevronDown
+          aria-hidden="true"
+          size={16}
+          className="shrink-0 text-[var(--ilt-text-muted)] transition-transform group-open:rotate-180"
+        />
       </summary>
       <div className="mt-3">{children}</div>
     </details>
@@ -413,9 +446,32 @@ export function SeoBand({
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonKind = "solid" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
+export type SemanticButtonAction =
+  | "play"
+  | "pause"
+  | "reset"
+  | "stop"
+  | "fullscreen"
+  | "exitFullscreen"
+  | "copy"
+  | "share"
+  | "settings"
+  | "clear"
+  | "add"
+  | "remove"
+  | "download"
+  | "print"
+  | "previous"
+  | "next"
+  | "lap"
+  | "confirm"
+  | "sound"
+  | "mute"
+  | "close";
 type ButtonIconOptions = {
   leadingIcon?: ReactNode;
   trailingIcon?: ReactNode;
+  semanticIcon?: SemanticButtonAction | false;
 };
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
@@ -469,6 +525,109 @@ function renderButtonIcon(icon: ReactNode, size: ButtonSize) {
   });
 }
 
+function plainButtonLabel(children: ReactNode) {
+  if (typeof children === "string" || typeof children === "number") {
+    return String(children).trim().toLowerCase();
+  }
+  return "";
+}
+
+function inferSemanticButtonAction(children: ReactNode): SemanticButtonAction | null {
+  const label = plainButtonLabel(children);
+  if (!label) return null;
+
+  if (/^start over\b/.test(label) || /^restart\b/.test(label)) return "reset";
+  if (/^(start|resume|run)\b/.test(label)) return "play";
+  if (/^pause\b/.test(label)) return "pause";
+  if (/^reset\b/.test(label)) return "reset";
+  if (/^stop\b/.test(label)) return "stop";
+  if (/^(fullscreen|enter fullscreen)\b/.test(label)) return "fullscreen";
+  if (/^(copy|copied)\b/.test(label)) return "copy";
+  if (/^share\b/.test(label)) return "share";
+  if (/^settings?\b/.test(label)) return "settings";
+  if (/^clear\b/.test(label)) return "clear";
+  if (/^(add|new)\b/.test(label)) return "add";
+  if (/^(remove|delete)\b/.test(label)) return "remove";
+  if (/^(download|export)\b/.test(label)) return "download";
+  if (/^print\b/.test(label)) return "print";
+  if (/^(previous|back)\b/.test(label)) return "previous";
+  if (/^(next|continue)\b/.test(label)) return "next";
+  if (/^lap\b/.test(label)) return "lap";
+  if (/^(apply|save|confirm|done)\b/.test(label)) return "confirm";
+  if (/^(sound|test sound|enable sound|unmute)\b/.test(label)) return "sound";
+  if (/^(mute|disable sound)\b/.test(label)) return "mute";
+  if (/^(close|cancel)\b/.test(label)) return "close";
+
+  return null;
+}
+
+function semanticButtonIcon(action: SemanticButtonAction | null): ReactNode {
+  switch (action) {
+    case "play":
+      return <Play />;
+    case "pause":
+      return <Pause />;
+    case "reset":
+      return <RotateCcw />;
+    case "stop":
+      return <Square />;
+    case "fullscreen":
+      return <Maximize2 />;
+    case "exitFullscreen":
+      return <Minimize2 />;
+    case "copy":
+      return <Copy />;
+    case "share":
+      return <Share2 />;
+    case "settings":
+      return <Settings />;
+    case "clear":
+    case "close":
+      return <X />;
+    case "add":
+      return <Plus />;
+    case "remove":
+      return <Trash2 />;
+    case "download":
+      return <Download />;
+    case "print":
+      return <Printer />;
+    case "previous":
+      return <ArrowLeft />;
+    case "next":
+      return <ArrowRight />;
+    case "lap":
+      return <Flag />;
+    case "confirm":
+      return <Check />;
+    case "sound":
+      return <Volume2 />;
+    case "mute":
+      return <VolumeX />;
+    default:
+      return null;
+  }
+}
+
+function resolveLeadingIcon({
+  children,
+  leadingIcon,
+  trailingIcon,
+  semanticIcon,
+  infer,
+}: {
+  children: ReactNode;
+  leadingIcon?: ReactNode;
+  trailingIcon?: ReactNode;
+  semanticIcon?: SemanticButtonAction | false;
+  infer: boolean;
+}) {
+  if (leadingIcon) return leadingIcon;
+  if (trailingIcon || semanticIcon === false) return null;
+  const action = semanticIcon ?? (infer ? inferSemanticButtonAction(children) : null);
+  return semanticButtonIcon(action);
+}
+
 export function Button({
   variant = "secondary",
   kind,
@@ -477,6 +636,7 @@ export function Button({
   children,
   leadingIcon,
   trailingIcon,
+  semanticIcon,
   type = "button",
   ...props
 }: ButtonProps) {
@@ -488,7 +648,14 @@ export function Button({
           ? "danger"
         : "secondary"
       : variant;
-  const hasIcon = Boolean(leadingIcon || trailingIcon);
+  const resolvedLeadingIcon = resolveLeadingIcon({
+    children,
+    leadingIcon,
+    trailingIcon,
+    semanticIcon,
+    infer: true,
+  });
+  const hasIcon = Boolean(resolvedLeadingIcon || trailingIcon);
 
   return (
     <button
@@ -502,7 +669,7 @@ export function Button({
       )}
       {...props}
     >
-      {renderButtonIcon(leadingIcon, size)}
+      {renderButtonIcon(resolvedLeadingIcon, size)}
       {children}
       {renderButtonIcon(trailingIcon, size)}
     </button>
@@ -521,6 +688,7 @@ export function IconButton({
   return (
     <Button
       aria-label={label}
+      semanticIcon={false}
       className={cx("aspect-square px-0", className)}
       {...props}
     >
@@ -537,6 +705,7 @@ export function ButtonLink({
   children,
   leadingIcon,
   trailingIcon,
+  semanticIcon,
   ...props
 }: ButtonLinkProps) {
   const resolvedVariant =
@@ -547,7 +716,14 @@ export function ButtonLink({
           ? "danger"
         : "secondary"
       : variant;
-  const hasIcon = Boolean(leadingIcon || trailingIcon);
+  const resolvedLeadingIcon = resolveLeadingIcon({
+    children,
+    leadingIcon,
+    trailingIcon,
+    semanticIcon,
+    infer: false,
+  });
+  const hasIcon = Boolean(resolvedLeadingIcon || trailingIcon);
 
   return (
     <a
@@ -560,7 +736,7 @@ export function ButtonLink({
       )}
       {...props}
     >
-      {renderButtonIcon(leadingIcon, size)}
+      {renderButtonIcon(resolvedLeadingIcon, size)}
       {children}
       {renderButtonIcon(trailingIcon, size)}
     </a>

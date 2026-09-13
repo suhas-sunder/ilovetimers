@@ -241,6 +241,12 @@ try {
 
   const page = await context.newPage();
   const pageErrors = [];
+  let documentRequests = 0;
+  page.on("request", (request) => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
+      documentRequests += 1;
+    }
+  });
   page.on("pageerror", (error) => pageErrors.push(error.message));
   page.on("console", (message) => {
     if (message.type() === "error" || message.type() === "warning") {
@@ -303,7 +309,9 @@ try {
   await waitForPageviewCount(1);
   assert.equal(pageviews().length, 1, "Direct load emitted more than one pageview.");
 
-  await page.locator('a[href="/countdown-timer"]').first().click();
+  // Header anchors perform document navigation. The footer uses React Router
+  // links, so this must remain in the original document to exercise the tracker.
+  await page.locator('footer a[href="/countdown-timer"]').first().click();
   await page.waitForURL(`${BASE}/countdown-timer`);
   await waitForPageviewCount(2);
   assert.equal(pageviews().length, 2, "Client navigation emitted more than one pageview.");
@@ -318,8 +326,23 @@ try {
   await waitForPageviewCount(4);
   await page.waitForTimeout(700);
   assert.equal(pageviews().length, 4, "Forward navigation or idle time emitted a duplicate pageview.");
+  assert.equal(documentRequests, 1, "The SPA/Back/Forward test reloaded the document.");
 
-  const expectedPaths = ["/", "/countdown-timer", "/", "/countdown-timer"];
+  await page.locator('footer a[href="/egg-timer"]').first().click();
+  await page.waitForURL(`${BASE}/egg-timer`);
+  await waitForPageviewCount(5);
+  await page.getByRole("button", { name: "Start", exact: true }).first().click();
+  await page.getByRole("button", { name: "Pause", exact: true }).first().click();
+  await page.waitForTimeout(700);
+  assert.equal(documentRequests, 1, "Navigating to the action fixture reloaded the document.");
+  assert.equal(pageviews().length, 5, "Timer actions emitted duplicate pageviews.");
+  assert.deepEqual(
+    capturedEvents().filter((event) => event.event !== "$pageview").map((event) => event.event),
+    ["timer_start", "timer_pause"],
+    "Manual timer actions must be captured exactly once, without automatic events.",
+  );
+
+  const expectedPaths = ["/", "/countdown-timer", "/", "/countdown-timer", "/egg-timer"];
   assert.deepEqual(
     pageviews().map((event) => event.properties?.route_path),
     expectedPaths,
@@ -427,9 +450,13 @@ try {
   console.log("- bundle: public project token and initialization present without VITE_POSTHOG_KEY");
   console.log("- storage: 0 PostHog cookies, localStorage entries, sessionStorage entries, or IndexedDB databases");
   console.log("- pageviews: direct=1, client navigation=1, Back=1, Forward=1, duplicates=0");
+  console.log("- SPA verification: one document request across all route/history changes; action fixture pageview=1");
+  console.log("- manual actions: timer_start=1, timer_pause=1");
   console.log("- privacy: sanitized Web Analytics paths; query, fragment, and test user value absent");
   console.log("- disabled: autocapture, recording, surveys, flags, experiments, and person profiles");
   console.log("- resilience: application navigation remained functional with analytics returning HTTP 503");
+  console.log("- scope: local collector only; this does NOT verify PostHog project settings or stored production events");
+  console.log("- production ingestion gate: follow docs/posthog-verification.md before declaring analytics recovered");
 } finally {
   await browser?.close();
   preview.kill();

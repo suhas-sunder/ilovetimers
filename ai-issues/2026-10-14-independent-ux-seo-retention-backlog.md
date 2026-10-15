@@ -6,6 +6,15 @@
 **Production:** https://www.ilovetimers.com  
 **Status:** **PROPOSED/INVESTIGATE only**. No application source, URLs, canonicals, production styling, ad placement, tool settings, or SEO copy changed as part of this audit.
 
+## Owner directive: AdSense placeholder overlap prevention (all ad-supported sites)
+
+**PRODUCTION-SAFETY REQUIREMENT — overrides cosmetic ad-placeholder proposals in this report.** The owner previously observed a serious production failure: loading/empty-ad placeholders visibly **overlaid actual rendered advertisements**, despite agent reports claiming the UI was fixed. Such overlap creates material advertising-account/policy risk. The owner's deliberate protective behavior is to **hide all placeholders once the first real advertisement renders**, accepting somewhat less polished empty-space UX in exchange for a safer production state. This policy applies across the owner's ad-supported sites, not just this repository.
+
+- **Preserve the existing global first-ad-render → hide-placeholders safety behavior** wherever placeholders exist. Do **not** reintroduce per-slot placeholders, placeholder overlays, independently reappearing fallbacks, or “fix” empty ad gaps by undoing the global suppression. Do not change ad fill detection, race handling, hydration transitions, or sitewide hiding as an incidental styling/SEO improvement.
+- Any ad layout/spacing adjustment is **investigation-only** unless it can demonstrably retain this invariant. Never overlay placeholders on creatives, permit ads to be confused with primary actions, cover a rendered ad with an element, or allow layout collapse/re-expansion to shift active creatives into controls. A genuinely absent/disabled ad may have unused wrapper spacing investigated, but speculative changes to temporarily empty or slow-loading ad slots are prohibited.
+- **Approval gate:** request an explicit owner decision before modifying placeholder display policy. To propose an alternative, first obtain real production-equivalent proof across ads blocked, pending, unfilled, first fill, multiple fills, delayed fills, navigation, resize, mobile/desktop, and site theme states; include screenshots/video/DOM stacking checks, actual ad-network behavior, and a rollback. Passing local mocks or an agent PASS report alone is **not** enough. Never represent any unverified implementation as guaranteed AdSense-compliant.
+- In release plans, prioritize **ad-account safety over minor whitespace/cosmetic gains**. This requirement does not prevent unrelated SEO/content/tool work; avoid touching the ad lifecycle for those tasks.
+
 ## 0. Product brief, non-negotiables and audit quality
 
 **Owner direction:** The site's *basic look and simplicity are assets*. A sizable visitor base exists; prioritize retaining current visitors while improving perceived polish, the relevance and placement of offerings, and SEO/help-section typography/layout. Improve existing content where genuinely useful and add new tools/content only with a distinct user job and evidence. This is a **weekly release candidate backlog**, not a one-shot redesign.
@@ -24,13 +33,13 @@
 
 ## 1. Critical source-backed presentation and navigation issues
 
-### ILT-UI01 — Eliminate empty ad-wrapper spacing that breaks SEO-section rhythm
-**P0 candidate | SOURCE-CONFIRMED DOM/layout behavior; measure real pixels before merging | Type: CSS/layout bug.**
+### ILT-UI01 — Investigate empty ad-wrapper spacing without weakening ad safety
+**P1 INVESTIGATE ONLY | SOURCE-CONFIRMED DOM/layout behavior, not a verified production defect | Type: ad-safe CSS/layout audit.**
 
 - `app/clients/components/ui/foundation.tsx` `SeoBand()` **always renders** `<div className="py-10 sm:py-12"><SeoSectionAd /></div>` between content blocks.
 - `app/clients/components/ads/AdSense.tsx` `AdSenseUnit()` returns `null` whenever the ad provider is disabled. `BelowHeaderAd()` and `AboveFooterAd()` **also always render padded wrappers** around a potentially null ad unit.
 - `app/app.css` has no obvious `:empty` collapse handling for these wrappers. Result: the wrappers exist even when their children do not; they may leave large blank vertical bands across many tool SEO/help sections and near footer. This is exactly the kind of avoidable presentation defect a visitor notices.
-- **Acceptance:** Test approved/filled/unfilled/disabled ads on Countdown, Online, Pomodoro, Classroom, Multiple Timers and one guide, at 320/390/768/1440 px in dark/light mode. An absent ad must leave **no orphan ad-only padding**; a present ad retains policy-compliant spacing and no CLS. Keep ads clearly separated from timer controls and don't optimize for accidental clicks. Change shared wrappers cautiously and test every route family; do not indiscriminately remove the spacing around *valid* filled ads.
+- **Acceptance:** Test approved/filled/unfilled/disabled and slow-loading ads on Countdown, Online, Pomodoro, Classroom, Multiple Timers and one guide, at 320/390/768/1440 px in dark/light mode. Investigate purely orphaned padding **only where it is proven no ad will render**; preserve layout reservation for potentially loading creatives, ad separation and no CLS. **The owner's global hide-placeholders-after-first-real-ad-render behavior is mandatory; it is not a broken UX state to restore.** Change no ad lifecycle or fallback behavior without explicit owner approval and production regression evidence. Never introduce placeholder-over-ad overlap or rely only on simulated/ad-blocked local testing.
 
 ### ILT-UI02 — Establish one coherent SEO/help-section visual design system
 **P1 | OWNER-OBSERVED major styling issue + SOURCE-CONFIRMED mixed implementation | Type: visual consistency/reusable component.**
@@ -158,7 +167,7 @@ Competitor screenshots/features alone do not provide search volume, traffic, RPM
 
 | Release lane | Candidate scope | Acceptance gate |
 |---|---|---|
-| **W1 — SEO visual correctness** | ILT-UI01 collapse empty ad wrapper spacing, capture before screenshots; ILT-UI02 **design system/spec plus one representative implementation** (e.g. Countdown + Online Timer) | 2 themes x 5+ widths; ad filled/unfilled/off; no changed timed results, no sitemap/canonical/H1 edits |
+| **W1 — SEO visual correctness** | ILT-UI01 **inspect** empty-ad-wrapper spacing without changing ad placeholders/fill logic; ILT-UI02 **design system/spec plus one representative implementation** (e.g. Countdown + Online Timer) | 2 themes x 5+ widths; ads pending/filled/unfilled/off and global first-render suppression tested on production-equivalent behavior; no placeholder-over-creative overlap; no changed timed results, sitemap/canonical/H1 edits |
 | **W2 — navigation clarity** | ILT-UI03 redirect alias labeling/search results; ILT-UI04 inventory and one narrow taxonomy fix | No 404/redirect loops; every visible link honest; canonical URLs protected; find-the-tool task success |
 | **W3 — core timer polish** | ILT-UI06 reduce default control density on 1–2 high-traffic tools; ILT-UI05 DOM/keyboard order fix only after real test | Start/pause/edit/fullscreen remain correct; no hidden or lost advanced option; mobile/keyboard acceptance |
 | **W4 — extend SEO section system** | ILT-UI02 rollout by **one route family at a time** (study, classroom/meeting, clock or calculators); ILT-UI09 light/dark/zoom polish | Compare before/after each route family; valid structured data, heading hierarchy, no readable-width regression |

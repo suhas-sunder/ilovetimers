@@ -295,10 +295,7 @@ function AtomicClockCard({ initialNowISO }: { initialNowISO: string }) {
           <span
             ref={timeTextRef}
             data-primary-display-value
-            className={[
-              "timer-clock-value inline-block text-center",
-              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
-            ].join(" ")}
+            className="timer-clock-value inline-block text-center tracking-normal"
             style={{
               fontSize: fitFontPx,
               lineHeight: "1",

@@ -183,6 +183,7 @@ function HIITCard() {
   const [remaining, setRemaining] = useState(warmSec * 1000);
 
   const rafRef = useRef<number | null>(null);
+  const transitionRef = useRef<number | null>(null);
   const endRef = useRef<number | null>(null);
   const lastBeepSecondRef = useRef<number | null>(null);
 
@@ -226,8 +227,16 @@ function HIITCard() {
     rafRef.current = null;
   }
 
+  function cancelTransition() {
+    if (transitionRef.current !== null) window.clearTimeout(transitionRef.current);
+    transitionRef.current = null;
+  }
+
+  useEffect(() => () => cancelTransition(), []);
+
   // Reset predictably when settings change
   useEffect(() => {
+    cancelTransition();
     setRunning(false);
     setStep("warmup");
     setRoundIdx(0);
@@ -280,7 +289,10 @@ function HIITCard() {
           beep(freq, 180);
         }
 
-        window.setTimeout(() => advanceStep(), 20);
+        transitionRef.current = window.setTimeout(() => {
+          transitionRef.current = null;
+          advanceStep();
+        }, 20);
         return;
       }
 
@@ -301,6 +313,7 @@ function HIITCard() {
   }
 
   function resetAll(track = true) {
+    cancelTransition();
     if (track) trackEvent("timer_reset", analyticsBase);
     setRunning(false);
     setStep("warmup");
@@ -312,6 +325,7 @@ function HIITCard() {
   }
 
   function applyReusableSetup(config: HiitShareConfig) {
+    cancelTransition();
     setWarmSec(config.warmupSeconds);
     setWorkSec(config.workSeconds);
     setRestSec(config.restSeconds);
@@ -343,6 +357,7 @@ function HIITCard() {
   );
 
   function startPause() {
+    cancelTransition();
     const s = stepRef.current;
 
     if (s === "done") {
@@ -420,6 +435,7 @@ function HIITCard() {
   }
 
   function skipNext() {
+    cancelTransition();
     trackEvent("timer_next", analyticsBase);
     setRunning(false);
     endRef.current = null;

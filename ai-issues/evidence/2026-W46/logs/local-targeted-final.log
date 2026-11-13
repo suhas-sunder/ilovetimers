@@ -1,0 +1,16 @@
+smoke-after 1 / 16 /free-online-timers 1440 light true
+smoke-after 2 / 16 /speedcubing-timer 1440 light true
+smoke-after 3 / 16 /fibonacci-clock 1440 light true
+smoke-after 4 / 16 /world-clock-with-milliseconds 1440 light true
+smoke-after 5 / 16 /free-online-timers 390 light true
+smoke-after 6 / 16 /speedcubing-timer 390 light true
+smoke-after 7 / 16 /fibonacci-clock 390 light true
+smoke-after 8 / 16 /world-clock-with-milliseconds 390 light true
+smoke-after 9 / 16 /free-online-timers 1440 dark true
+smoke-after 10 / 16 /speedcubing-timer 1440 dark true
+smoke-after 11 / 16 /fibonacci-clock 1440 dark true
+smoke-after 12 / 16 /world-clock-with-milliseconds 1440 dark true
+smoke-after 13 / 16 /free-online-timers 390 dark true
+smoke-after 14 / 16 /speedcubing-timer 390 dark true
+smoke-after 15 / 16 /fibonacci-clock 390 dark true
+smoke-after 16 / 16 /world-clock-with-milliseconds 390 dark true

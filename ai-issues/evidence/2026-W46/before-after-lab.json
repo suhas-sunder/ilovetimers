@@ -1,0 +1,15 @@
+{
+  "before": {
+    "cases": 528,
+    "medianLcpMs": 112,
+    "maxCls": 0.11565556000312298,
+    "casesClsAbovePointOne": 1
+  },
+  "after": {
+    "cases": 528,
+    "medianLcpMs": 116,
+    "maxCls": 0.11569173735860173,
+    "casesClsAbovePointOne": 2
+  },
+  "limitation": "Unthrottled short navigation samples, third parties blocked, variable concurrent audit workload. Not controlled attribution, field p75 or INP. Full raw metrics remain in route receipts."
+}

@@ -1,0 +1,14 @@
+{
+  "observedAt": "2026-11-13T04:59:00Z",
+  "suite": "test:final-browser",
+  "installedPlaywrightExpectedWebKitRevision": "2336",
+  "legacyScriptExecutableRevision": "2272",
+  "processId": 80188,
+  "verifiedParentAuditNodeProcessId": 77504,
+  "startedAtLocal": "2026-11-12 23:46:56 America/New_York",
+  "observation": "WebKit subprocess made no observable progress for over eleven minutes; parent did not write reports because it awaited this probe.",
+  "action": "Terminated only the verified audit-owned WebKit subprocess, allowing suite to catch disconnect and save remaining results. No user processes terminated.",
+  "status": "Initial run BLOCKED/FAIL, not passed; no package/browser download or threshold relaxation",
+  "savedError": "browserContext.newPage: Protocol error (Page.overrideSetting): Unknown setting: PushAPIEnabled",
+  "availableResolution": "Existing npm cache contains Playwright1.59.1 at _npx/8d2e8001be657ecc/node_modules/playwright/index.mjs, matching installed Chromium1217 and WebKit2272. After-run uses ILT_REAL_PLAYWRIGHT_MODULE to that path; no install or upgrade."
+}

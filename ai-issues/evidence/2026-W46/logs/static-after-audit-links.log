@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 audit:links
+> node scripts/audits/internal-links.mjs
+
+Internal-link audit passed (132 routes, 95 More-directory tools, 95 related-tool groups, 126 footer links).

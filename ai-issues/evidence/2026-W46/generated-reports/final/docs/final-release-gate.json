@@ -1,0 +1,409 @@
+{
+  "status": "failed",
+  "generatedAt": "2026-11-13T05:29:17.351Z",
+  "repositoryCodeGate": "internal blocking defects remain",
+  "checks": 54,
+  "failures": [
+    "Final route validation is missing, failed, or stale.",
+    "At least one canonical browser record failed.",
+    "Live Google advertising code or network hosts are present.",
+    "An external production script loads in the advertising-disabled, analytics-unconfigured browser run.",
+    "Stage 4 content failed with exit code 1.",
+    "Dependency audit reports unaccepted high or critical vulnerabilities in: @react-router/node, dompurify, react-router.",
+    "Worktree inventory contains an accidental or temporary tracked candidate."
+  ],
+  "warnings": [
+    "npm audit reports the accepted React Router RSC-mode CSRF advisory; the audited deployment has no RSC or server action runtime surface.",
+    "The full dependency tree reports 8 advisories, primarily in development/build tooling; production dependencies report 3."
+  ],
+  "counts": {
+    "canonical": 132,
+    "indexable": 109,
+    "noindex": 23,
+    "redirects": 28,
+    "sitemap": 109,
+    "shareRoutes": 5,
+    "presetRoutes": 4,
+    "guides": 7
+  },
+  "buildAndPriorAudits": [
+    {
+      "name": "typecheck",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "> ilovetimers@1.0.0 typecheck",
+        "> react-router typegen && tsc -b"
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "production build",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run build",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Prerender (html): /chess-clock -> build\\client\\chess-clock\\index.html",
+        "Prerender (html): /privacy -> build\\client\\privacy\\index.html",
+        "Prerender (html): /terms -> build\\client\\terms\\index.html",
+        "Prerender (html): /cookies -> build\\client\\cookies\\index.html",
+        "Prerender (html): /sitemap -> build\\client\\sitemap\\index.html",
+        "Prerender (html): SPA Fallback -> build\\client\\__spa-fallback.html",
+        "Removing the server build in C:\\Users\\Suhas\\.codex\\worktrees\\ilovetimers-diagnostic-W46\\build\\server due to ssr:false",
+        "✓ built in 9.90s"
+      ],
+      "stderrTail": [
+        "\"useLayoutEffect\" and \"default\" are imported from external module \"react\" but never used in \"app/routes/atomic-clock.tsx\", \"app/routes/epoch-unix-time-clock.tsx\", \"app/routes/minimalist-clock.tsx\", \"app/routes/utc-clock.tsx\", \"app/routes/current-local-time.tsx\", \"app/routes/digital-clock.tsx\", \"app/clients/components/billable-hours-clock/HowItWorks.tsx\" and \"app/clients/components/billable-hours-calculator/HowItWorks.tsx\"."
+      ]
+    },
+    {
+      "name": "static deployment",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/static-deployment.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Static deployment audit passed (132 prerendered canonical routes, 28 permanent aliases, no runtime server output)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "SEO integrity",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/seo-integrity.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "SEO integrity audit passed (132 routes, 28 redirects, 109 sitemap URLs)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "internal links",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/internal-links.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Internal-link audit passed (132 routes, 95 More-directory tools, 95 related-tool groups, 126 footer links)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "preset timers",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/preset-timers.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Preset timer audit passed (6 generic preset routes, 132 routes, 109 sitemap URLs, 126 footer links)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "time tools",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/time-tools.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Time-tool audit passed (21 routes, 132 canonical routes, 28 redirects, 109 sitemap URLs, 95 related groups)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "Stage 2 accuracy",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/stage2-accuracy.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Stage 2 accuracy audit passed (17 methodology source files, 13 primary sources)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "route architecture",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/route-architecture.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Route architecture audit passed: 132 canonical pages, 28 redirects, 109 indexable sitemap routes; A=101, B=8, C=23, D=21, E=7."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "Stage 4 content",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/stage4-content-quality.mjs",
+      "status": "failed",
+      "exitCode": 1,
+      "stdoutTail": [
+        ""
+      ],
+      "stderrTail": [
+        "Stage 4 content-quality audit failed (1):",
+        "- 3 forbidden public process references remain."
+      ]
+    },
+    {
+      "name": "Stage 5 guides",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/stage5-guides.mjs --check-citations",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Stage 5 guide audit passed: 1 index, 6 substantial guides, 6127 rendered article words, 15 citation URLs, 13 contextual tool pages."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "Stage 6 sharing and presets",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/stage6-share-presets.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Stage 6 share and preset audit passed (2525 checks, 5 share routes, 4 preset routes)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "calculators",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/calculators.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Calculator integrity audit passed (18 routes, 132 canonical routes, 28 redirects, 109 sitemap URLs, 95 related groups)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "specialty tools",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/specialty-tools.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Specialty-tool audit passed (68 routes; A INDEPENDENT INDEXABLE: 48, B CONCISE INDEXABLE PRESET: 7, C NON-INDEXABLE UTILITY: 13; 132 canonical routes; 109 sitemap URLs; 95 related groups)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "UI integrity",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/ui-integrity.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "UI integrity audit passed (132 routes; shared targets, focus, labels, reduced motion, and narrow displays)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "accessibility source audit",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/accessibility.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Accessibility audit passed (433 source files; names, fields, modal focus, touch targets, live regions, and reduced motion)."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    },
+    {
+      "name": "release readiness",
+      "command": "C:\\Program Files\\nodejs\\node.exe scripts/audits/release-readiness.mjs",
+      "status": "passed",
+      "exitCode": 0,
+      "stdoutTail": [
+        "Release-readiness audit passed (132 routes, 28 redirects, 109 sitemap URLs, 95 More tools, 126 footer destinations, 95 related groups).",
+        "Static checks do not predict rankings, field Core Web Vitals, or AdSense approval; use the human readiness report and post-release monitoring plan."
+      ],
+      "stderrTail": [
+        ""
+      ]
+    }
+  ],
+  "dependencyAudit": {
+    "status": "completed",
+    "exitCode": 1,
+    "productionCounts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 2,
+      "critical": 1,
+      "total": 3
+    },
+    "fullTreeCounts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 6,
+      "critical": 1,
+      "total": 8
+    },
+    "acceptedStaticOnlyAdvisories": [
+      {
+        "id": 1124282,
+        "ghsa": "GHSA-qwww-vcr4-c8h2",
+        "title": "React Router: RSC Mode CSRF Bypass Allows Action Execution Before 400 Response",
+        "rationale": "This application has RSC mode disabled and publishes no runtime server, action endpoint, Netlify Function, or Edge Function. React Router 8.3.0 was evaluated but rejected because it causes verified hydration failures on loader-backed prerendered routes."
+      }
+    ],
+    "productionReachability": "The production scan omits devDependencies. High or critical advisories fail unless the exact advisory is recorded above and its affected runtime surface is absent from the audited static build."
+  },
+  "privacyStorageInventory": {
+    "localStorage": [
+      {
+        "key": "ilt-theme-mode",
+        "feature": "theme preference"
+      },
+      {
+        "key": "astroClockPrefs",
+        "feature": "astronomical clock coordinates and timezone"
+      },
+      {
+        "key": "bpmTapper.settings.v1",
+        "feature": "BPM tapper settings"
+      },
+      {
+        "key": "bpmTapper.history.v1",
+        "feature": "BPM tapper recent results"
+      },
+      {
+        "key": "ilovetimers:billable-hours-clock:v1",
+        "feature": "billable-hours clock state"
+      },
+      {
+        "key": "ilovetimers:event-countdown:v1",
+        "feature": "saved event countdowns"
+      },
+      {
+        "key": "ilt-meeting-agenda-timer-items",
+        "feature": "meeting agenda items"
+      },
+      {
+        "key": "ilovetimers:multiple-timers:v2",
+        "feature": "multiple-timer configuration"
+      },
+      {
+        "key": "ilovetimers:time-blocking-clock:v2",
+        "feature": "time blocks"
+      },
+      {
+        "key": "ilovetimers:time-zone-converter:v1",
+        "feature": "timezone converter preferences"
+      },
+      {
+        "key": "sc_start_mode",
+        "feature": "speedcubing start mode"
+      },
+      {
+        "key": "sc_auto_save",
+        "feature": "speedcubing add-on-stop preference"
+      },
+      {
+        "key": "sc_max_solves",
+        "feature": "speedcubing result limit"
+      },
+      {
+        "key": "ilovetimers:presets:countdown-timer:v1",
+        "feature": "Countdown Timer named presets"
+      },
+      {
+        "key": "ilovetimers:presets:pomodoro-timer:v1",
+        "feature": "Pomodoro Timer named presets"
+      },
+      {
+        "key": "ilovetimers:presets:hiit-timer:v1",
+        "feature": "HIIT Timer named presets"
+      },
+      {
+        "key": "ilovetimers:presets:time-zone-meeting-planner:v1",
+        "feature": "Time Zone Meeting Planner named presets"
+      }
+    ],
+    "sessionStorage": [],
+    "indexedDB": [],
+    "notes": [
+      "PostHog runs in always-on cookieless mode with persistence disabled and does not create browser-storage entries.",
+      "Share configurations are URL-carried rather than browser storage; preset names are excluded from URLs."
+    ]
+  },
+  "advertising": {
+    "mode": "disabled; homepage placeholder-only",
+    "liveNetworkScript": false,
+    "publisherRecordPresent": true,
+    "publisherOwnershipVerified": false
+  },
+  "buildOutput": {
+    "filesInspected": 393,
+    "sourceMaps": 0,
+    "localPathMatches": [],
+    "likelySecretMatches": [],
+    "posthogProjectTokenFiles": [
+      "build/client/assets/analytics-ZBA9Tkm9.js"
+    ]
+  },
+  "blockerClassification": {
+    "internalBlocking": [
+      "Final route validation is missing, failed, or stale.",
+      "At least one canonical browser record failed.",
+      "Live Google advertising code or network hosts are present.",
+      "An external production script loads in the advertising-disabled, analytics-unconfigured browser run.",
+      "Stage 4 content failed with exit code 1.",
+      "Dependency audit reports unaccepted high or critical vulnerabilities in: @react-router/node, dompurify, react-router.",
+      "Worktree inventory contains an accidental or temporary tracked candidate."
+    ],
+    "internalNonBlocking": [
+      "The repository has no separate lint or formatter script; type checking, source audits, SSR rendering, browser interaction, and diff-whitespace checks provide the current automated coverage.",
+      "Firefox, physical-device, assistive-technology, and production field Core Web Vitals data were unavailable in this environment and are not claimed as certified coverage.",
+      "Two simulated-mobile Lighthouse LCP results were slightly above the 2.5-second good threshold (2.524 and 2.540 seconds); both remained well below the 4-second poor threshold and the affected performance scores remained at least 95.",
+      "npm audit reports the accepted React Router RSC-mode CSRF advisory; the audited deployment has no RSC or server action runtime surface.",
+      "The full dependency tree reports 8 advisories, primarily in development/build tooling; production dependencies report 3."
+    ],
+    "ownerAction": [
+      "Confirm that ads.txt publisher ID pub-4810616735714570 belongs to the intended AdSense account.",
+      "Confirm the production PostHog project accepts cookieless events."
+    ],
+    "externalAccountOrPlatformAction": [
+      "Netlify account access is required to confirm the production branch, environment values, domain/DNS/HTTPS state, deploy preview behavior, and rollback controls.",
+      "AdSense account access is required for site ownership, application/review status, publisher-ID confirmation, ads.txt authorization, and any future ad units.",
+      "A Google-certified CMP and correct regional configuration are required before eligible personalized ads are served in the EEA, UK, or Switzerland.",
+      "Search Console and DNS/domain registrar verification are post-repository account tasks where the owner chooses to use them."
+    ],
+    "postDeploymentVerification": [
+      "Run docs/post-deployment-smoke-tests.json against the exact published deploy and record the deploy ID and Git revision.",
+      "Verify production response headers, MIME types, compression/CDN caching, canonical/robots behavior, 404 status, assets, console, and mobile physical-device layout.",
+      "Verify /ads.txt over HTTPS and its AdSense account status before enabling advertising.",
+      "If analytics is configured, confirm the PostHog project accepts cookieless events and inspect production event properties."
+    ]
+  },
+  "artifactsVerified": [
+    "docs/final-worktree-inventory.json",
+    "docs/final-google-policy-evidence.json",
+    "docs/final-route-validation.json",
+    "docs/final-performance-accessibility.json",
+    "docs/post-deployment-smoke-tests.json",
+    "docs/rollback-plan.md"
+  ]
+}

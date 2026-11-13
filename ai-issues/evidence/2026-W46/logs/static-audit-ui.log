@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 audit:ui
+> node scripts/audits/ui-integrity.mjs
+
+UI integrity audit passed (132 routes; shared targets, focus, labels, reduced motion, and narrow displays).

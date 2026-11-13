@@ -1,0 +1,21 @@
+
+> ilovetimers@1.0.0 test:final-lighthouse
+> node scripts/tests/final-lighthouse.mjs
+
+Lighthouse mobile /
+Lighthouse mobile /countdown-timer
+Lighthouse mobile /interval-timer
+Lighthouse mobile /time-calculator
+Lighthouse mobile /world-clock
+Lighthouse mobile /guides/how-browser-timers-measure-time
+Lighthouse mobile /sitemap
+Lighthouse mobile /1-minute-timer
+Lighthouse desktop /
+Lighthouse desktop /countdown-timer
+Lighthouse desktop /interval-timer
+Lighthouse desktop /time-calculator
+Lighthouse desktop /world-clock
+Lighthouse desktop /guides/how-browser-timers-measure-time
+Lighthouse desktop /sitemap
+Lighthouse desktop /1-minute-timer
+Final Lighthouse suite failed (0 reports, 0 poor-threshold reports, 16 execution failures).

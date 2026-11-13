@@ -1,0 +1,71 @@
+{
+  "google": {
+    "start": "2026-05-11",
+    "end": "2026-11-10",
+    "total": {
+      "rows": 184,
+      "clicks": 14038,
+      "impressions": 730505
+    },
+    "latest28": {
+      "rows": 28,
+      "clicks": 3728,
+      "impressions": 134952
+    },
+    "prior28": {
+      "rows": 28,
+      "clicks": 3507,
+      "impressions": 174981
+    },
+    "clickChangePercent": 6.301682349586546
+  },
+  "bing": {
+    "start": "2026-05-13",
+    "end": "2026-11-10",
+    "total": {
+      "rows": 182,
+      "clicks": 17644,
+      "impressions": 698103
+    },
+    "latest28": {
+      "rows": 28,
+      "clicks": 2878,
+      "impressions": 121034
+    },
+    "prior28": {
+      "rows": 28,
+      "clicks": 2437,
+      "impressions": 76881
+    },
+    "clickChangePercent": 18.096019696347977
+  },
+  "tableTotals": {
+    "Chart.csv": {
+      "rows": 184,
+      "clicks": 14038,
+      "impressions": 730505
+    },
+    "Queries.csv": {
+      "rows": 1000,
+      "clicks": 7074,
+      "impressions": 320544
+    },
+    "Pages.csv": {
+      "rows": 230,
+      "clicks": 14162,
+      "impressions": 743746
+    },
+    "Countries.csv": {
+      "rows": 236,
+      "clicks": 14038,
+      "impressions": 730505
+    },
+    "Devices.csv": {
+      "rows": 3,
+      "clicks": 14038,
+      "impressions": 730505
+    }
+  },
+  "normalizedPageCount": 132,
+  "dualVariants": 93
+}

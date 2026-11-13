@@ -1,0 +1,2317 @@
+[
+  {
+    "route": "/free-online-timers",
+    "case": "native button Space start/pause/reset",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: focused Reset must not start\n\n1 !== 0\n"
+  },
+  {
+    "route": "/countdown-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/timer-stopwatch",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/timer-clock",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/stopwatch",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/stopwatch-with-milliseconds",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/pomodoro-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/hiit-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/silent-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/online-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/seconds-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/1-minute-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/5-minute-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/10-minute-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/15-minute-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/30-minute-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/interval-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/presentation-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/speech-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/classroom-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/meeting-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/meeting-agenda-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/exam-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/break-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/study-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/study-stopwatch",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/workout-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/rest-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/tabata-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/kitchen-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/meditation-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/speedcubing-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: focused Start should activate\n\n0 !== 1\n"
+  },
+  {
+    "route": "/lab-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/alarm-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/visual-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/productivity-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/meeting-count-up-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/breathing-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/sleep-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/stretch-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/drink-water-reminder-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/emom-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/amrap-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/round-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/pace-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/tea-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/egg-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/chaos-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/video-game-challenge-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/speedrun-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/pizza-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/debt-repayment-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/focus-session-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/event-countdown",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/binary-stopwatch",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/millisecond-timer",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/chess-clock",
+    "case": "native button Space start/pause/reset",
+    "status": "PASS"
+  },
+  {
+    "route": "/speedcubing-timer",
+    "case": "background hold-to-start remains available",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Armed/. Input:\n\n'0:00.00\\n' +\n  'ARMED\\n' +\n  'Start\\n' +\n  'Reset\\n' +\n  'Clear history\\n' +\n  'Fullscreen\\n' +\n  'Space hold+release start · R reset · F fullscreen\\n' +\n  'Solve settings\\n' +\n  'Start mode\\n' +\n  'Hold-to-start\\n' +\n  'Instant toggle\\n' +\n  'Add result on stop\\n' +\n  'Max session solves\\n' +\n  'Session results\\n' +\n  'No session results yet\\n' +\n  'Stop the timer to add a result.'\n"
+  },
+  {
+    "route": "/speedcubing-timer",
+    "case": "fullscreen Start button in default hold mode",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: fullscreen Start must begin timing\n\n0 !== 1\n"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 320,
+    "theme": "light",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:39.820",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:39.820",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:39.820",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:39.820",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:39.820",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 320,
+    "theme": "light",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:39.887",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:39.887",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:39.887",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:39.887",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:39.887",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 320,
+    "theme": "light",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:40.038 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.038 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:40.038 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.038 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:40.038 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 320,
+    "theme": "light",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:40.088 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.088 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:40.088 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.088 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:40.088 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 320,
+    "theme": "dark",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:40.721",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.721",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:40.721",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.721",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:40.721",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 320,
+    "theme": "dark",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:40.787",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.787",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:40.787",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.787",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:40.787",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 320,
+    "theme": "dark",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:40.972 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.972 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:40.972 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:40.972 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:40.972 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 320,
+    "theme": "dark",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:41.021 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.021 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:41.021 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.021 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:41.021 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 375,
+    "theme": "light",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:41.504",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.504",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:41.504",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.504",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:41.504",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 375,
+    "theme": "light",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:41.570",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.570",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:41.570",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.570",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:41.570",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 375,
+    "theme": "light",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:41.738 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.738 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:41.738 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.738 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:41.738 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 375,
+    "theme": "light",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:41.788 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.788 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:41.788 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:41.788 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:41.788 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 375,
+    "theme": "dark",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:42.287",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.287",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:42.287",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.287",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:42.287",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 375,
+    "theme": "dark",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:42.337",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.337",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:42.337",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.337",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:42.337",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 375,
+    "theme": "dark",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:42.488 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.488 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:42.488 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.488 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:42.488 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 375,
+    "theme": "dark",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:42.538 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.538 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:42.538 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.538 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:42.538 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 390,
+    "theme": "light",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:42.975",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.975",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:42.975",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:42.975",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:42.975",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 390,
+    "theme": "light",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:43.020",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.020",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:43.020",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.020",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:43.020",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 390,
+    "theme": "light",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:43.187 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.187 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:43.187 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.187 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:43.187 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 390,
+    "theme": "light",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:43.221 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.221 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:43.221 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.221 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:43.221 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 390,
+    "theme": "dark",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:43.687",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.687",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:43.687",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.687",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:43.687",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 390,
+    "theme": "dark",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:43.754",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.754",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:43.754",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.754",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:43.754",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 390,
+    "theme": "dark",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:43.904 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.904 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:43.904 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.904 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:43.904 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 390,
+    "theme": "dark",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:43.954 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.954 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:43.954 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:43.954 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:43.954 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 768,
+    "theme": "light",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:44.505",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:44.505",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:44.505",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:44.505",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:44.505",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 768,
+    "theme": "light",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:44.570",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:44.570",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:44.570",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:44.570",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:44.570",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 768,
+    "theme": "light",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:44.771 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:44.771 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:44.771 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:44.771 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:44.771 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 768,
+    "theme": "light",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:44.861 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:44.861 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:44.861 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:44.861 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:44.861 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 768,
+    "theme": "dark",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:45.328",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:45.328",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:45.328",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:45.328",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:45.328",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 768,
+    "theme": "dark",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:45.441",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:45.441",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:45.441",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:45.441",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:45.441",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 768,
+    "theme": "dark",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:45.608 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:45.608 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:45.608 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:45.608 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:45.608 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 768,
+    "theme": "dark",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:45.655 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:45.655 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:45.655 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:45.655 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:45.655 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1024,
+    "theme": "light",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:46.204",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:46.204",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:46.204",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:46.204",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:46.204",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1024,
+    "theme": "light",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:46.288",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:46.288",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:46.288",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:46.288",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:46.288",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1024,
+    "theme": "light",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:46.471 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:46.471 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:46.471 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:46.471 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:46.471 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1024,
+    "theme": "light",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:46.521 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:46.521 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:46.521 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:46.521 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:46.521 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1024,
+    "theme": "dark",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:47.010",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.010",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:47.010",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.010",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:47.010",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1024,
+    "theme": "dark",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:47.070",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.070",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:47.070",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.070",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:47.070",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1024,
+    "theme": "dark",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:47.255 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.255 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:47.255 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.255 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:47.255 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1024,
+    "theme": "dark",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:47.288 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.288 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:47.288 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.288 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:47.288 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1440,
+    "theme": "light",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:47.789",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.789",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:47.789",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.789",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:47.789",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1440,
+    "theme": "light",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:47.854",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.854",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:47.854",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:47.854",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:47.854",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1440,
+    "theme": "light",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:48.022 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.022 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:48.022 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.022 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:48.022 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1440,
+    "theme": "light",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:48.071 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.071 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:48.071 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.071 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:48.071 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1440,
+    "theme": "dark",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:48.604",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.604",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:48.604",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.604",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:48.604",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1440,
+    "theme": "dark",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:48.670",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.670",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:48.670",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.670",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:48.670",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1440,
+    "theme": "dark",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:48.855 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.855 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:48.855 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.855 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:48.855 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1440,
+    "theme": "dark",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:48.905 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.905 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:48.905 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:48.905 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:48.905 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1920,
+    "theme": "light",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:49.426",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:49.426",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:49.426",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:49.426",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:49.426",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1920,
+    "theme": "light",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:49.505",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:49.505",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:49.505",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:49.505",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:49.505",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1920,
+    "theme": "light",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:49.654 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:49.654 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:49.654 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:49.654 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:49.654 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1920,
+    "theme": "light",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:49.705 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:49.705 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:49.705 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:49.705 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:49.705 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1920,
+    "theme": "dark",
+    "use24": true,
+    "full": false,
+    "values": [
+      {
+        "text": "00:07:50.271",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:50.271",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:50.271",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:50.271",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:50.271",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1920,
+    "theme": "dark",
+    "use24": true,
+    "full": true,
+    "values": [
+      {
+        "text": "00:07:50.338",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:50.338",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "00:07:50.338",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:50.338",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "14:07:50.338",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1920,
+    "theme": "dark",
+    "use24": false,
+    "full": false,
+    "values": [
+      {
+        "text": "12:07:50.505 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:50.505 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:50.505 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:50.505 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:50.505 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "case": "all clock rows one line",
+    "width": 1920,
+    "theme": "dark",
+    "use24": false,
+    "full": true,
+    "values": [
+      {
+        "text": "12:07:50.555 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:50.555 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "12:07:50.555 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "05:07:50.555 AM",
+        "lines": 1,
+        "inside": true
+      },
+      {
+        "text": "02:07:50.555 PM",
+        "lines": 1,
+        "inside": true
+      }
+    ],
+    "status": "PASS"
+  }
+]

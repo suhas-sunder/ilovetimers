@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 audit:stage5-guides
+> node scripts/audits/stage5-guides.mjs --check-citations
+
+Stage 5 guide audit passed: 1 index, 6 substantial guides, 6127 rendered article words, 15 citation URLs, 13 contextual tool pages.

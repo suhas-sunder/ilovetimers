@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 test:sitewide-ui
+> node scripts/tests/sitewide-ui.mjs
+
+Sitewide SSR UI test passed (132 canonical routes, 28 redirects, H1/canonical/ID/control/ad/404 checks).

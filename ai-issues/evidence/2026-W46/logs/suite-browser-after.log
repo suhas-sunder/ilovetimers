@@ -1,0 +1,8 @@
+Starting test:stage6-browser
+Finished test:stage6-browser exit 1  | Node.js v25.9.0
+Starting test:display-stability
+Finished test:display-stability exit 0  | Display stability test passed (48 document-route entries across 6 viewport sizes; 48 rendered display cases sampled).
+Starting test:adsense
+Finished test:adsense exit 0  | AdSense integration tests passed.
+Starting test:final-browser
+Finished test:final-browser exit 1  | Node.js v25.9.0

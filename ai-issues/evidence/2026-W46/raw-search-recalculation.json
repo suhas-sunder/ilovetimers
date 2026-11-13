@@ -1,0 +1,2785 @@
+{
+  "sourceHashes": {
+    "ilovetimers.com-Performance-on-Search-2026-11-12.zip": "54463fddce871058935fe33cadab1a47ce0065351981f74ecfecdd10cd7b07d4",
+    "ilovetimers.com_SearchPerformanceOverview_All_11_13_2026.csv": "ed02a73e94d3134bc9a4a9659ed3095138e591276c79c1b6c5f0fef59da98991"
+  },
+  "google": {
+    "start": "2026-05-11",
+    "end": "2026-11-10",
+    "total": {
+      "rows": 184,
+      "clicks": 14038,
+      "impressions": 730505
+    },
+    "latest28": {
+      "rows": 28,
+      "clicks": 3728,
+      "impressions": 134952
+    },
+    "prior28": {
+      "rows": 28,
+      "clicks": 3507,
+      "impressions": 174981
+    },
+    "clickChangePercent": 6.301682349586546
+  },
+  "bing": {
+    "start": "2026-05-13",
+    "end": "2026-11-10",
+    "total": {
+      "rows": 182,
+      "clicks": 17644,
+      "impressions": 698103
+    },
+    "latest28": {
+      "rows": 28,
+      "clicks": 2878,
+      "impressions": 121034
+    },
+    "prior28": {
+      "rows": 28,
+      "clicks": 2437,
+      "impressions": 76881
+    },
+    "clickChangePercent": 18.096019696347977
+  },
+  "tableTotals": {
+    "Chart.csv": {
+      "rows": 184,
+      "clicks": 14038,
+      "impressions": 730505
+    },
+    "Queries.csv": {
+      "rows": 1000,
+      "clicks": 7074,
+      "impressions": 320544
+    },
+    "Pages.csv": {
+      "rows": 230,
+      "clicks": 14162,
+      "impressions": 743746
+    },
+    "Countries.csv": {
+      "rows": 236,
+      "clicks": 14038,
+      "impressions": 730505
+    },
+    "Devices.csv": {
+      "rows": 3,
+      "clicks": 14038,
+      "impressions": 730505
+    }
+  },
+  "normalizedPageCount": 132,
+  "dualVariants": 93,
+  "pages": {
+    "/millisecond-timer": {
+      "clicks": 7186,
+      "impressions": 73346,
+      "urls": [
+        "https://www.ilovetimers.com/millisecond-timer/",
+        "https://www.ilovetimers.com/millisecond-timer",
+        "https://ilovetimers.com/millisecond-timer"
+      ]
+    },
+    "/analog-clock": {
+      "clicks": 1790,
+      "impressions": 83127,
+      "urls": [
+        "https://www.ilovetimers.com/analog-clock/",
+        "https://www.ilovetimers.com/analog-clock",
+        "https://ilovetimers.com/analog-clock/"
+      ]
+    },
+    "/clock-with-milliseconds": {
+      "clicks": 533,
+      "impressions": 43195,
+      "urls": [
+        "https://www.ilovetimers.com/clock-with-milliseconds/",
+        "https://www.ilovetimers.com/clock-with-milliseconds"
+      ]
+    },
+    "/": {
+      "clicks": 504,
+      "impressions": 6303,
+      "urls": [
+        "https://www.ilovetimers.com/",
+        "https://ilovetimers.com/",
+        "http://ilovetimers.com/"
+      ]
+    },
+    "/atomic-clock": {
+      "clicks": 449,
+      "impressions": 40753,
+      "urls": [
+        "https://www.ilovetimers.com/atomic-clock"
+      ]
+    },
+    "/seconds-timer": {
+      "clicks": 418,
+      "impressions": 8593,
+      "urls": [
+        "https://www.ilovetimers.com/seconds-timer/",
+        "https://www.ilovetimers.com/seconds-timer"
+      ]
+    },
+    "/utc-clock": {
+      "clicks": 389,
+      "impressions": 81405,
+      "urls": [
+        "https://www.ilovetimers.com/utc-clock/",
+        "https://www.ilovetimers.com/utc-clock"
+      ]
+    },
+    "/online-alarm-clock": {
+      "clicks": 364,
+      "impressions": 22347,
+      "urls": [
+        "https://www.ilovetimers.com/online-alarm-clock",
+        "https://www.ilovetimers.com/online-alarm-clock/",
+        "https://ilovetimers.com/online-alarm-clock"
+      ]
+    },
+    "/12-hour-clock": {
+      "clicks": 282,
+      "impressions": 20064,
+      "urls": [
+        "https://www.ilovetimers.com/12-hour-clock/",
+        "https://www.ilovetimers.com/12-hour-clock"
+      ]
+    },
+    "/chaos-timer": {
+      "clicks": 211,
+      "impressions": 5323,
+      "urls": [
+        "https://www.ilovetimers.com/chaos-timer/",
+        "https://www.ilovetimers.com/chaos-timer"
+      ]
+    },
+    "/hexadecimal-clock": {
+      "clicks": 176,
+      "impressions": 3953,
+      "urls": [
+        "https://www.ilovetimers.com/hexadecimal-clock/",
+        "https://www.ilovetimers.com/hexadecimal-clock"
+      ]
+    },
+    "/roman-numeral-clock": {
+      "clicks": 171,
+      "impressions": 2754,
+      "urls": [
+        "https://www.ilovetimers.com/roman-numeral-clock/",
+        "https://www.ilovetimers.com/roman-numeral-clock"
+      ]
+    },
+    "/stopwatch-with-milliseconds": {
+      "clicks": 162,
+      "impressions": 4139,
+      "urls": [
+        "https://www.ilovetimers.com/stopwatch-with-milliseconds",
+        "https://www.ilovetimers.com/stopwatch-with-milliseconds/"
+      ]
+    },
+    "/binary-clock": {
+      "clicks": 143,
+      "impressions": 2521,
+      "urls": [
+        "https://www.ilovetimers.com/binary-clock/",
+        "https://www.ilovetimers.com/binary-clock"
+      ]
+    },
+    "/birthday-countdown": {
+      "clicks": 122,
+      "impressions": 19649,
+      "urls": [
+        "https://www.ilovetimers.com/birthday-countdown",
+        "https://www.ilovetimers.com/birthday-countdown/"
+      ]
+    },
+    "/military-time-clock": {
+      "clicks": 100,
+      "impressions": 13864,
+      "urls": [
+        "https://www.ilovetimers.com/military-time-clock/",
+        "https://www.ilovetimers.com/military-time-clock",
+        "https://ilovetimers.com/military-time-clock/"
+      ]
+    },
+    "/alarm-timer": {
+      "clicks": 56,
+      "impressions": 2842,
+      "urls": [
+        "https://www.ilovetimers.com/alarm-timer/",
+        "https://www.ilovetimers.com/alarm-timer"
+      ]
+    },
+    "/drink-water-reminder-timer": {
+      "clicks": 55,
+      "impressions": 1445,
+      "urls": [
+        "https://www.ilovetimers.com/drink-water-reminder-timer",
+        "https://www.ilovetimers.com/drink-water-reminder-timer/"
+      ]
+    },
+    "/world-clock-with-milliseconds": {
+      "clicks": 51,
+      "impressions": 3100,
+      "urls": [
+        "https://www.ilovetimers.com/world-clock-with-milliseconds/",
+        "https://www.ilovetimers.com/world-clock-with-milliseconds"
+      ]
+    },
+    "/metronome": {
+      "clicks": 47,
+      "impressions": 2645,
+      "urls": [
+        "https://www.ilovetimers.com/metronome",
+        "https://www.ilovetimers.com/metronome/"
+      ]
+    },
+    "/silent-timer": {
+      "clicks": 46,
+      "impressions": 1900,
+      "urls": [
+        "https://www.ilovetimers.com/silent-timer"
+      ]
+    },
+    "/epoch-unix-time-clock": {
+      "clicks": 44,
+      "impressions": 6646,
+      "urls": [
+        "https://www.ilovetimers.com/epoch-unix-time-clock/",
+        "https://www.ilovetimers.com/epoch-unix-time-clock"
+      ]
+    },
+    "/swatch-internet-time-clock": {
+      "clicks": 41,
+      "impressions": 5377,
+      "urls": [
+        "https://www.ilovetimers.com/swatch-internet-time-clock",
+        "https://www.ilovetimers.com/swatch-internet-time-clock/"
+      ]
+    },
+    "/count-up-timer": {
+      "clicks": 40,
+      "impressions": 1156,
+      "urls": [
+        "https://www.ilovetimers.com/count-up-timer"
+      ]
+    },
+    "/24-hour-clock": {
+      "clicks": 39,
+      "impressions": 3468,
+      "urls": [
+        "https://www.ilovetimers.com/24-hour-clock/",
+        "https://www.ilovetimers.com/24-hour-clock"
+      ]
+    },
+    "/new-year-countdown": {
+      "clicks": 36,
+      "impressions": 3022,
+      "urls": [
+        "https://www.ilovetimers.com/new-year-countdown",
+        "https://www.ilovetimers.com/new-year-countdown/"
+      ]
+    },
+    "/kitchen-timer": {
+      "clicks": 35,
+      "impressions": 807,
+      "urls": [
+        "https://www.ilovetimers.com/kitchen-timer",
+        "https://www.ilovetimers.com/kitchen-timer/"
+      ]
+    },
+    "/stopwatch": {
+      "clicks": 32,
+      "impressions": 1269,
+      "urls": [
+        "https://www.ilovetimers.com/stopwatch/",
+        "https://www.ilovetimers.com/stopwatch"
+      ]
+    },
+    "/countdown-timer": {
+      "clicks": 31,
+      "impressions": 1085,
+      "urls": [
+        "https://www.ilovetimers.com/countdown-timer/",
+        "https://www.ilovetimers.com/countdown-timer"
+      ]
+    },
+    "/astronomical-clock": {
+      "clicks": 29,
+      "impressions": 648,
+      "urls": [
+        "https://www.ilovetimers.com/astronomical-clock"
+      ]
+    },
+    "/stretch-timer": {
+      "clicks": 28,
+      "impressions": 363,
+      "urls": [
+        "https://www.ilovetimers.com/stretch-timer"
+      ]
+    },
+    "/weekday-calculator": {
+      "clicks": 26,
+      "impressions": 3053,
+      "urls": [
+        "https://www.ilovetimers.com/weekday-calculator/",
+        "https://www.ilovetimers.com/weekday-calculator"
+      ]
+    },
+    "/date-duration-calculator": {
+      "clicks": 24,
+      "impressions": 45381,
+      "urls": [
+        "https://www.ilovetimers.com/date-duration-calculator",
+        "https://www.ilovetimers.com/date-duration-calculator/"
+      ]
+    },
+    "/study-stopwatch": {
+      "clicks": 23,
+      "impressions": 948,
+      "urls": [
+        "https://www.ilovetimers.com/study-stopwatch/",
+        "https://www.ilovetimers.com/study-stopwatch"
+      ]
+    },
+    "/amrap-timer": {
+      "clicks": 23,
+      "impressions": 1047,
+      "urls": [
+        "https://www.ilovetimers.com/amrap-timer",
+        "https://www.ilovetimers.com/amrap-timer/"
+      ]
+    },
+    "/fibonacci-clock": {
+      "clicks": 22,
+      "impressions": 539,
+      "urls": [
+        "https://www.ilovetimers.com/fibonacci-clock/",
+        "https://www.ilovetimers.com/fibonacci-clock"
+      ]
+    },
+    "/smooth-second-hand-clock": {
+      "clicks": 19,
+      "impressions": 919,
+      "urls": [
+        "https://www.ilovetimers.com/smooth-second-hand-clock"
+      ]
+    },
+    "/full-screen-analog-clock": {
+      "clicks": 19,
+      "impressions": 822,
+      "urls": [
+        "https://www.ilovetimers.com/full-screen-analog-clock"
+      ]
+    },
+    "/weeks-between-dates-calculator": {
+      "clicks": 18,
+      "impressions": 63244,
+      "urls": [
+        "https://www.ilovetimers.com/weeks-between-dates-calculator/",
+        "https://www.ilovetimers.com/weeks-between-dates-calculator"
+      ]
+    },
+    "/digital-clock": {
+      "clicks": 16,
+      "impressions": 946,
+      "urls": [
+        "https://www.ilovetimers.com/digital-clock/",
+        "https://www.ilovetimers.com/digital-clock"
+      ]
+    },
+    "/milliseconds-converter": {
+      "clicks": 15,
+      "impressions": 62024,
+      "urls": [
+        "https://www.ilovetimers.com/milliseconds-converter/",
+        "https://www.ilovetimers.com/milliseconds-converter"
+      ]
+    },
+    "/interval-timer": {
+      "clicks": 15,
+      "impressions": 715,
+      "urls": [
+        "https://www.ilovetimers.com/interval-timer",
+        "https://www.ilovetimers.com/interval-timer/"
+      ]
+    },
+    "/months-between-dates-calculator": {
+      "clicks": 15,
+      "impressions": 24304,
+      "urls": [
+        "https://www.ilovetimers.com/months-between-dates-calculator/",
+        "https://www.ilovetimers.com/months-between-dates-calculator"
+      ]
+    },
+    "/free-online-timers": {
+      "clicks": 15,
+      "impressions": 871,
+      "urls": [
+        "https://www.ilovetimers.com/free-online-timers",
+        "https://www.ilovetimers.com/free-online-timers/"
+      ]
+    },
+    "/pace-timer": {
+      "clicks": 15,
+      "impressions": 330,
+      "urls": [
+        "https://www.ilovetimers.com/pace-timer/",
+        "https://www.ilovetimers.com/pace-timer"
+      ]
+    },
+    "/full-screen-clock": {
+      "clicks": 14,
+      "impressions": 566,
+      "urls": [
+        "https://www.ilovetimers.com/full-screen-clock"
+      ]
+    },
+    "/clock-with-seconds": {
+      "clicks": 11,
+      "impressions": 697,
+      "urls": [
+        "https://www.ilovetimers.com/clock-with-seconds"
+      ]
+    },
+    "/multiple-timers": {
+      "clicks": 11,
+      "impressions": 305,
+      "urls": [
+        "https://www.ilovetimers.com/multiple-timers",
+        "https://www.ilovetimers.com/multiple-timers/"
+      ]
+    },
+    "/chess-clock": {
+      "clicks": 11,
+      "impressions": 329,
+      "urls": [
+        "https://www.ilovetimers.com/chess-clock",
+        "https://www.ilovetimers.com/chess-clock/"
+      ]
+    },
+    "/meeting-count-up-timer": {
+      "clicks": 11,
+      "impressions": 183,
+      "urls": [
+        "https://www.ilovetimers.com/meeting-count-up-timer",
+        "https://www.ilovetimers.com/meeting-count-up-timer/"
+      ]
+    },
+    "/time-zone-converter": {
+      "clicks": 9,
+      "impressions": 2279,
+      "urls": [
+        "https://www.ilovetimers.com/time-zone-converter",
+        "https://www.ilovetimers.com/time-zone-converter/"
+      ]
+    },
+    "/break-timer": {
+      "clicks": 9,
+      "impressions": 600,
+      "urls": [
+        "https://www.ilovetimers.com/break-timer"
+      ]
+    },
+    "/speech-timer": {
+      "clicks": 9,
+      "impressions": 375,
+      "urls": [
+        "https://www.ilovetimers.com/speech-timer",
+        "https://www.ilovetimers.com/speech-timer/"
+      ]
+    },
+    "/billable-hours-clock": {
+      "clicks": 9,
+      "impressions": 207,
+      "urls": [
+        "https://www.ilovetimers.com/billable-hours-clock/",
+        "https://www.ilovetimers.com/billable-hours-clock"
+      ]
+    },
+    "/time-duration-calculator": {
+      "clicks": 9,
+      "impressions": 7394,
+      "urls": [
+        "https://www.ilovetimers.com/time-duration-calculator",
+        "https://www.ilovetimers.com/time-duration-calculator/"
+      ]
+    },
+    "/christmas-countdown": {
+      "clicks": 9,
+      "impressions": 1838,
+      "urls": [
+        "https://www.ilovetimers.com/christmas-countdown/",
+        "https://www.ilovetimers.com/christmas-countdown"
+      ]
+    },
+    "/time-card-calculator": {
+      "clicks": 9,
+      "impressions": 747,
+      "urls": [
+        "https://www.ilovetimers.com/time-card-calculator",
+        "https://www.ilovetimers.com/time-card-calculator/"
+      ]
+    },
+    "/date-calculator": {
+      "clicks": 8,
+      "impressions": 3749,
+      "urls": [
+        "https://www.ilovetimers.com/date-calculator",
+        "https://www.ilovetimers.com/date-calculator/"
+      ]
+    },
+    "/tea-timer": {
+      "clicks": 8,
+      "impressions": 706,
+      "urls": [
+        "https://www.ilovetimers.com/tea-timer",
+        "https://www.ilovetimers.com/tea-timer/"
+      ]
+    },
+    "/presentation-timer": {
+      "clicks": 8,
+      "impressions": 313,
+      "urls": [
+        "https://www.ilovetimers.com/presentation-timer",
+        "https://www.ilovetimers.com/presentation-timer/"
+      ]
+    },
+    "/countdown-to-date": {
+      "clicks": 7,
+      "impressions": 557,
+      "urls": [
+        "https://www.ilovetimers.com/countdown-to-date/",
+        "https://www.ilovetimers.com/countdown-to-date"
+      ]
+    },
+    "/unix-timestamp-converter": {
+      "clicks": 7,
+      "impressions": 2655,
+      "urls": [
+        "https://www.ilovetimers.com/unix-timestamp-converter/",
+        "https://www.ilovetimers.com/unix-timestamp-converter"
+      ]
+    },
+    "/timer-clock": {
+      "clicks": 7,
+      "impressions": 271,
+      "urls": [
+        "https://www.ilovetimers.com/timer-clock/",
+        "https://www.ilovetimers.com/timer-clock"
+      ]
+    },
+    "/hours-until-calculator": {
+      "clicks": 7,
+      "impressions": 6396,
+      "urls": [
+        "https://www.ilovetimers.com/hours-until-calculator/",
+        "https://www.ilovetimers.com/hours-until-calculator"
+      ]
+    },
+    "/retro-flip-clock": {
+      "clicks": 6,
+      "impressions": 112,
+      "urls": [
+        "https://www.ilovetimers.com/retro-flip-clock/",
+        "https://www.ilovetimers.com/retro-flip-clock"
+      ]
+    },
+    "/guides/unix-timestamps-seconds-milliseconds-microseconds": {
+      "clicks": 6,
+      "impressions": 1333,
+      "urls": [
+        "https://www.ilovetimers.com/guides/unix-timestamps-seconds-milliseconds-microseconds/",
+        "https://www.ilovetimers.com/guides/unix-timestamps-seconds-milliseconds-microseconds"
+      ]
+    },
+    "/sleep-timer": {
+      "clicks": 6,
+      "impressions": 204,
+      "urls": [
+        "https://www.ilovetimers.com/sleep-timer",
+        "https://www.ilovetimers.com/sleep-timer/"
+      ]
+    },
+    "/week-number-calculator": {
+      "clicks": 6,
+      "impressions": 722,
+      "urls": [
+        "https://www.ilovetimers.com/week-number-calculator",
+        "https://www.ilovetimers.com/week-number-calculator/"
+      ]
+    },
+    "/analog-clock-with-second-hand": {
+      "clicks": 5,
+      "impressions": 345,
+      "urls": [
+        "https://www.ilovetimers.com/analog-clock-with-second-hand"
+      ]
+    },
+    "/debt-clock": {
+      "clicks": 5,
+      "impressions": 266,
+      "urls": [
+        "https://www.ilovetimers.com/debt-clock"
+      ]
+    },
+    "/days-until-calculator": {
+      "clicks": 5,
+      "impressions": 3709,
+      "urls": [
+        "https://www.ilovetimers.com/days-until-calculator/",
+        "https://www.ilovetimers.com/days-until-calculator"
+      ]
+    },
+    "/sunrise-sunset-clock": {
+      "clicks": 5,
+      "impressions": 629,
+      "urls": [
+        "https://www.ilovetimers.com/sunrise-sunset-clock",
+        "https://www.ilovetimers.com/sunrise-sunset-clock/"
+      ]
+    },
+    "/online-timer": {
+      "clicks": 5,
+      "impressions": 243,
+      "urls": [
+        "https://www.ilovetimers.com/online-timer",
+        "https://www.ilovetimers.com/online-timer/"
+      ]
+    },
+    "/world-clock-with-seconds": {
+      "clicks": 4,
+      "impressions": 871,
+      "urls": [
+        "https://www.ilovetimers.com/world-clock-with-seconds"
+      ]
+    },
+    "/boxing-timer": {
+      "clicks": 4,
+      "impressions": 261,
+      "urls": [
+        "https://www.ilovetimers.com/boxing-timer"
+      ]
+    },
+    "/debt-repayment-timer": {
+      "clicks": 4,
+      "impressions": 86,
+      "urls": [
+        "https://www.ilovetimers.com/debt-repayment-timer"
+      ]
+    },
+    "/cooking-timer": {
+      "clicks": 3,
+      "impressions": 143,
+      "urls": [
+        "https://www.ilovetimers.com/cooking-timer"
+      ]
+    },
+    "/workdays-calculator": {
+      "clicks": 3,
+      "impressions": 155,
+      "urls": [
+        "https://www.ilovetimers.com/workdays-calculator",
+        "https://www.ilovetimers.com/workdays-calculator/"
+      ]
+    },
+    "/time-zone-meeting-planner": {
+      "clicks": 3,
+      "impressions": 5869,
+      "urls": [
+        "https://www.ilovetimers.com/time-zone-meeting-planner/",
+        "https://www.ilovetimers.com/time-zone-meeting-planner"
+      ]
+    },
+    "/event-countdown": {
+      "clicks": 3,
+      "impressions": 428,
+      "urls": [
+        "https://www.ilovetimers.com/event-countdown",
+        "https://www.ilovetimers.com/event-countdown/"
+      ]
+    },
+    "/world-clock": {
+      "clicks": 3,
+      "impressions": 245,
+      "urls": [
+        "https://www.ilovetimers.com/world-clock",
+        "https://www.ilovetimers.com/world-clock/"
+      ]
+    },
+    "/reaction-time-test": {
+      "clicks": 3,
+      "impressions": 222,
+      "urls": [
+        "https://www.ilovetimers.com/reaction-time-test/",
+        "https://www.ilovetimers.com/reaction-time-test"
+      ]
+    },
+    "/business-days-calculator": {
+      "clicks": 2,
+      "impressions": 1825,
+      "urls": [
+        "https://www.ilovetimers.com/business-days-calculator/",
+        "https://www.ilovetimers.com/business-days-calculator"
+      ]
+    },
+    "/big-digital-clock": {
+      "clicks": 2,
+      "impressions": 661,
+      "urls": [
+        "https://www.ilovetimers.com/big-digital-clock"
+      ]
+    },
+    "/1-minute-timer": {
+      "clicks": 2,
+      "impressions": 339,
+      "urls": [
+        "https://www.ilovetimers.com/1-minute-timer"
+      ]
+    },
+    "/meeting-agenda-timer": {
+      "clicks": 2,
+      "impressions": 697,
+      "urls": [
+        "https://www.ilovetimers.com/meeting-agenda-timer",
+        "https://www.ilovetimers.com/meeting-agenda-timer/"
+      ]
+    },
+    "/15-minute-timer": {
+      "clicks": 2,
+      "impressions": 317,
+      "urls": [
+        "https://www.ilovetimers.com/15-minute-timer"
+      ]
+    },
+    "/5-minute-timer": {
+      "clicks": 2,
+      "impressions": 315,
+      "urls": [
+        "https://www.ilovetimers.com/5-minute-timer"
+      ]
+    },
+    "/golden-hour-clock": {
+      "clicks": 2,
+      "impressions": 314,
+      "urls": [
+        "https://www.ilovetimers.com/golden-hour-clock"
+      ]
+    },
+    "/round-timer": {
+      "clicks": 2,
+      "impressions": 389,
+      "urls": [
+        "https://www.ilovetimers.com/round-timer/",
+        "https://www.ilovetimers.com/round-timer"
+      ]
+    },
+    "/exam-timer": {
+      "clicks": 2,
+      "impressions": 48,
+      "urls": [
+        "https://www.ilovetimers.com/exam-timer",
+        "https://www.ilovetimers.com/exam-timer/"
+      ]
+    },
+    "/timer-stopwatch": {
+      "clicks": 2,
+      "impressions": 86,
+      "urls": [
+        "https://www.ilovetimers.com/timer-stopwatch/",
+        "https://www.ilovetimers.com/timer-stopwatch"
+      ]
+    },
+    "/egg-timer": {
+      "clicks": 2,
+      "impressions": 106,
+      "urls": [
+        "https://www.ilovetimers.com/egg-timer/",
+        "https://www.ilovetimers.com/egg-timer"
+      ]
+    },
+    "/30-minute-timer": {
+      "clicks": 1,
+      "impressions": 1194,
+      "urls": [
+        "https://www.ilovetimers.com/30-minute-timer"
+      ]
+    },
+    "/meeting-timer": {
+      "clicks": 1,
+      "impressions": 413,
+      "urls": [
+        "https://www.ilovetimers.com/meeting-timer"
+      ]
+    },
+    "/guides/browser-timers-background-tabs": {
+      "clicks": 1,
+      "impressions": 361,
+      "urls": [
+        "https://www.ilovetimers.com/guides/browser-timers-background-tabs/",
+        "https://www.ilovetimers.com/guides/browser-timers-background-tabs"
+      ]
+    },
+    "/about": {
+      "clicks": 1,
+      "impressions": 364,
+      "urls": [
+        "https://www.ilovetimers.com/about",
+        "https://www.ilovetimers.com/about/"
+      ]
+    },
+    "/emom-timer": {
+      "clicks": 1,
+      "impressions": 210,
+      "urls": [
+        "https://www.ilovetimers.com/emom-timer/",
+        "https://www.ilovetimers.com/emom-timer"
+      ]
+    },
+    "/moon-phase-clock": {
+      "clicks": 1,
+      "impressions": 95,
+      "urls": [
+        "https://www.ilovetimers.com/moon-phase-clock"
+      ]
+    },
+    "/guides/daylight-saving-time-zone-conversions": {
+      "clicks": 1,
+      "impressions": 79,
+      "urls": [
+        "https://www.ilovetimers.com/guides/daylight-saving-time-zone-conversions/",
+        "https://www.ilovetimers.com/guides/daylight-saving-time-zone-conversions"
+      ]
+    },
+    "/age-calculator": {
+      "clicks": 1,
+      "impressions": 4792,
+      "urls": [
+        "https://www.ilovetimers.com/age-calculator",
+        "https://www.ilovetimers.com/age-calculator/"
+      ]
+    },
+    "/author/suhas-sunder": {
+      "clicks": 1,
+      "impressions": 38,
+      "urls": [
+        "https://www.ilovetimers.com/author/suhas-sunder/",
+        "https://www.ilovetimers.com/author/suhas-sunder"
+      ]
+    },
+    "/guides/how-browser-timers-measure-time": {
+      "clicks": 1,
+      "impressions": 308,
+      "urls": [
+        "https://www.ilovetimers.com/guides/how-browser-timers-measure-time",
+        "https://www.ilovetimers.com/guides/how-browser-timers-measure-time/"
+      ]
+    },
+    "/breathing-timer": {
+      "clicks": 1,
+      "impressions": 142,
+      "urls": [
+        "https://www.ilovetimers.com/breathing-timer/",
+        "https://www.ilovetimers.com/breathing-timer"
+      ]
+    },
+    "/meditation-timer": {
+      "clicks": 1,
+      "impressions": 2,
+      "urls": [
+        "https://www.ilovetimers.com/meditation-timer"
+      ]
+    },
+    "/ilovetimers.com/military-time-clock": {
+      "clicks": 1,
+      "impressions": 3,
+      "urls": [
+        "https://www.ilovetimers.com/ilovetimers.com/military-time-clock",
+        "https://www.ilovetimers.com/ilovetimers.com/military-time-clock/"
+      ]
+    },
+    "/military-time-converter": {
+      "clicks": 0,
+      "impressions": 10100,
+      "urls": [
+        "https://www.ilovetimers.com/military-time-converter",
+        "https://www.ilovetimers.com/military-time-converter/"
+      ]
+    },
+    "/10-minute-timer": {
+      "clicks": 0,
+      "impressions": 353,
+      "urls": [
+        "https://www.ilovetimers.com/10-minute-timer"
+      ]
+    },
+    "/guides/browser-timer-alarm-silent": {
+      "clicks": 0,
+      "impressions": 582,
+      "urls": [
+        "https://www.ilovetimers.com/guides/browser-timer-alarm-silent",
+        "https://www.ilovetimers.com/guides/browser-timer-alarm-silent/"
+      ]
+    },
+    "/guides/browser-storage": {
+      "clicks": 0,
+      "impressions": 371,
+      "urls": [
+        "https://www.ilovetimers.com/guides/browser-storage/",
+        "https://www.ilovetimers.com/guides/browser-storage"
+      ]
+    },
+    "/weekly-timesheet-calculator": {
+      "clicks": 0,
+      "impressions": 498,
+      "urls": [
+        "https://www.ilovetimers.com/weekly-timesheet-calculator",
+        "https://www.ilovetimers.com/weekly-timesheet-calculator/"
+      ]
+    },
+    "/focus-session-timer": {
+      "clicks": 0,
+      "impressions": 85,
+      "urls": [
+        "https://www.ilovetimers.com/focus-session-timer"
+      ]
+    },
+    "/sitemap": {
+      "clicks": 0,
+      "impressions": 68,
+      "urls": [
+        "https://www.ilovetimers.com/sitemap"
+      ]
+    },
+    "/lab-timer": {
+      "clicks": 0,
+      "impressions": 89,
+      "urls": [
+        "https://www.ilovetimers.com/lab-timer",
+        "https://www.ilovetimers.com/lab-timer/"
+      ]
+    },
+    "/how-ilovetimers-is-made": {
+      "clicks": 0,
+      "impressions": 43,
+      "urls": [
+        "https://www.ilovetimers.com/how-ilovetimers-is-made",
+        "https://www.ilovetimers.com/how-ilovetimers-is-made/"
+      ]
+    },
+    "/guides": {
+      "clicks": 0,
+      "impressions": 60,
+      "urls": [
+        "https://www.ilovetimers.com/guides",
+        "https://www.ilovetimers.com/guides/"
+      ]
+    },
+    "/pomodoro-timer": {
+      "clicks": 0,
+      "impressions": 50,
+      "urls": [
+        "https://www.ilovetimers.com/pomodoro-timer",
+        "https://www.ilovetimers.com/pomodoro-timer/"
+      ]
+    },
+    "/classroom-timer": {
+      "clicks": 0,
+      "impressions": 22,
+      "urls": [
+        "https://www.ilovetimers.com/classroom-timer",
+        "https://www.ilovetimers.com/classroom-timer/"
+      ]
+    },
+    "/contact": {
+      "clicks": 0,
+      "impressions": 23,
+      "urls": [
+        "https://www.ilovetimers.com/contact/",
+        "https://www.ilovetimers.com/contact"
+      ]
+    },
+    "/copyright": {
+      "clicks": 0,
+      "impressions": 25,
+      "urls": [
+        "https://www.ilovetimers.com/copyright",
+        "https://www.ilovetimers.com/copyright/"
+      ]
+    },
+    "/ilovetimers.com/utc-clock": {
+      "clicks": 0,
+      "impressions": 3,
+      "urls": [
+        "https://www.ilovetimers.com/ilovetimers.com/utc-clock/"
+      ]
+    },
+    "/ilovetimers.com/analog-clock": {
+      "clicks": 0,
+      "impressions": 3,
+      "urls": [
+        "https://www.ilovetimers.com/ilovetimers.com/analog-clock",
+        "https://www.ilovetimers.com/ilovetimers.com/analog-clock/"
+      ]
+    },
+    "/ilovetimers.com/millisecond-timer": {
+      "clicks": 0,
+      "impressions": 2,
+      "urls": [
+        "https://www.ilovetimers.com/ilovetimers.com/millisecond-timer"
+      ]
+    },
+    "/binary-token": {
+      "clicks": 0,
+      "impressions": 1,
+      "urls": [
+        "https://www.ilovetimers.com/binary-token/"
+      ]
+    },
+    "/clock-with-Milliseconds": {
+      "clicks": 0,
+      "impressions": 1,
+      "urls": [
+        "https://www.ilovetimers.com/clock-with-Milliseconds/"
+      ]
+    },
+    "/html/military-time-clock.html": {
+      "clicks": 0,
+      "impressions": 1,
+      "urls": [
+        "https://www.ilovetimers.com/html/military-time-clock.html"
+      ]
+    },
+    "/ill-timer": {
+      "clicks": 0,
+      "impressions": 1,
+      "urls": [
+        "https://www.ilovetimers.com/ill-timer"
+      ]
+    },
+    "/military-type-clock": {
+      "clicks": 0,
+      "impressions": 1,
+      "urls": [
+        "https://www.ilovetimers.com/military-type-clock"
+      ]
+    },
+    "/utc-xl-clock": {
+      "clicks": 0,
+      "impressions": 1,
+      "urls": [
+        "https://www.ilovetimers.com/utc-xl-clock/"
+      ]
+    },
+    "/v/utc-clock": {
+      "clicks": 0,
+      "impressions": 1,
+      "urls": [
+        "https://www.ilovetimers.com/v/utc-clock/"
+      ]
+    },
+    "/stopwatch/st.php": {
+      "clicks": 0,
+      "impressions": 1,
+      "urls": [
+        "https://www.ilovetimers.com/stopwatch/st.php"
+      ]
+    },
+    "/utc-cohort": {
+      "clicks": 0,
+      "impressions": 1,
+      "urls": [
+        "https://www.ilovetimers.com/utc-cohort/"
+      ]
+    }
+  },
+  "countries": [
+    {
+      "Country": "United States",
+      "Clicks": "5558",
+      "Impressions": "290363",
+      "CTR": "1.91%",
+      "Position": "14.46"
+    },
+    {
+      "Country": "India",
+      "Clicks": "958",
+      "Impressions": "36562",
+      "CTR": "2.62%",
+      "Position": "11.8"
+    },
+    {
+      "Country": "United Kingdom",
+      "Clicks": "873",
+      "Impressions": "62993",
+      "CTR": "1.39%",
+      "Position": "11.58"
+    },
+    {
+      "Country": "Canada",
+      "Clicks": "687",
+      "Impressions": "34684",
+      "CTR": "1.98%",
+      "Position": "11.78"
+    },
+    {
+      "Country": "Australia",
+      "Clicks": "600",
+      "Impressions": "31444",
+      "CTR": "1.91%",
+      "Position": "10.97"
+    },
+    {
+      "Country": "Philippines",
+      "Clicks": "506",
+      "Impressions": "22959",
+      "CTR": "2.2%",
+      "Position": "14.05"
+    },
+    {
+      "Country": "Indonesia",
+      "Clicks": "408",
+      "Impressions": "14413",
+      "CTR": "2.83%",
+      "Position": "12.29"
+    },
+    {
+      "Country": "Germany",
+      "Clicks": "227",
+      "Impressions": "12568",
+      "CTR": "1.81%",
+      "Position": "10.16"
+    },
+    {
+      "Country": "Malaysia",
+      "Clicks": "186",
+      "Impressions": "7949",
+      "CTR": "2.34%",
+      "Position": "13.75"
+    },
+    {
+      "Country": "Singapore",
+      "Clicks": "153",
+      "Impressions": "7702",
+      "CTR": "1.99%",
+      "Position": "9.66"
+    },
+    {
+      "Country": "Netherlands",
+      "Clicks": "145",
+      "Impressions": "10666",
+      "CTR": "1.36%",
+      "Position": "10.91"
+    },
+    {
+      "Country": "Spain",
+      "Clicks": "136",
+      "Impressions": "6486",
+      "CTR": "2.1%",
+      "Position": "12.47"
+    },
+    {
+      "Country": "New Zealand",
+      "Clicks": "136",
+      "Impressions": "6244",
+      "CTR": "2.18%",
+      "Position": "11.78"
+    },
+    {
+      "Country": "Brazil",
+      "Clicks": "133",
+      "Impressions": "6008",
+      "CTR": "2.21%",
+      "Position": "10.56"
+    },
+    {
+      "Country": "Poland",
+      "Clicks": "129",
+      "Impressions": "4580",
+      "CTR": "2.82%",
+      "Position": "9.89"
+    },
+    {
+      "Country": "United Arab Emirates",
+      "Clicks": "127",
+      "Impressions": "4944",
+      "CTR": "2.57%",
+      "Position": "10.8"
+    },
+    {
+      "Country": "France",
+      "Clicks": "118",
+      "Impressions": "5185",
+      "CTR": "2.28%",
+      "Position": "14.15"
+    },
+    {
+      "Country": "Pakistan",
+      "Clicks": "117",
+      "Impressions": "6903",
+      "CTR": "1.69%",
+      "Position": "12.58"
+    },
+    {
+      "Country": "Sweden",
+      "Clicks": "117",
+      "Impressions": "5004",
+      "CTR": "2.34%",
+      "Position": "9.64"
+    },
+    {
+      "Country": "Montenegro",
+      "Clicks": "116",
+      "Impressions": "320",
+      "CTR": "36.25%",
+      "Position": "13.87"
+    },
+    {
+      "Country": "Vietnam",
+      "Clicks": "115",
+      "Impressions": "8654",
+      "CTR": "1.33%",
+      "Position": "20.74"
+    },
+    {
+      "Country": "Italy",
+      "Clicks": "113",
+      "Impressions": "4432",
+      "CTR": "2.55%",
+      "Position": "12.76"
+    },
+    {
+      "Country": "Thailand",
+      "Clicks": "101",
+      "Impressions": "5620",
+      "CTR": "1.8%",
+      "Position": "14.99"
+    },
+    {
+      "Country": "Ukraine",
+      "Clicks": "93",
+      "Impressions": "3505",
+      "CTR": "2.65%",
+      "Position": "13.05"
+    },
+    {
+      "Country": "Russia",
+      "Clicks": "86",
+      "Impressions": "3882",
+      "CTR": "2.22%",
+      "Position": "16.36"
+    },
+    {
+      "Country": "Hong Kong",
+      "Clicks": "84",
+      "Impressions": "3784",
+      "CTR": "2.22%",
+      "Position": "9.23"
+    },
+    {
+      "Country": "Ireland",
+      "Clicks": "77",
+      "Impressions": "6994",
+      "CTR": "1.1%",
+      "Position": "10.19"
+    },
+    {
+      "Country": "South Korea",
+      "Clicks": "76",
+      "Impressions": "3020",
+      "CTR": "2.52%",
+      "Position": "8.75"
+    },
+    {
+      "Country": "Bangladesh",
+      "Clicks": "75",
+      "Impressions": "3899",
+      "CTR": "1.92%",
+      "Position": "20.25"
+    },
+    {
+      "Country": "Israel",
+      "Clicks": "75",
+      "Impressions": "3467",
+      "CTR": "2.16%",
+      "Position": "12.74"
+    },
+    {
+      "Country": "Turkey",
+      "Clicks": "68",
+      "Impressions": "3365",
+      "CTR": "2.02%",
+      "Position": "21.59"
+    },
+    {
+      "Country": "Romania",
+      "Clicks": "61",
+      "Impressions": "2434",
+      "CTR": "2.51%",
+      "Position": "10.35"
+    },
+    {
+      "Country": "Japan",
+      "Clicks": "58",
+      "Impressions": "2941",
+      "CTR": "1.97%",
+      "Position": "9.78"
+    },
+    {
+      "Country": "Belgium",
+      "Clicks": "55",
+      "Impressions": "3161",
+      "CTR": "1.74%",
+      "Position": "9.48"
+    },
+    {
+      "Country": "Egypt",
+      "Clicks": "54",
+      "Impressions": "2933",
+      "CTR": "1.84%",
+      "Position": "11.98"
+    },
+    {
+      "Country": "Iran",
+      "Clicks": "53",
+      "Impressions": "1680",
+      "CTR": "3.15%",
+      "Position": "8.21"
+    },
+    {
+      "Country": "Denmark",
+      "Clicks": "48",
+      "Impressions": "2948",
+      "CTR": "1.63%",
+      "Position": "9.54"
+    },
+    {
+      "Country": "South Africa",
+      "Clicks": "47",
+      "Impressions": "3996",
+      "CTR": "1.18%",
+      "Position": "11.87"
+    },
+    {
+      "Country": "Saudi Arabia",
+      "Clicks": "47",
+      "Impressions": "3670",
+      "CTR": "1.28%",
+      "Position": "14.58"
+    },
+    {
+      "Country": "Mexico",
+      "Clicks": "45",
+      "Impressions": "5042",
+      "CTR": "0.89%",
+      "Position": "15"
+    },
+    {
+      "Country": "Finland",
+      "Clicks": "44",
+      "Impressions": "3474",
+      "CTR": "1.27%",
+      "Position": "8.75"
+    },
+    {
+      "Country": "Norway",
+      "Clicks": "43",
+      "Impressions": "3378",
+      "CTR": "1.27%",
+      "Position": "10.54"
+    },
+    {
+      "Country": "Morocco",
+      "Clicks": "43",
+      "Impressions": "2177",
+      "CTR": "1.98%",
+      "Position": "20.35"
+    },
+    {
+      "Country": "Slovenia",
+      "Clicks": "42",
+      "Impressions": "761",
+      "CTR": "5.52%",
+      "Position": "12.68"
+    },
+    {
+      "Country": "Switzerland",
+      "Clicks": "40",
+      "Impressions": "2517",
+      "CTR": "1.59%",
+      "Position": "10.82"
+    },
+    {
+      "Country": "Portugal",
+      "Clicks": "40",
+      "Impressions": "2200",
+      "CTR": "1.82%",
+      "Position": "9.17"
+    },
+    {
+      "Country": "Hungary",
+      "Clicks": "40",
+      "Impressions": "1604",
+      "CTR": "2.49%",
+      "Position": "10.6"
+    },
+    {
+      "Country": "Greece",
+      "Clicks": "36",
+      "Impressions": "2189",
+      "CTR": "1.64%",
+      "Position": "9.82"
+    },
+    {
+      "Country": "Czechia",
+      "Clicks": "36",
+      "Impressions": "1611",
+      "CTR": "2.23%",
+      "Position": "9.13"
+    },
+    {
+      "Country": "Peru",
+      "Clicks": "33",
+      "Impressions": "653",
+      "CTR": "5.05%",
+      "Position": "9.72"
+    },
+    {
+      "Country": "Sri Lanka",
+      "Clicks": "31",
+      "Impressions": "2322",
+      "CTR": "1.34%",
+      "Position": "9.62"
+    },
+    {
+      "Country": "Puerto Rico",
+      "Clicks": "31",
+      "Impressions": "637",
+      "CTR": "4.87%",
+      "Position": "9.7"
+    },
+    {
+      "Country": "Austria",
+      "Clicks": "30",
+      "Impressions": "1985",
+      "CTR": "1.51%",
+      "Position": "8.97"
+    },
+    {
+      "Country": "Nigeria",
+      "Clicks": "28",
+      "Impressions": "1902",
+      "CTR": "1.47%",
+      "Position": "9.97"
+    },
+    {
+      "Country": "Bulgaria",
+      "Clicks": "23",
+      "Impressions": "1529",
+      "CTR": "1.5%",
+      "Position": "9.25"
+    },
+    {
+      "Country": "Nepal",
+      "Clicks": "23",
+      "Impressions": "1421",
+      "CTR": "1.62%",
+      "Position": "9.51"
+    },
+    {
+      "Country": "Lithuania",
+      "Clicks": "23",
+      "Impressions": "1229",
+      "CTR": "1.87%",
+      "Position": "9.25"
+    },
+    {
+      "Country": "Uzbekistan",
+      "Clicks": "23",
+      "Impressions": "607",
+      "CTR": "3.79%",
+      "Position": "8.42"
+    },
+    {
+      "Country": "Kazakhstan",
+      "Clicks": "23",
+      "Impressions": "595",
+      "CTR": "3.87%",
+      "Position": "10.03"
+    },
+    {
+      "Country": "Argentina",
+      "Clicks": "21",
+      "Impressions": "1339",
+      "CTR": "1.57%",
+      "Position": "12.02"
+    },
+    {
+      "Country": "Chile",
+      "Clicks": "21",
+      "Impressions": "747",
+      "CTR": "2.81%",
+      "Position": "11.35"
+    },
+    {
+      "Country": "Taiwan",
+      "Clicks": "20",
+      "Impressions": "1123",
+      "CTR": "1.78%",
+      "Position": "8.84"
+    },
+    {
+      "Country": "Colombia",
+      "Clicks": "19",
+      "Impressions": "1076",
+      "CTR": "1.77%",
+      "Position": "15.37"
+    },
+    {
+      "Country": "Kenya",
+      "Clicks": "17",
+      "Impressions": "1345",
+      "CTR": "1.26%",
+      "Position": "10.79"
+    },
+    {
+      "Country": "Tunisia",
+      "Clicks": "17",
+      "Impressions": "524",
+      "CTR": "3.24%",
+      "Position": "9.64"
+    },
+    {
+      "Country": "Estonia",
+      "Clicks": "16",
+      "Impressions": "1149",
+      "CTR": "1.39%",
+      "Position": "9"
+    },
+    {
+      "Country": "Serbia",
+      "Clicks": "15",
+      "Impressions": "1431",
+      "CTR": "1.05%",
+      "Position": "9.19"
+    },
+    {
+      "Country": "Qatar",
+      "Clicks": "15",
+      "Impressions": "999",
+      "CTR": "1.5%",
+      "Position": "10.21"
+    },
+    {
+      "Country": "Slovakia",
+      "Clicks": "13",
+      "Impressions": "786",
+      "CTR": "1.65%",
+      "Position": "8.99"
+    },
+    {
+      "Country": "Trinidad & Tobago",
+      "Clicks": "13",
+      "Impressions": "785",
+      "CTR": "1.66%",
+      "Position": "11.33"
+    },
+    {
+      "Country": "China",
+      "Clicks": "13",
+      "Impressions": "781",
+      "CTR": "1.66%",
+      "Position": "8.99"
+    },
+    {
+      "Country": "Costa Rica",
+      "Clicks": "13",
+      "Impressions": "486",
+      "CTR": "2.67%",
+      "Position": "11.16"
+    },
+    {
+      "Country": "Mongolia",
+      "Clicks": "13",
+      "Impressions": "350",
+      "CTR": "3.71%",
+      "Position": "10.53"
+    },
+    {
+      "Country": "Cambodia",
+      "Clicks": "12",
+      "Impressions": "544",
+      "CTR": "2.21%",
+      "Position": "11.85"
+    },
+    {
+      "Country": "Myanmar (Burma)",
+      "Clicks": "12",
+      "Impressions": "386",
+      "CTR": "3.11%",
+      "Position": "11.67"
+    },
+    {
+      "Country": "Croatia",
+      "Clicks": "11",
+      "Impressions": "1072",
+      "CTR": "1.03%",
+      "Position": "9.55"
+    },
+    {
+      "Country": "Iceland",
+      "Clicks": "11",
+      "Impressions": "430",
+      "CTR": "2.56%",
+      "Position": "9.94"
+    },
+    {
+      "Country": "Iraq",
+      "Clicks": "10",
+      "Impressions": "903",
+      "CTR": "1.11%",
+      "Position": "14.04"
+    },
+    {
+      "Country": "Cyprus",
+      "Clicks": "10",
+      "Impressions": "879",
+      "CTR": "1.14%",
+      "Position": "10.16"
+    },
+    {
+      "Country": "Botswana",
+      "Clicks": "10",
+      "Impressions": "226",
+      "CTR": "4.42%",
+      "Position": "10.46"
+    },
+    {
+      "Country": "Georgia",
+      "Clicks": "9",
+      "Impressions": "766",
+      "CTR": "1.17%",
+      "Position": "9.54"
+    },
+    {
+      "Country": "Oman",
+      "Clicks": "9",
+      "Impressions": "611",
+      "CTR": "1.47%",
+      "Position": "10.19"
+    },
+    {
+      "Country": "Brunei",
+      "Clicks": "8",
+      "Impressions": "352",
+      "CTR": "2.27%",
+      "Position": "9.7"
+    },
+    {
+      "Country": "Algeria",
+      "Clicks": "7",
+      "Impressions": "1096",
+      "CTR": "0.64%",
+      "Position": "22.74"
+    },
+    {
+      "Country": "Kuwait",
+      "Clicks": "7",
+      "Impressions": "683",
+      "CTR": "1.02%",
+      "Position": "10.04"
+    },
+    {
+      "Country": "Ghana",
+      "Clicks": "7",
+      "Impressions": "567",
+      "CTR": "1.23%",
+      "Position": "9.63"
+    },
+    {
+      "Country": "Venezuela",
+      "Clicks": "7",
+      "Impressions": "298",
+      "CTR": "2.35%",
+      "Position": "14.89"
+    },
+    {
+      "Country": "Azerbaijan",
+      "Clicks": "7",
+      "Impressions": "297",
+      "CTR": "2.36%",
+      "Position": "9.59"
+    },
+    {
+      "Country": "Lebanon",
+      "Clicks": "6",
+      "Impressions": "467",
+      "CTR": "1.28%",
+      "Position": "9.73"
+    },
+    {
+      "Country": "Dominican Republic",
+      "Clicks": "6",
+      "Impressions": "424",
+      "CTR": "1.42%",
+      "Position": "9.98"
+    },
+    {
+      "Country": "Macedonia",
+      "Clicks": "6",
+      "Impressions": "416",
+      "CTR": "1.44%",
+      "Position": "9.78"
+    },
+    {
+      "Country": "Kosovo",
+      "Clicks": "6",
+      "Impressions": "180",
+      "CTR": "3.33%",
+      "Position": "7.59"
+    },
+    {
+      "Country": "Uruguay",
+      "Clicks": "6",
+      "Impressions": "174",
+      "CTR": "3.45%",
+      "Position": "9.6"
+    },
+    {
+      "Country": "Libya",
+      "Clicks": "6",
+      "Impressions": "86",
+      "CTR": "6.98%",
+      "Position": "12.16"
+    },
+    {
+      "Country": "Jordan",
+      "Clicks": "5",
+      "Impressions": "1222",
+      "CTR": "0.41%",
+      "Position": "19.44"
+    },
+    {
+      "Country": "Jamaica",
+      "Clicks": "5",
+      "Impressions": "910",
+      "CTR": "0.55%",
+      "Position": "11.39"
+    },
+    {
+      "Country": "Ecuador",
+      "Clicks": "5",
+      "Impressions": "424",
+      "CTR": "1.18%",
+      "Position": "14.12"
+    },
+    {
+      "Country": "Maldives",
+      "Clicks": "5",
+      "Impressions": "422",
+      "CTR": "1.18%",
+      "Position": "9.13"
+    },
+    {
+      "Country": "Moldova",
+      "Clicks": "5",
+      "Impressions": "406",
+      "CTR": "1.23%",
+      "Position": "9.57"
+    },
+    {
+      "Country": "Luxembourg",
+      "Clicks": "5",
+      "Impressions": "338",
+      "CTR": "1.48%",
+      "Position": "10.29"
+    },
+    {
+      "Country": "Albania",
+      "Clicks": "5",
+      "Impressions": "309",
+      "CTR": "1.62%",
+      "Position": "10.39"
+    },
+    {
+      "Country": "Guyana",
+      "Clicks": "5",
+      "Impressions": "218",
+      "CTR": "2.29%",
+      "Position": "10.84"
+    },
+    {
+      "Country": "Paraguay",
+      "Clicks": "5",
+      "Impressions": "164",
+      "CTR": "3.05%",
+      "Position": "12.94"
+    },
+    {
+      "Country": "Bahrain",
+      "Clicks": "4",
+      "Impressions": "581",
+      "CTR": "0.69%",
+      "Position": "10.16"
+    },
+    {
+      "Country": "Ethiopia",
+      "Clicks": "4",
+      "Impressions": "511",
+      "CTR": "0.78%",
+      "Position": "10.08"
+    },
+    {
+      "Country": "Armenia",
+      "Clicks": "4",
+      "Impressions": "453",
+      "CTR": "0.88%",
+      "Position": "9.42"
+    },
+    {
+      "Country": "Bosnia & Herzegovina",
+      "Clicks": "4",
+      "Impressions": "374",
+      "CTR": "1.07%",
+      "Position": "10.14"
+    },
+    {
+      "Country": "Belarus",
+      "Clicks": "4",
+      "Impressions": "312",
+      "CTR": "1.28%",
+      "Position": "9.45"
+    },
+    {
+      "Country": "Panama",
+      "Clicks": "4",
+      "Impressions": "251",
+      "CTR": "1.59%",
+      "Position": "10.97"
+    },
+    {
+      "Country": "Barbados",
+      "Clicks": "4",
+      "Impressions": "232",
+      "CTR": "1.72%",
+      "Position": "8.45"
+    },
+    {
+      "Country": "Malta",
+      "Clicks": "3",
+      "Impressions": "713",
+      "CTR": "0.42%",
+      "Position": "9.35"
+    },
+    {
+      "Country": "Zimbabwe",
+      "Clicks": "3",
+      "Impressions": "407",
+      "CTR": "0.74%",
+      "Position": "9.12"
+    },
+    {
+      "Country": "Mauritius",
+      "Clicks": "3",
+      "Impressions": "364",
+      "CTR": "0.82%",
+      "Position": "10.96"
+    },
+    {
+      "Country": "Syria",
+      "Clicks": "3",
+      "Impressions": "245",
+      "CTR": "1.22%",
+      "Position": "7.8"
+    },
+    {
+      "Country": "El Salvador",
+      "Clicks": "3",
+      "Impressions": "209",
+      "CTR": "1.44%",
+      "Position": "10.16"
+    },
+    {
+      "Country": "Belize",
+      "Clicks": "3",
+      "Impressions": "208",
+      "CTR": "1.44%",
+      "Position": "10.8"
+    },
+    {
+      "Country": "Guatemala",
+      "Clicks": "3",
+      "Impressions": "189",
+      "CTR": "1.59%",
+      "Position": "10.94"
+    },
+    {
+      "Country": "Fiji",
+      "Clicks": "3",
+      "Impressions": "179",
+      "CTR": "1.68%",
+      "Position": "9.59"
+    },
+    {
+      "Country": "Bolivia",
+      "Clicks": "3",
+      "Impressions": "154",
+      "CTR": "1.95%",
+      "Position": "11.03"
+    },
+    {
+      "Country": "Mozambique",
+      "Clicks": "3",
+      "Impressions": "62",
+      "CTR": "4.84%",
+      "Position": "8.47"
+    },
+    {
+      "Country": "Latvia",
+      "Clicks": "2",
+      "Impressions": "773",
+      "CTR": "0.26%",
+      "Position": "10.18"
+    },
+    {
+      "Country": "Tanzania",
+      "Clicks": "2",
+      "Impressions": "284",
+      "CTR": "0.7%",
+      "Position": "10.96"
+    },
+    {
+      "Country": "Honduras",
+      "Clicks": "2",
+      "Impressions": "169",
+      "CTR": "1.18%",
+      "Position": "10.69"
+    },
+    {
+      "Country": "Kyrgyzstan",
+      "Clicks": "2",
+      "Impressions": "153",
+      "CTR": "1.31%",
+      "Position": "8.37"
+    },
+    {
+      "Country": "Rwanda",
+      "Clicks": "2",
+      "Impressions": "150",
+      "CTR": "1.33%",
+      "Position": "10.25"
+    },
+    {
+      "Country": "Guam",
+      "Clicks": "2",
+      "Impressions": "137",
+      "CTR": "1.46%",
+      "Position": "8.18"
+    },
+    {
+      "Country": "St. Lucia",
+      "Clicks": "2",
+      "Impressions": "110",
+      "CTR": "1.82%",
+      "Position": "7.54"
+    },
+    {
+      "Country": "Angola",
+      "Clicks": "2",
+      "Impressions": "90",
+      "CTR": "2.22%",
+      "Position": "15.06"
+    },
+    {
+      "Country": "Cura\u00e7ao",
+      "Clicks": "2",
+      "Impressions": "82",
+      "CTR": "2.44%",
+      "Position": "8.01"
+    },
+    {
+      "Country": "Aruba",
+      "Clicks": "2",
+      "Impressions": "73",
+      "CTR": "2.74%",
+      "Position": "8.03"
+    },
+    {
+      "Country": "Yemen",
+      "Clicks": "2",
+      "Impressions": "68",
+      "CTR": "2.94%",
+      "Position": "8.46"
+    },
+    {
+      "Country": "Cayman Islands",
+      "Clicks": "2",
+      "Impressions": "68",
+      "CTR": "2.94%",
+      "Position": "8.53"
+    },
+    {
+      "Country": "Northern Mariana Islands",
+      "Clicks": "2",
+      "Impressions": "32",
+      "CTR": "6.25%",
+      "Position": "7.62"
+    },
+    {
+      "Country": "New Caledonia",
+      "Clicks": "2",
+      "Impressions": "27",
+      "CTR": "7.41%",
+      "Position": "7.04"
+    },
+    {
+      "Country": "Namibia",
+      "Clicks": "1",
+      "Impressions": "193",
+      "CTR": "0.52%",
+      "Position": "11.39"
+    },
+    {
+      "Country": "Afghanistan",
+      "Clicks": "1",
+      "Impressions": "160",
+      "CTR": "0.62%",
+      "Position": "11.39"
+    },
+    {
+      "Country": "Bhutan",
+      "Clicks": "1",
+      "Impressions": "141",
+      "CTR": "0.71%",
+      "Position": "7.9"
+    },
+    {
+      "Country": "Palestine",
+      "Clicks": "1",
+      "Impressions": "140",
+      "CTR": "0.71%",
+      "Position": "9.82"
+    },
+    {
+      "Country": "Unknown Region",
+      "Clicks": "1",
+      "Impressions": "117",
+      "CTR": "0.85%",
+      "Position": "8.43"
+    },
+    {
+      "Country": "Somalia",
+      "Clicks": "1",
+      "Impressions": "110",
+      "CTR": "0.91%",
+      "Position": "9.32"
+    },
+    {
+      "Country": "Malawi",
+      "Clicks": "1",
+      "Impressions": "92",
+      "CTR": "1.09%",
+      "Position": "8.79"
+    },
+    {
+      "Country": "Guernsey",
+      "Clicks": "1",
+      "Impressions": "79",
+      "CTR": "1.27%",
+      "Position": "7.99"
+    },
+    {
+      "Country": "Senegal",
+      "Clicks": "1",
+      "Impressions": "77",
+      "CTR": "1.3%",
+      "Position": "12.27"
+    },
+    {
+      "Country": "Antigua & Barbuda",
+      "Clicks": "1",
+      "Impressions": "65",
+      "CTR": "1.54%",
+      "Position": "8.54"
+    },
+    {
+      "Country": "C\u00f4te d\u2019Ivoire",
+      "Clicks": "1",
+      "Impressions": "46",
+      "CTR": "2.17%",
+      "Position": "11.78"
+    },
+    {
+      "Country": "Gambia",
+      "Clicks": "1",
+      "Impressions": "34",
+      "CTR": "2.94%",
+      "Position": "9.44"
+    },
+    {
+      "Country": "Haiti",
+      "Clicks": "1",
+      "Impressions": "28",
+      "CTR": "3.57%",
+      "Position": "19.86"
+    },
+    {
+      "Country": "American Samoa",
+      "Clicks": "1",
+      "Impressions": "24",
+      "CTR": "4.17%",
+      "Position": "8.33"
+    },
+    {
+      "Country": "Turkmenistan",
+      "Clicks": "1",
+      "Impressions": "22",
+      "CTR": "4.55%",
+      "Position": "10.86"
+    },
+    {
+      "Country": "Uganda",
+      "Clicks": "0",
+      "Impressions": "471",
+      "CTR": "0%",
+      "Position": "9.61"
+    },
+    {
+      "Country": "Bahamas",
+      "Clicks": "0",
+      "Impressions": "254",
+      "CTR": "0%",
+      "Position": "13.98"
+    },
+    {
+      "Country": "Zambia",
+      "Clicks": "0",
+      "Impressions": "213",
+      "CTR": "0%",
+      "Position": "9.75"
+    },
+    {
+      "Country": "Jersey",
+      "Clicks": "0",
+      "Impressions": "139",
+      "CTR": "0%",
+      "Position": "8.19"
+    },
+    {
+      "Country": "Isle of Man",
+      "Clicks": "0",
+      "Impressions": "139",
+      "CTR": "0%",
+      "Position": "8.24"
+    },
+    {
+      "Country": "Macau",
+      "Clicks": "0",
+      "Impressions": "127",
+      "CTR": "0%",
+      "Position": "8.05"
+    },
+    {
+      "Country": "Cameroon",
+      "Clicks": "0",
+      "Impressions": "107",
+      "CTR": "0%",
+      "Position": "10.13"
+    },
+    {
+      "Country": "Laos",
+      "Clicks": "0",
+      "Impressions": "100",
+      "CTR": "0%",
+      "Position": "8.76"
+    },
+    {
+      "Country": "Swaziland",
+      "Clicks": "0",
+      "Impressions": "84",
+      "CTR": "0%",
+      "Position": "6.9"
+    },
+    {
+      "Country": "Suriname",
+      "Clicks": "0",
+      "Impressions": "84",
+      "CTR": "0%",
+      "Position": "8.58"
+    },
+    {
+      "Country": "Grenada",
+      "Clicks": "0",
+      "Impressions": "82",
+      "CTR": "0%",
+      "Position": "8.15"
+    },
+    {
+      "Country": "Nicaragua",
+      "Clicks": "0",
+      "Impressions": "80",
+      "CTR": "0%",
+      "Position": "10.38"
+    },
+    {
+      "Country": "Papua New Guinea",
+      "Clicks": "0",
+      "Impressions": "73",
+      "CTR": "0%",
+      "Position": "9.05"
+    },
+    {
+      "Country": "St. Vincent & Grenadines",
+      "Clicks": "0",
+      "Impressions": "55",
+      "CTR": "0%",
+      "Position": "9.4"
+    },
+    {
+      "Country": "Congo - Kinshasa",
+      "Clicks": "0",
+      "Impressions": "55",
+      "CTR": "0%",
+      "Position": "10.69"
+    },
+    {
+      "Country": "US Virgin Islands",
+      "Clicks": "0",
+      "Impressions": "50",
+      "CTR": "0%",
+      "Position": "8.22"
+    },
+    {
+      "Country": "Madagascar",
+      "Clicks": "0",
+      "Impressions": "46",
+      "CTR": "0%",
+      "Position": "11.72"
+    },
+    {
+      "Country": "Lesotho",
+      "Clicks": "0",
+      "Impressions": "43",
+      "CTR": "0%",
+      "Position": "8.05"
+    },
+    {
+      "Country": "Gibraltar",
+      "Clicks": "0",
+      "Impressions": "42",
+      "CTR": "0%",
+      "Position": "8.12"
+    },
+    {
+      "Country": "Togo",
+      "Clicks": "0",
+      "Impressions": "41",
+      "CTR": "0%",
+      "Position": "15.22"
+    },
+    {
+      "Country": "Seychelles",
+      "Clicks": "0",
+      "Impressions": "39",
+      "CTR": "0%",
+      "Position": "8.36"
+    },
+    {
+      "Country": "St. Kitts & Nevis",
+      "Clicks": "0",
+      "Impressions": "39",
+      "CTR": "0%",
+      "Position": "8.38"
+    },
+    {
+      "Country": "South Sudan",
+      "Clicks": "0",
+      "Impressions": "36",
+      "CTR": "0%",
+      "Position": "8.25"
+    },
+    {
+      "Country": "Sint Maarten",
+      "Clicks": "0",
+      "Impressions": "34",
+      "CTR": "0%",
+      "Position": "8.24"
+    },
+    {
+      "Country": "Sierra Leone",
+      "Clicks": "0",
+      "Impressions": "34",
+      "CTR": "0%",
+      "Position": "8.32"
+    },
+    {
+      "Country": "Dominica",
+      "Clicks": "0",
+      "Impressions": "34",
+      "CTR": "0%",
+      "Position": "8.94"
+    },
+    {
+      "Country": "Bermuda",
+      "Clicks": "0",
+      "Impressions": "32",
+      "CTR": "0%",
+      "Position": "8.28"
+    },
+    {
+      "Country": "Sudan",
+      "Clicks": "0",
+      "Impressions": "32",
+      "CTR": "0%",
+      "Position": "9.12"
+    },
+    {
+      "Country": "Greenland",
+      "Clicks": "0",
+      "Impressions": "32",
+      "CTR": "0%",
+      "Position": "9.38"
+    },
+    {
+      "Country": "Benin",
+      "Clicks": "0",
+      "Impressions": "28",
+      "CTR": "0%",
+      "Position": "9.79"
+    },
+    {
+      "Country": "Liberia",
+      "Clicks": "0",
+      "Impressions": "27",
+      "CTR": "0%",
+      "Position": "7.74"
+    },
+    {
+      "Country": "Tajikistan",
+      "Clicks": "0",
+      "Impressions": "22",
+      "CTR": "0%",
+      "Position": "9.36"
+    },
+    {
+      "Country": "Cuba",
+      "Clicks": "0",
+      "Impressions": "20",
+      "CTR": "0%",
+      "Position": "8.8"
+    },
+    {
+      "Country": "Turks & Caicos Islands",
+      "Clicks": "0",
+      "Impressions": "19",
+      "CTR": "0%",
+      "Position": "7.68"
+    },
+    {
+      "Country": "Andorra",
+      "Clicks": "0",
+      "Impressions": "19",
+      "CTR": "0%",
+      "Position": "17.95"
+    },
+    {
+      "Country": "Vanuatu",
+      "Clicks": "0",
+      "Impressions": "18",
+      "CTR": "0%",
+      "Position": "8.83"
+    },
+    {
+      "Country": "Mauritania",
+      "Clicks": "0",
+      "Impressions": "18",
+      "CTR": "0%",
+      "Position": "10.67"
+    },
+    {
+      "Country": "Burkina Faso",
+      "Clicks": "0",
+      "Impressions": "18",
+      "CTR": "0%",
+      "Position": "15"
+    },
+    {
+      "Country": "Samoa",
+      "Clicks": "0",
+      "Impressions": "17",
+      "CTR": "0%",
+      "Position": "7.53"
+    },
+    {
+      "Country": "Caribbean Netherlands",
+      "Clicks": "0",
+      "Impressions": "16",
+      "CTR": "0%",
+      "Position": "8.31"
+    },
+    {
+      "Country": "Faroe Islands",
+      "Clicks": "0",
+      "Impressions": "15",
+      "CTR": "0%",
+      "Position": "8.53"
+    },
+    {
+      "Country": "Guinea",
+      "Clicks": "0",
+      "Impressions": "15",
+      "CTR": "0%",
+      "Position": "9.13"
+    },
+    {
+      "Country": "Gabon",
+      "Clicks": "0",
+      "Impressions": "14",
+      "CTR": "0%",
+      "Position": "13.14"
+    },
+    {
+      "Country": "Monaco",
+      "Clicks": "0",
+      "Impressions": "14",
+      "CTR": "0%",
+      "Position": "25.79"
+    },
+    {
+      "Country": "Congo - Brazzaville",
+      "Clicks": "0",
+      "Impressions": "13",
+      "CTR": "0%",
+      "Position": "13.62"
+    },
+    {
+      "Country": "Mali",
+      "Clicks": "0",
+      "Impressions": "13",
+      "CTR": "0%",
+      "Position": "26.54"
+    },
+    {
+      "Country": "British Virgin Islands",
+      "Clicks": "0",
+      "Impressions": "12",
+      "CTR": "0%",
+      "Position": "6.58"
+    },
+    {
+      "Country": "Palau",
+      "Clicks": "0",
+      "Impressions": "12",
+      "CTR": "0%",
+      "Position": "8"
+    },
+    {
+      "Country": "St. Martin",
+      "Clicks": "0",
+      "Impressions": "12",
+      "CTR": "0%",
+      "Position": "8.17"
+    },
+    {
+      "Country": "Liechtenstein",
+      "Clicks": "0",
+      "Impressions": "12",
+      "CTR": "0%",
+      "Position": "25.5"
+    },
+    {
+      "Country": "Solomon Islands",
+      "Clicks": "0",
+      "Impressions": "11",
+      "CTR": "0%",
+      "Position": "12.64"
+    },
+    {
+      "Country": "Cook Islands",
+      "Clicks": "0",
+      "Impressions": "10",
+      "CTR": "0%",
+      "Position": "8.4"
+    },
+    {
+      "Country": "Timor-Leste",
+      "Clicks": "0",
+      "Impressions": "10",
+      "CTR": "0%",
+      "Position": "9.1"
+    },
+    {
+      "Country": "R\u00e9union",
+      "Clicks": "0",
+      "Impressions": "10",
+      "CTR": "0%",
+      "Position": "9.8"
+    },
+    {
+      "Country": "Western Sahara",
+      "Clicks": "0",
+      "Impressions": "10",
+      "CTR": "0%",
+      "Position": "11"
+    },
+    {
+      "Country": "Cape Verde",
+      "Clicks": "0",
+      "Impressions": "10",
+      "CTR": "0%",
+      "Position": "16"
+    },
+    {
+      "Country": "Tonga",
+      "Clicks": "0",
+      "Impressions": "9",
+      "CTR": "0%",
+      "Position": "9"
+    },
+    {
+      "Country": "Niger",
+      "Clicks": "0",
+      "Impressions": "8",
+      "CTR": "0%",
+      "Position": "8.5"
+    },
+    {
+      "Country": "\u00c5land Islands",
+      "Clicks": "0",
+      "Impressions": "8",
+      "CTR": "0%",
+      "Position": "8.88"
+    },
+    {
+      "Country": "Djibouti",
+      "Clicks": "0",
+      "Impressions": "7",
+      "CTR": "0%",
+      "Position": "9.86"
+    },
+    {
+      "Country": "Burundi",
+      "Clicks": "0",
+      "Impressions": "7",
+      "CTR": "0%",
+      "Position": "12"
+    },
+    {
+      "Country": "Nauru",
+      "Clicks": "0",
+      "Impressions": "6",
+      "CTR": "0%",
+      "Position": "5.33"
+    },
+    {
+      "Country": "Marshall Islands",
+      "Clicks": "0",
+      "Impressions": "6",
+      "CTR": "0%",
+      "Position": "8.33"
+    },
+    {
+      "Country": "Guadeloupe",
+      "Clicks": "0",
+      "Impressions": "6",
+      "CTR": "0%",
+      "Position": "16"
+    },
+    {
+      "Country": "Martinique",
+      "Clicks": "0",
+      "Impressions": "6",
+      "CTR": "0%",
+      "Position": "20.33"
+    },
+    {
+      "Country": "Equatorial Guinea",
+      "Clicks": "0",
+      "Impressions": "5",
+      "CTR": "0%",
+      "Position": "7"
+    },
+    {
+      "Country": "San Marino",
+      "Clicks": "0",
+      "Impressions": "5",
+      "CTR": "0%",
+      "Position": "8.6"
+    },
+    {
+      "Country": "Micronesia",
+      "Clicks": "0",
+      "Impressions": "5",
+      "CTR": "0%",
+      "Position": "10"
+    },
+    {
+      "Country": "French Polynesia",
+      "Clicks": "0",
+      "Impressions": "4",
+      "CTR": "0%",
+      "Position": "9.25"
+    },
+    {
+      "Country": "Chad",
+      "Clicks": "0",
+      "Impressions": "4",
+      "CTR": "0%",
+      "Position": "15.75"
+    },
+    {
+      "Country": "Central African Republic",
+      "Clicks": "0",
+      "Impressions": "4",
+      "CTR": "0%",
+      "Position": "16.25"
+    },
+    {
+      "Country": "Anguilla",
+      "Clicks": "0",
+      "Impressions": "4",
+      "CTR": "0%",
+      "Position": "19"
+    },
+    {
+      "Country": "Tuvalu",
+      "Clicks": "0",
+      "Impressions": "3",
+      "CTR": "0%",
+      "Position": "8.33"
+    },
+    {
+      "Country": "S\u00e3o Tom\u00e9 & Pr\u00edncipe",
+      "Clicks": "0",
+      "Impressions": "3",
+      "CTR": "0%",
+      "Position": "10"
+    },
+    {
+      "Country": "Guinea-Bissau",
+      "Clicks": "0",
+      "Impressions": "3",
+      "CTR": "0%",
+      "Position": "11.33"
+    },
+    {
+      "Country": "Svalbard & Jan Mayen",
+      "Clicks": "0",
+      "Impressions": "2",
+      "CTR": "0%",
+      "Position": "5"
+    },
+    {
+      "Country": "Eritrea",
+      "Clicks": "0",
+      "Impressions": "2",
+      "CTR": "0%",
+      "Position": "8.5"
+    },
+    {
+      "Country": "St. Helena",
+      "Clicks": "0",
+      "Impressions": "2",
+      "CTR": "0%",
+      "Position": "9"
+    },
+    {
+      "Country": "Kiribati",
+      "Clicks": "0",
+      "Impressions": "2",
+      "CTR": "0%",
+      "Position": "38.5"
+    },
+    {
+      "Country": "Christmas Island",
+      "Clicks": "0",
+      "Impressions": "1",
+      "CTR": "0%",
+      "Position": "6"
+    },
+    {
+      "Country": "St. Barth\u00e9lemy",
+      "Clicks": "0",
+      "Impressions": "1",
+      "CTR": "0%",
+      "Position": "7"
+    },
+    {
+      "Country": "Mayotte",
+      "Clicks": "0",
+      "Impressions": "1",
+      "CTR": "0%",
+      "Position": "8"
+    },
+    {
+      "Country": "Niue",
+      "Clicks": "0",
+      "Impressions": "1",
+      "CTR": "0%",
+      "Position": "8"
+    },
+    {
+      "Country": "Antarctica",
+      "Clicks": "0",
+      "Impressions": "1",
+      "CTR": "0%",
+      "Position": "9"
+    },
+    {
+      "Country": "Montserrat",
+      "Clicks": "0",
+      "Impressions": "1",
+      "CTR": "0%",
+      "Position": "10"
+    },
+    {
+      "Country": "Norfolk Island",
+      "Clicks": "0",
+      "Impressions": "1",
+      "CTR": "0%",
+      "Position": "39"
+    },
+    {
+      "Country": "Comoros",
+      "Clicks": "0",
+      "Impressions": "1",
+      "CTR": "0%",
+      "Position": "42"
+    }
+  ],
+  "devices": [
+    {
+      "Device": "Desktop",
+      "Clicks": "7718",
+      "Impressions": "463961",
+      "CTR": "1.66%",
+      "Position": "15.28"
+    },
+    {
+      "Device": "Mobile",
+      "Clicks": "5694",
+      "Impressions": "255080",
+      "CTR": "2.23%",
+      "Position": "8.86"
+    },
+    {
+      "Device": "Tablet",
+      "Clicks": "626",
+      "Impressions": "11464",
+      "CTR": "5.46%",
+      "Position": "8.76"
+    }
+  ],
+  "limits": [
+    "Queries is capped at 1000 rows; no Query+Page join supplied.",
+    "No Bing landing-page/query/device/country split supplied.",
+    "Page and property denominators differ; do not sum or conflate.",
+    "These exports do not measure revenue, sessions, retention, or current field CWV."
+  ],
+  "fullUrlSlashNormalizedCount": 138,
+  "fullUrlDualSlashVariants": 92,
+  "normalizationNote": "normalizedPageCount/dualVariants group pathname across schemes/hosts; fullUrl fields retain scheme and host and only remove terminal slash. Historical baseline uses the latter."
+}

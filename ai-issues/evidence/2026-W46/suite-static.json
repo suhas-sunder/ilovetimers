@@ -1,0 +1,162 @@
+[
+  {
+    "name": "audit:static-deployment",
+    "command": "npm run audit:static-deployment",
+    "startedAt": "2026-11-13T04:17:33.305Z",
+    "finishedAt": "2026-11-13T04:17:33.701Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-static-deployment.log"
+  },
+  {
+    "name": "audit:seo",
+    "command": "npm run audit:seo",
+    "startedAt": "2026-11-13T04:17:33.702Z",
+    "finishedAt": "2026-11-13T04:17:34.066Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-seo.log"
+  },
+  {
+    "name": "audit:links",
+    "command": "npm run audit:links",
+    "startedAt": "2026-11-13T04:17:34.067Z",
+    "finishedAt": "2026-11-13T04:17:34.560Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-links.log"
+  },
+  {
+    "name": "audit:presets",
+    "command": "npm run audit:presets",
+    "startedAt": "2026-11-13T04:17:34.562Z",
+    "finishedAt": "2026-11-13T04:17:34.805Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-presets.log"
+  },
+  {
+    "name": "audit:time-tools",
+    "command": "npm run audit:time-tools",
+    "startedAt": "2026-11-13T04:17:34.806Z",
+    "finishedAt": "2026-11-13T04:17:35.080Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-time-tools.log"
+  },
+  {
+    "name": "test:technical-time",
+    "command": "npm run test:technical-time",
+    "startedAt": "2026-11-13T04:17:35.081Z",
+    "finishedAt": "2026-11-13T04:17:35.337Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-test-technical-time.log"
+  },
+  {
+    "name": "audit:stage2-accuracy",
+    "command": "npm run audit:stage2-accuracy",
+    "startedAt": "2026-11-13T04:17:35.339Z",
+    "finishedAt": "2026-11-13T04:17:35.603Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-stage2-accuracy.log"
+  },
+  {
+    "name": "audit:route-architecture",
+    "command": "npm run audit:route-architecture",
+    "startedAt": "2026-11-13T04:17:35.604Z",
+    "finishedAt": "2026-11-13T04:17:38.098Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-route-architecture.log"
+  },
+  {
+    "name": "audit:stage4-content",
+    "command": "npm run audit:stage4-content",
+    "startedAt": "2026-11-13T04:17:38.100Z",
+    "finishedAt": "2026-11-13T04:17:44.737Z",
+    "exitCode": 1,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-stage4-content.log"
+  },
+  {
+    "name": "audit:stage5-guides",
+    "command": "npm run audit:stage5-guides",
+    "startedAt": "2026-11-13T04:17:44.738Z",
+    "finishedAt": "2026-11-13T04:17:48.124Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-stage5-guides.log"
+  },
+  {
+    "name": "test:stage6-share-presets",
+    "command": "npm run test:stage6-share-presets",
+    "startedAt": "2026-11-13T04:17:48.126Z",
+    "finishedAt": "2026-11-13T04:17:48.514Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-test-stage6-share-presets.log"
+  },
+  {
+    "name": "audit:stage6-share-presets",
+    "command": "npm run audit:stage6-share-presets",
+    "startedAt": "2026-11-13T04:17:48.515Z",
+    "finishedAt": "2026-11-13T04:17:51.927Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-stage6-share-presets.log"
+  },
+  {
+    "name": "test:calculators",
+    "command": "npm run test:calculators",
+    "startedAt": "2026-11-13T04:17:51.930Z",
+    "finishedAt": "2026-11-13T04:17:52.266Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-test-calculators.log"
+  },
+  {
+    "name": "audit:calculators",
+    "command": "npm run audit:calculators",
+    "startedAt": "2026-11-13T04:17:52.268Z",
+    "finishedAt": "2026-11-13T04:17:52.586Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-calculators.log"
+  },
+  {
+    "name": "audit:specialty-tools",
+    "command": "npm run audit:specialty-tools",
+    "startedAt": "2026-11-13T04:17:52.588Z",
+    "finishedAt": "2026-11-13T04:17:52.960Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-specialty-tools.log"
+  },
+  {
+    "name": "audit:ui",
+    "command": "npm run audit:ui",
+    "startedAt": "2026-11-13T04:17:52.962Z",
+    "finishedAt": "2026-11-13T04:17:53.281Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-ui.log"
+  },
+  {
+    "name": "audit:a11y",
+    "command": "npm run audit:a11y",
+    "startedAt": "2026-11-13T04:17:53.282Z",
+    "finishedAt": "2026-11-13T04:17:53.669Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-a11y.log"
+  },
+  {
+    "name": "audit:release",
+    "command": "npm run audit:release",
+    "startedAt": "2026-11-13T04:17:53.672Z",
+    "finishedAt": "2026-11-13T04:18:06.903Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-audit-release.log"
+  },
+  {
+    "name": "test:ui-regressions",
+    "command": "npm run test:ui-regressions",
+    "startedAt": "2026-11-13T04:18:06.905Z",
+    "finishedAt": "2026-11-13T04:18:07.214Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-test-ui-regressions.log"
+  },
+  {
+    "name": "test:sitewide-ui",
+    "command": "npm run test:sitewide-ui",
+    "startedAt": "2026-11-13T04:18:07.216Z",
+    "finishedAt": "2026-11-13T04:18:10.335Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/static-test-sitewide-ui.log"
+  }
+]

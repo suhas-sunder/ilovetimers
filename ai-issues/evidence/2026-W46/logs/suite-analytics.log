@@ -1,0 +1,4 @@
+Starting test:analytics
+Finished test:analytics exit 0 - scope: local collector only; this does NOT verify PostHog project settings or stored production events | - production ingestion gate: follow docs/posthog-verification.md before declaring analytics recovered
+Starting build
+Finished build exit 0 Removing the server build in C:\Users\Suhas\.codex\worktrees\ilovetimers-diagnostic-W46\build\server due to ssr:false | ✓ built in 7.74s

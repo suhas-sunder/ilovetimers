@@ -1,0 +1,548 @@
+[
+  {
+    "route": "/countdown-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/millisecond-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/atomic-clock",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "light",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'\n+ ]\n- []\n",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ]
+  },
+  {
+    "route": "/hiit-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/speedcubing-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/free-online-timers",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-countdown-timer-390-dark.png"
+  },
+  {
+    "route": "/millisecond-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-millisecond-timer-390-dark.png"
+  },
+  {
+    "route": "/atomic-clock",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-atomic-clock-390-dark.png"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "dark",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'\n+ ]\n- []\n",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "screenshot": "screens/cross-browser/firefox-world-clock-with-milliseconds-390-dark.png"
+  },
+  {
+    "route": "/hiit-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-hiit-timer-390-dark.png"
+  },
+  {
+    "route": "/speedcubing-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-speedcubing-timer-390-dark.png"
+  },
+  {
+    "route": "/free-online-timers",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-free-online-timers-390-dark.png"
+  },
+  {
+    "route": "/countdown-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-countdown-timer-1440-light.png"
+  },
+  {
+    "route": "/millisecond-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-millisecond-timer-1440-light.png"
+  },
+  {
+    "route": "/atomic-clock",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-atomic-clock-1440-light.png"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "light",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'\n+ ]\n- []\n",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "screenshot": "screens/cross-browser/firefox-world-clock-with-milliseconds-1440-light.png"
+  },
+  {
+    "route": "/hiit-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-hiit-timer-1440-light.png"
+  },
+  {
+    "route": "/speedcubing-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-speedcubing-timer-1440-light.png"
+  },
+  {
+    "route": "/free-online-timers",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/firefox-free-online-timers-1440-light.png"
+  },
+  {
+    "route": "/countdown-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/millisecond-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/atomic-clock",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "dark",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'\n+ ]\n- []\n",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ]
+  },
+  {
+    "route": "/hiit-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/speedcubing-timer",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/free-online-timers",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/millisecond-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/atomic-clock",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/hiit-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/speedcubing-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/free-online-timers",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "light",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-countdown-timer-390-dark.png"
+  },
+  {
+    "route": "/millisecond-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-millisecond-timer-390-dark.png"
+  },
+  {
+    "route": "/atomic-clock",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-atomic-clock-390-dark.png"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-world-clock-with-milliseconds-390-dark.png"
+  },
+  {
+    "route": "/hiit-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-hiit-timer-390-dark.png"
+  },
+  {
+    "route": "/speedcubing-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-speedcubing-timer-390-dark.png"
+  },
+  {
+    "route": "/free-online-timers",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-free-online-timers-390-dark.png"
+  },
+  {
+    "route": "/countdown-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-countdown-timer-1440-light.png"
+  },
+  {
+    "route": "/millisecond-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-millisecond-timer-1440-light.png"
+  },
+  {
+    "route": "/atomic-clock",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-atomic-clock-1440-light.png"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "light",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: clock values one line",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-world-clock-with-milliseconds-1440-light.png"
+  },
+  {
+    "route": "/hiit-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-hiit-timer-1440-light.png"
+  },
+  {
+    "route": "/speedcubing-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-speedcubing-timer-1440-light.png"
+  },
+  {
+    "route": "/free-online-timers",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "light",
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-free-online-timers-1440-light.png"
+  },
+  {
+    "route": "/countdown-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/millisecond-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/atomic-clock",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "dark",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: clock values one line",
+    "errors": []
+  },
+  {
+    "route": "/hiit-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/speedcubing-timer",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/free-online-timers",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "dark",
+    "status": "PASS",
+    "errors": []
+  }
+]

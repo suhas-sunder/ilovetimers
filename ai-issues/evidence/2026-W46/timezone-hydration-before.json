@@ -1,0 +1,2014 @@
+{
+  "at": "2026-11-13T04:22:07.436Z",
+  "buildTimezone": "America/New_York",
+  "results": [
+    {
+      "path": "/",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/free-online-timers",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/about",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/author/suhas-sunder",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/contact",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/how-ilovetimers-is-made",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/copyright",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/browser-timers-background-tabs",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/browser-timer-alarm-silent",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/how-browser-timers-measure-time",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/daylight-saving-time-zone-conversions",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/browser-storage",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/countdown-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/timer-stopwatch",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/timer-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/stopwatch",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/stopwatch-with-milliseconds",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/pomodoro-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/hiit-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/silent-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/online-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/seconds-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/1-minute-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/5-minute-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/10-minute-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/15-minute-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/30-minute-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/interval-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/presentation-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/speech-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/classroom-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/meeting-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/meeting-agenda-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/exam-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/break-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/study-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/study-stopwatch",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/workout-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/rest-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/tabata-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/kitchen-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/meditation-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/speedcubing-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/lab-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/alarm-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/online-alarm-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/multiple-timers",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/visual-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/productivity-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/meeting-count-up-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/breathing-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/sleep-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/stretch-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/drink-water-reminder-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/emom-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/amrap-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/round-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/pace-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/tea-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/egg-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/chaos-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/video-game-challenge-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/speedrun-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/pizza-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/fibonacci-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/sunrise-sunset-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/debt-repayment-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/focus-session-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/morse-code-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/world-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/world-clock-with-milliseconds",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/debt-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/current-local-time",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/utc-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/24-hour-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/12-hour-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/analog-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/digital-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/clock-with-milliseconds",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/binary-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/hexadecimal-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/event-countdown",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/countdown-to-date",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/new-year-countdown",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/christmas-countdown",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/golden-hour-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/moon-phase-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/astronomical-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/epoch-unix-time-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/swatch-internet-time-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/billable-hours-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/time-blocking-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/atomic-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/time-zone-converter",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/time-zone-meeting-planner",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/military-time-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/binary-stopwatch",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/roman-numeral-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/retro-flip-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/minimalist-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/reaction-time-test",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/metronome",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/bpm-tapper",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/military-time-converter",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/work-hours-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/time-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/time-duration-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/date-duration-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/date-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/business-days-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/workdays-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/age-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/days-until-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/weekday-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/week-number-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/months-between-dates-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/weeks-between-dates-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/birthday-countdown",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/hours-until-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/time-card-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/weekly-timesheet-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/billable-hours-calculator",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/milliseconds-converter",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/millisecond-timer",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/unix-timestamp-converter",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/chess-clock",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/privacy",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/terms",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/cookies",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/sitemap",
+      "timezoneId": "UTC",
+      "locale": "en-US",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/free-online-timers",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/about",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/author/suhas-sunder",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/contact",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/how-ilovetimers-is-made",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/copyright",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/browser-timers-background-tabs",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/browser-timer-alarm-silent",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/how-browser-timers-measure-time",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/daylight-saving-time-zone-conversions",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/guides/browser-storage",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/countdown-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/timer-stopwatch",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/timer-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/stopwatch",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/stopwatch-with-milliseconds",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/pomodoro-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/hiit-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/silent-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/online-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/seconds-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/1-minute-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/5-minute-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/10-minute-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/15-minute-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/30-minute-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/interval-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/presentation-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/speech-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/classroom-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/meeting-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/meeting-agenda-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/exam-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/break-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/study-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/study-stopwatch",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/workout-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/rest-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/tabata-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/kitchen-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/meditation-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/speedcubing-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/lab-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/alarm-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/online-alarm-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/multiple-timers",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/visual-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/productivity-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/meeting-count-up-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/breathing-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/sleep-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/stretch-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/drink-water-reminder-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/emom-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/amrap-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/round-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/pace-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/tea-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/egg-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/chaos-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/video-game-challenge-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/speedrun-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/pizza-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/fibonacci-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/sunrise-sunset-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/debt-repayment-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/focus-session-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/morse-code-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/world-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/world-clock-with-milliseconds",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/debt-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/current-local-time",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/utc-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/24-hour-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/12-hour-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/analog-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/digital-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/clock-with-milliseconds",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/binary-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/hexadecimal-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/event-countdown",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/countdown-to-date",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/new-year-countdown",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/christmas-countdown",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/golden-hour-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/moon-phase-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/astronomical-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/epoch-unix-time-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/swatch-internet-time-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/billable-hours-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/time-blocking-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/atomic-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/time-zone-converter",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/time-zone-meeting-planner",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/military-time-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/binary-stopwatch",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/roman-numeral-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/retro-flip-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/minimalist-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/reaction-time-test",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/metronome",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/bpm-tapper",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/military-time-converter",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/work-hours-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/time-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/time-duration-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/date-duration-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/date-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/business-days-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/workdays-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/age-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/days-until-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/weekday-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/week-number-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/months-between-dates-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/weeks-between-dates-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/birthday-countdown",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/hours-until-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/time-card-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/weekly-timesheet-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/billable-hours-calculator",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/milliseconds-converter",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/millisecond-timer",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/unix-timestamp-converter",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [
+        "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+      ],
+      "removedMain": 1
+    },
+    {
+      "path": "/chess-clock",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/privacy",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/terms",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/cookies",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    },
+    {
+      "path": "/sitemap",
+      "timezoneId": "Australia/Sydney",
+      "locale": "en-GB",
+      "errors": [],
+      "removedMain": 0
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 test:display-stability
+> node scripts/tests/display-stability.mjs
+
+Display stability test passed (48 document-route entries across 6 viewport sizes; 48 rendered display cases sampled).

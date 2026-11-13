@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 audit:seo
+> node scripts/audits/seo-integrity.mjs
+
+SEO integrity audit passed (132 routes, 28 redirects, 109 sitemap URLs).

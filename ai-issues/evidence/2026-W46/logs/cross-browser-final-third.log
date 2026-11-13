@@ -1,0 +1,102 @@
+firefox 390 light /countdown-timer PASS 
+firefox 390 light /millisecond-timer PASS 
+firefox 390 light /atomic-clock PASS 
+firefox 390 light /world-clock-with-milliseconds FAIL AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'
++ ]
+- []
+
+firefox 390 light /hiit-timer PASS 
+firefox 390 light /speedcubing-timer PASS 
+firefox 390 light /free-online-timers PASS 
+firefox 390 dark /countdown-timer PASS 
+firefox 390 dark /millisecond-timer PASS 
+firefox 390 dark /atomic-clock PASS 
+firefox 390 dark /world-clock-with-milliseconds FAIL AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'
++ ]
+- []
+
+firefox 390 dark /hiit-timer PASS 
+firefox 390 dark /speedcubing-timer PASS 
+firefox 390 dark /free-online-timers PASS 
+firefox 1440 light /countdown-timer PASS 
+firefox 1440 light /millisecond-timer PASS 
+firefox 1440 light /atomic-clock PASS 
+firefox 1440 light /world-clock-with-milliseconds FAIL AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'
++ ]
+- []
+
+firefox 1440 light /hiit-timer PASS 
+firefox 1440 light /speedcubing-timer PASS 
+firefox 1440 light /free-online-timers PASS 
+firefox 1440 dark /countdown-timer PASS 
+firefox 1440 dark /millisecond-timer PASS 
+firefox 1440 dark /atomic-clock PASS 
+firefox 1440 dark /world-clock-with-milliseconds FAIL AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'
++ ]
+- []
+
+firefox 1440 dark /hiit-timer PASS 
+firefox 1440 dark /speedcubing-timer PASS 
+firefox 1440 dark /free-online-timers PASS 
+webkit 390 light /countdown-timer PASS 
+webkit 390 light /millisecond-timer PASS 
+webkit 390 light /atomic-clock PASS 
+webkit 390 light /world-clock-with-milliseconds PASS 
+webkit 390 light /hiit-timer PASS 
+webkit 390 light /speedcubing-timer PASS 
+webkit 390 light /free-online-timers PASS 
+webkit 390 dark /countdown-timer PASS 
+webkit 390 dark /millisecond-timer PASS 
+webkit 390 dark /atomic-clock PASS 
+webkit 390 dark /world-clock-with-milliseconds PASS 
+webkit 390 dark /hiit-timer PASS 
+webkit 390 dark /speedcubing-timer PASS 
+webkit 390 dark /free-online-timers PASS 
+webkit 1440 light /countdown-timer PASS 
+webkit 1440 light /millisecond-timer PASS 
+webkit 1440 light /atomic-clock PASS 
+webkit 1440 light /world-clock-with-milliseconds PASS 
+webkit 1440 light /hiit-timer PASS 
+webkit 1440 light /speedcubing-timer PASS 
+webkit 1440 light /free-online-timers PASS 
+webkit 1440 dark /countdown-timer PASS 
+webkit 1440 dark /millisecond-timer PASS 
+webkit 1440 dark /atomic-clock PASS 
+webkit 1440 dark /world-clock-with-milliseconds PASS 
+webkit 1440 dark /hiit-timer PASS 
+webkit 1440 dark /speedcubing-timer PASS 
+webkit 1440 dark /free-online-timers PASS 
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+4 !== 0
+
+    at file:///C:/Users/Suhas/.codex/worktrees/ilovetimers-diagnostic-W46/scripts/tests/diagnostic-cross-browser-w46.mjs:34:8 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 4,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v25.9.0

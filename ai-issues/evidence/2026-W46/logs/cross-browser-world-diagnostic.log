@@ -1,0 +1,54 @@
+firefox 390 light /world-clock-with-milliseconds FAIL AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'
++ ]
+- []
+
+firefox 390 dark /world-clock-with-milliseconds FAIL AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'
++ ]
+- []
+
+firefox 1440 light /world-clock-with-milliseconds FAIL AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'
++ ]
+- []
+
+firefox 1440 dark /world-clock-with-milliseconds FAIL AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'
++ ]
+- []
+
+webkit 390 light /world-clock-with-milliseconds PASS 
+webkit 390 dark /world-clock-with-milliseconds FAIL AssertionError [ERR_ASSERTION]: clock values one line
+webkit 1440 light /world-clock-with-milliseconds PASS 
+webkit 1440 dark /world-clock-with-milliseconds PASS 
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+5 !== 0
+
+    at file:///C:/Users/Suhas/.codex/worktrees/ilovetimers-diagnostic-W46/scripts/tests/diagnostic-cross-browser-w46.mjs:33:8 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 5,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v25.9.0

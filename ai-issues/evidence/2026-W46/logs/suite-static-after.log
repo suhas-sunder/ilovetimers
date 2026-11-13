@@ -1,0 +1,40 @@
+Starting audit:static-deployment
+Finished audit:static-deployment exit 0  | Static deployment audit passed (132 prerendered canonical routes, 28 permanent aliases, no runtime server output).
+Starting audit:seo
+Finished audit:seo exit 0  | SEO integrity audit passed (132 routes, 28 redirects, 109 sitemap URLs).
+Starting audit:links
+Finished audit:links exit 0  | Internal-link audit passed (132 routes, 95 More-directory tools, 95 related-tool groups, 126 footer links).
+Starting audit:presets
+Finished audit:presets exit 0  | Preset timer audit passed (6 generic preset routes, 132 routes, 109 sitemap URLs, 126 footer links).
+Starting audit:time-tools
+Finished audit:time-tools exit 0  | Time-tool audit passed (21 routes, 132 canonical routes, 28 redirects, 109 sitemap URLs, 95 related groups).
+Starting test:technical-time
+Finished test:technical-time exit 0  | Technical time tests passed.
+Starting audit:stage2-accuracy
+Finished audit:stage2-accuracy exit 0  | Stage 2 accuracy audit passed (17 methodology source files, 13 primary sources).
+Starting audit:route-architecture
+Finished audit:route-architecture exit 0  | Route architecture audit passed: 132 canonical pages, 28 redirects, 109 indexable sitemap routes; A=101, B=8, C=23, D=21, E=7.
+Starting audit:stage4-content
+Finished audit:stage4-content exit 1 Stage 4 content-quality audit failed (1): | - 3 forbidden public process references remain.
+Starting audit:stage5-guides
+Finished audit:stage5-guides exit 0  | Stage 5 guide audit passed: 1 index, 6 substantial guides, 6127 rendered article words, 15 citation URLs, 13 contextual tool pages.
+Starting test:stage6-share-presets
+Finished test:stage6-share-presets exit 0  | Stage 6 share and preset tests passed (150 assertions).
+Starting audit:stage6-share-presets
+Finished audit:stage6-share-presets exit 0  | Stage 6 share and preset audit passed (2525 checks, 5 share routes, 4 preset routes).
+Starting test:calculators
+Finished test:calculators exit 0  | Calculator formula tests passed (date, time, workday, shift, timesheet, and billable policies).
+Starting audit:calculators
+Finished audit:calculators exit 0  | Calculator integrity audit passed (18 routes, 132 canonical routes, 28 redirects, 109 sitemap URLs, 95 related groups).
+Starting audit:specialty-tools
+Finished audit:specialty-tools exit 0  | Specialty-tool audit passed (68 routes; A INDEPENDENT INDEXABLE: 48, B CONCISE INDEXABLE PRESET: 7, C NON-INDEXABLE UTILITY: 13; 132 canonical routes; 109 sitemap URLs; 95 related groups).
+Starting audit:ui
+Finished audit:ui exit 0  | UI integrity audit passed (132 routes; shared targets, focus, labels, reduced motion, and narrow displays).
+Starting audit:a11y
+Finished audit:a11y exit 0  | Accessibility audit passed (433 source files; names, fields, modal focus, touch targets, live regions, and reduced motion).
+Starting audit:release
+Finished audit:release exit 0 Release-readiness audit passed (132 routes, 28 redirects, 109 sitemap URLs, 95 More tools, 126 footer destinations, 95 related groups). | Static checks do not predict rankings, field Core Web Vitals, or AdSense approval; use the human readiness report and post-release monitoring plan.
+Starting test:ui-regressions
+Finished test:ui-regressions exit 0  | Targeted UI regression checks passed (alarm rollover, tap-tempo filtering, control stacking, stable reaction layout, silent audio removal, metronome loop guard, single-path BPM input, trailing-slash hydration stability, ISO dateModified output, and deferred custom duration commits across timer routes).
+Starting test:sitewide-ui
+Finished test:sitewide-ui exit 1 - Redirect destination /digital-clock returned 404. | - Redirect destination /digital-clock returned 404.

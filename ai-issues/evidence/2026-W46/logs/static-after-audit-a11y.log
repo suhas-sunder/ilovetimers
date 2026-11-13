@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 audit:a11y
+> node scripts/audits/accessibility.mjs
+
+Accessibility audit passed (433 source files; names, fields, modal focus, touch targets, live regions, and reduced motion).

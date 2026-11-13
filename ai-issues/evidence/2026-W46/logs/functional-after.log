@@ -1,0 +1,58 @@
+PASS /countdown-timer start, delayed frame, pause, resume, reset 
+PASS /millisecond-timer start, delayed frame, pause, resume, reset 
+PASS /seconds-timer start, delayed frame, pause, resume, reset 
+PASS /online-timer start, delayed frame, pause, resume, reset 
+PASS /timer-stopwatch start, delayed frame, pause, resume, reset 
+PASS /timer-clock start, delayed frame, pause, resume, reset 
+PASS /study-timer start, delayed frame, pause, resume, reset 
+PASS /break-timer start, delayed frame, pause, resume, reset 
+PASS /meeting-timer start, delayed frame, pause, resume, reset 
+PASS /presentation-timer start, delayed frame, pause, resume, reset 
+PASS /speech-timer start, delayed frame, pause, resume, reset 
+PASS /exam-timer start, delayed frame, pause, resume, reset 
+PASS /classroom-timer start, delayed frame, pause, resume, reset 
+PASS /kitchen-timer start, delayed frame, pause, resume, reset 
+PASS /egg-timer start, delayed frame, pause, resume, reset 
+PASS /pizza-timer start, delayed frame, pause, resume, reset 
+PASS /tea-timer start, delayed frame, pause, resume, reset 
+PASS /sleep-timer start, delayed frame, pause, resume, reset 
+PASS /silent-timer start, delayed frame, pause, resume, reset 
+PASS /visual-timer start, delayed frame, pause, resume, reset 
+PASS /focus-session-timer start, delayed frame, pause, resume, reset 
+PASS /rest-timer start, delayed frame, pause, resume, reset 
+PASS /meditation-timer start, delayed frame, pause, resume, reset 
+PASS /lab-timer start, delayed frame, pause, resume, reset 
+PASS /1-minute-timer start, delayed frame, pause, resume, reset 
+PASS /5-minute-timer start, delayed frame, pause, resume, reset 
+PASS /10-minute-timer start, delayed frame, pause, resume, reset 
+PASS /15-minute-timer start, delayed frame, pause, resume, reset 
+PASS /30-minute-timer start, delayed frame, pause, resume, reset 
+PASS /millisecond-timer 1ms, zero clamp, Enter commit, completion and restart 
+PASS /stopwatch elapsed, pause exclusion, resume and reset 
+PASS /stopwatch-with-milliseconds elapsed, pause exclusion, resume and reset 
+PASS /study-stopwatch elapsed, pause exclusion, resume and reset 
+PASS /binary-stopwatch elapsed, pause exclusion, resume and reset 
+PASS /stopwatch laps record cumulative totals and distinct splits 
+PASS /hiit-timer Reset cancels already-queued phase transition 
+PASS /hiit-timer zero warmup/rest/cooldown, two rounds complete 
+PASS /pomodoro-timer next phase, pause and reset state 
+PASS /tabata-timer next phase, pause and reset state 
+PASS /interval-timer next phase, pause and reset state 
+PASS /workout-timer next phase, pause and reset state 
+PASS /round-timer next phase, pause and reset state 
+PASS /productivity-timer next phase, pause and reset state 
+PASS /multiple-timers timer independence and added timer 
+PASS /chess-clock switch turn and increment preserve independent clocks 
+PASS /speedrun-timer split, undo, end run 
+PASS /speedcubing-timer start/stop adds session solve; reset preserves session 
+PASS /reaction-time-test early press reports false start and recovers 
+PASS /bpm-tapper 500ms taps yield 120 BPM 
+PASS /breathing-timer box phase advances to hold and resets 
+PASS /emom-timer prep to first minute; pause survives delay 
+PASS /amrap-timer manual rounds/reps independent of timer 
+PASS /countdown-timer theme missing storage 
+PASS /countdown-timer theme invalid storage 
+PASS /countdown-timer theme light storage 
+PASS /countdown-timer theme dark storage 
+PASS /countdown-timer theme denied storage 
+Functional: 57 passed, 0 failed

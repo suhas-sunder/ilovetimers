@@ -1,0 +1,467 @@
+[
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "light",
+    "geometry": [
+      {
+        "text": "12:14:17.384 am",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 3.55rem);"
+      },
+      {
+        "text": "05:14:17.384 am",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "12:14:17.384 am",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "05:14:17.384 am",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "02:14:17.384 pm",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      }
+    ],
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'\n+ ]\n- []\n",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ]
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 390,
+    "theme": "dark",
+    "geometry": [
+      {
+        "text": "12:14:18.558 am",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 3.55rem);"
+      },
+      {
+        "text": "05:14:18.558 am",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "12:14:18.558 am",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "05:14:18.558 am",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "02:14:18.558 pm",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.9583px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      }
+    ],
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'\n+ ]\n- []\n",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "screenshot": "screens/cross-browser/firefox-world-clock-with-milliseconds-390-dark.png"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "light",
+    "geometry": [
+      {
+        "text": "12:14:19.158 am",
+        "lines": 1,
+        "width": 354.3500061035156,
+        "parentWidth": 383.1499938964844,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 3.55rem);"
+      },
+      {
+        "text": "05:14:19.158 am",
+        "lines": 1,
+        "width": 354.3500061035156,
+        "parentWidth": 383.1499938964844,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "12:14:19.158 am",
+        "lines": 1,
+        "width": 354.3499755859375,
+        "parentWidth": 383.1500244140625,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "05:14:19.158 am",
+        "lines": 1,
+        "width": 354.3500061035156,
+        "parentWidth": 383.1499938964844,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "02:14:19.158 pm",
+        "lines": 1,
+        "width": 354.3500061035156,
+        "parentWidth": 383.1499938964844,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      }
+    ],
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'\n+ ]\n- []\n",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "screenshot": "screens/cross-browser/firefox-world-clock-with-milliseconds-1440-light.png"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "width": 1440,
+    "theme": "dark",
+    "geometry": [
+      {
+        "text": "12:14:19.742 am",
+        "lines": 1,
+        "width": 354.3500061035156,
+        "parentWidth": 383.1499938964844,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 3.55rem);"
+      },
+      {
+        "text": "05:14:19.742 am",
+        "lines": 1,
+        "width": 354.3500061035156,
+        "parentWidth": 383.1499938964844,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "12:14:19.742 am",
+        "lines": 1,
+        "width": 354.3499755859375,
+        "parentWidth": 383.1500244140625,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "05:14:19.742 am",
+        "lines": 1,
+        "width": 354.3500061035156,
+        "parentWidth": 383.1499938964844,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      },
+      {
+        "text": "02:14:19.742 pm",
+        "lines": 1,
+        "width": 354.3500061035156,
+        "parentWidth": 383.1499938964844,
+        "font": "36.9115px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.4167cqw, 2.65rem);"
+      }
+    ],
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.'\n+ ]\n- []\n",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ]
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "light",
+    "geometry": [
+      {
+        "text": "12:14:20.911 AM",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.958334px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 3.55rem);"
+      },
+      {
+        "text": "05:14:20.911 AM",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.958334px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "12:14:20.911 AM",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.958334px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "05:14:20.911 AM",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.958334px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "02:14:20.911 PM",
+        "lines": 1,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "28.958334px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      }
+    ],
+    "status": "PASS",
+    "errors": []
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 390,
+    "theme": "dark",
+    "geometry": [
+      {
+        "text": "12:14:21.527 AM",
+        "lines": 2,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "36.197918px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 3.55rem);"
+      },
+      {
+        "text": "05:14:21.527 AM",
+        "lines": 2,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "36.197918px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "12:14:21.527 AM",
+        "lines": 2,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "36.197918px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "05:14:21.527 AM",
+        "lines": 2,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "36.197918px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "02:14:21.527 PM",
+        "lines": 2,
+        "width": 278,
+        "parentWidth": 302,
+        "font": "36.197918px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      }
+    ],
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: clock values one line",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-world-clock-with-milliseconds-390-dark.png"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "light",
+    "geometry": [
+      {
+        "text": "12:14:22.168 AM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 3.55rem);"
+      },
+      {
+        "text": "05:14:22.168 AM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "12:14:22.168 AM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "05:14:22.168 AM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "02:14:22.168 PM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      }
+    ],
+    "status": "PASS",
+    "errors": [],
+    "screenshot": "screens/cross-browser/webkit-world-clock-with-milliseconds-1440-light.png"
+  },
+  {
+    "route": "/world-clock-with-milliseconds",
+    "engine": "webkit",
+    "version": "26.4",
+    "width": 1440,
+    "theme": "dark",
+    "geometry": [
+      {
+        "text": "12:14:22.816 AM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 3.55rem);"
+      },
+      {
+        "text": "05:14:22.816 AM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "12:14:22.816 AM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "05:14:22.816 AM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      },
+      {
+        "text": "02:14:22.816 PM",
+        "lines": 1,
+        "width": 354.375,
+        "parentWidth": 383.15625,
+        "font": "36.914063px",
+        "family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+        "style": "font-size: clamp(1rem, 10.416667cqw, 2.65rem);"
+      }
+    ],
+    "status": "PASS",
+    "errors": []
+  }
+]

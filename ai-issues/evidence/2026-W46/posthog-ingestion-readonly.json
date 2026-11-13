@@ -1,0 +1,14 @@
+{
+  "projectId":293132,
+  "projectName":"iLoveTimers",
+  "baseUrl":"https://us.posthog.com/project/293132",
+  "queryTool":"query-trends",
+  "eventDefinitionsVerified":["$pageview","timer_start","timer_pause"],
+  "dateFrom":"2026-11-11T00:00:00Z",
+  "dateTo":"2026-11-12T00:00:00Z",
+  "filterTestAccounts":true,
+  "results":[{"date":"2026-11-11","$pageview":803,"timer_start":69,"timer_pause":50},{"date":"2026-11-12","$pageview":0,"timer_start":0,"timer_pause":0}],
+  "interpretation":"Stored event availability only. No unique-user, success, completeness, retention, revenue or attribution claim. Zero end-boundary bin is retained.",
+  "mutations":"Only connector active project context selected after confirming target. No project settings, capture, billing, experiments, replay or identifiers changed.",
+  "scopes":"Project skill read scope unavailable; built-in tool schema available. Query used verified target conversation context. No personal event rows exported."
+}

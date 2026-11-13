@@ -1,0 +1,70 @@
+[
+  {
+    "route": "/fibonacci-clock",
+    "width": 390,
+    "theme": "light",
+    "case": "client date differs from build date; no hydration error",
+    "errors": [],
+    "status": "PASS"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 390,
+    "theme": "light",
+    "case": "live date advances across local midnight",
+    "before": "DECIMAL TIME\n23:59:58\nSaturday, November 14, 2026",
+    "after": "DECIMAL TIME\n00:00:02\nSunday, November 15, 2026",
+    "status": "PASS"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 390,
+    "theme": "dark",
+    "case": "client date differs from build date; no hydration error",
+    "errors": [],
+    "status": "PASS"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 390,
+    "theme": "dark",
+    "case": "live date advances across local midnight",
+    "before": "DECIMAL TIME\n23:59:58\nSaturday, November 14, 2026",
+    "after": "DECIMAL TIME\n00:00:02\nSunday, November 15, 2026",
+    "status": "PASS"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 1440,
+    "theme": "light",
+    "case": "client date differs from build date; no hydration error",
+    "errors": [],
+    "status": "PASS"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 1440,
+    "theme": "light",
+    "case": "live date advances across local midnight",
+    "before": "DECIMAL TIME\n23:59:58\nSaturday, November 14, 2026",
+    "after": "DECIMAL TIME\n00:00:02\nSunday, November 15, 2026",
+    "status": "PASS"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 1440,
+    "theme": "dark",
+    "case": "client date differs from build date; no hydration error",
+    "errors": [],
+    "status": "PASS"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 1440,
+    "theme": "dark",
+    "case": "live date advances across local midnight",
+    "before": "DECIMAL TIME\n23:59:58\nSaturday, November 14, 2026",
+    "after": "DECIMAL TIME\n00:00:02\nSunday, November 15, 2026",
+    "status": "PASS"
+  }
+]

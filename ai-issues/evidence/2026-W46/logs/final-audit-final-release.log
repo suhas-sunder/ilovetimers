@@ -1,0 +1,12 @@
+
+> ilovetimers@1.0.0 audit:final-release
+> node scripts/audits/final-release-gate.mjs
+
+Final release gate failed (7 failures across 54 static checks plus 17 aggregated steps).
+- Final route validation is missing, failed, or stale.
+- At least one canonical browser record failed.
+- Live Google advertising code or network hosts are present.
+- An external production script loads in the advertising-disabled, analytics-unconfigured browser run.
+- Stage 4 content failed with exit code 1.
+- Dependency audit reports unaccepted high or critical vulnerabilities in: @react-router/node, dompurify, react-router.
+- Worktree inventory contains an accidental or temporary tracked candidate.

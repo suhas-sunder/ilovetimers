@@ -1,0 +1,154 @@
+
+> ilovetimers@1.0.0 test:final-browser
+> node scripts/tests/final-browser-validation.mjs
+
+Canonical /
+Canonical /1-minute-timer
+Canonical /10-minute-timer
+Canonical /12-hour-clock
+Canonical /15-minute-timer
+Canonical /24-hour-clock
+Canonical /30-minute-timer
+Canonical /5-minute-timer
+Canonical /about
+Canonical /age-calculator
+Canonical /alarm-timer
+Canonical /amrap-timer
+Canonical /analog-clock
+Canonical /astronomical-clock
+Canonical /atomic-clock
+Canonical /author/suhas-sunder
+Canonical /billable-hours-calculator
+Canonical /billable-hours-clock
+Canonical /binary-clock
+Canonical /binary-stopwatch
+Canonical /birthday-countdown
+Canonical /bpm-tapper
+Canonical /break-timer
+Canonical /breathing-timer
+Canonical /business-days-calculator
+Canonical /chaos-timer
+Canonical /chess-clock
+Canonical /christmas-countdown
+Canonical /classroom-timer
+Canonical /clock-with-milliseconds
+Canonical /contact
+Canonical /cookies
+Canonical /copyright
+Canonical /countdown-timer
+Canonical /countdown-to-date
+Canonical /current-local-time
+Canonical /date-calculator
+Canonical /date-duration-calculator
+Canonical /days-until-calculator
+Canonical /debt-clock
+Canonical /debt-repayment-timer
+Canonical /digital-clock
+Canonical /drink-water-reminder-timer
+Canonical /egg-timer
+Canonical /emom-timer
+Canonical /epoch-unix-time-clock
+Canonical /event-countdown
+Canonical /exam-timer
+Canonical /fibonacci-clock
+Canonical /focus-session-timer
+Canonical /free-online-timers
+Canonical /golden-hour-clock
+Canonical /guides
+Canonical /guides/browser-storage
+Canonical /guides/browser-timer-alarm-silent
+Canonical /guides/browser-timers-background-tabs
+Canonical /guides/daylight-saving-time-zone-conversions
+Canonical /guides/how-browser-timers-measure-time
+Canonical /guides/unix-timestamps-seconds-milliseconds-microseconds
+Canonical /hexadecimal-clock
+Canonical /hiit-timer
+Canonical /hours-until-calculator
+Canonical /how-ilovetimers-is-made
+Canonical /interval-timer
+Canonical /kitchen-timer
+Canonical /lab-timer
+Canonical /meditation-timer
+Canonical /meeting-agenda-timer
+Canonical /meeting-count-up-timer
+Canonical /meeting-timer
+Canonical /metronome
+Canonical /military-time-clock
+Canonical /military-time-converter
+Canonical /millisecond-timer
+Canonical /milliseconds-converter
+Canonical /minimalist-clock
+Canonical /months-between-dates-calculator
+Canonical /moon-phase-clock
+Canonical /morse-code-clock
+Canonical /multiple-timers
+Canonical /new-year-countdown
+Canonical /online-alarm-clock
+Canonical /online-timer
+Canonical /pace-timer
+Canonical /pizza-timer
+Canonical /pomodoro-timer
+Canonical /presentation-timer
+Canonical /privacy
+Canonical /productivity-timer
+Canonical /reaction-time-test
+Canonical /rest-timer
+Canonical /retro-flip-clock
+Canonical /roman-numeral-clock
+Canonical /round-timer
+Canonical /seconds-timer
+Canonical /silent-timer
+Canonical /sitemap
+Canonical /sleep-timer
+Canonical /speech-timer
+Canonical /speedcubing-timer
+Canonical /speedrun-timer
+Canonical /stopwatch
+Canonical /stopwatch-with-milliseconds
+Canonical /stretch-timer
+Canonical /study-stopwatch
+Canonical /study-timer
+Canonical /sunrise-sunset-clock
+Canonical /swatch-internet-time-clock
+Canonical /tabata-timer
+Canonical /tea-timer
+Canonical /terms
+Canonical /time-blocking-clock
+Canonical /time-calculator
+Canonical /time-card-calculator
+Canonical /time-duration-calculator
+Canonical /time-zone-converter
+Canonical /time-zone-meeting-planner
+Canonical /timer-clock
+Canonical /timer-stopwatch
+Canonical /unix-timestamp-converter
+Canonical /utc-clock
+Canonical /video-game-challenge-timer
+Canonical /visual-timer
+Canonical /week-number-calculator
+Canonical /weekday-calculator
+Canonical /weekly-timesheet-calculator
+Canonical /weeks-between-dates-calculator
+Canonical /work-hours-calculator
+Canonical /workdays-calculator
+Canonical /workout-timer
+Canonical /world-clock
+Canonical /world-clock-with-milliseconds
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Final route validation failed for /, /1-minute-timer, /10-minute-timer, /12-hour-clock, /15-minute-timer, /24-hour-clock, /30-minute-timer, /5-minute-timer, /age-calculator, /alarm-timer, /amrap-timer, /analog-clock, /astronomical-clock, /atomic-clock, /billable-hours-calculator, /billable-hours-clock, /binary-clock, /binary-stopwatch, /birthday-countdown, /bpm-tapper, /break-timer, /breathing-timer, /business-days-calculator, /chaos-timer, /chess-clock, /christmas-countdown, /classroom-timer, /clock-with-milliseconds, /countdown-timer, /countdown-to-date, /current-local-time, /date-calculator, /date-duration-calculator, /days-until-calculator, /debt-clock, /debt-repayment-timer, /digital-clock, /drink-water-reminder-timer, /egg-timer, /emom-timer, /epoch-unix-time-clock, /event-countdown, /exam-timer, /fibonacci-clock, /focus-session-timer, /golden-hour-clock, /guides, /guides/browser-storage, /guides/browser-timer-alarm-silent, /guides/browser-timers-background-tabs, /guides/daylight-saving-time-zone-conversions, /guides/how-browser-timers-measure-time, /guides/unix-timestamps-seconds-milliseconds-microseconds, /hexadecimal-clock, /hiit-timer, /hours-until-calculator, /interval-timer, /kitchen-timer, /lab-timer, /meditation-timer, /meeting-agenda-timer, /meeting-count-up-timer, /meeting-timer, /metronome, /military-time-clock, /military-time-converter, /millisecond-timer, /milliseconds-converter, /minimalist-clock, /months-between-dates-calculator, /moon-phase-clock, /morse-code-clock, /multiple-timers, /new-year-countdown, /online-alarm-clock, /online-timer, /pace-timer, /pizza-timer, /pomodoro-timer, /presentation-timer, /productivity-timer, /reaction-time-test, /rest-timer, /retro-flip-clock, /roman-numeral-clock, /round-timer, /seconds-timer, /silent-timer, /sleep-timer, /speech-timer, /speedcubing-timer, /speedrun-timer, /stopwatch, /stopwatch-with-milliseconds, /stretch-timer, /study-stopwatch, /study-timer, /sunrise-sunset-clock, /swatch-internet-time-clock, /tabata-timer, /tea-timer, /time-blocking-clock, /time-calculator, /time-card-calculator, /time-duration-calculator, /time-zone-converter, /time-zone-meeting-planner, /timer-clock, /timer-stopwatch, /unix-timestamp-converter, /utc-clock, /video-game-challenge-timer, /visual-timer, /week-number-calculator, /weekday-calculator, /weekly-timesheet-calculator, /weeks-between-dates-calculator, /work-hours-calculator, /workdays-calculator, /workout-timer, /world-clock, /world-clock-with-milliseconds
+
+'failed' !== 'passed'
+
+    at file:///C:/Users/Suhas/.codex/worktrees/ilovetimers-diagnostic-W46/scripts/tests/final-browser-validation.mjs:581:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'failed',
+  expected: 'passed',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v25.9.0

@@ -1,0 +1,547 @@
+[
+  {
+    "route": "/countdown-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "Start\nReset\n+1:00\n-0:10\nQuick presets\nChoose a common duration or enter a custom value below.\n1m\n5m\n10m\n15m\n30m\nSet countdown\n\nMinutes and seconds. Seconds are clamped to 0-59.\n\nMinutes\nSeconds\n0-59\nApply\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / R reset / A +1:00 / S -0:10 / F fullscreen\n5:00\nCOUNTDOWN / READY\nCountdown Timer\n\nSet a general countdown toward zero, then start, pause, resume, adjust, reset, or open the remaining time fullscreen.\n\nAdvertisements\nA general countdown toward zero\n\nChoose a duration for cooking, work, study, meetings, exercise, or an everyday task. Enter minutes and seconds directly; longer durations can be entered as total minutes and are displayed with hours when needed.\n\nA stopwatch counts upward, while this timer counts down. Use Multiple Timers for independent simultaneous countdowns, the Timer and Stopwatch for both modes in one tool, the Clock and Timer to keep current local time visible, or the Online Timer for presets, looping, and flexible setup.\n\nFor the implementation details behind delayed callbacks and hidden pages, read how browser timers measure elapsed time and what changes in background tabs or on locked devices.\n\nSet a countdown\nEnter minutes and seconds, or choose a minute preset.\nPress Start. Pause keeps the current remainder for resuming.\nUse +1:00 or -0:10 to adjust the active remaining time.\nReset returns to the duration currently shown in the inputs.\n\nA 7-minute setup can be entered as 7 minutes and 0 seconds. If you add one minute after it reaches 04:20, the display moves to 05:20.\n\nWhen zero is reached\n\nThe display stops at zero and uses the selected sound behavior. The page must remain open. Browser audio rules can require an earlier click, and device sleep can postpone the cue. Reset does not preserve the prior run as history.\n\nAdvertisements\n\nNeed a countdown with visible milliseconds and millisecond input? Use the millisecond timer. This page stays focused on simple minutes-and-seconds countdowns. For a short countdown built around whole seconds, use the seconds timer, or open a direct 1 minute, 5 minute, 10 minute, 15 minute, or 30 minute timer when you want the duration ready immediately. For cooking presets and kitchen checks, use the kitchen timer. For a date-based countdown to January 1, use the New Year countdown.",
+    "pageErrors": []
+  },
+  {
+    "route": "/millisecond-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "0:10.000",
+      "active": "0:08.808",
+      "paused": "0:08.808",
+      "reset": "0:10.000"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/seconds-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "30s",
+      "active": "29s",
+      "paused": "29s",
+      "reset": "30s"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/online-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "Start\nReset\nFullscreen\n5:00\nCOUNTDOWN / READY\nQuick presets\nPick a common duration or enter a custom time below.\n1m\n2m\n3m\n5m\n10m\n15m\n20m\n25m\n30m\n45m\n60m\nTimer settings\n\nSet a custom duration, then choose optional sound and loop behavior.\n\nCustom time\nSet\nSound\nLoop\nShortcuts: Space start/pause / R reset / F fullscreen\nOnline Timer\n\nStart a clear countdown with presets, custom time, sound, loop, and fullscreen mode.\n\nAdvertisements\nChoose the right timer\n\nOnline Timer is a flexible everyday starting point with quick presets, custom time entry, optional sound, looping, and fullscreen. Use the Countdown Timer for the definitive general countdown, or the Timer and Stopwatch when you also need elapsed-time mode.\n\nOpen Multiple Timers for simultaneous independent countdowns, the Study Timer for a fixed study block, the Pomodoro Timer for repeated work and breaks, or the Clock and Timer when current local time should remain visible.\n\nAdvertisements\nEnter one duration\n\nType a time such as 05:00, or select a minute preset. Start begins the countdown. Pause keeps the current remainder, and Reset reloads the entered duration. Fullscreen enlarges the same active timer rather than opening a separate session.\n\nUse this route for a single general countdown. The Countdown Timer adds direct +1:00 and -0:10 adjustments. Multiple Timers is the better fit when several independent deadlines must run together.\n\nAlarm delivery\n\nThe final sound is produced by the browser when sound is enabled. An earlier user action may be required before audio is allowed. Background tabs can update less often, and a sleeping device can delay completion. No active run survives a refresh or closed tab.",
+    "pageErrors": []
+  },
+  {
+    "route": "/timer-stopwatch",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "00:05:00",
+      "active": "00:04:59",
+      "paused": "00:04:59",
+      "reset": "00:05:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/timer-clock",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "00:05:00",
+      "active": "00:04:59",
+      "paused": "00:04:59",
+      "reset": "00:05:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/study-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "STUDY SESSION / READY\n25:00\nStart\nReset\nStudy presets\nPick a study block length or set a custom session below.\n5m\n10m\n15m\n20m\n25m\n30m\n40m\n45m\n50m\n60m\n75m\n90m\nStudy settings\n\nChoose the session length and quiet study cues.\n\nCustom minutes\nSound\nFinal beeps\nFocus mode\nMilestones\nShow end time\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen / M focus mode / S sound\nStudy Timer\n\nRun a large, quiet study countdown with presets, focus mode, optional sound, milestones, and fullscreen mode.\n\nAdvertisements\nHow this study timer works\n\nStudy Timer keeps the active study block first: the countdown, ready state, running state, and completion state are the main event. Below the display you can choose presets, set a custom duration, toggle sound, use focus mode, show milestones, reveal the expected end time, enter fullscreen, and use keyboard shortcuts.\n\nIt is useful for homework, reading, flashcard review, timed problem sets, writing drafts, exam-prep practice, or review windows where a visible stop point helps you plan the session. It helps structure time, but it does not make academic-performance claims.\n\nStudy examples and settings\nUse a 20 or 25 minute preset for a short reading block or a flashcard pass.\nUse a 45 or 60 minute preset for a longer homework block, then take a separate break if needed.\nTurn on end-time visibility when you want to know the expected finish time before starting.\nUse milestone labels when you want visible checkpoints during a longer session; use focus mode when the countdown alone is enough.\nAdvertisements\nStudy Timer vs Study Stopwatch\n\nStudy Timer counts down from a planned duration and provides a clear stopping point, milestones, and an estimated finish time. The Study Stopwatch counts upward for an open-ended session when you do not know the duration in advance.\n\nFor one intentional work block without study-specific milestones, use the Focus Session Timer. For repeated work and break cycles, use the Pomodoro Timer. For a standalone rest between sessions, use the Break Timer.\n\nLimits to keep in mind\n\nThis page runs in your browser and depends on the device staying awake, the tab remaining available, and your audio settings if sound is enabled. For proctored or formal timing, follow the rules for your class, school, or test environment.",
+    "pageErrors": []
+  },
+  {
+    "route": "/break-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "READY\n5:00\nStart\nReset\nBreak presets\nPick a common break length or set a custom duration.\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\nBreak settings\n\nCommon breaks: 1 to 3 minutes for a quick reset, 5 minutes for a short break, and 10 to 15 minutes for a longer break.\n\nBreak length (minutes)\nLoop\nSound\nFinal beeps\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen / S sound / L loop\nBreak Timer\n\nStart a calm break countdown with quick presets, custom duration, optional sound, and fullscreen mode.\n\nAdvertisements\nHow this break timer works\n\nBreak Timer is a short countdown for stepping away and coming back at the time you choose. Pick a preset, enter custom minutes, start, pause, or reset, and keep the remaining time visible while the controls stay below the countdown.\n\nReset returns the timer to the currently selected duration. If loop is enabled, the same break length can repeat; if sound or final beeps are enabled, browser audio settings still apply.\n\nWhen to use a break timer\n\nUse it for desk breaks, screen breaks, pauses between study sessions, short meeting breaks, coffee refills, cleanup pauses, or a simple rest between tasks. It is a timing tool, not medical or wellness advice.\n\nStart 2 minutes after a quick task batch.\nUse 5 minutes between study topics or focus blocks.\nUse 10 or 15 minutes for a longer pause between meetings.\nAdvertisements\nA standalone break countdown\n\nThis page times one break by itself. It does not manage repeated Pomodoro cycles or add the study milestones of the Study Timer. Return to the Focus Session Timer or Study Timer when the next work block needs structure, or use the Countdown Timer for a general-purpose duration.\n\nQuiet and related break tools\n\nFor work and break cycles, use the Pomodoro timer. For direct short break countdowns, use the 5 minute timer or 10 minute timer. For a single work block before the break, use the focus session timer. For no-sound timing, use the silent timer. For workout rest periods, use the rest timer. For movement breaks, try the stretch timer.",
+    "pageErrors": []
+  },
+  {
+    "route": "/meeting-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "Start\nReset\nMeeting length\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n25m\n30m\n45m\n60m\nMeeting settings\nCustom minutes\nSound\nFinal beeps\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen\nREADY\n10:00\nMeeting Timer (Agenda Timeboxing)\n\nRun a clear countdown for agenda items with presets, custom minutes, fullscreen, optional sound, and shortcuts.\n\nAdvertisements\nMeeting timer behavior\n\nThe timer opens at 10:00 in the Ready state. Start begins the countdown. Pause keeps the remaining time, and Start then resumes from that point. Reset stops the timer and restores the selected duration. At 0:00 the timer stops. It does not count overtime.\n\nMeeting-length presets and Custom minutes are disabled while the timer runs. Pause before changing the duration. Sound is on by default and plays one short completion tone. Final beeps are off by default. If you enable them, the page beeps once for each of the final five seconds. You can change the sound toggles during a run. The last ten seconds use the warning style.\n\nSpace starts or pauses, R resets, and F toggles fullscreen when the timer frame has focus. Fullscreen also lets you tap the time to start or pause. The page does not save meeting state. Refreshing or reopening it restores the 10-minute default and the default sound settings. Each browser tab runs its own timer.\n\nExample: choose 7m and press Start. After two minutes the display is about 5:00. Pause, then press Start to continue. When it reaches 0:00 it stops and plays the completion tone if sound is enabled. Press Reset to return to 7:00.\n\nThe countdown uses the browser's monotonic elapsed-time clock while the page stays open. A background tab can repaint less often and catch up when it runs again. Browser suspension or device sleep can delay the display and sound. The page cannot wake a sleeping device, and it cannot alert you after the tab is closed.\n\nSet the meeting timebox\n\nPick a preset or enter custom minutes before starting. The duration controls are disabled during an active run. Pause first if the timebox needs to change, then choose the new value and resume or restart.\n\nA seven-minute setup counts down from 07:00. The configured warning changes the display near the end, and sound can mark completion. Reset restores the selected duration and clears the running state.\n\nWhich meeting tool fits\n\nThis page handles one countdown. Meeting Agenda Timer assigns minutes to ordered agenda items. Meeting Count Up Timer records elapsed topic markers instead of counting toward a fixed finish. The current meeting countdown is held only in this tab and is lost on refresh.\n\nAdvertisements\n\nNeed separate durations for each agenda topic? Use the meeting agenda timer to edit agenda items, move between topics, and track total remaining meeting time.\n\nPlanning the meeting time across several locations first? The time zone meeting planner compares dates, work windows, and local times before the meeting starts.",
+    "pageErrors": []
+  },
+  {
+    "route": "/presentation-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "Start\nReset\nPresentation duration\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n25m\n30m\n45m\n60m\nPresentation settings\n\nAdjust the time limit and optional sound cues.\n\nCustom minutes\nSound\nFinal beeps\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen\nREADY\n10:00\nPresentation Timer (Fullscreen Countdown)\n\nKeep talks, pitches, and meeting segments on time with a large countdown, presets, optional sound, and fullscreen mode.\n\nAdvertisements\nHow this presentation timer works\n\nPresentation Timer is a speaker countdown. Choose a talk length, press Start, and keep the remaining time visible while you rehearse or present. The tool keeps the timer display first, then places presets, custom minutes, sound, final beeps, and fullscreen controls below it.\n\nIt shows remaining time, not timezone information or an agenda document. That makes it useful as a simple confidence monitor on a laptop, podium screen, second monitor, or projected room display.\n\nWhen to use it\n\nUse it for talks, lectures, workshops, demos, pitches, conference sessions, student presentations, and rehearsal runs. The large display helps a speaker glance at the remaining time without turning the page into a control panel.\n\nPresets cover common short talks, classroom presentations, demos, and longer sessions.\nCustom minutes handle unusual time slots, rehearsal targets, or short Q&A buffers.\nFinal beeps can mark the last five seconds when Sound is enabled.\nFullscreen keeps the display readable for rehearsal rooms, podiums, projectors, and shared screens.\nLimitations and room setup notes\n\nThis is a browser-based presentation timer, not professional AV timing equipment and not an official event compliance tool. Keep the page visible if you rely on the display, test sound before the session if you plan to use beeps, and use the venue's timing rules when a talk has formal requirements.\n\nAdvertisements\nRelated tools\n\nFor structured agenda timing, use the meeting timer. For a speaker-focused countdown with warning thresholds, use the speech timer. For a date-based launch or event, use the event countdown. For the simplest projected countdown, try the fullscreen timer. For student-facing classroom activities, use the classroom timer.\n\nPresentation timer FAQ\nCan I use this as a rehearsal timer?\n\nYes. Pick the time limit you expect for the real talk, run through the material, and use the remaining-time display to learn where you tend to speed up or run long.\n\nDoes fullscreen remove distractions?\n\nFullscreen focuses the view on the timer controls and large digits. Active fullscreen views do not include ad placements.\n\nIs this a meeting timer?\n\nIt can time a meeting segment, but the meeting timer is better when the main job is agenda timeboxing instead of speaker timing.",
+    "pageErrors": []
+  },
+  {
+    "route": "/speech-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "05:00",
+      "active": "04:59",
+      "paused": "04:59",
+      "reset": "05:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/exam-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "Start\nReset\nExam duration\n5m\n10m\n15m\n20m\n25m\n30m\n35m\n40m\n45m\n60m\n75m\n90m\n120m\n180m\nExam cues\n\nSound and warning cues stay secondary to the exam countdown.\n\nSound\nWarnings\nFinal beeps\n5 min warning\n1 min warning\nCustom duration\nCustom minutes\nFullscreen\nSpace start/pause / R reset / F fullscreen\nREADY\n25:00\nWarnings: 5m · 1m\nExam Timer (Fullscreen Countdown)\n\nRun timed practice with a calm fullscreen countdown, presets, optional warning beeps, and keyboard shortcuts.\n\nAdvertisements\nConfigure a timed section\n\nChoose a minute preset or enter a custom duration. Optional warning controls can mark the five-minute and one-minute points. Final beeps apply only to the last seconds when enabled.\n\nFor a 25-minute practice section, choose 25 minutes and enable both warnings. Pause stops the current countdown without clearing it. Reset returns to 25:00 and restores the warning schedule for a new attempt.\n\nUse limits\n\nThis is a browser timer, not an exam administration system. It does not lock the device, collect answers, or keep an attempt record. Fullscreen only changes the display. Keep the page open because device sleep can delay warnings and completion audio.\n\nAdvertisements",
+    "pageErrors": []
+  },
+  {
+    "route": "/classroom-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "CLASSROOM TIMER\nREADY\n5:00\nStart\nReset\n-1 min\n+1 min\n+5 min\nFullscreen\nClassroom presets\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n30m\n45m\n60m\nClassroom settings\n\nSet the timer label and classroom sound cues before starting.\n\nMinutes\nLabel (optional)\nSound\nFinal beeps\nEnd chime\nSpace start/pause / R reset / F fullscreen / + add 1 min / - subtract 1 min\nClassroom Timer (Fullscreen Countdown)\n\nBig, readable countdown for smartboards and projectors with presets, custom labels, sound cues, and keyboard shortcuts.\n\nAdvertisements\nRun a visible classroom countdown\n\nChoose a preset or enter a custom number of minutes. The title field changes the label shown with the timer. During a run, -1 min, +1 min, and +5 min adjust the remaining time without rebuilding the setup.\n\nFor a 12-minute activity, enter 12 and set the title to Group work. Start the timer, then add five minutes if the activity is extended. The display changes to reflect the new deadline.\n\nDisplay behavior\n\nPause holds the current remainder. Reset returns to the selected class duration. Fullscreen keeps the label and large time visible. The page has no student accounts, remote controls, or durable class history. Device sleep can delay both the display and any completion sound.\n\nAdvertisements",
+    "pageErrors": []
+  },
+  {
+    "route": "/kitchen-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "10:00",
+      "active": "9:59",
+      "paused": "9:59",
+      "reset": "10:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/egg-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "Start\nReset\nEgg presets\nChoose a doneness preset or adjust the duration below.\nSoft\nJammy\nMedium\nHard\nVery hard\nTimer settings\n\nSet custom minutes and seconds, then choose whether sound and final countdown beeps should run.\n\nMinutes\nSeconds\nSound\nFinal beeps\nFullscreen\n6:00\nShortcuts: Space start/pause / R reset / F fullscreen / S sound\nEgg Timer\n\nChoose soft, jammy, medium, or hard egg presets, then run a large countdown with optional sound.\n\nAdvertisements\nChoose or adjust a preset\n\nSoft, Jammy, Medium, Hard, and Very hard load different countdown values. You can change minutes and seconds after choosing a preset. The selected value remains a timer setting, not a cooking guarantee.\n\nChoose Jammy to load its preset, then add 30 seconds if you want a later check. Start begins that exact countdown. Pause holds it, and Reset returns to the edited value. Final beeps apply near zero when enabled.\n\nWhat affects the result\n\nEgg size, starting temperature, altitude, cookware, and heating method can change cooking time. Check the food directly and follow appropriate food-safety guidance. The browser cue can be delayed if the device sleeps.\n\nAdvertisements\n\nNeed a general kitchen countdown instead of an egg-specific preset? Use the kitchen timer.",
+    "pageErrors": []
+  },
+  {
+    "route": "/pizza-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "OVEN / READY\n14:00\nStart\nReset\nPizza presets\nChoose a starting point, then adjust method and reminder settings below.\nFrozen (Oven 14m)\nFrozen (Oven 16m)\nFrozen (Air fryer 10m)\nReheat slice (6m)\nSkillet slice (5m)\nTimer settings\n\nSet the duration, cooking method, check reminder, and sound behavior.\n\nMinutes\nSeconds\nMethod\nOven\nAir fryer\nSkillet\nCustom\nCheck minutes left\nReminder point before the timer ends.\nReminder style\nRepeating (10s)\nTriple beep\nNone\nSound\nFinal beeps\nTest reminder\nStop sound\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen\nPizza Timer\n\nUse pizza presets, reminders, sound controls, and fullscreen mode with the countdown as the focus.\n\nAdvertisements\nPreset, check point, and finish\n\nChoose a method preset or set custom minutes and seconds. The early check value schedules a reminder before the final deadline. Repeating reminder mode can continue its selected pattern after that check point.\n\nFrozen oven 14m loads a 14-minute countdown. With an early check set to 2 minutes, the check reminder occurs at 12:00 elapsed, leaving two minutes before the final cue. Reset restores the loaded or edited time.\n\nKitchen limitation\n\nPresets are starting values. Appliance temperature, product thickness, starting temperature, and cookware affect heating time. Check the food and follow its package instructions. Device sleep can delay browser audio.\n\nAdvertisements\n\nNeed a general kitchen countdown for oven checks, simmering, or prep? Use the kitchen timer.",
+    "pageErrors": []
+  },
+  {
+    "route": "/tea-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "READY\n2:00\nStart\nReset\nTea presets\nGreen tea\nBlack tea\nOolong\nWhite tea\nHerbal\nChai\nRooibos\nPu-erh\nMatcha\nTimer settings\n\nSet a custom steep time and choose whether the timer should make sound.\n\nMinutes\nSeconds\nSound\nFinal beeps\n2:00 (lighter, avoid bitterness)\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen\nTea Timer\n\nChoose a tea preset or custom steep time, then keep the countdown clean, large, and easy to see.\n\nAdvertisements\nHow this tea timer works\n\nTea Timer keeps steep timing simple: choose a tea preset or enter custom minutes and seconds, then start the countdown while the cup or pot steeps. The display stays large and visible, with optional sound and fullscreen controls available below the timer.\n\nPresets cover common green, black, oolong, white, herbal, chai, rooibos, pu-erh, and matcha starting points. Use them as convenient defaults, then adjust the time when the tea label, water temperature, leaf amount, vessel size, or personal taste points to a shorter or longer steep.\n\nTea examples and custom steep times\nUse a shorter green tea or white tea steep when bitterness is a concern.\nUse a black tea, chai, oolong, or herbal preset when you want a quick starting point for a common cup.\nUse custom timing for matcha prep, a second infusion, loose-leaf instructions, or a tea vendor's specific recommendation.\nKeep the timer visible on a second screen or in fullscreen when you are preparing food at the same time.\nTaste and timing limits\n\nA timer helps prevent accidental over-steeping, but it cannot choose the right flavor for every tea. Tea amount, water temperature, mug or pot size, steeping method, and preference all matter, so treat presets as starting points rather than promises.\n\nLike other browser timers, this page depends on the device staying awake and the tab remaining available. If sound is enabled, browser audio permissions and device volume still apply.\n\nAdvertisements\nRelated kitchen timers\n\nFor general cooking steps, use the cooking timer. For boiled eggs, use the egg timer. For a general kitchen countdown, use the kitchen timer. For plain custom minutes and seconds, use the countdown timer.\n\nTea timer FAQ\n\nCan I use this for loose-leaf tea? Yes. Pick the closest tea type or set a custom steep time based on the tea label, vendor note, or your usual preference.\n\nDoes it choose water temperature? No. The timer only tracks steep duration. Water temperature, leaf amount, and steeping method are separate choices.\n\nCan I time a second infusion? Yes. Use the custom minutes and seconds fields when a later infusion needs a different time than the first steep.",
+    "pageErrors": []
+  },
+  {
+    "route": "/sleep-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "READY\n30:00\nStart\nReset\nQuiet settings\nMinutes\nSound\nSoft alarm\nDim mode\n5m\n10m\n15m\n20m\n30m\n45m\n60m\n90m\n120m\nFullscreen\nShortcuts: Space start/pause · R reset · F fullscreen · D dim\nSleep Timer\n\nSet a quiet bedtime countdown with soft alarm, dim mode, presets, and fullscreen support.\n\nAdvertisements\nHow this sleep timer works\n\nSleep Timer is a quiet countdown for bedtime-adjacent tasks such as reading, music timing, a device-off reminder, a wind-down window, or a short nap countdown. Choose a preset or custom minutes, then use start, pause, reset, dim mode, soft alarm, optional sound, fullscreen, and keyboard shortcuts as needed.\n\nThe timer stays visible first and keeps settings below the display. Dim mode changes the visual intensity while keeping the remaining time readable; soft alarm and sound can be left off when you want a quiet page.\n\nIt controls only its own browser countdown and optional sound. It does not stop external media, close another application, shut down the device, or keep the device awake.\n\nWhen to use it\nSet 15 minutes for reading before stopping.\nUse 30 minutes as a device-off reminder.\nUse a short preset for a nap countdown or quiet pause.\nKeep sound off if a visual countdown is enough for the room.\nAdvertisements\nWhat this timer can and cannot do\n\nThis browser timer cannot guarantee that another application, media player, browser tab, or device will stop or remain awake. Background throttling, tab closure, permissions, and device sleep can affect completion behavior.\n\nIt is a general timing tool, not medical or sleep-health advice. It does not control external media or make claims about sleep quality.\n\nMaintained by Suhas Sunder. See how iLoveTimers is made.\n\nLast reviewed July 14, 2026.\n\nRelated quiet timers\n\nFor a general-purpose duration, use the countdown timer. For no-sound countdowns, use the silent timer. For a quiet timed session, try the meditation timer. For a direct alarm time, use the alarm timer. For daytime pause timing, use the break timer.",
+    "pageErrors": []
+  },
+  {
+    "route": "/silent-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "COUNTDOWN\nReady\n5:00\nStart\nReset\nPresets\n1m\n2m\n3m\n5m\n10m\n15m\n20m\n25m\n30m\n45m\n60m\nSilent timer settings\n\nThis timer never creates completion or ticking audio.\n\nCustom time\nSet\nLoop\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen\nSilent Timer\n\nRun a quiet visual countdown for classrooms, meetings, exams, libraries, and other no-alarm settings.\n\nAdvertisements\nHow this silent timer works\n\nSilent Timer is a no-sound countdown. The main display shows the remaining time in large digits, then changes to a visible Done state at zero. Pick a preset, type a custom time, press Start, and use the screen itself as the completion cue.\n\nThis route does not create a completion beep, ticking sound, vibration, or notification. It remains distinct from ordinary countdown and alarm pages for libraries, classrooms, shared offices, meetings, exams, and other quiet spaces.\n\nWhen to use a no-sound countdown\n\nUse this route when the end of the timer should be noticed by the person watching the screen, not announced to the whole room. It is a good fit for projected classroom transitions, reading periods, quiet exam practice, meditation blocks, desk focus sessions, and meeting timeboxes where a visual finish state is enough.\n\nPresets cover common short and medium countdowns without opening the custom time field.\nCustom time accepts seconds, minutes and seconds, or an hour-style entry when the preset list does not match the task.\nLoop can restart the same visual countdown for recurring desk checks, station rotations, repeated practice rounds, or quiet reminders.\nFullscreen keeps the digits readable on a second screen, shared screen, projector, or nearby tablet.\nLimits and quiet-room notes\n\nA silent browser timer is not a safety alarm, proctoring system, or official time source. Keep the page open and visible if the visual finish state matters. If the device sleeps, the display updates when the browser resumes. Because this page intentionally has no audible alert, do not rely on it when you cannot watch the display.\n\nAdvertisements\nRelated quiet and visual tools\n\nFor an even more visual countdown, try the visual timer. For the largest projected display, use the fullscreen timer. For a standard countdown with more general wording, use the countdown timer. For quiet practice blocks, see the meditation timer or exam timer.\n\nSilent timer FAQ\nDoes this timer make sound?\n\nNo. It creates no completion beep or ticking sound. At zero, the display changes to a visible Done state.\n\nCan I use the silent timer in fullscreen?\n\nYes. Fullscreen keeps the countdown and its visual completion state large without adding audio.\n\nWhat happens if the browser or device sleeps?\n\nThe timer reconciles elapsed time when the page resumes, but the visible completion cue cannot be seen while the display is asleep or the tab is closed.",
+    "pageErrors": []
+  },
+  {
+    "route": "/visual-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "Start\nReset\nREADY\n10:00\nStart\nDone\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n25m\n30m\n45m\n60m\nCustom minutes\nBar\nRing\nShow time\nSound\nFinal beeps\nFullscreen\nShortcuts: Space start/pause · R reset · F fullscreen · V toggle visual · T toggle time\nVisual Timer\n\nShow remaining time with a shrinking bar or ring beside the numeric countdown.\n\nAdvertisements\nHow this timer works\n\nVisual Timer pairs a large countdown with a simple bar or ring indicator so the changing proportion remains visible. The display stays first, while duration presets, custom time, mode controls, show-time settings, fullscreen, and optional sound remain below it.\n\nWhen a visual countdown helps\n\nUse it for classroom activities, focus work, kids' routines, presentations, shared spaces, or quiet tasks where a shrinking visual cue is easier to follow than reading small digits. The time display can stay visible or be reduced depending on how simple the screen should feel.\n\nDisplay options\nRing mode emphasizes the remaining portion of the countdown in a compact visual shape.\nBar mode works well when the timer is projected or placed near a task list.\nShow-time controls decide whether the numeric countdown appears with the visual cue.\nFullscreen mode is useful when the timer is projected, shared on a call, or placed on a second screen.\nTips and limitations\nAdvertisements\n\nA visual timer helps show time remaining without requiring everyone to read small numbers. It is still a browser timer, so device sleep, tab throttling, audio permissions, and system settings can affect what you see or hear. Keep the page visible for important shared-room timing and use a dedicated device alarm for safety-critical reminders.\n\nRelated visual timers\n\nFor no-sound timing, use the silent timer. For a large projected countdown, try the fullscreen timer. For a standard countdown with more timing options, use the countdown timer. For classroom use, compare the classroom timer. For speaker timing, use the presentation timer.\n\nFAQ\n\nCan I hide the numbers? Use the show-time setting if you want the visual cue to carry more of the display. Keeping numbers visible is helpful when people need the remaining minutes and seconds.\n\nDoes fullscreen show ads? No. Fullscreen keeps the active timer display separate from page content and ad placeholders.",
+    "pageErrors": []
+  },
+  {
+    "route": "/focus-session-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "READY\n45:00\nStart\nReset\nFocus presets\nPick a calm single-session length or set a custom duration.\n1m\n5m\n10m\n15m\n20m\n25m\n30m\n35m\n40m\n45m\n50m\n60m\n75m\n90m\nFocus settings\n\nKeep this timer simple: one session length, optional sound, and final cues.\n\nSession length (minutes)\nSound\nFinal beeps\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen / S sound\nFocus Session Timer\n\nChoose a focus session length, start the countdown, and keep session controls secondary to the active timer.\n\nAdvertisements\nOne planned focus block\n\nThis timer runs one intentional countdown from the session length you choose. It does not repeat Pomodoro cycles, count upward like the Study Stopwatch, or act as a productivity dashboard.\n\nUse the Study Timer for a study-specific countdown with milestones, the Pomodoro Timer for repeated work and break phases, or the Break Timer for a standalone rest.\n\nOne fixed focus block\n\nSelect a preset or enter the number of minutes, then start a single countdown. A 45-minute session runs once and stops at zero. It does not add breaks, cycles, tasks, or notes.\n\nPause keeps the current remainder. Reset restores the chosen duration. Use Pomodoro Timer when work and break phases should repeat, or Study Stopwatch when the session should run upward without a preset end.\n\nBrowser note\n\nSound depends on browser audio permission and an open page. Background throttling can delay a visual update, while device sleep can postpone the final cue. The running session is not saved after refresh.\n\nAdvertisements\nRelated preset focus blocks\n\nFor a fixed countdown without focus-session settings, open the 15 minute timer or 30 minute timer. This focus session timer stays broader, with session presets, sound options, and completion guidance.",
+    "pageErrors": []
+  },
+  {
+    "route": "/rest-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "READY\n1:30\nSound on · Final beeps on\nStart\nReset\nPresets\n15s\n30s\n45s\n1m\n2m\n2m\n3m\n4m\n5m\nSettings\nCustom seconds\nSound\nFinal beeps\nLoop\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen\nRest Timer\n\nTime rest periods between sets with a large countdown and simple workout-focused controls.\n\nAdvertisements\nHow this rest timer works\n\nRest Timer is built for short repeatable intervals between sets, rounds, drills, rehearsals, or practice attempts. Choose a seconds-based preset or enter a custom rest length, then keep the countdown visible while you prepare for the next round.\n\nPresets are useful for common 30, 45, 60, and 90 second intervals. Optional sound can mark the end when you are not looking at the screen, and auto-restart can repeat the same interval for simple routines.\n\nCommon rest timer examples\nSet 60 seconds between strength sets.\nUse 30 seconds between short drills or practice attempts.\nUse 90 seconds between heavier attempts or rehearsal passes.\nKeep the timer visible so a short rest window does not stretch without noticing.\n\nChoose durations that fit your own routine. This page does not determine training intensity, recovery needs, or safe rest length.\n\nAdvertisements\nRelated interval tools\n\nFor full work/rest structure, use the workout timer. For round-based sessions, try the round timer. For movement breaks, use the stretch timer. For general work pauses, use the break timer.",
+    "pageErrors": []
+  },
+  {
+    "route": "/meditation-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "Start\nReset\nBreathing presets\nBox 3m\nBox 5m\nBreathe 7m\nBreathe 10m\nMeditation + yoga presets\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n30m\n45m\n60m\nSettings\nCustom minutes\n+ extra seconds\nSound\nFinal beeps\nEnd chime\nLoop\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen / S sound / L loop\nREADY\n10:00\nMeditation Timer\n\nUse a calm meditation countdown with compact bell, chime, loop, and fullscreen controls.\n\nAdvertisements\nSet a quiet session\n\nChoose a preset or enter minutes and seconds. Some presets load named breathing patterns, while a plain minute preset runs one countdown. Sound controls whether browser cues mark the session boundary.\n\nSelect Breathe 7m to load seven minutes, or enter 12:00 for a custom session. Pause holds the current remainder. Reset restores the chosen duration rather than recording a completed session.\n\nScope and delivery\n\nThis timer provides general timing and does not make a health claim. Browser audio may need an initial interaction. Keep the page open, and note that device sleep can delay the end cue.\n\nAdvertisements",
+    "pageErrors": []
+  },
+  {
+    "route": "/lab-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "Fullscreen\nLab timer settings\n\nSound cues apply to the repeatable countdown. Stopwatch laps stay silent.\n\nSound\nFinal beeps\nSpace stopwatch / L lap / C countdown / R reset / T repeat / F fullscreen\nStopwatch + Laps\nmm:ss.cc\n0:00.00\nREADY\nStart\nLap\nReset\nMax laps\nLAPS (NEWEST FIRST)\nStart the stopwatch, then press L to record laps (splits).\nRepeatable Countdown\nstep timer\nCommon step times\n10s\n15s\n30s\n45s\n1m\n1m 30s\n2m\n3m\n5m\n10m\nCountdown setup\nCustom step (seconds)\nStart\nReset\nRepeat step\nIf Repeat is on, the countdown restarts automatically after it hits zero.\n1:00\nSTEP COUNTDOWN - REPEAT ON - READY\nC start/pause - R reset - T toggle repeat - F fullscreen\nLab Timer (Experiments + Reaction Time)\n\nUse a stopwatch with laps and a repeatable countdown for timed lab steps, optional sound, and fullscreen step timing.\n\nAdvertisements\nTwo timing modes for a procedure\n\nStopwatch mode measures open-ended elapsed time and records laps. Step mode counts down a selected short duration for a repeatable procedure. The quick second presets load the step duration.\n\nStart the stopwatch and press Lap at each observation to keep timestamps. For a repeated 60-second step, set 60 seconds and restart that step for each sample. Reset clears the active mode's current timing data.\n\nRecordkeeping boundary\n\nThe lap list is a session aid, not a laboratory record system. Refreshing or closing the page removes it. Browser and input latency affect recorded times, and device sleep can interrupt countdown cues. Export required observations into the appropriate record before leaving the page.\n\nAdvertisements",
+    "pageErrors": []
+  },
+  {
+    "route": "/1-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "1:00",
+      "active": "0:59",
+      "paused": "0:59",
+      "reset": "1:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/5-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "5:00",
+      "active": "4:59",
+      "paused": "4:59",
+      "reset": "5:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/10-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "10:00",
+      "active": "9:59",
+      "paused": "9:59",
+      "reset": "10:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/15-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "15:00",
+      "active": "14:59",
+      "paused": "14:59",
+      "reset": "15:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/30-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "30:00",
+      "active": "29:59",
+      "paused": "29:59",
+      "reset": "30:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/millisecond-timer",
+    "name": "1ms, zero clamp, Enter commit, completion and restart",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "1 ms lower bound and committed 250 ms",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/stopwatch",
+    "name": "elapsed, pause exclusion, resume and reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "0:00.000\nREADY\nStart\nLap\nReset\nFullscreen\nCopy laps\nShortcuts: Space start/pause · L lap · C copy · R reset · F fullscreen\nLaps\nMost recent first · Split is time since previous lap\nPress Lap (or L) to record splits.\nOnline Stopwatch\n\nTrack general elapsed time, pause and resume, record lap and split times, copy results, and use a clear fullscreen display.\n\nAdvertisements\nLaps, splits, and everyday elapsed time\n\nUse this stopwatch for workouts, practice, study, meetings, and everyday tasks that do not have a fixed end time. Pause holds the elapsed value, and Resume continues from that same point.\n\nEach lap records a total time since the stopwatch started and a split time since the previous lap. If you know the desired finish time in advance, a countdown is usually a better fit; the combined timer and stopwatch page is useful when one session may need both.\n\nRead how browser timers measure elapsed time and handle delays for the monotonic-clock and callback-reconciliation method used by this kind of stopwatch.\n\nRecord elapsed time and laps\n\nStart begins an open-ended measurement. Lap records the elapsed value without stopping the watch. Pause holds the displayed elapsed time, and Start resumes from that point. Reset clears both elapsed time and laps.\n\nAs an example, press Lap at 00:45 and again at 01:32. The list keeps both timestamps so you can compare the 45-second first segment with the 47-second second segment. Copy laps exports the visible list.\n\nSession scope\n\nThe stopwatch uses the browser's monotonic timing reference. Rendering may slow in a background tab, but the elapsed value reconciles when the page runs again. Laps are held only in this tab and disappear after a refresh or close.\n\nAdvertisements\n\nNeed a countdown that starts from a set duration and shows milliseconds? Use the millisecond timer. This stopwatch is for elapsed time; the millisecond timer is for counting down with minute, second, and millisecond inputs. For a page that puts millisecond precision first, use the stopwatch with milliseconds.",
+    "pageErrors": []
+  },
+  {
+    "route": "/stopwatch-with-milliseconds",
+    "name": "elapsed, pause exclusion, resume and reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "0:00.000",
+      "active": "0:01.224"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/study-stopwatch",
+    "name": "elapsed, pause exclusion, resume and reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ '0:01.23'\n- '0:01.22'\n         ^\n",
+    "text": "STUDY STOPWATCH / PAUSED\n0:01.23\n0 session markers\nResume\nAdd marker\nReset\nFullscreen\nClear markers\nShortcuts: Space start/pause / M add marker / R reset / F fullscreen\nSession markers\n\nChronological checkpoints in this session\n\nAdd a marker when you finish a chapter, practice set, break, or topic.\n\nStudy Stopwatch\n\nTrack study time without choosing a fixed countdown or Pomodoro cycle.\n\nHow to use the study stopwatch\n\nStart when you begin studying, pause when the session stops, and resume from the same elapsed value. Add a marker without stopping the clock when you reach a useful checkpoint. The tool is quiet by default and does not play ticks, marker sounds, or completion audio.\n\nStudy stopwatch vs study timer\n\nThe Study Stopwatch counts upward for an open-ended session. The Study Timer counts down from a fixed duration. Choose the stopwatch when you do not know the session length in advance, or choose the timer when you want a planned stopping point.\n\nStudy stopwatch vs Pomodoro\n\nA Pomodoro timer alternates repeated work and break cycles. This stopwatch keeps one continuous elapsed-time session with optional markers. Neither method is universally better; the useful choice depends on whether you want open-ended tracking or structured cycles.\n\nUseful session markers\n\nAdd a marker after a chapter, practice set, break, or topic change. Markers are simple elapsed-time checkpoints in chronological order. They have no required text field, are not saved to a server, and disappear when you reset or reload the page.\n\nAccuracy and limitations\n\nThis page measures practical browser-based elapsed time. Display refresh, browser scheduling, device performance, background behavior, and input delay can affect millisecond-level readings. It is intended for study tracking, not certified measurement.\n\nMaintained by Suhas Sunder. See how iLoveTimers is made.\n\nLast reviewed July 15, 2026.\n\nStudy stopwatch FAQ\nDoes the study stopwatch have a fixed end time?\n\nNo. It counts upward from zero until you pause or reset it. Use the Study Timer when you want a fixed-duration countdown.\n\nWhat are session markers?\n\nA marker records the current elapsed time without stopping the stopwatch. You can use markers for a completed chapter, practice set, break, or topic change.\n\nWill it keep running in a background tab?\n\nThe browser may reduce screen updates in a background tab. When the page becomes visible again, the displayed elapsed time is reconciled from the browser's monotonic timing clock, subject to browser and device behavior.\n\nIs study information sent to analytics?\n\nNo marker content or elapsed value is sent by this tool. Markers stay in this page's memory and are cleared by reset or reload. Cookieless analytics may record the canonical page path only.",
+    "pageErrors": []
+  },
+  {
+    "route": "/binary-stopwatch",
+    "name": "elapsed, pause exclusion, resume and reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "TimeoutError: locator.innerText: Timeout 3500ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-primary-display-value]').first()\u001b[22m\n",
+    "text": "READY · STOPWATCH · PURE BINARY · NORMAL\n0:00\nHOURS\n0\n0\n0\n0\n0\n0\n0\n0000000\nMINUTES\n0\n0\n0\n0\n0\n0\n0\n000000\nSECONDS\n0\n0\n0\n0\n0\n0\n0\n000000\nTop bit is the largest weight. Add the weights of the lit bits to read the value.\nStart\nReset\nBinary display settings\n\nCount up and read hours, minutes, and seconds in pure binary.\n\nMode\nStopwatch\nTimer\nStopwatch mode counts upward from zero.\nWeights\nPractice\nDim\nSound\nSoft alarm\nFullscreen\nSpace start/pause · R reset · F fullscreen · D dim · M mode · W weights · P practice · E reveal · S sound\nBinary Stopwatch (Binary Timer + Practice Mode)\n\nUse it as a binary stopwatch or binary countdown timer. Toggle weights and practice mode, then go fullscreen for a clean, readable display.\n\nAdvertisements\nMeasure time in binary\n\nStopwatch mode counts upward. Timer mode counts down from its configured value and can use a completion sound. Weights labels the bit positions, Practice exposes a learning view, and Dim reduces inactive-bit contrast.\n\nAt 10 elapsed seconds, the seconds field is 1010 because the active weights are 8 and 2. Pause holds the elapsed or remaining value. Reset clears the run and restores the selected mode's starting value.\n\nMeasurement and storage\n\nBinary changes the representation, not the timing source. Browser input and rendering latency affect what you see. The current run is held in memory and does not survive a refresh.\n\nAdvertisements",
+    "pageErrors": []
+  },
+  {
+    "route": "/stopwatch",
+    "name": "laps record cumulative totals and distinct splits",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "0:03.000\nPAUSED\nStart\nLap\nReset\nFullscreen\nCopy laps\nShortcuts: Space start/pause · L lap · C copy · R reset · F fullscreen\nLaps\nMost recent first · Split is time since previous lap\nLap 2\nTotal 0:03.000\nSplit 0:02.000\nLap 1\nTotal 0:01.000\nSplit 0:01.000\nCopy format: CSV (Lap, Split Time, Total Time)\nOnline Stopwatch\n\nTrack general elapsed time, pause and resume, record lap and split times, copy results, and use a clear fullscreen display.\n\nLaps, splits, and everyday elapsed time\n\nUse this stopwatch for workouts, practice, study, meetings, and everyday tasks that do not have a fixed end time. Pause holds the elapsed value, and Resume continues from that same point.\n\nEach lap records a total time since the stopwatch started and a split time since the previous lap. If you know the desired finish time in advance, a countdown is usually a better fit; the combined timer and stopwatch page is useful when one session may need both.\n\nRead how browser timers measure elapsed time and handle delays for the monotonic-clock and callback-reconciliation method used by this kind of stopwatch.\n\nRecord elapsed time and laps\n\nStart begins an open-ended measurement. Lap records the elapsed value without stopping the watch. Pause holds the displayed elapsed time, and Start resumes from that point. Reset clears both elapsed time and laps.\n\nAs an example, press Lap at 00:45 and again at 01:32. The list keeps both timestamps so you can compare the 45-second first segment with the 47-second second segment. Copy laps exports the visible list.\n\nSession scope\n\nThe stopwatch uses the browser's monotonic timing reference. Rendering may slow in a background tab, but the elapsed value reconciles when the page runs again. Laps are held only in this tab and disappear after a refresh or close.\n\nNeed a countdown that starts from a set duration and shows milliseconds? Use the millisecond timer. This stopwatch is for elapsed time; the millisecond timer is for counting down with minute, second, and millisecond inputs. For a page that puts millisecond precision first, use the stopwatch with milliseconds.",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/hiit-timer",
+    "name": "Reset cancels already-queued phase transition",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "beforeReset": "0:00\nWARM-UP\nGET READY\nREADY\nStart\nReset\nNext\nHIIT presets\nLoad a common work/rest pattern, then fine-tune the timing below.\nTabata 20/10 x 8\nIntervals 40/20 x 10\nBoxing 3:00/1:00 x 6\nInterval settings\n\nSet warm-up, work, rest, rounds, cool-down, and optional cues.\n\nWarm-up seconds\n0 = skip\nWork seconds\nRest seconds\n0 = none\nRounds\nCool-down seconds\n0 = skip\nSound\nFinal 3-2-1 beeps\nWork only\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / R reset / N next / F fullscreen\nHIIT Timer (Intervals)\n\nRun warm-up, work, rest, rounds, and cool-down intervals with a dominant phase countdown.\n\nHow the HIIT sequence runs\n\nThe sequence is warm-up, alternating work and rest, then cool-down. Enter 0 for warm-up or cool-down to skip that phase. Rest is skipped after the final work interval, so the session can move directly to cool-down or finish.\n\nSet Warm-up to 30 seconds, Work to 40, Rest to 20, Rounds to 10, and Cool-down to 60. The timed session lasts 10 minutes 30 seconds: 30 seconds of preparation, ten work periods, nine rests, and one minute to cool down.\n\nDuring an interval\n\nPause holds the current phase. Start resumes it. Next ends the current phase early and advances the sequence. Settings remain fixed while the run is active. Reset returns to the first available phase and round one. Sound cues use browser audio, so keep the tab open and prevent device sleep when a cue matters.",
+    "afterReset": "0:20\nWORK\nROUND 1/8\nRUNNING\nPause\nReset\nNext\nHIIT presets\nLoad a common work/rest pattern, then fine-tune the timing below.\nTabata 20/10 x 8\nIntervals 40/20 x 10\nBoxing 3:00/1:00 x 6\nInterval settings\n\nSet warm-up, work, rest, rounds, cool-down, and optional cues.\n\nWarm-up seconds\n0 = skip\nWork seconds\nRest seconds\n0 = none\nRounds\nCool-down seconds\n0 = skip\nSound\nFinal 3-2-1 beeps\nWork only\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nPause or reset the active session before loading a setup.\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / R reset / N next / F fullscreen\nHIIT Timer (Intervals)\n\nRun warm-up, work, rest, rounds, and cool-down intervals with a dominant phase countdown.\n\nHow the HIIT sequence runs\n\nThe sequence is warm-up, alternating work and rest, then cool-down. Enter 0 for warm-up or cool-down to skip that phase. Rest is skipped after the final work interval, so the session can move directly to cool-down or finish.\n\nSet Warm-up to 30 seconds, Work to 40, Rest to 20, Rounds to 10, and Cool-down to 60. The timed session lasts 10 minutes 30 seconds: 30 seconds of preparation, ten work periods, nine rests, and one minute to cool down.\n\nDuring an interval\n\nPause holds the current phase. Start resumes it. Next ends the current phase early and advances the sequence. Settings remain fixed while the run is active. Reset returns to the first available phase and round one. Sound cues use browser audio, so keep the tab open and prevent device sleep when a cue matters.",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Reset must not be undone by delayed auto-advance\n\n1 !== 0\n",
+    "text": "0:20\nWORK\nROUND 1/8\nRUNNING\nPause\nReset\nNext\nHIIT presets\nLoad a common work/rest pattern, then fine-tune the timing below.\nTabata 20/10 x 8\nIntervals 40/20 x 10\nBoxing 3:00/1:00 x 6\nInterval settings\n\nSet warm-up, work, rest, rounds, cool-down, and optional cues.\n\nWarm-up seconds\n0 = skip\nWork seconds\nRest seconds\n0 = none\nRounds\nCool-down seconds\n0 = skip\nSound\nFinal 3-2-1 beeps\nWork only\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nPause or reset the active session before loading a setup.\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / R reset / N next / F fullscreen\nHIIT Timer (Intervals)\n\nRun warm-up, work, rest, rounds, and cool-down intervals with a dominant phase countdown.\n\nHow the HIIT sequence runs\n\nThe sequence is warm-up, alternating work and rest, then cool-down. Enter 0 for warm-up or cool-down to skip that phase. Rest is skipped after the final work interval, so the session can move directly to cool-down or finish.\n\nSet Warm-up to 30 seconds, Work to 40, Rest to 20, Rounds to 10, and Cool-down to 60. The timed session lasts 10 minutes 30 seconds: 30 seconds of preparation, ten work periods, nine rests, and one minute to cool down.\n\nDuring an interval\n\nPause holds the current phase. Start resumes it. Next ends the current phase early and advances the sequence. Settings remain fixed while the run is active. Reset returns to the first available phase and round one. Sound cues use browser audio, so keep the tab open and prevent device sleep when a cue matters.",
+    "pageErrors": []
+  },
+  {
+    "route": "/hiit-timer",
+    "name": "zero warmup/rest/cooldown, two rounds complete",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "0:00\nCOMPLETE\nDONE\nDONE\nRestart\nReset\nNext\nHIIT presets\nLoad a common work/rest pattern, then fine-tune the timing below.\nTabata 20/10 x 8\nIntervals 40/20 x 10\nBoxing 3:00/1:00 x 6\nInterval settings\n\nSet warm-up, work, rest, rounds, cool-down, and optional cues.\n\nWarm-up seconds\n0 = skip\nWork seconds\nRest seconds\n0 = none\nRounds\nCool-down seconds\n0 = skip\nSound\nFinal 3-2-1 beeps\nWork only\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / R reset / N next / F fullscreen\nHIIT Timer (Intervals)\n\nRun warm-up, work, rest, rounds, and cool-down intervals with a dominant phase countdown.\n\nHow the HIIT sequence runs\n\nThe sequence is warm-up, alternating work and rest, then cool-down. Enter 0 for warm-up or cool-down to skip that phase. Rest is skipped after the final work interval, so the session can move directly to cool-down or finish.\n\nSet Warm-up to 30 seconds, Work to 40, Rest to 20, Rounds to 10, and Cool-down to 60. The timed session lasts 10 minutes 30 seconds: 30 seconds of preparation, ten work periods, nine rests, and one minute to cool down.\n\nDuring an interval\n\nPause holds the current phase. Start resumes it. Next ends the current phase early and advances the sequence. Settings remain fixed while the run is active. Reset returns to the first available phase and round one. Sound cues use browser audio, so keep the tab open and prevent device sleep when a cue matters.",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/pomodoro-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "5:00\nBREAK\nShort break 1/4\nRUNNING\nPause\nNext\nReset\nPomodoro settings\n\nSet the work block, break length, cycle count, and optional cues.\n\nWork (minutes)\nBreak (minutes)\nCycles\nSound\nAuto\nFinal 3-2-1 beeps\nLong break after last cycle\nLong break (minutes)\nTypical: 10 to 20\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nPause or reset the active session before loading a setup.\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen\nPomodoro Timer\n\nRun repeated work and break cycles, starting with the familiar 25-minute work and 5-minute break pattern or your own durations.\n\nRepeated work and break cycles\n\nThe standard starting pattern is 25 minutes of work followed by a",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/tabata-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "0:10\nREST / ROUND 1/8 / TOTAL 3:50 / REST\nPause\nReset\nNext\nWork\n10s\n15s\n20s\n30s\n40s\n45s\nRest\n0s\n5s\n10s\n15s\n20s\n30s\nRounds\n4\n6\n8\n10\n12\n16\nTabata settings\n\nKeep the 20/10 rhythm clear, or adjust work, rest, rounds, and cues.\n\nWork seconds\nRest seconds\nClassic Tabata rest is 10 seconds.\nRounds\nSound\nFinal beeps\nTOTAL\n3:50, no rest after last work interval.\nClassic 20/10 x 8\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen / C classic\nTabata Timer (20/10 Intervals)\n\nRun classic Tabata work and rest intervals with round status, final beeps, and fullscreen controls.\n\nHow this Tabata timer works\n\nThis Tabata timer keeps the common 20 seconds work, 10 seconds rest, 8 round structure ready while still allowing custom work, rest, and round settings. The current work or rest phase stays first, with round status, optional sound cues, final beeps, and fullscreen controls below the display.\n\nUse the Classic control to return to the 20/10 format, or adjust the intervals befor",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/interval-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "ROUND 1 OF 4 / STEP 2 OF 2 / READY\nBreak\n05:00\nCustom repeating interval sequence\nStart\nNext step\nReset\nInterval presets\nStart with a generic repeating pattern, then edit labels, durations, and rounds.\nWork / Break\nFocus / Rest\nPractice / Pause\nInterval steps\n\nEach step has its own label and duration. Keep this generic for work, study, practice, household, or light routine timing.\n\nRepeat rounds\nHow many times to repeat the full step list.\nStep 1 label\nStep 1 minutes\nStep 1 seconds\nSet step 1 active\nDelete step 1\nStep 2 label\nStep 2 minutes\nStep 2 seconds\nSet step 2 active\nDelete step 2\nAdd interval step\nCopy interval summary\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen\nInterval Timer\n\nCreate a generic repeating interval timer with labeled steps, editable durations, repeat rounds, next-step control, and fullscreen display.\n\nHow this interval timer works\n\nThis interval timer lets you build a custom sequence of labeled steps. Each step has its own minutes and",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/workout-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "1:00\nREST / ROUND 1/3 / RUNNING\nPause\nNext\nReset\nWork\n1m\n2m\n3m\n4m\n5m\nRest\n0\n15s\n30s\n1m\n2m\n3m\nRounds\n2\n3\n4\n5\n6\n8\n10\n12\nWorkout settings\n\nAdjust work length, rest length, rounds, and sound cues before starting.\n\nWork minutes\nRest minutes\nUse 0 for back-to-back rounds.\nRounds\nSound\nFinal beeps\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen\nWorkout Timer (Rounds + Rest)\n\nConfigure work, rest, and rounds, then run a large workout countdown with sound cues and fullscreen controls.\n\nHow this workout timer works\n\nUse this workout timer for repeated blocks where each round has a work interval and an optional rest interval. The active phase, round number, and time remaining stay in the main display, while presets, custom work/rest lengths, rounds, sound cues, and fullscreen controls stay below the countdown.\n\nSettings are meant to be chosen before you start. Once the timer is running, start/pause, next, reset, and fullscreen actions remain available so the session can ",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/round-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "ROUND 1 OF 3\n3:00\nWork\n1 / 3 rounds\n3m work / 1m rest\nPause\nNext\nReset\nRound presets\nBoxing 3×3 (1m rest)\nBoxing 3×2 (1m rest)\nBoxing 5×3 (1m rest)\nBoxing 6×3 (1m rest)\nBoxing 12×3 (1m rest)\nMMA 3×5 (1m rest)\nMMA 5×5 (1m rest)\nTabata-ish 8×(20/10)\nSprints 10×(30/30)\nRound settings\n\nSettings lock while a round is active.\n\nRounds\nRound length (sec)\nRest (sec)\nWarmup (sec)\nSound\nFinal beeps\nCurrent setup\n3 rounds / 3m work / 1m rest\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen / S sound\nRound Timer (Boxing & MMA)\n\nRun boxing or MMA-style work and rest rounds with warmup, sound cues, presets, and fullscreen display.\n\nHow this round timer works\n\nThis round timer is built for formats that alternate a timed round with a timed rest. Boxing-style, martial-arts-style, debate, rehearsal, bag work, sparring drills, and general interval sessions can use presets or custom round, rest, and warmup values.\n\nThe current round or rest phase stays dominant, while total round s",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/productivity-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "BREAK / READY\n5:00\nStart\nNext\nReset\nProductivity modes\nSwitch between common focus and break patterns.\nClassic 25/5\nDeep work 50/10\nSprint 90/15\nSession settings\n\nSet focus blocks, short breaks, and long-break cadence.\n\nFocus (min)\nBreak (min)\nLong break (min)\nLong break every\n0 = never use long breaks\nSound\nAuto-advance\nPHASE\nBreak / Completed focus sessions: 1\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen\nProductivity Timer\n\nRun structured productivity sessions with a large active phase timer and compact controls below it.\n\nHow this productivity timer works\n\nProductivity Timer runs a visible work or break session based on the mode and preset you choose. The active phase, remaining time, session count, and controls stay in the utility area, while settings such as auto-advance, sound, fullscreen, and keyboard shortcuts remain close enough to adjust without turning the page into a setup form.\n\nUse it when you want configurable work, short-break, and long-brea",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/multiple-timers",
+    "name": "timer independence and added timer",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "Pause all\nReset all\nAdd timer\nStop alarms\nShared timer options\n\nSound cues apply to every timer in the list.\n\nSound\nFinal beeps\nFullscreen\nSpace start/pause all / R reset / A add / X stop alarms / F fullscreen\n4:58\nRunning\nremove\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n25m\n30m\nMinutes\nSeconds\nPause\nReset\nSilence\n10:00\nPaused\nremove\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n25m\n30m\nMinutes\nSeconds\nStart\nReset\nSilence\n5:00\nPaused\nremove\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n25m\n30m\nMinutes\nSeconds\nStart\nReset\nSilence\nMultiple Timers\n\nRun several independent countdowns with individual names, durations, controls, completion states, and optional sound.\n\nWhen several countdowns help\n\nRun separate timers for multiple dishes, classroom activity stations, workout intervals, study tasks, meeting agenda segments, or household jobs. Each timer can be started, paused, reset, named, or silenced independently, while group controls handle the full list.\n\nMultiple timers vs other timing tools\n\nUse the Countdown Timer when only one duration matters. Use the Timer and Stopwatch when you need one countdown and an elapsed-time mode, or an Interval Timer when one structured sequence should advance through planned intervals.\n\nTimer names, durations, remaining values, and sound settings are saved in local browser storage on this device. This route does not add analytics capture for timer names or entered values, and it does not use accounts or cloud synchronization.\n\nThe browser storage guide lists this route's exact key and ",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/chess-clock",
+    "name": "switch turn and increment preserve independent clocks",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "before": "PLAYER 1 TO MOVE\nPLAYER 1\n04:59\nActive turn / 0 moves\nPLAYER 2\n05:00\nWaiting / 0 moves\nPause\nSwitch turn\nReset\nStarting time\nChoose a common casual chess time control or enter a custom starting time below.\n1m\n3m\n5m\n10m\n15m\nTime control\n\nIncrement is added to the player who just moved when you switch turns while the clock is running.\n\nCustom starting minutes\nIncrement seconds per move\nOptional Fischer-style increment for casual play.\nFullscreen\nShortcuts: Space start/pause / T or Enter switch / R reset / F fullscreen\nChess Clock\n\nRun a casual two-player chess clock with large player displays, presets, custom time, optional increment, move counts, and fullscreen mode.\n\nHow this chess clock wor",
+    "after": "PLAYER 2 TO MOVE\nPLAYER 1\n05:01\nWaiting / 1 moves\nPLAYER 2\n04:59\nActive turn / 0 moves\nPause\nSwitch turn\nReset\nStarting time\nChoose a common casual chess time control or enter a custom starting time below.\n1m\n3m\n5m\n10m\n15m\nTime control\n\nIncrement is added to the player who just moved when you switch turns while the clock is running.\n\nCustom starting minutes\nIncrement seconds per move\nOptional Fischer-style increment for casual play.\nFullscreen\nShortcuts: Space start/pause / T or Enter switch / R reset / F fullscreen\nChess Clock\n\nRun a casual two-player chess clock with large player displays, presets, custom time, optional increment, move counts, and fullscreen mode.\n\nHow this chess clock wor",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/speedrun-timer",
+    "name": "split, undo, end run",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://127.0.0.1:3065/speedrun-timer\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3065/speedrun-timer\", waiting until \"load\"\u001b[22m\n",
+    "text": "",
+    "pageErrors": []
+  },
+  {
+    "route": "/speedcubing-timer",
+    "name": "start/stop adds session solve; reset preserves session",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://127.0.0.1:3065/speedcubing-timer\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3065/speedcubing-timer\", waiting until \"load\"\u001b[22m\n",
+    "text": "",
+    "pageErrors": []
+  },
+  {
+    "route": "/reaction-time-test",
+    "name": "early press reports false start and recovers",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://127.0.0.1:3065/reaction-time-test\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3065/reaction-time-test\", waiting until \"load\"\u001b[22m\n",
+    "text": "",
+    "pageErrors": []
+  },
+  {
+    "route": "/bpm-tapper",
+    "name": "500ms taps yield 120 BPM",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://127.0.0.1:3065/bpm-tapper\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3065/bpm-tapper\", waiting until \"load\"\u001b[22m\n",
+    "text": "",
+    "pageErrors": []
+  },
+  {
+    "route": "/breathing-timer",
+    "name": "box phase advances to hold and resets",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://127.0.0.1:3065/breathing-timer\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3065/breathing-timer\", waiting until \"load\"\u001b[22m\n",
+    "text": "",
+    "pageErrors": []
+  },
+  {
+    "route": "/emom-timer",
+    "name": "prep to first minute; pause survives delay",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "Error: page.goto: net::ERR_HTTP_RESPONSE_CODE_FAILURE at http://127.0.0.1:3065/emom-timer\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3065/emom-timer\", waiting until \"load\"\u001b[22m\n",
+    "text": "",
+    "pageErrors": []
+  },
+  {
+    "route": "/amrap-timer",
+    "name": "manual rounds/reps independent of timer",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "12:00\nREADY\nSCORE\n1 rounds + 1 reps\nStart\nReset all\nAMRAP length\n4m\n6m\n8m\n10m\n12m\n15m\n20m\n25m\n30m\nPrep countdown\nNone\n5s\n10s\n15s\n20s\nAMRAP settings\n\nCustom duration and quiet audio options.\n\nMinutes\nCommon AMRAPs include 8, 10, 12, 15, and 20 minutes.\nPrep seconds\nSound\nFinal beeps\nScore\nREPS\n-\n1\nTap + / -\n+\nROUNDS\n-\n1\nTap + / -\n+\nScore\n1 rounds + 1 reps\nFullscreen\nShortcuts: + / - reps / Up / Down rounds / Space start/pause / R reset all / F fullscreen / S sound\nAMRAP Timer (Countdown + Rep Counter)\n\nRun an AMRAP countdown with optional prep while tracking rounds and reps quietly below the timer.\n\nAdvertisements\nOne deadline with manual counters\n\nChoose the total duration and optional preparation time. The countdown runs once. Use the round and repetition controls to record work as it happens; the app does not infer movement from the timer.\n\nFor a 12-minute session with 10 seconds of prep, start after setting the duration. If you complete three full rounds and eight more repetitions, ",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme missing storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "dark",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme invalid storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "dark",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme light storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "dark",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme dark storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "light",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme denied storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "dark",
+    "status": "PASS",
+    "pageErrors": []
+  }
+]

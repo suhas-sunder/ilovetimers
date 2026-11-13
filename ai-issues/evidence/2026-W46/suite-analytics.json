@@ -1,0 +1,18 @@
+[
+  {
+    "name": "test:analytics",
+    "command": "npm run test:analytics",
+    "startedAt": "2026-11-13T04:58:34.329Z",
+    "finishedAt": "2026-11-13T04:59:08.825Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/analytics-test-analytics.log"
+  },
+  {
+    "name": "build",
+    "command": "npm run build",
+    "startedAt": "2026-11-13T04:59:08.827Z",
+    "finishedAt": "2026-11-13T04:59:29.833Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/analytics-build.log"
+  }
+]

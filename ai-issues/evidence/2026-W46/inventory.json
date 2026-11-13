@@ -1,0 +1,3624 @@
+{
+  "sha": "54c19824b2a76da0ea671e912598fadb3214b8b9",
+  "generatedAt": "2026-11-13T04:16:48.003Z",
+  "counts": {
+    "canonical": 132,
+    "indexable": 109,
+    "noindex": 23,
+    "aliases": 28,
+    "sitemap": 109,
+    "built": 132
+  },
+  "missing": [],
+  "omitted": [],
+  "routes": [
+    {
+      "path": "/",
+      "owner": "app/routes/home.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com",
+      "family": "homepage",
+      "job": "Navigation-first homepage with popular tool links, browse-by-task sections, FAQ, and two reserved ad placeholders.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "PageShell"
+      ],
+      "hooks": [],
+      "protected": "protected"
+    },
+    {
+      "path": "/free-online-timers",
+      "owner": "app/routes/free-online-timers.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/free-online-timers",
+      "family": "archived multi-tool page",
+      "job": "Free Online Timers is implemented as a archived multi-tool page. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, 1 m, 2 m, 3 m, 5 m, 10 m, 15 m, 20 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useIsFullscreen",
+        "useState",
+        "useMemo"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/about",
+      "owner": "app/routes/about.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/about",
+      "family": "trust page",
+      "job": "About iLoveTimers informational page with 4 supporting subsections.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/author/suhas-sunder",
+      "owner": "app/routes/author.suhas-sunder.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/author/suhas-sunder",
+      "family": "trust page",
+      "job": "Suhas Sunder informational page with 3 supporting subsections.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/contact",
+      "owner": "app/routes/contact.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/contact",
+      "family": "trust page",
+      "job": "Contact iLoveTimers informational page with 3 supporting subsections.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/how-ilovetimers-is-made",
+      "owner": "app/routes/how-ilovetimers-is-made.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/how-ilovetimers-is-made",
+      "family": "trust page",
+      "job": "How iLoveTimers Is Made informational page with 8 supporting subsections.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/copyright",
+      "owner": "app/routes/copyright.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/copyright",
+      "family": "trust page",
+      "job": "Copyright and Content Concerns informational page with 3 supporting subsections.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/guides",
+      "owner": "app/routes/guides.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/guides",
+      "family": "specialty time tool",
+      "job": "Guides to Browser Timing, Timezones, and Local Data is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/guides/browser-timers-background-tabs",
+      "owner": "app/routes/guides.browser-timers-background-tabs.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/guides/browser-timers-background-tabs",
+      "family": "timer",
+      "job": "Browser Timers in Background Tabs, Locked Phones, and Closed Tabs is implemented as a timer. It implements client-side calculation or live reconciliation.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/guides/browser-timer-alarm-silent",
+      "owner": "app/routes/guides.browser-timer-alarm-silent.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/guides/browser-timer-alarm-silent",
+      "family": "timer",
+      "job": "Why a Browser Timer or Alarm May Stay Silent is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/guides/how-browser-timers-measure-time",
+      "owner": "app/routes/guides.how-browser-timers-measure-time.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/guides/how-browser-timers-measure-time",
+      "family": "timer",
+      "job": "How Browser Timers Measure Elapsed Time and Handle Delays is implemented as a timer. It implements browser-generated audio, client-side calculation or live reconciliation.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "owner": "app/routes/guides.unix-timestamps-seconds-milliseconds-microseconds.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/guides/unix-timestamps-seconds-milliseconds-microseconds",
+      "family": "specialty time tool",
+      "job": "Unix Timestamps in Seconds, Milliseconds, and Microseconds is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/guides/daylight-saving-time-zone-conversions",
+      "owner": "app/routes/guides.daylight-saving-time-zone-conversions.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/guides/daylight-saving-time-zone-conversions",
+      "family": "specialty time tool",
+      "job": "Daylight-Saving Gaps, Repeated Times, and Timezone Conversions is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/guides/browser-storage",
+      "owner": "app/routes/guides.browser-storage.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/guides/browser-storage",
+      "family": "specialty time tool",
+      "job": "What iLoveTimers Stores in Your Browser is implemented as a specialty time tool. It implements client-side calculation or live reconciliation.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/countdown-timer",
+      "owner": "app/routes/countdown-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/countdown-timer",
+      "family": "date or event countdown",
+      "job": "Countdown Timer is implemented as a date or event countdown. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, +1:00, -0:10, 1 m, 5 m, 10 m, 15 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ToolFrame",
+        "Button",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "DisplayStage",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useEffect",
+        "useFullscreen",
+        "useMemo",
+        "useFitDisplayText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/timer-stopwatch",
+      "owner": "app/routes/timer-stopwatch.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/timer-stopwatch",
+      "family": "stopwatch or count-up tool",
+      "job": "Timer and Stopwatch is implemented as a stopwatch or count-up tool. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Countdown Timer, Stopwatch, Start, Reset, Apply, 10 seconds, 1 minute, 5 minutes.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "Button",
+        "ToolFrame",
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useCompletionBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useRef",
+        "useElapsedStopwatch",
+        "useFullscreen",
+        "useFitDisplayText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/timer-clock",
+      "owner": "app/routes/timer-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/timer-clock",
+      "family": "clock or live time display",
+      "job": "Clock and Timer is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 1 m, 5 m, 10 m, 15 m, 30 m, Apply.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ToolFrame",
+        "Button",
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useCompletionBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useFullscreen",
+        "useFitDisplayText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/stopwatch",
+      "owner": "app/routes/stopwatch.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/stopwatch",
+      "family": "stopwatch or count-up tool",
+      "job": "Online Stopwatch is implemented as a stopwatch or count-up tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Lap, Reset, Fullscreen, Copy laps.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useEffect",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/stopwatch-with-milliseconds",
+      "owner": "app/routes/stopwatch-with-milliseconds.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/stopwatch-with-milliseconds",
+      "family": "stopwatch or count-up tool",
+      "job": "Stopwatch With Milliseconds is implemented as a stopwatch or count-up tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Lap, Reset, Copy elapsed, Copy laps, Clear laps, Fullscreen, Precision Show milliseconds Show hundredths Show seconds only.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useEffect",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/pomodoro-timer",
+      "owner": "app/routes/pomodoro-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/pomodoro-timer",
+      "family": "timer",
+      "job": "Pomodoro Timer is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Share setup, Save preset, Load preset, Rename, Delete.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/hiit-timer",
+      "owner": "app/routes/hiit-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/hiit-timer",
+      "family": "timer",
+      "job": "HIIT Timer (Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, Tabata 20/10 x 8, Intervals 40/20 x 10, Boxing 3:00/1:00 x 6, Share setup, Save preset.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/silent-timer",
+      "owner": "app/routes/silent-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/silent-timer",
+      "family": "timer",
+      "job": "Silent Timer is implemented as a timer. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 1 m, 2 m, 3 m, 5 m, 10 m, 15 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useState",
+        "useEffect",
+        "useFullscreen",
+        "useCallback",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/online-timer",
+      "owner": "app/routes/online-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/online-timer",
+      "family": "timer",
+      "job": "Online Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Fullscreen, 1 m, 2 m, 3 m, 5 m, 10 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "DisplayStage",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/seconds-timer",
+      "owner": "app/routes/seconds-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/seconds-timer",
+      "family": "seconds countdown",
+      "job": "Seconds Timer is implemented as a seconds countdown. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 5 s, 10 s, 15 s, 30 s, 45 s, 60 s.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "elevated"
+    },
+    {
+      "path": "/1-minute-timer",
+      "owner": "app/routes/1-minute-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/1-minute-timer",
+      "family": "preset-duration countdown",
+      "job": "1 Minute Timer is implemented as a preset-duration countdown. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Fullscreen, Final beep.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/5-minute-timer",
+      "owner": "app/routes/5-minute-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/5-minute-timer",
+      "family": "preset-duration countdown",
+      "job": "5 Minute Timer is implemented as a preset-duration countdown. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Fullscreen, Final beep.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/10-minute-timer",
+      "owner": "app/routes/10-minute-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/10-minute-timer",
+      "family": "preset-duration countdown",
+      "job": "10 Minute Timer is implemented as a preset-duration countdown. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Fullscreen, Final beep.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/15-minute-timer",
+      "owner": "app/routes/15-minute-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/15-minute-timer",
+      "family": "preset-duration countdown",
+      "job": "15 Minute Timer is implemented as a preset-duration countdown. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Fullscreen, Final beep.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/30-minute-timer",
+      "owner": "app/routes/30-minute-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/30-minute-timer",
+      "family": "preset-duration countdown",
+      "job": "30 Minute Timer is implemented as a preset-duration countdown. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Fullscreen, Final beep.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/interval-timer",
+      "owner": "app/routes/interval-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/interval-timer",
+      "family": "timer",
+      "job": "Interval Timer is implemented as a timer. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Next step, Reset, Work / Break, Focus / Rest, Practice / Pause, Set step 1 active, Delete step 1.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useMemo",
+        "useEffect",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/presentation-timer",
+      "owner": "app/routes/presentation-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/presentation-timer",
+      "family": "timer",
+      "job": "Presentation Timer (Fullscreen Countdown) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 3 m, 5 m, 7 m, 10 m, 12 m, 15 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/speech-timer",
+      "owner": "app/routes/speech-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/speech-timer",
+      "family": "timer",
+      "job": "Speech Timer is implemented as a timer. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 3 m, 5 m, 7 m, 10 m, 15 m, Fullscreen.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useMemo",
+        "useEffect",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/classroom-timer",
+      "owner": "app/routes/classroom-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/classroom-timer",
+      "family": "timer",
+      "job": "Classroom Timer (Fullscreen Countdown) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, -1 min, +1 min, +5 min, Fullscreen, 1 m, 2 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/meeting-timer",
+      "owner": "app/routes/meeting-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/meeting-timer",
+      "family": "timer",
+      "job": "Meeting Timer (Agenda Timeboxing) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 1 m, 2 m, 3 m, 5 m, 7 m, 10 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/meeting-agenda-timer",
+      "owner": "app/routes/meeting-agenda-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/meeting-agenda-timer",
+      "family": "timer",
+      "job": "Meeting Agenda Timer is implemented as a timer. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Previous item, Next item, Set item 1 active, Move item 1 up, Move item 1 down, Delete item 1.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useMemo",
+        "useFitText",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/exam-timer",
+      "owner": "app/routes/exam-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/exam-timer",
+      "family": "timer",
+      "job": "Exam Timer (Fullscreen Countdown) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 5 m, 10 m, 15 m, 20 m, 25 m, 30 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/break-timer",
+      "owner": "app/routes/break-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/break-timer",
+      "family": "timer",
+      "job": "Break Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 1 m, 2 m, 3 m, 5 m, 7 m, 10 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/study-timer",
+      "owner": "app/routes/study-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/study-timer",
+      "family": "timer",
+      "job": "Study Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 5 m, 10 m, 15 m, 20 m, 25 m, 30 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/study-stopwatch",
+      "owner": "app/routes/study-stopwatch.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/study-stopwatch",
+      "family": "stopwatch or count-up tool",
+      "job": "Study Stopwatch is implemented as a stopwatch or count-up tool. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Add marker, Reset, Fullscreen, Clear markers.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ToolFrame",
+        "Button",
+        "DisplayStage",
+        "ControlGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useElapsedStopwatch",
+        "useRef",
+        "useFullscreen",
+        "useFitDisplayText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/workout-timer",
+      "owner": "app/routes/workout-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/workout-timer",
+      "family": "timer",
+      "job": "Workout Timer (Rounds + Rest) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, 1 m, 2 m, 3 m, 4 m, 5 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/rest-timer",
+      "owner": "app/routes/rest-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/rest-timer",
+      "family": "timer",
+      "job": "Rest Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 15s, 30s, 45s, 1m, 2m, 3m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useRef",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/tabata-timer",
+      "owner": "app/routes/tabata-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/tabata-timer",
+      "family": "timer",
+      "job": "Tabata Timer (20/10 Intervals) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Next, 10 s, 15 s, 20 s, 30 s, 40 s.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/kitchen-timer",
+      "owner": "app/routes/kitchen-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/kitchen-timer",
+      "family": "timer",
+      "job": "Kitchen Timer is implemented as a timer. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 1 min, 3 min, 5 min, 10 min, 15 min, 20 min.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/meditation-timer",
+      "owner": "app/routes/meditation-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/meditation-timer",
+      "family": "timer",
+      "job": "Meditation Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Box 3m, Box 5m, Breathe 7m, Breathe 10m, 1m, 2m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "DisplayStage",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/speedcubing-timer",
+      "owner": "app/routes/speedcubing-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/speedcubing-timer",
+      "family": "timer",
+      "job": "Speedcubing Timer is implemented as a timer. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Clear history, Fullscreen, Start mode Hold-to-start Instant toggle, Add result on stop, Max session solves.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Select",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useEffect",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/lab-timer",
+      "owner": "app/routes/lab-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/lab-timer",
+      "family": "timer",
+      "job": "Lab Timer (Experiments + Reaction Time) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Start, Lap, Reset, 10s, 15s, 30s, 45s.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "ControlGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useRef",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/alarm-timer",
+      "owner": "app/routes/alarm-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/alarm-timer",
+      "family": "timer",
+      "job": "Alarm Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 1 m, 2 m, 3 m, 5 m, 7 m, 10 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "DisplayStage",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/online-alarm-clock",
+      "owner": "app/routes/online-alarm-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/online-alarm-clock",
+      "family": "clock or live time display",
+      "job": "Online Alarm Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Set alarm, Reset, Test sound, Fullscreen, Alarm time, Sound.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "elevated"
+    },
+    {
+      "path": "/multiple-timers",
+      "owner": "app/routes/multiple-timers.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/multiple-timers",
+      "family": "timer",
+      "job": "Multiple Timers is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start all, Reset all, Add timer, Stop alarms, Fullscreen, Remove timer, 1 m, 2 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useRef",
+        "useFullscreen"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/visual-timer",
+      "owner": "app/routes/visual-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/visual-timer",
+      "family": "timer",
+      "job": "Visual Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 1 m, 2 m, 3 m, 5 m, 7 m, 10 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "DisplayStage",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/productivity-timer",
+      "owner": "app/routes/productivity-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/productivity-timer",
+      "family": "timer",
+      "job": "Productivity Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Classic 25/5, Deep work 50/10, Sprint 90/15, Fullscreen, Focus (min).",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/meeting-count-up-timer",
+      "owner": "app/routes/meeting-count-up-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/meeting-count-up-timer",
+      "family": "stopwatch or count-up tool",
+      "job": "Meeting Count Up Timer (Elapsed Time) is implemented as a stopwatch or count-up tool. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Topic, Reset, Fullscreen, Button label, # of agenda topics.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useEffect",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/breathing-timer",
+      "owner": "app/routes/breathing-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/breathing-timer",
+      "family": "timer",
+      "job": "Breathing Timer (Guided Cycles) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Box 4-4-4-4, 4-7-8, Calm 4-2-6, Custom, Fullscreen, Inhale (sec).",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/sleep-timer",
+      "owner": "app/routes/sleep-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/sleep-timer",
+      "family": "timer",
+      "job": "Sleep Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 5 m, 10 m, 15 m, 20 m, 30 m, 45 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/stretch-timer",
+      "owner": "app/routes/stretch-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/stretch-timer",
+      "family": "timer",
+      "job": "Stretch Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Fullscreen, Stretch (seconds), Rest (seconds), Rounds, Sound.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Select",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useMemo",
+        "useRef",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/drink-water-reminder-timer",
+      "owner": "app/routes/drink-water-reminder-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/drink-water-reminder-timer",
+      "family": "timer",
+      "job": "Drink Water Reminder Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset cycle, 15 m, 20 m, 30 m, 45 m, 60 m, 90 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/emom-timer",
+      "owner": "app/routes/emom-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/emom-timer",
+      "family": "timer",
+      "job": "EMOM Timer (Every Minute On the Minute) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 6 m, 8 m, 10 m, 12 m, 15 m, 20 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/amrap-timer",
+      "owner": "app/routes/amrap-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/amrap-timer",
+      "family": "timer",
+      "job": "AMRAP Timer (Countdown + Rep Counter) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset all, 4 m, 6 m, 8 m, 10 m, 12 m, 15 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/round-timer",
+      "owner": "app/routes/round-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/round-timer",
+      "family": "timer",
+      "job": "Round Timer (Boxing & MMA) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Next, Reset, Boxing 3×3 (1m rest), Boxing 3×2 (1m rest), Boxing 5×3 (1m rest), Boxing 6×3 (1m rest), Boxing 12×3 (1m rest).",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/pace-timer",
+      "owner": "app/routes/pace-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/pace-timer",
+      "family": "timer",
+      "job": "Pace Timer (Running & Rowing) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Exit (Esc), Start, Reset, Running, Rowing, km, mi, Target pace.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/tea-timer",
+      "owner": "app/routes/tea-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/tea-timer",
+      "family": "timer",
+      "job": "Tea Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Green tea, Black tea, Oolong, White tea, Herbal, Chai.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/egg-timer",
+      "owner": "app/routes/egg-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/egg-timer",
+      "family": "timer",
+      "job": "Egg Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Soft, Jammy, Medium, Hard, Very hard, Fullscreen.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "DisplayStage",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/chaos-timer",
+      "owner": "app/routes/chaos-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/chaos-timer",
+      "family": "timer",
+      "job": "Chaos Timer (Random Interval Timer) is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Test beep, Fullscreen, Random timer, Random interval timer, Min seconds If min is greater than max, the tool swaps them automatically., Max seconds.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/video-game-challenge-timer",
+      "owner": "app/routes/video-game-challenge-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/video-game-challenge-timer",
+      "family": "timer",
+      "job": "Video Game Challenge Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, One minute, Sudden death (30s), Sudden death (60s), Best of 5 (60s), Best of 10 (45s), Fullscreen.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/speedrun-timer",
+      "owner": "app/routes/speedrun-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/speedrun-timer",
+      "family": "timer",
+      "job": "Speedrun Timer is implemented as a timer. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Split, Undo, End run, Reset, Fullscreen, Next split name (optional).",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useEffect",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/pizza-timer",
+      "owner": "app/routes/pizza-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/pizza-timer",
+      "family": "timer",
+      "job": "Pizza Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Frozen (Oven 14m), Frozen (Oven 16m), Frozen (Air fryer 10m), Reheat slice (6m), Skillet slice (5m), Test reminder.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useState",
+        "useMemo",
+        "useRef",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/fibonacci-clock",
+      "owner": "app/routes/fibonacci-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/fibonacci-clock",
+      "family": "clock or live time display",
+      "job": "Fibonacci Clock (Time Zones + Explore) is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Live, Explore, Mode Live Explore.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Select",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useCallback",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/sunrise-sunset-clock",
+      "owner": "app/routes/sunrise-sunset-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/sunrise-sunset-clock",
+      "family": "clock or live time display",
+      "job": "Sunrise & Sunset Clock is implemented as a clock or live time display. It implements fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Time zone (display) Use your device zone or enter one like Europe/Berlin, UTC, Asia/Tokyo., Location mode Use my device location Manual latitude/longitude Enter coordinates for any place on Earth., Latitude, Longitude, Seconds, 24-hour, Show seconds.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/debt-repayment-timer",
+      "owner": "app/routes/debt-repayment-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/debt-repayment-timer",
+      "family": "timer",
+      "job": "Debt Repayment Timer is implemented as a timer. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Payoff date, Duration (days), Start, Reset, Currency USD CAD EUR GBP AUD NZD JPY, Starting balance, Target balance.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Select",
+        "Field",
+        "ControlGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useFullscreen",
+        "useMemo",
+        "useState",
+        "useEffect",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/focus-session-timer",
+      "owner": "app/routes/focus-session-timer.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/focus-session-timer",
+      "family": "timer",
+      "job": "Focus Session Timer is implemented as a timer. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 1 m, 5 m, 10 m, 15 m, 20 m, 25 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/morse-code-clock",
+      "owner": "app/routes/morse-code-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/morse-code-clock",
+      "family": "clock or live time display",
+      "job": "Morse Code Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Text view, Copy, Fullscreen, 24-hour, Seconds.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/world-clock",
+      "owner": "app/routes/world-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/world-clock",
+      "family": "clock or live time display",
+      "job": "World Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Remove, Toronto, New York, Los Angeles, London, Paris, Berlin, Dubai.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useMemo"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/world-clock-with-milliseconds",
+      "owner": "app/routes/world-clock-with-milliseconds.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/world-clock-with-milliseconds",
+      "family": "clock or live time display",
+      "job": "World Clock With Milliseconds is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Remove, Add city, Reset defaults, Copy summary, Fullscreen, 24-hour.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/debt-clock",
+      "owner": "app/routes/debt-clock.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/debt-clock",
+      "family": "clock or live time display",
+      "job": "Debt Clock (Estimated Counter) is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Pause, Reset, Copy, Fullscreen, World (demo), United States (demo), Canada (demo), Custom.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Select",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useState",
+        "useEffect",
+        "useFullscreen",
+        "useCallback",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/current-local-time",
+      "owner": "app/routes/current-local-time.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/current-local-time",
+      "family": "specialty time tool",
+      "job": "Current Local Time is implemented as a specialty time tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Local, Toronto, New York, London, Vancouver 12:46 AM, Toronto 03:46 AM.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useCallback",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/utc-clock",
+      "owner": "app/routes/utc-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/utc-clock",
+      "family": "clock or live time display",
+      "job": "UTC Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, UTC, Local, Toronto, New York, London, Local (America/New_York) 03:46.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useCallback",
+        "useFitText"
+      ],
+      "protected": "elevated"
+    },
+    {
+      "path": "/24-hour-clock",
+      "owner": "app/routes/24-hour-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/24-hour-clock",
+      "family": "clock or live time display",
+      "job": "24 Hour Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy 24-hour time, Fullscreen, Seconds, Date, Time source Local UTC.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "SettingGroup",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useEffect",
+        "useFitText",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/12-hour-clock",
+      "owner": "app/routes/12-hour-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/12-hour-clock",
+      "family": "clock or live time display",
+      "job": "12 Hour Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy 12-hour time, Fullscreen, Seconds, Date, 24-hour comparison.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useEffect",
+        "useFitText",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/analog-clock",
+      "owner": "app/routes/analog-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/analog-clock",
+      "family": "clock or live time display",
+      "job": "Analog Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Exit (Esc), Copy current time, Fullscreen, Seconds hand, Smooth, Digital readout.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ToolFrame",
+        "Button",
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useEffect"
+      ],
+      "protected": "protected"
+    },
+    {
+      "path": "/digital-clock",
+      "owner": "app/routes/digital-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/digital-clock",
+      "family": "clock or live time display",
+      "job": "Digital Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Seconds, 24-hour, Date, Minimal.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useState",
+        "useEffect",
+        "useCallback",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/clock-with-milliseconds",
+      "owner": "app/routes/clock-with-milliseconds.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/clock-with-milliseconds",
+      "family": "clock or live time display",
+      "job": "Clock With Milliseconds is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy current time, Fullscreen, 24-hour time, Milliseconds, UTC mode, Date.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useMemo",
+        "useEffect",
+        "useFitText"
+      ],
+      "protected": "elevated"
+    },
+    {
+      "path": "/binary-clock",
+      "owner": "app/routes/binary-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/binary-clock",
+      "family": "clock or live time display",
+      "job": "Binary Clock (Time in Binary) is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Seconds, 24-hour, Mode BCD digits Pure binary.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useNow",
+        "useEffect",
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/hexadecimal-clock",
+      "owner": "app/routes/hexadecimal-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/hexadecimal-clock",
+      "family": "clock or live time display",
+      "job": "Hexadecimal Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Mode Hex HH:MM:SS Hex color, Seconds, Milliseconds, 24-hour.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useEffect",
+        "useCallback",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/event-countdown",
+      "owner": "app/routes/event-countdown.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/event-countdown",
+      "family": "date or event countdown",
+      "job": "Event Countdown (Countdown to Date & Time) is implemented as a date or event countdown. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, New, Duplicate, Delete, Fullscreen, -1h, -2h.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Select",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/countdown-to-date",
+      "owner": "app/routes/countdown-to-date.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/countdown-to-date",
+      "family": "date or event countdown",
+      "job": "Countdown To Date is implemented as a date or event countdown. It implements fullscreen, copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Tomorrow, +7 days, +30 days, Copy countdown, Share, Fullscreen, Reset, Label.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/new-year-countdown",
+      "owner": "app/routes/new-year-countdown.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/new-year-countdown",
+      "family": "date or event countdown",
+      "job": "New Year Countdown is implemented as a date or event countdown. It implements fullscreen, copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy countdown, Share, Fullscreen.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useEffect",
+        "useFitText",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/christmas-countdown",
+      "owner": "app/routes/christmas-countdown.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/christmas-countdown",
+      "family": "date or event countdown",
+      "job": "Christmas Countdown is implemented as a date or event countdown. It implements fullscreen, copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy countdown, Share, Fullscreen.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/golden-hour-clock",
+      "owner": "app/routes/golden-hour-clock.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/golden-hour-clock",
+      "family": "clock or live time display",
+      "job": "Golden Hour Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use GPS, Today, Sound, Final beeps, Date Sunday, July 26, 2026, Latitude Range: -90 to 90, Longitude Range: -180 to 180.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/moon-phase-clock",
+      "owner": "app/routes/moon-phase-clock.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/moon-phase-clock",
+      "family": "clock or live time display",
+      "job": "Moon Phase Clock is implemented as a clock or live time display. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Set to noon, Now, Live, Sound, Final beeps, Date, Hour.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/astronomical-clock",
+      "owner": "app/routes/astronomical-clock.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/astronomical-clock",
+      "family": "clock or live time display",
+      "job": "Astronomical Clock (Sun, Moon, Sunrise, Sunset) is implemented as a clock or live time display. It implements fullscreen, optional geolocation, client-side calculation or live reconciliation. SSR-visible controls include Use my location, Clear location, Fullscreen, New York, Toronto, London, Los Angeles, Tokyo.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Select",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useMemo",
+        "useEffect",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/epoch-unix-time-clock",
+      "owner": "app/routes/epoch-unix-time-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/epoch-unix-time-clock",
+      "family": "clock or live time display",
+      "job": "Unix Time Clock (Epoch Timestamp) is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Freeze, Snap now, Copy seconds, Copy milliseconds, Fullscreen, Live timestamp.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/swatch-internet-time-clock",
+      "owner": "app/routes/swatch-internet-time-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/swatch-internet-time-clock",
+      "family": "clock or live time display",
+      "job": "Swatch Internet Time (.beat) Clock is implemented as a clock or live time display. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Freeze, Snap, Fullscreen, Live.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/billable-hours-clock",
+      "owner": "app/routes/billable-hours-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/billable-hours-clock",
+      "family": "clock or live time display",
+      "job": "Billable Hours Clock (Live Timer) is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Add timer, Copy all, Reset all, Fullscreen, Print, Print all, Start, Reset.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "Field",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useFullscreen",
+        "useRef",
+        "useEffect"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/time-blocking-clock",
+      "owner": "app/routes/time-blocking-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/time-blocking-clock",
+      "family": "clock or live time display",
+      "job": "Time Blocking Clock (Daily Schedule) is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Add block, Copy, Clear, Fullscreen, Delete, Live, Title, Start.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "Field",
+        "ControlGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useEffect",
+        "useRef",
+        "useFullscreen",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/atomic-clock",
+      "owner": "app/routes/atomic-clock.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/atomic-clock",
+      "family": "clock or live time display",
+      "job": "Atomic Clock (Device Time Display) is implemented as a clock or live time display. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Freeze, Hide ms, Fullscreen, Live, Milliseconds.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "elevated"
+    },
+    {
+      "path": "/time-zone-converter",
+      "owner": "app/routes/time-zone-converter.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/time-zone-converter",
+      "family": "converter",
+      "job": "Time Zone Converter is implemented as a converter. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include PT → ET, ET → London, London → Paris, London → Tokyo, ET → India, PT → Tokyo, UTC → ET, UTC → Tokyo.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useFullscreen",
+        "useState",
+        "useRef",
+        "useEffect"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/time-zone-meeting-planner",
+      "owner": "app/routes/time-zone-meeting-planner.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/time-zone-meeting-planner",
+      "family": "specialty time tool",
+      "job": "Time Zone Meeting Planner is implemented as a specialty time tool. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Add zone, Add local zone, Remove UTC, Remove New York, Remove London, Share setup, Save preset, Load preset.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "SettingGroup",
+        "Field",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useEffect",
+        "useMemo"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/military-time-clock",
+      "owner": "app/routes/military-time-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/military-time-clock",
+      "family": "clock or live time display",
+      "job": "Military Time Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy military time, Fullscreen, Seconds, Date, Time source Local UTC / Zulu.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "SettingGroup",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useFitText",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/binary-stopwatch",
+      "owner": "app/routes/binary-stopwatch.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/binary-stopwatch",
+      "family": "stopwatch or count-up tool",
+      "job": "Binary Stopwatch (Binary Timer + Practice Mode) is implemented as a stopwatch or count-up tool. It implements browser-generated audio, fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Stopwatch, Timer, Fullscreen, Weights, Practice, Dim.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useBeep",
+        "useEffect",
+        "useCallback",
+        "useMemo",
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/roman-numeral-clock",
+      "owner": "app/routes/roman-numeral-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/roman-numeral-clock",
+      "family": "clock or live time display",
+      "job": "Roman Numeral Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Seconds, 24-hour, Use IIII.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useEffect",
+        "useCallback",
+        "useFullscreen",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/retro-flip-clock",
+      "owner": "app/routes/retro-flip-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/retro-flip-clock",
+      "family": "clock or live time display",
+      "job": "Retro Flip Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Exit (Esc), Seconds, 24-hour, Date, Zen.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useRef",
+        "useState",
+        "useEffect",
+        "useMemo",
+        "useFullscreen",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/minimalist-clock",
+      "owner": "app/routes/minimalist-clock.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/minimalist-clock",
+      "family": "clock or live time display",
+      "job": "Minimalist Clock is implemented as a clock or live time display. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Fullscreen, Seconds, 24-hour, Date, Zen.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useFitText",
+        "useCallback",
+        "useEffect"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/reaction-time-test",
+      "owner": "app/routes/reaction-time-test.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/reaction-time-test",
+      "family": "interactive measurement or rhythm tool",
+      "job": "Reaction Time Test is implemented as a interactive measurement or rhythm tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, Copy, Fullscreen, Quick (5), Standard (10), Focus (15), Zen.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ControlGroup",
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useEffect",
+        "useRef",
+        "useMemo",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/metronome",
+      "owner": "app/routes/metronome.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/metronome",
+      "family": "interactive measurement or rhythm tool",
+      "job": "Online Metronome is implemented as a interactive measurement or rhythm tool. It implements browser-generated audio, fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include -, +, Start, Tap tempo, -5, +5, Copy, Fullscreen.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "Select",
+        "DisplayStage",
+        "ControlGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useRef",
+        "useEffect",
+        "useCallback",
+        "useFitText"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/bpm-tapper",
+      "owner": "app/routes/bpm-tapper.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/bpm-tapper",
+      "family": "interactive measurement or rhythm tool",
+      "job": "BPM Tapper is implemented as a interactive measurement or rhythm tool. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Lock, Copy, Fullscreen, Reset, 2 s, 4 s, 6 s, 10 s.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "SettingGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useRef",
+        "useState",
+        "useFullscreen",
+        "useCallback",
+        "useFitText",
+        "useEffect"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/military-time-converter",
+      "owner": "app/routes/military-time-converter.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/military-time-converter",
+      "family": "converter",
+      "job": "Military Time Converter is implemented as a converter. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Fullscreen, Use current time, Clear, Copy result, 0000, 0030, 0600, 1200.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useFullscreen",
+        "useFitText",
+        "useCallback",
+        "useEffect"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/work-hours-calculator",
+      "owner": "app/routes/work-hours-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/work-hours-calculator",
+      "family": "calculator",
+      "job": "Work Hours Calculator is implemented as a calculator. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Now, 0 m, 15 m, 30 m, 45 m, 60 m, Copy paid time, Copy summary.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useMemo",
+        "useState",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/time-calculator",
+      "owner": "app/routes/time-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/time-calculator",
+      "family": "calculator",
+      "job": "Time Calculator is implemented as a calculator. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Reset, Copy result, Add, Subtract, Duration, Days, Hours, Minutes.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useFitText",
+        "useMemo",
+        "useCallback",
+        "useState"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/time-duration-calculator",
+      "owner": "app/routes/time-duration-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/time-duration-calculator",
+      "family": "calculator",
+      "job": "Time Duration Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Reset, Start time, End time, End time is next day.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/date-duration-calculator",
+      "owner": "app/routes/date-duration-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/date-duration-calculator",
+      "family": "calculator",
+      "job": "Date Duration Calculator is implemented as a calculator. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Start date, End date.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "protected"
+    },
+    {
+      "path": "/date-calculator",
+      "owner": "app/routes/date-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/date-calculator",
+      "family": "calculator",
+      "job": "Date Calculator is implemented as a calculator. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include +7 days, +14 days, +30 days, +90 days, -7 days, Copy result, Today, Reset.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/business-days-calculator",
+      "owner": "app/routes/business-days-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/business-days-calculator",
+      "family": "calculator",
+      "job": "Business Days Calculator is implemented as a calculator. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Start date, End date, Include start date, Include end date.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/workdays-calculator",
+      "owner": "app/routes/workdays-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/workdays-calculator",
+      "family": "calculator",
+      "job": "Workdays Calculator is implemented as a calculator. It implements fullscreen, copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Mon-Fri, Sat-Sun only, Mon-Thu, All days, Copy result, Today, Reset, Start date.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/age-calculator",
+      "owner": "app/routes/age-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/age-calculator",
+      "family": "calculator",
+      "job": "Age Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Birth date, Age on date.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/days-until-calculator",
+      "owner": "app/routes/days-until-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/days-until-calculator",
+      "family": "calculator",
+      "job": "Days Until Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include New Year, Christmas, Today + 7 days, Today + 30 days, Copy result, Today, Reset, Start date.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/weekday-calculator",
+      "owner": "app/routes/weekday-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/weekday-calculator",
+      "family": "calculator",
+      "job": "Weekday Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Date.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/week-number-calculator",
+      "owner": "app/routes/week-number-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/week-number-calculator",
+      "family": "calculator",
+      "job": "Week Number Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Date.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/months-between-dates-calculator",
+      "owner": "app/routes/months-between-dates-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/months-between-dates-calculator",
+      "family": "calculator",
+      "job": "Months Between Dates Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Start date, End date.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/weeks-between-dates-calculator",
+      "owner": "app/routes/weeks-between-dates-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/weeks-between-dates-calculator",
+      "family": "calculator",
+      "job": "Weeks Between Dates Calculator is implemented as a calculator. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Today, Reset, Start date, End date, Inclusive count.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/birthday-countdown",
+      "owner": "app/routes/birthday-countdown.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/birthday-countdown",
+      "family": "date or event countdown",
+      "job": "Birthday Countdown is implemented as a date or event countdown. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy result, Share result, Today, Reset, Month, Day, Birth year (optional).",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "protected"
+    },
+    {
+      "path": "/hours-until-calculator",
+      "owner": "app/routes/hours-until-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/hours-until-calculator",
+      "family": "calculator",
+      "job": "Hours Until Calculator is implemented as a calculator. It implements copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include +1 hour, +6 hours, +12 hours, +24 hours, Tomorrow 09:00, Copy result, Now, Reset.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/time-card-calculator",
+      "owner": "app/routes/time-card-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/time-card-calculator",
+      "family": "calculator",
+      "job": "Time Card Calculator is implemented as a calculator. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Remove 1, Add row, Copy summary, Reset, Label, Start, End, Break minutes.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/weekly-timesheet-calculator",
+      "owner": "app/routes/weekly-timesheet-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/weekly-timesheet-calculator",
+      "family": "calculator",
+      "job": "Weekly Timesheet Calculator is implemented as a calculator. It implements fullscreen, copy, native share or copy fallback, client-side calculation or live reconciliation. SSR-visible controls include Copy summary, Reset week, Start, End, Break minutes.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/billable-hours-calculator",
+      "owner": "app/routes/billable-hours-calculator.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/billable-hours-calculator",
+      "family": "calculator",
+      "job": "Billable Hours Calculator is implemented as a calculator. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Copy, Print, Reset, Now, 0 m, 15 m, 30 m, 45 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "Field",
+        "Select",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useMemo",
+        "useCallback",
+        "useEffect"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/milliseconds-converter",
+      "owner": "app/routes/milliseconds-converter.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/milliseconds-converter",
+      "family": "converter",
+      "job": "Milliseconds Converter is implemented as a converter. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Reset, Copy, ms → seconds, seconds → ms, 1 ms ↔ 0.001 s, 10 ms ↔ 0.01 s, 16.67 ms ↔ 0.01667 s, 100 ms ↔ 0.1 s.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "Field",
+        "SettingsPanel",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useEffect",
+        "useMemo",
+        "useCallback"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/millisecond-timer",
+      "owner": "app/routes/millisecond-timer.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/millisecond-timer",
+      "family": "timer",
+      "job": "Millisecond Timer is implemented as a timer. It implements fullscreen, copy, client-side calculation or live reconciliation. SSR-visible controls include Start, Reset, 100 ms, 1 second, 10 seconds, 30 seconds, 1 minute, 5 minutes.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useRef",
+        "useFullscreen",
+        "useEffect",
+        "useMemo",
+        "useFitText"
+      ],
+      "protected": "protected"
+    },
+    {
+      "path": "/unix-timestamp-converter",
+      "owner": "app/routes/unix-timestamp-converter.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/unix-timestamp-converter",
+      "family": "converter",
+      "job": "Unix Timestamp Converter is implemented as a converter. It implements copy, client-side calculation or live reconciliation. SSR-visible controls include Set now, Reset, Copy ISO, Copy seconds, Copy milliseconds, Unix timestamp Auto mode uses the integer digit count. The selected interpretation is shown beside this field., Timestamp unit Auto-detect Seconds Milliseconds Microseconds Interpreting as: seconds, UTC date and time This input is interpreted as UTC, not your local timezone..",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "SettingGroup",
+        "Field",
+        "Select",
+        "ControlGroup",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useCopyFeedback",
+        "useState",
+        "useMemo"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/chess-clock",
+      "owner": "app/routes/chess-clock.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/chess-clock",
+      "family": "clock or live time display",
+      "job": "Chess Clock is implemented as a clock or live time display. It implements fullscreen, client-side calculation or live reconciliation. SSR-visible controls include Switch after player 1 move, Switch after player 2 move, Start, Switch turn, Reset, 1 m, 3 m, 5 m.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "DisplayStage",
+        "ControlGroup",
+        "SettingGroup",
+        "Field",
+        "PageShell",
+        "ToolHero",
+        "SeoBand"
+      ],
+      "hooks": [
+        "useState",
+        "useFullscreen",
+        "useEffect"
+      ],
+      "protected": "standard"
+    },
+    {
+      "path": "/privacy",
+      "owner": "app/routes/privacy.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/privacy",
+      "family": "legal page",
+      "job": "Privacy Policy informational page with 10 supporting subsections.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/terms",
+      "owner": "app/routes/terms.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/terms",
+      "family": "legal page",
+      "job": "Terms of Service informational page with 10 supporting subsections.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/cookies",
+      "owner": "app/routes/cookies.tsx",
+      "indexability": "noindex",
+      "canonical": "https://www.ilovetimers.com/cookies",
+      "family": "legal page",
+      "job": "Cookie Policy informational page with 7 supporting subsections.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    },
+    {
+      "path": "/sitemap",
+      "owner": "app/routes/sitemap.tsx",
+      "indexability": "indexable",
+      "canonical": "https://www.ilovetimers.com/sitemap",
+      "family": "HTML directory",
+      "job": "HTML Sitemap informational page with 150 supporting subsections.",
+      "oldCoverage": [
+        "audit:route-architecture",
+        "audit:seo",
+        "audit:links",
+        "rendered canonical and robots test"
+      ],
+      "primitives": [
+        "ContentPage"
+      ],
+      "hooks": [],
+      "protected": "standard"
+    }
+  ],
+  "aliases": {
+    "/stopwatch-timer": "/timer-stopwatch",
+    "/timer-and-stopwatch": "/timer-stopwatch",
+    "/online-timer-stopwatch": "/timer-stopwatch",
+    "/stopwatch-countdown": "/timer-stopwatch",
+    "/countdown-stopwatch": "/timer-stopwatch",
+    "/focus-stopwatch": "/study-stopwatch",
+    "/stopwatch-for-study": "/study-stopwatch",
+    "/study-timer-stopwatch": "/study-stopwatch",
+    "/clock-timer": "/timer-clock",
+    "/online-clock-timer": "/timer-clock",
+    "/military-time-calculator": "/military-time-converter",
+    "/army-time-converter": "/military-time-converter",
+    "/military-time-translator": "/military-time-converter",
+    "/ms-to-seconds": "/milliseconds-converter",
+    "/milliseconds-to-seconds": "/milliseconds-converter",
+    "/utc-time-now": "/utc-clock",
+    "/current-unix-timestamp": "/epoch-unix-time-clock",
+    "/fullscreen-timer": "/online-timer",
+    "/count-up-timer": "/stopwatch",
+    "/cooking-timer": "/kitchen-timer",
+    "/boxing-timer": "/round-timer",
+    "/world-clock-with-seconds": "/world-clock",
+    "/analog-clock-with-second-hand": "/analog-clock",
+    "/full-screen-analog-clock": "/analog-clock",
+    "/smooth-second-hand-clock": "/analog-clock",
+    "/full-screen-clock": "/digital-clock",
+    "/big-digital-clock": "/digital-clock",
+    "/clock-with-seconds": "/digital-clock"
+  }
+}

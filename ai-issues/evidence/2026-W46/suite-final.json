@@ -1,0 +1,34 @@
+[
+  {
+    "name": "typecheck",
+    "command": "npm run typecheck",
+    "startedAt": "2026-11-13T05:27:58.480Z",
+    "finishedAt": "2026-11-13T05:28:00.095Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/final-typecheck.log"
+  },
+  {
+    "name": "build",
+    "command": "npm run build",
+    "startedAt": "2026-11-13T05:28:00.097Z",
+    "finishedAt": "2026-11-13T05:28:21.120Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/final-build.log"
+  },
+  {
+    "name": "audit:static-deployment",
+    "command": "npm run audit:static-deployment",
+    "startedAt": "2026-11-13T05:28:21.121Z",
+    "finishedAt": "2026-11-13T05:28:21.532Z",
+    "exitCode": 0,
+    "log": "ai-issues/evidence/2026-W46/logs/final-audit-static-deployment.log"
+  },
+  {
+    "name": "audit:final-release",
+    "command": "npm run audit:final-release",
+    "startedAt": "2026-11-13T05:28:21.533Z",
+    "finishedAt": "2026-11-13T05:29:17.386Z",
+    "exitCode": 1,
+    "log": "ai-issues/evidence/2026-W46/logs/final-audit-final-release.log"
+  }
+]

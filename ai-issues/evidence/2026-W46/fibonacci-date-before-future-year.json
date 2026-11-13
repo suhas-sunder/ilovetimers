@@ -1,0 +1,78 @@
+[
+  {
+    "route": "/fibonacci-clock",
+    "width": 390,
+    "theme": "light",
+    "case": "client date differs from build date; no hydration error",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "status": "FAIL"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 390,
+    "theme": "light",
+    "case": "live date advances across local midnight",
+    "before": "DECIMAL TIME\n23:59:58\nThursday, February 28, 2030",
+    "after": "DECIMAL TIME\n00:00:02\nThursday, February 28, 2030",
+    "status": "FAIL"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 390,
+    "theme": "dark",
+    "case": "client date differs from build date; no hydration error",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "status": "FAIL"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 390,
+    "theme": "dark",
+    "case": "live date advances across local midnight",
+    "before": "DECIMAL TIME\n23:59:58\nThursday, February 28, 2030",
+    "after": "DECIMAL TIME\n00:00:02\nThursday, February 28, 2030",
+    "status": "FAIL"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 1440,
+    "theme": "light",
+    "case": "client date differs from build date; no hydration error",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "status": "FAIL"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 1440,
+    "theme": "light",
+    "case": "live date advances across local midnight",
+    "before": "DECIMAL TIME\n23:59:58\nThursday, February 28, 2030",
+    "after": "DECIMAL TIME\n00:00:02\nThursday, February 28, 2030",
+    "status": "FAIL"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 1440,
+    "theme": "dark",
+    "case": "client date differs from build date; no hydration error",
+    "errors": [
+      "Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ],
+    "status": "FAIL"
+  },
+  {
+    "route": "/fibonacci-clock",
+    "width": 1440,
+    "theme": "dark",
+    "case": "live date advances across local midnight",
+    "before": "DECIMAL TIME\n23:59:58\nThursday, February 28, 2030",
+    "after": "DECIMAL TIME\n00:00:02\nThursday, February 28, 2030",
+    "status": "FAIL"
+  }
+]

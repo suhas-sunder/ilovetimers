@@ -1,0 +1,143 @@
+{
+  "cases": 42,
+  "failures": [
+    {
+      "width": 1024,
+      "theme": "light",
+      "ms": true,
+      "fullscreen": false,
+      "text": "23:22:08.500",
+      "fontSize": "120.523px",
+      "letterSpacing": "12.0523px",
+      "lineCount": 2,
+      "withinStage": true,
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "ms": true,
+      "fullscreen": false,
+      "text": "23:22:09.367",
+      "fontSize": "120.523px",
+      "letterSpacing": "12.0523px",
+      "lineCount": 2,
+      "withinStage": true,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "ms": true,
+      "fullscreen": false,
+      "text": "23:22:10.250",
+      "fontSize": "173.548px",
+      "letterSpacing": "17.3548px",
+      "lineCount": 2,
+      "withinStage": true,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "ms": true,
+      "fullscreen": true,
+      "text": "23:22:10.250",
+      "fontSize": "181.089px",
+      "letterSpacing": "18.1089px",
+      "lineCount": 1,
+      "withinStage": false,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "ms": true,
+      "fullscreen": false,
+      "text": "23:22:11.100",
+      "fontSize": "173.548px",
+      "letterSpacing": "17.3548px",
+      "lineCount": 2,
+      "withinStage": true,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "ms": true,
+      "fullscreen": true,
+      "text": "23:22:11.100",
+      "fontSize": "181.089px",
+      "letterSpacing": "18.1089px",
+      "lineCount": 1,
+      "withinStage": false,
+      "overflow": false
+    },
+    {
+      "width": 1920,
+      "theme": "light",
+      "ms": true,
+      "fullscreen": false,
+      "text": "23:22:11.984",
+      "fontSize": "187.767px",
+      "letterSpacing": "18.7767px",
+      "lineCount": 2,
+      "withinStage": true,
+      "overflow": false
+    },
+    {
+      "width": 1920,
+      "theme": "light",
+      "ms": true,
+      "fullscreen": true,
+      "text": "23:22:11.984",
+      "fontSize": "247.756px",
+      "letterSpacing": "24.7756px",
+      "lineCount": 1,
+      "withinStage": false,
+      "overflow": false
+    },
+    {
+      "width": 1920,
+      "theme": "dark",
+      "ms": true,
+      "fullscreen": false,
+      "text": "23:22:12.900",
+      "fontSize": "187.767px",
+      "letterSpacing": "18.7767px",
+      "lineCount": 2,
+      "withinStage": true,
+      "overflow": false
+    },
+    {
+      "width": 1920,
+      "theme": "dark",
+      "ms": true,
+      "fullscreen": true,
+      "text": "23:22:12.900",
+      "fontSize": "247.756px",
+      "letterSpacing": "24.7756px",
+      "lineCount": 1,
+      "withinStage": false,
+      "overflow": false
+    }
+  ]
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Clock value must stay one readable line inside its display
+
+10 !== 0
+
+    at file:///C:/Users/Suhas/.codex/worktrees/ilovetimers-diagnostic-W46/scripts/tests/atomic-clock-legibility.mjs:33:8 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 10,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v25.9.0

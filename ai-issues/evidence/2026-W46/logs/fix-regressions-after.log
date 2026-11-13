@@ -1,0 +1,35 @@
+{
+  "cases": 113,
+  "failures": [
+    {
+      "route": "/free-online-timers",
+      "case": "native button Space start/pause/reset",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: focused Reset must not start\n\n1 !== 0\n"
+    },
+    {
+      "route": "/speedcubing-timer",
+      "case": "native button Space start/pause/reset",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: focused Start should activate\n\n0 !== 1\n"
+    }
+  ]
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+2 !== 0
+
+    at file:///C:/Users/Suhas/.codex/worktrees/ilovetimers-diagnostic-W46/scripts/tests/diagnostic-fix-regressions.mjs:16:166 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 2,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v25.9.0

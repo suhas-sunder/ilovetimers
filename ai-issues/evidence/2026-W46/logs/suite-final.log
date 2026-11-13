@@ -1,0 +1,8 @@
+Starting typecheck
+Finished typecheck exit 0 > ilovetimers@1.0.0 typecheck | > react-router typegen && tsc -b
+Starting build
+Finished build exit 0 Removing the server build in C:\Users\Suhas\.codex\worktrees\ilovetimers-diagnostic-W46\build\server due to ssr:false | ✓ built in 8.06s
+Starting audit:static-deployment
+Finished audit:static-deployment exit 0  | Static deployment audit passed (132 prerendered canonical routes, 28 permanent aliases, no runtime server output).
+Starting audit:final-release
+Finished audit:final-release exit 1 - Dependency audit reports unaccepted high or critical vulnerabilities in: @react-router/node, dompurify, react-router. | - Worktree inventory contains an accidental or temporary tracked candidate.

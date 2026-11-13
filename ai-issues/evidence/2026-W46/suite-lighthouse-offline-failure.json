@@ -1,0 +1,10 @@
+[
+  {
+    "name": "test:final-lighthouse",
+    "command": "npm run test:final-lighthouse",
+    "startedAt": "2026-11-13T05:23:01.576Z",
+    "finishedAt": "2026-11-13T05:23:30.421Z",
+    "exitCode": 1,
+    "log": "ai-issues/evidence/2026-W46/logs/lighthouse-test-final-lighthouse.log"
+  }
+]

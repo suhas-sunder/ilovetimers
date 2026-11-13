@@ -1,0 +1,656 @@
+
+> ilovetimers@1.0.0 test:sitewide-ui
+> node scripts/tests/sitewide-ui.mjs
+
+Sitewide SSR UI test failed:
+- / canonical is https://www.rentconverter.com; expected https://www.ilovetimers.com.
+- / must render all four non-sidebar ad placements (0).
+- /free-online-timers returned 404, expected 200.
+- /free-online-timers renders 0 SSR canonicals.
+- /free-online-timers canonical is missing; expected https://www.ilovetimers.com/free-online-timers.
+- /free-online-timers has no SSR-visible core control.
+- /about canonical is https://www.rentconverter.com/about; expected https://www.ilovetimers.com/about.
+- /author/suhas-sunder returned 404, expected 200.
+- /author/suhas-sunder renders 0 SSR canonicals.
+- /author/suhas-sunder canonical is missing; expected https://www.ilovetimers.com/author/suhas-sunder.
+- /contact canonical is https://www.rentconverter.com/contact; expected https://www.ilovetimers.com/contact.
+- /how-ilovetimers-is-made returned 404, expected 200.
+- /how-ilovetimers-is-made renders 0 SSR canonicals.
+- /how-ilovetimers-is-made canonical is missing; expected https://www.ilovetimers.com/how-ilovetimers-is-made.
+- /copyright returned 404, expected 200.
+- /copyright renders 0 SSR canonicals.
+- /copyright canonical is missing; expected https://www.ilovetimers.com/copyright.
+- /guides returned 404, expected 200.
+- /guides renders 0 SSR canonicals.
+- /guides canonical is missing; expected https://www.ilovetimers.com/guides.
+- /guides must render all four non-sidebar ad placements (0).
+- /guides/browser-timers-background-tabs returned 404, expected 200.
+- /guides/browser-timers-background-tabs renders 0 SSR canonicals.
+- /guides/browser-timers-background-tabs canonical is missing; expected https://www.ilovetimers.com/guides/browser-timers-background-tabs.
+- /guides/browser-timers-background-tabs must render all four non-sidebar ad placements (0).
+- /guides/browser-timer-alarm-silent returned 404, expected 200.
+- /guides/browser-timer-alarm-silent renders 0 SSR canonicals.
+- /guides/browser-timer-alarm-silent canonical is missing; expected https://www.ilovetimers.com/guides/browser-timer-alarm-silent.
+- /guides/browser-timer-alarm-silent must render all four non-sidebar ad placements (0).
+- /guides/how-browser-timers-measure-time returned 404, expected 200.
+- /guides/how-browser-timers-measure-time renders 0 SSR canonicals.
+- /guides/how-browser-timers-measure-time canonical is missing; expected https://www.ilovetimers.com/guides/how-browser-timers-measure-time.
+- /guides/how-browser-timers-measure-time must render all four non-sidebar ad placements (0).
+- /guides/unix-timestamps-seconds-milliseconds-microseconds returned 404, expected 200.
+- /guides/unix-timestamps-seconds-milliseconds-microseconds renders 0 SSR canonicals.
+- /guides/unix-timestamps-seconds-milliseconds-microseconds canonical is missing; expected https://www.ilovetimers.com/guides/unix-timestamps-seconds-milliseconds-microseconds.
+- /guides/unix-timestamps-seconds-milliseconds-microseconds must render all four non-sidebar ad placements (0).
+- /guides/daylight-saving-time-zone-conversions returned 404, expected 200.
+- /guides/daylight-saving-time-zone-conversions renders 0 SSR canonicals.
+- /guides/daylight-saving-time-zone-conversions canonical is missing; expected https://www.ilovetimers.com/guides/daylight-saving-time-zone-conversions.
+- /guides/daylight-saving-time-zone-conversions must render all four non-sidebar ad placements (0).
+- /guides/browser-storage returned 404, expected 200.
+- /guides/browser-storage renders 0 SSR canonicals.
+- /guides/browser-storage canonical is missing; expected https://www.ilovetimers.com/guides/browser-storage.
+- /guides/browser-storage must render all four non-sidebar ad placements (0).
+- /countdown-timer returned 404, expected 200.
+- /countdown-timer renders 0 SSR canonicals.
+- /countdown-timer canonical is missing; expected https://www.ilovetimers.com/countdown-timer.
+- /countdown-timer must render all four non-sidebar ad placements (0).
+- /countdown-timer has no SSR-visible core control.
+- /timer-stopwatch returned 404, expected 200.
+- /timer-stopwatch renders 0 SSR canonicals.
+- /timer-stopwatch canonical is missing; expected https://www.ilovetimers.com/timer-stopwatch.
+- /timer-stopwatch must render all four non-sidebar ad placements (0).
+- /timer-stopwatch has no SSR-visible core control.
+- /timer-clock returned 404, expected 200.
+- /timer-clock renders 0 SSR canonicals.
+- /timer-clock canonical is missing; expected https://www.ilovetimers.com/timer-clock.
+- /timer-clock must render all four non-sidebar ad placements (0).
+- /timer-clock has no SSR-visible core control.
+- /stopwatch returned 404, expected 200.
+- /stopwatch renders 0 SSR canonicals.
+- /stopwatch canonical is missing; expected https://www.ilovetimers.com/stopwatch.
+- /stopwatch must render all four non-sidebar ad placements (0).
+- /stopwatch has no SSR-visible core control.
+- /stopwatch-with-milliseconds returned 404, expected 200.
+- /stopwatch-with-milliseconds renders 0 SSR canonicals.
+- /stopwatch-with-milliseconds canonical is missing; expected https://www.ilovetimers.com/stopwatch-with-milliseconds.
+- /stopwatch-with-milliseconds must render all four non-sidebar ad placements (0).
+- /stopwatch-with-milliseconds has no SSR-visible core control.
+- /pomodoro-timer returned 404, expected 200.
+- /pomodoro-timer renders 0 SSR canonicals.
+- /pomodoro-timer canonical is missing; expected https://www.ilovetimers.com/pomodoro-timer.
+- /pomodoro-timer must render all four non-sidebar ad placements (0).
+- /pomodoro-timer has no SSR-visible core control.
+- /hiit-timer returned 404, expected 200.
+- /hiit-timer renders 0 SSR canonicals.
+- /hiit-timer canonical is missing; expected https://www.ilovetimers.com/hiit-timer.
+- /hiit-timer must render all four non-sidebar ad placements (0).
+- /hiit-timer has no SSR-visible core control.
+- /silent-timer returned 404, expected 200.
+- /silent-timer renders 0 SSR canonicals.
+- /silent-timer canonical is missing; expected https://www.ilovetimers.com/silent-timer.
+- /silent-timer must render all four non-sidebar ad placements (0).
+- /silent-timer has no SSR-visible core control.
+- /online-timer returned 404, expected 200.
+- /online-timer renders 0 SSR canonicals.
+- /online-timer canonical is missing; expected https://www.ilovetimers.com/online-timer.
+- /online-timer must render all four non-sidebar ad placements (0).
+- /online-timer has no SSR-visible core control.
+- /seconds-timer returned 404, expected 200.
+- /seconds-timer renders 0 SSR canonicals.
+- /seconds-timer canonical is missing; expected https://www.ilovetimers.com/seconds-timer.
+- /seconds-timer must render all four non-sidebar ad placements (0).
+- /seconds-timer has no SSR-visible core control.
+- /1-minute-timer returned 404, expected 200.
+- /1-minute-timer renders 0 SSR canonicals.
+- /1-minute-timer canonical is missing; expected https://www.ilovetimers.com/1-minute-timer.
+- /1-minute-timer must render all four non-sidebar ad placements (0).
+- /1-minute-timer has no SSR-visible core control.
+- /5-minute-timer returned 404, expected 200.
+- /5-minute-timer renders 0 SSR canonicals.
+- /5-minute-timer canonical is missing; expected https://www.ilovetimers.com/5-minute-timer.
+- /5-minute-timer must render all four non-sidebar ad placements (0).
+- /5-minute-timer has no SSR-visible core control.
+- /10-minute-timer returned 404, expected 200.
+- /10-minute-timer renders 0 SSR canonicals.
+- /10-minute-timer canonical is missing; expected https://www.ilovetimers.com/10-minute-timer.
+- /10-minute-timer must render all four non-sidebar ad placements (0).
+- /10-minute-timer has no SSR-visible core control.
+- /15-minute-timer returned 404, expected 200.
+- /15-minute-timer renders 0 SSR canonicals.
+- /15-minute-timer canonical is missing; expected https://www.ilovetimers.com/15-minute-timer.
+- /15-minute-timer must render all four non-sidebar ad placements (0).
+- /15-minute-timer has no SSR-visible core control.
+- /30-minute-timer returned 404, expected 200.
+- /30-minute-timer renders 0 SSR canonicals.
+- /30-minute-timer canonical is missing; expected https://www.ilovetimers.com/30-minute-timer.
+- /30-minute-timer must render all four non-sidebar ad placements (0).
+- /30-minute-timer has no SSR-visible core control.
+- /interval-timer returned 404, expected 200.
+- /interval-timer renders 0 SSR canonicals.
+- /interval-timer canonical is missing; expected https://www.ilovetimers.com/interval-timer.
+- /interval-timer must render all four non-sidebar ad placements (0).
+- /interval-timer has no SSR-visible core control.
+- /presentation-timer returned 404, expected 200.
+- /presentation-timer renders 0 SSR canonicals.
+- /presentation-timer canonical is missing; expected https://www.ilovetimers.com/presentation-timer.
+- /presentation-timer must render all four non-sidebar ad placements (0).
+- /presentation-timer has no SSR-visible core control.
+- /speech-timer returned 404, expected 200.
+- /speech-timer renders 0 SSR canonicals.
+- /speech-timer canonical is missing; expected https://www.ilovetimers.com/speech-timer.
+- /speech-timer must render all four non-sidebar ad placements (0).
+- /speech-timer has no SSR-visible core control.
+- /classroom-timer returned 404, expected 200.
+- /classroom-timer renders 0 SSR canonicals.
+- /classroom-timer canonical is missing; expected https://www.ilovetimers.com/classroom-timer.
+- /classroom-timer must render all four non-sidebar ad placements (0).
+- /classroom-timer has no SSR-visible core control.
+- /meeting-timer returned 404, expected 200.
+- /meeting-timer renders 0 SSR canonicals.
+- /meeting-timer canonical is missing; expected https://www.ilovetimers.com/meeting-timer.
+- /meeting-timer must render all four non-sidebar ad placements (0).
+- /meeting-timer has no SSR-visible core control.
+- /meeting-agenda-timer returned 404, expected 200.
+- /meeting-agenda-timer renders 0 SSR canonicals.
+- /meeting-agenda-timer canonical is missing; expected https://www.ilovetimers.com/meeting-agenda-timer.
+- /meeting-agenda-timer must render all four non-sidebar ad placements (0).
+- /meeting-agenda-timer has no SSR-visible core control.
+- /exam-timer returned 404, expected 200.
+- /exam-timer renders 0 SSR canonicals.
+- /exam-timer canonical is missing; expected https://www.ilovetimers.com/exam-timer.
+- /exam-timer must render all four non-sidebar ad placements (0).
+- /exam-timer has no SSR-visible core control.
+- /break-timer returned 404, expected 200.
+- /break-timer renders 0 SSR canonicals.
+- /break-timer canonical is missing; expected https://www.ilovetimers.com/break-timer.
+- /break-timer must render all four non-sidebar ad placements (0).
+- /break-timer has no SSR-visible core control.
+- /study-timer returned 404, expected 200.
+- /study-timer renders 0 SSR canonicals.
+- /study-timer canonical is missing; expected https://www.ilovetimers.com/study-timer.
+- /study-timer must render all four non-sidebar ad placements (0).
+- /study-timer has no SSR-visible core control.
+- /study-stopwatch returned 404, expected 200.
+- /study-stopwatch renders 0 SSR canonicals.
+- /study-stopwatch canonical is missing; expected https://www.ilovetimers.com/study-stopwatch.
+- /study-stopwatch must render all four non-sidebar ad placements (0).
+- /study-stopwatch has no SSR-visible core control.
+- /workout-timer returned 404, expected 200.
+- /workout-timer renders 0 SSR canonicals.
+- /workout-timer canonical is missing; expected https://www.ilovetimers.com/workout-timer.
+- /workout-timer must render all four non-sidebar ad placements (0).
+- /workout-timer has no SSR-visible core control.
+- /rest-timer returned 404, expected 200.
+- /rest-timer renders 0 SSR canonicals.
+- /rest-timer canonical is missing; expected https://www.ilovetimers.com/rest-timer.
+- /rest-timer must render all four non-sidebar ad placements (0).
+- /rest-timer has no SSR-visible core control.
+- /tabata-timer returned 404, expected 200.
+- /tabata-timer renders 0 SSR canonicals.
+- /tabata-timer canonical is missing; expected https://www.ilovetimers.com/tabata-timer.
+- /tabata-timer must render all four non-sidebar ad placements (0).
+- /tabata-timer has no SSR-visible core control.
+- /kitchen-timer returned 404, expected 200.
+- /kitchen-timer renders 0 SSR canonicals.
+- /kitchen-timer canonical is missing; expected https://www.ilovetimers.com/kitchen-timer.
+- /kitchen-timer must render all four non-sidebar ad placements (0).
+- /kitchen-timer has no SSR-visible core control.
+- /meditation-timer returned 404, expected 200.
+- /meditation-timer renders 0 SSR canonicals.
+- /meditation-timer canonical is missing; expected https://www.ilovetimers.com/meditation-timer.
+- /meditation-timer must render all four non-sidebar ad placements (0).
+- /meditation-timer has no SSR-visible core control.
+- /speedcubing-timer returned 404, expected 200.
+- /speedcubing-timer renders 0 SSR canonicals.
+- /speedcubing-timer canonical is missing; expected https://www.ilovetimers.com/speedcubing-timer.
+- /speedcubing-timer must render all four non-sidebar ad placements (0).
+- /speedcubing-timer has no SSR-visible core control.
+- /lab-timer returned 404, expected 200.
+- /lab-timer renders 0 SSR canonicals.
+- /lab-timer canonical is missing; expected https://www.ilovetimers.com/lab-timer.
+- /lab-timer must render all four non-sidebar ad placements (0).
+- /lab-timer has no SSR-visible core control.
+- /alarm-timer returned 404, expected 200.
+- /alarm-timer renders 0 SSR canonicals.
+- /alarm-timer canonical is missing; expected https://www.ilovetimers.com/alarm-timer.
+- /alarm-timer must render all four non-sidebar ad placements (0).
+- /alarm-timer has no SSR-visible core control.
+- /online-alarm-clock returned 404, expected 200.
+- /online-alarm-clock renders 0 SSR canonicals.
+- /online-alarm-clock canonical is missing; expected https://www.ilovetimers.com/online-alarm-clock.
+- /online-alarm-clock must render all four non-sidebar ad placements (0).
+- /online-alarm-clock has no SSR-visible core control.
+- /multiple-timers returned 404, expected 200.
+- /multiple-timers renders 0 SSR canonicals.
+- /multiple-timers canonical is missing; expected https://www.ilovetimers.com/multiple-timers.
+- /multiple-timers must render all four non-sidebar ad placements (0).
+- /multiple-timers has no SSR-visible core control.
+- /visual-timer returned 404, expected 200.
+- /visual-timer renders 0 SSR canonicals.
+- /visual-timer canonical is missing; expected https://www.ilovetimers.com/visual-timer.
+- /visual-timer must render all four non-sidebar ad placements (0).
+- /visual-timer has no SSR-visible core control.
+- /productivity-timer returned 404, expected 200.
+- /productivity-timer renders 0 SSR canonicals.
+- /productivity-timer canonical is missing; expected https://www.ilovetimers.com/productivity-timer.
+- /productivity-timer must render all four non-sidebar ad placements (0).
+- /productivity-timer has no SSR-visible core control.
+- /meeting-count-up-timer returned 404, expected 200.
+- /meeting-count-up-timer renders 0 SSR canonicals.
+- /meeting-count-up-timer canonical is missing; expected https://www.ilovetimers.com/meeting-count-up-timer.
+- /meeting-count-up-timer must render all four non-sidebar ad placements (0).
+- /meeting-count-up-timer has no SSR-visible core control.
+- /breathing-timer returned 404, expected 200.
+- /breathing-timer renders 0 SSR canonicals.
+- /breathing-timer canonical is missing; expected https://www.ilovetimers.com/breathing-timer.
+- /breathing-timer must render all four non-sidebar ad placements (0).
+- /breathing-timer has no SSR-visible core control.
+- /sleep-timer returned 404, expected 200.
+- /sleep-timer renders 0 SSR canonicals.
+- /sleep-timer canonical is missing; expected https://www.ilovetimers.com/sleep-timer.
+- /sleep-timer must render all four non-sidebar ad placements (0).
+- /sleep-timer has no SSR-visible core control.
+- /stretch-timer returned 404, expected 200.
+- /stretch-timer renders 0 SSR canonicals.
+- /stretch-timer canonical is missing; expected https://www.ilovetimers.com/stretch-timer.
+- /stretch-timer must render all four non-sidebar ad placements (0).
+- /stretch-timer has no SSR-visible core control.
+- /drink-water-reminder-timer returned 404, expected 200.
+- /drink-water-reminder-timer renders 0 SSR canonicals.
+- /drink-water-reminder-timer canonical is missing; expected https://www.ilovetimers.com/drink-water-reminder-timer.
+- /drink-water-reminder-timer must render all four non-sidebar ad placements (0).
+- /drink-water-reminder-timer has no SSR-visible core control.
+- /emom-timer returned 404, expected 200.
+- /emom-timer renders 0 SSR canonicals.
+- /emom-timer canonical is missing; expected https://www.ilovetimers.com/emom-timer.
+- /emom-timer must render all four non-sidebar ad placements (0).
+- /emom-timer has no SSR-visible core control.
+- /amrap-timer returned 404, expected 200.
+- /amrap-timer renders 0 SSR canonicals.
+- /amrap-timer canonical is missing; expected https://www.ilovetimers.com/amrap-timer.
+- /amrap-timer must render all four non-sidebar ad placements (0).
+- /amrap-timer has no SSR-visible core control.
+- /round-timer returned 404, expected 200.
+- /round-timer renders 0 SSR canonicals.
+- /round-timer canonical is missing; expected https://www.ilovetimers.com/round-timer.
+- /round-timer must render all four non-sidebar ad placements (0).
+- /round-timer has no SSR-visible core control.
+- /pace-timer returned 404, expected 200.
+- /pace-timer renders 0 SSR canonicals.
+- /pace-timer canonical is missing; expected https://www.ilovetimers.com/pace-timer.
+- /pace-timer must render all four non-sidebar ad placements (0).
+- /pace-timer has no SSR-visible core control.
+- /tea-timer returned 404, expected 200.
+- /tea-timer renders 0 SSR canonicals.
+- /tea-timer canonical is missing; expected https://www.ilovetimers.com/tea-timer.
+- /tea-timer must render all four non-sidebar ad placements (0).
+- /tea-timer has no SSR-visible core control.
+- /egg-timer returned 404, expected 200.
+- /egg-timer renders 0 SSR canonicals.
+- /egg-timer canonical is missing; expected https://www.ilovetimers.com/egg-timer.
+- /egg-timer must render all four non-sidebar ad placements (0).
+- /egg-timer has no SSR-visible core control.
+- /chaos-timer returned 404, expected 200.
+- /chaos-timer renders 0 SSR canonicals.
+- /chaos-timer canonical is missing; expected https://www.ilovetimers.com/chaos-timer.
+- /chaos-timer must render all four non-sidebar ad placements (0).
+- /chaos-timer has no SSR-visible core control.
+- /video-game-challenge-timer returned 404, expected 200.
+- /video-game-challenge-timer renders 0 SSR canonicals.
+- /video-game-challenge-timer canonical is missing; expected https://www.ilovetimers.com/video-game-challenge-timer.
+- /video-game-challenge-timer must render all four non-sidebar ad placements (0).
+- /video-game-challenge-timer has no SSR-visible core control.
+- /speedrun-timer returned 404, expected 200.
+- /speedrun-timer renders 0 SSR canonicals.
+- /speedrun-timer canonical is missing; expected https://www.ilovetimers.com/speedrun-timer.
+- /speedrun-timer must render all four non-sidebar ad placements (0).
+- /speedrun-timer has no SSR-visible core control.
+- /pizza-timer returned 404, expected 200.
+- /pizza-timer renders 0 SSR canonicals.
+- /pizza-timer canonical is missing; expected https://www.ilovetimers.com/pizza-timer.
+- /pizza-timer must render all four non-sidebar ad placements (0).
+- /pizza-timer has no SSR-visible core control.
+- /fibonacci-clock returned 404, expected 200.
+- /fibonacci-clock renders 0 SSR canonicals.
+- /fibonacci-clock canonical is missing; expected https://www.ilovetimers.com/fibonacci-clock.
+- /fibonacci-clock must render all four non-sidebar ad placements (0).
+- /fibonacci-clock has no SSR-visible core control.
+- /sunrise-sunset-clock returned 404, expected 200.
+- /sunrise-sunset-clock renders 0 SSR canonicals.
+- /sunrise-sunset-clock canonical is missing; expected https://www.ilovetimers.com/sunrise-sunset-clock.
+- /sunrise-sunset-clock must render all four non-sidebar ad placements (0).
+- /sunrise-sunset-clock has no SSR-visible core control.
+- /debt-repayment-timer returned 404, expected 200.
+- /debt-repayment-timer renders 0 SSR canonicals.
+- /debt-repayment-timer canonical is missing; expected https://www.ilovetimers.com/debt-repayment-timer.
+- /debt-repayment-timer must render all four non-sidebar ad placements (0).
+- /debt-repayment-timer has no SSR-visible core control.
+- /focus-session-timer returned 404, expected 200.
+- /focus-session-timer renders 0 SSR canonicals.
+- /focus-session-timer canonical is missing; expected https://www.ilovetimers.com/focus-session-timer.
+- /focus-session-timer must render all four non-sidebar ad placements (0).
+- /focus-session-timer has no SSR-visible core control.
+- /morse-code-clock returned 404, expected 200.
+- /morse-code-clock renders 0 SSR canonicals.
+- /morse-code-clock canonical is missing; expected https://www.ilovetimers.com/morse-code-clock.
+- /morse-code-clock must render all four non-sidebar ad placements (0).
+- /morse-code-clock has no SSR-visible core control.
+- /world-clock returned 404, expected 200.
+- /world-clock renders 0 SSR canonicals.
+- /world-clock canonical is missing; expected https://www.ilovetimers.com/world-clock.
+- /world-clock must render all four non-sidebar ad placements (0).
+- /world-clock has no SSR-visible core control.
+- /world-clock-with-milliseconds returned 404, expected 200.
+- /world-clock-with-milliseconds renders 0 SSR canonicals.
+- /world-clock-with-milliseconds canonical is missing; expected https://www.ilovetimers.com/world-clock-with-milliseconds.
+- /world-clock-with-milliseconds must render all four non-sidebar ad placements (0).
+- /world-clock-with-milliseconds has no SSR-visible core control.
+- /debt-clock returned 404, expected 200.
+- /debt-clock renders 0 SSR canonicals.
+- /debt-clock canonical is missing; expected https://www.ilovetimers.com/debt-clock.
+- /debt-clock must render all four non-sidebar ad placements (0).
+- /debt-clock has no SSR-visible core control.
+- /current-local-time returned 404, expected 200.
+- /current-local-time renders 0 SSR canonicals.
+- /current-local-time canonical is missing; expected https://www.ilovetimers.com/current-local-time.
+- /current-local-time must render all four non-sidebar ad placements (0).
+- /current-local-time has no SSR-visible core control.
+- /utc-clock returned 404, expected 200.
+- /utc-clock renders 0 SSR canonicals.
+- /utc-clock canonical is missing; expected https://www.ilovetimers.com/utc-clock.
+- /utc-clock must render all four non-sidebar ad placements (0).
+- /utc-clock has no SSR-visible core control.
+- /24-hour-clock returned 404, expected 200.
+- /24-hour-clock renders 0 SSR canonicals.
+- /24-hour-clock canonical is missing; expected https://www.ilovetimers.com/24-hour-clock.
+- /24-hour-clock must render all four non-sidebar ad placements (0).
+- /24-hour-clock has no SSR-visible core control.
+- /12-hour-clock returned 404, expected 200.
+- /12-hour-clock renders 0 SSR canonicals.
+- /12-hour-clock canonical is missing; expected https://www.ilovetimers.com/12-hour-clock.
+- /12-hour-clock must render all four non-sidebar ad placements (0).
+- /12-hour-clock has no SSR-visible core control.
+- /analog-clock returned 404, expected 200.
+- /analog-clock renders 0 SSR canonicals.
+- /analog-clock canonical is missing; expected https://www.ilovetimers.com/analog-clock.
+- /analog-clock must render all four non-sidebar ad placements (0).
+- /analog-clock has no SSR-visible core control.
+- /digital-clock returned 404, expected 200.
+- /digital-clock renders 0 SSR canonicals.
+- /digital-clock canonical is missing; expected https://www.ilovetimers.com/digital-clock.
+- /digital-clock must render all four non-sidebar ad placements (0).
+- /digital-clock has no SSR-visible core control.
+- /clock-with-milliseconds returned 404, expected 200.
+- /clock-with-milliseconds renders 0 SSR canonicals.
+- /clock-with-milliseconds canonical is missing; expected https://www.ilovetimers.com/clock-with-milliseconds.
+- /clock-with-milliseconds must render all four non-sidebar ad placements (0).
+- /clock-with-milliseconds has no SSR-visible core control.
+- /binary-clock returned 404, expected 200.
+- /binary-clock renders 0 SSR canonicals.
+- /binary-clock canonical is missing; expected https://www.ilovetimers.com/binary-clock.
+- /binary-clock must render all four non-sidebar ad placements (0).
+- /binary-clock has no SSR-visible core control.
+- /hexadecimal-clock returned 404, expected 200.
+- /hexadecimal-clock renders 0 SSR canonicals.
+- /hexadecimal-clock canonical is missing; expected https://www.ilovetimers.com/hexadecimal-clock.
+- /hexadecimal-clock must render all four non-sidebar ad placements (0).
+- /hexadecimal-clock has no SSR-visible core control.
+- /event-countdown returned 404, expected 200.
+- /event-countdown renders 0 SSR canonicals.
+- /event-countdown canonical is missing; expected https://www.ilovetimers.com/event-countdown.
+- /event-countdown must render all four non-sidebar ad placements (0).
+- /event-countdown has no SSR-visible core control.
+- /countdown-to-date returned 404, expected 200.
+- /countdown-to-date renders 0 SSR canonicals.
+- /countdown-to-date canonical is missing; expected https://www.ilovetimers.com/countdown-to-date.
+- /countdown-to-date must render all four non-sidebar ad placements (0).
+- /countdown-to-date has no SSR-visible core control.
+- /new-year-countdown returned 404, expected 200.
+- /new-year-countdown renders 0 SSR canonicals.
+- /new-year-countdown canonical is missing; expected https://www.ilovetimers.com/new-year-countdown.
+- /new-year-countdown must render all four non-sidebar ad placements (0).
+- /new-year-countdown has no SSR-visible core control.
+- /christmas-countdown returned 404, expected 200.
+- /christmas-countdown renders 0 SSR canonicals.
+- /christmas-countdown canonical is missing; expected https://www.ilovetimers.com/christmas-countdown.
+- /christmas-countdown must render all four non-sidebar ad placements (0).
+- /christmas-countdown has no SSR-visible core control.
+- /golden-hour-clock returned 404, expected 200.
+- /golden-hour-clock renders 0 SSR canonicals.
+- /golden-hour-clock canonical is missing; expected https://www.ilovetimers.com/golden-hour-clock.
+- /golden-hour-clock must render all four non-sidebar ad placements (0).
+- /golden-hour-clock has no SSR-visible core control.
+- /moon-phase-clock returned 404, expected 200.
+- /moon-phase-clock renders 0 SSR canonicals.
+- /moon-phase-clock canonical is missing; expected https://www.ilovetimers.com/moon-phase-clock.
+- /moon-phase-clock must render all four non-sidebar ad placements (0).
+- /moon-phase-clock has no SSR-visible core control.
+- /astronomical-clock returned 404, expected 200.
+- /astronomical-clock renders 0 SSR canonicals.
+- /astronomical-clock canonical is missing; expected https://www.ilovetimers.com/astronomical-clock.
+- /astronomical-clock must render all four non-sidebar ad placements (0).
+- /astronomical-clock has no SSR-visible core control.
+- /epoch-unix-time-clock returned 404, expected 200.
+- /epoch-unix-time-clock renders 0 SSR canonicals.
+- /epoch-unix-time-clock canonical is missing; expected https://www.ilovetimers.com/epoch-unix-time-clock.
+- /epoch-unix-time-clock must render all four non-sidebar ad placements (0).
+- /epoch-unix-time-clock has no SSR-visible core control.
+- /swatch-internet-time-clock returned 404, expected 200.
+- /swatch-internet-time-clock renders 0 SSR canonicals.
+- /swatch-internet-time-clock canonical is missing; expected https://www.ilovetimers.com/swatch-internet-time-clock.
+- /swatch-internet-time-clock must render all four non-sidebar ad placements (0).
+- /swatch-internet-time-clock has no SSR-visible core control.
+- /billable-hours-clock returned 404, expected 200.
+- /billable-hours-clock renders 0 SSR canonicals.
+- /billable-hours-clock canonical is missing; expected https://www.ilovetimers.com/billable-hours-clock.
+- /billable-hours-clock must render all four non-sidebar ad placements (0).
+- /billable-hours-clock has no SSR-visible core control.
+- /time-blocking-clock returned 404, expected 200.
+- /time-blocking-clock renders 0 SSR canonicals.
+- /time-blocking-clock canonical is missing; expected https://www.ilovetimers.com/time-blocking-clock.
+- /time-blocking-clock must render all four non-sidebar ad placements (0).
+- /time-blocking-clock has no SSR-visible core control.
+- /atomic-clock returned 404, expected 200.
+- /atomic-clock renders 0 SSR canonicals.
+- /atomic-clock canonical is missing; expected https://www.ilovetimers.com/atomic-clock.
+- /atomic-clock must render all four non-sidebar ad placements (0).
+- /atomic-clock has no SSR-visible core control.
+- /time-zone-converter returned 404, expected 200.
+- /time-zone-converter renders 0 SSR canonicals.
+- /time-zone-converter canonical is missing; expected https://www.ilovetimers.com/time-zone-converter.
+- /time-zone-converter must render all four non-sidebar ad placements (0).
+- /time-zone-converter has no SSR-visible core control.
+- /time-zone-meeting-planner returned 404, expected 200.
+- /time-zone-meeting-planner renders 0 SSR canonicals.
+- /time-zone-meeting-planner canonical is missing; expected https://www.ilovetimers.com/time-zone-meeting-planner.
+- /time-zone-meeting-planner must render all four non-sidebar ad placements (0).
+- /time-zone-meeting-planner has no SSR-visible core control.
+- /military-time-clock returned 404, expected 200.
+- /military-time-clock renders 0 SSR canonicals.
+- /military-time-clock canonical is missing; expected https://www.ilovetimers.com/military-time-clock.
+- /military-time-clock must render all four non-sidebar ad placements (0).
+- /military-time-clock has no SSR-visible core control.
+- /binary-stopwatch returned 404, expected 200.
+- /binary-stopwatch renders 0 SSR canonicals.
+- /binary-stopwatch canonical is missing; expected https://www.ilovetimers.com/binary-stopwatch.
+- /binary-stopwatch must render all four non-sidebar ad placements (0).
+- /binary-stopwatch has no SSR-visible core control.
+- /roman-numeral-clock returned 404, expected 200.
+- /roman-numeral-clock renders 0 SSR canonicals.
+- /roman-numeral-clock canonical is missing; expected https://www.ilovetimers.com/roman-numeral-clock.
+- /roman-numeral-clock must render all four non-sidebar ad placements (0).
+- /roman-numeral-clock has no SSR-visible core control.
+- /retro-flip-clock returned 404, expected 200.
+- /retro-flip-clock renders 0 SSR canonicals.
+- /retro-flip-clock canonical is missing; expected https://www.ilovetimers.com/retro-flip-clock.
+- /retro-flip-clock must render all four non-sidebar ad placements (0).
+- /retro-flip-clock has no SSR-visible core control.
+- /minimalist-clock returned 404, expected 200.
+- /minimalist-clock renders 0 SSR canonicals.
+- /minimalist-clock canonical is missing; expected https://www.ilovetimers.com/minimalist-clock.
+- /minimalist-clock must render all four non-sidebar ad placements (0).
+- /minimalist-clock has no SSR-visible core control.
+- /reaction-time-test returned 404, expected 200.
+- /reaction-time-test renders 0 SSR canonicals.
+- /reaction-time-test canonical is missing; expected https://www.ilovetimers.com/reaction-time-test.
+- /reaction-time-test must render all four non-sidebar ad placements (0).
+- /reaction-time-test has no SSR-visible core control.
+- /metronome returned 404, expected 200.
+- /metronome renders 0 SSR canonicals.
+- /metronome canonical is missing; expected https://www.ilovetimers.com/metronome.
+- /metronome must render all four non-sidebar ad placements (0).
+- /metronome has no SSR-visible core control.
+- /bpm-tapper returned 404, expected 200.
+- /bpm-tapper renders 0 SSR canonicals.
+- /bpm-tapper canonical is missing; expected https://www.ilovetimers.com/bpm-tapper.
+- /bpm-tapper must render all four non-sidebar ad placements (0).
+- /bpm-tapper has no SSR-visible core control.
+- /military-time-converter returned 404, expected 200.
+- /military-time-converter renders 0 SSR canonicals.
+- /military-time-converter canonical is missing; expected https://www.ilovetimers.com/military-time-converter.
+- /military-time-converter must render all four non-sidebar ad placements (0).
+- /military-time-converter has no SSR-visible core control.
+- /work-hours-calculator returned 404, expected 200.
+- /work-hours-calculator renders 0 SSR canonicals.
+- /work-hours-calculator canonical is missing; expected https://www.ilovetimers.com/work-hours-calculator.
+- /work-hours-calculator must render all four non-sidebar ad placements (0).
+- /work-hours-calculator has no SSR-visible core control.
+- /time-calculator returned 404, expected 200.
+- /time-calculator renders 0 SSR canonicals.
+- /time-calculator canonical is missing; expected https://www.ilovetimers.com/time-calculator.
+- /time-calculator must render all four non-sidebar ad placements (0).
+- /time-calculator has no SSR-visible core control.
+- /time-duration-calculator returned 404, expected 200.
+- /time-duration-calculator renders 0 SSR canonicals.
+- /time-duration-calculator canonical is missing; expected https://www.ilovetimers.com/time-duration-calculator.
+- /time-duration-calculator must render all four non-sidebar ad placements (0).
+- /time-duration-calculator has no SSR-visible core control.
+- /date-duration-calculator returned 404, expected 200.
+- /date-duration-calculator renders 0 SSR canonicals.
+- /date-duration-calculator canonical is missing; expected https://www.ilovetimers.com/date-duration-calculator.
+- /date-duration-calculator must render all four non-sidebar ad placements (0).
+- /date-duration-calculator has no SSR-visible core control.
+- /date-calculator returned 404, expected 200.
+- /date-calculator renders 0 SSR canonicals.
+- /date-calculator canonical is missing; expected https://www.ilovetimers.com/date-calculator.
+- /date-calculator must render all four non-sidebar ad placements (0).
+- /date-calculator has no SSR-visible core control.
+- /business-days-calculator returned 404, expected 200.
+- /business-days-calculator renders 0 SSR canonicals.
+- /business-days-calculator canonical is missing; expected https://www.ilovetimers.com/business-days-calculator.
+- /business-days-calculator must render all four non-sidebar ad placements (0).
+- /business-days-calculator has no SSR-visible core control.
+- /workdays-calculator returned 404, expected 200.
+- /workdays-calculator renders 0 SSR canonicals.
+- /workdays-calculator canonical is missing; expected https://www.ilovetimers.com/workdays-calculator.
+- /workdays-calculator must render all four non-sidebar ad placements (0).
+- /workdays-calculator has no SSR-visible core control.
+- /age-calculator returned 404, expected 200.
+- /age-calculator renders 0 SSR canonicals.
+- /age-calculator canonical is missing; expected https://www.ilovetimers.com/age-calculator.
+- /age-calculator must render all four non-sidebar ad placements (0).
+- /age-calculator has no SSR-visible core control.
+- /days-until-calculator returned 404, expected 200.
+- /days-until-calculator renders 0 SSR canonicals.
+- /days-until-calculator canonical is missing; expected https://www.ilovetimers.com/days-until-calculator.
+- /days-until-calculator must render all four non-sidebar ad placements (0).
+- /days-until-calculator has no SSR-visible core control.
+- /weekday-calculator returned 404, expected 200.
+- /weekday-calculator renders 0 SSR canonicals.
+- /weekday-calculator canonical is missing; expected https://www.ilovetimers.com/weekday-calculator.
+- /weekday-calculator must render all four non-sidebar ad placements (0).
+- /weekday-calculator has no SSR-visible core control.
+- /week-number-calculator returned 404, expected 200.
+- /week-number-calculator renders 0 SSR canonicals.
+- /week-number-calculator canonical is missing; expected https://www.ilovetimers.com/week-number-calculator.
+- /week-number-calculator must render all four non-sidebar ad placements (0).
+- /week-number-calculator has no SSR-visible core control.
+- /months-between-dates-calculator returned 404, expected 200.
+- /months-between-dates-calculator renders 0 SSR canonicals.
+- /months-between-dates-calculator canonical is missing; expected https://www.ilovetimers.com/months-between-dates-calculator.
+- /months-between-dates-calculator must render all four non-sidebar ad placements (0).
+- /months-between-dates-calculator has no SSR-visible core control.
+- /weeks-between-dates-calculator returned 404, expected 200.
+- /weeks-between-dates-calculator renders 0 SSR canonicals.
+- /weeks-between-dates-calculator canonical is missing; expected https://www.ilovetimers.com/weeks-between-dates-calculator.
+- /weeks-between-dates-calculator must render all four non-sidebar ad placements (0).
+- /weeks-between-dates-calculator has no SSR-visible core control.
+- /birthday-countdown returned 404, expected 200.
+- /birthday-countdown renders 0 SSR canonicals.
+- /birthday-countdown canonical is missing; expected https://www.ilovetimers.com/birthday-countdown.
+- /birthday-countdown must render all four non-sidebar ad placements (0).
+- /birthday-countdown has no SSR-visible core control.
+- /hours-until-calculator returned 404, expected 200.
+- /hours-until-calculator renders 0 SSR canonicals.
+- /hours-until-calculator canonical is missing; expected https://www.ilovetimers.com/hours-until-calculator.
+- /hours-until-calculator must render all four non-sidebar ad placements (0).
+- /hours-until-calculator has no SSR-visible core control.
+- /time-card-calculator returned 404, expected 200.
+- /time-card-calculator renders 0 SSR canonicals.
+- /time-card-calculator canonical is missing; expected https://www.ilovetimers.com/time-card-calculator.
+- /time-card-calculator must render all four non-sidebar ad placements (0).
+- /time-card-calculator has no SSR-visible core control.
+- /weekly-timesheet-calculator returned 404, expected 200.
+- /weekly-timesheet-calculator renders 0 SSR canonicals.
+- /weekly-timesheet-calculator canonical is missing; expected https://www.ilovetimers.com/weekly-timesheet-calculator.
+- /weekly-timesheet-calculator must render all four non-sidebar ad placements (0).
+- /weekly-timesheet-calculator has no SSR-visible core control.
+- /billable-hours-calculator returned 404, expected 200.
+- /billable-hours-calculator renders 0 SSR canonicals.
+- /billable-hours-calculator canonical is missing; expected https://www.ilovetimers.com/billable-hours-calculator.
+- /billable-hours-calculator must render all four non-sidebar ad placements (0).
+- /billable-hours-calculator has no SSR-visible core control.
+- /milliseconds-converter returned 404, expected 200.
+- /milliseconds-converter renders 0 SSR canonicals.
+- /milliseconds-converter canonical is missing; expected https://www.ilovetimers.com/milliseconds-converter.
+- /milliseconds-converter must render all four non-sidebar ad placements (0).
+- /milliseconds-converter has no SSR-visible core control.
+- /millisecond-timer returned 404, expected 200.
+- /millisecond-timer renders 0 SSR canonicals.
+- /millisecond-timer canonical is missing; expected https://www.ilovetimers.com/millisecond-timer.
+- /millisecond-timer must render all four non-sidebar ad placements (0).
+- /millisecond-timer has no SSR-visible core control.
+- /unix-timestamp-converter returned 404, expected 200.
+- /unix-timestamp-converter renders 0 SSR canonicals.
+- /unix-timestamp-converter canonical is missing; expected https://www.ilovetimers.com/unix-timestamp-converter.
+- /unix-timestamp-converter must render all four non-sidebar ad placements (0).
+- /unix-timestamp-converter has no SSR-visible core control.
+- /chess-clock returned 404, expected 200.
+- /chess-clock renders 0 SSR canonicals.
+- /chess-clock canonical is missing; expected https://www.ilovetimers.com/chess-clock.
+- /chess-clock must render all four non-sidebar ad placements (0).
+- /chess-clock has no SSR-visible core control.
+- /privacy returned 404, expected 200.
+- /privacy renders 0 SSR canonicals.
+- /privacy canonical is missing; expected https://www.ilovetimers.com/privacy.
+- /terms returned 404, expected 200.
+- /terms renders 0 SSR canonicals.
+- /terms canonical is missing; expected https://www.ilovetimers.com/terms.
+- /cookies canonical is https://www.rentconverter.com/cookies; expected https://www.ilovetimers.com/cookies.
+- /sitemap canonical is https://www.rentconverter.com/sitemap; expected https://www.ilovetimers.com/sitemap.
+- Redirect destination /timer-stopwatch returned 404.
+- Redirect destination /timer-stopwatch returned 404.
+- Redirect destination /timer-stopwatch returned 404.
+- Redirect destination /timer-stopwatch returned 404.
+- Redirect destination /timer-stopwatch returned 404.
+- Redirect destination /study-stopwatch returned 404.
+- Redirect destination /study-stopwatch returned 404.
+- Redirect destination /study-stopwatch returned 404.
+- Redirect destination /timer-clock returned 404.
+- Redirect destination /timer-clock returned 404.
+- Redirect destination /military-time-converter returned 404.
+- Redirect destination /military-time-converter returned 404.
+- Redirect destination /military-time-converter returned 404.
+- Redirect destination /milliseconds-converter returned 404.
+- Redirect destination /milliseconds-converter returned 404.
+- Redirect destination /utc-clock returned 404.
+- Redirect destination /epoch-unix-time-clock returned 404.
+- Redirect destination /online-timer returned 404.
+- Redirect destination /stopwatch returned 404.
+- Redirect destination /kitchen-timer returned 404.
+- Redirect destination /round-timer returned 404.
+- Redirect destination /world-clock returned 404.
+- Redirect destination /analog-clock returned 404.
+- Redirect destination /analog-clock returned 404.
+- Redirect destination /analog-clock returned 404.
+- Redirect destination /digital-clock returned 404.
+- Redirect destination /digital-clock returned 404.
+- Redirect destination /digital-clock returned 404.

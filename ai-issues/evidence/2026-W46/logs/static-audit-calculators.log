@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 audit:calculators
+> node scripts/audits/calculators.mjs
+
+Calculator integrity audit passed (18 routes, 132 canonical routes, 28 redirects, 109 sitemap URLs, 95 related groups).

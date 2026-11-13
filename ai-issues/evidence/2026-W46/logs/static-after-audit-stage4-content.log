@@ -1,0 +1,6 @@
+
+> ilovetimers@1.0.0 audit:stage4-content
+> node scripts/audits/stage4-content-quality.mjs
+
+Stage 4 content-quality audit failed (1):
+- 3 forbidden public process references remain.

@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 test:ui-regressions
+> node scripts/tests/ui-regressions.mjs
+
+Targeted UI regression checks passed (alarm rollover, tap-tempo filtering, control stacking, stable reaction layout, silent audio removal, metronome loop guard, single-path BPM input, trailing-slash hydration stability, ISO dateModified output, and deferred custom duration commits across timer routes).

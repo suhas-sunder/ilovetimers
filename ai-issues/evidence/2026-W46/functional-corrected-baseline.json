@@ -1,0 +1,619 @@
+[
+  {
+    "route": "/countdown-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "5:00",
+      "active": "4:59",
+      "paused": "4:59",
+      "reset": "5:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/millisecond-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "0:10.000",
+      "active": "0:08.808",
+      "paused": "0:08.808",
+      "reset": "0:10.000"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/seconds-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "30s",
+      "active": "29s",
+      "paused": "29s",
+      "reset": "30s"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/online-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "5:00",
+      "active": "4:59",
+      "paused": "4:59",
+      "reset": "5:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/timer-stopwatch",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "00:05:00",
+      "active": "00:04:59",
+      "paused": "00:04:59",
+      "reset": "00:05:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/timer-clock",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "00:05:00",
+      "active": "00:04:59",
+      "paused": "00:04:59",
+      "reset": "00:05:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/study-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "25:00",
+      "active": "24:59",
+      "paused": "24:59",
+      "reset": "25:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/break-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "5:00",
+      "active": "4:59",
+      "paused": "4:59",
+      "reset": "5:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/meeting-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "10:00",
+      "active": "9:59",
+      "paused": "9:59",
+      "reset": "10:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/presentation-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "10:00",
+      "active": "9:59",
+      "paused": "9:59",
+      "reset": "10:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/speech-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "05:00",
+      "active": "04:59",
+      "paused": "04:59",
+      "reset": "05:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/exam-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "25:00",
+      "active": "24:59",
+      "paused": "24:59",
+      "reset": "25:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/classroom-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "5:00",
+      "active": "4:59",
+      "paused": "4:59",
+      "reset": "5:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/kitchen-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "10:00",
+      "active": "9:59",
+      "paused": "9:59",
+      "reset": "10:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/egg-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "6:00",
+      "active": "5:59",
+      "paused": "5:59",
+      "reset": "6:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/pizza-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "14:00",
+      "active": "13:59",
+      "paused": "13:59",
+      "reset": "14:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/tea-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "2:00",
+      "active": "1:59",
+      "paused": "1:59",
+      "reset": "2:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/sleep-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "30:00",
+      "active": "29:59",
+      "paused": "29:59",
+      "reset": "30:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/silent-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "5:00",
+      "active": "4:59",
+      "paused": "4:59",
+      "reset": "5:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/visual-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "10:00",
+      "active": "9:59",
+      "paused": "9:59",
+      "reset": "10:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/focus-session-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "45:00",
+      "active": "44:59",
+      "paused": "44:59",
+      "reset": "45:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/rest-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "1:30",
+      "active": "1:29",
+      "paused": "1:29",
+      "reset": "1:30"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/meditation-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "10:00",
+      "active": "9:59",
+      "paused": "9:59",
+      "reset": "10:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/lab-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "0:00.00",
+      "active": "0:01.19",
+      "paused": "0:01.19",
+      "reset": "0:00.00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/1-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "1:00",
+      "active": "0:59",
+      "paused": "0:59",
+      "reset": "1:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/5-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "5:00",
+      "active": "4:59",
+      "paused": "4:59",
+      "reset": "5:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/10-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "10:00",
+      "active": "9:59",
+      "paused": "9:59",
+      "reset": "10:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/15-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "15:00",
+      "active": "14:59",
+      "paused": "14:59",
+      "reset": "15:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/30-minute-timer",
+    "name": "start, delayed frame, pause, resume, reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "30:00",
+      "active": "29:59",
+      "paused": "29:59",
+      "reset": "30:00"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/millisecond-timer",
+    "name": "1ms, zero clamp, Enter commit, completion and restart",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "1 ms lower bound and committed 250 ms",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/stopwatch",
+    "name": "elapsed, pause exclusion, resume and reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "0:00.000",
+      "active": "0:01.224"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/stopwatch-with-milliseconds",
+    "name": "elapsed, pause exclusion, resume and reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "0:00.000",
+      "active": "0:01.224"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/study-stopwatch",
+    "name": "elapsed, pause exclusion, resume and reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ '0:01.23'\n- '0:01.22'\n         ^\n",
+    "text": "STUDY STOPWATCH / PAUSED\n0:01.23\n0 session markers\nResume\nAdd marker\nReset\nFullscreen\nClear markers\nShortcuts: Space start/pause / M add marker / R reset / F fullscreen\nSession markers\n\nChronological checkpoints in this session\n\nAdd a marker when you finish a chapter, practice set, break, or topic.\n\nStudy Stopwatch\n\nTrack study time without choosing a fixed countdown or Pomodoro cycle.\n\nHow to use the study stopwatch\n\nStart when you begin studying, pause when the session stops, and resume from the same elapsed value. Add a marker without stopping the clock when you reach a useful checkpoint. The tool is quiet by default and does not play ticks, marker sounds, or completion audio.\n\nStudy stopwatch vs study timer\n\nThe Study Stopwatch counts upward for an open-ended session. The Study Timer counts down from a fixed duration. Choose the stopwatch when you do not know the session length in advance, or choose the timer when you want a planned stopping point.\n\nStudy stopwatch vs Pomodoro\n\nA Pomodoro timer alternates repeated work and break cycles. This stopwatch keeps one continuous elapsed-time session with optional markers. Neither method is universally better; the useful choice depends on whether you want open-ended tracking or structured cycles.\n\nUseful session markers\n\nAdd a marker after a chapter, practice set, break, or topic change. Markers are simple elapsed-time checkpoints in chronological order. They have no required text field, are not saved to a server, and disappear when you reset or reload the page.\n\nAccuracy and limitations\n\nThis page measures practical browser-based elapsed time. Display refresh, browser scheduling, device performance, background behavior, and input delay can affect millisecond-level readings. It is intended for study tracking, not certified measurement.\n\nMaintained by Suhas Sunder. See how iLoveTimers is made.\n\nLast reviewed July 15, 2026.\n\nStudy stopwatch FAQ\nDoes the study stopwatch have a fixed end time?\n\nNo. It counts upward from zero until you pause or reset it. Use the Study Timer when you want a fixed-duration countdown.\n\nWhat are session markers?\n\nA marker records the current elapsed time without stopping the stopwatch. You can use markers for a completed chapter, practice set, break, or topic change.\n\nWill it keep running in a background tab?\n\nThe browser may reduce screen updates in a background tab. When the page becomes visible again, the displayed elapsed time is reconciled from the browser's monotonic timing clock, subject to browser and device behavior.\n\nIs study information sent to analytics?\n\nNo marker content or elapsed value is sent by this tool. Markers stay in this page's memory and are cleared by reset or reload. Cookieless analytics may record the canonical page path only.",
+    "pageErrors": []
+  },
+  {
+    "route": "/binary-stopwatch",
+    "name": "elapsed, pause exclusion, resume and reset",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": {
+      "start": "0:00",
+      "active": "0:02"
+    },
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/stopwatch",
+    "name": "laps record cumulative totals and distinct splits",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "0:03.000\nPAUSED\nStart\nLap\nReset\nFullscreen\nCopy laps\nShortcuts: Space start/pause · L lap · C copy · R reset · F fullscreen\nLaps\nMost recent first · Split is time since previous lap\nLap 2\nTotal 0:03.000\nSplit 0:02.000\nLap 1\nTotal 0:01.000\nSplit 0:01.000\nCopy format: CSV (Lap, Split Time, Total Time)\nOnline Stopwatch\n\nTrack general elapsed time, pause and resume, record lap and split times, copy results, and use a clear fullscreen display.\n\nLaps, splits, and everyday elapsed time\n\nUse this stopwatch for workouts, practice, study, meetings, and everyday tasks that do not have a fixed end time. Pause holds the elapsed value, and Resume continues from that same point.\n\nEach lap records a total time since the stopwatch started and a split time since the previous lap. If you know the desired finish time in advance, a countdown is usually a better fit; the combined timer and stopwatch page is useful when one session may need both.\n\nRead how browser timers measure elapsed time and handle delays for the monotonic-clock and callback-reconciliation method used by this kind of stopwatch.\n\nRecord elapsed time and laps\n\nStart begins an open-ended measurement. Lap records the elapsed value without stopping the watch. Pause holds the displayed elapsed time, and Start resumes from that point. Reset clears both elapsed time and laps.\n\nAs an example, press Lap at 00:45 and again at 01:32. The list keeps both timestamps so you can compare the 45-second first segment with the 47-second second segment. Copy laps exports the visible list.\n\nSession scope\n\nThe stopwatch uses the browser's monotonic timing reference. Rendering may slow in a background tab, but the elapsed value reconciles when the page runs again. Laps are held only in this tab and disappear after a refresh or close.\n\nNeed a countdown that starts from a set duration and shows milliseconds? Use the millisecond timer. This stopwatch is for elapsed time; the millisecond timer is for counting down with minute, second, and millisecond inputs. For a page that puts millisecond precision first, use the stopwatch with milliseconds.",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/hiit-timer",
+    "name": "Reset cancels already-queued phase transition",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "beforeReset": "0:00\nWARM-UP\nGET READY\nREADY\nStart\nReset\nNext\nHIIT presets\nLoad a common work/rest pattern, then fine-tune the timing below.\nTabata 20/10 x 8\nIntervals 40/20 x 10\nBoxing 3:00/1:00 x 6\nInterval settings\n\nSet warm-up, work, rest, rounds, cool-down, and optional cues.\n\nWarm-up seconds\n0 = skip\nWork seconds\nRest seconds\n0 = none\nRounds\nCool-down seconds\n0 = skip\nSound\nFinal 3-2-1 beeps\nWork only\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / R reset / N next / F fullscreen\nHIIT Timer (Intervals)\n\nRun warm-up, work, rest, rounds, and cool-down intervals with a dominant phase countdown.\n\nHow the HIIT sequence runs\n\nThe sequence is warm-up, alternating work and rest, then cool-down. Enter 0 for warm-up or cool-down to skip that phase. Rest is skipped after the final work interval, so the session can move directly to cool-down or finish.\n\nSet Warm-up to 30 seconds, Work to 40, Rest to 20, Rounds to 10, and Cool-down to 60. The timed session lasts 10 minutes 30 seconds: 30 seconds of preparation, ten work periods, nine rests, and one minute to cool down.\n\nDuring an interval\n\nPause holds the current phase. Start resumes it. Next ends the current phase early and advances the sequence. Settings remain fixed while the run is active. Reset returns to the first available phase and round one. Sound cues use browser audio, so keep the tab open and prevent device sleep when a cue matters.",
+    "afterReset": "0:20\nWORK\nROUND 1/8\nRUNNING\nPause\nReset\nNext\nHIIT presets\nLoad a common work/rest pattern, then fine-tune the timing below.\nTabata 20/10 x 8\nIntervals 40/20 x 10\nBoxing 3:00/1:00 x 6\nInterval settings\n\nSet warm-up, work, rest, rounds, cool-down, and optional cues.\n\nWarm-up seconds\n0 = skip\nWork seconds\nRest seconds\n0 = none\nRounds\nCool-down seconds\n0 = skip\nSound\nFinal 3-2-1 beeps\nWork only\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nPause or reset the active session before loading a setup.\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / R reset / N next / F fullscreen\nHIIT Timer (Intervals)\n\nRun warm-up, work, rest, rounds, and cool-down intervals with a dominant phase countdown.\n\nHow the HIIT sequence runs\n\nThe sequence is warm-up, alternating work and rest, then cool-down. Enter 0 for warm-up or cool-down to skip that phase. Rest is skipped after the final work interval, so the session can move directly to cool-down or finish.\n\nSet Warm-up to 30 seconds, Work to 40, Rest to 20, Rounds to 10, and Cool-down to 60. The timed session lasts 10 minutes 30 seconds: 30 seconds of preparation, ten work periods, nine rests, and one minute to cool down.\n\nDuring an interval\n\nPause holds the current phase. Start resumes it. Next ends the current phase early and advances the sequence. Settings remain fixed while the run is active. Reset returns to the first available phase and round one. Sound cues use browser audio, so keep the tab open and prevent device sleep when a cue matters.",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Reset must not be undone by delayed auto-advance\n\n1 !== 0\n",
+    "text": "0:20\nWORK\nROUND 1/8\nRUNNING\nPause\nReset\nNext\nHIIT presets\nLoad a common work/rest pattern, then fine-tune the timing below.\nTabata 20/10 x 8\nIntervals 40/20 x 10\nBoxing 3:00/1:00 x 6\nInterval settings\n\nSet warm-up, work, rest, rounds, cool-down, and optional cues.\n\nWarm-up seconds\n0 = skip\nWork seconds\nRest seconds\n0 = none\nRounds\nCool-down seconds\n0 = skip\nSound\nFinal 3-2-1 beeps\nWork only\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nPause or reset the active session before loading a setup.\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / R reset / N next / F fullscreen\nHIIT Timer (Intervals)\n\nRun warm-up, work, rest, rounds, and cool-down intervals with a dominant phase countdown.\n\nHow the HIIT sequence runs\n\nThe sequence is warm-up, alternating work and rest, then cool-down. Enter 0 for warm-up or cool-down to skip that phase. Rest is skipped after the final work interval, so the session can move directly to cool-down or finish.\n\nSet Warm-up to 30 seconds, Work to 40, Rest to 20, Rounds to 10, and Cool-down to 60. The timed session lasts 10 minutes 30 seconds: 30 seconds of preparation, ten work periods, nine rests, and one minute to cool down.\n\nDuring an interval\n\nPause holds the current phase. Start resumes it. Next ends the current phase early and advances the sequence. Settings remain fixed while the run is active. Reset returns to the first available phase and round one. Sound cues use browser audio, so keep the tab open and prevent device sleep when a cue matters.",
+    "pageErrors": []
+  },
+  {
+    "route": "/hiit-timer",
+    "name": "zero warmup/rest/cooldown, two rounds complete",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "0:00\nCOMPLETE\nDONE\nDONE\nRestart\nReset\nNext\nHIIT presets\nLoad a common work/rest pattern, then fine-tune the timing below.\nTabata 20/10 x 8\nIntervals 40/20 x 10\nBoxing 3:00/1:00 x 6\nInterval settings\n\nSet warm-up, work, rest, rounds, cool-down, and optional cues.\n\nWarm-up seconds\n0 = skip\nWork seconds\nRest seconds\n0 = none\nRounds\nCool-down seconds\n0 = skip\nSound\nFinal 3-2-1 beeps\nWork only\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / R reset / N next / F fullscreen\nHIIT Timer (Intervals)\n\nRun warm-up, work, rest, rounds, and cool-down intervals with a dominant phase countdown.\n\nHow the HIIT sequence runs\n\nThe sequence is warm-up, alternating work and rest, then cool-down. Enter 0 for warm-up or cool-down to skip that phase. Rest is skipped after the final work interval, so the session can move directly to cool-down or finish.\n\nSet Warm-up to 30 seconds, Work to 40, Rest to 20, Rounds to 10, and Cool-down to 60. The timed session lasts 10 minutes 30 seconds: 30 seconds of preparation, ten work periods, nine rests, and one minute to cool down.\n\nDuring an interval\n\nPause holds the current phase. Start resumes it. Next ends the current phase early and advances the sequence. Settings remain fixed while the run is active. Reset returns to the first available phase and round one. Sound cues use browser audio, so keep the tab open and prevent device sleep when a cue matters.",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/pomodoro-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "5:00\nBREAK\nShort break 1/4\nRUNNING\nPause\nNext\nReset\nPomodoro settings\n\nSet the work block, break length, cycle count, and optional cues.\n\nWork (minutes)\nBreak (minutes)\nCycles\nSound\nAuto\nFinal 3-2-1 beeps\nLong break after last cycle\nLong break (minutes)\nTypical: 10 to 20\nShare and reuse this setup\n\nShare links contain selected settings in the URL. Named presets stay in this browser. You can save up to 20 presets for this tool.\n\nShare setup\nPreset name\n0/40 characters. Duplicate names are allowed.\nSaved presets\nNo presets saved\nSave preset\nLoad preset\nRename\nDelete\nDelete all\n\nPause or reset the active session before loading a setup.\n\nLearn more in the browser storage guide.\n\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen\nPomodoro Timer\n\nRun repeated work and break cycles, starting with the familiar 25-minute work and 5-minute break pattern or your own durations.\n\nRepeated work and break cycles\n\nThe standard starting pattern is 25 minutes of work followed by a",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/tabata-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "0:10\nREST / ROUND 1/8 / TOTAL 3:50 / REST\nPause\nReset\nNext\nWork\n10s\n15s\n20s\n30s\n40s\n45s\nRest\n0s\n5s\n10s\n15s\n20s\n30s\nRounds\n4\n6\n8\n10\n12\n16\nTabata settings\n\nKeep the 20/10 rhythm clear, or adjust work, rest, rounds, and cues.\n\nWork seconds\nRest seconds\nClassic Tabata rest is 10 seconds.\nRounds\nSound\nFinal beeps\nTOTAL\n3:50, no rest after last work interval.\nClassic 20/10 x 8\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen / C classic\nTabata Timer (20/10 Intervals)\n\nRun classic Tabata work and rest intervals with round status, final beeps, and fullscreen controls.\n\nHow this Tabata timer works\n\nThis Tabata timer keeps the common 20 seconds work, 10 seconds rest, 8 round structure ready while still allowing custom work, rest, and round settings. The current work or rest phase stays first, with round status, optional sound cues, final beeps, and fullscreen controls below the display.\n\nUse the Classic control to return to the 20/10 format, or adjust the intervals befor",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/interval-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "ROUND 1 OF 4 / STEP 2 OF 2 / READY\nBreak\n05:00\nCustom repeating interval sequence\nStart\nNext step\nReset\nInterval presets\nStart with a generic repeating pattern, then edit labels, durations, and rounds.\nWork / Break\nFocus / Rest\nPractice / Pause\nInterval steps\n\nEach step has its own label and duration. Keep this generic for work, study, practice, household, or light routine timing.\n\nRepeat rounds\nHow many times to repeat the full step list.\nStep 1 label\nStep 1 minutes\nStep 1 seconds\nSet step 1 active\nDelete step 1\nStep 2 label\nStep 2 minutes\nStep 2 seconds\nSet step 2 active\nDelete step 2\nAdd interval step\nCopy interval summary\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen\nInterval Timer\n\nCreate a generic repeating interval timer with labeled steps, editable durations, repeat rounds, next-step control, and fullscreen display.\n\nHow this interval timer works\n\nThis interval timer lets you build a custom sequence of labeled steps. Each step has its own minutes and",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/workout-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "1:00\nREST / ROUND 1/3 / RUNNING\nPause\nNext\nReset\nWork\n1m\n2m\n3m\n4m\n5m\nRest\n0\n15s\n30s\n1m\n2m\n3m\nRounds\n2\n3\n4\n5\n6\n8\n10\n12\nWorkout settings\n\nAdjust work length, rest length, rounds, and sound cues before starting.\n\nWork minutes\nRest minutes\nUse 0 for back-to-back rounds.\nRounds\nSound\nFinal beeps\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen\nWorkout Timer (Rounds + Rest)\n\nConfigure work, rest, and rounds, then run a large workout countdown with sound cues and fullscreen controls.\n\nHow this workout timer works\n\nUse this workout timer for repeated blocks where each round has a work interval and an optional rest interval. The active phase, round number, and time remaining stay in the main display, while presets, custom work/rest lengths, rounds, sound cues, and fullscreen controls stay below the countdown.\n\nSettings are meant to be chosen before you start. Once the timer is running, start/pause, next, reset, and fullscreen actions remain available so the session can ",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/round-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "ROUND 1 OF 3\n3:00\nWork\n1 / 3 rounds\n3m work / 1m rest\nPause\nNext\nReset\nRound presets\nBoxing 3×3 (1m rest)\nBoxing 3×2 (1m rest)\nBoxing 5×3 (1m rest)\nBoxing 6×3 (1m rest)\nBoxing 12×3 (1m rest)\nMMA 3×5 (1m rest)\nMMA 5×5 (1m rest)\nTabata-ish 8×(20/10)\nSprints 10×(30/30)\nRound settings\n\nSettings lock while a round is active.\n\nRounds\nRound length (sec)\nRest (sec)\nWarmup (sec)\nSound\nFinal beeps\nCurrent setup\n3 rounds / 3m work / 1m rest\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen / S sound\nRound Timer (Boxing & MMA)\n\nRun boxing or MMA-style work and rest rounds with warmup, sound cues, presets, and fullscreen display.\n\nHow this round timer works\n\nThis round timer is built for formats that alternate a timed round with a timed rest. Boxing-style, martial-arts-style, debate, rehearsal, bag work, sparring drills, and general interval sessions can use presets or custom round, rest, and warmup values.\n\nThe current round or rest phase stays dominant, while total round s",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/productivity-timer",
+    "name": "next phase, pause and reset state",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "afterNext": "BREAK / READY\n5:00\nStart\nNext\nReset\nProductivity modes\nSwitch between common focus and break patterns.\nClassic 25/5\nDeep work 50/10\nSprint 90/15\nSession settings\n\nSet focus blocks, short breaks, and long-break cadence.\n\nFocus (min)\nBreak (min)\nLong break (min)\nLong break every\n0 = never use long breaks\nSound\nAuto-advance\nPHASE\nBreak / Completed focus sessions: 1\nFullscreen\nShortcuts: Space start/pause / N next / R reset / F fullscreen\nProductivity Timer\n\nRun structured productivity sessions with a large active phase timer and compact controls below it.\n\nHow this productivity timer works\n\nProductivity Timer runs a visible work or break session based on the mode and preset you choose. The active phase, remaining time, session count, and controls stay in the utility area, while settings such as auto-advance, sound, fullscreen, and keyboard shortcuts remain close enough to adjust without turning the page into a setup form.\n\nUse it when you want configurable work, short-break, and long-brea",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/multiple-timers",
+    "name": "timer independence and added timer",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "Pause all\nReset all\nAdd timer\nStop alarms\nShared timer options\n\nSound cues apply to every timer in the list.\n\nSound\nFinal beeps\nFullscreen\nSpace start/pause all / R reset / A add / X stop alarms / F fullscreen\n4:58\nRunning\nremove\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n25m\n30m\nMinutes\nSeconds\nPause\nReset\nSilence\n10:00\nPaused\nremove\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n25m\n30m\nMinutes\nSeconds\nStart\nReset\nSilence\n5:00\nPaused\nremove\n1m\n2m\n3m\n5m\n7m\n10m\n12m\n15m\n20m\n25m\n30m\nMinutes\nSeconds\nStart\nReset\nSilence\nMultiple Timers\n\nRun several independent countdowns with individual names, durations, controls, completion states, and optional sound.\n\nWhen several countdowns help\n\nRun separate timers for multiple dishes, classroom activity stations, workout intervals, study tasks, meeting agenda segments, or household jobs. Each timer can be started, paused, reset, named, or silenced independently, while group controls handle the full list.\n\nMultiple timers vs other timing tools\n\nUse the Countdown Timer when only one duration matters. Use the Timer and Stopwatch when you need one countdown and an elapsed-time mode, or an Interval Timer when one structured sequence should advance through planned intervals.\n\nTimer names, durations, remaining values, and sound settings are saved in local browser storage on this device. This route does not add analytics capture for timer names or entered values, and it does not use accounts or cloud synchronization.\n\nThe browser storage guide lists this route's exact key and ",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/chess-clock",
+    "name": "switch turn and increment preserve independent clocks",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "before": "PLAYER 1 TO MOVE\nPLAYER 1\n04:59\nActive turn / 0 moves\nPLAYER 2\n05:00\nWaiting / 0 moves\nPause\nSwitch turn\nReset\nStarting time\nChoose a common casual chess time control or enter a custom starting time below.\n1m\n3m\n5m\n10m\n15m\nTime control\n\nIncrement is added to the player who just moved when you switch turns while the clock is running.\n\nCustom starting minutes\nIncrement seconds per move\nOptional Fischer-style increment for casual play.\nFullscreen\nShortcuts: Space start/pause / T or Enter switch / R reset / F fullscreen\nChess Clock\n\nRun a casual two-player chess clock with large player displays, presets, custom time, optional increment, move counts, and fullscreen mode.\n\nHow this chess clock wor",
+    "after": "PLAYER 2 TO MOVE\nPLAYER 1\n05:01\nWaiting / 1 moves\nPLAYER 2\n04:59\nActive turn / 0 moves\nPause\nSwitch turn\nReset\nStarting time\nChoose a common casual chess time control or enter a custom starting time below.\n1m\n3m\n5m\n10m\n15m\nTime control\n\nIncrement is added to the player who just moved when you switch turns while the clock is running.\n\nCustom starting minutes\nIncrement seconds per move\nOptional Fischer-style increment for casual play.\nFullscreen\nShortcuts: Space start/pause / T or Enter switch / R reset / F fullscreen\nChess Clock\n\nRun a casual two-player chess clock with large player displays, presets, custom time, optional increment, move counts, and fullscreen mode.\n\nHow this chess clock wor",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/speedrun-timer",
+    "name": "split, undo, end run",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "0:01.00\nPAUSED\nStart\nSplit\nUndo\nEnd run\nReset\nFullscreen\nSplit setup\n\nOptional label for the next split you record.\n\nNext split name (optional)\nSpace start/pause · S split · U undo · E end · R reset · F fullscreen\nSplits\nTotal is run time · Delta is time since previous split\nSPLIT\tTOTAL\tDELTA\nFinish\t0:01.00\t0:01.00\nSpeedrun Timer\n\nTrack runs with start, pause, splits, undo, end, reset, CSV copy, keyboard shortcuts, and fullscreen.\n\nHow this speedrun timer works\n\nThis page is built for split-based practice runs. Start the run, record a split when each segment ends, undo the most recent split if it was accidental, and end or reset the run when you are finished. The active run clock stays visually dominant while split rows stay below it for quick scanning.\n\nSplits are useful when the run has named checkpoints: intro, level 1, boss, final room, credits, or any route marker you want to review. The timer shows the total time at each split and the delta from the previous split, so you can see both the run clock and the segment length without doing manual subtraction.\n\nPractice examples and split setup\n\nFor a short route practice session, name only the segments you care about and keep them",
+    "status": "FAIL",
+    "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n",
+    "text": "0:01.00\nPAUSED\nStart\nSplit\nUndo\nEnd run\nReset\nFullscreen\nSplit setup\n\nOptional label for the next split you record.\n\nNext split name (optional)\nSpace start/pause · S split · U undo · E end · R reset · F fullscreen\nSplits\nTotal is run time · Delta is time since previous split\nSPLIT\tTOTAL\tDELTA\nFinish\t0:01.00\t0:01.00\nSpeedrun Timer\n\nTrack runs with start, pause, splits, undo, end, reset, CSV copy, keyboard shortcuts, and fullscreen.\n\nHow this speedrun timer works\n\nThis page is built for split-based practice runs. Start the run, record a split when each segment ends, undo the most recent split if it was accidental, and end or reset the run when you are finished. The active run clock stays visually dominant while split rows stay below it for quick scanning.\n\nSplits are useful when the run has named checkpoints: intro, level 1, boss, final room, credits, or any route marker you want to review. The timer shows the total time at each split and the delta from the previous split, so you can see both the run clock and the segment length without doing manual subtraction.\n\nPractice examples and split setup\n\nFor a short route practice session, name only the segments you care about and keep them short enough to read during play. For a full run, use the same split list across attempts so your comparison notes are consistent. For segment grinding, start with just a few checkpoints and reset often.\n\nPractice run: start, split at each level clear, end the run, then copy the notes for a quick personal log.\nRoute practice: use fewer split names so the active segment is easy to identify while you are playing.\nMistake handling: use Undo for the latest accidental split instead of resetting the whole run.\nCopy, export, and interpretation notes\n\nCopy or export is best treated as a lightweight practice record. It can help you compare attempts outside the browser, save notes after a session, or paste split times into a personal log. It is not an official race, tournament, or leaderboard verification system.\n\nBrowser timing can be affected by tab focus, device sleep, keyboard input latency, and background load. Keep the timer visible during a serious practice run, and use the same browser/device setup when you want attempts to be comparable.\n\nRelated speed and elapsed-time tools\n\nFor a simpler elapsed timer, use the stopwatch. For a plain count-up display without split rows, try the count-up timer. For solve practice, use the speedcubing timer. For start-response practice, try the reaction time test.\n\nSpeedrun timer FAQ\nCan I use this for official submissions?\n\nUse it for practice and personal notes. Follow the rules of the leaderboard, event, or community you are submitting to if official verification is required.\n\nWhat is a split?\n\nA split is a checkpoint recorded during the run. It captures the run total at that moment and the time since the previous split.\n\nWhen should I use Undo?\n\nUse Undo when the latest split was accidental or happened at the wrong checkpoint. It only fixes the most recent split, so use it right away.",
+    "pageErrors": []
+  },
+  {
+    "route": "/speedcubing-timer",
+    "name": "start/stop adds session solve; reset preserves session",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "0:00.00\nREADY\nStart\nReset\nClear history\nFullscreen\nSpace hold+release start · R reset · F fullscreen\nSolve settings\nStart mode\nHold-to-start\nInstant toggle\nAdd result on stop\nMax session solves\nSession results\n1 in session · Best 0:01.49 · Avg 0:01.49\n#1\n0:01.49\nBEST\nRemove\nSpeedcubing Timer\n\nPractice solves with instant or hold-to-start timing, session results, a simple average, keyboard controls, and fullscreen.\n\nHow timing starts and stops\n\nInstant mode uses Space as a start and stop toggle. Hold-to-start mode arms after you hold Space for 250 milliseconds, then starts when you release it. Space stops an active solve immediately. The on-screen Start button begins timing without the hold step.\n\nIn fullscreen, tapping the display starts and stops only in Instant mode. In Hold-to-start mode, a tap can stop a running solve, while a keyboard is required to arm and start. Reset clears the current elapsed time. Remove deletes one result, and Clear history removes all results from the current session.\n\nSession results and saved preferences\n\nAdd result on stop is enabled by default. When it is off, press Save or S after stopping. The page keeps up to the selected session limit, from 5 to 200 results. Best is the lowest current result. Avg is the arithmetic mean of every current result. Times display to centiseconds by truncating milliseconds.\n\nResults and averages exist only in memor",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/reaction-time-test",
+    "name": "early press reports false start and recovers",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "EARLY\n \nTOO SOON\nToo soon. That counts as a false start. Tap to try again.\nTry again\nReset\nTRIALS 0/10 · FALSE STARTS 1\nLAST\n--\nRun a trial\nBEST\n--\nNo data yet\nAVERAGE\n--\nNo data yet\nMEDIAN\n--\nNo data yet\nZen\nCopy\nFullscreen\nReset\nPresets\nPresets reset your current run.\nQuick (5)\nStandard (10)\nFocus (15)\nTest settings\n\nAdjust the number of trials and the random wait window.\n\nTrials\n10\nMore trials gives a better average.\nMinimum delay\n1200 ms\nMaximum delay\n3200 ms\nRandom timing stops you from guessing.\nSpace or Enter tap · F fullscreen · R reset · Z zen · C copy\nBrowser-based measurement: device, display, and input latency affect the result.\nReaction Time Test\n\nTap to start, wait for the signal, then react as fast as possible. Track best, average, median, false starts, and fullscreen runs.\n\nHow this reaction time test works\n\nStart a trial, wait while the test is in its waiting state, then tap or press when the signal changes. A valid result measures the time between the signal and your input. Early clicks are handled separately so they do not get mixed into valid reaction history.\n\nThe active test area stays first so the next trial is easy to run. Summary stats such as best, average",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/bpm-tapper",
+    "name": "500ms taps yield 120 BPM",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "120\nKEEP TAPPING\nBPM\nSESSION\nTaps: 5 · Intervals: 4 · Stability: Very steady\nAuto-reset after 6s · Holds last result for 12s\nTIMING\nms/beat: 500 · ms/8th: 250 · ms/16th: 125\nLock\nCopy\nFullscreen\nReset\nTap/click anywhere / Space/Enter tap / F fullscreen / R reset / C copy\nTapper settings\n\nAdjust reset timing and keyboard tapping without changing the tap target.\n\nAuto-reset after pause\nShorter resets feel snappier. Longer resets help if you pause between phrases.\n2s\n4s\n6s\n10s\n20s\nOff\nHold last result\nOff\n6s\n12s\n20s\n30s\nSpace/Enter to tap\nBPM Tapper\n\nTap a rhythm to estimate its BPM, review the intervals and stability, then copy or lock the result.\n\nHow tap tempo is calculated\n\nTap at least three times with the mouse, touch screen, Space, or Enter. The page keeps up to 24 recent taps, excludes intervals under 120 milliseconds or over 2 seconds, and converts the median valid interval into a ",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/breathing-timer",
+    "name": "box phase advances to hold and resets",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "4\nHOLD\nGUIDED BREATHING\nCycle 1 (continuous)\nPause\nReset\nBreathing presets\nPresets are locked while running.\nBox 4-4-4-4\n4-7-8\nCalm 4-2-6\nCustom\nBreathing settings\n\nSet holds to 0 to skip them.\n\nInhale (sec)\nHold (sec)\nExhale (sec)\nHold (sec)\nCycles (0 = continuous)\nSound cues (S)\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen / S sound\nBreathing Timer (Guided Cycles)\n\nFollow inhale, hold, exhale, and rest phases with calm timing, presets, sound cues, and fullscreen mode.\n\nSet ",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/emom-timer",
+    "name": "prep to first minute; pause survives delay",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "PAUSED\n0:59\nResume\nReset\nTotal minutes\n6m\n8m\n10m\n12m\n15m\n20m\n30m\nPrep countdown\nNone\n5s\n10s\n15s\n20s\nEMOM settings\n\nOne round starts every minute. Work, then rest until the next minute starts.\n\nRounds\nPrep seconds\nSound\nFinal beeps\nFullscreen\nShortcuts: Space start/pause / R reset / F fullscreen / S sound / B final beeps\nEMOM Timer (Every Minute On the Minute)\n\nSet total minutes, optional prep, and sound cues for every-minute-on-the-minute training.\n\nMinute rounds\n\nSet the total number of minutes and an optional preparation countdown. After preparation, each new minute advances the round. The d",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/amrap-timer",
+    "name": "manual rounds/reps independent of timer",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "12:00\nREADY\nSCORE\n1 rounds + 1 reps\nStart\nReset all\nAMRAP length\n4m\n6m\n8m\n10m\n12m\n15m\n20m\n25m\n30m\nPrep countdown\nNone\n5s\n10s\n15s\n20s\nAMRAP settings\n\nCustom duration and quiet audio options.\n\nMinutes\nCommon AMRAPs include 8, 10, 12, 15, and 20 minutes.\nPrep seconds\nSound\nFinal beeps\nScore\nREPS\n-\n1\nTap + / -\n+\nROUNDS\n-\n1\nTap + / -\n+\nScore\n1 rounds + 1 reps\nFullscreen\nShortcuts: + / - reps / Up / Down rounds / Space start/pause / R reset all / F fullscreen / S sound\nAMRAP Timer (Countdown + Rep Counter)\n\nRun an AMRAP countdown with optional prep while tracking rounds and reps quietly below the timer.\n\nAdvertisements\nOne deadline with manual counters\n\nChoose the total duration and optional preparation time. The countdown runs once. Use the round and repetition controls to record work as it happens; the app does not infer movement from the timer.\n\nFor a 12-minute session with 10 seconds of prep, start after setting the duration. If you complete three full rounds and eight more repetitions, ",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme missing storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "dark",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme invalid storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "dark",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme light storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "dark",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme dark storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "light",
+    "status": "PASS",
+    "pageErrors": []
+  },
+  {
+    "route": "/countdown-timer",
+    "name": "theme denied storage",
+    "environment": "Chromium 390px light; third parties blocked; simulated clock where stated",
+    "observed": "dark",
+    "status": "PASS",
+    "pageErrors": []
+  }
+]

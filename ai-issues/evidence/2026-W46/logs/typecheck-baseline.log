@@ -1,0 +1,4 @@
+
+> ilovetimers@1.0.0 typecheck
+> react-router typegen && tsc -b
+

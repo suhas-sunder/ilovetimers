@@ -1,0 +1,5 @@
+
+> ilovetimers@1.0.0 test:adsense
+> node scripts/tests/adsense-integration.mjs
+
+AdSense integration tests passed.

@@ -1,0 +1,15 @@
+
+> ilovetimers@1.0.0 test:analytics
+> node scripts/tests/posthog-analytics.mjs
+
+Cookieless PostHog browser test passed.
+- bundle: public project token and initialization present without VITE_POSTHOG_KEY
+- storage: 0 PostHog cookies, localStorage entries, sessionStorage entries, or IndexedDB databases
+- pageviews: direct=1, client navigation=1, Back=1, Forward=1, duplicates=0
+- SPA verification: one document request across all route/history changes; action fixture pageview=1
+- manual actions: timer_start=1, timer_pause=1
+- privacy: sanitized Web Analytics paths; query, fragment, and test user value absent
+- disabled: autocapture, recording, surveys, flags, experiments, and person profiles
+- resilience: application navigation remained functional with analytics returning HTTP 503
+- scope: local collector only; this does NOT verify PostHog project settings or stored production events
+- production ingestion gate: follow docs/posthog-verification.md before declaring analytics recovered

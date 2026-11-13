@@ -78,6 +78,11 @@ try {
         "--only-categories=performance,accessibility,best-practices,seo",
       ];
       if (formFactor === "desktop") args.push("--preset=desktop");
+      // Optional diagnostic isolation: do not send synthetic lab sessions to
+      // production analytics or request paid ad inventory. Report this mode.
+      if (process.env.ILT_LIGHTHOUSE_BLOCK_THIRD_PARTIES === "1") {
+        args.push("--blocked-url-patterns=*posthog.com/*", "--blocked-url-patterns=*googlesyndication.com/*", "--blocked-url-patterns=*doubleclick.net/*");
+      }
       let run = { status: 0, stderr: "" };
       if (!reusable) {
         console.log(`Lighthouse ${formFactor} ${route.path}`);
@@ -143,6 +148,7 @@ quality.performance.lighthouse = {
   status: failures.length === 0 && results.length === routes.length * 2 && poor.length === 0 ? "passed" : "failed",
   tool: `Lighthouse ${results[0]?.lighthouseVersion || "unknown"}`,
   commandEnvironment: "Local static build through Vite preview, bundled Chromium 1217, Lighthouse simulated mobile and desktop, no field data.",
+  thirdPartyNetworkBlocked: process.env.ILT_LIGHTHOUSE_BLOCK_THIRD_PARTIES === "1",
   thresholds: {
     officialCoreWebVitalsGood: { lcpMilliseconds: 2500, cls: 0.1, inpMilliseconds: 200 },
     labResponsivenessProxy: { metric: "Total Blocking Time", goodMilliseconds: 200, poorMilliseconds: 600 },

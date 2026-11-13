@@ -36,7 +36,7 @@ const adFreeRoutes = new Set([
   "/sitemap",
 ]);
 const failures = [];
-const PORT = 3013;
+const PORT = Number(process.env.ILT_SITEWIDE_UI_PORT || 3013);
 const base = `http://127.0.0.1:${PORT}`;
 const server = spawnStaticPreview({ root: ROOT, port: PORT });
 
@@ -47,9 +47,11 @@ const decode = (value) => value.replaceAll("&amp;", "&").replaceAll("&quot;", '"
 
 async function waitForServer() {
   for (let attempt = 0; attempt < 50; attempt += 1) {
+    if (server.exitCode !== null) throw new Error(`Sitewide preview exited with ${server.exitCode}; port ${PORT} may already be in use.`);
     try {
       const response = await fetch(base, { redirect: "manual" });
-      if (response.status === 200) return;
+      const html = await response.text();
+      if (response.status === 200 && html.includes('href="https://www.ilovetimers.com"')) return;
     } catch {
       // The production process may still be loading the server bundle.
     }

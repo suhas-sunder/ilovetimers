@@ -17,6 +17,7 @@ const NPX_CLI = path.join(
   path.dirname(process.execPath),
   "node_modules/npm/bin/npx-cli.js",
 );
+const LIGHTHOUSE_CLI = process.env.ILT_LIGHTHOUSE_CLI;
 const routes = [
   { family: "homepage", path: "/" },
   { family: "basic timer", path: "/countdown-timer" },
@@ -46,6 +47,7 @@ function metric(report, id) {
 
 if (!existsSync(CHROME)) throw new Error(`Chromium executable not found at ${CHROME}`);
 if (!existsSync(NPX_CLI)) throw new Error(`npx CLI not found at ${NPX_CLI}`);
+if (LIGHTHOUSE_CLI && !existsSync(LIGHTHOUSE_CLI)) throw new Error(`Lighthouse CLI not found at ${LIGHTHOUSE_CLI}`);
 const server = spawnStaticPreview({ root: ROOT, port: PORT });
 
 const reuseReports = process.env.ILT_LIGHTHOUSE_REUSE_REPORTS === "1";
@@ -86,7 +88,7 @@ try {
       let run = { status: 0, stderr: "" };
       if (!reusable) {
         console.log(`Lighthouse ${formFactor} ${route.path}`);
-        run = spawnSync(process.execPath, [NPX_CLI, ...args], {
+        run = spawnSync(process.execPath, LIGHTHOUSE_CLI ? [LIGHTHOUSE_CLI, ...args.slice(2)] : [NPX_CLI, ...args], {
           cwd: ROOT,
           encoding: "utf8",
           timeout: 3 * 60 * 1000,

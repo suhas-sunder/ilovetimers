@@ -11,8 +11,9 @@
 - **All 132 nonredirect routes** passed the non-production **1,056-case structural browser matrix** at 390/768/1280/1920 CSS px, light and dark, GitHub Actions run `44629393881` (status 200, one H1, document width, clipped controls, checkbox intrinsic sizing, browser runtime errors). **This is not 132 fully-polished interactions or proof every design decision is good.**
 - **37 individually selected routes** passed 296 rendered settings/control geometry checks at four widths/two themes plus TypeScript, build, source regressions, and 132-route SSR/28 redirects in run `44628841405`.
 - **12 locale-sensitive time routes × 5 locale/timezone contexts = 60 cases** passed with **0 React hydration errors** after shared BrowserLocaleGate implementation (run `44628841405`). This fixed 44/60 failures previously observed on Phase 2 baseline.
-- **Golden Hour Clock no-event defect** found on 390/1920 screenshots: 520px dark dash and whitespace when future events were absent. Code fix and regression assertion staged in Phase 2; wait for run `44630416054` before marking verified.
+- **Golden Hour Clock no-event defect fixed and verified:** removed the giant 520px placeholder dash when no future event exists; tested a past-date empty state in mobile light/dark. Typecheck/build, 296 rendered geometry cases and 60 locale hydration cases all passed on run `44630416054`.
 - 132 top-viewport screenshot pairs were screened previously; comprehensive human review of full-page settings, functional interactions, fullscreen, keyboard, physical zoom, real devices and ad-state transitions remains incomplete.
+- **Full navigation/theme interaction gate:** 132 routes × mobile/desktop (264 cases), including correct i💛Timers.com header/footer, light/dark toggles and menu open/close; run `44631023381` in progress. Other route-specific Start/Pause, fullscreen and accessibility checks are still pending.
 - **No further production push** until final candidate has completed remaining review and passes integrated acceptance.
 
 ## Route checklist

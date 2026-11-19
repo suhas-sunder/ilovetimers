@@ -23,6 +23,11 @@ const CASES = [
   ["/pizza-timer", "Timer settings"],
   ["/interval-timer", "Interval steps"],
   ["/classroom-timer", "Classroom settings"],
+  ["/study-timer", "Study settings"],
+  ["/focus-session-timer", "Focus settings"],
+  ["/meeting-timer", "Meeting settings"],
+  ["/exam-timer", "Exam cues"],
+  ["/workout-timer", "Workout settings"],
 ];
 
 async function playwrightModule() {

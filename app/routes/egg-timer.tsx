@@ -331,7 +331,8 @@ function EggTimerCard() {
     textRef: timeTextRef,
     deps: [shownTime, isFs],
     minPx: 52,
-    maxPx: isFs ? 520 : 520,
+    maxPx: isFs ? 520 : 210,
+    initialScale: isFs ? 1 : 0.82,
     paddingAllowancePx: isFs ? 48 : 56,
   });
 
@@ -449,10 +450,11 @@ function EggTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-3xl"
               title="Timer settings"
               description="Set custom minutes and seconds, then choose whether sound and final countdown beeps should run."
             >
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(16rem,auto)]">
+              <SettingRow className="sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[minmax(0,11rem)_minmax(0,11rem)_auto] lg:justify-center">
                 <Field
                   label="Minutes"
                   type="number"
@@ -489,7 +491,7 @@ function EggTimerCard() {
                   }
                 />
 
-                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:col-span-2 lg:col-span-1 lg:justify-start">
                   <Toggle
                     label="Sound"
                     checked={sound}

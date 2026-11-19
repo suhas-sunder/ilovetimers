@@ -1225,12 +1225,7 @@ function SiteHeader() {
               className="h-9 w-9 rounded-md"
               loading="eager"
             />
-            <span className="tracking-tight">
-              iLoveTimers
-              <span className="ml-0.5 text-[var(--ilt-text-primary)]">
-                .com
-              </span>
-            </span>
+            <span className="tracking-tight">i💛Timers.com</span>
           </a>
 
           {/* Desktop nav */}
@@ -1365,12 +1360,7 @@ function SiteHeader() {
                   className="h-9 w-9 rounded-md"
                   loading="eager"
                 />
-                <span className="tracking-tight">
-                  iLoveTimers
-                  <span className="ml-0.5 text-[var(--ilt-text-primary)]">
-                    .com
-                  </span>
-                </span>
+                <span className="tracking-tight">i💛Timers.com</span>
               </a>
               <button
                 type="button"

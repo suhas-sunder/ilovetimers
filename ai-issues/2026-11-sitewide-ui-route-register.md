@@ -148,6 +148,13 @@
 | `/world-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/world-clock-with-milliseconds` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 
+## Rendered QA evidence — 2026-11-19
+
+- GitHub Actions [audit-only run #44456719334](https://github.com/suhas-sunder/ilovetimers/actions/runs/44456719334): npm ci, TypeScript typecheck, production build, source/UI regressions, the 132-route SSR structure smoke, and 18-route rendered geometry tests succeeded at 390/768/1280/1920 in light/dark (144 cases). This run was only on the audit branch; no Netlify production deployment was initiated.
+- Full-page screenshots from that run were downloaded and manually examined (desktop contact sheet and targeted mobile/desktop crops). They revealed defects **missed by the original automated test**: stretched native checkbox labels in Exam/Classroom and a huge Pomodoro long-break toggle; meeting row uses the same mistaken grid-over-flex approach. Tabata summary labels sat at opposite ends of a large row.
+- Those source defects were repaired after the cited run by replacing forced-grid wrappers with actual flex containers and grouping the Tabata summary. **The revised source is NOT yet browser-PASS** until a follow-up run against its exact commit succeeds and new screenshots are inspected.
+- The rendered geometry test now includes a stretched-toggle detection assertion. Follow-up testing must include desktop and mobile, both themes; do not substitute passing build for manual visual acceptance.
+
 ## Batch closeout rule
 
 For each new batch: record exact routes, defects, changes, before/after browser evidence and what is still blocked. Commit only to audit branch. No push to `main`, PR merge, production deploy, or fake completion claim until 132/132 page-by-page reviews plus responsive/dark/interactions final acceptance. User wants brief per-batch notification. If progress stalls due to unavailable browser tools, say so and leave production untouched.

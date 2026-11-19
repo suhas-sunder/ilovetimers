@@ -400,10 +400,11 @@ function KitchenTimerTool() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-3xl"
               title="Timer settings"
               description="Set custom minutes and seconds for boiling, baking checks, simmering, steeping, or prep tasks. Sound uses browser audio and device volume."
             >
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(10rem,auto)]">
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
                 <Field
                   label="Minutes"
                   type="number"
@@ -437,6 +438,7 @@ function KitchenTimerTool() {
                   }}
                 />
                 <Toggle
+                  className="sm:col-span-2 lg:col-span-1 lg:self-end"
                   label="Sound"
                   checked={sound}
                   onCheckedChange={setSound}

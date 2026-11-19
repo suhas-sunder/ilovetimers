@@ -985,7 +985,7 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
                   </option>
                 </Select>
               </SettingRow>
-              <SettingRow className="sm:grid-cols-2 lg:grid-cols-2">
+              <SettingRow className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                 <Toggle
                   label="Sound"
                   checked={sound}

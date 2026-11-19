@@ -1,8 +1,8 @@
-name: Full 132-page UI inventory (audit only)
+name: Full 132-page UI acceptance (Phase 2)
 on:
   push:
     branches:
-      - audit/2026-11-19-sitewide-ui-review
+      - audit/2026-11-19-sitewide-ui-phase2
     paths:
       - ai-issues/full-inventory-ci-trigger.txt
 jobs:
@@ -23,7 +23,6 @@ jobs:
       - run: node scripts/tests/sitewide-visual-matrix.mjs
         env:
           ILT_VISUAL_INVENTORY_DIR: sitewide-inventory-evidence
-          ILT_VISUAL_ROUTE_FILTER_FILE: ai-issues/oversized-toggle-routes.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

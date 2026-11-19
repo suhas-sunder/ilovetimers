@@ -395,7 +395,7 @@ function ExamTimerCard() {
               title="Exam cues"
               description="Sound and warning cues stay secondary to the exam countdown."
             >
-              <SettingRow className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                 <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                 <Toggle
                   label="Warnings"
@@ -421,7 +421,7 @@ function ExamTimerCard() {
                   onCheckedChange={setWarnAt1Min}
                   disabled={!sound || !warnings}
                 />
-              </SettingRow>
+              </div>
             </SettingGroup>
 
             <SettingGroup title="Custom duration" className="max-w-xs">

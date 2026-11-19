@@ -580,7 +580,8 @@ function TimerStopwatchTool() {
               <>
                 <SettingGroup
                   title="Set countdown"
-                  description="Enter hours, minutes, and seconds while the countdown is idle or paused. Applying a new duration replaces the paused countdown value."
+                  className="max-w-3xl"
+                  description="Enter hours, minutes (0–59), and seconds (0–59). Applying while paused replaces the remaining countdown."
                 >
                   <SettingRow className="sm:grid-cols-[repeat(3,minmax(0,8rem))_auto] sm:justify-center">
                     <Field
@@ -599,7 +600,6 @@ function TimerStopwatchTool() {
                     />
                     <Field
                       label="Minutes"
-                      hint="0-59"
                       value={minutesInput}
                       inputMode="numeric"
                       disabled={countdownRunning}
@@ -614,7 +614,6 @@ function TimerStopwatchTool() {
                     />
                     <Field
                       label="Seconds"
-                      hint="0-59"
                       value={secondsInput}
                       inputMode="numeric"
                       disabled={countdownRunning}
@@ -627,11 +626,12 @@ function TimerStopwatchTool() {
                         }
                       }}
                     />
-                    <div className="flex items-end justify-center">
+                    <div className="flex w-full justify-center sm:w-auto sm:self-end">
                       <Button
                         variant="secondary"
                         onClick={applyDurationInputs}
                         disabled={countdownRunning}
+                        className="w-full sm:w-auto"
                       >
                         Apply
                       </Button>

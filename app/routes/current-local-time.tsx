@@ -247,11 +247,7 @@ const ZoneTile = ({
    CURRENT LOCAL TIME CARD
 ========================================================= */
 function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
-  // Static HTML has no access to the visitor’s timezone or locale. Render
-  // a deterministic UTC/en-US snapshot on both server and hydration paint,
-  // then switch to the real local clock immediately after mount.
-  const [clientReady, setClientReady] = useState(false);
-  const tz = useMemo(() => clientReady ? safeTimeZone() : "UTC", [clientReady]);
+  const tz = useMemo(() => safeTimeZone(), []);
 
   const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [use24, setUse24] = useState(false);
@@ -281,8 +277,6 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
   );
 
   const [activeZoneKey, setActiveZoneKey] = useState<string>("local");
-
-  useEffect(() => { setClientReady(true); }, []);
 
   // Keep time accurate
   useEffect(() => {
@@ -325,13 +319,13 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
 
   const activeTimeText = useMemo(() => {
     if (activeZone.tz === "local") {
-      return formatClock(now, { use24, showSeconds }, !clientReady);
+      return formatClock(now, { use24, showSeconds });
     }
-    return formatTimeInZone(now, activeZone.tz, { use24, showSeconds }, !clientReady);
-  }, [now, activeZone.tz, use24, showSeconds, clientReady]);
+    return formatTimeInZone(now, activeZone.tz, { use24, showSeconds });
+  }, [now, activeZone.tz, use24, showSeconds]);
 
-  const dateText = useMemo(() => formatDateLine(now, !clientReady), [now, clientReady]);
-  const weekNo = useMemo(() => clientReady ? isoWeekNumber(now) : isoWeekNumberUTC(now), [now, clientReady]);
+  const dateText = useMemo(() => formatDateLine(now), [now]);
+  const weekNo = useMemo(() => isoWeekNumber(now), [now]);
 
   const zoneTiles = useMemo(() => {
     // Tiles don’t need seconds even if main display shows them.
@@ -340,9 +334,9 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
       .filter((z) => z.key !== "local")
       .map((z) => ({
         ...z,
-        time: formatTimeInZone(now, z.tz, tileOpts, !clientReady),
+        time: formatTimeInZone(now, z.tz, tileOpts),
       }));
-  }, [zones, now, use24, clientReady]);
+  }, [zones, now, use24]);
 
   const copyText = useMemo(() => {
     const zoneLabel = activeZone.tz === "local" ? tz : activeZone.label;

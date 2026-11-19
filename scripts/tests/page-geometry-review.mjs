@@ -252,6 +252,11 @@ try {
               assert.equal(await clock.locator("[data-primary-display-value]").count(), 0,
                 `Golden Hour rendered oversized countdown marker with no event (${theme})`);
             }
+            const sound = await panel.getByRole("checkbox", { name: "Sound", exact: true }).boundingBox();
+            const final = await panel.getByRole("checkbox", { name: "Final beeps", exact: true }).boundingBox();
+            assert.ok(sound && final, `Golden Hour sound settings missing: ${width}/${theme}`);
+            assert.ok(Math.abs(sound.x - final.x) <= 250,
+              `Golden Hour sound controls are separated across the form: ${width}/${theme}: ${JSON.stringify({ sound, final })}`);
           }
 
           if (route === "/unix-timestamp-converter") {

@@ -452,8 +452,8 @@ function RestTimerCard() {
               ))}
             </PresetGroup>
 
-            <SettingGroup title="Settings">
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto]">
+            <SettingGroup title="Settings" className="max-w-2xl">
+              <SettingRow className="lg:grid-cols-[minmax(0,12rem)_auto] lg:justify-center">
                 <Field
                   label="Custom seconds"
                   type="number"
@@ -465,7 +465,7 @@ function RestTimerCard() {
                     setSeconds(clamp(Number(e.target.value || 5), 5, 3600))
                   }
                 />
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:self-end lg:justify-start">
                   <Toggle checked={sound} onCheckedChange={setSound} label="Sound" />
                   <Toggle
                     checked={finalCountdownBeeps}

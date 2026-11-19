@@ -551,11 +551,11 @@ function FibonacciClockCard({ initialNowISO }: { initialNowISO: string }) {
 
   const dateText = useMemo(() => {
     try {
-      return formatDateLine(new Date(), zone);
+      return formatDateLine(now, zone);
     } catch {
-      return formatDateLine(new Date());
+      return formatDateLine(now);
     }
-  }, [zone]);
+  }, [now, zone]);
 
   const copyText = useMemo(() => {
     const hourTiles =

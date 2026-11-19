@@ -91,6 +91,7 @@ assert.match(pizza, /<ControlGroup>/);
 // shared SharePresetPanel, including Countdown, Pomodoro, HIIT and meeting planner.
 assert.match(sharePresetPanel, /className="mx-auto max-w-2xl"/);
 assert.match(sharePresetPanel, /grid min-w-0 gap-3 sm:grid-cols-2/);
+assert.match(sharePresetPanel, /records\.length > 0 \? \(/);
 assert.match(countdownTimer, /className="max-w-xl"\s+title="Set countdown"/);
 assert.match(eggTimer, /className="max-w-3xl"\s+title="Timer settings"/);
 assert.match(eggTimer, /maxPx: isFs \? 520 : 210/);

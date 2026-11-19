@@ -835,6 +835,7 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
 
           <span
             ref={timeTextRef}
+            data-primary-display-value
             className={[
               "mt-2 inline-block text-center font-mono font-extrabold",
               isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
@@ -891,8 +892,8 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
           </div>
 
           {/* Compact golden windows overlay */}
-          <div className="pointer-events-none relative mt-4 w-full sm:absolute sm:left-6 sm:right-6 sm:top-5 sm:mt-0 sm:w-auto">
-            <div className="flex items-start justify-between gap-3">
+          <div data-golden-windows className={isFs ? "pointer-events-none relative mt-3 w-full sm:absolute sm:left-6 sm:right-6 sm:top-5 sm:mt-0 sm:w-auto" : "pointer-events-none relative mt-4 w-full"}>
+            <div className="flex items-start justify-center gap-3">
               <div className="flex min-w-0 flex-col gap-1">
                 <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">
                   Golden hour (local)

@@ -118,12 +118,13 @@ try {
               h1Count: document.querySelectorAll("h1").length,
               clippedControls: clipped,
               oversizedToggles: oversized,
-              theme: document.documentElement.getAttribute("data-theme"),
+              observedTheme: document.documentElement.getAttribute("data-theme"),
             };
           });
           Object.assign(record, dom);
           record.overflowPx = Math.max(0, record.documentWidth - record.viewportWidth);
           record.runtimeErrors = pageErrors.slice(0, 15);
+          if (record.observedTheme !== theme) record.runtimeErrors.push(`Theme mismatch: expected ${theme}, got ${record.observedTheme}`);
           const baseName = slug(route) + "-" + width + "-" + theme;
           const topFile = "top-" + baseName + ".jpg";
           await page.evaluate(() => window.scrollTo(0, 0));

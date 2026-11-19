@@ -1,152 +1,155 @@
 # iLoveTimers — sitewide UI review register
 
-**Working branch:** `audit/2026-11-19-sitewide-ui-review` (not `main`).
+**Working branch:** `audit/2026-11-19-sitewide-ui-phase2` (not `main`).
 **Scope:** 132 canonical/nonredirect routes from `docs/route-architecture-manifest.json`. The additional 28 redirect routes are covered by the existing redirect audit, not counted as interactive pages.
-**Production:** Do NOT update `main` until every page has been reviewed individually, all pending browser checks are addressed and the integrated final candidate passes. Never merge simply to run tests or trigger a Netlify deployment.
+**Production:** Owner-authorized interim release `18a49e9` was published on 2026-11-19 after passing 34-route rendered QA. Do NOT push `main` again until the remaining full-site review and integrated acceptance are complete. No incremental production deployments.
 **Critical:** Source inspection and class-name checks are not rendered browser validation. A passing build is not sufficient to claim layouts are fixed. Use real screenshots, bounding rectangles, and interactive checks at mobile/tablet/desktop, in light and dark. Record specific failures and evidence. If browser access is unavailable, mark `BROWSER PENDING`, never PASS.
 
 ## Progress
 
-- 27 routes have individually inspected source and staged targeted adjustments; the latest nine await browser QA.
-- 105 canonical routes have not been assessed individually during this new review.
-- No production merges or Netlify deploys are authorized until the entire sitewide review and final QA finish.
+- **Interim production release:** commit `18a49e9`, Netlify deployment `6aff75e31e4bbf99b9a009cc` ready. Visible branding is **i💛Timers.com** in desktop/mobile header and footer.
+- **34/132 routes** passed real rendered form/control geometry at 390/768/1280/1920 CSS px in both themes (272 cases); GitHub Actions run `44626767362` passed typecheck, build, UI regression and 132-route SSR checks.
+- **37 routes** have individually inspected source and targeted changes across release and Phase 2. Deferred locale/clock work must still pass Phase 2 browser and hydration QA.
+- **132/132 canonical routes** had mobile/desktop light-mode top-view screenshot screening; remaining full-page dark/settings/interactions are not yet certified.
+- **98 routes** do not yet have the first release's eight-case geometry acceptance. Source review or top-screen inspection alone does not make a page fully accepted.
+- **No further production pushes** until remaining page-by-page review and combined acceptance are complete.
 
 ## Route checklist
 
 | Route | Current-pass code review | Browser visual/interaction QA | Specific change or next step |
 |---|---|---|---|
-| `/` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/1-minute-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/10-minute-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/12-hour-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/15-minute-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/24-hour-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/30-minute-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/5-minute-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/about` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/age-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/1-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/10-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/12-hour-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/15-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/24-hour-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/30-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/5-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/about` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/age-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/alarm-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact duration form and grouped audio toggles. |
-| `/amrap-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/analog-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/astronomical-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/atomic-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/author/suhas-sunder` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/billable-hours-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/billable-hours-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/binary-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/binary-stopwatch` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/birthday-countdown` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/bpm-tapper` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/amrap-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/analog-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/astronomical-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/atomic-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/author/suhas-sunder` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/billable-hours-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/billable-hours-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/binary-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/binary-stopwatch` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/birthday-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/bpm-tapper` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/break-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Constrained break settings and bottom-aligned audio and looping toggles. |
-| `/breathing-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/business-days-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/chaos-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/chess-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/christmas-countdown` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/breathing-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/business-days-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/chaos-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/chess-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/christmas-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/classroom-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact teacher settings; restrained minutes field and wrapped audio toggles. |
 | `/clock-with-milliseconds` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced four huge toggle grid columns with natural-width wrapped clock options. |
-| `/contact` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/cookies` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/copyright` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/countdown-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/countdown-to-date` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/current-local-time` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/date-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/date-duration-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/days-until-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/debt-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/debt-repayment-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/digital-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/drink-water-reminder-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/egg-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/emom-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/epoch-unix-time-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/event-countdown` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/contact` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/cookies` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/copyright` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/countdown-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/countdown-to-date` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/current-local-time` | Adjusted on audit branch | BROWSER PENDING | Prevented large time's AM/PM wrapping and began deterministic server/client hydration fix. |
+| `/date-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/date-duration-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/days-until-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/debt-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/debt-repayment-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/digital-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/drink-water-reminder-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/egg-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/emom-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/epoch-unix-time-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/event-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/exam-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Grouped five exam cue toggles in a wrapping row; compact custom-duration input. |
-| `/fibonacci-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/fibonacci-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/focus-session-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact session-duration form with consistently aligned sound controls. |
-| `/free-online-timers` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/golden-hour-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/guides` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/guides/browser-storage` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/guides/browser-timer-alarm-silent` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/guides/browser-timers-background-tabs` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/guides/daylight-saving-time-zone-conversions` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/guides/how-browser-timers-measure-time` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/guides/unix-timestamps-seconds-milliseconds-microseconds` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/hexadecimal-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/free-online-timers` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/golden-hour-clock` | Adjusted on audit branch | BROWSER PENDING | Moved golden-hour window notes into the normal content flow to prevent overlay on countdown. |
+| `/guides` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/browser-storage` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/browser-timer-alarm-silent` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/browser-timers-background-tabs` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/daylight-saving-time-zone-conversions` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/how-browser-timers-measure-time` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/unix-timestamps-seconds-milliseconds-microseconds` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/hexadecimal-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/hiit-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Balanced five-column interval inputs by consolidating skip guidance. |
-| `/hours-until-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/how-ilovetimers-is-made` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/hours-until-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/how-ilovetimers-is-made` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/interval-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Unboxed editable step rows; aligned active/delete controls with inputs. |
 | `/kitchen-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced excessively wide duration form; responsive two fields and sound toggle. |
-| `/lab-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/lab-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/meditation-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced custom duration form and grouped four sound/loop controls. |
-| `/meeting-agenda-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/meeting-agenda-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/meeting-count-up-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Constrained agenda helper label and topic-cap fields. |
 | `/meeting-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced stretched three-column grid with wrapped, input-aligned meeting controls. |
-| `/metronome` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/military-time-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/military-time-converter` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/millisecond-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/milliseconds-converter` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/minimalist-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/months-between-dates-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/moon-phase-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/morse-code-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/multiple-timers` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/new-year-countdown` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/online-alarm-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/metronome` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/military-time-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/military-time-converter` | Adjusted on audit branch | BROWSER PENDING | Constrained the standard-time readout so PM remains beside the converted value. |
+| `/millisecond-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/milliseconds-converter` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/minimalist-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/months-between-dates-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/moon-phase-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/morse-code-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/multiple-timers` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/new-year-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/online-alarm-clock` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Reduced oversized normal-clock stage height and kept alarm controls closer to live time. |
 | `/online-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact settings width; Set button bottom-aligned with labeled input; sound/loop aligned. |
-| `/pace-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/pace-timer` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Reduced unused normal-stage height without changing pace logic. |
 | `/pizza-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact two-row settings; moved reminder explanation out of unequal-height field. |
 | `/pomodoro-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Narrower settings; moved long-break guidance to group description; aligned controls. |
-| `/presentation-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/privacy` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/productivity-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/reaction-time-test` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/presentation-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/privacy` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/productivity-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/reaction-time-test` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/rest-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact duration form; sound/final-beeps/loop actions aligned. |
-| `/retro-flip-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/roman-numeral-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/retro-flip-clock` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Reduced excessive flip-display stage whitespace while retaining fullscreen layout. |
+| `/roman-numeral-clock` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Made the regular AM/PM reference single-line with reduced responsive font/tracking. |
 | `/round-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact four round-duration fields and centered audio controls. |
 | `/seconds-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact seconds input and sound toggle geometry. |
 | `/silent-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact no-audio settings; Set button aligned with labeled input; loop control aligned. |
-| `/sitemap` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/sitemap` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/sleep-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced cramped four-column tablet form with responsive 2/4-column settings. |
-| `/speech-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/speedcubing-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/speech-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/speedcubing-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/speedrun-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced excessively wide next-split label field. |
-| `/stopwatch` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/stopwatch-with-milliseconds` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/stretch-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/study-stopwatch` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/stopwatch` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/stopwatch-with-milliseconds` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/stretch-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/study-stopwatch` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Reduced empty session-display height and increased time text fit. |
 | `/study-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced oversized study settings width and bottom-aligned cue toggles with duration input. |
-| `/sunrise-sunset-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/swatch-internet-time-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/sunrise-sunset-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/swatch-internet-time-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/tabata-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Balanced work/rest/rounds fields; clarified classic preset in group description. |
 | `/tea-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Centered two-field steeping form and aligned sound/final beeps. |
-| `/terms` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/time-blocking-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/time-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/time-card-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/time-duration-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/time-zone-converter` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/time-zone-meeting-planner` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/timer-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/terms` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-blocking-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-card-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-duration-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-zone-converter` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-zone-meeting-planner` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/timer-clock` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Increased normal countdown legibility and reduced oversized combined-clock stage. |
 | `/timer-stopwatch` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Aligned countdown Apply to the actual three input bottoms, removed asymmetrical per-field hints, compacted its setup. |
-| `/unix-timestamp-converter` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/utc-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/video-game-challenge-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/unix-timestamp-converter` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Kept full ISO timestamp on one line; resized to remain prominent and readable. |
+| `/utc-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/video-game-challenge-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/visual-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced five-column settings grid with natural-width input, display-mode chips and toggles. |
-| `/week-number-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/weekday-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/weekly-timesheet-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/weeks-between-dates-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/work-hours-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/workdays-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/week-number-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/weekday-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/weekly-timesheet-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/weeks-between-dates-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/work-hours-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/workdays-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 | `/workout-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Balanced work/rest/rounds inputs by consolidating zero-rest guidance. |
-| `/world-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/world-clock-with-milliseconds` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/world-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/world-clock-with-milliseconds` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
 
 ## Rendered QA evidence — 2026-11-19
 
@@ -171,6 +174,15 @@
 - [Audit run #44459688702](https://github.com/suhas-sunder/ilovetimers/actions/runs/44459688702) then passed all stages and **216/216 geometry cases** against the corrected layout. Its mobile before/after screenshot was visually inspected.
 - **Scope of PASS:** browser-reported overflow, visible control clipping, expanded checkbox geometry, labeled Set/Apply positions on selected routes, plus representative screenshot review. This is NOT a claim of 27-page exhaustive functional/interactive/zoom accessibility acceptance.
 - Full 132-page top/settings screenshot inventory is being executed separately and must be reviewed before sitewide publication.
+
+## 132-route screenshot screening
+
+- Captured [528 rendered UI cases on 132 canonical pages](https://github.com/suhas-sunder/ilovetimers/actions/runs/44460035694) at 390/1440 and light/dark with additional settings screenshots. Initial run passed 132-route navigation/H1/console/overflow and found 35 routes with stretched checkbox controls.
+- Visually screened the **22 mobile-light** and **22 desktop-light** contact sheets (132 top-screen views each), then manually inspected the most visibly defective pages and before/after screens at full size. This is **initial top-screen inspection**, not proof each page's entire scrolled content and interactions have been manually checked.
+- Shared `Toggle` intrinsic width/placement fix was replayed against those 35 routes; remaining measured cases were the protected `/free-online-timers` archive and the React-independent Reaction Test control, not the shared-toggle grid stretch.
+- New visible concerns identified from screen reviews: wrapped AM/PM (Current Local Time, Military Converter, Roman), broken ISO line (Unix converter), float overlay (Golden Hour), and excessive nonfullscreen dead space (Online Alarm, Flip, Timer Clock, Study Stopwatch, Pace). Targeted route code fixes staged; strict browser rerun in progress.
+- Locale/timezone-dependent SSR hydration remains a separate UI reliability gate; one systematic #418 failure was confirmed on Current Local Time in [the 37-route run](https://github.com/suhas-sunder/ilovetimers/actions/runs/44463215877). A deterministic initial render fix is staged and must be rerun. No main publication until this is reconciled.
+- Dark, full-page interaction, safe-area/native mobile, physical zoom and further content checks remain separate from screenshot geometry.
 
 ## Batch closeout rule
 

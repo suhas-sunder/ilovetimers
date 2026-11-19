@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/time-zone-converter.tsx
 import type { Route } from "./+types/time-zone-converter";
@@ -1085,7 +1086,11 @@ export default function TimeZoneConverterPage({
       />
 
       <ToolHero
-        display={<TimeZoneConverterCard nowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="Time-zone converter">
+            <TimeZoneConverterCard nowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="Time Zone Converter"
         description="Convert a chosen date and wall time between browser-supported IANA time zones with date-aware DST offsets, cross-date results, copy, and versioned setup links."
       />

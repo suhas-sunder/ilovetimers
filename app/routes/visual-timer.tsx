@@ -522,9 +522,10 @@ function VisualTimerCard() {
               ))}
             </PresetGroup>
 
-            <SettingGroup>
-            <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
+            <SettingGroup className="max-w-4xl">
+            <div className="mx-auto flex w-full flex-wrap items-end justify-center gap-3">
               <Field
+                className="w-full sm:max-w-[13rem]"
                 label="Custom minutes"
                 type="number"
                 min={1}
@@ -536,7 +537,7 @@ function VisualTimerCard() {
                 }
               />
 
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center justify-center gap-2">
                   <Chip
                     onClick={() => setMode("bar")}
                     active={mode === "bar"}
@@ -574,7 +575,7 @@ function VisualTimerCard() {
                   onCheckedChange={setFinalCountdownBeeps}
                   disabled={!sound}
                 />
-            </SettingRow>
+            </div>
             </SettingGroup>
 
             <SecondaryActionRow>

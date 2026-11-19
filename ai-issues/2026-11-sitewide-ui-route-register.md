@@ -7,8 +7,8 @@
 
 ## Progress
 
-- 13 routes have individually inspected source and staged targeted adjustments; browser QA remains pending.
-- 119 canonical routes have not been assessed individually during this new review.
+- 18 routes have individually inspected source and staged targeted adjustments; browser QA remains pending.
+- 114 canonical routes have not been assessed individually during this new review.
 - No production merges or Netlify deploys are authorized until the entire sitewide review and final QA finish.
 
 ## Route checklist
@@ -62,9 +62,9 @@
 | `/emom-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/epoch-unix-time-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/event-countdown` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/exam-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/exam-timer` | Adjusted on audit branch | BROWSER PENDING | Grouped five exam cue toggles in a wrapping row; compact custom-duration input. |
 | `/fibonacci-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/focus-session-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/focus-session-timer` | Adjusted on audit branch | BROWSER PENDING | Compact session-duration form with consistently aligned sound controls. |
 | `/free-online-timers` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/golden-hour-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/guides` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
@@ -84,7 +84,7 @@
 | `/meditation-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/meeting-agenda-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/meeting-count-up-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/meeting-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/meeting-timer` | Adjusted on audit branch | BROWSER PENDING | Replaced stretched three-column grid with wrapped, input-aligned meeting controls. |
 | `/metronome` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/military-time-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/military-time-converter` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
@@ -120,7 +120,7 @@
 | `/stopwatch-with-milliseconds` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/stretch-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/study-stopwatch` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/study-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/study-timer` | Adjusted on audit branch | BROWSER PENDING | Reduced oversized study settings width and bottom-aligned cue toggles with duration input. |
 | `/sunrise-sunset-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/swatch-internet-time-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/tabata-timer` | Adjusted on audit branch | BROWSER PENDING | Balanced work/rest/rounds fields; clarified classic preset in group description. |
@@ -144,7 +144,7 @@
 | `/weeks-between-dates-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/work-hours-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/workdays-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/workout-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
+| `/workout-timer` | Adjusted on audit branch | BROWSER PENDING | Balanced work/rest/rounds inputs by consolidating zero-rest guidance. |
 | `/world-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/world-clock-with-milliseconds` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 

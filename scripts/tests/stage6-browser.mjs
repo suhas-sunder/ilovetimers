@@ -265,6 +265,62 @@ async function runPresetCase(browser, testCase) {
   await context.close();
 }
 
+// Verify actual rendered geometry, not only JSX class names. A prior UI
+// regression left Apply top-aligned in a CSS grid despite "items-end" on
+// the button wrapper; the two forms below share that failure mode.
+async function runFormAlignmentCases(browser) {
+  const context = await browser.newContext({ baseURL: BASE });
+  const page = await context.newPage();
+  try {
+    for (const routePath of ["/countdown-timer", "/timer-clock"]) {
+      for (const width of [390, 768, 1280, 1920]) {
+        await page.setViewportSize({ width, height: 900 });
+        for (const theme of ["light", "dark"]) {
+          await page.goto(routePath, { waitUntil: "networkidle" });
+          await setTheme(page, theme);
+          const form = page.locator("section.timer-settings-panel").filter({
+            has: page.getByRole("heading", { name: "Set countdown", exact: true }),
+          }).first();
+          const geometry = await form.locator(".ilt-setting-row").first().evaluate((row) => {
+            const boxes = [...row.querySelectorAll("input")].map((input) => {
+              const rect = input.getBoundingClientRect();
+              return { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right };
+            });
+            const button = row.querySelector("button");
+            if (!button) return { boxes, button: null, viewport: document.documentElement.clientWidth };
+            const rect = button.getBoundingClientRect();
+            return {
+              boxes,
+              button: { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right },
+              viewport: document.documentElement.clientWidth,
+            };
+          });
+          const caseName = `${routePath} ${width}px ${theme}: ${JSON.stringify(geometry)}`;
+          assert.ok(geometry.button && geometry.boxes.length >= 2, `Missing form controls: ${caseName}`);
+          for (const box of [...geometry.boxes, geometry.button]) {
+            assert.ok(box.left >= -2 && box.right <= geometry.viewport + 2, `Control overflows viewport: ${caseName}`);
+          }
+          assert.ok(
+            await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth),
+            `Horizontal overflow: ${caseName}`,
+          );
+          if (width >= 640) {
+            // Inputs and Apply must share the same top and bottom edges.
+            for (const box of geometry.boxes) {
+              assert.ok(Math.abs(box.top - geometry.button.top) <= 4, `Apply is not top-aligned: ${caseName}`);
+              assert.ok(Math.abs(box.bottom - geometry.button.bottom) <= 4, `Apply is not bottom-aligned: ${caseName}`);
+            }
+          } else {
+            assert.ok(geometry.button.top >= geometry.boxes.at(-1).bottom - 2, `Mobile Apply overlaps inputs: ${caseName}`);
+          }
+        }
+      }
+    }
+  } finally {
+    await context.close();
+  }
+}
+
 async function runCanonicalSweep(browser) {
   const manifest = JSON.parse(readFileSync(path.join(ROOT, "docs/route-architecture-manifest.json"), "utf8"));
   const paths = manifest.filter((entry) => entry.indexability !== "redirect").map((entry) => entry.sourcePath);
@@ -320,6 +376,7 @@ try {
     await runShareCase(browser, testCase, { width: 390, height: 844 }, "dark");
   }
   for (const testCase of shareCases) await runPresetCase(browser, testCase);
+  await runFormAlignmentCases(browser);
   const canonicalCount = await runCanonicalSweep(browser);
   console.log(`Stage 6 browser tests passed (${shareCases.length} share routes at desktop/light and mobile/dark, ${shareCases.filter((item) => item.storageKey).length} preset routes, ${canonicalCount} canonical Chromium renders).`);
 } finally {

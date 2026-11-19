@@ -25,7 +25,7 @@
 | `/5-minute-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/about` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/age-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/alarm-timer` | Adjusted on audit branch | BROWSER PENDING | Compact duration form and grouped audio toggles. |
+| `/alarm-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact duration form and grouped audio toggles. |
 | `/amrap-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/analog-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/astronomical-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
@@ -37,14 +37,14 @@
 | `/binary-stopwatch` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/birthday-countdown` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/bpm-tapper` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/break-timer` | Adjusted on audit branch | BROWSER PENDING | Constrained break settings and bottom-aligned audio and looping toggles. |
+| `/break-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Constrained break settings and bottom-aligned audio and looping toggles. |
 | `/breathing-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/business-days-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/chaos-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/chess-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/christmas-countdown` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/classroom-timer` | Adjusted on audit branch | BROWSER PENDING | Compact teacher settings; restrained minutes field and wrapped audio toggles. |
-| `/clock-with-milliseconds` | Adjusted on audit branch | BROWSER PENDING | Replaced four huge toggle grid columns with natural-width wrapped clock options. |
+| `/classroom-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact teacher settings; restrained minutes field and wrapped audio toggles. |
+| `/clock-with-milliseconds` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced four huge toggle grid columns with natural-width wrapped clock options. |
 | `/contact` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/cookies` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/copyright` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
@@ -62,9 +62,9 @@
 | `/emom-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/epoch-unix-time-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/event-countdown` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/exam-timer` | Adjusted on audit branch | BROWSER PENDING | Grouped five exam cue toggles in a wrapping row; compact custom-duration input. |
+| `/exam-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Grouped five exam cue toggles in a wrapping row; compact custom-duration input. |
 | `/fibonacci-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/focus-session-timer` | Adjusted on audit branch | BROWSER PENDING | Compact session-duration form with consistently aligned sound controls. |
+| `/focus-session-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact session-duration form with consistently aligned sound controls. |
 | `/free-online-timers` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/golden-hour-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/guides` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
@@ -75,16 +75,16 @@
 | `/guides/how-browser-timers-measure-time` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/guides/unix-timestamps-seconds-milliseconds-microseconds` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/hexadecimal-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/hiit-timer` | Adjusted on audit branch | BROWSER PENDING | Balanced five-column interval inputs by consolidating skip guidance. |
+| `/hiit-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Balanced five-column interval inputs by consolidating skip guidance. |
 | `/hours-until-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/how-ilovetimers-is-made` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/interval-timer` | Adjusted on audit branch | BROWSER PENDING | Unboxed editable step rows; aligned active/delete controls with inputs. |
-| `/kitchen-timer` | Adjusted on audit branch | BROWSER PENDING | Reduced excessively wide duration form; responsive two fields and sound toggle. |
+| `/interval-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Unboxed editable step rows; aligned active/delete controls with inputs. |
+| `/kitchen-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced excessively wide duration form; responsive two fields and sound toggle. |
 | `/lab-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/meditation-timer` | Adjusted on audit branch | BROWSER PENDING | Reduced custom duration form and grouped four sound/loop controls. |
+| `/meditation-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced custom duration form and grouped four sound/loop controls. |
 | `/meeting-agenda-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/meeting-count-up-timer` | Adjusted on audit branch | BROWSER PENDING | Constrained agenda helper label and topic-cap fields. |
-| `/meeting-timer` | Adjusted on audit branch | BROWSER PENDING | Replaced stretched three-column grid with wrapped, input-aligned meeting controls. |
+| `/meeting-count-up-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Constrained agenda helper label and topic-cap fields. |
+| `/meeting-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced stretched three-column grid with wrapped, input-aligned meeting controls. |
 | `/metronome` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/military-time-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/military-time-converter` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
@@ -97,34 +97,34 @@
 | `/multiple-timers` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/new-year-countdown` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/online-alarm-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/online-timer` | Adjusted on audit branch | BROWSER PENDING | Compact settings width; Set button bottom-aligned with labeled input; sound/loop aligned. |
+| `/online-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact settings width; Set button bottom-aligned with labeled input; sound/loop aligned. |
 | `/pace-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/pizza-timer` | Adjusted on audit branch | BROWSER PENDING | Compact two-row settings; moved reminder explanation out of unequal-height field. |
-| `/pomodoro-timer` | Adjusted on audit branch | BROWSER PENDING | Narrower settings; moved long-break guidance to group description; aligned controls. |
+| `/pizza-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact two-row settings; moved reminder explanation out of unequal-height field. |
+| `/pomodoro-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Narrower settings; moved long-break guidance to group description; aligned controls. |
 | `/presentation-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/privacy` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/productivity-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/reaction-time-test` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/rest-timer` | Adjusted on audit branch | BROWSER PENDING | Compact duration form; sound/final-beeps/loop actions aligned. |
+| `/rest-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact duration form; sound/final-beeps/loop actions aligned. |
 | `/retro-flip-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/roman-numeral-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/round-timer` | Adjusted on audit branch | BROWSER PENDING | Compact four round-duration fields and centered audio controls. |
-| `/seconds-timer` | Adjusted on audit branch | BROWSER PENDING | Compact seconds input and sound toggle geometry. |
-| `/silent-timer` | Adjusted on audit branch | BROWSER PENDING | Compact no-audio settings; Set button aligned with labeled input; loop control aligned. |
+| `/round-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact four round-duration fields and centered audio controls. |
+| `/seconds-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact seconds input and sound toggle geometry. |
+| `/silent-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact no-audio settings; Set button aligned with labeled input; loop control aligned. |
 | `/sitemap` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/sleep-timer` | Adjusted on audit branch | BROWSER PENDING | Replaced cramped four-column tablet form with responsive 2/4-column settings. |
+| `/sleep-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced cramped four-column tablet form with responsive 2/4-column settings. |
 | `/speech-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/speedcubing-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/speedrun-timer` | Adjusted on audit branch | BROWSER PENDING | Reduced excessively wide next-split label field. |
+| `/speedrun-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced excessively wide next-split label field. |
 | `/stopwatch` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/stopwatch-with-milliseconds` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/stretch-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/study-stopwatch` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/study-timer` | Adjusted on audit branch | BROWSER PENDING | Reduced oversized study settings width and bottom-aligned cue toggles with duration input. |
+| `/study-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced oversized study settings width and bottom-aligned cue toggles with duration input. |
 | `/sunrise-sunset-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/swatch-internet-time-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/tabata-timer` | Adjusted on audit branch | BROWSER PENDING | Balanced work/rest/rounds fields; clarified classic preset in group description. |
-| `/tea-timer` | Adjusted on audit branch | BROWSER PENDING | Centered two-field steeping form and aligned sound/final beeps. |
+| `/tabata-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Balanced work/rest/rounds fields; clarified classic preset in group description. |
+| `/tea-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Centered two-field steeping form and aligned sound/final beeps. |
 | `/terms` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/time-blocking-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/time-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
@@ -133,18 +133,18 @@
 | `/time-zone-converter` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/time-zone-meeting-planner` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/timer-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/timer-stopwatch` | Adjusted on audit branch | BROWSER PENDING | Aligned countdown Apply to the actual three input bottoms, removed asymmetrical per-field hints, compacted its setup. |
+| `/timer-stopwatch` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Aligned countdown Apply to the actual three input bottoms, removed asymmetrical per-field hints, compacted its setup. |
 | `/unix-timestamp-converter` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/utc-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/video-game-challenge-timer` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/visual-timer` | Adjusted on audit branch | BROWSER PENDING | Replaced five-column settings grid with natural-width input, display-mode chips and toggles. |
+| `/visual-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced five-column settings grid with natural-width input, display-mode chips and toggles. |
 | `/week-number-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/weekday-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/weekly-timesheet-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/weeks-between-dates-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/work-hours-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/workdays-calculator` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
-| `/workout-timer` | Adjusted on audit branch | BROWSER PENDING | Balanced work/rest/rounds inputs by consolidating zero-rest guidance. |
+| `/workout-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Balanced work/rest/rounds inputs by consolidating zero-rest guidance. |
 | `/world-clock` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 | `/world-clock-with-milliseconds` | Not reviewed in this pass | BROWSER PENDING | Inspect display, control alignment, settings, mobile/dark mode, keyboard and fullscreen; change only verified defects. |
 
@@ -162,6 +162,15 @@
 - Repairs on audit branch: Kitchen checkbox explicitly uses content-sized grid placement; Sleep sound/dim toggles are now a single responsive flex group beside the duration field.
 - **Resolved:** [audit-only run #44458294142](https://github.com/suhas-sunder/ilovetimers/actions/runs/44458294142) passed npm ci, typecheck, production build, source UI regressions, 132-route SSR structural gate and the stricter **144/144 rendered-browser geometry cases** (18 routes × 4 widths × 2 themes). Downloaded the full screenshot artifact and visually examined Kitchen/Sleep at 390 and 768 light; their sound controls now have compact intrinsic widths. No production deploy occurred.
 - **Remaining scope:** the first 18 routes now have automated layout-geometry PASS and representative manual screenshot review, but not an exhaustive manual interaction, zoom, keyboard, and all-144-screens review. Other 114 routes are still pending individual assessment; no sitewide acceptance or main publication is authorized.
+
+## Expanded responsive geometry gate — 27 routes
+
+- [Audit run #44459075797](https://github.com/suhas-sunder/ilovetimers/actions/runs/44459075797) passed build/typecheck, 132-route structural UI gate and 27 × 4 × 2 = **216** browser geometry/screenshot cases.
+- Manual review of that run's 390px and 1280px light contact sheets revealed an additional UI concern: Timer/Stopwatch's normal mobile stage consumed excessive vertical space and rendered small digits.
+- Corrected the Timer/Stopwatch stage's mobile/desktop minimum heights and digit-fit allowances in route code and scoped CSS, leaving fullscreen behavior unchanged. Added browser checks for normal-mobile stage height and digit size.
+- [Audit run #44459688702](https://github.com/suhas-sunder/ilovetimers/actions/runs/44459688702) then passed all stages and **216/216 geometry cases** against the corrected layout. Its mobile before/after screenshot was visually inspected.
+- **Scope of PASS:** browser-reported overflow, visible control clipping, expanded checkbox geometry, labeled Set/Apply positions on selected routes, plus representative screenshot review. This is NOT a claim of 27-page exhaustive functional/interactive/zoom accessibility acceptance.
+- Full 132-page top/settings screenshot inventory is being executed separately and must be reviewed before sitewide publication.
 
 ## Batch closeout rule
 

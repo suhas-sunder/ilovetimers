@@ -28,7 +28,6 @@ import {
   ToolFrame as Card,
   ToolHero,
   Toggle,
-  UtilityResultRow,
 } from "~/clients/components/ui/foundation";
 import { useFitDisplayText as useFitText } from "~/clients/hooks/useFitDisplayText";
 import { useFullscreen } from "~/clients/hooks/useFullscreen";
@@ -679,12 +678,12 @@ function TabataTimerCard() {
               </SettingRow>
             </SettingGroup>
 
-            <UtilityResultRow>
+            <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
               <span className="ilt-content-label">Total</span>
               <span className="text-sm font-semibold text-[var(--ilt-text-primary)]">
                 {totalText}, no rest after last work interval.
               </span>
-            </UtilityResultRow>
+            </div>
 
             <SecondaryActionRow>
               <Btn kind="ghost" onClick={setClassic} disabled={running}>

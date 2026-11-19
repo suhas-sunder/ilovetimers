@@ -28,6 +28,15 @@ const CASES = [
   ["/meeting-timer", "Meeting settings"],
   ["/exam-timer", "Exam cues"],
   ["/workout-timer", "Workout settings"],
+  ["/timer-stopwatch", "Set countdown"],
+  ["/break-timer", "Break settings"],
+  ["/meditation-timer", "Settings"],
+  ["/seconds-timer", "Custom seconds"],
+  ["/speedrun-timer", "Split setup"],
+  ["/meeting-count-up-timer", "Agenda helper"],
+  ["/round-timer", "Round settings"],
+  ["/clock-with-milliseconds", "Clock settings"],
+  ["/visual-timer", null],
 ];
 
 async function playwrightModule() {
@@ -135,8 +144,10 @@ try {
           await page.reload({ waitUntil: "domcontentloaded" });
           await page.evaluate(() => document.fonts.ready);
           assert.equal(await page.locator("html").getAttribute("data-theme"), theme);
-          const panel = page.locator("section.timer-settings-panel")
-            .filter({ has: page.getByRole("heading", { name: heading, exact: true }) }).first();
+          const panel = heading === null
+            ? page.locator("section.timer-settings-panel").first()
+            : page.locator("section.timer-settings-panel")
+              .filter({ has: page.getByRole("heading", { name: heading, exact: true }) }).first();
           assert.equal(await panel.count(), 1, `Missing settings panel on ${route}`);
           const geometry = await fieldGeometry(panel);
           const viewportWidth = await page.evaluate(() => document.documentElement.clientWidth);
@@ -152,6 +163,27 @@ try {
               `Clipped control ${route} ${width}/${theme} ${label}: ${JSON.stringify(rect)}`);
           }
           await checkSetButtonAlignment(page, route, width);
+          if (route === "/timer-stopwatch") {
+            const inputBoxes = await panel.locator(".ilt-setting-row input").evaluateAll((nodes) =>
+              nodes.map((node) => {
+                const r = node.getBoundingClientRect();
+                return { top: r.top, bottom: r.bottom };
+              }),
+            );
+            const applyBox = await panel.getByRole("button", { name: "Apply", exact: true }).boundingBox();
+            assert.ok(applyBox && inputBoxes.length === 3, `Missing countdown fields / Apply at ${width}`);
+            const applyBottom = applyBox.y + applyBox.height;
+            if (width >= 640) {
+              for (const box of inputBoxes) {
+                assert.ok(Math.abs(box.bottom - applyBottom) <= 4,
+                  `Combined timer Apply not bottom-aligned: ${route} ${width}/${theme}, inputs=${JSON.stringify(inputBoxes)}, button=${JSON.stringify(applyBox)}`);
+              }
+            } else {
+              assert.ok(applyBox.y >= inputBoxes.at(-1).bottom,
+                `Mobile combined timer Apply overlaps input: ${route} ${width}/${theme}`);
+            }
+          }
+
           assert.deepEqual(errors, [], `Runtime errors on ${route} ${width}/${theme}`);
           if (CAPTURE_DIR) {
             mkdirSync(CAPTURE_DIR, { recursive: true });

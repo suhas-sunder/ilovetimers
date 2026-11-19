@@ -59,8 +59,24 @@ async function fieldGeometry(form) {
       return { x: r.x, right: r.right, top: r.top, bottom: r.bottom,
         width: r.width, height: r.height };
     };
+    const stretchedToggles = [...container.querySelectorAll("label")]
+      .filter((label) => label.querySelector('input[type="checkbox"]'))
+      .map((label) => {
+        const style = getComputedStyle(label);
+        const children = [...label.children];
+        const innerWidth = children.reduce(
+          (sum, child) => sum + child.getBoundingClientRect().width, 0,
+        );
+        const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+        const gap = Number.parseFloat(style.columnGap) || 0;
+        const intrinsic = innerWidth + padding + gap * Math.max(0, children.length - 1);
+        const width = label.getBoundingClientRect().width;
+        return { text: label.textContent?.trim().slice(0, 60) || "toggle", width, intrinsic, extra: width - intrinsic };
+      })
+      .filter((item) => item.extra > 35);
     return {
       form: rect(container),
+      stretchedToggles,
       elements: [...container.querySelectorAll("input, select, button")]
         .filter((element) => {
           const s = getComputedStyle(element);
@@ -129,6 +145,8 @@ try {
             `Horizontal overflow ${route} ${width}/${theme}: ${scrollWidth} > ${viewportWidth}`);
           assert.ok(geometry.form.width <= viewportWidth + 2,
             `Settings width exceeds viewport: ${route} ${width}/${theme}`);
+          assert.deepEqual(geometry.stretchedToggles, [],
+            `Grid-stretched toggles on ${route} ${width}/${theme}: ${JSON.stringify(geometry.stretchedToggles)}`);
           for (const {label, rect} of geometry.elements) {
             assert.ok(rect.width >= 1 && rect.height >= 1 && rect.x >= -2 && rect.right <= viewportWidth + 2,
               `Clipped control ${route} ${width}/${theme} ${label}: ${JSON.stringify(rect)}`);

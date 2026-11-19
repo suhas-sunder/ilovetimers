@@ -1,3 +1,5 @@
 2026-11-19 — Run combined, non-production browser/layout QA for the first 18 route-level UI adjustments. Preserve branch-only review; never deploy or update main.
 
 2026-11-19 — Rerun after fixing browser-confirmed oversized toggles on Pomodoro/Exam/Classroom/Meeting and Tabata result separation; assert toggle intrinsic geometry and capture screenshots.
+
+2026-11-19 — Third strict browser geometry run after fixing measured Kitchen/Sleep checkbox stretch; one non-production audit run only.

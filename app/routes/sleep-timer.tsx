@@ -425,8 +425,8 @@ function SleepTimerCard() {
               </Btn>
             </ControlGroup>
 
-            <SettingGroup title="Quiet settings" className="order-2">
-              <SettingRow className="sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
+            <SettingGroup title="Quiet settings" className="order-2 max-w-4xl">
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-[minmax(0,14rem)_repeat(3,max-content)] lg:justify-center">
                 <Field
                   label="Minutes"
                   type="number"
@@ -453,17 +453,20 @@ function SleepTimerCard() {
                     if (!v) setSoftAlarm(true); // keep consistent default when re-enabled
                   }}
                   label="Sound"
+                  className="lg:self-end"
                 />
                 <Toggle
                   checked={softAlarm}
                   onCheckedChange={setSoftAlarm}
                   label="Soft alarm"
+                  className="lg:self-end"
                   disabled={!sound}
                 />
                 <Toggle
                   checked={dimMode}
                   onCheckedChange={setDimMode}
                   label="Dim mode"
+                  className="lg:self-end"
                 />
               </SettingRow>
             </SettingGroup>

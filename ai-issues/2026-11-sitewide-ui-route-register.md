@@ -155,6 +155,13 @@
 - Those source defects were repaired after the cited run by replacing forced-grid wrappers with actual flex containers and grouping the Tabata summary. **The revised source is NOT yet browser-PASS** until a follow-up run against its exact commit succeeds and new screenshots are inspected.
 - The rendered geometry test now includes a stretched-toggle detection assertion. Follow-up testing must include desktop and mobile, both themes; do not substitute passing build for manual visual acceptance.
 
+## Second rendered CI gate — confirmed defects
+
+- [Audit-only run #44457680665](https://github.com/suhas-sunder/ilovetimers/actions/runs/44457680665) passed npm install, typecheck, build, UI regression source checks and 132-route SSR checks, then **failed new strict browser toggle geometry assertions**.
+- Browser-measured failures: Kitchen Sound was 326px wide at 390px viewport and 674px at 768px (intrinsic label width ~98px); Sleep Sound/Soft alarm/Dim mode were 358px each at 390px and ~353px each at 768px.
+- Repairs on audit branch: Kitchen checkbox explicitly uses content-sized grid placement; Sleep sound/dim toggles are now a single responsive flex group beside the duration field.
+- **Pending:** third exact-commit CI run must pass; inspect screenshot outputs before upgrading any route to browser-PASS.
+
 ## Batch closeout rule
 
 For each new batch: record exact routes, defects, changes, before/after browser evidence and what is still blocked. Commit only to audit branch. No push to `main`, PR merge, production deploy, or fake completion claim until 132/132 page-by-page reviews plus responsive/dark/interactions final acceptance. User wants brief per-batch notification. If progress stalls due to unavailable browser tools, say so and leave production untouched.

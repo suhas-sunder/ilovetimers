@@ -597,6 +597,24 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
 /* =========================================================
    PAGE
 ========================================================= */
+// Prerendered HTML cannot know the visitor's locale or timezone. Keep
+// prerender and the first hydration frame identical, then mount the clock
+// with browser-local formatting. Do not display a fabricated UTC "local" time.
+function BrowserLocalClock({ initialNowISO }: { initialNowISO: string }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return (
+      <div className="ilt-tool-frame flex min-h-[clamp(12rem,24svh,19rem)] w-full flex-col items-center justify-center gap-2 text-center" aria-busy="true">
+        <div className="text-sm font-semibold text-[var(--ilt-text-muted)]">Local time</div>
+        <div className="text-xl font-semibold text-[var(--ilt-text-secondary)]">Loading your clock…</div>
+      </div>
+    );
+  }
+  return <CurrentLocalTimeCard initialNowISO={initialNowISO} />;
+}
+
 export default function CurrentLocalTimePage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
@@ -641,7 +659,7 @@ export default function CurrentLocalTimePage({
 
 
       <ToolHero
-        display={<CurrentLocalTimeCard initialNowISO={nowISO} />}
+        display={<BrowserLocalClock initialNowISO={nowISO} />}
         title="Current Local Time"
         description="A large local time display with date, timezone, seconds, copy, fullscreen, and compact comparison controls."
       />

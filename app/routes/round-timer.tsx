@@ -685,6 +685,7 @@ function RoundTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-4xl"
               title="Round settings"
               description="Settings lock while a round is active."
             >
@@ -734,7 +735,7 @@ function RoundTimerCard() {
                   }
                 />
               </SettingRow>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap justify-center gap-2">
                 <Toggle
                   label="Sound"
                   checked={sound}

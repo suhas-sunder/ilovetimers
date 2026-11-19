@@ -106,11 +106,12 @@ function safeTimeZone() {
   }
 }
 
-function formatClock(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
+function formatClock(d: Date, opts: { use24: boolean; showSeconds: boolean }, stable = false) {
   const { use24, showSeconds } = opts;
 
   try {
-    const fmt = new Intl.DateTimeFormat(undefined, {
+    const fmt = new Intl.DateTimeFormat(stable ? "en-US" : undefined, {
+      timeZone: stable ? "UTC" : undefined,
       hour: "2-digit",
       minute: "2-digit",
       second: showSeconds ? "2-digit" : undefined,
@@ -122,9 +123,9 @@ function formatClock(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
       .replace(/\u200e/g, "")
       .trim();
   } catch {
-    const h = d.getHours();
-    const m = d.getMinutes();
-    const s = d.getSeconds();
+    const h = stable ? d.getUTCHours() : d.getHours();
+    const m = stable ? d.getUTCMinutes() : d.getMinutes();
+    const s = stable ? d.getUTCSeconds() : d.getSeconds();
 
     const mm = String(m).padStart(2, "0");
     const ss = String(s).padStart(2, "0");
@@ -141,9 +142,10 @@ function formatClock(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
   }
 }
 
-function formatDateLine(d: Date) {
+function formatDateLine(d: Date, stable = false) {
   try {
-    return new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat(stable ? "en-US" : undefined, {
+      timeZone: stable ? "UTC" : undefined,
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -153,7 +155,7 @@ function formatDateLine(d: Date) {
       .replace(/\u200e/g, "")
       .trim();
   } catch {
-    return d.toDateString();
+    return stable ? d.toUTCString() : d.toDateString();
   }
 }
 
@@ -176,13 +178,28 @@ function isoWeekNumber(date: Date) {
   return 1 + Math.round(diffMs / (7 * 24 * 60 * 60 * 1000));
 }
 
+// ISO week based on UTC fields so the static server and the first client
+// hydration render agree even when the visitor is in a different timezone.
+function isoWeekNumberUTC(date: Date) {
+  const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  d.setUTCHours(0, 0, 0, 0);
+  const day = (d.getUTCDay() + 6) % 7;
+  d.setUTCDate(d.getUTCDate() - day + 3);
+  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  firstThursday.setUTCHours(0, 0, 0, 0);
+  const firstDay = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDay + 3);
+  return 1 + Math.round((d.getTime() - firstThursday.getTime()) / (7 * 24 * 60 * 60 * 1000));
+}
+
 function formatTimeInZone(
   d: Date,
   timeZone: string,
   opts: { use24: boolean; showSeconds: boolean },
+  stable = false,
 ) {
   try {
-    const fmt = new Intl.DateTimeFormat(undefined, {
+    const fmt = new Intl.DateTimeFormat(stable ? "en-US" : undefined, {
       timeZone,
       hour: "2-digit",
       minute: "2-digit",
@@ -230,7 +247,11 @@ const ZoneTile = ({
    CURRENT LOCAL TIME CARD
 ========================================================= */
 function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
-  const tz = useMemo(() => safeTimeZone(), []);
+  // Static HTML has no access to the visitor’s timezone or locale. Render
+  // a deterministic UTC/en-US snapshot on both server and hydration paint,
+  // then switch to the real local clock immediately after mount.
+  const [clientReady, setClientReady] = useState(false);
+  const tz = useMemo(() => clientReady ? safeTimeZone() : "UTC", [clientReady]);
 
   const [now, setNow] = useState<Date>(() => new Date(initialNowISO));
   const [use24, setUse24] = useState(false);
@@ -260,6 +281,8 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
   );
 
   const [activeZoneKey, setActiveZoneKey] = useState<string>("local");
+
+  useEffect(() => { setClientReady(true); }, []);
 
   // Keep time accurate
   useEffect(() => {
@@ -302,13 +325,13 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
 
   const activeTimeText = useMemo(() => {
     if (activeZone.tz === "local") {
-      return formatClock(now, { use24, showSeconds });
+      return formatClock(now, { use24, showSeconds }, !clientReady);
     }
-    return formatTimeInZone(now, activeZone.tz, { use24, showSeconds });
-  }, [now, activeZone.tz, use24, showSeconds]);
+    return formatTimeInZone(now, activeZone.tz, { use24, showSeconds }, !clientReady);
+  }, [now, activeZone.tz, use24, showSeconds, clientReady]);
 
-  const dateText = useMemo(() => formatDateLine(now), [now]);
-  const weekNo = useMemo(() => isoWeekNumber(now), [now]);
+  const dateText = useMemo(() => formatDateLine(now, !clientReady), [now, clientReady]);
+  const weekNo = useMemo(() => clientReady ? isoWeekNumber(now) : isoWeekNumberUTC(now), [now, clientReady]);
 
   const zoneTiles = useMemo(() => {
     // Tiles don’t need seconds even if main display shows them.
@@ -317,9 +340,9 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
       .filter((z) => z.key !== "local")
       .map((z) => ({
         ...z,
-        time: formatTimeInZone(now, z.tz, tileOpts),
+        time: formatTimeInZone(now, z.tz, tileOpts, !clientReady),
       }));
-  }, [zones, now, use24]);
+  }, [zones, now, use24, clientReady]);
 
   const copyText = useMemo(() => {
     const zoneLabel = activeZone.tz === "local" ? tz : activeZone.label;

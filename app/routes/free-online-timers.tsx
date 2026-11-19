@@ -161,7 +161,15 @@ const Card = ({
   <div
     ref={cardRef}
     tabIndex={tabIndex ?? 0}
-    onKeyDown={onKeyDown}
+    onKeyDown={(event) => {
+      if (
+        event.defaultPrevented ||
+        (event.key === " " &&
+          event.target instanceof Element &&
+          event.target.closest("button, input, select, textarea, summary, a[href]"))
+      ) return;
+      onKeyDown?.(event);
+    }}
     className={[
       "relative h-full bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-300/60",
       isFullscreen

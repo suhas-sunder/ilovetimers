@@ -599,13 +599,14 @@ function PomodoroCard() {
                 </div>
               </SettingRow>
 
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)] lg:items-end">
+              <div className="mx-auto flex w-full max-w-2xl flex-wrap items-end justify-center gap-3">
                 <Toggle
                   label="Long break after last cycle"
                   checked={useLongBreak}
                   onCheckedChange={setUseLongBreak}
                 />
                 <Field
+                  className="w-full sm:max-w-[12rem]"
                   label="Long break (minutes)"
                   type="number"
                   min={1}
@@ -616,7 +617,7 @@ function PomodoroCard() {
                   }
                   disabled={!useLongBreak}
                 />
-              </SettingRow>
+              </div>
             </SettingGroup>
 
             <SharePresetPanel

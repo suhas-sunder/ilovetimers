@@ -254,17 +254,17 @@ export function SharePresetPanel<T>({
             {records.length > 0 ? (
               <>
                 <Button variant="secondary" onClick={loadPreset} disabled={!selectedId || loadDisabled}>
-              Load preset
-            </Button>
-            <Button variant="secondary" onClick={renamePreset} disabled={!selectedId}>
-              Rename
-            </Button>
-            <Button variant="secondary" onClick={deletePreset} disabled={!selectedId}>
-              Delete
-            </Button>
-            <Button variant="danger" onClick={deleteAllPresets} disabled={records.length === 0}>
-              Delete all
-            </Button>
+                  Load preset
+                </Button>
+                <Button variant="secondary" onClick={renamePreset} disabled={!selectedId}>
+                  Rename
+                </Button>
+                <Button variant="secondary" onClick={deletePreset} disabled={!selectedId}>
+                  Delete
+                </Button>
+                <Button variant="danger" onClick={deleteAllPresets}>
+                  Delete all
+                </Button>
               </>
             ) : null}
           </div>

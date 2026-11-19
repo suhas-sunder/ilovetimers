@@ -771,7 +771,7 @@ export function Toggle({
   return (
     <label
       className={cx(
-        "ilt-focus-ring inline-flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] hover:bg-[var(--ilt-button-secondary-hover)]",
+        "ilt-focus-ring inline-flex w-fit max-w-full justify-self-center min-h-11 min-w-0 items-center gap-2 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-3 py-2 text-sm font-semibold text-[var(--ilt-text-primary)] shadow-[var(--ilt-shadow-interactive)] hover:bg-[var(--ilt-button-secondary-hover)]",
         disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
         className,
       )}

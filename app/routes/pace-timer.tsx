@@ -506,7 +506,7 @@ function PaceTimerCard() {
           "timer-display-surface order-first mt-0 overflow-hidden text-slate-950",
           urgent ? "border-rose-200" : "border-slate-200",
         ].join(" ")}
-        style={{ minHeight: 320 }}
+        style={{ minHeight: 225 }}
         aria-live="polite"
       >
         {/* Fullscreen CSS (UNCHANGED behavior): show ONLY fullscreen shell in fullscreen */}
@@ -579,7 +579,7 @@ function PaceTimerCard() {
           ref={displayBoxRef}
           className="relative w-full flex-col items-center justify-start p-4 sm:p-6"
           style={{
-            minHeight: 320,
+            minHeight: 225,
             userSelect: "none",
           }}
         >

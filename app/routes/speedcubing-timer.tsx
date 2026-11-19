@@ -404,6 +404,10 @@ function SpeedcubingTimerTool() {
                   toggleStartStop();
                 } else {
                   if (running) stopNow({ saveIfNeeded: autoSave });
+                  else {
+                    resetCurrent();
+                    startNow();
+                  }
                 }
               }}
               className="py-1 text-sm"
@@ -762,6 +766,7 @@ function KeyUpCapture({
     const onKeyUp = (e: globalThis.KeyboardEvent) => {
       if (e.key !== " ") return;
       if (isTypingTarget(e.target)) return;
+      if (e.target instanceof Element && e.target.closest("button, summary, a[href]")) return;
       e.preventDefault();
       onSpaceUp();
     };

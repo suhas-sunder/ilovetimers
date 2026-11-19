@@ -17,3 +17,5 @@
 2026-11-19 — PHASE 2 controlled hydration repair: shared BrowserLocaleGate defers 11 browser-dependent clock widgets while retaining prerendered metadata/SEO. Run 12 routes × 5 locales (60 cases) and geometry/build checks in audit only. Verify no hydration errors, maintain controls after mount; no main push.
 
 2026-11-19 — Review screenshot evidence from complete 1056-case inventory: Golden Hour no-event state rendered huge dash; fix display blank state and assert past-date behavior on mobile in both themes; rerun typecheck, build, 296 geometry, 60 locale/hydration cases without publishing main.
+
+2026-11-19 — Check all 132 routes at mobile/desktop for visible i💛Timers.com header/footer, functional light/dark controls and menu open/close; keep Golden Hour no-event regression, 296 geometry and 60 locale hydration cases. Phase 2 only. No additional main deploy.

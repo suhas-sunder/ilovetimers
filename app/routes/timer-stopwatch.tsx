@@ -384,7 +384,7 @@ function TimerStopwatchTool() {
     deps: [shownTime, mode, activeStatus, fullscreen.isFullscreen],
     minPx: 48,
     maxPx: fullscreen.isFullscreen ? 520 : 460,
-    paddingAllowancePx: fullscreen.isFullscreen ? 56 : 64,
+    paddingAllowancePx: fullscreen.isFullscreen ? 56 : 24,
     initialMobileScale: 0.88,
   });
 
@@ -501,7 +501,7 @@ function TimerStopwatchTool() {
           style={{
             minHeight: fullscreen.isFullscreen
               ? 0
-              : "clamp(300px, 38vw, 430px)",
+              : "clamp(210px, 24vw, 315px)",
             marginTop: fullscreen.isFullscreen ? "3.6rem" : undefined,
             marginBottom: fullscreen.isFullscreen ? "3.6rem" : undefined,
             userSelect: "none",
@@ -536,7 +536,7 @@ function TimerStopwatchTool() {
           <span
             ref={timeRef}
             data-primary-display-value
-            className="mt-4 inline-block whitespace-nowrap font-mono font-extrabold tracking-wider text-[var(--ilt-text-primary)]"
+            className="mt-4 inline-block whitespace-nowrap font-mono font-extrabold tracking-normal text-[var(--ilt-text-primary)]"
             style={{ fontSize: displayFontSize, lineHeight: 1 }}
           >
             {shownTime}

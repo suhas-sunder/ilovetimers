@@ -410,7 +410,7 @@ function AlarmTimerCard() {
               ))}
             </PresetGroup>
 
-            <SettingGroup title="Settings">
+            <SettingGroup title="Settings" className="max-w-2xl">
               <SettingRow>
                 <Field
                   label="Custom minutes"
@@ -423,7 +423,7 @@ function AlarmTimerCard() {
                     setMinutes(clamp(Number(e.target.value || 1), 1, 180))
                   }
                 />
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:self-end sm:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                   <Toggle
                     label="Final beeps"

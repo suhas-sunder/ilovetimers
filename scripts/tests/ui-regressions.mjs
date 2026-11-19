@@ -52,6 +52,8 @@ const [
   timerClock,
   timerStopwatch,
   countdownTimer,
+  sharePresetPanel,
+  eggTimer,
   onlineTimer,
   silentTimer,
   freeOnlineTimers,
@@ -71,6 +73,8 @@ const [
   read("app/routes/timer-clock.tsx"),
   read("app/routes/timer-stopwatch.tsx"),
   read("app/routes/countdown-timer.tsx"),
+  read("app/clients/components/share/SharePresetPanel.tsx"),
+  read("app/routes/egg-timer.tsx"),
   read("app/routes/online-timer.tsx"),
   read("app/routes/silent-timer.tsx"),
   read("app/routes/free-online-timers.tsx"),
@@ -81,6 +85,15 @@ assert.match(controlsRule, /position:\s*relative/);
 assert.match(controlsRule, /z-index:\s*1/);
 assert.match(pizza, /timer-countdown-stack/);
 assert.match(pizza, /<ControlGroup>/);
+
+// Keep saved-setup forms aligned with the timer controls rather than spanning
+// nearly the full display width. These assertions cover every route using the
+// shared SharePresetPanel, including Countdown, Pomodoro, HIIT and meeting planner.
+assert.match(sharePresetPanel, /className="mx-auto max-w-2xl"/);
+assert.match(sharePresetPanel, /grid min-w-0 gap-3 sm:grid-cols-2/);
+assert.match(countdownTimer, /className="max-w-xl"\s+title="Set countdown"/);
+assert.match(eggTimer, /className="max-w-3xl"\s+title="Timer settings"/);
+assert.match(eggTimer, /maxPx: isFs \? 520 : 210/);
 
 assert.doesNotMatch(reaction, /useFitDisplayText/);
 assert.match(reaction, /data-reaction-display-region/);

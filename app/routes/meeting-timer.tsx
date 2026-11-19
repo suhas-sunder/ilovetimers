@@ -395,7 +395,7 @@ function MeetingTimerCard() {
             </PresetGroup>
 
             <SettingGroup title="Meeting settings" className="max-w-2xl">
-              <SettingRow className="flex flex-wrap items-end justify-center gap-3">
+              <div className="flex flex-wrap items-end justify-center gap-3">
                 <Field
                   className="w-full sm:max-w-[14rem]"
                   label="Custom minutes"
@@ -430,7 +430,7 @@ function MeetingTimerCard() {
                   onCheckedChange={setFinalCountdownBeeps}
                   disabled={!sound}
                 />
-              </SettingRow>
+              </div>
             </SettingGroup>
 
             <SecondaryActionRow>

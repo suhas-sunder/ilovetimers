@@ -1,0 +1,1 @@
+2026-11-19: Run a first comprehensive 132-page rendered audit inventory on the review branch only. Do not publish main or Netlify.

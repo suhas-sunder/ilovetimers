@@ -409,10 +409,11 @@ function CountUpTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-xl"
               title="Set countdown"
               description="Minutes and seconds. Seconds are clamped to 0-59."
             >
-              <SettingRow className="mx-auto max-w-3xl sm:grid-cols-[minmax(0,10rem)_minmax(0,10rem)_auto] sm:justify-center">
+              <SettingRow className="mx-auto max-w-xl grid-cols-1 sm:grid-cols-[minmax(0,11rem)_minmax(0,11rem)_auto] sm:justify-center">
                 <Field
                   label="Minutes"
                   value={minsInput}

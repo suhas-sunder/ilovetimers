@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 // app/routes/roman-numeral-clock.tsx
 import type { Route } from "./+types/roman-numeral-clock";
 import { data as json } from "react-router";
@@ -637,7 +638,11 @@ export default function RomanNumeralClockPage({
       />
 
       <ToolHero
-        display={<RomanNumeralClockCard initialNowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="Roman numeral clock">
+            <RomanNumeralClockCard initialNowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="Roman Numeral Clock"
         description="Display the current time as Roman numeral segments while keeping the normal time available for comparison."
       />

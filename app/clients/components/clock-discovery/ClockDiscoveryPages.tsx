@@ -766,13 +766,13 @@ function WorldClockDiscoveryTool({
           aria-live="off"
         >
           <div className="timer-list-grid grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            <div className="timer-list-row p-4">
+            <div className="timer-list-row p-4" style={{ containerType: "inline-size" }}>
               <div
                 data-primary-display-value
                 className="timer-list-value max-w-full break-words font-mono font-extrabold tracking-[0.02em] text-[var(--ilt-text-primary)]"
                 style={{
                   fontSize: showMilliseconds
-                    ? "clamp(1.65rem, 7vw, 3.55rem)"
+                    ? `clamp(1rem, calc(100cqw / ${Math.max(15, localTime.length) * 0.64}), 3.55rem)`
                     : "clamp(2rem, 8vw, 4.25rem)",
                 }}
               >
@@ -787,12 +787,12 @@ function WorldClockDiscoveryTool({
             </div>
 
             {rows.map((row) => (
-              <div key={row.id} className="timer-list-row p-4">
+              <div key={row.id} className="timer-list-row p-4" style={{ containerType: "inline-size" }}>
                 <div
                   className="timer-list-value max-w-full break-words font-mono font-extrabold tracking-[0.02em] text-[var(--ilt-text-primary)]"
                   style={{
                     fontSize: showMilliseconds
-                      ? "clamp(1.4rem, 6vw, 2.65rem)"
+                      ? `clamp(1rem, calc(100cqw / ${Math.max(15, row.timeText.length) * 0.64}), 2.65rem)`
                       : "clamp(1.75rem, 7vw, 3.25rem)",
                   }}
                 >

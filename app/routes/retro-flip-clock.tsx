@@ -691,7 +691,7 @@ function RetroFlipClockCard({ initialNowISO }: { initialNowISO: string }) {
           <div
             data-shell="normal"
             className="h-full w-full items-start justify-center px-2 pb-3 pt-1 sm:px-4 sm:pb-4 sm:pt-1"
-            style={{ minHeight: "clamp(12rem, 30svh, 20rem)" }}
+            style={{ minHeight: "clamp(11rem, 20svh, 15rem)" }}
           >
             <div className="w-full max-w-[1500px]">
               <div className="px-1 pb-2 pt-0 sm:px-2 sm:pb-3 sm:pt-0">

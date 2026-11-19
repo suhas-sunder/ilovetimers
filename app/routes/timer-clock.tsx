@@ -448,11 +448,12 @@ function TimerClockTool({ initialNowISO }: { initialNowISO: string }) {
                     }
                   }}
                 />
-                <div className="flex items-end justify-center sm:justify-start">
+                <div className="flex w-full justify-center sm:w-auto sm:self-end sm:justify-start">
                   <Button
                     variant="secondary"
                     disabled={status === "running"}
                     onClick={applyInputs}
+                    className="w-full sm:w-auto"
                   >
                     Apply
                   </Button>

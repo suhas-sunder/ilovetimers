@@ -23,6 +23,7 @@ jobs:
       - run: node scripts/tests/sitewide-visual-matrix.mjs
         env:
           ILT_VISUAL_INVENTORY_DIR: sitewide-inventory-evidence
+          ILT_VISUAL_ROUTE_FILTER_FILE: ai-issues/oversized-toggle-routes.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

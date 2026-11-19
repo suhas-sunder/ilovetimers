@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/digital-clock.tsx
 import type { Route } from "./+types/digital-clock";
@@ -515,7 +516,11 @@ export default function DigitalClockPage({
       />
 
       <ToolHero
-        display={<DigitalClockCard initialNowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="Digital clock">
+            <DigitalClockCard initialNowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="Digital Clock"
         description="Big, readable local time. Toggle seconds and 12/24-hour, go fullscreen, and copy the current time."
       />

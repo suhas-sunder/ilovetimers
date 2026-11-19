@@ -164,6 +164,25 @@ try {
           }
           await checkSetButtonAlignment(page, route, width);
           if (route === "/timer-stopwatch") {
+            const display = await page.locator('[data-tool="timer-stopwatch"] [data-display-stage]').evaluate((node) => {
+              const time = node.querySelector("[data-primary-display-value]");
+              const stage = node.getBoundingClientRect();
+              const digits = time?.getBoundingClientRect();
+              return {
+                height: stage.height,
+                textHeight: digits?.height ?? 0,
+                textSize: time ? parseFloat(getComputedStyle(time).fontSize) : 0,
+                clipped: !digits || digits.left < stage.left - 2 || digits.right > stage.right + 2,
+              };
+            });
+            if (width === 390) {
+              assert.ok(display.height <= 235, `Combined timer has excessive mobile display whitespace: ${JSON.stringify(display)}`);
+              assert.ok(display.textSize >= 40, `Combined timer value too small for mobile: ${JSON.stringify(display)}`);
+            }
+            assert.ok(!display.clipped, `Combined timer text clipped: ${route} ${width}/${theme}`);
+          }
+
+          if (route === "/timer-stopwatch") {
             const inputBoxes = await panel.locator(".ilt-setting-row input").evaluateAll((nodes) =>
               nodes.map((node) => {
                 const r = node.getBoundingClientRect();

@@ -438,7 +438,7 @@ function SpeedrunTimerTool() {
             <SettingGroup
               title="Split setup"
               description="Optional label for the next split you record."
-              className="order-2"
+              className="order-2 max-w-xl"
             >
               <SettingRow className="sm:grid-cols-1">
                 <Field

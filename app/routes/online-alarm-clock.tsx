@@ -382,8 +382,8 @@ function OnlineAlarmClockTool({ initialNowISO }: { initialNowISO: string }) {
           isFullscreen={isFs}
           className="timer-display-surface mt-4 flex flex-col items-center justify-center p-4 font-mono sm:p-6"
           style={{
-            minHeight: isFs ? 0 : "clamp(320px, 38vw, 430px)",
-            height: isFs ? undefined : "clamp(320px, 38vw, 430px)",
+            minHeight: isFs ? 0 : "clamp(240px, 24vw, 310px)",
+            height: isFs ? undefined : "clamp(240px, 24vw, 310px)",
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
             userSelect: "none",

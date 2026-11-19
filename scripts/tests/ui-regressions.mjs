@@ -45,6 +45,7 @@ const [
   bpm,
   relatedTools,
   rootSource,
+  footerSource,
   author,
   millisecondTimer,
   kitchenTimer,
@@ -66,6 +67,7 @@ const [
   read("app/routes/bpm-tapper.tsx"),
   read("app/clients/components/navigation/RelatedTools.tsx"),
   read("app/root.tsx"),
+  read("app/clients/components/navigation/Footer.tsx"),
   read("app/routes/author.suhas-sunder.tsx"),
   read("app/routes/millisecond-timer.tsx"),
   read("app/routes/kitchen-timer.tsx"),
@@ -129,6 +131,9 @@ assert.match(bpm, /activeRef\.current \? tapsRef\.current : \[\]/);
 assert.match(relatedTools, /pathname\.replace\(\/\\\/\+\$\//);
 assert.match(rootSource, /key=\{normalizedPathname\}/);
 assert.doesNotMatch(rootSource, /getAdSenseLoaderScript/);
+assert.equal((rootSource.match(/i💛Timers\.com/g) ?? []).length, 2, "Desktop and mobile header must show the correct brand");
+assert.equal((footerSource.match(/i💛Timers\.com/g) ?? []).length, 3, "Footer brand, copyright and site directory must match");
+assert.match(footerSource, /How i💛Timers\.com Is Made/, "Footer site link must use the visible brand");
 
 assert.match(author, /const UPDATED_DATETIME = `\$\{UPDATED_DATE\}T00:00:00Z`;/);
 assert.match(author, /dateModified: UPDATED_DATETIME/);

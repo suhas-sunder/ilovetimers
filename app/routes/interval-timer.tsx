@@ -485,6 +485,7 @@ function IntervalTimerTool() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-5xl"
               title="Interval steps"
               description="Each step has its own label and duration. Keep this generic for work, study, practice, household, or light routine timing."
             >
@@ -509,7 +510,7 @@ function IntervalTimerTool() {
                 {safeSteps.map((step, index) => (
                   <div
                     key={step.id}
-                    className="ilt-surface-muted grid gap-3 px-3 py-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(7rem,0.4fr)_minmax(7rem,0.4fr)_auto]"
+                    className="grid gap-3 px-1 py-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(7rem,0.4fr)_minmax(7rem,0.4fr)_auto] lg:items-end"
                   >
                     <Field
                       label={`Step ${index + 1} label`}
@@ -545,7 +546,7 @@ function IntervalTimerTool() {
                         })
                       }
                     />
-                    <div className="flex flex-wrap items-end gap-2">
+                    <div className="flex flex-wrap items-center justify-center gap-2 lg:self-end lg:justify-start">
                       <Btn
                         kind="ghost"
                         size="sm"

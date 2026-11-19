@@ -283,10 +283,11 @@ function ClockWithMillisecondsTool({ initialNowISO }: { initialNowISO: string })
         {!isFs ? (
           <>
             <SettingGroup
+              className="max-w-3xl"
               title="Clock settings"
               description="The display uses your browser and device clock. UTC mode formats the same instant against UTC."
             >
-              <SettingRow className="sm:grid-cols-2 lg:grid-cols-4">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                 <Toggle
                   label="24-hour time"
                   checked={use24}
@@ -307,7 +308,7 @@ function ClockWithMillisecondsTool({ initialNowISO }: { initialNowISO: string })
                   checked={showDate}
                   onCheckedChange={setShowDate}
                 />
-              </SettingRow>
+              </div>
             </SettingGroup>
 
             <SecondaryActionRow>

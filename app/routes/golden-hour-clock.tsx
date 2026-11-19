@@ -602,11 +602,11 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
     );
   }, [beep, sound]);
 
-  const headline = inGolden ? "Golden hour is happening now" : "Next change";
   const rawCountdownMs = nextEvent?.ms ?? null;
+  const headline = rawCountdownMs == null ? "No upcoming change" : inGolden ? "Golden hour is happening now" : "Next change";
   const shownCountdown =
     rawCountdownMs == null
-      ? "–"
+      ? ""
       : msToClock(Math.ceil(rawCountdownMs / 1000) * 1000);
 
   const urgent = rawCountdownMs != null ? rawCountdownMs <= 10_000 : false;
@@ -817,7 +817,7 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
             isFs ? "mx-2 sm:mx-4 flex-1" : "",
           ].join(" ")}
           style={{
-            minHeight: isFs ? 0 : 320,
+            minHeight: isFs ? 0 : rawCountdownMs == null ? "clamp(12rem, 24svh, 18rem)" : 320,
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
             userSelect: "none",
@@ -834,7 +834,7 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
             {headline}
           </div>
 
-          <span
+          {rawCountdownMs != null ? <span
             ref={timeTextRef}
             data-primary-display-value
             className={[
@@ -848,7 +848,7 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
             }}
           >
             {shownCountdown}
-          </span>
+          </span> : null}
 
           <div className="mt-3 text-sm text-slate-700">
             {nextEvent ? (

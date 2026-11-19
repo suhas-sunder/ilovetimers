@@ -1,8 +1,9 @@
-name: UI review (audit branch only)
+name: UI review (audit and release-candidate branches)
 on:
   push:
     branches:
       - audit/2026-11-19-sitewide-ui-review
+      - release/2026-11-19-ui-batch1-brand
     paths:
       - ai-issues/ui-audit-ci-trigger.txt
 

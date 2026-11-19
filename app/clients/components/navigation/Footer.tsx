@@ -16,7 +16,7 @@ export const footerSections: TimerMenuSection[] = [
       { to: "/about", label: "About" },
       { to: "/author/suhas-sunder", label: "Suhas Sunder" },
       { to: "/contact", label: "Contact" },
-      { to: "/how-ilovetimers-is-made", label: "How iLoveTimers Is Made" },
+      { to: "/how-ilovetimers-is-made", label: "How i💛Timers.com Is Made" },
       { to: "/copyright", label: "Copyright" },
       { to: "/sitemap", label: "HTML Sitemap" },
       { to: "/privacy", label: "Privacy Policy" },
@@ -340,7 +340,7 @@ export default function Footer() {
                 to="/"
                 className="cursor-pointer text-base font-semibold text-white transition hover:text-sky-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
               >
-                i<span className="text-amber-500">Love</span>Timers
+                i💛Timers.com
               </Link>
               <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-400">
                 Free time tools
@@ -413,7 +413,7 @@ export default function Footer() {
         <div className="mt-10 flex flex-col gap-2 border-t border-slate-700/60 pt-6 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
           <div>
             © {year}{" "}
-            <span className="font-semibold text-white">iLoveTimers</span>
+            <span className="font-semibold text-white">i💛Timers.com</span>
           </div>
 
           <nav

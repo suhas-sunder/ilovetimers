@@ -2175,3 +2175,19 @@
     }
   }
 }
+
+
+@layer components {
+  /* The combined timer has a mode switch above its display. Keep the normal
+     display vertically compact rather than inheriting the oversized generic
+     clock stage, while leaving its fullscreen stage unchanged. */
+  [data-tool="timer-stopwatch"] .ilt-display-stage:not([data-fullscreen-stage="true"]) {
+    min-height: clamp(12.5rem, 24vw, 19.7rem) !important;
+  }
+
+  @media (max-width: 640px) {
+    [data-tool="timer-stopwatch"] .ilt-display-stage:not([data-fullscreen-stage="true"]) {
+      min-height: clamp(11rem, 43vw, 13rem) !important;
+    }
+  }
+}

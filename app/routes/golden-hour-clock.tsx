@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/golden-hour-clock.tsx
 import type { Route } from "./+types/golden-hour-clock";
@@ -1106,7 +1107,11 @@ export default function GoldenHourClockPage({
       />
 
       <ToolHero
-        display={<GoldenHourClockCard initialNowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="Golden-hour clock">
+            <GoldenHourClockCard initialNowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="Golden Hour Clock"
         description="Find the next golden hour, sunrise, sunset, and blue-hour windows for a selected date and location."
       />

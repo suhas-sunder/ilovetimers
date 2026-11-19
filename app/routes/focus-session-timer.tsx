@@ -438,6 +438,7 @@ function FocusSessionCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-2xl"
               title="Focus settings"
               description="Keep this timer simple: one session length, optional sound, and final cues."
             >
@@ -453,7 +454,7 @@ function FocusSessionCard() {
                     setMinutes(clamp(Number(e.target.value || 1), 1, 240))
                   }
                 />
-                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:self-end lg:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                   <Toggle
                     label="Final beeps"

@@ -204,7 +204,7 @@ export function SharePresetPanel<T>({
     <SettingGroup
       className="mx-auto max-w-2xl"
       title="Share and reuse this setup"
-      description={`Share links contain selected settings in the URL. Named presets stay in this browser. You can save up to ${LOCAL_PRESET_LIMIT} presets for this tool.`}
+      description={`Shared links include selected settings. Save up to ${LOCAL_PRESET_LIMIT} presets in this browser.`}
     >
       <div className="flex flex-wrap items-center justify-center gap-2">
         <Button variant="secondary" onClick={() => void shareSetup()}>
@@ -251,7 +251,9 @@ export function SharePresetPanel<T>({
             <Button variant="secondary" onClick={savePreset} disabled={records.length >= LOCAL_PRESET_LIMIT}>
               Save preset
             </Button>
-            <Button variant="secondary" onClick={loadPreset} disabled={!selectedId || loadDisabled}>
+            {records.length > 0 ? (
+              <>
+                <Button variant="secondary" onClick={loadPreset} disabled={!selectedId || loadDisabled}>
               Load preset
             </Button>
             <Button variant="secondary" onClick={renamePreset} disabled={!selectedId}>
@@ -263,6 +265,8 @@ export function SharePresetPanel<T>({
             <Button variant="danger" onClick={deleteAllPresets} disabled={records.length === 0}>
               Delete all
             </Button>
+              </>
+            ) : null}
           </div>
           {loadDisabled ? <p className="ilt-helper-text text-center">{loadDisabledReason}</p> : null}
         </>

@@ -37,6 +37,13 @@ const CASES = [
   ["/round-timer", "Round settings"],
   ["/clock-with-milliseconds", "Clock settings"],
   ["/visual-timer", null],
+  ["/online-alarm-clock", "Alarm settings"],
+  ["/retro-flip-clock", "Flip clock settings"],
+  ["/roman-numeral-clock", "Roman clock settings"],
+  ["/unix-timestamp-converter", "Timestamp input"],
+  ["/timer-clock", "Set countdown"],
+  ["/study-stopwatch", "__no_settings__"],
+  ["/pace-timer", "Pace settings"],
 ];
 
 async function playwrightModule() {
@@ -148,21 +155,72 @@ try {
             ? page.locator("section.timer-settings-panel").first()
             : page.locator("section.timer-settings-panel")
               .filter({ has: page.getByRole("heading", { name: heading, exact: true }) }).first();
-          assert.equal(await panel.count(), 1, `Missing settings panel on ${route}`);
-          const geometry = await fieldGeometry(panel);
+          const hasSettings = heading !== "__no_settings__";
+          if (hasSettings) {
+            assert.equal(await panel.count(), 1, `Missing settings panel on ${route}`);
+          }
+          const geometry = hasSettings ? await fieldGeometry(panel) : null;
           const viewportWidth = await page.evaluate(() => document.documentElement.clientWidth);
           const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
           assert.ok(scrollWidth <= viewportWidth + 2,
             `Horizontal overflow ${route} ${width}/${theme}: ${scrollWidth} > ${viewportWidth}`);
-          assert.ok(geometry.form.width <= viewportWidth + 2,
-            `Settings width exceeds viewport: ${route} ${width}/${theme}`);
-          assert.deepEqual(geometry.stretchedToggles, [],
-            `Grid-stretched toggles on ${route} ${width}/${theme}: ${JSON.stringify(geometry.stretchedToggles)}`);
-          for (const {label, rect} of geometry.elements) {
-            assert.ok(rect.width >= 1 && rect.height >= 1 && rect.x >= -2 && rect.right <= viewportWidth + 2,
-              `Clipped control ${route} ${width}/${theme} ${label}: ${JSON.stringify(rect)}`);
+          if (geometry) {
+            assert.ok(geometry.form.width <= viewportWidth + 2,
+              `Settings width exceeds viewport: ${route} ${width}/${theme}`);
+            assert.deepEqual(geometry.stretchedToggles, [],
+              `Grid-stretched toggles on ${route} ${width}/${theme}: ${JSON.stringify(geometry.stretchedToggles)}`);
+            for (const {label, rect} of geometry.elements) {
+              assert.ok(rect.width >= 1 && rect.height >= 1 && rect.x >= -2 && rect.right <= viewportWidth + 2,
+                `Clipped control ${route} ${width}/${theme} ${label}: ${JSON.stringify(rect)}`);
+            }
           }
           await checkSetButtonAlignment(page, route, width);
+          // Route-specific mobile display assertions complement generic overflow
+          // checks: empty display-stage height and wrapped reference values are
+          // visual defects even when nothing overflows the document.
+          const stageSelectors = {
+            "/online-alarm-clock": ["[data-display-stage].timer-display-surface", 315],
+            "/retro-flip-clock": ['[data-shell="normal"]', 335],
+            "/timer-clock": ['[data-tool="timer-clock"] [data-display-stage]', 355],
+            "/study-stopwatch": ["[data-display-stage]", 310],
+            "/pace-timer": ['[data-shell="normal"][data-display-stage]', 305],
+          };
+          if (stageSelectors[route] && width === 390) {
+            const [selector, maxHeight] = stageSelectors[route];
+            const height = await page.locator(selector).first().evaluate((node) => node.getBoundingClientRect().height);
+            assert.ok(height <= maxHeight,
+              `Excessive mobile display whitespace on ${route} (${theme}): ${height}px > ${maxHeight}px`);
+          }
+          if (route === "/roman-numeral-clock") {
+            const normalTime = await page.locator(".timer-clock-context-wrap .timer-clock-context").first().evaluate((node) => {
+              const box = node.getBoundingClientRect();
+              const fontSize = parseFloat(getComputedStyle(node).fontSize);
+              return {
+                width: box.width,
+                height: box.height,
+                fontSize,
+                scrollWidth: node.scrollWidth,
+                clientWidth: node.clientWidth,
+                right: box.right,
+              };
+            });
+            assert.ok(normalTime.height <= normalTime.fontSize * 1.35,
+              `Roman clock normal AM/PM reference wrapped: ${route} ${width}/${theme}: ${JSON.stringify(normalTime)}`);
+            assert.ok(normalTime.right <= viewportWidth + 2,
+              `Roman clock reference extends beyond viewport: ${JSON.stringify(normalTime)}`);
+          }
+          if (route === "/unix-timestamp-converter") {
+            const iso = await page.locator("[data-primary-display-value]").first().evaluate((node) => {
+              const box = node.getBoundingClientRect();
+              const fontSize = parseFloat(getComputedStyle(node).fontSize);
+              return { width: box.width, height: box.height, right: box.right, fontSize, length: node.textContent?.trim().length };
+            });
+            assert.ok(iso.height <= iso.fontSize * 1.35,
+              `ISO timestamp wrapped: ${route} ${width}/${theme}: ${JSON.stringify(iso)}`);
+            assert.ok(iso.right <= viewportWidth + 2,
+              `ISO timestamp extends beyond viewport: ${JSON.stringify(iso)}`);
+          }
+
           if (route === "/timer-stopwatch") {
             const display = await page.locator('[data-tool="timer-stopwatch"] [data-display-stage]').evaluate((node) => {
               const time = node.querySelector("[data-primary-display-value]");

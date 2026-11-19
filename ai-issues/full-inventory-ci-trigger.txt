@@ -1,3 +1,5 @@
 2026-11-19: Run a first comprehensive 132-page rendered audit inventory on the review branch only. Do not publish main or Netlify.
 
 2026-11-19: Replay the 35 routes with browser-measured oversized toggles after shared Toggle intrinsic sizing. Branch-only/no production.
+
+2026-11-19 — PHASE 2 read-only full 132-route 390/768/1280/1920 × light/dark inventory. Save full screenshot evidence and geometry per page; fail on overflow, giant toggles, clipped controls and browser errors. No production deploy or main push.

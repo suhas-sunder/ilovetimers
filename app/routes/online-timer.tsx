@@ -494,10 +494,11 @@ function OnlineTimerCard() {
               </PresetGroup>
 
               <SettingGroup
+                className="max-w-3xl"
                 title="Timer settings"
                 description="Set a custom duration, then choose optional sound and loop behavior."
               >
-                <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(16rem,auto)]">
+                <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto]">
                   <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
                     <Field
                       label="Custom time"
@@ -528,12 +529,12 @@ function OnlineTimerCard() {
                       }}
                       placeholder="mm:ss or ss"
                     />
-                    <Btn kind="ghost" onClick={onSet}>
+                    <Btn kind="ghost" onClick={onSet} className="w-full sm:w-auto sm:self-end">
                       Set
                     </Btn>
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                  <div className="flex flex-wrap items-center justify-center gap-2 lg:self-end lg:justify-start">
                     <Toggle
                       label="Sound"
                       checked={sound}

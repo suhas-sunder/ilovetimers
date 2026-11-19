@@ -387,7 +387,7 @@ function MeetingCountupCard() {
             <SettingGroup
               title="Agenda helper"
               description="Optional topic label and cap for agenda splits."
-              className="order-3"
+              className="order-3 max-w-3xl"
             >
               <SettingRow className="lg:grid-cols-2">
                 <Field

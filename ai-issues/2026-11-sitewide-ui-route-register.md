@@ -7,149 +7,150 @@
 
 ## Progress
 
-- **Interim production release:** commit `18a49e9`, Netlify deployment `6aff75e31e4bbf99b9a009cc` ready. Visible branding is **i💛Timers.com** in desktop/mobile header and footer.
-- **34/132 routes** passed real rendered form/control geometry at 390/768/1280/1920 CSS px in both themes (272 cases); GitHub Actions run `44626767362` passed typecheck, build, UI regression and 132-route SSR checks.
-- **37 routes** have individually inspected source and targeted changes across release and Phase 2. Deferred locale/clock work must still pass Phase 2 browser and hydration QA.
-- **132/132 canonical routes** had mobile/desktop light-mode top-view screenshot screening; remaining full-page dark/settings/interactions are not yet certified.
-- **98 routes** do not yet have the first release's eight-case geometry acceptance. Source review or top-screen inspection alone does not make a page fully accepted.
-- **No further production pushes** until remaining page-by-page review and combined acceptance are complete.
+- **Interim production release:** commit `18a49e9` and Netlify deploy `6aff75e31e4bbf99b9a009cc` ready. Branding is **i💛Timers.com** in desktop/mobile header and footer; canonical URLs remain unchanged.
+- **All 132 nonredirect routes** passed the non-production **1,056-case structural browser matrix** at 390/768/1280/1920 CSS px, light and dark, GitHub Actions run `44629393881` (status 200, one H1, document width, clipped controls, checkbox intrinsic sizing, browser runtime errors). **This is not 132 fully-polished interactions or proof every design decision is good.**
+- **37 individually selected routes** passed 296 rendered settings/control geometry checks at four widths/two themes plus TypeScript, build, source regressions, and 132-route SSR/28 redirects in run `44628841405`.
+- **12 locale-sensitive time routes × 5 locale/timezone contexts = 60 cases** passed with **0 React hydration errors** after shared BrowserLocaleGate implementation (run `44628841405`). This fixed 44/60 failures previously observed on Phase 2 baseline.
+- **Golden Hour Clock no-event defect** found on 390/1920 screenshots: 520px dark dash and whitespace when future events were absent. Code fix and regression assertion staged in Phase 2; wait for run `44630416054` before marking verified.
+- 132 top-viewport screenshot pairs were screened previously; comprehensive human review of full-page settings, functional interactions, fullscreen, keyboard, physical zoom, real devices and ad-state transitions remains incomplete.
+- **No further production push** until final candidate has completed remaining review and passes integrated acceptance.
 
 ## Route checklist
 
 | Route | Current-pass code review | Browser visual/interaction QA | Specific change or next step |
 |---|---|---|---|
-| `/` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/1-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/10-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/12-hour-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/15-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/24-hour-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/30-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/5-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/about` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/age-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/alarm-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact duration form and grouped audio toggles. |
-| `/amrap-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/analog-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/astronomical-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/atomic-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/author/suhas-sunder` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/billable-hours-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/billable-hours-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/binary-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/binary-stopwatch` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/birthday-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/bpm-tapper` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/break-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Constrained break settings and bottom-aligned audio and looping toggles. |
-| `/breathing-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/business-days-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/chaos-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/chess-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/christmas-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/classroom-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact teacher settings; restrained minutes field and wrapped audio toggles. |
-| `/clock-with-milliseconds` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced four huge toggle grid columns with natural-width wrapped clock options. |
-| `/contact` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/cookies` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/copyright` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/countdown-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/countdown-to-date` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/current-local-time` | Adjusted on audit branch | BROWSER PENDING | Prevented large time's AM/PM wrapping and began deterministic server/client hydration fix. |
-| `/date-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/date-duration-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/days-until-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/debt-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/debt-repayment-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/digital-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/drink-water-reminder-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/egg-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/emom-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/epoch-unix-time-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/event-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/exam-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Grouped five exam cue toggles in a wrapping row; compact custom-duration input. |
-| `/fibonacci-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/focus-session-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact session-duration form with consistently aligned sound controls. |
-| `/free-online-timers` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/golden-hour-clock` | Adjusted on audit branch | BROWSER PENDING | Moved golden-hour window notes into the normal content flow to prevent overlay on countdown. |
-| `/guides` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/guides/browser-storage` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/guides/browser-timer-alarm-silent` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/guides/browser-timers-background-tabs` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/guides/daylight-saving-time-zone-conversions` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/guides/how-browser-timers-measure-time` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/guides/unix-timestamps-seconds-milliseconds-microseconds` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/hexadecimal-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/hiit-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Balanced five-column interval inputs by consolidating skip guidance. |
-| `/hours-until-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/how-ilovetimers-is-made` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/interval-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Unboxed editable step rows; aligned active/delete controls with inputs. |
-| `/kitchen-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced excessively wide duration form; responsive two fields and sound toggle. |
-| `/lab-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/meditation-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced custom duration form and grouped four sound/loop controls. |
-| `/meeting-agenda-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/meeting-count-up-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Constrained agenda helper label and topic-cap fields. |
-| `/meeting-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced stretched three-column grid with wrapped, input-aligned meeting controls. |
-| `/metronome` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/military-time-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/military-time-converter` | Adjusted on audit branch | BROWSER PENDING | Constrained the standard-time readout so PM remains beside the converted value. |
-| `/millisecond-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/milliseconds-converter` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/minimalist-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/months-between-dates-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/moon-phase-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/morse-code-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/multiple-timers` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/new-year-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/online-alarm-clock` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Reduced oversized normal-clock stage height and kept alarm controls closer to live time. |
-| `/online-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact settings width; Set button bottom-aligned with labeled input; sound/loop aligned. |
-| `/pace-timer` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Reduced unused normal-stage height without changing pace logic. |
-| `/pizza-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact two-row settings; moved reminder explanation out of unequal-height field. |
-| `/pomodoro-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Narrower settings; moved long-break guidance to group description; aligned controls. |
-| `/presentation-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/privacy` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/productivity-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/reaction-time-test` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/rest-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact duration form; sound/final-beeps/loop actions aligned. |
-| `/retro-flip-clock` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Reduced excessive flip-display stage whitespace while retaining fullscreen layout. |
-| `/roman-numeral-clock` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Made the regular AM/PM reference single-line with reduced responsive font/tracking. |
-| `/round-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact four round-duration fields and centered audio controls. |
-| `/seconds-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact seconds input and sound toggle geometry. |
-| `/silent-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Compact no-audio settings; Set button aligned with labeled input; loop control aligned. |
-| `/sitemap` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/sleep-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced cramped four-column tablet form with responsive 2/4-column settings. |
-| `/speech-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/speedcubing-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/speedrun-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced excessively wide next-split label field. |
-| `/stopwatch` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/stopwatch-with-milliseconds` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/stretch-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/study-stopwatch` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Reduced empty session-display height and increased time text fit. |
-| `/study-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Reduced oversized study settings width and bottom-aligned cue toggles with duration input. |
-| `/sunrise-sunset-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/swatch-internet-time-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/tabata-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Balanced work/rest/rounds fields; clarified classic preset in group description. |
-| `/tea-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Centered two-field steeping form and aligned sound/final beeps. |
-| `/terms` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/time-blocking-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/time-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/time-card-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/time-duration-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/time-zone-converter` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/time-zone-meeting-planner` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/timer-clock` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Increased normal countdown legibility and reduced oversized combined-clock stage. |
-| `/timer-stopwatch` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Aligned countdown Apply to the actual three input bottoms, removed asymmetrical per-field hints, compacted its setup. |
-| `/unix-timestamp-converter` | Adjusted on audit branch | GEOMETRY PASS (4 widths × 2 themes); interaction QA pending | Kept full ISO timestamp on one line; resized to remain prominent and readable. |
-| `/utc-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/video-game-challenge-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/visual-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Replaced five-column settings grid with natural-width input, display-mode chips and toggles. |
-| `/week-number-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/weekday-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/weekly-timesheet-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/weeks-between-dates-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/work-hours-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/workdays-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/workout-timer` | Adjusted on audit branch | GEOMETRY PASS; interaction QA pending | Balanced work/rest/rounds inputs by consolidating zero-rest guidance. |
-| `/world-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
-| `/world-clock-with-milliseconds` | 390/1440 light top-screen reviewed; no obvious layout defect | BROWSER PENDING | Continue dark/settings/interaction review; change only verified defects. |
+| `/` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/1-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/10-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/12-hour-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/15-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/24-hour-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/30-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/5-minute-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/about` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/age-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/alarm-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Compact duration form and grouped audio toggles. |
+| `/amrap-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/analog-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/astronomical-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/atomic-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/author/suhas-sunder` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/billable-hours-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/billable-hours-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/binary-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/binary-stopwatch` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/birthday-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/bpm-tapper` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/break-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Constrained break settings and bottom-aligned audio and looping toggles. |
+| `/breathing-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/business-days-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/chaos-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/chess-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/christmas-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/classroom-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Compact teacher settings; restrained minutes field and wrapped audio toggles. |
+| `/clock-with-milliseconds` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Replaced four huge toggle grid columns with natural-width wrapped clock options. |
+| `/contact` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/cookies` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/copyright` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/countdown-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/countdown-to-date` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/current-local-time` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Prevented large time's AM/PM wrapping and began deterministic server/client hydration fix. |
+| `/date-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/date-duration-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/days-until-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/debt-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/debt-repayment-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/digital-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/drink-water-reminder-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/egg-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/emom-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/epoch-unix-time-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/event-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/exam-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Grouped five exam cue toggles in a wrapping row; compact custom-duration input. |
+| `/fibonacci-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/focus-session-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Compact session-duration form with consistently aligned sound controls. |
+| `/free-online-timers` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/golden-hour-clock` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Moved golden-hour window notes into the normal content flow to prevent overlay on countdown. |
+| `/guides` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/browser-storage` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/browser-timer-alarm-silent` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/browser-timers-background-tabs` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/daylight-saving-time-zone-conversions` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/how-browser-timers-measure-time` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/guides/unix-timestamps-seconds-milliseconds-microseconds` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/hexadecimal-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/hiit-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Balanced five-column interval inputs by consolidating skip guidance. |
+| `/hours-until-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/how-ilovetimers-is-made` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/interval-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Unboxed editable step rows; aligned active/delete controls with inputs. |
+| `/kitchen-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Reduced excessively wide duration form; responsive two fields and sound toggle. |
+| `/lab-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/meditation-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Reduced custom duration form and grouped four sound/loop controls. |
+| `/meeting-agenda-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/meeting-count-up-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Constrained agenda helper label and topic-cap fields. |
+| `/meeting-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Replaced stretched three-column grid with wrapped, input-aligned meeting controls. |
+| `/metronome` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/military-time-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/military-time-converter` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Constrained the standard-time readout so PM remains beside the converted value. |
+| `/millisecond-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/milliseconds-converter` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/minimalist-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/months-between-dates-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/moon-phase-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/morse-code-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/multiple-timers` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/new-year-countdown` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/online-alarm-clock` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Reduced oversized normal-clock stage height and kept alarm controls closer to live time. |
+| `/online-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Compact settings width; Set button bottom-aligned with labeled input; sound/loop aligned. |
+| `/pace-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Reduced unused normal-stage height without changing pace logic. |
+| `/pizza-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Compact two-row settings; moved reminder explanation out of unequal-height field. |
+| `/pomodoro-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Narrower settings; moved long-break guidance to group description; aligned controls. |
+| `/presentation-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/privacy` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/productivity-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/reaction-time-test` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/rest-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Compact duration form; sound/final-beeps/loop actions aligned. |
+| `/retro-flip-clock` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Reduced excessive flip-display stage whitespace while retaining fullscreen layout. |
+| `/roman-numeral-clock` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Made the regular AM/PM reference single-line with reduced responsive font/tracking. |
+| `/round-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Compact four round-duration fields and centered audio controls. |
+| `/seconds-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Compact seconds input and sound toggle geometry. |
+| `/silent-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Compact no-audio settings; Set button aligned with labeled input; loop control aligned. |
+| `/sitemap` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/sleep-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Replaced cramped four-column tablet form with responsive 2/4-column settings. |
+| `/speech-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/speedcubing-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/speedrun-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Reduced excessively wide next-split label field. |
+| `/stopwatch` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/stopwatch-with-milliseconds` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/stretch-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/study-stopwatch` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Reduced empty session-display height and increased time text fit. |
+| `/study-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Reduced oversized study settings width and bottom-aligned cue toggles with duration input. |
+| `/sunrise-sunset-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/swatch-internet-time-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/tabata-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Balanced work/rest/rounds fields; clarified classic preset in group description. |
+| `/tea-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Centered two-field steeping form and aligned sound/final beeps. |
+| `/terms` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-blocking-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-card-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-duration-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-zone-converter` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/time-zone-meeting-planner` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/timer-clock` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Increased normal countdown legibility and reduced oversized combined-clock stage. |
+| `/timer-stopwatch` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Aligned countdown Apply to the actual three input bottoms, removed asymmetrical per-field hints, compacted its setup. |
+| `/unix-timestamp-converter` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Kept full ISO timestamp on one line; resized to remain prominent and readable. |
+| `/utc-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/video-game-challenge-timer` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/visual-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Replaced five-column settings grid with natural-width input, display-mode chips and toggles. |
+| `/week-number-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/weekday-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/weekly-timesheet-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/weeks-between-dates-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/work-hours-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/workdays-calculator` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/workout-timer` | Adjusted on audit branch | STRUCTURAL GEOMETRY PASS (1056 matrix); focused form geometry PASS; full interaction pending | Balanced work/rest/rounds inputs by consolidating zero-rest guidance. |
+| `/world-clock` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
+| `/world-clock-with-milliseconds` | 390/1440 light top-screen reviewed; no obvious layout defect | STRUCTURAL GEOMETRY PASS (1056 matrix); focused interaction pending | Continue dark/settings/interaction review; change only verified defects. |
 
 ## Rendered QA evidence — 2026-11-19
 

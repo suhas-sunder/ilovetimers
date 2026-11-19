@@ -438,7 +438,7 @@ function KitchenTimerTool() {
                   }}
                 />
                 <Toggle
-                  className="sm:col-span-2 lg:col-span-1 lg:self-end"
+                  className="justify-self-center sm:col-span-2 lg:col-span-1 lg:self-end lg:justify-self-start"
                   label="Sound"
                   checked={sound}
                   onCheckedChange={setSound}

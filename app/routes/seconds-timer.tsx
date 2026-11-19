@@ -351,10 +351,11 @@ function SecondsTimerTool() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-2xl"
               title="Custom seconds"
               description="Enter a whole number of seconds from 1 to 86400. Final sound uses browser audio and may require interaction."
             >
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
+              <SettingRow className="lg:grid-cols-[minmax(0,15rem)_auto] lg:justify-center">
                 <Field
                   label="Total seconds"
                   type="number"
@@ -371,7 +372,7 @@ function SecondsTimerTool() {
                     }
                   }}
                 />
-                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:self-end lg:justify-start">
                   <Toggle
                     label="Sound"
                     checked={sound}

@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 // app/routes/sunrise-sunset-clock.tsx
 import type { Route } from "./+types/sunrise-sunset-clock";
 import { data as json } from "react-router";
@@ -982,7 +983,11 @@ export default function SunriseSunsetClockPage({
       />
 
       <ToolHero
-        display={<SunriseSunsetClockCard initialNowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="Sunrise and sunset">
+            <SunriseSunsetClockCard initialNowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="Sunrise & Sunset Clock"
         description="Check today's sunrise, sunset, solar noon, and the next solar event for your selected location and time zone."
       />

@@ -1,0 +1,1 @@
+2026-11-19 — Run combined, non-production browser/layout QA for the first 18 route-level UI adjustments. Preserve branch-only review; never deploy or update main.

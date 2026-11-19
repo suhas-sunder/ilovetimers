@@ -554,8 +554,9 @@ function PomodoroCard() {
             </ControlGroup>
 
             <SettingGroup
+              className="max-w-4xl"
               title="Pomodoro settings"
-              description="Set the work block, break length, cycle count, and optional cues."
+              description="Set work, breaks, cycles, and cues. Long breaks are typically 10–20 minutes."
             >
               <SettingRow className="lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                 <div className="grid gap-3 sm:grid-cols-3">
@@ -582,7 +583,7 @@ function PomodoroCard() {
                   />
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:self-end lg:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                   <Toggle
                     label="Auto"
@@ -598,7 +599,7 @@ function PomodoroCard() {
                 </div>
               </SettingRow>
 
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)]">
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)] lg:items-end">
                 <Toggle
                   label="Long break after last cycle"
                   checked={useLongBreak}
@@ -606,7 +607,6 @@ function PomodoroCard() {
                 />
                 <Field
                   label="Long break (minutes)"
-                  hint="Typical: 10 to 20"
                   type="number"
                   min={1}
                   max={90}

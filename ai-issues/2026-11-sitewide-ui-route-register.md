@@ -160,7 +160,8 @@
 - [Audit-only run #44457680665](https://github.com/suhas-sunder/ilovetimers/actions/runs/44457680665) passed npm install, typecheck, build, UI regression source checks and 132-route SSR checks, then **failed new strict browser toggle geometry assertions**.
 - Browser-measured failures: Kitchen Sound was 326px wide at 390px viewport and 674px at 768px (intrinsic label width ~98px); Sleep Sound/Soft alarm/Dim mode were 358px each at 390px and ~353px each at 768px.
 - Repairs on audit branch: Kitchen checkbox explicitly uses content-sized grid placement; Sleep sound/dim toggles are now a single responsive flex group beside the duration field.
-- **Pending:** third exact-commit CI run must pass; inspect screenshot outputs before upgrading any route to browser-PASS.
+- **Resolved:** [audit-only run #44458294142](https://github.com/suhas-sunder/ilovetimers/actions/runs/44458294142) passed npm ci, typecheck, production build, source UI regressions, 132-route SSR structural gate and the stricter **144/144 rendered-browser geometry cases** (18 routes × 4 widths × 2 themes). Downloaded the full screenshot artifact and visually examined Kitchen/Sleep at 390 and 768 light; their sound controls now have compact intrinsic widths. No production deploy occurred.
+- **Remaining scope:** the first 18 routes now have automated layout-geometry PASS and representative manual screenshot review, but not an exhaustive manual interaction, zoom, keyboard, and all-144-screens review. Other 114 routes are still pending individual assessment; no sitewide acceptance or main publication is authorized.
 
 ## Batch closeout rule
 

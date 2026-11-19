@@ -546,10 +546,11 @@ function TeaTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-3xl"
               title="Timer settings"
               description="Set a custom steep time and choose whether the timer should make sound."
             >
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(16rem,auto)]">
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-[minmax(0,11rem)_minmax(0,11rem)_auto] lg:justify-center">
                 <Field
                   label="Minutes"
                   type="number"
@@ -574,7 +575,7 @@ function TeaTimerCard() {
                   disabled={isMatcha}
                 />
 
-                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:col-span-2 lg:col-span-1 lg:self-end lg:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                   <Toggle
                     label="Final beeps"

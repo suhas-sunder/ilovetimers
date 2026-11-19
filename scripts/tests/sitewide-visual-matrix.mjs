@@ -17,7 +17,7 @@ if (selection && routes.length !== selection.length) {
 const PORT = Number(process.env.ILT_VISUAL_INVENTORY_PORT || 3097);
 const BASE = "http://127.0.0.1:" + PORT;
 const DEST = process.env.ILT_VISUAL_INVENTORY_DIR || path.join(ROOT, "ui-inventory");
-const WIDTHS = [390, 1440];
+const WIDTHS = [390, 768, 1280, 1920];
 const THEMES = ["light", "dark"];
 const results = [];
 const fatal = [];
@@ -81,6 +81,11 @@ try {
           const response = await page.goto(BASE + route, { waitUntil: "domcontentloaded", timeout: 20000 });
           record.status = response?.status() ?? 0;
           await page.evaluate(() => document.fonts.ready);
+          if (route === "/current-local-time") {
+            // This page renders a deterministic loading shell until locale-aware
+            // time formatting hydrates in the browser. Capture the real clock.
+            await page.getByText("Loading your clock…").waitFor({ state: "hidden", timeout: 12000 });
+          }
           const dom = await page.evaluate(() => {
             const vw = document.documentElement.clientWidth;
             const controls = [...document.querySelectorAll("button, input, select, textarea, [role='button']")];
@@ -149,7 +154,7 @@ try {
               }
             }
           }
-          if (record.status !== 200 || record.h1Count !== 1 || record.overflowPx > 2 || record.runtimeErrors.length) {
+          if (record.status !== 200 || record.h1Count !== 1 || record.overflowPx > 2 || record.runtimeErrors.length || record.clippedControls.length || record.oversizedToggles.length) {
             fatal.push(record);
           }
         } catch (err) {

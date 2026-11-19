@@ -136,7 +136,7 @@ function StudyStopwatchTool() {
     deps: [shownTime, status, markers.length, fullscreen.isFullscreen],
     minPx: 48,
     maxPx: fullscreen.isFullscreen ? 520 : 460,
-    paddingAllowancePx: fullscreen.isFullscreen ? 56 : 64,
+    paddingAllowancePx: fullscreen.isFullscreen ? 56 : 32,
     initialMobileScale: 0.9,
   });
 
@@ -204,7 +204,7 @@ function StudyStopwatchTool() {
           style={{
             minHeight: fullscreen.isFullscreen
               ? 0
-              : "clamp(320px, 38vw, 440px)",
+              : "clamp(210px, 24vw, 300px)",
             marginTop: fullscreen.isFullscreen ? "3.6rem" : undefined,
             marginBottom: fullscreen.isFullscreen ? "3.6rem" : undefined,
             userSelect: "none",
@@ -238,7 +238,7 @@ function StudyStopwatchTool() {
           <span
             ref={timeRef}
             data-primary-display-value
-            className="mt-4 inline-block whitespace-nowrap font-mono font-extrabold tracking-wider text-[var(--ilt-text-primary)]"
+            className="mt-4 inline-block whitespace-nowrap font-mono font-extrabold tracking-normal text-[var(--ilt-text-primary)]"
             style={{ fontSize: displayFontSize, lineHeight: 1 }}
           >
             {shownTime}

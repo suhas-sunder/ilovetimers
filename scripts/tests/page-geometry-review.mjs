@@ -160,6 +160,10 @@ try {
               .filter({ has: page.getByRole("heading", { name: heading, exact: true }) }).first();
           const hasSettings = heading !== "__no_settings__";
           if (hasSettings) {
+            // Browser-local clocks initially render a hydration-safe loading
+            // placeholder. Wait for the mounted settings instead of treating
+            // React hydration latency as a missing page element.
+            await panel.waitFor({ state: "attached", timeout: 12_000 });
             assert.equal(await panel.count(), 1, `Missing settings panel on ${route}`);
           }
           const geometry = hasSettings ? await fieldGeometry(panel) : null;

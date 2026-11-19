@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/utc-clock.tsx
 import type { Route } from "./+types/utc-clock";
@@ -724,7 +725,11 @@ export default function UtcClockPage({
 
 
       <ToolHero
-        display={<UtcClockCard initialNowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="UTC clock">
+            <UtcClockCard initialNowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="UTC Clock"
         description="A large UTC time display with seconds, ISO timestamp, week number, copy, fullscreen, and quick timezone comparison."
       />

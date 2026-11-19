@@ -391,10 +391,11 @@ function ExamTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-4xl"
               title="Exam cues"
               description="Sound and warning cues stay secondary to the exam countdown."
             >
-              <SettingRow>
+              <SettingRow className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                 <Toggle label="Sound" checked={sound} onCheckedChange={setSound} />
                 <Toggle
                   label="Warnings"
@@ -423,7 +424,7 @@ function ExamTimerCard() {
               </SettingRow>
             </SettingGroup>
 
-            <SettingGroup title="Custom duration">
+            <SettingGroup title="Custom duration" className="max-w-xs">
               <SettingRow>
                 <Field
                   label="Custom minutes"

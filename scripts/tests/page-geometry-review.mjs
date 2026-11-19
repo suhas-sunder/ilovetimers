@@ -228,15 +228,30 @@ try {
               `AM/PM display exceeds viewport: ${route} ${width}/${theme}: ${JSON.stringify(ordinaryTime)}`);
           }
           if (route === "/golden-hour-clock") {
-            const boxes = await page.locator(".timer-display-surface").first().evaluate((node) => {
+            const clock = page.locator(".timer-display-surface").first();
+            const boxes = await clock.evaluate((node) => {
               const digit = node.querySelector("[data-primary-display-value]");
               const windowInfo = node.querySelector("[data-golden-windows]");
-              if (!digit || !windowInfo) return null;
-              const a = digit.getBoundingClientRect(), b = windowInfo.getBoundingClientRect();
-              return { digitsBottom: a.bottom, windowTop: b.top, digitWidth: a.width, windowWidth: b.width };
+              const a = digit?.getBoundingClientRect(), b = windowInfo?.getBoundingClientRect();
+              return { hasDigit: !!digit, hasWindows: !!windowInfo,
+                digitsBottom: a?.bottom ?? null, windowTop: b?.top ?? null,
+                emptyStatus: node.textContent?.includes("No upcoming events for this date and location.") };
             });
-            assert.ok(boxes && boxes.windowTop >= boxes.digitsBottom - 2,
-              `Golden Hour info overlaps countdown: ${route} ${width}/${theme}: ${JSON.stringify(boxes)}`);
+            assert.ok(boxes.hasWindows, `Golden Hour time windows missing: ${route} ${width}/${theme}`);
+            if (boxes.hasDigit) {
+              assert.ok(boxes.windowTop >= boxes.digitsBottom - 2,
+                `Golden Hour info overlaps countdown: ${route} ${width}/${theme}: ${JSON.stringify(boxes)}`);
+            } else {
+              assert.ok(boxes.emptyStatus, `Golden Hour missing no-event explanation: ${JSON.stringify(boxes)}`);
+            }
+            if (width === 390) {
+              // Exercise a known past date: no upcoming event must not render
+              // a 520px en dash or leave the user staring at a huge black bar.
+              await page.locator('section.timer-settings-panel input[type="date"]').first().fill("2020-01-01");
+              await page.getByText("No upcoming events for this date and location.").first().waitFor();
+              assert.equal(await clock.locator("[data-primary-display-value]").count(), 0,
+                `Golden Hour rendered oversized countdown marker with no event (${theme})`);
+            }
           }
 
           if (route === "/unix-timestamp-converter") {

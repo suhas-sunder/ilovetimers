@@ -111,8 +111,18 @@ try {
               .map((label) => {
                 const s = getComputedStyle(label);
                 const children = [...label.children];
+                // Labels commonly contain direct text nodes after the checkbox.
+                // Element-only measurement falsely categorizes ordinary 51–61px
+                // controls as oversized because it ignores that text entirely.
+                const directTextWidth = [...label.childNodes]
+                  .filter((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+                  .reduce((width, node) => {
+                    const range = document.createRange();
+                    range.selectNodeContents(node);
+                    return width + range.getBoundingClientRect().width;
+                  }, 0);
                 const intrinsic = children.reduce((a, child) => a + child.getBoundingClientRect().width, 0) +
-                  parseFloat(s.paddingLeft || "0") + parseFloat(s.paddingRight || "0") +
+                  directTextWidth + parseFloat(s.paddingLeft || "0") + parseFloat(s.paddingRight || "0") +
                   (parseFloat(s.columnGap) || 0) * Math.max(0, children.length - 1);
                 const actual = label.getBoundingClientRect().width;
                 return { label: label.innerText?.trim().slice(0, 50) || "toggle", width: Math.round(actual), extra: Math.round(actual - intrinsic) };

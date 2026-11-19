@@ -13,3 +13,5 @@
 2026-11-19 — OWNER-AUTHORIZED interim main candidate: last green 34-route checkpoint + i💛Timers.com header/footer branding. Run one non-production typecheck/build, 132-route SSR checks, and 272 real browser geometry captures before single production push. Do not use latest unverified 19 audit commits.
 
 2026-11-19 — PHASE 2 (no production): validate clock/locale follow-up on fresh branded release base. Browser-local clocks must hydrate from static placeholder; wait for mounted settings before geometry. Run 37-route visual geometry + locale-hydration regression matrix; never push main until completion.
+
+2026-11-19 — PHASE 2 controlled hydration repair: shared BrowserLocaleGate defers 11 browser-dependent clock widgets while retaining prerendered metadata/SEO. Run 12 routes × 5 locales (60 cases) and geometry/build checks in audit only. Verify no hydration errors, maintain controls after mount; no main push.

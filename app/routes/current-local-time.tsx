@@ -106,11 +106,12 @@ function safeTimeZone() {
   }
 }
 
-function formatClock(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
+function formatClock(d: Date, opts: { use24: boolean; showSeconds: boolean }, stable = false) {
   const { use24, showSeconds } = opts;
 
   try {
-    const fmt = new Intl.DateTimeFormat(undefined, {
+    const fmt = new Intl.DateTimeFormat(stable ? "en-US" : undefined, {
+      timeZone: stable ? "UTC" : undefined,
       hour: "2-digit",
       minute: "2-digit",
       second: showSeconds ? "2-digit" : undefined,
@@ -122,9 +123,9 @@ function formatClock(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
       .replace(/\u200e/g, "")
       .trim();
   } catch {
-    const h = d.getHours();
-    const m = d.getMinutes();
-    const s = d.getSeconds();
+    const h = stable ? d.getUTCHours() : d.getHours();
+    const m = stable ? d.getUTCMinutes() : d.getMinutes();
+    const s = stable ? d.getUTCSeconds() : d.getSeconds();
 
     const mm = String(m).padStart(2, "0");
     const ss = String(s).padStart(2, "0");
@@ -141,9 +142,10 @@ function formatClock(d: Date, opts: { use24: boolean; showSeconds: boolean }) {
   }
 }
 
-function formatDateLine(d: Date) {
+function formatDateLine(d: Date, stable = false) {
   try {
-    return new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat(stable ? "en-US" : undefined, {
+      timeZone: stable ? "UTC" : undefined,
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -153,7 +155,7 @@ function formatDateLine(d: Date) {
       .replace(/\u200e/g, "")
       .trim();
   } catch {
-    return d.toDateString();
+    return stable ? d.toUTCString() : d.toDateString();
   }
 }
 
@@ -180,9 +182,10 @@ function formatTimeInZone(
   d: Date,
   timeZone: string,
   opts: { use24: boolean; showSeconds: boolean },
+  stable = false,
 ) {
   try {
-    const fmt = new Intl.DateTimeFormat(undefined, {
+    const fmt = new Intl.DateTimeFormat(stable ? "en-US" : undefined, {
       timeZone,
       hour: "2-digit",
       minute: "2-digit",
@@ -342,9 +345,10 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
     textRef: timeTextRef,
     deps: [activeTimeText, isFs, use24, showSeconds, activeZoneKey],
     minPx: 54,
-    maxPx: isFs ? 520 : 520,
+    maxPx: isFs ? 520 : 320,
     paddingAllowancePx: isFs ? 64 : 72,
-    initialScale: isFs ? 1 : 0.95,
+    initialScale: isFs ? 1 : 0.8,
+    initialMobileScale: isFs ? 1 : 0.76,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -447,11 +451,12 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
             data-primary-display-value
             className={[
               "timer-clock-value mt-2 inline-block text-center font-mono font-extrabold",
-              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-normal whitespace-nowrap",
             ].join(" ")}
             style={{
               fontSize: fitFontPx,
               lineHeight: "1",
+              whiteSpace: "nowrap",
               transform: "translateZ(0)",
             }}
           >
@@ -572,6 +577,25 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
 /* =========================================================
    PAGE
 ========================================================= */
+// Prerendered HTML cannot know the visitor's locale or timezone. Keep
+// prerender and the first hydration frame identical, then mount the clock
+// with browser-local formatting. Do not display a fabricated UTC "local" time.
+function BrowserLocalClock({ initialNowISO }: { initialNowISO: string }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return (
+      <div className="ilt-tool-frame flex min-h-[clamp(12rem,24svh,19rem)] w-full flex-col items-center justify-center gap-2 text-center" aria-busy="true">
+        <div className="text-sm font-semibold text-[var(--ilt-text-muted)]">Local time</div>
+        <div className="text-xl font-semibold text-[var(--ilt-text-secondary)]">Loading your clock…</div>
+        <button type="button" disabled className="mt-2 min-h-11 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-4 text-sm text-[var(--ilt-text-muted)] opacity-60">Copy time (loading)</button>
+      </div>
+    );
+  }
+  return <CurrentLocalTimeCard initialNowISO={initialNowISO} />;
+}
+
 export default function CurrentLocalTimePage({
   loaderData: { nowISO },
 }: Route.ComponentProps) {
@@ -616,7 +640,7 @@ export default function CurrentLocalTimePage({
 
 
       <ToolHero
-        display={<CurrentLocalTimeCard initialNowISO={nowISO} />}
+        display={<BrowserLocalClock initialNowISO={nowISO} />}
         title="Current Local Time"
         description="A large local time display with date, timezone, seconds, copy, fullscreen, and compact comparison controls."
       />

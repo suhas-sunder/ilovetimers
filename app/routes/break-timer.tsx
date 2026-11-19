@@ -429,6 +429,7 @@ function BreakTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-3xl"
               title="Break settings"
               description="Common breaks: 1 to 3 minutes for a quick reset, 5 minutes for a short break, and 10 to 15 minutes for a longer break."
             >
@@ -444,7 +445,7 @@ function BreakTimerCard() {
                     setMinutes(clamp(Number(e.target.value || 1), 1, 180))
                   }
                 />
-                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:self-end lg:justify-start">
                   <Toggle checked={loop} onCheckedChange={setLoop} label="Loop" />
                   <Toggle checked={sound} onCheckedChange={setSound} label="Sound" />
                   <Toggle

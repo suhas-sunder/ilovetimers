@@ -175,7 +175,7 @@ function UnixTimestampConverterTool({
         </div>
         <div
           data-primary-display-value
-          className="timer-result-value mt-3 max-w-full whitespace-nowrap font-mono text-[clamp(0.9rem,3vw,2.6rem)] font-extrabold leading-tight tracking-tight text-[var(--ilt-text-primary)]"
+          className="timer-result-value mt-3 max-w-full whitespace-nowrap font-mono text-[clamp(0.9rem,4.8vw,2.6rem)] font-extrabold leading-tight tracking-tight text-[var(--ilt-text-primary)]"
         >
           {activeSummary ? activeSummary.iso : "Invalid timestamp"}
         </div>

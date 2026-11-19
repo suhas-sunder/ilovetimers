@@ -11,3 +11,5 @@
 2026-11-19 — Sixth audit-only browser run after source edits to online alarm, Retro Flip, Roman, Unix Timestamp, Timer Clock, Study Stopwatch, and Pace. Verify 34 routes × 4 widths × 2 themes including phone display heights and one-line time/ISO values.
 
 2026-11-19 — OWNER-AUTHORIZED interim main candidate: last green 34-route checkpoint + i💛Timers.com header/footer branding. Run one non-production typecheck/build, 132-route SSR checks, and 272 real browser geometry captures before single production push. Do not use latest unverified 19 audit commits.
+
+2026-11-19 — PHASE 2 (no production): validate clock/locale follow-up on fresh branded release base. Browser-local clocks must hydrate from static placeholder; wait for mounted settings before geometry. Run 37-route visual geometry + locale-hydration regression matrix; never push main until completion.

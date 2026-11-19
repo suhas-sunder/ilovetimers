@@ -604,8 +604,9 @@ function PizzaTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-4xl"
               title="Timer settings"
-              description="Set the duration, cooking method, check reminder, and sound behavior."
+              description="Set duration, method, sound, and when a check reminder should occur before the timer ends."
             >
               <SettingRow className="lg:grid-cols-3">
 
@@ -651,7 +652,6 @@ function PizzaTimerCard() {
 
                 <Field
                   label="Check minutes left"
-                  hint="Reminder point before the timer ends."
                   type="number"
                   min={0}
                   max={30}

@@ -589,6 +589,7 @@ function BrowserLocalClock({ initialNowISO }: { initialNowISO: string }) {
       <div className="ilt-tool-frame flex min-h-[clamp(12rem,24svh,19rem)] w-full flex-col items-center justify-center gap-2 text-center" aria-busy="true">
         <div className="text-sm font-semibold text-[var(--ilt-text-muted)]">Local time</div>
         <div className="text-xl font-semibold text-[var(--ilt-text-secondary)]">Loading your clock…</div>
+        <button type="button" disabled className="mt-2 min-h-11 rounded-[var(--ilt-radius-control)] bg-[var(--ilt-button-secondary-bg)] px-4 text-sm text-[var(--ilt-text-muted)] opacity-60">Copy time (loading)</button>
       </div>
     );
   }

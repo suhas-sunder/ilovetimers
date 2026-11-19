@@ -44,6 +44,9 @@ const CASES = [
   ["/timer-clock", "Set countdown"],
   ["/study-stopwatch", "__no_settings__"],
   ["/pace-timer", "Pace settings"],
+  ["/current-local-time", "Clock settings"],
+  ["/military-time-converter", "__no_settings__"],
+  ["/golden-hour-clock", "Golden hour settings"],
 ];
 
 async function playwrightModule() {
@@ -209,6 +212,29 @@ try {
             assert.ok(normalTime.right <= viewportWidth + 2,
               `Roman clock reference extends beyond viewport: ${JSON.stringify(normalTime)}`);
           }
+          if (["/current-local-time", "/military-time-converter"].includes(route)) {
+            const ordinaryTime = await page.locator("[data-primary-display-value]").first().evaluate((node) => {
+              const b = node.getBoundingClientRect();
+              const font = parseFloat(getComputedStyle(node).fontSize);
+              return { height: b.height, width: b.width, right: b.right, font };
+            });
+            assert.ok(ordinaryTime.height <= ordinaryTime.font * 1.3,
+              `AM/PM display wrapped: ${route} ${width}/${theme}: ${JSON.stringify(ordinaryTime)}`);
+            assert.ok(ordinaryTime.right <= viewportWidth + 2,
+              `AM/PM display exceeds viewport: ${route} ${width}/${theme}: ${JSON.stringify(ordinaryTime)}`);
+          }
+          if (route === "/golden-hour-clock") {
+            const boxes = await page.locator(".timer-display-surface").first().evaluate((node) => {
+              const digit = node.querySelector("[data-primary-display-value]");
+              const windowInfo = node.querySelector("[data-golden-windows]");
+              if (!digit || !windowInfo) return null;
+              const a = digit.getBoundingClientRect(), b = windowInfo.getBoundingClientRect();
+              return { digitsBottom: a.bottom, windowTop: b.top, digitWidth: a.width, windowWidth: b.width };
+            });
+            assert.ok(boxes && boxes.windowTop >= boxes.digitsBottom - 2,
+              `Golden Hour info overlaps countdown: ${route} ${width}/${theme}: ${JSON.stringify(boxes)}`);
+          }
+
           if (route === "/unix-timestamp-converter") {
             const iso = await page.locator("[data-primary-display-value]").first().evaluate((node) => {
               const box = node.getBoundingClientRect();

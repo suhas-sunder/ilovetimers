@@ -202,6 +202,7 @@ export function SharePresetPanel<T>({
 
   return (
     <SettingGroup
+      className="mx-auto max-w-2xl"
       title="Share and reuse this setup"
       description={`Share links contain selected settings in the URL. Named presets stay in this browser. You can save up to ${LOCAL_PRESET_LIMIT} presets for this tool.`}
     >
@@ -223,7 +224,7 @@ export function SharePresetPanel<T>({
 
       {schema.storageKey ? (
         <>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2">
             <Field
               label="Preset name"
               value={name}

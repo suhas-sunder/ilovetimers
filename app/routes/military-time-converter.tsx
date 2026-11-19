@@ -358,9 +358,10 @@ function MilitaryTimeConverterCard() {
     textRef: displayTextRef,
     deps: [shownValue, shownLabel, isFs, activeField],
     minPx: 44,
-    maxPx: isFs ? 520 : 520,
+    maxPx: isFs ? 520 : 320,
     paddingAllowancePx: isFs ? 72 : 80,
-    initialScale: 0.93,
+    initialScale: isFs ? 0.93 : 0.72,
+    initialMobileScale: isFs ? 0.93 : 0.7,
   });
 
   const clearToastTimer = useCallback(() => {
@@ -600,11 +601,12 @@ function MilitaryTimeConverterCard() {
               className={[
                 "timer-result-value",
                 "inline-block text-center font-mono font-extrabold tabular-nums",
-                isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+                isFs ? "tracking-wide sm:tracking-widest" : "tracking-normal whitespace-nowrap",
               ].join(" ")}
               style={{
                 fontSize: fitFontPx,
                 lineHeight: "1",
+                whiteSpace: "nowrap",
                 transform: "translateZ(0)",
                 maxWidth: "100%",
                 minWidth: isFs ? `${shownMinCh}ch` : undefined,

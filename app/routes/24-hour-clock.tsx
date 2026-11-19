@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 import type { Route } from "./+types/24-hour-clock";
 import { data as json } from "react-router";
 import {
@@ -377,7 +378,11 @@ export default function TwentyFourHourClockPage({
       />
 
       <ToolHero
-        display={<TwentyFourHourClockTool initialNowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="24-hour clock">
+            <TwentyFourHourClockTool initialNowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="24 Hour Clock"
         description="See the current time in 24-hour format with a large live display, seconds and date toggles, local or UTC mode, copy, and fullscreen support."
       />

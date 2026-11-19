@@ -133,6 +133,7 @@ export function ToolFrame({
   isFullscreen = false,
   className,
   tabIndex = 0,
+  onKeyDown,
   ...props
 }: ToolFrameProps) {
   return (
@@ -149,6 +150,17 @@ export function ToolFrame({
         className,
       )}
       {...props}
+      onKeyDown={(event) => {
+        // Space activates a focused native control. Do not also dispatch the
+        // enclosing tool's start/pause shortcut or cancel that native action.
+        if (
+          event.defaultPrevented ||
+          (event.key === " " &&
+            event.target instanceof Element &&
+            event.target.closest("button, input, select, textarea, summary, a[href]"))
+        ) return;
+        onKeyDown?.(event);
+      }}
     />
   );
 }

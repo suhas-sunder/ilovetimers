@@ -307,8 +307,9 @@ function RomanNumeralClockCard({ initialNowISO }: { initialNowISO: string }) {
     textRef: timeSpanRef,
     deps: [timeText, isFs, use24, showSeconds],
     minPx: 18,
-    maxPx: isFs ? 64 : 36,
-    paddingAllowancePx: isFs ? 40 : 56,
+    maxPx: isFs ? 64 : 30,
+    paddingAllowancePx: isFs ? 40 : 72,
+    initialMobileScale: isFs ? 1 : 0.8,
   });
 
   const statusLine = `${tz} · ${use24 ? "24-hour" : "12-hour"} · ${
@@ -495,13 +496,13 @@ function RomanNumeralClockCard({ initialNowISO }: { initialNowISO: string }) {
           >
             <span
               ref={timeSpanRef}
-              className="timer-clock-context text-center font-mono font-extrabold tracking-widest text-slate-800"
+              className="timer-clock-context text-center font-mono font-extrabold tracking-normal text-slate-800"
               style={{
                 fontSize: timeFontPx,
                 lineHeight: "1.1",
-              maxWidth: "100%",
-              overflowWrap: "anywhere",
-              whiteSpace: isFs ? "nowrap" : "normal",
+                maxWidth: "100%",
+                overflowWrap: "normal",
+                whiteSpace: "nowrap",
               }}
               aria-label={timeText}
             >

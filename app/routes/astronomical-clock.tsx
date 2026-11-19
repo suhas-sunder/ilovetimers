@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/astronomical-clock.tsx
 import type { Route } from "./+types/astronomical-clock";
@@ -870,7 +871,11 @@ export default function AstronomicalClockPage({
       />
 
       <ToolHero
-        display={<AstronomicalClockCard initialNowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="Astronomical clock">
+            <AstronomicalClockCard initialNowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="Astronomical Clock (Sun, Moon, Sunrise, Sunset)"
         description="Live local time for the selected time zone, with sunrise and sunset plus a moon phase readout. Fullscreen supported."
       />

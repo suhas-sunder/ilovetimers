@@ -5,6 +5,7 @@ This file is durable repo guidance for future Codex and agent passes. Keep it cu
 ## 1. Project identity
 
 - iLoveTimers is a simple, minimal online timer website.
+- Public-facing visual brand text is `i💛Timers.com` in the desktop header, mobile navigation header, and footer (including copyright); the actual canonical domain remains `https://www.ilovetimers.com`. Do not replace canonical URLs or metadata identifiers with emoji.
 - The product exists to give users clean, accurate, clutter-free timing tools that are ready to use immediately.
 - The site should prioritize practical utility over content, marketing, decoration, or generic SaaS-style presentation.
 - The core promise is: large readable timers, simple controls, accurate timing, fullscreen support, and no unnecessary interruptions.

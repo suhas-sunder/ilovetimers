@@ -95,6 +95,14 @@ assert.match(sharePresetPanel, /records\.length > 0 \? \(/);
 assert.match(countdownTimer, /className="max-w-xl"\s+title="Set countdown"/);
 assert.match(eggTimer, /className="max-w-3xl"\s+title="Timer settings"/);
 assert.match(eggTimer, /maxPx: isFs \? 520 : 210/);
+// Assert the right layout mechanism: the Apply grid item itself must
+// align to the bottoms of the labeled fields, not its children internally.
+for (const [name, source] of [["countdown", countdownTimer], ["timer clock", timerClock]]) {
+  assert.match(source, /className="flex w-full justify-center sm:w-auto sm:self-end sm:justify-start"/, `${name} Apply grid cell must be bottom-aligned`);
+  assert.match(source, /className="w-full sm:w-auto"/, `${name} Apply button must fit mobile layout`);
+}
+assert.doesNotMatch(countdownTimer, /hint="0-59"/, "Duplicate seconds hint reintroduces uneven field heights");
+
 
 assert.doesNotMatch(reaction, /useFitDisplayText/);
 assert.match(reaction, /data-reaction-display-region/);

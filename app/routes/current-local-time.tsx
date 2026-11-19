@@ -342,9 +342,10 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
     textRef: timeTextRef,
     deps: [activeTimeText, isFs, use24, showSeconds, activeZoneKey],
     minPx: 54,
-    maxPx: isFs ? 520 : 520,
+    maxPx: isFs ? 520 : 320,
     paddingAllowancePx: isFs ? 64 : 72,
-    initialScale: isFs ? 1 : 0.95,
+    initialScale: isFs ? 1 : 0.8,
+    initialMobileScale: isFs ? 1 : 0.76,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -447,11 +448,12 @@ function CurrentLocalTimeCard({ initialNowISO }: { initialNowISO: string }) {
             data-primary-display-value
             className={[
               "timer-clock-value mt-2 inline-block text-center font-mono font-extrabold",
-              isFs ? "tracking-wide sm:tracking-widest" : "tracking-widest",
+              isFs ? "tracking-wide sm:tracking-widest" : "tracking-normal whitespace-nowrap",
             ].join(" ")}
             style={{
               fontSize: fitFontPx,
               lineHeight: "1",
+              whiteSpace: "nowrap",
               transform: "translateZ(0)",
             }}
           >

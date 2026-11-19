@@ -178,20 +178,6 @@ function isoWeekNumber(date: Date) {
   return 1 + Math.round(diffMs / (7 * 24 * 60 * 60 * 1000));
 }
 
-// ISO week based on UTC fields so the static server and the first client
-// hydration render agree even when the visitor is in a different timezone.
-function isoWeekNumberUTC(date: Date) {
-  const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-  d.setUTCHours(0, 0, 0, 0);
-  const day = (d.getUTCDay() + 6) % 7;
-  d.setUTCDate(d.getUTCDate() - day + 3);
-  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
-  firstThursday.setUTCHours(0, 0, 0, 0);
-  const firstDay = (firstThursday.getUTCDay() + 6) % 7;
-  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDay + 3);
-  return 1 + Math.round((d.getTime() - firstThursday.getTime()) / (7 * 24 * 60 * 60 * 1000));
-}
-
 function formatTimeInZone(
   d: Date,
   timeZone: string,

@@ -79,7 +79,7 @@ async function checkSetButtonAlignment(page, route, width) {
   const button = await form.getByRole("button", { name: "Set", exact: true }).boundingBox();
   assert.ok(input && button, `Missing Set/input on ${route} ${width}`);
   if (width >= 640) {
-    assert.ok(Math.abs(input.bottom - button.bottom) <= 4,
+    assert.ok(Math.abs((input.y + input.height) - (button.y + button.height)) <= 4,
       `Set not aligned with input: ${route} ${width}: ${JSON.stringify({input, button})}`);
   } else {
     assert.ok(button.y >= input.y + input.height,

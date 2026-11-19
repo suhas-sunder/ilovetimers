@@ -600,7 +600,7 @@ function RetroFlipClockCard({ initialNowISO }: { initialNowISO: string }) {
             isFs ? "mx-0 flex-1 rounded-none border-0" : "",
           ].join(" ")}
           style={{
-            minHeight: isFs ? 0 : 460,
+            minHeight: isFs ? 0 : 220,
             marginTop: isFs ? "3.6rem" : undefined,
             marginBottom: isFs ? "3.6rem" : undefined,
           }}
@@ -691,7 +691,7 @@ function RetroFlipClockCard({ initialNowISO }: { initialNowISO: string }) {
           <div
             data-shell="normal"
             className="h-full w-full items-start justify-center px-2 pb-3 pt-1 sm:px-4 sm:pb-4 sm:pt-1"
-            style={{ minHeight: "clamp(300px, 52svh, 620px)" }}
+            style={{ minHeight: "clamp(12rem, 30svh, 20rem)" }}
           >
             <div className="w-full max-w-[1500px]">
               <div className="px-1 pb-2 pt-0 sm:px-2 sm:pb-3 sm:pt-0">

@@ -490,10 +490,11 @@ function SilentTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-2xl"
               title="Silent timer settings"
               description="This timer never creates completion or ticking audio."
             >
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(16rem,auto)]">
+              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_auto]">
                 <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
                   <Field
                     label="Custom time"
@@ -512,11 +513,11 @@ function SilentTimerCard() {
                     }}
                     placeholder="mm:ss or ss"
                   />
-                  <Btn kind="ghost" onClick={onSet}>
+                  <Btn kind="ghost" onClick={onSet} className="w-full sm:w-auto sm:self-end">
                     Set
                   </Btn>
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:self-end lg:justify-start">
                   <Toggle label="Loop" checked={loop} onCheckedChange={setLoop} />
                 </div>
 

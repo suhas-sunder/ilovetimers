@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 import Stage4RouteContent from "~/clients/components/content/Stage4RouteContent";
 // app/routes/world-clock.tsx
 import type { Route } from "./+types/world-clock";
@@ -535,7 +536,11 @@ export default function WorldClockPage({
       />
 
       <ToolHero
-        display={<WorldClockCard initialNowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="World clock">
+            <WorldClockCard initialNowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="World Clock"
         description="Track current time across selected cities with search, 12/24-hour mode, seconds, copy, reset, clear, and fullscreen."
       />

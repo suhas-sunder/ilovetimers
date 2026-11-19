@@ -627,8 +627,9 @@ function TabataTimerCard() {
             </div>
 
             <SettingGroup
+              className="max-w-3xl"
               title="Tabata settings"
-              description="Keep the 20/10 rhythm clear, or adjust work, rest, rounds, and cues."
+              description="Classic Tabata uses 20 seconds work, 10 seconds rest, and 8 rounds. Adjust any setting below."
             >
               <SettingRow className="sm:grid-cols-3">
                 <Field
@@ -644,7 +645,6 @@ function TabataTimerCard() {
                 />
                 <Field
                   label="Rest seconds"
-                  hint="Classic Tabata rest is 10 seconds."
                   type="number"
                   min={0}
                   max={600}

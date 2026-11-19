@@ -459,8 +459,8 @@ function MeditationTimerCard() {
               </PresetGroup>
             </div>
 
-            <SettingGroup title="Settings">
-              <SettingRow className="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+            <SettingGroup title="Settings" className="max-w-4xl">
+              <SettingRow className="sm:grid-cols-2 lg:grid-cols-[minmax(0,12rem)_minmax(0,12rem)_minmax(0,1fr)] lg:justify-center">
                 <Field
                   label="Custom minutes"
                   type="number"
@@ -483,7 +483,7 @@ function MeditationTimerCard() {
                     setSeconds(minutesPart * 60 + s);
                   }}
                 />
-                <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:col-span-2 lg:col-span-1 lg:self-end lg:justify-start">
                   <Toggle checked={sound} onCheckedChange={setSound} label="Sound" title="Toggle sound on/off" />
                   <Toggle checked={finalCountdownBeeps} onCheckedChange={setFinalCountdownBeeps} disabled={!sound} label="Final beeps" title="Optional soft beeps in the last 5 seconds" />
                   <Toggle checked={endChime} onCheckedChange={setEndChime} disabled={!sound} label="End chime" />

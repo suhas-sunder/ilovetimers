@@ -1,9 +1,9 @@
-name: UI review (audit and release-candidate branches)
+name: UI review (Phase 2 audit branch)
 on:
   push:
     branches:
       - audit/2026-11-19-sitewide-ui-review
-      - release/2026-11-19-ui-batch1-brand
+      - audit/2026-11-19-sitewide-ui-phase2
     paths:
       - ai-issues/ui-audit-ci-trigger.txt
 
@@ -27,6 +27,16 @@ jobs:
       - run: npm run test:page-geometry
         env:
           ILT_UI_CAPTURE_DIR: ui-review-screenshots
+      - run: node scripts/tests/locale-hydration-ui.mjs
+        env:
+          ILT_HYDRATION_REPORT_DIR: hydration-ui-report
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: locale-hydration-report
+          path: hydration-ui-report
+          if-no-files-found: warn
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         if: always()
         with:

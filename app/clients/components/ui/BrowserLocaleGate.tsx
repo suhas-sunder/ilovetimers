@@ -31,7 +31,7 @@ export default function BrowserLocaleGate({
         {label}
       </span>
       <span className="text-lg font-semibold text-[var(--ilt-text-secondary)]">
-        Loading your clock…
+        Preparing time display…
       </span>
       <button
         type="button"

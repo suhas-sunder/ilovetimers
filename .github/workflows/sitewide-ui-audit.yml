@@ -30,6 +30,7 @@ jobs:
       - run: node scripts/tests/locale-hydration-ui.mjs
         env:
           ILT_HYDRATION_REPORT_DIR: hydration-ui-report
+      - run: node scripts/tests/sitewide-ui-interactions.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

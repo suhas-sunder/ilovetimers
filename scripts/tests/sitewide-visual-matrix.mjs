@@ -5,7 +5,15 @@ import { spawnStaticPreview } from "./preview-process.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const manifest = JSON.parse(readFileSync(path.join(ROOT, "docs/route-architecture-manifest.json"), "utf8"));
-const routes = manifest.filter((item) => item.indexability !== "redirect").map((item) => item.sourcePath);
+const allRoutes = manifest.filter((item) => item.indexability !== "redirect").map((item) => item.sourcePath);
+const selectionFile = process.env.ILT_VISUAL_ROUTE_FILTER_FILE;
+const selection = selectionFile
+  ? JSON.parse(readFileSync(path.join(ROOT, selectionFile), "utf8"))
+  : null;
+const routes = selection ? allRoutes.filter((route) => selection.includes(route)) : allRoutes;
+if (selection && routes.length !== selection.length) {
+  throw new Error("Route filter has an unknown or duplicate canonical path.");
+}
 const PORT = Number(process.env.ILT_VISUAL_INVENTORY_PORT || 3097);
 const BASE = "http://127.0.0.1:" + PORT;
 const DEST = process.env.ILT_VISUAL_INVENTORY_DIR || path.join(ROOT, "ui-inventory");

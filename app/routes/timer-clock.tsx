@@ -284,8 +284,8 @@ function TimerClockTool({ initialNowISO }: { initialNowISO: string }) {
     textRef: countdownRef,
     deps: [shownCountdown, shownLocalTime, statusLabel, fullscreen.isFullscreen],
     minPx: 44,
-    maxPx: fullscreen.isFullscreen ? 380 : 190,
-    paddingAllowancePx: fullscreen.isFullscreen ? 64 : 72,
+    maxPx: fullscreen.isFullscreen ? 380 : 230,
+    paddingAllowancePx: fullscreen.isFullscreen ? 64 : 36,
     initialMobileScale: 0.86,
   });
 
@@ -341,7 +341,7 @@ function TimerClockTool({ initialNowISO }: { initialNowISO: string }) {
           style={{
             minHeight: fullscreen.isFullscreen
               ? 0
-              : "clamp(340px, 42vw, 500px)",
+              : "clamp(225px, 28vw, 330px)",
             marginTop: fullscreen.isFullscreen ? "3.6rem" : undefined,
             marginBottom: fullscreen.isFullscreen ? "3.6rem" : undefined,
             overflow: "hidden",
@@ -361,7 +361,7 @@ function TimerClockTool({ initialNowISO }: { initialNowISO: string }) {
           <span
             ref={countdownRef}
             data-primary-display-value
-            className="mt-2 inline-block whitespace-nowrap font-mono font-extrabold tracking-wider text-[var(--ilt-text-primary)]"
+            className="mt-2 inline-block whitespace-nowrap font-mono font-extrabold tracking-normal text-[var(--ilt-text-primary)]"
             style={{ fontSize: countdownFontSize, lineHeight: 1 }}
           >
             {shownCountdown}

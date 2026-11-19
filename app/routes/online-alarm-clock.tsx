@@ -1,3 +1,4 @@
+import BrowserLocaleGate from "~/clients/components/ui/BrowserLocaleGate";
 import type { Route } from "./+types/online-alarm-clock";
 import { data as json } from "react-router";
 import {
@@ -540,7 +541,11 @@ export default function OnlineAlarmClockPage({
       />
 
       <ToolHero
-        display={<OnlineAlarmClockTool initialNowISO={nowISO} />}
+        display={
+          <BrowserLocaleGate label="Alarm clock">
+            <OnlineAlarmClockTool initialNowISO={nowISO} />
+          </BrowserLocaleGate>
+        }
         title="Online Alarm Clock"
         description="Set a browser alarm for a time of day, see the next occurrence clearly, test the sound, and keep the alarm clock fullscreen when useful."
       />

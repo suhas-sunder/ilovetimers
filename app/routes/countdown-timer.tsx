@@ -411,7 +411,7 @@ function CountUpTimerCard() {
             <SettingGroup
               className="max-w-xl"
               title="Set countdown"
-              description="Minutes and seconds. Seconds are clamped to 0-59."
+              description="Enter minutes and seconds (0–59), then apply."
             >
               <SettingRow className="mx-auto max-w-xl grid-cols-1 sm:grid-cols-[minmax(0,11rem)_minmax(0,11rem)_auto] sm:justify-center">
                 <Field
@@ -431,7 +431,6 @@ function CountUpTimerCard() {
 
                 <Field
                   label="Seconds"
-                  hint="0-59"
                   value={secsInput}
                   onChange={(e) => setSecsInput(e.target.value)}
                   onBlur={applyInputsToTotal}
@@ -445,11 +444,12 @@ function CountUpTimerCard() {
                   disabled={running}
                 />
 
-                <div className="flex items-end justify-center sm:justify-start">
+                <div className="flex w-full justify-center sm:w-auto sm:self-end sm:justify-start">
                   <Button
                     variant="secondary"
                     onClick={applyInputsToTotal}
                     disabled={running}
+                    className="w-full sm:w-auto"
                   >
                     Apply
                   </Button>

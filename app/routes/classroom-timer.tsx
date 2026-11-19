@@ -475,10 +475,11 @@ function ClassroomTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-3xl"
               title="Classroom settings"
               description="Set the timer label and classroom sound cues before starting."
             >
-              <SettingRow>
+              <SettingRow className="sm:grid-cols-[minmax(0,12rem)_minmax(0,1fr)]">
                 <Field
                   label="Minutes"
                   type="number"
@@ -501,7 +502,7 @@ function ClassroomTimerCard() {
                 />
               </SettingRow>
 
-              <SettingRow>
+              <SettingRow className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                 <Toggle
                   label="Sound"
                   checked={sound}

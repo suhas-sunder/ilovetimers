@@ -677,8 +677,9 @@ function HIITCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-5xl"
               title="Interval settings"
-              description="Set warm-up, work, rest, rounds, cool-down, and optional cues."
+              description="Set work, rest, rounds, and cues. Use 0 seconds to skip warm-up, rest, or cool-down."
             >
               <SettingRow className="sm:grid-cols-2 lg:grid-cols-5">
                 <Field
@@ -696,7 +697,6 @@ function HIITCard() {
                       source: "custom",
                     })
                   }
-                  hint="0 = skip"
                 />
                 <Field
                   label="Work seconds"
@@ -729,7 +729,6 @@ function HIITCard() {
                       source: "custom",
                     })
                   }
-                  hint="0 = none"
                 />
                 <Field
                   label="Rounds"
@@ -762,7 +761,6 @@ function HIITCard() {
                       source: "custom",
                     })
                   }
-                  hint="0 = skip"
                 />
               </SettingRow>
               <SettingRow className="justify-items-center lg:grid-cols-[auto]">

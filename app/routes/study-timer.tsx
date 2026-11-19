@@ -485,6 +485,7 @@ function StudyTimerCard() {
             </PresetGroup>
 
             <SettingGroup
+              className="max-w-4xl"
               title="Study settings"
               description="Choose the session length and quiet study cues."
             >
@@ -500,7 +501,7 @@ function StudyTimerCard() {
                     setMinutes(clamp(Number(e.target.value || 1), 1, 240))
                   }
                 />
-                <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-2 lg:self-end lg:justify-start">
                   <Toggle label="Sound" checked={sound} onCheckedChange={(v) => setSound(v)} />
                   <Toggle
                     label="Final beeps"

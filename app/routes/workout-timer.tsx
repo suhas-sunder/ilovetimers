@@ -547,8 +547,9 @@ function WorkoutTimerCard() {
             </div>
 
             <SettingGroup
+              className="max-w-3xl"
               title="Workout settings"
-              description="Adjust work length, rest length, rounds, and sound cues before starting."
+              description="Set work length, rest (use 0 for back-to-back rounds), rounds, and sound cues."
             >
               <SettingRow className="sm:grid-cols-3">
                 <Field
@@ -567,7 +568,6 @@ function WorkoutTimerCard() {
                 />
                 <Field
                   label="Rest minutes"
-                  hint="Use 0 for back-to-back rounds."
                   type="number"
                   min={0}
                   max={60}

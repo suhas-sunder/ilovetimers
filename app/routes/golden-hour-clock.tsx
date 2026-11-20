@@ -985,18 +985,20 @@ function GoldenHourClockCard({ initialNowISO }: { initialNowISO: string }) {
                   </option>
                 </Select>
               </SettingRow>
-              <SettingRow className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-                <Toggle
-                  label="Sound"
-                  checked={sound}
-                  onCheckedChange={setSound}
-                />
-                <Toggle
-                  label="Final beeps"
-                  checked={finalBeeps}
-                  onCheckedChange={setFinalBeeps}
-                  disabled={!sound}
-                />
+              <SettingRow className="justify-items-center">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                  <Toggle
+                    label="Sound"
+                    checked={sound}
+                    onCheckedChange={setSound}
+                  />
+                  <Toggle
+                    label="Final beeps"
+                    checked={finalBeeps}
+                    onCheckedChange={setFinalBeeps}
+                    disabled={!sound}
+                  />
+                </div>
               </SettingRow>
             </SettingGroup>
 

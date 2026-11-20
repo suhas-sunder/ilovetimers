@@ -1488,6 +1488,25 @@
     min-height: clamp(14rem, 28svh, 28rem) !important;
   }
 
+  /* Fullscreen is an instrument display, not a keyboard-shortcut tutorial.
+     Keep usable controls visible but remove explanatory/status-only rows.
+     A text-only bottom bar must not leave an empty overlay behind. */
+  [data-fullscreen-bottombar]:not(:has(button, input, select, textarea, a[href], [role="button"])) {
+    display: none !important;
+  }
+
+  [data-fullscreen-bottombar] > div > :is(div, p):not(:has(button, input, select, textarea, a[href], [role="button"])),
+  [data-fullscreen-bottombar] > div > :is(div, p) > :is(div, p):not(:has(button, input, select, textarea, a[href], [role="button"])),
+  [data-fullscreen-bottombar] > div > :is(div, p) > :is(div, p) > :is(div, p):not(:has(button, input, select, textarea, a[href], [role="button"])) {
+    display: none !important;
+  }
+
+  .ilt-tool-frame[data-fullscreen-active="true"] .timer-shortcut-hint,
+  .ilt-tool-frame:fullscreen .timer-shortcut-hint,
+  [data-fs-container]:fullscreen .timer-shortcut-hint {
+    display: none !important;
+  }
+
   .ilt-tool-frame[data-fullscreen-active="true"],
   .ilt-tool-frame:fullscreen {
     background: var(--ilt-bg-utility) !important;

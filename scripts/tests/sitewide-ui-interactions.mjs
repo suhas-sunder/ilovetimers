@@ -71,7 +71,7 @@ try {
             const open = page.getByRole("button", { name: "Open menu" });
             await open.click();
             await page.locator("#mobile-nav").waitFor({ state: "visible" });
-            const close = page.getByRole("button", { name: "Close menu" }).first();
+            const close = page.locator("#mobile-nav").getByRole("button", { name: "Close menu", exact: true });
             await close.click();
             await page.locator("#mobile-nav").waitFor({ state: "hidden" });
           } else {

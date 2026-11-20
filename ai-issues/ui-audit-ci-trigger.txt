@@ -27,3 +27,5 @@
 2026-11-19 — OWNER FULLSCREEN DIRECTIVE: every timer, stopwatch, and clock fullscreen must be display-first. Added shared CSS to remove text-only bottom bars and hint/status clutter without hiding actionable controls; added Chromium fullscreen test across all registered shared-bar routes at 390/1280 and screenshot samples. Run full typecheck/build, SSR and geometry, locale-hydration, route navigation, and fullscreen-cleanliness before ONE owner-approved main publication.
 
 2026-11-19 — Retest all 132 navigation/theme/brand interactions with network-idle hydration waits, bounded per-route timeouts and progress logs; run fullscreen controls/cleanliness across all shared fullscreen routes at 390/1280 after geometry and locale gates. This candidate remains non-production until green.
+
+2026-11-19 — Prioritize fullscreen stage in final CI before slower 264-case navigation sweep to expose all timer fullscreen regressions promptly; no main push until checks are resolved.

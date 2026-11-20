@@ -35,6 +35,7 @@
     "test:display-stability": "node scripts/tests/display-stability.mjs",
     "test:sitewide-ui": "node scripts/tests/sitewide-ui.mjs",
     "test:page-geometry": "node scripts/tests/page-geometry-review.mjs",
+    "test:fullscreen-cleanliness": "node scripts/tests/fullscreen-cleanliness.mjs",
     "test:analytics": "node scripts/tests/posthog-analytics.mjs",
     "test:adsense": "node scripts/tests/adsense-integration.mjs",
     "audit:final-release": "node scripts/audits/final-release-gate.mjs"

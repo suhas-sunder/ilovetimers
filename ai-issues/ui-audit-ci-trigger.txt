@@ -21,3 +21,5 @@
 2026-11-19 — Check all 132 routes at mobile/desktop for visible i💛Timers.com header/footer, functional light/dark controls and menu open/close; keep Golden Hour no-event regression, 296 geometry and 60 locale hydration cases. Phase 2 only. No additional main deploy.
 
 2026-11-19 — Re-run Golden Hour sound controls compactness regression (desktop inputs currently wide) after aligning toggles in a wrapped flex row. Include full 37-route geometry, 60 locale-hydration, and 132 mobile/desktop header/footer/menus/theme interactions. Preserve no main pushes.
+
+2026-11-19 — OWNER AUTHORIZES publication of all staged UI/UX changes after a minimal build/browser gate. Fix Golden Hour sound checkbox separation caused by SettingRow CSS grid overriding flex display; nest toggles in one flex child. Run integrated browser geometry, 60 locale/hydration, 132-route SSR and 264 branding/navigation/theme tests before one safe fast-forward of main.

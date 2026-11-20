@@ -48,14 +48,18 @@ async function ready() {
 }
 async function enterFullscreen(page) {
   const launch = page.getByRole("button", { name: /fullscreen/i });
+  let clickedFullscreenControl = false;
   for (let i = 0; i < await launch.count(); i++) {
     const candidate = launch.nth(i);
     if (await candidate.isVisible() && await candidate.isEnabled()) {
       await candidate.click({ timeout: 5000 });
+      clickedFullscreenControl = true;
       break;
     }
   }
-  if (!(await page.evaluate(() => Boolean(document.fullscreenElement)))) {
+  // Never press F immediately after clicking: requestFullscreen resolves
+  // asynchronously and F can toggle it back off before React observes it.
+  if (!clickedFullscreenControl) {
     const frame = page.locator("[data-fullscreen-frame]").first();
     if (await frame.count()) await frame.focus();
     await page.keyboard.press("f");

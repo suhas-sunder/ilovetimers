@@ -1501,6 +1501,12 @@
     display: none !important;
   }
 
+  /* Route-specific status pills inside a toolbar are repeated in the
+     main display; preserve interactive label pills with checkboxes. */
+  [data-fullscreen-bottombar] span.ilt-inline-pill:not(:has(button, input, select, textarea, a[href], [role="button"])) {
+    display: none !important;
+  }
+
   .ilt-tool-frame[data-fullscreen-active="true"] .timer-shortcut-hint,
   .ilt-tool-frame:fullscreen .timer-shortcut-hint,
   [data-fs-container]:fullscreen .timer-shortcut-hint {

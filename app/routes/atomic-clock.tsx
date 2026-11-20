@@ -355,7 +355,7 @@ function AtomicClockCard({ initialNowISO }: { initialNowISO: string }) {
         {/* Fullscreen bottom controls */}
         <FullscreenBottomBar show={isFs}>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap items-center gap-2 sm:hidden">
+            <div className="flex flex-wrap items-center gap-2">
               <Toggle
                 label="Live"
                 checked={live}

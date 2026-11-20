@@ -44,6 +44,8 @@ try {
   for (const width of [390, 1280]) {
     const context = await browser.newContext({ viewport: { width, height: 900 } });
     const page = await context.newPage();
+    page.setDefaultTimeout(4000);
+    page.setDefaultNavigationTimeout(12000);
     const runtimeErrors = [];
     let currentRoute = "";
     page.on("pageerror", (error) => runtimeErrors.push(currentRoute + ": " + error.message));
@@ -52,7 +54,7 @@ try {
         currentRoute = route;
         runtimeErrors.length = 0;
         try {
-          const response = await page.goto(BASE + route, { waitUntil: "domcontentloaded" });
+          const response = await page.goto(BASE + route, { waitUntil: "networkidle", timeout: 12000 });
           assert.equal(response?.status(), 200, "Expected HTTP 200");
           await page.locator('header a[aria-label="iLoveTimers home"]').first().waitFor();
           assert.ok(await page.locator("header").first().getByText("i💛Timers.com", { exact: true }).isVisible(),
@@ -81,8 +83,11 @@ try {
           }
           assert.equal(runtimeErrors.length, 0, "Browser errors: " + runtimeErrors.join(" | "));
           passes++;
+          if (passes % 20 === 0) console.log("UI interaction pass count: " + passes);
         } catch (error) {
           failures.push(width + " " + route + ": " + error.message);
+          console.error("UI interaction failed: " + width + " " + route + " — " + error.message);
+          if (failures.length >= 12) break;
         }
       }
     } finally {

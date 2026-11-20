@@ -31,6 +31,9 @@ jobs:
         env:
           ILT_HYDRATION_REPORT_DIR: hydration-ui-report
       - run: node scripts/tests/sitewide-ui-interactions.mjs
+      - run: npm run test:fullscreen-cleanliness
+        env:
+          ILT_FULLSCREEN_CAPTURES: fullscreen-cleanliness-evidence
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -42,6 +45,8 @@ jobs:
         if: always()
         with:
           name: ui-review-screenshots
-          path: ui-review-screenshots
+          path: |
+            ui-review-screenshots
+            fullscreen-cleanliness-evidence
           if-no-files-found: ignore
           retention-days: 7

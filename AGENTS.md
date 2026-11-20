@@ -200,6 +200,15 @@ Rules:
 
 - Fullscreen bar titles may remain because they identify the active fullscreen tool.
 
+### Fullscreen is a clean display
+
+- Apply the same minimal fullscreen rule to every timer, stopwatch, clock, and specialty time tool.
+- The main fullscreen area must not show keyboard shortcut paragraphs, "no ads" notices, explanatory instructions, duplicated status copy, or SEO content.
+- Keep only essential time/phase information in the display. Use the compact top header for the tool name and Exit control, and a restrained bottom toolbar only when real interactive controls are needed.
+- The shared `FullscreenBottomBar` suppresses text-only content and removes empty bottom overlays via CSS while preserving controls. Do not reintroduce free-floating instruction text in route-local fullscreen layouts.
+- Help and keyboard hints belong in normal mode, not in fullscreen. Keep tool-specific essential controls accessible and verify tap/Space/keyboard/Exit behaviour.
+- When modifying fullscreen, run `npm run test:fullscreen-cleanliness` (rendered Chromium, not source-only checks) across the available fullscreen routes.
+
 ## 8. Homepage rules
 
 The homepage must be a clean navigation and explanation page for the full site.
